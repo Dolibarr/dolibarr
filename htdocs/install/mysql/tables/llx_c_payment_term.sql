@@ -24,7 +24,7 @@ create table llx_c_payment_term
   active          tinyint DEFAULT 1,
   libelle         varchar(255),
   libelle_facture text,
-  fdm             tinyint,    -- reglement fin de mois
+  type_cdr        tinyint,    -- reglement fin de mois / Le N du mois courant ou suivant
   nbjour          smallint,
   decalage		  smallint,
   module          varchar(32) NULL

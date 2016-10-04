@@ -43,6 +43,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 
 $langs->load("errors");
 $langs->load("admin");
+$langs->load("main");
 $langs->load("companies");
 $langs->load("resource");
 $langs->load("holiday");
@@ -172,7 +173,7 @@ $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as 
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.fdm, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -246,7 +247,7 @@ $tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle,position";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
@@ -283,7 +284,7 @@ $tabfieldvalue[8] = "code,libelle,country".(! empty($conf->global->SOCIETE_SORT_
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle,position";
-$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
+$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
@@ -320,7 +321,7 @@ $tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_S
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle,position";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
@@ -1016,7 +1017,7 @@ if ($id)
             }
             if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-            if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+            if ($fieldlist[$field]=='type_cdr')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
@@ -1192,7 +1193,7 @@ if ($id)
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-            if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+            if ($fieldlist[$field]=='type_cdr')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
@@ -1326,8 +1327,10 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
                                 }
                             }
-                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
-                                $valuetoshow=yn($valuetoshow);
+                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+				if(empty($valuetoshow)) $valuetoshow = $langs->trans('None');
+				elseif($valuetoshow == 1) $valuetoshow = $langs->trans('AtEndOfMonth');
+				elseif($valuetoshow == 2) $valuetoshow = $langs->trans('CurrentNext');
                                 $align="center";
                             }
                             else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
@@ -1685,9 +1688,13 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print 'user<input type="hidden" name="type" value="user">';
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
 			print '<td>';
-			print $form->selectyesno($fieldlist[$field],(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''),1);
+			if($fieldlist[$field] == 'type_cdr') {
+				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			} else {
+				print $form->selectyesno($fieldlist[$field],(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''),1);
+			}
 			print '</td>';
 		}
 		elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
