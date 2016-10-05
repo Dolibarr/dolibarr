@@ -170,7 +170,7 @@ else if ($action == "confirm_create") {
     
     $book = new BookKeeping($db);
 
-	if (empty(GETPOST('next_num_mvt')))
+	if (! GETPOST('next_num_mvt'))
 	{
 	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
 	    $error++;
