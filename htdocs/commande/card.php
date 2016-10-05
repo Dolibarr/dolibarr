@@ -60,13 +60,13 @@ $langs->load('deliveries');
 $langs->load('sendings');
 $langs->load('products');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
-if (! empty($conf->margin->enabled))
-	$langs->load('margins');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
@@ -1765,16 +1765,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		$formconfirm = '';
 
-		/*
-		 * Confirmation de la suppression de la commande
-		*/
+		// Confirmation to delete
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 		}
 
-		/*
-		 * Confirmation de la validation
-		*/
+		// Confirmation of validation
 		if ($action == 'validate')
 		{
 			// on verifie si l'objet est en numerotation provisoire
@@ -1980,52 +1976,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	    print '<div class="underbanner clearboth"></div>';
 
 	    print '<table class="border" width="100%">';
-
-		// Ref
-		/*
-		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Ref commande client
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-		print $langs->trans('RefCustomer') . '</td><td align="left">';
-		print '</td>';
-		if ($action != 'refcustomer' && $object->brouillon)
-			print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refcustomer&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($user->rights->commande->creer && $action == 'refcustomer') {
-			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-			print '<input type="hidden" name="action" value="set_ref_client">';
-			print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-			print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-			print '</form>';
-		} else {
-			print $object->ref_client;
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Third party
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%">';
-        print '<tr><td>' . $langs->trans('Company') . '</td>';
-        print '</td><td colspan="5">';
-        if (! empty($conf->global->COMMANDE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->commande->creer)
-            print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetLinkToThirdParty'), 1) . '</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="5">';
-        if ($action == 'editthirdparty') {
-            $form->form_thirdparty($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, 'socid','client>0');
-        } else {
-            print $soc->getNomUrl(1, 'compta');
-        }
-		print '</tr>';*/
 
 		if ($soc->outstanding_limit)
 		{
@@ -2294,29 +2244,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
     	// TODO How record was recorded OrderMode (llx_c_input_method)
-
-		// Project
-		/*
-		if (! empty($conf->projet->enabled))
-		{
-			$langs->load('projects');
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('Project');
-			print '</td>';
-			if ($action != 'classify')
-				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetProject')) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			// print "$object->id, $object->socid, $object->fk_project";
-			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
-			} else {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
-			}
-			print '</td></tr>';
-		}
-        */
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
