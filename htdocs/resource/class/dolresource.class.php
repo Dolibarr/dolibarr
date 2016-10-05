@@ -1870,9 +1870,7 @@ class ResourceLink extends CommonObject
         $result = array(
             'available' => $available,
             'notavailable' => $notavailable,
-            'need' => $need,
-            'requested' => $requested,
-            'total' => count($available) + count($notavailable)
+            'need' => $need
         );
 
         return $result;

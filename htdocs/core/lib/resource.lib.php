@@ -199,7 +199,12 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                 );
                 $action='';
                 $reshook=$hookmanager->executeHooks('occupyLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook == 0 && !empty($hookmanager->resArray))
+                if ($reshook < 0)
+                {
+                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    $error++;
+                }
+                elseif ($reshook == 0 && !empty($hookmanager->resArray))
                 {
                     $result = $hookmanager->resArray;
                     if (isset($result['qty'])) $qty = $result['qty'];
@@ -209,75 +214,79 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                     if (isset($result['return'])) $return = $result['return'];
                 }
 
-                //If hook didn't provide the roots calculate from tree
-                if ($roots === null)
+                if (!$error && !isset($return))
                 {
-                    $roots = $link->getAvailableRoots($tree, $qty);
-                }
+                    //If hook didn't provide the roots calculate from tree
+                    if ($roots === null)
+                    {
+                        $roots = $link->getAvailableRoots($tree, $qty);
+                    }
 
-                //There are root resources? Also check if we need to return hook value
-                if ($roots['total'] > 0 && !$error && !isset($return))
-                {
-                    $need = $roots['need'];
+                    //There are root resources? Also check if we need to return hook value
                     $available = $roots['available'];
                     $notavailable = $roots['notavailable'];
-                    $resource_error = '';
+                    $total = count($available) + count($notavailable);
+                    if ($total > 0)
+                    {
+                        $need = $roots['need'];
+                        $resource_error = '';
 
-                    //Check if qty was not satisfied
-                    if ($need > 0)
-                    {
-                        if (!empty($notavailable))
+                        //Check if qty was not satisfied
+                        if ($need > 0)
                         {
-                            $trans = ResourceStatus::translated();
-                            foreach ($notavailable as $id => $data)
+                            if (!empty($notavailable) && $need <= $total)
                             {
-                                $status_priority = $data['status_priority'];
-                                $resource_error = $langs->transnoentities('ResourceStatus', $data['path'], $trans[$status_priority]);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            $resource_error = $langs->transnoentities('ErrorResourceNotEnoughAvailable', $need);
-                        }
-                    }
-
-                    if (!empty($resource_error))
-                    {
-                        setEventMessages($langs->transnoentities('ErrorServiceResource', $object->product_label, $resource_error), null, 'errors');
-                        $error++;
-                    }
-                    else
-                    {
-                        //Free any resources that we have taken before occupying
-                        foreach ($tree as $data)
-                        {
-                            if ($data['status'] == ResourceStatus::TAKEN)
-                            {
-                                $resource = $data['resource'];
-                                $result = $resource->freeResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type);
-                                if ($result < 0)
+                                $trans = ResourceStatus::translated();
+                                foreach ($notavailable as $id => $data)
                                 {
-                                    setEventMessages($resource->error, $resource->errors, 'errors');
-                                    $error++;
+                                    $status_priority = $data['status_priority'];
+                                    $resource_error = $langs->transnoentities('ResourceStatus', $data['path'], $trans[$status_priority]);
                                     break;
                                 }
                             }
+                            else
+                            {
+                                $resource_error = $langs->transnoentities('ErrorResourceNotEnoughAvailable', $need);
+                            }
                         }
 
-                        //Iterate each available roots and occupy their dependant resources
-                        require_once DOL_DOCUMENT_ROOT.'/resource/class/resourcelog.class.php';
-                        foreach ($available as $root)
+                        if (!empty($resource_error))
                         {
-                            foreach ($root['dependency'] as $id => $resource)
+                            setEventMessages($langs->transnoentities('ErrorServiceResource', $object->product_label, $resource_error), null, 'errors');
+                            $error++;
+                        }
+                        else
+                        {
+                            //Free any resources that we have taken before occupying
+                            foreach ($tree as $data)
                             {
-                                /** @var Dolresource $resource */
-                                $result = $resource->setStatus($user, $object->date_start, $object->date_end, ResourceStatus::$AVAILABLE, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
-                                if ($result < 0)
+                                if ($data['status'] == ResourceStatus::TAKEN)
                                 {
-                                    setEventMessages($resource->error, $resource->errors, 'errors');
-                                    $error++;
-                                    break 2;
+                                    $resource = $data['resource'];
+                                    $result = $resource->freeResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type);
+                                    if ($result < 0)
+                                    {
+                                        setEventMessages($resource->error, $resource->errors, 'errors');
+                                        $error++;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            //Iterate each available roots and occupy their dependant resources
+                            require_once DOL_DOCUMENT_ROOT.'/resource/class/resourcelog.class.php';
+                            foreach ($available as $root)
+                            {
+                                foreach ($root['dependency'] as $id => $resource)
+                                {
+                                    /** @var Dolresource $resource */
+                                    $result = $resource->setStatus($user, $object->date_start, $object->date_end, ResourceStatus::$AVAILABLE, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
+                                    if ($result < 0)
+                                    {
+                                        setEventMessages($resource->error, $resource->errors, 'errors');
+                                        $error++;
+                                        break 2;
+                                    }
                                 }
                             }
                         }
@@ -357,7 +366,12 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
                 );
                 $action='';
                 $reshook=$hookmanager->executeHooks('switchLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook == 0 && !empty($hookmanager->resArray))
+                if ($reshook < 0)
+                {
+                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    $error++;
+                }
+                elseif ($reshook == 0 && !empty($hookmanager->resArray))
                 {
                     $result = $hookmanager->resArray;
                     if (isset($result['resources'])) $resources = $result['resources'];
@@ -461,7 +475,12 @@ function freeAllResources($object, $status, $booker_id=null, $booker_type=null)
                 );
                 $action='';
                 $reshook=$hookmanager->executeHooks('freeLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook == 0 && !empty($hookmanager->resArray))
+                if ($reshook < 0)
+                {
+                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    $error++;
+                }
+                elseif ($reshook == 0 && !empty($hookmanager->resArray))
                 {
                     $result = $hookmanager->resArray;
                     if (isset($result['resources'])) $resources = $result['resources'];

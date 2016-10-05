@@ -666,7 +666,7 @@ else if ($element_id && $element_type) //Show linked resources to this element
 
 	$res_tree = $object->getFullTree($element_id, $element_type, true);
 	$roots = $object->getAvailableRoots($res_tree, 1);
-	if ($roots['total'] > 0 && $roots['need'] > 0) {
+	if ((count($roots['available']) + count($roots['notavailable'])) > 0 && $roots['need'] > 0) {
 		print '<div class="warning">'.$langs->trans('WarningResourcesNotAvailable').'</div>';
 	}
 
