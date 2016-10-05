@@ -3408,29 +3408,43 @@ class Societe extends CommonObject
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
+	 *  @param  null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
+		if (! empty($moreparams) && ! empty($moreparams['use_companybankid']))
 		{
-			if (! empty($conf->global->COMPANY_ADDON_PDF))
-			{
-				$modele = $conf->global->COMPANY_ADDON_PDF;
-			}
-			else
-			{
-				print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
-                return 0;
-			}
+		    $modelpath = "core/modules/bank/doc/";
+
+		    include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		    $companybankaccount = new CompanyBankAccount($this->db);
+		    $result = $companybankaccount->fetch($moreparams['use_companybankid']);
+		    if (! $result) dol_print_error($this->db, $companybankaccount->error, $companybankaccount->errors);
+		    $result=$companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
-
-		$modelpath = "core/modules/societe/doc/";
-
-		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		else
+		{
+    		// Positionne le modele sur le nom du modele a utiliser
+    		if (! dol_strlen($modele))
+    		{
+    			if (! empty($conf->global->COMPANY_ADDON_PDF))
+    			{
+    				$modele = $conf->global->COMPANY_ADDON_PDF;
+    			}
+    			else
+    			{
+    				print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+                    return 0;
+    			}
+    		}
+    
+    		$modelpath = "core/modules/societe/doc/";
+		
+    		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 
 		return $result;
 	}

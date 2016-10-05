@@ -287,7 +287,7 @@ print "</table>";
 
 $year = $year_end;
 
-$result=dol_mkdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -378,7 +378,7 @@ else
 	}
 
 	// Fabrication tableau 4b
-	$file= $conf->banque->dir_temp."/credmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/credmovement".$id."-".$year.".png";
 	$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/credmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();
@@ -465,7 +465,7 @@ else
 		$datamin[$i] = 0;
 	}
 
-	$file= $conf->banque->dir_temp."/debmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/debmovement".$id."-".$year.".png";
 	$fileurl= DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/debmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Debit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();

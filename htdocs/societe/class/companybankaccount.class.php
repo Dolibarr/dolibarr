@@ -176,6 +176,8 @@ class CompanyBankAccount extends Account
             {
                 $obj = $this->db->fetch_object($resql);
 
+                $this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
+
                 $this->id			   = $obj->rowid;
                 $this->socid           = $obj->fk_soc;
                 $this->bank            = $obj->bank;

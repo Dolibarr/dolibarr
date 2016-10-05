@@ -46,7 +46,7 @@ $optioncss = GETPOST('optioncss','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque');
 
-$diroutputmassaction=$conf->banque->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');

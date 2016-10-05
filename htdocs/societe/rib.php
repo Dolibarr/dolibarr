@@ -281,13 +281,22 @@ if (empty($reshook))
     }
 
     $savid=$id;
-
+    
     // Actions to build doc
+    if ($action == 'builddocrib')
+    {
+        $action = 'builddoc';
+        $moreparams = array(
+            'use_companybankid'=>GETPOST('companybankid'),
+            'force_dir_output'=>$conf->societe->dir_output.'/'.dol_sanitizeFileName($object->id)
+        );
+        $_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
+    }
     $id = $socid;
     $upload_dir = $conf->societe->dir_output;
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-    
+
     $id = $savid;
 }
 
@@ -435,10 +444,11 @@ if ($socid && $action != 'edit' && $action != "create")
         print_liste_field_titre($langs->trans("BIC"));
         if (! empty($conf->prelevement->enabled))
         {
-			print '<td>'.$langs->trans("RUM").'</td>';
-			print '<td>'.$langs->trans("WithdrawMode").'</td>';
+			print print_liste_field_titre($langs->trans("RUM"));
+			print print_liste_field_titre($langs->trans("WithdrawMode"));
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
+        print_liste_field_titre('', '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 
@@ -512,7 +522,60 @@ if ($socid && $action != 'edit' && $action != "create")
                 print img_picto($langs->trans("Enabled"),'on');
             }
             print '</td>';
-
+            
+            // Generate doc
+            print '<td align="center">';
+             
+            $buttonlabel = $langs->trans("BuildDoc");
+            $forname='builddocrib'.$rib->id;
+             
+            include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+            $modellist=ModeleBankAccountDoc::liste_modeles($db);
+            $out = '';
+            if (is_array($modellist) && count($modellist))
+            {
+                $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+                $out.= '<input type="hidden" name="action" value="builddocrib">';
+                $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $out.= '<input type="hidden" name="socid" value="'.$object->id.'">';
+                $out.= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+    
+                if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
+                {
+                    $arraykeys=array_keys($modellist);
+                    $modelselected=$arraykeys[0];
+                }
+                $out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+                $out.= ajax_combobox('modelrib'.$rib->id);
+                 
+                // Language code (if multilang)
+                if ($conf->global->MAIN_MULTILANGS)
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+                    $formadmin=new FormAdmin($db);
+                    $defaultlang=$codelang?$codelang:$langs->getDefaultLang();
+                    $morecss='maxwidth150';
+                    if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+                    $out.= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
+                }
+                // Button
+                $genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+                $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
+                if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled';
+                $genbutton.= '>';
+                if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid')
+                {
+                    $langs->load("errors");
+                    $genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+                }
+                if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
+                if (empty($modellist) && ! $showempty && $modulepart != 'unpaid') $genbutton='';
+                $out.= $genbutton;
+                $out.= '</form>';
+            }
+            print $out;
+            print '</td>';
+            
             // Edit/Delete
             print '<td align="right">';
             if ($user->rights->societe->creer)
@@ -534,7 +597,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         if (count($rib_list) == 0)
         {
-        	$colspan=7;
+        	$colspan=8;
         	if (! empty($conf->prelevement->enabled)) $colspan+=2;
             print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }

@@ -453,9 +453,12 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 
         // Actions for all version (not in database)
-        migrate_delete_old_files($db,$langs,$conf);
+        migrate_delete_old_files($db, $langs, $conf);
 
-        migrate_delete_old_dir($db,$langs,$conf);
+        migrate_delete_old_dir($db, $langs, $conf);
+        
+        dol_mkdir(DOL_DATA_ROOT.'/bank');
+        migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
     }
 
     print '</table>';
@@ -3866,8 +3869,8 @@ function migrate_remise_except_entity($db,$langs,$conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @param	string		$oldname	Old name
- * @param	string		$newname	New name
+ * @param	string		$oldname	Old name (relative to DOL_DATA_ROOT)
+ * @param	string		$newname	New name (relative to DOL_DATA_ROOT)
  * @return	void
  */
 function migrate_directories($db,$langs,$conf,$oldname,$newname)

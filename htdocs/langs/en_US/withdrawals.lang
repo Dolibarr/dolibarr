@@ -79,6 +79,7 @@ WithdrawMode=Direct debit mode (FRST or RECUR)
 WithdrawRequestAmount=Withdraw request amount: 
 WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 SepaMandate=SEPA Direct Debit Mandate
+SepaMandateShort=SEPA Mandate
 PleaseReturnMandate=Please return this mandate form to
 SEPALegalText=By signing this mandate form, you authorize (A) %s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.
 CreditorIdentifier=Creditor Identifier

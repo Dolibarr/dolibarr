@@ -88,11 +88,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
-	 *	@param	Project		$object   		Object project a generer
-	 *	@param	Translate	$outputlangs	Lang output object
-	 *	@return	int         				1 if OK, <=0 if KO
+	 *	@param	    Project		$object   		    Object project a generer
+	 *	@param	    Translate	$outputlangs	    Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details (not used for this template)
+     *  @param		int			$hidedesc			Do not show desc (not used for this template)
+     *  @param		int			$hideref			Do not show ref (not used for this template)
+     *  @param      null|array  $moreparams         More parameters
+	 *	@return	    int         				    1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
@@ -104,22 +109,26 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("projects");
-
-		if ($conf->bank->dir_output)
+		$outputlangs->load("withdrawals");
+		$outputlangs->load("bills");
+		
+		if (! empty($conf->bank->dir_output))
 		{
 			//$nblignes = count($object->lines);  // This is set later with array of tasks
 
 		    // Definition of $dir and $file
 		    if ($object->specimen)
 		    {
-		        $dir = $conf->bank->dir_output;
+		        if (! empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
+		        else $dir = $conf->bank->dir_output;
 		        $file = $dir . "/SPECIMEN.pdf";
 		    }
 		    else
 		    {
 		        $objectref = dol_sanitizeFileName($object->ref);
-		        $dir = $conf->bank->dir_output . "/" . $objectref;
-		        $file = $dir . "/" . $objectref . ".pdf";
+		        if (! empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
+		        else $dir = $conf->bank->dir_output . "/" . $objectref;
+		        $file = $dir . "/" . $langs->trans("SepaMandateShort").' '.$objectref . "-".dol_sanitizeFileName($object->rum).".pdf";
 		    }
 		    
 			if (! file_exists($dir))
@@ -264,7 +273,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0)
 				{
-				    $sepaname = $thirdparty->name.' ('.$object->account_owner.')';
+				    $sepaname = $thirdparty->name.($object->account_owner?' ('.$object->account_owner.')':'');
 				}
 				$posY=$pdf->GetY();
 				$posY+=3;
@@ -354,11 +363,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				var_dump($tab_top);
+				/*var_dump($tab_top);
 				var_dump($heightforinfotot);
 				var_dump($heightforfreetext);
 				var_dump($heightforfooter);
-				var_dump($bottomlasttab);
+				var_dump($bottomlasttab);*/
 				
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
@@ -555,6 +564,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		{
             $daterum = dol_print_date($object->date_rum,'day',false,$outputlangs,true);
 		}
+		else $daterum = dol_print_date($object->datec,'day',false,$outputlangs,true);   // For old record, the date_rum was not saved.
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . $daterum, '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);
