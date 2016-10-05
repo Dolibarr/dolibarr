@@ -19,30 +19,30 @@ Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Breakdown
+Ventilation=Binding to accounts
 
 MenuAccountancy=Accountancy
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Reports
 NewAccount=New accounting account
 Create=Create
-CreateMvts=Create movement
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Write records in general ledger
+CreateMvts=Create e transaction entry
+UpdateMvts=Modification of a transaction entry
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=General ledger
 AccountBalance=Account balance
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=Ventilate in the accounting account
+InvoiceLines=Lines of invoice to be binded
+InvoiceLinesDone=Binded lines of invoice
+IntoAccount=Bind line with the accounting account
 
 Ventilate=Ventilate
 
 Processing=Processing
 EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Any lines to bind
 SelectedLines=Selected lines
 Lineofinvoice=Line of invoice
 VentilatedinAccount=Binded successfully to the accounting account
@@ -50,9 +50,9 @@ NotVentilatedinAccount=Not binded to the accounting account
 XLineSuccessfullyBinded=%s products/services successfuly binded to an accounting account
 XLineFailedToBeBinded=%s products/services were not binded to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be binded shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
@@ -100,15 +100,15 @@ DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of records that are binded to accountancy account and can be breakdowned into the General Ledger.
+DescJournalOnlyBindedVisible=This is a view of records that are binded to accountancy account and can be recorded into the General Ledger.
 
 CustomerInvoicePayment=Payment of invoice customer
 
 ThirdPartyAccount=Thirdparty account
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
+NewAccountingMvt=New transaction entry
+NumMvts=Number of transactions
+ListeMvts=List of transactions
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
 
 ReportThirdParty=List thirdparty account
@@ -137,7 +137,7 @@ AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=Breakdown card
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ## Admin
@@ -181,5 +181,5 @@ BookeppingLineAlreayExists=Lines already existing into bookeeping
 
 
 Binded=Lines binded
-To bind=Lines to bind
+ToBind=Lines to bind
 

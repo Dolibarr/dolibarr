@@ -204,7 +204,7 @@ if ($result) {
 	
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
-	print '<input type="submit" class="button" value="' . $langs->trans("Validate") . '" /></div>';
+	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Validate") . '" /></div>';
 	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -216,7 +216,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 	
 	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
@@ -270,7 +270,7 @@ if ($result) {
 		print img_edit();
 		print '</a></td>';
 		
-		print '<td align="center"><input type="checkbox" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
+		print '<td align="center"><input type="checkbox" class="toselect" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 		
 		print "</tr>";
 		$i ++;

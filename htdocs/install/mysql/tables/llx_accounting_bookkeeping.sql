@@ -27,7 +27,7 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
   fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
   code_tiers		varchar(24),			-- code tiers
-  numero_compte		varchar(32) DEFAULT NULL,
+  numero_compte		varchar(32) DEFAULT NOT NULL,
   label_compte		varchar(128) NOT NULL,
   debit				double NOT NULL,
   credit			double NOT NULL,

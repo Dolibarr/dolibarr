@@ -15,7 +15,10 @@
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): -- VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
@@ -123,8 +126,10 @@ create table llx_product_warehouse_properties
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user_modif     integer;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_creation		datetime;
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp; 
-
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
+ALTER TABLE llx_accounting_bookkeeping numero_compte		varchar(32) DEFAULT NOT NULL 
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN numero_compte varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN numero_compte SET NOT NULL;
 
 ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
 
