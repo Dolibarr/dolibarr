@@ -127,9 +127,10 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT N
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user_modif     integer;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_creation		datetime;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
-ALTER TABLE llx_accounting_bookkeeping numero_compte		varchar(32) DEFAULT NOT NULL 
 -- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN numero_compte varchar(32) NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN numero_compte SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN code_journal SET NOT NULL;
 
 ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
 

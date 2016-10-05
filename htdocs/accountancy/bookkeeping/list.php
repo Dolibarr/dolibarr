@@ -167,7 +167,7 @@ if (! empty($search_mvt_num)) {
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_mvt_num = '';
 	$search_doc_type = '';
@@ -272,7 +272,7 @@ if ($action == 'export_csv') {
  */
 
 $title_page = $langs->trans("Bookkeeping");
-if ($search_date_start || $search_date_end) $title_page .= ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+if ($search_date_start || $search_date_end) $title_page .= ' ' . dol_print_date($search_date_start, 'day') . ' - ' . dol_print_date($search_date_end, 'day');
 llxHeader('', $title_page);
 
 // List
@@ -339,7 +339,7 @@ print '</div>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
@@ -353,7 +353,7 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
 print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
-print '<td class="liste_titre">';
+print '<td class="liste_titre center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '<br>';

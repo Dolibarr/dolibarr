@@ -409,7 +409,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (empty($this->fk_doc) ? '0' : $this->fk_doc) . ',';
 		$sql .= ' ' . (empty($this->fk_docdet) ? '0' : $this->fk_docdet) . ',';
 		$sql .= ' ' . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ',';
-		$sql .= ' ' . (! isset($this->numero_compte) ? 'NULL' : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : "'" . $this->debit . "'") . ',';
 		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : "'" . $this->credit . "'") . ',';
@@ -417,8 +417,8 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
 		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
-		$sql .= ' ' . (! isset($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
-		$sql .= ' ' . (! isset($this->piece_num) ? 'NULL' : $this->piece_num).',';
+		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
+		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->piece_num).',';
 		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
 		$sql .= ')';
 		
@@ -1215,18 +1215,20 @@ class BookKeeping extends CommonObject
 	/**
 	 * Return next number movement
 	 *
-	 * @return string Last number
+	 * @return string      Next numero to use
 	 */
-	public function getNextNumMvt() {
+	public function getNextNumMvt() 
+	{
 		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . $this->table_element;
-		
+
 		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
-		
+
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			
-			return $obj->max;
+	        if ($obj) $result = $obj->max;
+	        if (empty($result)) $result = 1;
+	        return $result;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);

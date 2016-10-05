@@ -27,7 +27,7 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
   fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
   code_tiers		varchar(24),			-- code tiers
-  numero_compte		varchar(32) DEFAULT NOT NULL,
+  numero_compte		varchar(32) NOT NULL,
   label_compte		varchar(128) NOT NULL,
   debit				double NOT NULL,
   credit			double NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE llx_accounting_bookkeeping
   date_creation		datetime,								-- date de creation
   tms               timestamp,								-- date last modification 
   import_key		varchar(14),
-  code_journal		varchar(10) DEFAULT NULL,
+  code_journal		varchar(10) NOT NULL,
   piece_num			integer NOT NULL,
   validated         tinyint DEFAULT 0 NOT NULL -- 0 line not validated / 1 line validated (No deleting / No modification) 
 ) ENGINE=innodb;

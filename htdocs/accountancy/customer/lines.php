@@ -264,7 +264,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -277,8 +277,8 @@ if ($result) {
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_country" value="' . $search_country . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_tavintra" value="' . $search_tavintra . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre" align="center">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(1);
 	print $searchpitco;
 	print "</td></tr>\n";
 
@@ -317,7 +317,7 @@ if ($result) {
 		print '</a></td>';
 		print '<td align="right">' . $objp->country .'</td>';
 		print '<td align="center">' . $objp->tva_intra . '</td>';
-		print '<td align="center"><input type="checkbox" class="toselect" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
+		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
 
 		print "</tr>";
 		$i ++;

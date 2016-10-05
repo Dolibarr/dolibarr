@@ -92,8 +92,13 @@ $accounting = new AccountingAccount($db);
 $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
 $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
 
+
+/*
+ * Action
+ */
+
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) {
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -101,6 +106,42 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+}
+
+if ($action == 'ventil' && ! empty($btn_ventil)) {
+    $msg='';
+    //print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+    if (! empty($codeventil) && ! empty($mesCasesCochees)) {
+        $msg = '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
+        $mesCodesVentilChoisis = $codeventil;
+        $cpt = 0;
+
+        foreach ( $mesCasesCochees as $maLigneCochee ) {
+            $maLigneCourante = explode("_", $maLigneCochee);
+            $monId = $maLigneCourante[0];
+            $monNumLigne = $maLigneCourante[1];
+            $monCompte = $mesCodesVentilChoisis[$monNumLigne];
+
+            $sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
+            $sql .= " SET fk_code_ventilation = " . $monCompte;
+            $sql .= " WHERE rowid = " . $monId;
+
+            $accountventilated = new AccountingAccount($db);
+            $accountventilated->fetch($monCompte, '');
+
+            dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
+            if ($db->query($sql)) {
+                $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
+            } else {
+                $msg.= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+            }
+
+            $cpt ++;
+        }
+    } else {
+        $msg. '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
+    }
+    $msg.= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
 }
 
 
@@ -127,45 +168,6 @@ print '<script type="text/javascript">
 			    });
 			});
 		</script>';
-
-/*
- * Action
- */
-if ($action == 'ventil' && ! empty($btn_ventil)) {
-    $msg='';
-	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
-	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
-		$msg = '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
-		$mesCodesVentilChoisis = $codeventil;
-		$cpt = 0;
-
-		foreach ( $mesCasesCochees as $maLigneCochee ) {
-			$maLigneCourante = explode("_", $maLigneCochee);
-			$monId = $maLigneCourante[0];
-			$monNumLigne = $maLigneCourante[1];
-			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
-
-			$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
-			$sql .= " SET fk_code_ventilation = " . $monCompte;
-			$sql .= " WHERE rowid = " . $monId;
-
-			$accountventilated = new AccountingAccount($db);
-			$accountventilated->fetch($monCompte, '');
-
-			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
-			if ($db->query($sql)) {
-				$msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
-			} else {
-				$msg.= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
-			}
-
-			$cpt ++;
-		}
-	} else {
-		$msg. '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
-	}
-	$msg.= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
-}
 
 /*
  * Customer Invoice lines
@@ -232,7 +234,7 @@ if ($result) {
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 
-	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
+	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
 
 	if ($msg) print $msg.'<br>';
 	
@@ -250,7 +252,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print '</tr>';
 
 	// We add search filter
@@ -261,10 +263,12 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
-	print '<td align="right" class="liste_titre" colspan="4">';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-	print '&nbsp;';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td align="right" class="liste_titre">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(1);
+	print $searchpitco;
 	print '</td>';
 	print '</tr>';
 
@@ -352,8 +356,8 @@ if ($result) {
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil[]', 1);
 		print '</td>';
 		print '<td align="center">' . $objp->rowid . '</td>';
-		print '<td align="center">';
-		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<td align="right">';
+		print '<input type="checkbox" class="checkforaction" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 		print '</tr>';
 		$i ++;

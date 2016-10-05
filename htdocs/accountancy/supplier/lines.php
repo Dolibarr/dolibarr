@@ -216,7 +216,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 	
 	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
@@ -228,7 +228,7 @@ if ($result) {
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=$form->showFilterAndCheckAddButtons(1);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";
@@ -270,7 +270,7 @@ if ($result) {
 		print img_edit();
 		print '</a></td>';
 		
-		print '<td align="center"><input type="checkbox" class="toselect" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
+		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 		
 		print "</tr>";
 		$i ++;
