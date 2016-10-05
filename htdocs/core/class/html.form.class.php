@@ -2344,13 +2344,13 @@ class Form
      *  @param      string	$htmlname        Name of HTML field
      *  @return		string|null
      */
-    function select_product_fourn_price($productid,$htmlname='productfournpriceid')
+    function select_product_fourn_price($productid, $selected_supplier='', $htmlname='productfournpriceid')
     {
         global $langs,$conf;
 
         $langs->load('stocks');
 
-        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
+        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, pfp.fk_soc,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
         $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2387,7 +2387,7 @@ class Form
 
                     $opt = '<option value="'.$objp->idprodfournprice.'"';
                     //if there is only one supplier, preselect it
-                    if($num == 1) {
+                    if($num == 1 || ($selected_supplier > 0 && $objp->fk_soc == $selected_supplier)) {
                         $opt .= ' selected';
                     }
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
