@@ -102,27 +102,24 @@ Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
 AccountingCategory=Accounting category
-
 NotMatch=Not Set
-
 DeleteMvt=Delete general ledger lines
 DelYear=Year to delete
 DelJournal=Journal to delete
 ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
 ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
-
 DelBookKeeping=Delete the records of the general ledger
-
 DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of records that are binded to accountancy account and can be recorded into the General Ledger.
-
+DescJournalOnlyBindedVisible=This is a view of records that are binded to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for thirdparty not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
-
 ThirdPartyAccount=Thirdparty account
-
 NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
@@ -144,7 +141,7 @@ DescVentilCustomer=Consult here the list of customer invoice lines binded (or no
 DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not binded to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
 DescVentilTodoCustomer=Bind invoice lines not already binded with a product accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
 DescVentilSupplier=Consult here the list of supplier invoice lines binded or not yet binded to a product accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
@@ -157,6 +154,9 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not binded to any accounting account
+ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories

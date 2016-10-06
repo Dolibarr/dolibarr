@@ -76,9 +76,9 @@ if ($user->societe_id > 0 && empty($id_bank_account))
 
 
 /*
- * View
+ * Actions
  */
-
+	
 $error = 0;
 	
 $year_current = strftime("%Y", dol_now());
@@ -101,9 +101,9 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql  = "SELECT b.rowid , b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, soc.code_compta,";
+$sql  = "SELECT b.rowid , b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number,";
-$sql .= " soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop";
+$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
@@ -301,11 +301,6 @@ var_dump($tabbq);
 var_dump($tabtp);
 */
 
-
-/*
- * Actions
- */
-
 // Write bookkeeping
 if (! $error && $action == 'writebookkeeping') {
 	$now = dol_now();
@@ -466,13 +461,26 @@ if (! $error && $action == 'writebookkeeping') {
 	}
 	elseif (count($tabpay) == $error)
 	{
-	    setEventMessages($langs->trans("NoRecordSaved"), null, 'warnings');
+	    setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
 	else
 	{
 	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
+	
+	$action = '';
 }
+
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+
 // Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -632,8 +640,8 @@ if ($action == 'export_csv') {
 		}
 	}
 }
-else {
-	$form = new Form($db);
+
+if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	
@@ -680,6 +688,7 @@ else {
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
+	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
@@ -749,9 +758,17 @@ else {
 		foreach ( $tabbq[$key] as $k => $mt ) {
 
 		    print "<tr " . $bc[$var] . ">";
-			print "<td>" . $date . "</td>";
+		    print "<td><!-- Bank --></td>";
+		    print "<td>" . $date . "</td>";
 			print "<td>" . $ref . "</td>";
-			print "<td>" . length_accountg($k) . "</td>";
+			print "<td>";
+			$accountoshow = length_accountg($k);
+			if ($accountoshow == 'NotDefined')
+			{
+			    print '<span class="error">'.$langs->trans("BankAccountNotDefined").'</span>';
+			}
+			else print $accountoshow;
+			print "</td>";
 			if ($val['soclib'] == '') {
 				print "<td>" . $bank_code_journal->label . " - " . $val["ref"] . "</td>";
 			} else {
@@ -768,9 +785,17 @@ else {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($k != 'type') {
 					print "<tr " . $bc[$var] . ">";
+					print "<td><!-- Thirdparty --></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
-					print "<td>" . length_accounta($k) . "</td>";
+					print "<td>";
+        			$accountoshow = length_accounta($k);
+        			if ($accountoshow == 'NotDefined')
+        			{
+        			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+        			}
+        			else print $accountoshow;
+					print "</td>";
 					print "<td>" . $reflabel . ' ' . $val['soclib'] . "</td>";
 					print "<td>" . $val["type_payment"] . "</td>";
 					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -781,9 +806,12 @@ else {
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print "<tr " . $bc[$var] . ">";
+				print "<td><!-- Wait --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
-				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
+				print "<td>";
+				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . 
+				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";

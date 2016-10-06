@@ -213,7 +213,7 @@ if ($result) {
 	
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
-	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Validate") . '" /></div>';
+	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);

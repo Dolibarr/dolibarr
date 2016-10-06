@@ -183,11 +183,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_desc = '';
 }
 
+
 /*
  * View
  */
 
-llxHeader('', $langs->trans("InitAccountancy"));
+llxHeader('', $langs->trans("ProductsBinding"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -244,7 +245,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print load_fiche_titre($langs->trans("ModulesSystemTools"), '', 'title_accountancy');
+	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';

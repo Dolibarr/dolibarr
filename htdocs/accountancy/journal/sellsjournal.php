@@ -89,7 +89,7 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
 $sql .= " fd.situation_percent,ct.accountancy_code_sell as account_tva";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
@@ -204,6 +204,10 @@ if ($action == 'writebookkeeping') {
 
         $companystatic->id = $tabcompany[$key]['id'];
         $companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
         $companystatic->client = $tabcompany[$key]['code_client'];
 
         $invoicestatic->id = $key;
@@ -316,7 +320,7 @@ if ($action == 'writebookkeeping') {
     }
     elseif (count($tabpay) == $error)
     {
-        setEventMessages($langs->trans("NoRecordSaved"), null, 'warnings');
+        setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
     }
     else
     {
@@ -537,9 +541,17 @@ if (empty($action) || $action == 'view') {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
-			print "<td>" . length_accounta($k);
+			$companystatic->client = $tabcompany[$key]['code_client'];
+			print "<td>";
+			$accountoshow = length_accounta($k);
+			if ($accountoshow == 'NotDefined')
+			{
+			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+			}
+			else print $accountoshow;
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
+			print '</td>';
 			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			print "</td><td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -556,7 +568,14 @@ if (empty($action) || $action == 'view') {
 				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				print "<td>" . length_accountg($k) . "</td>";
+				print "<td>";
+    			$accountoshow = length_accountg($k);
+    			if ($accountoshow == 'NotDefined')
+    			{
+    			    print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
+    			}
+    			else print $accountoshow;
+				print "</td>";
 				// print "<td>" . $accountingaccount->label . "</td>";
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -572,7 +591,14 @@ if (empty($action) || $action == 'view') {
 				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				print "<td>" . length_accountg($k) . "</td>";
+				print "<td>";
+    			$accountoshow = length_accountg($k);
+    			if ($accountoshow == 'NotDefined')
+    			{
+    			    print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
+    			}
+    			else print $accountoshow;
+				print "</td>";
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . ' '.$def_tva[$key]. "</td>";
 				// print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";

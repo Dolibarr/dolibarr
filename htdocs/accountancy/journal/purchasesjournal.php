@@ -86,8 +86,8 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier,";
 $sql .= " fd.rowid as fdid, fd.description, fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur, s.fournisseur,";
-$sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
+$sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " p.accountancy_code_buy , ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
@@ -184,6 +184,10 @@ if ($action == 'writebookkeeping') {
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
 		foreach ( $tabttc[$key] as $k => $mt ) {
@@ -298,7 +302,7 @@ if ($action == 'writebookkeeping') {
 	}
 	elseif (count($tabpay) == $error)
 	{
-	    setEventMessages($langs->trans("NoRecordSaved"), null, 'warnings');
+	    setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
 	else
 	{
@@ -520,10 +524,17 @@ if (empty($action) || $action == 'view') {
 
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
-				print "<td></td>";
+				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				print "<td>" . length_accountg($k) . "</td>";
+				print "<td>";
+    			$accountoshow = length_accountg($k);
+    			if ($accountoshow == 'NotDefined')
+    			{
+    			    print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
+    			}
+    			else print $accountoshow;
+				print "</td>";
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label . "</td>";
@@ -537,10 +548,17 @@ if (empty($action) || $action == 'view') {
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
-				print "<td></td>";
+				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				print "<td>" . length_accountg($k) . "</td>";
+				print "<td>";
+    			$accountoshow = length_accountg($k);
+    			if ($accountoshow == 'NotDefined')
+    			{
+    			    print '<span class="error">'.$langs->trans("VatAccountNotDefined").'</span>';
+    			}
+    			else print $accountoshow;
+				print "</td>";
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key]. "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -551,12 +569,19 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print "<td></td>";
+			print "<td><!-- Thirdparty --></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-			print "<td>" . length_accounta($k) . "</td>";
+			print "<td>";
+			$accountoshow = length_accounta($k);
+			if ($accountoshow == 'NotDefined')
+			{
+			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+			}
+			else print $accountoshow;
+            print "</td>";
 			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';
