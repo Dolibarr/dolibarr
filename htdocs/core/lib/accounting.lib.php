@@ -105,7 +105,7 @@ function clean_account($account)
 }
 
 /**
- * Return general accounting account with defined length
+ * Return General accounting account with defined length
  *
  * @param 	string	$account		General accounting account
  * @return	string          		String with defined length
@@ -137,7 +137,8 @@ function length_accountg($account)
 }
 
 /**
- * Return auxiliary accounting account with defined length
+ * Return Auxiliary accounting account with defined length
+ * TODO For thirdparty accounts only, or products too ?
  *
  * @param 	string	$accounta		Auxiliary accounting account
  * @return	string          		String with defined length

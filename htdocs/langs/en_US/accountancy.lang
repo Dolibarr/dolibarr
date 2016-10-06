@@ -19,7 +19,8 @@ AccountancyAreaDescIntro=Usage of the accountancy module is done in several step
 AccountancyAreaDescActionOnce=The following action are usually executed one time only, or once per year...
 AccountancyAreaDescActionFreq=The following action are usually executed every month, week or day for very large companies...
 AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
-AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.    
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
 AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.    
 AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.    
 AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.    
@@ -27,6 +28,7 @@ AccountancyAreaDescDonation=STEP %s: Check the binding between donation and acco
     
 AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting accounting is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
 AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting accounting is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
 
 Selectchartofaccounts=Select a chart of accounts
 Addanaccount=Add an accounting account
@@ -195,7 +197,8 @@ ErrorNoAccountingCategoryForThisCountry=No accounting category are available for
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 
-
 Binded=Lines binded
 ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced be a correct report in a next version. 
 
