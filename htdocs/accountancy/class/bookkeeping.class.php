@@ -241,7 +241,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", piece_num";
 				$sql .= ', entity';				
 				$sql .= ") VALUES (";
-				$sql .= "'" . $this->doc_date . "'";
+				$sql .= "'" . $this->db->idate($this->doc_date) . "'";
 				$sql .= ",'" . $this->doc_type . "'";
 				$sql .= ",'" . $this->doc_ref . "'";
 				$sql .= "," . $this->fk_doc;
@@ -254,7 +254,7 @@ class BookKeeping extends CommonObject
 				$sql .= "," . $this->montant;
 				$sql .= ",'" . $this->sens . "'";
 				$sql .= ",'" . $this->fk_user_author . "'";
-				$sql .= ",'" . $this->date_create . "'";
+				$sql .= ",'" . $this->db->idate($this->date_create). "'";
 				$sql .= ",'" . $this->code_journal . "'";
 				$sql .= "," . $this->piece_num;
 				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
@@ -384,7 +384,6 @@ class BookKeeping extends CommonObject
 		
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
 		$sql .= 'doc_date,';
 		$sql .= 'doc_type,';
 		$sql .= 'doc_ref,';
