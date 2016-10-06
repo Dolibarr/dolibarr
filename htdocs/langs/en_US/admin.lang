@@ -867,6 +867,7 @@ LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 NbOfDays=Nb of days
 AtEndOfMonth=At end of month
+CurrentNext=Current/Next
 Offset=Offset
 AlwaysActive=Always active
 Upgrade=Upgrade
