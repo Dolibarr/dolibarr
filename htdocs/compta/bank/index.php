@@ -408,7 +408,6 @@ foreach ($accounts as $key=>$type)
 		print '<tr '.$bc[$var].'>';
 		print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
 		print '<td>';
-		print $langs->trans("CashAccounts");
 		print $acc->type_lib[$acc->type];
 		print '</td>';
 		print '<td>'.$acc->bank.'</td>';

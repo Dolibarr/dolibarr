@@ -299,7 +299,6 @@ if ($id > 0 || ! empty($ref))
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
-	print $sql;
 	
 	dol_syslog("account.php count transactions -", LOG_DEBUG);
 	$result=$db->query($sql);

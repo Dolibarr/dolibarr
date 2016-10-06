@@ -23,9 +23,8 @@
  * \ingroup		Advanced accountancy
  * \brief		Home supplier ventilation
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -37,6 +36,9 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+    accessforbidden();
+}
 if ($user->societe_id > 0)
 	accessforbidden();
 if (! $user->rights->accounting->ventilation->read)

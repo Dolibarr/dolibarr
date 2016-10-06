@@ -42,13 +42,12 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
-if (! $user->admin) {
-	accessforbidden();
-}
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-	
+if (! $user->rights->accounting->ventilation->read)
+    accessforbidden();
+
 // search & action GETPOST
 $action = GETPOST('action');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
