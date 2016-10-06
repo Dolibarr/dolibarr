@@ -207,11 +207,14 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				"csv"
 		);
+		/* Not required to disable this. This make not possible to do complete reconciliation.
+		Also, this is not a problem, lines added manually will be reported as "not binded into accounting export module
+		and will be binded manually to be created into general ledger
 		$this->const[24] = array(
 				"BANK_DISABLE_DIRECT_INPUT",
 				"yesno",
 				"1"
-		);
+		);*/
 
 		// Tabs
 		$this->tabs = array();
