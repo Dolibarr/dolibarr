@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load('orders');
@@ -153,7 +154,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -203,6 +204,191 @@ if (empty($reshook))
 }
 
 
+if($massaction == 'confirm_createbills') {
+	
+	$orders = GETPOST('toselect');
+	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
+	$TOrderTMP = array();
+	
+	$nb_bills_created = 0;
+	
+	$db->begin();
+	
+	foreach($orders as $id_order) {
+		
+		$cmd = new Commande($db);
+		if($cmd->fetch($id_order) <= 0) continue;
+		
+		$object = new Facture($db);
+		if(!empty($createbills_onebythird) && !empty($TOrderTMP[$cmd->socid])) $object = &$TOrderTMP[$cmd->socid]; // To use only one bill for a third
+		else {
+			
+			$object->socid = $cmd->socid;
+			$object->type = Facture::TYPE_STANDARD;
+			$object->cond_reglement_id	= $cmd->cond_reglement_id;
+			$object->mode_reglement_id	= $cmd->mode_reglement_id;
+			$object->fk_project			= $cmd->fk_project;
+			
+			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			if (empty($datefacture))
+			{
+				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+			}
+			
+			$object->date = $datefacture;
+			$object->origin    = 'commande';
+			$object->origin_id = $id_order;
+			
+			if($object->create($user)) $nb_bills_created++;
+			
+		}
+		
+		if($object->id > 0) {
+			
+			$db->begin();
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
+			$sql.= "fk_source";
+			$sql.= ", sourcetype";
+			$sql.= ", fk_target";
+			$sql.= ", targettype";
+			$sql.= ") VALUES (";
+			$sql.= $id_order;
+			$sql.= ", '".$object->origin."'";
+			$sql.= ", ".$object->id;
+			$sql.= ", '".$object->element."'";
+			$sql.= ")";
+
+			if ($db->query($sql))
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+			
+			$lines = $cmd->lines;
+			if (empty($lines) && method_exists($cmd, 'fetch_lines'))
+			{
+				$cmd->fetch_lines();
+				$lines = $cmd->lines;
+			}
+			
+			$fk_parent_line=0;
+			$num=count($lines);
+			
+			for ($i=0;$i<$num;$i++)
+			{
+				$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+				if ($lines[$i]->subprice < 0)
+				{
+					// Negative line, we create a discount line
+					$discount = new DiscountAbsolute($db);
+					$discount->fk_soc=$object->socid;
+					$discount->amount_ht=abs($lines[$i]->total_ht);
+					$discount->amount_tva=abs($lines[$i]->total_tva);
+					$discount->amount_ttc=abs($lines[$i]->total_ttc);
+					$discount->tva_tx=$lines[$i]->tva_tx;
+					$discount->fk_user=$user->id;
+					$discount->description=$desc;
+					$discountid=$discount->create($user);
+					if ($discountid > 0)
+					{
+						$result=$object->insert_discount($discountid);
+						//$result=$discount->link_to_invoice($lineid,$id);
+					}
+					else
+					{
+						setEventMessages($discount->error, $discount->errors, 'errors');
+						$error++;
+						break;
+					}
+				}
+				else
+				{
+					// Positive line
+					$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+					// Date start
+					$date_start=false;
+					if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
+					if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+					if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+					//Date end
+					$date_end=false;
+					if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
+					if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+					if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+					// Reset fk_parent_line for no child products and special product
+					if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
+					{
+						$fk_parent_line = 0;
+					}
+					$result = $object->addline(
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->localtax1_tx,
+							$lines[$i]->localtax2_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except,
+							'HT',
+							0,
+							$product_type,
+							$ii,
+							$lines[$i]->special_code,
+							$object->origin,
+							$lines[$i]->rowid,
+							$fk_parent_line,
+							$lines[$i]->fk_fournprice,
+							$lines[$i]->pa_ht,
+							$lines[$i]->label
+					);
+					if ($result > 0)
+					{
+						$lineid=$result;
+					}
+					else
+					{
+						$lineid=0;
+						$error++;
+						break;
+					}
+					// Defined the new fk_parent_line
+					if ($result > 0 && $lines[$i]->product_type == 9)
+					{
+						$fk_parent_line = $result;
+					}
+				}
+			}			
+			
+		}
+
+		// Une fois fini :
+		if(!empty($createbills_onebythird) && empty($TOrderTMP[$cmd->socid])) $TOrderTMP[$cmd->socid] = $object;
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessage($nb_bills_created.' factures créées');
+	}
+	else
+	{
+		$db->rollback();
+		$action='create';
+		$_GET["origin"]=$_POST["origin"];
+		$_GET["originid"]=$_POST["originid"];
+		setEventMessages($object->error, $object->errors, 'errors');
+		$error++;
+	}
+	
+}
 
 
 /*
@@ -416,8 +602,9 @@ if ($resql)
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
+	if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend') $arrayofmassactions=array();
+	if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lines of title fields
@@ -526,6 +713,38 @@ if ($resql)
 	    print $formmail->get_form();
 	
 	    dol_fiche_end();
+	}
+	elseif ($massaction == 'createbills')
+	{
+		//var_dump($_REQUEST);
+		print '<input type="hidden" name="massaction" value="confirm_createbills">';
+		
+		print '<table class="border" width="100%" >';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('DateInvoice');
+		print '</td>';
+		print '<td>';
+		print $form->select_date('', '', '', '', '', "addprop", 1, 1);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('Créer une facture par tiers');
+		print '</td>';
+		print '<td>';
+		print $form->selectyesno('createbills_onebythird', '', 1);
+		print '</td>';
+		print '</tr>';
+		print '</table>';
+		
+		print '<br />';
+		print '<div class="center">';
+		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
+		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+		print '</div>';
+		print '<br />';
+		
 	}
 	
 	if ($sall)
@@ -1155,9 +1374,11 @@ if ($resql)
 				
 	print '</table>'."\n";
 
+	print '<br />';
+
 	print '</form>'."\n";
 
-	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
+	//print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 	
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{
