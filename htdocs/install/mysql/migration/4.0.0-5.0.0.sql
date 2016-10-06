@@ -100,7 +100,7 @@ ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,datea
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
 ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
  
-create table llx_product_lot_extrafields
+CREATE TABLE llx_product_lot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -112,14 +112,14 @@ ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (f
 
 ALTER TABLE llx_website_page MODIFY content MEDIUMTEXT;
 
-create table llx_product_warehouse_properties
+CREATE TABLE llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
   tms             		timestamp,
   fk_product      		integer NOT NULL,
   fk_entrepot     		integer NOT NULL,
-  seuil_stock_alerte    integer DEFAULT '0',
-  desiredstock    		integer DEFAULT '0',
+  seuil_stock_alerte    integer DEFAULT 0,
+  desiredstock    		integer DEFAULT 0,
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
 
