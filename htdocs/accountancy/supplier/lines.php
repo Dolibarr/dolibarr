@@ -185,6 +185,15 @@ if (strlen(trim($search_vat))) {
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
+// Count total nb of records with no order and no limits
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    $resql = $db->query($sql);
+    if ($resql)
+        $nbtotalofrecords = $db->num_rows($resql);
+        else
+            dol_print_error($db);
+}
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -195,7 +204,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy');
 	
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneSupplier") . '</b></td>';
 	

@@ -56,7 +56,7 @@ $langs->load("accountancy");
 
 llxHeader('', $langs->trans("AccountancyArea"));
 
-print load_fiche_titre($langs->trans("AccountancyArea"));
+print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
 
 $step = 0;
 

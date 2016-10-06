@@ -325,7 +325,7 @@ if ($action == 'delbookkeepingyear') {
 	print $formconfirm;
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy');
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="tabsAction">' . "\n";

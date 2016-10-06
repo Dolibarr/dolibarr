@@ -244,7 +244,7 @@ if ($result) {
 		$param .= "&search_tvaintra=" . $search_tvaintra;
 
 
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords);
+	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy');
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';

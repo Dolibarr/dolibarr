@@ -211,7 +211,7 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'',0,'','',$limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,'','',$limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )

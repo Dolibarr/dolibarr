@@ -154,6 +154,7 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
 
 ## Admin
 ApplyMassCategories=Apply mass categories

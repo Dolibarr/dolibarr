@@ -232,7 +232,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines, 0, 'title_accountancy');
 
 	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
 

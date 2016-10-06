@@ -244,7 +244,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print_barre_liste($langs->trans("ModulesSystemTools"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	print load_fiche_titre($langs->trans("ModulesSystemTools"), '', 'title_accountancy');
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';
@@ -269,6 +269,9 @@ if ($result) {
 	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
 	print "<br>\n";
+	
+	
+	print_barre_liste($langs->trans("ListOfProductsWithoutAccountingAccount"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines, '', '');
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

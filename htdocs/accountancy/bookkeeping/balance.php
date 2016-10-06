@@ -153,7 +153,7 @@ else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result);
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, 0, 'title_accountancy');
 
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
