@@ -558,7 +558,6 @@ class Categorie extends CommonObject
 		global $user,$langs,$conf;
 
 		$error=0;
-        $trigger=true;
 
 		if ($this->id == -1) return -2;
 
@@ -591,26 +590,23 @@ class Categorie extends CommonObject
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
-					if ($this->db->num_rows($resql) > 0)
-					{
-						$objparent = $this->db->fetch_object($resql);
+					if ($this->db->num_rows($resql) > 0) {
+                        $objparent = $this->db->fetch_object($resql);
 
-						if (!empty($objparent->fk_parent))
-						{
-							$cat = new Categorie($this->db);
-							$cat->id=$objparent->fk_parent;
+                        if (!empty($objparent->fk_parent)) {
+                            $cat = new Categorie($this->db);
+                            $cat->id = $objparent->fk_parent;
 
-                            if (! $cat->containsObject($type,$obj->id)) {
-							    $result=$cat->add_type($obj, $type);
-							    if ($result < 0) {
-								    $this->error=$cat->error;
-								    $error++;
-							    }
-                            } else {
-                                $trigger=false;
+                            if (!$cat->containsObject($type, $obj->id)) {
+                                $result = $cat->add_type($obj, $type);
+                                if ($result < 0) {
+                                    $this->error = $cat->error;
+                                    $error++;
+                                }
+
                             }
-						}
-					}
+                        }
+                    }
 				}
 				else
 				{
@@ -629,13 +625,10 @@ class Categorie extends CommonObject
 			$this->linkto=$obj;
 
             // Call trigger
-            if ($trigger) {
-                $result = $this->call_trigger('CATEGORY_LINK', $user);
-                if ($result < 0) {
-                    $error++;
-                }
-                // End call triggers
-            }
+            $result=$this->call_trigger('CATEGORY_LINK',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+
 			if (! $error)
 			{
 			    $this->db->commit();
@@ -650,24 +643,17 @@ class Categorie extends CommonObject
 		}
 		else
 		{
-            if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
-                if (empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
-                    $this->db->rollback();
-                    $this->error = $this->db->lasterrno();
-                    return -3;
-                }
-                else {
-                    $this->db->commit();
-                    return 1;
-                }
-            }
-            else
-            {
-                $this->db->rollback();
-                $this->error=$this->db->lasterror();
-                return -1;
-            }
+		    $this->db->rollback();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$this->error=$this->db->lasterrno();
+				return -3;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+			}
+			return -1;
 		}
 	}
 
