@@ -209,7 +209,10 @@ if($massaction == 'confirm_createbills') {
 	
 	$orders = GETPOST('toselect');
 	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-	$TOrderTMP = array();
+	$validate_invoices = GETPOST('valdate_invoices', 'int');
+	
+	$TFact = array();
+	$TFactThird = array();
 	
 	$nb_bills_created = 0;
 	
@@ -221,7 +224,7 @@ if($massaction == 'confirm_createbills') {
 		if($cmd->fetch($id_order) <= 0) continue;
 		
 		$object = new Facture($db);
-		if(!empty($createbills_onebythird) && !empty($TOrderTMP[$cmd->socid])) $object = &$TOrderTMP[$cmd->socid]; // To use only one bill for a third
+		if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // To use only one bill for a third
 		else {
 			
 			$object->socid = $cmd->socid;
@@ -240,7 +243,9 @@ if($massaction == 'confirm_createbills') {
 			$object->origin    = 'commande';
 			$object->origin_id = $id_order;
 			
-			if($object->create($user)) $nb_bills_created++;
+			$res = $object->create($user);
+			
+			if($res > 0) $nb_bills_created++;
 			
 		}
 		
@@ -369,12 +374,40 @@ if($massaction == 'confirm_createbills') {
 			}			
 			
 		}
-
+		 
 		$cmd->classifyBilled($user);
-		
-		if(!empty($createbills_onebythird) && empty($TOrderTMP[$cmd->socid])) $TOrderTMP[$cmd->socid] = $object;
-	}
 
+		if(!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
+		else $TFact[$object->id] = $object;
+	}
+	
+	// Build doc with all invoices
+	$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
+	$toselect = array();
+	
+	if(!empty($validate_invoices)) {
+		
+		$massaction = $action = 'builddoc';
+		
+		foreach($TAllFact as &$object) {
+			$object->validate($user);
+			$toselect[] = $object->id; // For builddoc action
+			
+			// Fac builddoc
+			$upload_dir = $conf->facture->dir_output;
+		    $permissioncreate=$user->rights->facture->creer;
+		    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+		}
+		
+		$objectclass='Facture';
+	    $objectlabel='Invoice';
+	    $permtoread = $user->rights->facture->lire;
+	    $permtodelete = $user->rights->facture->supprimer;
+	    $uploaddir = $conf->facture->dir_output;
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+		
+	}
+	
 	if (! $error)
 	{
 		$db->commit();
@@ -591,6 +624,7 @@ if ($resql)
 	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+	if ($billed != '')			$param.='&billed='.$billed;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
@@ -727,7 +761,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', "addprop", 1, 1);
+		print $form->select_date('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -736,6 +770,14 @@ if ($resql)
 		print '</td>';
 		print '<td>';
 		print $form->selectyesno('createbills_onebythird', '', 1);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('ValidateInvoices');
+		print '</td>';
+		print '<td>';
+		print $form->selectyesno('valdate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';

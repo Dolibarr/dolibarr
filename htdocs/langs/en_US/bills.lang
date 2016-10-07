@@ -421,6 +421,7 @@ ShowUnpaidAll=Show all unpaid invoices
 ShowUnpaidLateOnly=Show late unpaid invoices only
 PaymentInvoiceRef=Payment invoice %s
 ValidateInvoice=Validate invoice
+ValidateInvoices=Validate invoices
 Cash=Cash
 Reported=Delayed
 DisabledBecausePayments=Not possible since there are some payments
