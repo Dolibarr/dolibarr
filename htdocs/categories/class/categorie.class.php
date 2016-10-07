@@ -558,6 +558,7 @@ class Categorie extends CommonObject
 		global $user,$langs,$conf;
 
 		$error=0;
+        $trigger=true;
 
 		if ($this->id == -1) return -2;
 
@@ -598,12 +599,16 @@ class Categorie extends CommonObject
 						{
 							$cat = new Categorie($this->db);
 							$cat->id=$objparent->fk_parent;
-							$result=$cat->add_type($obj, $type);
-							if ($result < 0)
-							{
-								$this->error=$cat->error;
-								$error++;
-							}
+
+                            if (! $cat->containsObject($type,$obj->id)) {
+							    $result=$cat->add_type($obj, $type);
+							    if ($result < 0) {
+								    $this->error=$cat->error;
+								    $error++;
+							    }
+                            } else {
+                                $trigger=false;
+                            }
 						}
 					}
 				}
@@ -624,10 +629,13 @@ class Categorie extends CommonObject
 			$this->linkto=$obj;
 
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_LINK',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
-
+            if ($trigger) {
+                $result = $this->call_trigger('CATEGORY_LINK', $user);
+                if ($result < 0) {
+                    $error++;
+                }
+                // End call triggers
+            }
 			if (! $error)
 			{
 			    $this->db->commit();
