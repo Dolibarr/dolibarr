@@ -2262,11 +2262,12 @@ class Form
     /**
      *	Return list of suppliers prices for a product
      *
-     *  @param		int		$productid       Id of product
-     *  @param      string	$htmlname        Name of HTML field
+     *  @param		int		$productid       	Id of product
+     *  @param      string	$htmlname        	Name of HTML field
+	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
      *  @return		void
      */
-    function select_product_fourn_price($productid, $selected_supplier='', $htmlname='productfournpriceid')
+    function select_product_fourn_price($productid, $htmlname='productfournpriceid', $selected_supplier='')
     {
         global $langs,$conf;
 
