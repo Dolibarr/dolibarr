@@ -369,14 +369,15 @@ if($massaction == 'confirm_createbills') {
 			
 		}
 
-		// Une fois fini :
+		$cmd->classifyBilled($user);
+		
 		if(!empty($createbills_onebythird) && empty($TOrderTMP[$cmd->socid])) $TOrderTMP[$cmd->socid] = $object;
 	}
 
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($nb_bills_created.' factures créées');
+		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
 	}
 	else
 	{
@@ -730,7 +731,7 @@ if ($resql)
 		print '</tr>';
 		print '<tr>';
 		print '<td>';
-		print $langs->trans('Créer une facture par tiers');
+		print $langs->trans('CreateOneBillByThird');
 		print '</td>';
 		print '<td>';
 		print $form->selectyesno('createbills_onebythird', '', 1);
