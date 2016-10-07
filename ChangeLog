@@ -35,6 +35,8 @@ check you make a fetch on object before calling the delete.
 - The javascript "datatables" library was used to be provided into Dolibarr sources, but it was not used by application.
   So there is no reason to maintain its compatibility with other dolibarr components. If an external module need this 
   library, this external module must embed hte library in his own sources/packages.
+- Trigger name SUPPLIER_PROPOSAL_CREATE has been renamed into PROPOSAL_SUPPLIER_CREATE
+
 
 
 ***** ChangeLog for 4.0.1 compared to 4.0.0 *****

@@ -452,7 +452,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
    
 	    $pdf->SetXY($this->marge_gauche, $posy);
 	    $pdf->SetFont('','', $default_font_size);
-	    $pdf->MultiCell(100, 3, $outputlangs->trans("PleaseReturnMandate").':', 0, 'L', 0);
+	    $pdf->MultiCell(100, 3, $outputlangs->trans("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
 	    $posy=$pdf->GetY()+2;
 	     
 	    $pdf->SetXY($this->marge_gauche, $posy);
