@@ -5,7 +5,7 @@
  * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -642,17 +642,24 @@ class Categorie extends CommonObject
 		}
 		else
 		{
-		    $this->db->rollback();
-			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
-				$this->error=$this->db->lasterrno();
-				return -3;
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-			}
-			return -1;
+            if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
+                if (empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+                    $this->db->rollback();
+                    $this->error = $this->db->lasterrno();
+                    return -3;
+                }
+                else {
+                    $this->db->commit();
+                    return 1;
+                }
+            }
+            else
+            {
+                $this->db->rollback();
+                $this->error=$this->db->lasterror();
+                return -1;
+            }
 		}
 	}
 
