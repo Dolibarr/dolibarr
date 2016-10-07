@@ -3747,9 +3747,10 @@ class PropaleLigne  extends CommonObjectLine
     /**
      * 	Delete line in database
      *
+     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	 int  <0 if ko, >0 if ok
      */
-    function delete()
+    function delete($notrigger=0)
     {
         global $conf,$user;
 
@@ -3773,13 +3774,16 @@ class PropaleLigne  extends CommonObjectLine
         		}
         	}
 
-            // Call trigger
-            $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
-            if ($result < 0)
-            {
-                $this->db->rollback();
-                return -1;
-            }
+        	if (! $error && ! $notrigger)
+        	{
+	            // Call trigger
+	            $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
+	            if ($result < 0)
+	            {
+	                $this->db->rollback();
+	                return -1;
+	            }
+        	}
             // End call triggers
 
             $this->db->commit();
