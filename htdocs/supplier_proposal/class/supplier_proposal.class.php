@@ -927,7 +927,7 @@ class SupplierProposal extends CommonObject
                         if (! $notrigger)
                         {
                             // Call trigger
-                            $result=$this->call_trigger('SUPPLIER_PROPOSAL_CREATE',$user);
+                            $result=$this->call_trigger('PROPAL_SUPPLIER_CREATE',$user);
                             if ($result < 0) { $error++; }
                             // End call triggers
                         }
