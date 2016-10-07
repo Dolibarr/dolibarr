@@ -22,9 +22,8 @@
  * \ingroup     Advanced accountancy
  * \brief 		Card of accounting account
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -47,7 +46,11 @@ $cancel = GETPOST('cancel');
 
 $object = new AccountingAccount($db);
 
-// Action
+
+/*
+ * Action
+ */
+
 if ($action == 'add' && $user->rights->accounting->chartofaccount)
 {
 	if (! $cancel) {
@@ -85,18 +88,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$object->active = 1;
 		
 		$res = $object->create($user);
-		
 		if ($res == - 3) {
 			$error = 1;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		if ($res == - 4) {
+		elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		elseif ($res < 0)
+		{
+		    $error++;
+		    setEventMessages($object->error, $object->errors, 'errors');
+		    $action = "create";
+		}
+		if (! $error)
+		{
+		    header("Location: account.php");
+		    exit;
 		}
 	}
-	header("Location: account.php");
-	exit;
 } else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (! $cancel) {
 		$result = $object->fetch($id);
