@@ -590,23 +590,24 @@ class Categorie extends CommonObject
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
-					if ($this->db->num_rows($resql) > 0) {
+					if ($this->db->num_rows($resql) > 0)
+					{
                         $objparent = $this->db->fetch_object($resql);
 
-                        if (!empty($objparent->fk_parent)) {
-                            $cat = new Categorie($this->db);
-                            $cat->id = $objparent->fk_parent;
-
-                            if (!$cat->containsObject($type, $obj->id)) {
-                                $result = $cat->add_type($obj, $type);
-                                if ($result < 0) {
-                                    $this->error = $cat->error;
-                                    $error++;
-                                }
-
-                            }
-                        }
-                    }
+						if (!empty($objparent->fk_parent))
+						{
+							$cat = new Categorie($this->db);
+							$cat->id = $objparent->fk_parent;
+							if (!$cat->containsObject($type, $obj->id)) {
+								$result = $cat->add_type($obj, $type);
+								if ($result < 0)
+								{
+									$this->error = $cat->error;
+									$error++;
+								}
+							}
+						}
+					}
 				}
 				else
 				{
