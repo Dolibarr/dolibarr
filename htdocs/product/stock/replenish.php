@@ -644,7 +644,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td align="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
-		print '<td align="right">'.	$form->select_product_fourn_price($prod->id, $fk_supplier, 'fourn'.$i).'</td>';
+		print '<td align="right">'.	$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
 
 		print '</tr>';
 	}
