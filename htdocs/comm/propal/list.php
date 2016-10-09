@@ -79,9 +79,10 @@ $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
+
 $day=GETPOST("day","int");
-$year=GETPOST("year","int");
 $month=GETPOST("month","int");
+$year=GETPOST("year","int");
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');

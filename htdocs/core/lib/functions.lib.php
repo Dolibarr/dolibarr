@@ -228,7 +228,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'custom'= custom filter specify $filter and $options)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'day', 'month', 'year', 'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
@@ -245,6 +245,25 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 
 	if (! empty($check))
 	{
+	    if (preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
+	    {
+	        if ($reg[1] == 'DAY')
+	        {
+    	        $tmp=dol_getdate(dol_now(), true);
+    	        $out = $tmp['mday'];
+	        }
+	        elseif ($reg[1] == 'MONTH')
+	        {
+    	        $tmp=dol_getdate(dol_now(), true);
+    	        $out = $tmp['mon'];
+	        }	         
+	        elseif ($reg[1] == 'YEAR')
+	        {
+	           $tmp=dol_getdate(dol_now(), true);
+	           $out = $tmp['year'];
+	        }
+	    }
+	     
 	    switch ($check)
 	    {
 	        case 'int':
@@ -271,13 +290,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
+			case 'nohtml':
+				$out=dol_string_nohtmltag($out);
+				break;
 	        case 'custom':
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
-			case 'nohtml':
-				$out=dol_string_nohtmltag($out);
-				break;
 	    }
 	}
 
