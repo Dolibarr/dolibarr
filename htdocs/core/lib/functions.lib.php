@@ -245,7 +245,7 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 
 	if (! empty($check))
 	{
-	    if (preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
+	    if (! is_array($out) && preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
 	    {
 	        if ($reg[1] == 'DAY')
 	        {
