@@ -134,6 +134,7 @@ if (empty($reshook))
     		$account->proprio         = GETPOST('proprio','alpha');
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur','alpha');
+    		$account->rum             = GETPOST('rum','alpha');
     		if (empty($account->rum)) 
     		{
     		    $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
@@ -363,7 +364,7 @@ if ($socid && $action != 'edit' && $action != "create")
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
-	foreach($account->getFieldsToShow() as $val)
+	foreach($account->getFieldsToShow(1) as $val)
 	{
 		if ($val == 'BankCode') {
 			$content = $account->code_banque;
@@ -380,7 +381,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			}				
 		} elseif ($val == 'BankAccountNumberKey') {
 			$content = $account->cle_rib;
-		}elseif ($val == 'IBAN') {
+		} elseif ($val == 'IBAN') {
 			$content = $account->iban;
 			if (! empty($account->iban)) {
 				if (! checkIbanForAccount($account)) {
@@ -389,7 +390,7 @@ if ($socid && $action != 'edit' && $action != "create")
 					$content.= ' '.img_picto($langs->trans("IbanValid"),'info');
 				}
 			}
-		}elseif ($val == 'BIC') {
+		} elseif ($val == 'BIC') {
 			$content = $account->bic;
 			if (! empty($account->bic)) {
 				if (! checkSwiftForAccount($account)) {
@@ -692,7 +693,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// Show fields of bank account
-	foreach ($account->getFieldsToShow() as $val) {
+	foreach ($account->getFieldsToShow(1) as $val) {
 
 		$require=false;
 		if ($val == 'BankCode') {
@@ -754,11 +755,11 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4">'.$account->rum.'</td></tr>';
+	    print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
 
 	    // FRSTRECUR
 	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
+	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
 
 	    print '</table>';
     }
