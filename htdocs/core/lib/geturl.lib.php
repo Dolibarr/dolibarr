@@ -117,18 +117,16 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     //getting response from server
     $response = curl_exec($ch);
 
-    $status = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
-    dol_syslog("getURLContent request=".$status);
-
-    dol_syslog("getURLContent response=".$response);
+    $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
+    
+    dol_syslog("getURLContent request=".$request);
+    dol_syslog("getURLContent httpresponse=".$httpreponse." response=".$response);
 
     $rep=array();
-    $rep['content']=$response;
-    $rep['curl_error_no']='';
-    $rep['curl_error_msg']='';
-
     if (curl_errno($ch))
     {
+        $rep['content']=$response;
+        
         // moving to display page to display curl errors
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
@@ -138,8 +136,15 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     else
     {
     	$info = curl_getinfo($ch);
-    	$rep['header_size']=$info['header_size'];
 
+    	$rep = $info;
+    	//$rep['header_size']=$info['header_size'];
+    	//$rep['http_code']=$info['http_code'];
+
+        // Add more keys
+    	$rep['curl_error_no']='';
+    	$rep['curl_error_msg']='';
+    	 
     	//closing the curl
         curl_close($ch);
     }
