@@ -120,11 +120,12 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
     
     dol_syslog("getURLContent request=".$request);
-    dol_syslog("getURLContent httpresponse=".$httpreponse." response=".$response);
+    dol_syslog("getURLContent response=".$response);
 
     $rep=array();
     if (curl_errno($ch))
     {
+        // Ad keys to $rep
         $rep['content']=$response;
         
         // moving to display page to display curl errors
@@ -137,11 +138,14 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     {
     	$info = curl_getinfo($ch);
 
+    	// Ad keys to $rep
     	$rep = $info;
     	//$rep['header_size']=$info['header_size'];
     	//$rep['http_code']=$info['http_code'];
-
-        // Add more keys
+    	dol_syslog("getURLContent http_code=".$rep['http_code']);
+    	
+        // Add more keys to $rep
+        $rep['content']=$response;
     	$rep['curl_error_no']='';
     	$rep['curl_error_msg']='';
     	 
