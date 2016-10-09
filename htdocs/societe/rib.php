@@ -292,6 +292,7 @@ if (empty($reshook))
             'force_dir_output'=>$conf->societe->dir_output.'/'.dol_sanitizeFileName($object->id)
         );
         $_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
+        $_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
     }
     $id = $socid;
     $upload_dir = $conf->societe->dir_output;

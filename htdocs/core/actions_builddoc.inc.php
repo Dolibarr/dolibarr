@@ -49,7 +49,10 @@ if ($action == 'builddoc' && $permissioncreate)
         }*/
         
         // Save last template used to generate document
-    	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+    	if (GETPOST('model'))
+    	{
+    	    $object->setDocModel($user, GETPOST('model','alpha'));
+    	}
     
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
