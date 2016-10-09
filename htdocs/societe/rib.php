@@ -374,9 +374,9 @@ if ($socid && $action != 'edit' && $action != "create")
 			$content = $account->number;
 			if (! empty($account->label)) {
 			    if (! checkBanForAccount($account)) {
-			        $content.= ' '.img_picto($langs->trans("NotValid"),'warning');
+			        $content.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 			    } else {
-			        $content.= ' '.img_picto($langs->trans("Valid"),'info');
+			        $content.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
 			    }
 			}				
 		} elseif ($val == 'BankAccountNumberKey') {
@@ -385,18 +385,18 @@ if ($socid && $action != 'edit' && $action != "create")
 			$content = $account->iban;
 			if (! empty($account->iban)) {
 				if (! checkIbanForAccount($account)) {
-					$content.= ' '.img_picto($langs->trans("IbanNotValid"),'warning');
+					$content.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 				} else {
-					$content.= ' '.img_picto($langs->trans("IbanValid"),'info');
+					$content.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
 				}
 			}
 		} elseif ($val == 'BIC') {
 			$content = $account->bic;
 			if (! empty($account->bic)) {
 				if (! checkSwiftForAccount($account)) {
-					$content.= ' '.img_picto($langs->trans("SwiftNotValid"),'warning');
+					$content.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 				} else {
-					$content.= ' '.img_picto($langs->trans("SwiftValid"),'info');
+					$content.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
 				}
 			}
 		}

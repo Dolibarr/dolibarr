@@ -241,7 +241,6 @@ ProfId6RU=-
 VATIntra=VAT number
 VATIntraShort=VAT number
 VATIntraSyntaxIsValid=Syntax is valid
-VATIntraValueIsValid=Value is valid
 ProspectCustomer=Prospect / Customer
 Prospect=Prospect
 CustomerCard=Customer Card
