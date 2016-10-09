@@ -181,6 +181,7 @@ EncodeBinariesInHexa=Encode binary data in hexadecimal
 IgnoreDuplicateRecords=Ignore errors of duplicate records (INSERT IGNORE)
 AutoDetectLang=Autodetect (browser language)
 FeatureDisabledInDemo=Feature disabled in demo
+FeatureAvailableOnlyOnStable=Feature only available on official stable versions
 Rights=Permissions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
