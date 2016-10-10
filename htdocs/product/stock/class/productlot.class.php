@@ -44,6 +44,8 @@ class Productlot extends CommonObject
 	 */
 	public $table_element = 'product_lot';
 	
+	public $picto='barcode';
+	
 	public $isnolinkedbythird = 1;
     public $ismultientitymanaged = 1;
     
@@ -523,7 +525,7 @@ class Productlot extends CommonObject
 	}
 	
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -541,7 +543,6 @@ class Productlot extends CommonObject
 
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("Batch") . '</u>';
         $label.= '<div width="100%">';
@@ -554,7 +555,7 @@ class Productlot extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $link . $this->batch . $linkend;

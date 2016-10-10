@@ -77,7 +77,13 @@ if (! empty($canvas))
 	$objcanvas->getCanvas('product','list',$canvas);
 }
 
-if (! empty($_POST["button_removefilter_x"]))
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $sref="";
     $snom="";
@@ -90,14 +96,6 @@ if (! empty($_POST["button_removefilter_x"]))
     $search_batch='';
     $search_warehouse='';
 }
-
-
-
-/*
- * Actions
- */
-
-// None
 
 
 /*
@@ -174,7 +172,7 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall or $snom or $sref))
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref))
 	{
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");
