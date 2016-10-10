@@ -44,7 +44,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -325,12 +325,12 @@ if ($action == 'add')
 
             if (! empty($entity)) $urlback.='&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-            Header("Location: ".$urlback);
+            header("Location: ".$urlback);
             exit;
         }
         else
         {
-            $errmsg .= join('<br>',$adh->errors);
+            $errmsg .= implode('<br>',$adh->errors);
         }
     }
 }

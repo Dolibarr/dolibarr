@@ -24,7 +24,7 @@
  * \ingroup		Advanced accountancy
  * \brief		To define accounting account on product / service
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -328,10 +328,10 @@ if ($result) {
 		
 		$product_static = new Product($db);
 		
-		print '<tr'. $bc[$var].'>';
+		print '<tr'. $bc[$var?1:0].'>';
 		
 		print "</tr>";
-		print '<tr'. $bc[$var].'>';
+		print '<tr'. $bc[$var?1:0].'>';
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;

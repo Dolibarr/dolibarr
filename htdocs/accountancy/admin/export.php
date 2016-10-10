@@ -25,7 +25,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Setup page to configure accounting expert module
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -142,7 +142,7 @@ print "</tr>\n";
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '>';
+print '<tr ' . $bc[$var?1:0] . '>';
 print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
 if (! $conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
@@ -165,7 +165,7 @@ if ($num) {
 	foreach ( $main_option as $key ) {
 		$var = ! $var;
 		
-		print '<tr ' . $bc[$var] . ' class="value">';
+		print '<tr ' . $bc[$var?1:0] . ' class="value">';
 		
 		// Param
 		$label = $langs->trans($key);
@@ -193,7 +193,7 @@ print '</tr>';
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '>';
+print '<tr ' . $bc[$var?1:0] . '>';
 print '<td width="50%">' . $langs->trans("Selectmodelcsv") . '</td>';
 if (! $conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
@@ -227,7 +227,7 @@ if ($num2) {
 	foreach ( $model_option as $key ) {
 		$var = ! $var;
 		
-		print '<tr ' . $bc[$var] . ' class="value">';
+		print '<tr ' . $bc[$var?1:0] . ' class="value">';
 		
 		// Param
 		$label = $langs->trans($key);

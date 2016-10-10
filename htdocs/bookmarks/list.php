@@ -21,7 +21,7 @@
  *       \ingroup    bookmark
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 $langs->load("bookmarks");
@@ -115,7 +115,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
 
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         // Id
         print '<td align="left">';

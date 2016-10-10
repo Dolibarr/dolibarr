@@ -23,7 +23,7 @@
  * \ingroup		Advanced accountancy
  * \brief 		List operation of book keeping
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -195,7 +195,7 @@ if ($action == 'delbookkeeping') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit();
 	}
 }
@@ -216,7 +216,7 @@ if ($action == 'delbookkeepingyearconfirm') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit;
 	}
 }
@@ -229,7 +229,7 @@ if ($action == 'delmouvconfirm') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit;
 	}
 }
@@ -385,7 +385,7 @@ foreach ( $object->lines as $line ) {
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-	print '<tr'. $bc[$var].'>';
+	print '<tr'. $bc[$var?1:0].'>';
 
 	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';

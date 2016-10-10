@@ -32,7 +32,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 

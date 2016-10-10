@@ -258,7 +258,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         $var=!$var;
-        print "<tr ".$bc[$var].">\n";
+        print "<tr ".$bc[$var?1:0].">\n";
 //         print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
 //         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 

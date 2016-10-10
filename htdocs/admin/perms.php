@@ -24,7 +24,7 @@
  *		\brief      Page d'administration/configuration des permissions par defaut
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -187,7 +187,7 @@ if ($result)
         }
 
         $var=!$var;
-        print '<tr '. $bc[$var].'>';
+        print '<tr '. $bc[$var?1:0].'>';
 
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';

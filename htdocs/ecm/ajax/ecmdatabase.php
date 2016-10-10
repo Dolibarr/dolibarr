@@ -27,7 +27,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 $action	= GETPOST('action','alpha');

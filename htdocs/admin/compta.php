@@ -26,7 +26,7 @@
  *	\brief      Page to setup accountancy module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load('admin');
@@ -150,7 +150,7 @@ foreach ($list as $key)
 {
 	$var=!$var;
 
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr '.$bc[$var?1:0].' class="value">';
 
 	// Param
 	$libelle = $langs->trans($key);

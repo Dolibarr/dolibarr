@@ -25,7 +25,7 @@
  *	\brief      Fiche d'information sur une resource
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 

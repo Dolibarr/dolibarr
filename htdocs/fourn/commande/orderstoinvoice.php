@@ -28,7 +28,7 @@
  * \ingroup commande
  * \brief Page to invoice multiple supplier orders
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
@@ -548,7 +548,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		while ( $i < $num ) {
 			$objp = $db->fetch_object($resql);
 			$var = ! $var;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr ' . $bc[$var?1:0] . '>';
 			print '<td class="nowrap">';
 
 			$generic_commande->id = $objp->rowid;

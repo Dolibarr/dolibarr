@@ -20,7 +20,7 @@
  *     \brief      Page administration XDebug
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $langs->load("admin");
 

@@ -20,7 +20,7 @@
  *  \brief      Page to show Performance information
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';

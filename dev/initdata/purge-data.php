@@ -146,7 +146,7 @@ $sqls=array(
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',',$argv));
 
 $mode = $argv[1];
 $option = $argv[2];
@@ -154,14 +154,14 @@ $option = $argv[2];
 if (empty($mode) || ! in_array($mode,array('test','confirm'))) {
     print "Usage:  $script_file (test|confirm) (all|option)\n";
     print "\n";
-    print "option can be ".join(',',array_keys($sqls))."\n";
+    print "option can be ".implode(',',array_keys($sqls))."\n";
     exit(-1);
 }
 
 if (empty($option) || ! in_array($option, array_merge(array('all'),array_keys($sqls))) ) {
     print "Usage:  $script_file (test|confirm) (all|option)\n";
     print "\n";
-    print "option can be ".join(',',array_keys($sqls))."\n";
+    print "option can be ".implode(',',array_keys($sqls))."\n";
     exit(-1);
 }
 

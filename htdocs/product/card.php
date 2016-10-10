@@ -35,7 +35,7 @@
  *  \brief      Page to show product
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -201,14 +201,14 @@ if (empty($reshook))
     if ($action == 'setaccountancy_code_buy') {
 
 	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
+        if ($result < 0) setEventMessages(implode(',',$object->errors), null, 'errors');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
 	    $result = $object->setAccountancyCode('sell', GETPOST('accountancy_code_sell'));
-	    if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
+	    if ($result < 0) setEventMessages(implode(',',$object->errors), null, 'errors');
 	    $action="";
     }
 	*/

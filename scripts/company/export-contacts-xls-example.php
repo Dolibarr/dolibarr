@@ -60,7 +60,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',',$argv));
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 

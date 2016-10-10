@@ -31,7 +31,7 @@
  *	\brief      	Page of supplier proposals card and list
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsupplier_proposal.class.php';
@@ -306,7 +306,7 @@ if ($result)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	    //sort($fieldstosearchall);
-	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 	}
 	
 	$i = 0;
@@ -407,7 +407,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$now = dol_now();
 		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td class="nowrap">';
 
 		$objectstatic->id=$objp->supplier_proposalid;

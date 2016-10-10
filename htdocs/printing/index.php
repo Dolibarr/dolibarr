@@ -22,7 +22,7 @@
  *  \brief      Printing
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 $langs->load("printing");

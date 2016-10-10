@@ -27,7 +27,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
@@ -464,13 +464,13 @@ if ($mode != 'marketplace')
         $var=!$var;
 
         //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
-        print '<tr '.$bc[$var].">\n";
+        print '<tr '.$bc[$var?1:0].">\n";
 
         // Picto
         print '  <td valign="top" width="14" align="center">';
         $alttext='';
-        //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
-        //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
+        //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.implode('.',$objMod->need_dolibarr_version);
+        //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.implode('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
         	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
@@ -763,7 +763,7 @@ else
     print '</tr>';
 
     $var=!$var;
-    print "<tr ".$bc[$var].">\n";
+    print "<tr ".$bc[$var?1:0].">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
@@ -771,7 +771,7 @@ else
     print '</tr>';
 
     $var=!$var;
-    print "<tr ".$bc[$var].">\n";
+    print "<tr ".$bc[$var?1:0].">\n";
     $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
     print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';

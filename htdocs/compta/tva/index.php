@@ -24,7 +24,7 @@
  *      \ingroup    tax
  *		\brief      Index page of VAT reports
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -84,7 +84,7 @@ function pt ($db, $sql, $date)
         {
             $obj = $db->fetch_object($result);
             $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
 
@@ -172,7 +172,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
     }
 
     $var=!$var;
-    print "<tr ".$bc[$var].">";
+    print "<tr ".$bc[$var?1:0].">";
     print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
     $x_coll = 0;

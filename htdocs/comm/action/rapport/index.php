@@ -24,7 +24,7 @@
  *		\brief      Page with reports of actions
  */
 
-require '../../../main.inc.php';
+require __DIR__.'/../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -132,7 +132,7 @@ if ($resql)
 		if ($obj)
 		{
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print "<td>".$obj->df."</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';

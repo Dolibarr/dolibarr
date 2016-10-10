@@ -107,7 +107,7 @@ class DolGraph
 			if (isset($theme_datacolor))   $this->datacolor   = $theme_datacolor;
 			if (isset($theme_bgcolor))     $this->bgcolor     = $theme_bgcolor;
 		}
-		//print 'bgcolor: '.join(',',$this->bgcolor).'<br>';
+		//print 'bgcolor: '.implode(',',$this->bgcolor).'<br>';
 	}
 
 
@@ -426,7 +426,7 @@ class DolGraph
 		{
 			if ($bg_color == 'onglet')
 			{
-				//print 'ee'.join(',',$theme_bgcoloronglet);
+				//print 'ee'.implode(',',$theme_bgcoloronglet);
 				$this->bgcolor = $theme_bgcoloronglet;
 			}
 			else
@@ -454,7 +454,7 @@ class DolGraph
 		{
 			if ($bg_colorgrid == 'onglet')
 			{
-				//print 'ee'.join(',',$theme_bgcoloronglet);
+				//print 'ee'.implode(',',$theme_bgcoloronglet);
 				$this->bgcolorgrid = $theme_bgcoloronglet;
 			}
 			else
@@ -610,7 +610,7 @@ class DolGraph
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
+		dol_syslog(get_class($this)."::draw_artichow this->type=".implode(',',$this->type));
 
 		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
 		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);
@@ -798,7 +798,7 @@ class DolGraph
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+		dol_syslog(get_class($this)."::draw_jflot this->type=".implode(',',$this->type));
 
 		if (empty($this->width) && empty($this->height))
 		{

@@ -23,7 +23,7 @@
  *	\brief      Page de gestion des documents attachees a un projet
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -116,7 +116,7 @@ if ($object->id > 0)
     if (! $user->rights->projet->all->lire)
     {
         $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
     }
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';

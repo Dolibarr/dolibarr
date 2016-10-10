@@ -24,7 +24,7 @@
  *      \brief      Liste des contacts
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 $langs->load("companies");
 
@@ -152,7 +152,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
 		print "<td>$obj->firstname</TD>";

@@ -22,7 +22,7 @@
  *		\brief      Page des infos systeme de php
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -56,7 +56,7 @@ $var=false;
 
 // Recupere la version de PHP
 $phpversion=version_php();
-print "<tr ".$bc[$var].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+print "<tr ".$bc[$var?1:0].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 
 print '</table>';
 print '<br>';
@@ -82,14 +82,14 @@ foreach($phparray as $key => $value)
 		if (! is_array($keyvalue))
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
 			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=join('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=join('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == 'Path') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
@@ -97,14 +97,14 @@ foreach($phparray as $key => $value)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td>'.$keyparam.'</td>';
 			$i=0;
 			foreach($keyvalue as $keyparam2 => $keyvalue2)
 			{
 				print '<td>';
 				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=join(', ',explode(',',trim($valtoshow)));
+				if ($keyparam == 'disable_functions') $valtoshow=implode(', ',explode(',',trim($valtoshow)));
 				//print $keyparam;
 				print $valtoshow;
 				$i++;

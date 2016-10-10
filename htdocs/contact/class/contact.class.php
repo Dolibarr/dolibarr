@@ -992,7 +992,7 @@ class Contact extends CommonObject
         if ($this->phone_pro) $phonelist[]=$this->phone_pro;
         if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
         if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.implode(', ',$phonelist);
         $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
         $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';

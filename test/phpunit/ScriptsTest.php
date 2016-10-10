@@ -145,7 +145,7 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		$result=exec($script, $output, $returnvar);
 
 		print __METHOD__." result=".$result."\n";
-		print __METHOD__." output=".join("\n",$output)."\n";
+		print __METHOD__." output=".implode("\n",$output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
 		$this->assertEquals($returnvar,255);
@@ -172,7 +172,7 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		$result=exec($script, $output, $returnvar);
 
 		print __METHOD__." result=".$result."\n";
-		print __METHOD__." output=".join("\n",$output)."\n";
+		print __METHOD__." output=".implode("\n",$output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
 		$this->assertEquals($returnvar,255);
@@ -197,21 +197,21 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php thirdparties');
 
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test contacts -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php contacts');
 
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_representatives.php test -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_expire_services_to_representatives.php');
 
@@ -235,21 +235,21 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
 
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test contacts -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php contacts');
 
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_representatives.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".implode("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
     	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
 

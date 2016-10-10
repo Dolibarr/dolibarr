@@ -201,7 +201,7 @@ if ($id > 0 || ! empty($ref))
     		if (! $user->rights->projet->all->lire)
     		{
     		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
     		}
     		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
     		print '</td></tr>';
@@ -327,7 +327,7 @@ if ($id > 0 || ! empty($ref))
 			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print '<td class="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -362,7 +362,7 @@ if ($id > 0 || ! empty($ref))
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				print '<td class="nowrap">';
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -413,7 +413,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				$var = !$var;
 
-				print '<tr '.$bc[$var].' valign="top">';
+				print '<tr '.$bc[$var?1:0].' valign="top">';
 
 				// Source
 				print '<td align="left">';

@@ -24,7 +24,7 @@
  *	\brief      Page to add new time spent on a task
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -272,7 +272,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			if (! $user->rights->projet->all->lire)
 			{
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
 			}
 			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
@@ -589,7 +589,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			$date1=$db->jdate($task_time->task_date);
 			$date2=$db->jdate($task_time->task_datehour);

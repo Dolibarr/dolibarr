@@ -22,7 +22,7 @@
  * \ingroup		Advanced accountancy
  * \brief		List accounting account
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -223,7 +223,7 @@ if ($result) {
 		$accountstatic->label = $obj->label;
 		$accountstatic->account_number = $obj->account_number;
 		
-		print '<tr ' . $bc[$var] . '>';
+		print '<tr ' . $bc[$var?1:0] . '>';
 		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
 

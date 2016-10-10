@@ -24,7 +24,7 @@
  *	\brief      Page d'infos des tables de la base
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $langs->load("admin");
 
@@ -108,7 +108,7 @@ else
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
@@ -161,7 +161,7 @@ else
 			{
 				$row = $db->fetch_row($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td>'.$row[0].'</td>';
 				print '<td align="right">'.$row[1].'</td>';
 				print '<td align="right">'.$row[2].'</td>';
@@ -200,7 +200,7 @@ else
 					$count = '?';
 				}
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';

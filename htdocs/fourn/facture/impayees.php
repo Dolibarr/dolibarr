@@ -26,7 +26,7 @@
  *		\brief      Page to list all unpaid invoices
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -237,7 +237,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				$classname = "impayee";
 
 				print '<td class="nowrap">';

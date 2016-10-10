@@ -191,7 +191,7 @@ if (!empty($sall))
 	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
-if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
+if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.implode(',',$childids).')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -283,7 +283,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 }
 
 print '<table class="noborder" width="100%;">';
@@ -400,7 +400,7 @@ if (! empty($holiday->holiday))
 
 		$date = $infos_CP['date_create'];
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td>';
 		$holidaystatic->id=$infos_CP['rowid'];
 		$holidaystatic->ref=$infos_CP['rowid'];

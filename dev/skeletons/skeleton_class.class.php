@@ -116,7 +116,7 @@ class Skeleton_Class extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -189,7 +189,7 @@ class Skeleton_Class extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -256,7 +256,7 @@ class Skeleton_Class extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -301,7 +301,7 @@ class Skeleton_Class extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && !$notrigger) {
@@ -362,7 +362,7 @@ class Skeleton_Class extends CommonObject
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -410,7 +410,7 @@ class Skeleton_Class extends CommonObject
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		// End

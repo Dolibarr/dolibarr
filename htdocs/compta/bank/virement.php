@@ -168,7 +168,7 @@ print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo
 print '</tr>';
 
 $var=false;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 $form->select_comptes($account_from,'account_from',0,'',1);
 print "</td>";
 

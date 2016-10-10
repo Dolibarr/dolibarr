@@ -29,7 +29,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 $country=GETPOST('country', 'alpha');
 
@@ -47,7 +47,7 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog(join(',',$_POST));
+dol_syslog(implode(',',$_POST));
 
 // Generate list of countries
 if (! empty($country))

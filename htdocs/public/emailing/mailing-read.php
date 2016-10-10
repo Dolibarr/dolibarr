@@ -45,7 +45,7 @@ function llxHeader() { }
 function llxFooter() { }
 
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $tag=GETPOST('tag');
 $securitykey=GETPOST('securitykey');

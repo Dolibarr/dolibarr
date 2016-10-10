@@ -27,7 +27,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure accounting expert module
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -239,7 +239,7 @@ print '<td colspan="3">';
 print $langs->trans("Chartofaccounts") . '</td>';
 print "</tr>\n";
 $var = ! $var;
-print '<tr ' . $bc[$var] . '>';
+print '<tr ' . $bc[$var?1:0] . '>';
 print "<td>" . $langs->trans("Selectchartofaccounts") . "</td>";
 print "<td>";
 print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
@@ -284,7 +284,7 @@ print "</tr>\n";
 foreach ( $list as $key ) {
 	$var = ! $var;
 	
-	print '<tr ' . $bc[$var] . ' class="value">';
+	print '<tr ' . $bc[$var?1:0] . ' class="value">';
 	
 	// Param
 	$label = $langs->trans($key);
@@ -299,7 +299,7 @@ foreach ( $list as $key ) {
 foreach ( $list_account as $key ) {
 	$var = ! $var;
 	
-	print '<tr ' . $bc[$var] . ' class="value">';
+	print '<tr ' . $bc[$var?1:0] . ' class="value">';
 	
 	// Param
 	$label = $langs->trans($key);
@@ -313,7 +313,7 @@ foreach ( $list_account as $key ) {
 
 // TO DO Mutualize code for yes/no constants
 $var = ! $var;
-print "<tr " . $bc[$var] . ">";
+print "<tr " . $bc[$var?1:0] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
@@ -327,7 +327,7 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 print '</tr>';
 
 $var = ! $var;
-print "<tr " . $bc[$var] . ">";
+print "<tr " . $bc[$var?1:0] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
@@ -341,7 +341,7 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 print '</tr>';
 
 $var = ! $var;
-print "<tr " . $bc[$var] . ">";
+print "<tr " . $bc[$var?1:0] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
 if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
@@ -355,7 +355,7 @@ if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 print '</tr>';
 
 $var = ! $var;
-print "<tr " . $bc[$var] . ">";
+print "<tr " . $bc[$var?1:0] . ">";
 print '<td width="80%">' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
 if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';

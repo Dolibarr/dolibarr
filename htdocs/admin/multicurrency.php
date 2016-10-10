@@ -24,7 +24,7 @@
  */
 // Dolibarr environment
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -184,7 +184,7 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 /* TODO uncomment when the functionality will integrated
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnInvoiceDate").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -198,7 +198,7 @@ print '</td></tr>';
 */
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -212,7 +212,7 @@ print '</td></tr>';
 
 /* TODO uncomment when the functionality will integrated
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_buyPriceInCurrency").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -227,7 +227,7 @@ print '</td></tr>';
 
 /* TODO uncomment when the functionality will integrated 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -261,7 +261,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	
 	
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td><a target="_blank" href="https://currencylayer.com">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -274,7 +274,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 	
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -287,7 +287,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 	
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -312,7 +312,7 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Rate").'</td>'."\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add_currency">';
@@ -326,7 +326,7 @@ print '</td></form></tr>';
 foreach ($TCurrency as &$currency)
 {
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';

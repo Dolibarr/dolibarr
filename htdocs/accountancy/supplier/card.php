@@ -26,7 +26,7 @@
  * \ingroup Accountancy
  * \brief Card supplier ventilation
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';

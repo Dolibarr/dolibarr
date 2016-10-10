@@ -38,7 +38,7 @@ function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>
  */
 function llxFooterVierge() { print '</body></html>'; }
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/don/class/don.class.php';
 
 // Security check
@@ -81,7 +81,7 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			if ($objp->public)
 			{
 				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";

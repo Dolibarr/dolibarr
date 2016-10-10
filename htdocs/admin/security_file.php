@@ -23,7 +23,7 @@
  *      \brief      Security options setup
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -57,7 +57,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$value=(GETPOST($code) ? GETPOST($code) : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -71,7 +71,7 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -99,7 +99,7 @@ else if ($action == 'delete')
 	$ret=dol_delete_file($file);
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -136,7 +136,7 @@ print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
 if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
@@ -148,7 +148,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
@@ -159,7 +159,7 @@ print '</tr>';
 
 // Use anti virus
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 // Check command in inside safe_mode
@@ -182,7 +182,7 @@ print '</tr>';
 
 // Use anti virus
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';

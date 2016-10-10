@@ -26,7 +26,7 @@
 define('NOCSRFCHECK',1);
 define('NOLOGIN',1);		
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 /**
  * View

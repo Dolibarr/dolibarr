@@ -26,7 +26,7 @@
  *     \brief      Onglet de gestion des contacts additionnel d'une société
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -260,7 +260,7 @@ if ($id > 0 || ! empty($ref))
 						$companyname=$objp->company;
 
 						$var=!$var;
-						print "<tr ".$bc[$var].">";
+						print "<tr ".$bc[$var?1:0].">";
 
 						// Ref
 						print "<td>";

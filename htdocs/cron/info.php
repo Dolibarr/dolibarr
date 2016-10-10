@@ -20,7 +20,7 @@
  *  \brief      	Page of info of a cron job
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';

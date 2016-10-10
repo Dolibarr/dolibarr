@@ -28,7 +28,7 @@
  *	\brief      Page for supplier third party card (view, edit)
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
@@ -84,7 +84,7 @@ if (empty($reshook))
 	    $result=$object->update($object->id,$user,1,0,1);
 	    if ($result < 0)
 	    {
-	        $mesg=join(',',$object->errors);
+	        $mesg=implode(',',$object->errors);
 	    }
 	}
 	// conditions de reglement
@@ -332,7 +332,7 @@ if ($object->id > 0)
 				$productstatic->type = $objp->fk_product_type;
 				$productstatic->entity = $objp->entity;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">';
 				print $productstatic->getNomUrl(1);
 				print '</td>';
@@ -402,7 +402,7 @@ if ($object->id > 0)
 	            $obj = $db->fetch_object($resql);
 	            $var=!$var;
 	
-	            print "<tr ".$bc[$var].">";
+	            print "<tr ".$bc[$var?1:0].">";
 	            print '<td class="nowrap">';
 	            $proposalstatic->id = $obj->rowid;
 	            $proposalstatic->ref = $obj->ref;
@@ -506,7 +506,7 @@ if ($object->id > 0)
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
                 print '<td class="nowrap">';
                 $orderstatic->id = $obj->rowid;
                 $orderstatic->ref = $obj->ref;
@@ -578,7 +578,7 @@ if ($object->id > 0)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td>';
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id=$obj->rowid;

@@ -23,7 +23,7 @@
  *       \brief      Main project home page
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -166,7 +166,7 @@ if ( $resql )
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{

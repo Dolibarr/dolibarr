@@ -23,7 +23,7 @@
  *     \brief      Page fiche ventilation
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("bills");

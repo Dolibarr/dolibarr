@@ -22,7 +22,7 @@
  * \ingroup Accountancy
  * \brief Card customer ventilation
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

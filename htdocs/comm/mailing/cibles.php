@@ -24,7 +24,7 @@
  *       \brief      Page to define emailing targets
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
@@ -295,7 +295,7 @@ if ($object->fetch($id) >= 0)
 				if ($qualified)
 				{
 					$var = !$var;
-					print '<tr '.$bc[$var].'>';
+					print '<tr '.$bc[$var?1:0].'>';
 
 					if ($allowaddtarget)
 					{
@@ -485,7 +485,7 @@ if ($object->fetch($id) >= 0)
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td>'.$obj->email.'</td>';
 				print '<td>'.$obj->lastname.'</td>';
 				print '<td>'.$obj->firstname.'</td>';

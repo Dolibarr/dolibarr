@@ -26,7 +26,7 @@
  * \ingroup Advanced accountancy
  * \brief Page with purchases journal
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
@@ -485,7 +485,7 @@ if ($action == 'export_csv') {
 			$accountingaccount->fetch(null, $k);
 
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print "<tr " . $bc[$var?1:0] . " >";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
@@ -501,7 +501,7 @@ if ($action == 'export_csv') {
 		// VAT
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print "<tr " . $bc[$var?1:0] . " >";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
@@ -511,7 +511,7 @@ if ($action == 'export_csv') {
 				print "</tr>";
 			}
 		}
-		print "<tr " . $bc[$var] . ">";
+		print "<tr " . $bc[$var?1:0] . ">";
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {

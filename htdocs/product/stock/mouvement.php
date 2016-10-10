@@ -24,7 +24,7 @@
  *	\brief      Page to list stock movements
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -698,7 +698,7 @@ if ($resql)
 		}
 
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         // Id movement
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date

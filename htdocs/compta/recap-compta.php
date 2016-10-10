@@ -22,7 +22,7 @@
  *  \brief      Page de fiche recap customer
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -198,7 +198,7 @@ if ($socid > 0)
 			// Display array
 			foreach($TData as $data) {
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 	
 				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
 				print '<td>'.$data['link']."</td>\n";

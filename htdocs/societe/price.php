@@ -25,7 +25,7 @@
  * \ingroup product
  * \brief Page to show product prices by customer
  */
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
@@ -418,7 +418,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print '<tr'. $bc[$var].'>';
+				print '<tr'. $bc[$var?1:0].'>';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -522,7 +522,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             
             foreach ($prodcustprice->lines as $line)
             {
-                print "<tr " . $bc[$var] . ">";
+                print "<tr " . $bc[$var?1:0] . ">";
                 
                 $staticprod = new Product($db);
                 $staticprod->fetch($line->fk_product);

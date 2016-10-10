@@ -22,7 +22,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Card of accounting account
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';

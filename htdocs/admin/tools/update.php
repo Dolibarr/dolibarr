@@ -22,7 +22,7 @@
  *		\brief      Page to make a Dolibarr online upgrade
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/geturl.lib.php';

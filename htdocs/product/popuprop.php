@@ -26,7 +26,7 @@
  * \brief      Liste des produits/services par popularite
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 //Required to translate NbOfProposals
@@ -187,7 +187,7 @@ foreach($infoprod as $prodid => $vals)
 	}
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
 	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
 	else print img_object($langs->trans("ShowProduct"),"product");

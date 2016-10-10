@@ -25,7 +25,7 @@
  *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -240,7 +240,7 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Ref
 			print '<td>';
 			$socialcontrib->fetch($objp->scid);

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
@@ -52,7 +52,7 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
+			header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);
@@ -78,7 +78,7 @@ if ($_GET["action"] == 'confirm_account_to_ndf' && $_GET["confirm"] == "yes"):
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
+			header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);
@@ -165,7 +165,7 @@ else:
 				while($i<$num):
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
-						print '<tr'. $bc[$var].'>';
+						print '<tr'. $bc[$var?1:0].'>';
 							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.dol_print_date($db->jdate($objp->date_valid),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';

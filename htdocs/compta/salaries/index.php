@@ -23,7 +23,7 @@
  *		\brief     	List of salaries payments
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -203,7 +203,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         $userstatic->id=$obj->uid;
         $userstatic->lastname=$obj->lastname;

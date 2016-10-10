@@ -27,7 +27,7 @@
  *		\brief      Page to setup invoice module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -356,7 +356,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->isEnabled())
                         {
                             $var = !$var;
-                            print '<tr '.$bc[$var].'><td width="100">';
+                            print '<tr '.$bc[$var?1:0].'><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_facture_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
 
@@ -547,7 +547,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr '.$bc[$var?1:0].'><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -646,7 +646,7 @@ print $langs->trans("PaymentMode").'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if (! empty($conf->banque->enabled))
@@ -689,7 +689,7 @@ else
 }
 print "</td></tr>";
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select class="flat" name="chq" id="chq">';
@@ -741,7 +741,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
@@ -755,7 +755,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_AUTO_FILLJS" />';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("JSOnPaimentBill");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
@@ -768,7 +768,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -790,7 +790,7 @@ $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';
 print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
 print '</td><td align="right">';
@@ -831,7 +831,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

@@ -30,7 +30,7 @@
  *       \brief      Page to show customer card of a third party
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
@@ -542,7 +542,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
                 print '<td class="nowrap">';
                 $propal_static->id = $objp->propalid;
                 $propal_static->ref = $objp->ref;
@@ -626,7 +626,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
                 print '<td class="nowrap">';
                 $commande_static->id = $objp->cid;
                 $commande_static->ref = $objp->ref;
@@ -691,7 +691,7 @@ if ($id > 0)
             while ($i < $num && $i < $MAXLIST) {
                 $objp = $db->fetch_object($resql);
                 $var = ! $var;
-                print "<tr " . $bc[$var] . ">";
+                print "<tr " . $bc[$var?1:0] . ">";
                 print '<td class="nowrap">';
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
@@ -751,7 +751,7 @@ if ($id > 0)
 
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
@@ -814,7 +814,7 @@ if ($id > 0)
 				$fichinter_static->id=$objp->id;
                 $fichinter_static->statut=$objp->fk_statut;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td align="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
@@ -877,7 +877,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">';
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->facnumber;

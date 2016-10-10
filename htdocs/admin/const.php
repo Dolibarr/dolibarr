@@ -24,7 +24,7 @@
  *	\brief      Admin page to define miscellaneous constants
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
@@ -196,7 +196,7 @@ print "</tr>\n";
 $var=false;
 print "\n";
 
-print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
+print '<tr '.$bc[$var?1:0].'><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="'.$constvalue.'">';
 print '</td><td>';
@@ -250,7 +250,7 @@ if ($result)
 
 		print "\n";
 
-		print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
+		print '<tr '.$bc[$var?1:0].'><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';

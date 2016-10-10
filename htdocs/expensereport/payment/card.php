@@ -21,7 +21,7 @@
  *		\brief      Tab payment of an expense report
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -227,7 +227,7 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Ref
 			print '<td>';
 			$expensereport->fetch($objp->did);

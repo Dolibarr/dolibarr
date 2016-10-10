@@ -28,7 +28,7 @@
  *	\brief      Page to invoice multiple orders
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -654,7 +654,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td class="nowrap">';
 
 			$generic_commande->id=$objp->rowid;

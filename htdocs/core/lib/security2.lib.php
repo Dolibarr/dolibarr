@@ -57,7 +57,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 	// Check parameters
 	if ($entitytotest == '') $entitytotest=1;
 
-    dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',',$authmode));
+    dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".implode(',',$authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules

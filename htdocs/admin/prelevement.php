@@ -24,7 +24,7 @@
  *	\brief      Page configuration des prelevements
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -262,7 +262,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	        $obj = $db->fetch_object($resql);
 	        $var=!$var;
 
-	        print "<tr ".$bc[$var].">";
+	        print "<tr ".$bc[$var?1:0].">";
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';

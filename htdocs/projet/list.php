@@ -26,7 +26,7 @@
  *	\brief      Page to list projects
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -272,7 +272,7 @@ if ($search_opp_status)
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user; 
+if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".implode(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user;
 if ($search_opp_amount != '') $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_budget_amount != '') $sql .= natural_search('p.budget_amount', $search_budget_amount, 1);
 // Add where from extra fields
@@ -369,7 +369,7 @@ if ($resql)
 	if ($search_all)
 	{
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $search_all) . implode(', ',$fieldstosearchall);
 	}
 
 	// If the user can view thirdparties other than his'
@@ -582,7 +582,7 @@ if ($resql)
     	if ($userAccess >= 0)
     	{
     		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
 
     		// Project url
         	if (! empty($arrayfields['p.ref']['checked']))

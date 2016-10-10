@@ -23,7 +23,7 @@
  *       \brief      Home page of shipping area.
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -52,7 +52,7 @@ print '<form method="post" action="list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
@@ -93,7 +93,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].'><td class="nowrap">';
+			print "<tr ".$bc[$var?1:0].'><td class="nowrap">';
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
 			print $shipment->getNomUrl(1);
@@ -142,7 +142,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
@@ -200,7 +200,7 @@ if ( $resql )
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var]."><td width=\"30%\">";
+			print "<tr ".$bc[$var?1:0]."><td width=\"30%\">";
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			print $orderstatic->getNomUrl(1);
@@ -257,7 +257,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print '<tr '.$bc[$var].'><td width="20%"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
+			print '<tr '.$bc[$var?1:0].'><td width="20%"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
 			print $obj->ref.'</a></td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 			print '<td>';

@@ -521,7 +521,7 @@ foreach(array(1,2,3,4,5,6) as $key)
 if ($search_all)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+    print $langs->trans("FilterOnInto", $search_all) . implode(', ',$fieldstosearchall);
 }
 
 // Filter on categories
@@ -865,7 +865,7 @@ while ($i < min($num, $limit))
     $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
     $companystatic->name_alias=$obj->name_alias;
 	
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print "<td>";

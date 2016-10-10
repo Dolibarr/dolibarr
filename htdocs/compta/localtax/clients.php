@@ -22,7 +22,7 @@
  *		\brief      Third parties localtax report
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -196,7 +196,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;
@@ -271,7 +271,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;

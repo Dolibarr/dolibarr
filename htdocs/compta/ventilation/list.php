@@ -25,7 +25,7 @@
  * 		\brief      Page de ventilation des lignes de facture
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -88,7 +88,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		// Ref facture
 		$facture_static->ref=$objp->facnumber;

@@ -23,7 +23,7 @@
  *  \brief      Page d'activation du module FCKeditor dans les autres modules
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -160,7 +160,7 @@ else
         if (! $conditions[$const]) continue;
 
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         print '<td width="16">'.img_object("",$picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
         print '<td align="center" width="100">';

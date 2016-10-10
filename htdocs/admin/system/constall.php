@@ -22,7 +22,7 @@
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("user");
@@ -170,7 +170,7 @@ foreach($configfileparameters as $key)
         }
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		if ($newkey == 'separator')
 		{
 			print '<td colspan="3">&nbsp;</td>';
@@ -239,7 +239,7 @@ if ($resql)
     	$obj = $db->fetch_object($resql);
     	$var=!$var;
 
-    	print '<tr '.$bc[$var].'>';
+    	print '<tr '.$bc[$var?1:0].'>';
     	print '<td>'.$obj->name.'</td>'."\n";
     	print '<td>'.$obj->value.'</td>'."\n";
     	if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled

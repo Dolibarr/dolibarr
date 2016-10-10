@@ -3,7 +3,7 @@
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 define('REQUIRE_JQUERY_MULTISELECT','select2');
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 if ($dolibarr_main_prod) {

@@ -25,7 +25,7 @@
  *	\brief      Page of invoice statistics for a product
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -235,7 +235,7 @@ if ($id > 0 || ! empty($ref))
                         $objp = $db->fetch_object($result);
                         $var=!$var;
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr '.$bc[$var?1:0].'>';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;

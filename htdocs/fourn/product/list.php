@@ -26,7 +26,7 @@
  *		\brief      Page to list supplier products and services
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -209,7 +209,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;

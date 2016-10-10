@@ -23,7 +23,7 @@
  *  \brief      Cron Jobs Card
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -93,7 +93,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
+		header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }

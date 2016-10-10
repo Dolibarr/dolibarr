@@ -22,7 +22,7 @@
  *		\brief      Page to add payment of a loan
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -248,7 +248,7 @@ if ($action == 'create')
 	$var=True;
 
 
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 
 	if ($loan->datestart > 0)
 	{

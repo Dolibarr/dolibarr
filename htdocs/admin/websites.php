@@ -21,7 +21,7 @@
  *		\brief      Page to administer web sites
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -503,7 +503,7 @@ if ($id)
 
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr '.$bc[$var?1:0].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';

@@ -26,7 +26,7 @@
  *		\brief      Page d'administration/configuration du module Ldap
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -130,7 +130,7 @@ print "</tr>\n";
 
 // DN Pour les utilisateurs
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
+print '<tr '.$bc[$var?1:0].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -138,7 +138,7 @@ print '</tr>';
 
 // List of object class used to define attributes in structure
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
+print '<tr '.$bc[$var?1:0].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_USER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPUserObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -146,7 +146,7 @@ print '</tr>';
 
 // Filter, used to filter search
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
 print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
 print '<td></td>';
@@ -165,7 +165,7 @@ print "</tr>\n";
 
 // Common name
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FULLNAME)?' checked':'')."></td>";
@@ -173,7 +173,7 @@ print '</tr>';
 
 // Name
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_NAME)?' checked':'')."></td>";
@@ -181,7 +181,7 @@ print '</tr>';
 
 // Firstname
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FIRSTNAME)?' checked':'')."></td>";
@@ -189,7 +189,7 @@ print '</tr>';
 
 // Login unix
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
 print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_LOGIN)?' checked':'')."></td>";
@@ -197,7 +197,7 @@ print '</tr>';
 
 // Login samba
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
 print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_LOGIN_SAMBA)?' checked':'')."></td>";
@@ -205,7 +205,7 @@ print '</tr>';
 
 // Password not crypted
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.$conf->global->LDAP_FIELD_PASSWORD.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWORD"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD)?' checked':'')."></td>";
@@ -213,7 +213,7 @@ print '</tr>';
 
 // Password crypted
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.$conf->global->LDAP_FIELD_PASSWORD_CRYPTED.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWORD_CRYPTED"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD_CRYPTED)?' checked':'')."></td>";
@@ -221,7 +221,7 @@ print '</tr>';
 
 // Mail
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MAIL)?' checked':'')."></td>";
@@ -229,7 +229,7 @@ print '</tr>';
 
 // Phone
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PHONE)?' checked':'')."></td>";
@@ -237,7 +237,7 @@ print '</tr>';
 
 // Mobile
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MOBILE)?' checked':'')."></td>";
@@ -245,7 +245,7 @@ print '</tr>';
 
 // Skype
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
 print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_FIELD_SKYPE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SKYPE)?' checked':'')."></td>";
@@ -253,7 +253,7 @@ print '</tr>';
 
 // Fax
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked':'')."></td>";
@@ -261,7 +261,7 @@ print '</tr>';
 
 // Title
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
 print '<input size="25" type="text" name="fieldtitle" value="'.$conf->global->LDAP_FIELD_TITLE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldTitleExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_TITLE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_TITLE)?' checked':'')."></td>";
@@ -269,7 +269,7 @@ print '</tr>';
 
 // Note
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("Note").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("Note").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_DESCRIPTION)?' checked':'')."></td>";
@@ -277,7 +277,7 @@ print '</tr>';
 
 // Sid
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
 print '<input size="25" type="text" name="fieldsid" value="'.$conf->global->LDAP_FIELD_SID.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_SID"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SID)?' checked':'')."></td>";
@@ -437,7 +437,7 @@ if (function_exists("ldap_connect"))
 			print "search: *<br>\n";
 			print "userDN: ".$conf->global->LDAP_USER_DN."<br>\n";
 			print "useridentifier: ".$conf->global->LDAP_KEY_USERS."<br>\n";
-			print "required_fields: ".join(',',$required_fields)."<br>\n";
+			print "required_fields: ".implode(',',$required_fields)."<br>\n";
 			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		}

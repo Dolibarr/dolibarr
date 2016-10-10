@@ -25,7 +25,7 @@
  *   \brief      Page de ventilation des lignes de facture
  */
 
-require '../../../main.inc.php';
+require __DIR__.'/../../../main.inc.php';
 
 $langs->load("bills");
 
@@ -74,7 +74,7 @@ if ($result)
     {
       $objp = $db->fetch_object($result);
       $var=!$var;
-      print "<tr ".$bc[$var].">";
+      print "<tr ".$bc[$var?1:0].">";
 
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';

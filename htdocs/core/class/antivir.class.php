@@ -71,7 +71,7 @@ class AntiVir
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
 
-        //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
+        //print "x".$lastline." - ".implode(',',$output)." - ".$return_var."y";exit;
 
 		/*
         $outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
@@ -103,7 +103,7 @@ class AntiVir
 		}
 		*/
 
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',',$output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".implode(',',$output));
 
 		$returncodevirus=1;
 		if ($return_var == $returncodevirus)	// Virus found

@@ -25,7 +25,7 @@
  * \brief Page des stats des factures fournisseurs pour un produit
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -214,7 +214,7 @@ if ($id > 0 || ! empty($ref))
 						$objp = $db->fetch_object($result);
 						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
+						print '<tr ' . $bc[$var?1:0] . '>';
 						print '<td>';
 						$supplierinvoicestatic->id = $objp->facid;
 						$supplierinvoicestatic->ref = $objp->facnumber;

@@ -23,7 +23,7 @@
  *      \brief      Page to setup receipt printer
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -250,7 +250,7 @@ if ($mode == 'config' && $user->admin)
     } else {
         for ($line=0; $line < $nbofprinters; $line++) {
             $var = !$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
@@ -381,7 +381,7 @@ if ($mode == 'template' && $user->admin)
         $max = count($printer->listprinterstemplates);
         for ($line=0; $line < $max; $line++) {
             $var = !$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
                 print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
@@ -427,7 +427,7 @@ if ($mode == 'template' && $user->admin)
     $max = count($printer->tags);
     for ($tag=0; $tag < $max; $tag++) {
         $var = !$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';
     }

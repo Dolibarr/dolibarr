@@ -22,7 +22,7 @@
  *      \brief      Log event setup page
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -100,12 +100,12 @@ foreach ($eventstolog as $key => $arr)
 	if ($arr['id'])
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+		print '<input '.$bc[$var?1:0].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
 		print '</td></tr>'."\n";
 	}
 }

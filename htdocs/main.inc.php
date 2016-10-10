@@ -380,7 +380,7 @@ if (! defined('NOLOGIN'))
         $dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int',3);
         $dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int',3);
         $dol_use_jmobile=GETPOST('dol_use_jmobile','int',3);
-        //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
+        //dol_syslog("POST key=".implode(array_keys($_POST),',').' value='.implode($_POST,','));
 
         // If in demo mode, we check we go to home page through the public/demo/index.php page
         if (! empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
@@ -835,7 +835,7 @@ if (! defined('NOLOGIN'))
 
 dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]);
 //Another call for easy debugg
-//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.implode(',',array_keys($_GET)).'->'.implode(',',$_GET).' POST:'.implode(',',array_keys($_POST)).'->'.implode(',',$_POST));
 
 // Load main languages files
 if (! defined('NOREQUIRETRAN'))

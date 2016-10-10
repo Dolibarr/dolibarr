@@ -26,7 +26,7 @@
  *  \brief      Page list of expenses
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
@@ -74,7 +74,7 @@ $sql.= " WHERE de.fk_expensereport = d.rowid AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
 {
-	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+	$sql.= " AND d.fk_user_author IN (".implode(',',$childids).")\n";
 }
 $sql.= " GROUP BY tf.code, tf.label";
 
@@ -146,7 +146,7 @@ $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.ref, d.date_d
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND d.fk_user_author IN ('.join(',',$childids).')';
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND d.fk_user_author IN ('.implode(',',$childids).')';
 //$sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
@@ -183,7 +183,7 @@ if ($result)
             $userstatic->id=$obj->uid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -201,7 +201,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var?1:0].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

@@ -635,7 +635,7 @@ class FormCompany
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto))
 			{
-				$sql.= " AND s.rowid IN (".join(',',$limitto).")";
+				$sql.= " AND s.rowid IN (".implode(',',$limitto).")";
 			}
 			$sql.= " ORDER BY s.nom ASC";
 

@@ -23,7 +23,7 @@
  *  \brief      Page of links to sales representatives
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("companies");
@@ -267,7 +267,7 @@ if (! empty($socid))
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var]."><td>";
+				print "<tr ".$bc[$var?1:0]."><td>";
 				$tmpuser->id=$obj->rowid;
 				$tmpuser->firstname=$obj->firstname;
 				$tmpuser->lastname=$obj->lastname;

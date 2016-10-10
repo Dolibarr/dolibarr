@@ -22,7 +22,7 @@
  *       \brief      Admin page to setup FTP client module
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
@@ -229,7 +229,7 @@ else
 
 		    preg_match('/([0-9]+)$/i',$obj->name,$reg);
 			$idrss = $reg[0];
-			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
+			//print "x".implode(',',$reg)."=".$obj->name."=".$idrss;
 
 			$var=true;
 
@@ -241,37 +241,37 @@ else
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td>".$langs->trans("Name")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . @constant("FTP_NAME_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td>".$langs->trans("Server")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . @constant("FTP_SERVER_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . @constant("FTP_PORT_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . @constant("FTP_USER_" . $idrss) . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
 			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . @constant("FTP_PASSWORD_" . $idrss) . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
 			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
 			print "</tr>";

@@ -28,7 +28,7 @@
  *	\brief      Page to show predefined invoice
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -1602,7 +1602,7 @@ else
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
-					print "<tr ".$bc[$var].">";
+					print "<tr ".$bc[$var?1:0].">";
 
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";

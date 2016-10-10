@@ -68,7 +68,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        if (! $conf->use_javascript_ajax)
 	        {
 	            $var=!$var;
-	            print "<tr ".$bc[$var].">";
+	            print "<tr ".$bc[$var?1:0].">";
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 	            print "</tr>\n";

@@ -78,14 +78,14 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AmountToWithdraw").'</td>';
+print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever(),'','',1,-1,-1,'auto');
 print '</td></tr></table><br>';
@@ -132,7 +132,7 @@ if ($resql)
             $alreadypayed=$invoicestatic->getSommePaiement();
 
             $var=!$var;
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr '.$bc[$var?1:0].'><td>';
             print $invoicestatic->getNomUrl(1,'withdraw');
             print '</td>';
 
@@ -201,7 +201,7 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         print "<td>";
         $bprev->id=$obj->rowid;

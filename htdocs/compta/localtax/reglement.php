@@ -21,7 +21,7 @@
  *		\brief      List of IRPF payments
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
 $langs->load("compta");
@@ -67,7 +67,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
 		$localtax_static->id=$obj->rowid;
 		$localtax_static->ref=$obj->rowid;

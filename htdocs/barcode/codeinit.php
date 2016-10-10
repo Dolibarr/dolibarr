@@ -20,7 +20,7 @@
  *	\ingroup    member
  *	\brief      Page to make mass init of barcode
  */
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 

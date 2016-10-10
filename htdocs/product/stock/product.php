@@ -29,7 +29,7 @@
  *	\brief      Page to list detailed stock of a product
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -733,7 +733,7 @@ if ($resql)
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
 		$stock_real = round($obj->reel, 10);
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
 		// PMP

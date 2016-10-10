@@ -32,7 +32,7 @@
  *		\brief      Page to administer data tables
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -1087,7 +1087,7 @@ if ($id)
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
         	$formmail=new FormMail($db);
         	$tmp=$formmail->getAvailableSubstitKey('form');
-        	print join(', ', $tmp);
+        	print implode(', ', $tmp);
         	print '</td></tr>';
         }
 
@@ -1208,7 +1208,7 @@ if ($id)
 
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr '.$bc[$var?1:0].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
@@ -1488,13 +1488,13 @@ else
         	if ($showemptyline)
         	{
         		$var=!$var;
-        		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		print '<tr '.$bc[$var?1:0].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
             $var=!$var;
             $value=$tabname[$i];
-            print '<tr '.$bc[$var].'><td width="50%">';
+            print '<tr '.$bc[$var?1:0].'><td width="50%">';
             if (! empty($tabcond[$i]))
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
@@ -1560,7 +1560,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if (in_array('region_id',$fieldlist))
 			{
 				print '<td>';
-				//print join(',',$fieldlist);
+				//print implode(',',$fieldlist);
 				print '</td>';
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)

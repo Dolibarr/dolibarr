@@ -21,7 +21,7 @@
  *       \brief      Page to show translation information
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
@@ -149,7 +149,7 @@ print "</tr>\n";
 $var=false;
 print "\n";
 
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $formadmin->select_language(GETPOST('langcode'),'langcode',0,null,1,0,0,'',1);
 //print '<input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'">';
 print '</td>'."\n";
@@ -207,7 +207,7 @@ if ($result)
 
 		print "\n";
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		
 		print '<td>'.$obj->lang.'</td>'."\n";
 		print '<td>'.$obj->transkey.'</td>'."\n";

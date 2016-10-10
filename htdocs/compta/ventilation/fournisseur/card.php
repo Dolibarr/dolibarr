@@ -23,7 +23,7 @@
  *      \brief      Page fiche ventilation
  */
 
-require '../../../main.inc.php';
+require __DIR__.'/../../../main.inc.php';
 
 $mesg = '';
 

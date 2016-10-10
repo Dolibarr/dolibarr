@@ -21,7 +21,7 @@
  *		\brief      Payment's card of loan
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -230,7 +230,7 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);

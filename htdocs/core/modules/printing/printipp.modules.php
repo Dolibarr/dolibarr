@@ -165,7 +165,7 @@ class printing_printipp extends PrintingDriver
         {
             $var=!$var;
             $printer_det = $this->get_printer_detail($value);
-            $html.= "<tr ".$bc[$var].">";
+            $html.= "<tr ".$bc[$var?1:0].">";
             $html.= '<td>'.$value.'</td>';
             //$html.= '<td><pre>'.print_r($printer_det,true).'</pre></td>';
             $html.= '<td>'.$printer_det->printer_name->_value0.'</td>';
@@ -292,7 +292,7 @@ class printing_printipp extends PrintingDriver
         foreach ($jobs as $value )
         {
             $var = !$var;
-            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<tr '.$bc[$var?1:0].'>';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
             $html .= '<td>'.$value->printer_uri->_value0.'</td>';

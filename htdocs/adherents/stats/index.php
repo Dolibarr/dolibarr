@@ -23,7 +23,7 @@
  *		\brief      Page of subscription members statistics
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -184,7 +184,7 @@ foreach ($data as $val)
     {	// If we have empty year
         $oldyear--;
         $var=!$var;
-        print '<tr '.$bc[$var].' height="24">';
+        print '<tr '.$bc[$var?1:0].' height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
@@ -196,7 +196,7 @@ foreach ($data as $val)
         print '</tr>';
     }
     $var=!$var;
-    print '<tr '.$bc[$var].' height="24">';
+    print '<tr '.$bc[$var?1:0].' height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;

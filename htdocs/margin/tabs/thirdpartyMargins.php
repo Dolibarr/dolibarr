@@ -21,7 +21,7 @@
  *	\brief      Page des marges des factures clients pour un tiers
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -208,7 +208,7 @@ if ($socid > 0)
 
     			$var=!$var;
 
-    			print "<tr ".$bc[$var].">";
+    			print "<tr ".$bc[$var?1:0].">";
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
     			$invoicestatic->ref=$objp->facnumber;

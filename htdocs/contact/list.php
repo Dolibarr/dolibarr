@@ -28,7 +28,7 @@
  *		\brief      Page to list all contacts
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
@@ -416,7 +416,7 @@ if ($result)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
 	if ($search_firstlast_only)
 	{
@@ -627,7 +627,7 @@ if ($result)
         $obj = $db->fetch_object($result);
 
 		$var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
 		$contactstatic->lastname=$obj->lastname;
 		$contactstatic->firstname='';

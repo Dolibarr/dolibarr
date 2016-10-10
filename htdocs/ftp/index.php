@@ -557,7 +557,7 @@ else
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var].' height="18">';
+				print '<tr '.$bc[$var?1:0].' height="18">';
 				// Name
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;

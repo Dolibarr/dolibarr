@@ -25,7 +25,7 @@
  *	\brief      Home page of interventional module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT .'/fichinter/class/fichinter.class.php';
@@ -66,7 +66,7 @@ print '<table class="noborder nohover" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</form></table><br>\n";
 
@@ -137,7 +137,7 @@ if ($resql)
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $fichinterstatic->LibStatut($status,$bool,3);
@@ -190,7 +190,7 @@ if (! empty($conf->ficheinter->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">';
 				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"),"intervention").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
@@ -241,7 +241,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td width="20%" class="nowrap">';
 
 			$fichinterstatic->id=$obj->rowid;
@@ -311,7 +311,7 @@ if (! empty($conf->fichinter->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap" width="20%">';
 
 				$fichinterstatic->id=$obj->rowid;

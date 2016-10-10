@@ -25,7 +25,7 @@
  *  \brief      Page to list stocks
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -323,7 +323,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td class="nowrap">';
+		print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
 		
 		$product=new Product($db);
 		$product->fetch($objp->rowid);

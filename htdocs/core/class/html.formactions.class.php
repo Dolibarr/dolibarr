@@ -201,7 +201,7 @@ class FormActions
         		$label=$action->getNomUrl(0,38);
 
         		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+        		print '<tr '.$bc[$var?1:0].'>';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.dol_print_date($action->datep,'dayhour');

@@ -24,7 +24,7 @@
  *		\brief      Page to list all members of foundation
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -328,7 +328,7 @@ if ($resql)
 	if ($sall)
 	{
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 	}
 
 	// Filter on categories
@@ -597,7 +597,7 @@ if ($resql)
 		}
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{

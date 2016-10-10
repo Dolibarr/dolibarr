@@ -1844,7 +1844,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
+		$sql.= " WHERE rowid IN (".implode(',',$listofidtoclean).")";	// So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1853,7 +1853,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			{
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
-				print join(',',$listofidtoclean);
+				print implode(',',$listofidtoclean);
 			}
 
 			$totalnb+=$nb;
@@ -1863,7 +1863,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
+		$sql.= " WHERE ".$fieldfkparent." NOT IN (".implode(',',$listofid).")";	// So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1872,7 +1872,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			{
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
-				print join(',',$listofid);
+				print implode(',',$listofid);
 			}
 
 			$totalnb+=$nb;

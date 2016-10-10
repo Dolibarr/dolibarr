@@ -23,7 +23,7 @@
  * \brief      Page to setup paybox module
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -111,21 +111,21 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_SITE").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
 print '<br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_RANG").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
 print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
 print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
@@ -139,7 +139,7 @@ print "</tr>\n";
 
 /*
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("PAYBOX_IBS_DEVISE").'</td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_DEVISE" value="'.$conf->global->PAYBOX_IBS_DEVISE.'">';
 print '<br>'.$langs->trans("Example").': 978 (EUR)';
@@ -148,7 +148,7 @@ print '</td></tr>';
 
 /*
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("PAYBOX_CGI_URL_V1").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V1" value="'.$conf->global->PAYBOX_CGI_URL_V1.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/module_linux.cgi';
@@ -156,42 +156,42 @@ print '</td></tr>';
 */
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CREDITOR" value="'.$conf->global->PAYBOX_CREDITOR.'">';
 print '<br>'.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global->PAYBOX_CSS_URL.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("MessageOK").'</td><td>';
 $doleditor=new DolEditor('PAYBOX_MESSAGE_OK',$conf->global->PAYBOX_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("MessageKO").'</td><td>';
 $doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("PAYBOX_PAYONLINE_SENDEMAIL").'</td><td>';
 print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.$conf->global->PAYBOX_PAYONLINE_SENDEMAIL.'">';
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';

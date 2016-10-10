@@ -24,7 +24,7 @@
  *		\brief      Page to list all loans
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 $langs->load("loan");
@@ -152,7 +152,7 @@ if ($resql)
         $loan_static->label = $obj->label;
 
 		$var = !$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		// Ref
 		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';

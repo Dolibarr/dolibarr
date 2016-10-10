@@ -24,7 +24,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Balance by month
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';

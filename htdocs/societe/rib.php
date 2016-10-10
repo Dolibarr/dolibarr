@@ -26,7 +26,7 @@
  *		\brief      BAN tab for companies
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
@@ -350,7 +350,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         foreach ($rib_list as $rib)
         {
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             // Label
             print '<td>'.$rib->label.'</td>';
             // Bank name

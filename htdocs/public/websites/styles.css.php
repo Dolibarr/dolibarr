@@ -42,7 +42,7 @@ function llxHeader() { }
  */
 function llxFooter() { }
 
-require '../../master.inc.php';
+require __DIR__.'/../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 

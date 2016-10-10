@@ -130,7 +130,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -184,7 +184,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -244,7 +244,7 @@ if ($db->type != 'pgsql')
     	while ($row = $db->fetch_object($resql))
     	{
     		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -300,7 +300,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     
     	while ($row = $db->fetch_object($resql))
     	{
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -351,7 +351,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	{
 		while ($row = $db->fetch_object($resql))
 		{
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>';
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
@@ -431,7 +431,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";  // project i have permission on
 	if ($mine)     // this may duplicate record if we are contact twice
 	{
-        $sql.= " AND ect.fk_c_type_contact IN (".join(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
+        $sql.= " AND ect.fk_c_type_contact IN (".implode(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
 	}
 	if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " AND p.fk_statut=1";
@@ -477,7 +477,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			//print '<td>'.$username.'</td>';
 			print '<td>';
 			$projectstatic->id=$obj->projectid;

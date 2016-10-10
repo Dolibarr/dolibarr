@@ -25,7 +25,7 @@
  *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -824,7 +824,7 @@ if ($rowid > 0)
             {
                 $objp = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print "<tr ".$bc[$var?1:0].">";
                 $cotisationstatic->ref=$objp->crowid;
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';

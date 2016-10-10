@@ -28,7 +28,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action=GETPOST('action','alpha');
