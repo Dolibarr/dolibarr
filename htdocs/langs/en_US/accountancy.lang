@@ -52,7 +52,7 @@ AccountBalance=Account balance
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoices to bind
-InvoiceLinesDone=Binded lines of invoices
+InvoiceLinesDone=Bound lines of invoices
 IntoAccount=Bind line with the accounting account
 
 Ventilate=Bind
