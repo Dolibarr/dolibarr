@@ -201,7 +201,16 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$langs->load("commercial");
 
-			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+            if(GETPOST('fromtype')==='user'){
+                $from = $user->getFullName($langs) .' <'.$user->email.'>';
+
+            }elseif( GETPOST('fromtype')==='company'){
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+            }
+            else {
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+            }
+
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
 			$sendtobcc= GETPOST('sendtoccc');
