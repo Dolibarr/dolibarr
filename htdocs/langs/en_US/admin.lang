@@ -238,6 +238,7 @@ MAIN_MAIL_EMAIL_STARTTLS= Use TLS (STARTTLS) encrypt
 MAIN_DISABLE_ALL_SMS=Disable all SMS sendings (for test purposes or demos)
 MAIN_SMS_SENDMODE=Method to use to send SMS
 MAIN_MAIL_SMS_FROM=Default sender phone number for Sms sending
+MAIN_MAIL_DEFAULT_FROMTYPE=Email to be used by default (User / Company)
 FeatureNotAvailableOnLinux=Feature not available on Unix like systems. Test your sendmail program locally.
 SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
 SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or for developers on github.com/Dolibarr/dolibarr.

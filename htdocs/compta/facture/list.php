@@ -884,7 +884,7 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->withform=-1;
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):'user');
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
 
         if($formmail->fromtype === 'user'){
             $formmail->fromid = $user->id;
