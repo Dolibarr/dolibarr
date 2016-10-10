@@ -26,8 +26,8 @@ AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and a
 AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.    
 AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
     
-AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting accounting is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
-AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting accounting is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
 AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
 
 Selectchartofaccounts=Select a chart of accounts
@@ -51,7 +51,7 @@ Bookkeeping=General ledger
 AccountBalance=Account balance
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Lines of invoice to be binded
+InvoiceLines=Lines of invoice to bind
 InvoiceLinesDone=Binded lines of invoice
 IntoAccount=Bind line with the accounting account
 
@@ -63,11 +63,11 @@ AnyLineVentilate=Any lines to bind
 SelectedLines=Selected lines
 Lineofinvoice=Line of invoice
 VentilatedinAccount=Binded successfully to the accounting account
-NotVentilatedinAccount=Not binded to the accounting account
-XLineSuccessfullyBinded=%s products/services successfuly binded to an accounting account
-XLineFailedToBeBinded=%s products/services were not binded to any accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be binded shown by page (maximum recommended : 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
@@ -113,7 +113,7 @@ DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of records that are binded to products/services accountancy account and can be recorded into the General Ledger.
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for thirdparty not defined
 ProductAccountNotDefined=Account for product not defined
@@ -137,13 +137,13 @@ Accountparent=Root of the account
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 
-DescVentilCustomer=Consult here the list of customer invoice lines binded (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not binded to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
-DescVentilTodoCustomer=Bind invoice lines not already binded with a product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
-DescVentilSupplier=Consult here the list of supplier invoice lines binded or not yet binded to a product accounting account
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
 ValidateHistory=Bind Automatically
@@ -155,7 +155,7 @@ FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
 NoNewRecordSaved=No new record saved
-ListOfProductsWithoutAccountingAccount=List of products not binded to any accounting account
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
 ## Admin
@@ -197,8 +197,8 @@ ErrorNoAccountingCategoryForThisCountry=No accounting category are available for
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 
-Binded=Lines binded
+Binded=Lines bound
 ToBind=Lines to bind
 
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced be a correct report in a next version. 
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version. 
 
