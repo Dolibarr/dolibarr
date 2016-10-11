@@ -5,7 +5,7 @@ NewLoan=Nuovo prestito
 ShowLoan=Mostra prestito
 PaymentLoan=Pagamento prestito
 ShowLoanPayment=Mostra pagamento prestito
-LoanCapital=Capital
+LoanCapital=Capitale
 Insurance=Assicurazione
 Interest=Interesse
 Nbterms=Numero di rate
@@ -14,7 +14,7 @@ LoanAccountancyInsuranceCode=Codice contabilità per l'assicurazione
 LoanAccountancyInterestCode=Codice contabilità per gli interessi
 ConfirmDeleteLoan=Conferma l'eliminazione di questo prestito
 LoanDeleted=Prestito eliminato correttamente
-ConfirmPayLoan=Confirm classify paid this loan
+ConfirmPayLoan=Conferma questo prestito come ripagato
 LoanPaid=Prestito ripagato
 # Calc
 LoanCalc=Bank Loans Calculator
@@ -24,7 +24,7 @@ PercentageDown=Percentage Down
 LengthOfMortgage=Durata del prestito
 AnnualInterestRate=Tasso di interesse annuo
 ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
+ShowMeCalculationsAndAmortization=Mostrami interessi ed ammortamento
 MortgagePaymentInformation=Informazioni sul pagamento del mutuo ipotecario
 DownPayment=Anticipo
 DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
@@ -41,7 +41,7 @@ MonthlyPayment=Rata mensile
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s will go towards INTEREST
 GoToPrincipal=%s will go towards PRINCIPAL
-YouWillSpend=You will spend %s in year %s
+YouWillSpend=Spenderete %s in %s anni
 # Admin
 ConfigLoan=Configurazione del modulo prestiti
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Codice contabilità capitale di default

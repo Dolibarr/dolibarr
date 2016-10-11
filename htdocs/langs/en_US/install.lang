@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Leave empty if user has no password (avoid this)
 SaveConfigurationFile=Save values
 ServerConnection=Server connection
 DatabaseCreation=Database creation
-UserCreation=User creation
 CreateDatabaseObjects=Database objects creation
 ReferenceDataLoading=Reference data loading
 TablesAndPrimaryKeysCreation=Tables and Primary keys creation

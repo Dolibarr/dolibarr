@@ -188,7 +188,7 @@ $formaccounting = new FormAccounting($db);
 
 // Create mode
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans('NewAccount'));
+	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 	
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';

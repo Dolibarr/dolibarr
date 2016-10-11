@@ -157,3 +157,4 @@ OrderCreated=Je order is aangemaakt
 OrderFail=Fout tijdens aanmaken order
 CreateOrders=Maak orders
 ToBillSeveralOrderSelectCustomer=Om een factuur voor verscheidene orden te creëren, klikt eerste op klant, dan kies "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

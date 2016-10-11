@@ -235,7 +235,6 @@ SupplierPreview=Historico Fornecedor
 ShowCustomerPreview=Ver Historico Cliente
 ShowSupplierPreview=Ver Historico Fornecedor
 SendByMail=Enviado por e-mail
-SendAcknowledgementByMail=Enviar email de confirmação
 NoMobilePhone=Sem celular
 Owner=Proprietário
 Refresh=Atualizar

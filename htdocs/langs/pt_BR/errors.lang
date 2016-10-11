@@ -117,7 +117,6 @@ ErrorPHPNeedModule=Erro, o PHP deve ter <b>módulo% s</b> instalado para usar es
 ErrorOpenIDSetupNotComplete=Você arquivo de configuração Dolibarr configuração para permitir a autenticação OpenID, mas a URL de serviço OpenID não está definido em constante% s
 ErrorWarehouseMustDiffers=A conta origem e destino devem ser diferentes
 ErrorBadFormat=Formato ruim!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Erro, esse membro ainda não está vinculado a qualquer fornecedor. Fazer a ligação membro a um terceiro existente ou criar uma novo fornecedor antes de criar assinatura com nota fiscal.
 ErrorThereIsSomeDeliveries=Erro, há algumas entregas ligados a este envio. Supressão recusou.
 ErrorCantDeletePaymentReconciliated=Não posso deletar o pagamento que gerou uma transação bancaria conciliada.
 ErrorCantDeletePaymentSharedWithPayedInvoice=Não e possivel cancelar o pagamento condiviso para pelo menos uma fatura com estado Pago

@@ -1107,7 +1107,6 @@ CompanyIdProfChecker=Rules on Professional Ids
 MustBeUnique=Must be unique ?
 MustBeMandatory=Mandatory to create third parties ?
 MustBeInvoiceMandatory=Mandatory to validate invoices ?
-Miscellaneous=Miscellaneous
 ##### Webcal setup #####
 WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at following link: %s
 ##### Invoices #####

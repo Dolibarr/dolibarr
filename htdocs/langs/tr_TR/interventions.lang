@@ -45,6 +45,7 @@ TypeContact_fichinter_external_CUSTOMER=Müşteri izleme yetkilisi
 # Modele numérotation
 PrintProductsOnFichinter=Müdahale kartında "ürün" türü (yalnızca hizmetleri değil) satırını da yazdır.
 PrintProductsOnFichinterDetails=Siparişlerden oluşturulan müdahaleler
+UseServicesDurationOnFichinter=Siparişlerden oluşturulan müdahaleler için hizmet sürelerini kullan
 InterventionStatistics=Müdahale istatistikleri
 NbOfinterventions=Müdahale kartları sayısı
 NumberOfInterventionsByMonth=Aylık (doğrulama tarihi) müdahale kartları sayısı

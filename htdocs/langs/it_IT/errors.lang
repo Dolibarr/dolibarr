@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Errore, il tuo PHP deve avere il modulo <b>%s</b> installato 
 ErrorOpenIDSetupNotComplete=Hai impostato il config file di Dolibarr per permettere l'autenticazione tramite OpenID, ma l'URL del service di OpenID non è definita nella costante %s
 ErrorWarehouseMustDiffers=Il magazzino di origine e quello di destinazione devono essere differenti
 ErrorBadFormat=Formato non valido!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Errore, questo membro non è stato ancora collegato a nessuna terza parte. Collega il membro ad una delle terze parti esistenti o creane una nuova prima di creare sottoscrizioni con fattura.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Errore, ci sono alcune consegne collegate a questa spedizione. Cancellazione rifiutata.
 ErrorCantDeletePaymentReconciliated=Impossibile cancellare un pagamento che ha generato una transazione bancaria che è stata conciliata
 ErrorCantDeletePaymentSharedWithPayedInvoice=Impossibile cancellare un pagamento condiviso con almeno una fattura con lo stato Pagato
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.

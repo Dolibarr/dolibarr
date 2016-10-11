@@ -100,3 +100,6 @@ WeeklyHours=Savaitės valandos
 ColorUser=Vartotojo spalva
 DisabledInMonoUserMode=Disabled in maintenance mode
 UserAccountancyCode=User accountancy code
+UserLogoff=User logout
+UserLogged=User logged
+DateEmployment=Date of Employment

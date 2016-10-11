@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Eroare, PHP trebuie să aibă modul <b>%s</b> instalat pentru
 ErrorOpenIDSetupNotComplete=Trebuie setat fișier de configurare Dolibarr pentru a permite autentificarea OpenID, dar URL-ul serviciului OpenID nu este definit în constanta %s
 ErrorWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
 ErrorBadFormat=Format gresit!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Eroare, acest membru nu este încă legat de nici un terţ. Link  Membru catre un terţ ezistent  sau creați un nou terţ înainte de crearea  abonamentului cu factura.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Eroare, există unele livrări legate de acest transport. Ștergere refuzată.
 ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o tranzacție bancară care a fost decontată
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nu se poate șterge o plată partajată de cel puțin un factură cu statutul platită
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 

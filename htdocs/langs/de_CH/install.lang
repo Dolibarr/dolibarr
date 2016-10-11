@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - install
+InstallEasy=Wir haben uns bemüht, die Installation von Dolibarr so einfach wie möglich zu gestalten. \nBefolgen Sie einfach die Schritte auf dem Bildschirm.
 ConfFileIsNotWritable=Die Konfigurationsdatei <b>%s</b> ist nicht beschreibbar. Bitte überprüfen Sie die Dateizugriffsrechte. Für die Erstinstallation muss Ihr Webserver in die Konfigurationsdatei schreiben können, sezzten Sie die Dateiberechtigungen entsprechend (z.B. mittels "chmod 666" auf Unix-Betriebssystemen).
 ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
 IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".

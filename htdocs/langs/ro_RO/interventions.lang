@@ -45,6 +45,7 @@ TypeContact_fichinter_external_CUSTOMER=Contact client urmărire intervenţie
 # Modele numérotation
 PrintProductsOnFichinter=Printează si liniile de tip ''produs''( nu numai serviciile) pe fişa intervenţiei
 PrintProductsOnFichinterDetails=intervenții generate din comenzi
+UseServicesDurationOnFichinter=Use services duration for interventions generated from orders
 InterventionStatistics=Statistici intervenţii
 NbOfinterventions=Numar Fişe intervenţie
 NumberOfInterventionsByMonth=Numarul Fişelor intervenţie pe luna(data validare)

@@ -12,6 +12,6 @@ CloseEtablishment=Close establishment
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module
-Employees=Employees
-Employee=Employee
-NewEmployee=New employee
+Employees=Punonjësit
+Employee=Punonjës
+NewEmployee=Punonjës i ri

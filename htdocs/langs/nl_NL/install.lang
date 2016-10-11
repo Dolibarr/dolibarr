@@ -11,12 +11,14 @@ PHPSupportSessions=Deze PHP installatie ondersteund sessies.
 PHPSupportPOSTGETOk=Deze PHP installatie ondersteund POST en GET.
 PHPSupportPOSTGETKo=Mogelijk ondersteund uw PHP installatie geen POST en / of GET variabelen. Controleer deze instelling <b>variables_order</b> in php.ini.
 PHPSupportGD=Deze PHP installatie ondersteund GD grafische functies.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Deze PHP installatie ondersteund UTF8 functies.
 PHPMemoryOK=Het maximale sessiegeheugen van deze PHP installatie is ingesteld op <b>%s</b>. Dit zou genoeg moeten zijn.
 PHPMemoryTooLow=Het maximale sessiegeheugen van deze PHP installatie is ingesteld op <b>%s</b> bytes. Dit zou te weinig kunnen zijn. Verander uw <b>php.ini</b> om de <b>memory_limit</b> instelling op minimaal <b>%s</b> bytes te zetten.
 Recheck=Klik hier voor een significantere test
 ErrorPHPDoesNotSupportSessions=Uw PHP installatie ondersteund geen sessies. Dit is vereist voor een goede werking van Dolibarr. Controleer uw PHP instellingen.
 ErrorPHPDoesNotSupportGD=Uw PHP installatie ondersteund geen grafische functies. Grafieken zullen niet beschikbaar zijn.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Uw PHP installatie ondersteund geen UTF8 functies. Dolibarr kan daardoor niet goed werken. Los dit op voordat u verder gaat met de installatie van Dolibarr.
 ErrorDirDoesNotExists=De map %s bestaat niet.
 ErrorGoBackAndCorrectParameters=Ga terug en corrigeer de foutief ingestelde waarden.
@@ -133,6 +135,10 @@ ActivateModule=Activeer module %s
 ShowEditTechnicalParameters=Klik hier om geavanceerde parameters te zien of te wijzigen. (expert instellingen)
 WarningUpgrade=Opgelet:\nHeb je eerst een database backup uitgevoerd?\nDit wordt ten zeerste aanbevolen: bijvoorbeeld in het geval er fouten in de database systemen zitten (voorbeeld mysql version 5.5.40/41/42/43), sommige data of tabellen kunnen verloren gaan tijdens dit proces,  daarom is het aanbevolen om een volledige dump van jou database te hebben voor je start met de migratie.\n\nDruk op OK om de migratie te starten....
 ErrorDatabaseVersionForbiddenForMigration=Uw database versie is %s en heeft een kritieke bug die gegevensverlies veroorzaakt als u structuur veranderingen uitvoert op uw database, welke gedaan worden door het migratieproces. Vanwege deze reden, zal de migratie niet worden toegestaan ​​totdat u uw database upgrade naar een hogere versie (lijst van gekende versies met bug: %s).
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Bijwerken van gegevens over acties
 MigrationPaymentMode=Data migratie voor de betaling mode
 MigrationCategorieAssociation=Migratie van categoriën
 MigrationEvents=Migratie van taken om taak eigenaar toe te voegen in toekennings tabel
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Herlaad module %s
 ShowNotAvailableOptions=Toon niet beschikbare opties
 HideNotAvailableOptions=Verberg niet beschikbare opties

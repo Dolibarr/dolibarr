@@ -157,3 +157,4 @@ OrderCreated=Jūsu pasūtījumi ir radīti
 OrderFail=Kļūda notika laikā jūsu pasūtījumu radīšanu
 CreateOrders=Izveidot pasūtījumus
 ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

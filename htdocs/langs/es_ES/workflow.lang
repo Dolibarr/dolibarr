@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Configuración del módulo Flujo de trabajo
 WorkflowDesc=Este módulo está diseñado para modificar el comportamiento de acciones automáticas en la aplicación. Por defecto, el flujo de trabajo está abierto (se pueden hacer cosas en el orden que se desee). Puede activar las acciones automáticas que le interesen.
 ThereIsNoWorkflowToModify=No hay disponibles modificaciones de flujo de trabajo de los módulos activados.
@@ -9,3 +9,5 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamen
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto cuando el pedido de cliente relacionado se clasifique como pagado
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos cuando la factura relacionada se clasifique como pagada
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos de cliente relacionados cuando la factura sea validada
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto relacionado cuando la factura a cliente sea validada
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar como enviado el pedido origen en la validación del envío si la cantidad enviada es la misma que la del pedido

@@ -129,7 +129,7 @@ ErrorPHPNeedModule=خطأ، يجب PHP الخاص بتثبيت <b>وحدة٪ s �
 ErrorOpenIDSetupNotComplete=يمكنك إعداد Dolibarr ملف التكوين للسماح بالمصادقة رض، ولكن لم يتم تعريف URL الخدمة رض إلى المستمر٪ الصورة
 ErrorWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات
 ErrorBadFormat=شكل سيئة!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطأ، لا يرتبط هذا العضو حتى الآن أي مرشحين عن. عضو تصل إلى طرف ثالث القائمة أو إنشاء مرشحين عن الجديد قبل إنشاء الاشتراك مع الفاتورة.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=خطأ، وهناك بعض الولادات ترتبط هذه الشحنة. رفض الحذف.
 ErrorCantDeletePaymentReconciliated=لا يمكنك حذف الدفع التي قد ولدت المعاملات المصرفية التي تم التصالح
 ErrorCantDeletePaymentSharedWithPayedInvoice=لا يمكنك حذف دفع تتقاسمها فاتورة واحدة على الأقل مع وضع سيولي
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
