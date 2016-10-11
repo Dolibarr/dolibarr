@@ -1107,7 +1107,6 @@ CompanyIdProfChecker=Pravila za profesionalne ID
 MustBeUnique=Mora biti jedinstven ?
 MustBeMandatory=Obavezan za kreiranje komitenta ?
 MustBeInvoiceMandatory=Obavezno za ovjeru računa ?
-Miscellaneous=Ostalo
 ##### Webcal setup #####
 WebCalUrlForVCalExport=Izvoz poveznice u <b>%s</b> formatu je dostupno na sljedećoj poveznici: %s
 ##### Invoices #####
