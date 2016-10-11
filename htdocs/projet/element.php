@@ -5,6 +5,7 @@
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,7 +485,13 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ht_by_line=$element->total_ht;
 
-				$total_ht = $total_ht + $total_ht_by_line;
+				$qualifiedfortotal=true;
+				if ($key == 'invoice')
+				{
+					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				}
+				
+				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
 				elseif ($tablename == 'projet_task')
@@ -494,7 +501,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ttc_by_line=$element->total_ttc;
 
-				$total_ttc = $total_ttc + $total_ttc_by_line;
+				if ($qualifiedfortotal) $total_ttc = $total_ttc + $total_ttc_by_line;
 			}
 
 			// Calculate margin
