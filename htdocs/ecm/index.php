@@ -100,7 +100,13 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if (empty($_FILES['userfile']['tmp_name']))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
+			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
+		}
+		else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
+
 	}
 
 	if (! $error)

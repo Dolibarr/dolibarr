@@ -1359,6 +1359,8 @@ class Contrat extends CommonObject
 			if (empty($info_bits)) $info_bits=0;
 			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
 			if (empty($pu_ttc)) $pu_ttc=0;
+            if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
+            if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
 			{
