@@ -22,7 +22,7 @@ SessionId=Session ID
 SessionSaveHandler=Handler to save sessions
 SessionSavePath=Storage session localization
 PurgeSessions=Purge of sessions
-ConfirmPurgeSessions=Do you really want to purge all sessions ? This will disconnect every user (except yourself).
+ConfirmPurgeSessions=Do you really want to purge all sessions? This will disconnect every user (except yourself).
 NoSessionListWithThisHandler=Save session handler configured in your PHP does not allow to list all running sessions.
 LockNewSessions=Lock new connections
 ConfirmLockNewSessions=Are you sure you want to restrict any new Dolibarr connection to yourself. Only user <b>%s</b> will be able to connect after that. 
@@ -143,7 +143,7 @@ PurgeRunNow=Purge now
 PurgeNothingToDelete=No directory or files to delete.
 PurgeNDirectoriesDeleted=<b>%s</b> files or directories deleted.
 PurgeAuditEvents=Purge all security events
-ConfirmPurgeAuditEvents=Are you sure you want to purge all security events ? All security logs will be deleted, no other data will be removed.
+ConfirmPurgeAuditEvents=Are you sure you want to purge all security events? All security logs will be deleted, no other data will be removed.
 GenerateBackup=Generate backup
 Backup=Backup
 Restore=Restore
@@ -303,7 +303,7 @@ UseACacheDelay= Delay for caching export response in seconds (0 or empty for no 
 DisableLinkToHelpCenter=Hide link "<b>Need help or support</b>" on login page
 DisableLinkToHelp=Hide link to online help "<b>%s</b>"
 AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on documents because too long, you must add yourself carriage returns in the textarea.
-ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your data files with no way to restore them (ECM files, attached files...). 
+ConfirmPurge=Are you sure you want to execute this purge?<br>This will delete definitely all your data files with no way to restore them (ECM files, attached files...). 
 MinLength=Minimum length
 LanguageFilesCachedIntoShmopSharedMemory=Files .lang loaded in shared memory
 ExamplesWithCurrentSetup=Examples with current running setup
@@ -384,7 +384,7 @@ BarcodeInitForProductsOrServices=Mass barcode init or reset for products or serv
 CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=Init value for next %s empty records
 EraseAllCurrentBarCode=Erase all current barcode values
-ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode values ?
+ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode values?
 AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 EnableFileCache=Enable file cache
@@ -397,7 +397,7 @@ EnableAndSetupModuleCron=If you want to have this recurring invoice beeing gener
 ModuleCompanyCodeAquarium=Return an accountancy code built by:<br>%s followed by third party supplier code for a supplier accountancy code,<br>%s followed by third party customer code for a customer accountancy code.
 ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
-Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce an third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1 validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval is always required.  
+Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1 validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval is always required.  
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 
 # Modules
@@ -1104,9 +1104,9 @@ DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT or .ODS f
 WatermarkOnDraft=Watermark on draft document
 JSOnPaimentBill=Activate feature to autofill payment lines on payment form
 CompanyIdProfChecker=Rules on Professional Ids
-MustBeUnique=Must be unique ?
-MustBeMandatory=Mandatory to create third parties ?
-MustBeInvoiceMandatory=Mandatory to validate invoices ?
+MustBeUnique=Must be unique?
+MustBeMandatory=Mandatory to create third parties?
+MustBeInvoiceMandatory=Mandatory to validate invoices?
 ##### Webcal setup #####
 WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at following link: %s
 ##### Invoices #####
@@ -1426,7 +1426,7 @@ DetailTarget=Target for links (_blank top open a new window)
 DetailLevel=Level (-1:top menu, 0:header menu, >0 menu and sub menu)
 ModifMenu=Menu change
 DeleteMenu=Delete menu entry
-ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b> ?
+ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b>?
 FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Taxes, social or fiscal taxes and dividends module setup
@@ -1481,7 +1481,7 @@ NbOfBoomarkToShow=Maximum number of bookmarks to show in left menu
 WebServicesSetup=Webservices module setup
 WebServicesDesc=By enabling this module, Dolibarr become a web service server to provide miscellaneous web services.
 WSDLCanBeDownloadedHere=WSDL descriptor files of provided services can be download here
-EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint available at Url
+EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint available at URL
 ##### API ####
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
@@ -1529,7 +1529,7 @@ NewFiscalYear=New fiscal year
 OpenFiscalYear=Open fiscal year
 CloseFiscalYear=Close fiscal year
 DeleteFiscalYear=Delete fiscal year
-ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year?
 ShowFiscalYear=Show fiscal year
 AlwaysEditable=Can always be edited
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
