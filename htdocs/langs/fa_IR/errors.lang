@@ -129,7 +129,7 @@ ErrorPHPNeedModule=خطا، PHP شما باید <b>بخش٪ s</b> نصب کرد�
 ErrorOpenIDSetupNotComplete=شما راه اندازی Dolibarr فایل پیکربندی اجازه می دهد تا احراز هویت ایجاد حساب کاربری، اما URL خدمات ایجاد حساب کاربری به٪ ثابت تعریف نشده
 ErrorWarehouseMustDiffers=منبع و هدف انبارها باید متفاوت
 ErrorBadFormat=فرمت بد!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطا، این عضو هنوز رتبهدهی نشده است به هر thirdparty مرتبط است. عضو لینک به یک شخص ثالث موجود یا ایجاد یک thirdparty جدید قبل از ایجاد اشتراک با فاکتور.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=خطا، برخی از زایمان مرتبط با این حمل و نقل وجود دارد. حذف خودداری کرد.
 ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
 ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.

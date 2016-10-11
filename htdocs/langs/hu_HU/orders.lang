@@ -157,3 +157,4 @@ OrderCreated=A megrendelései elkészültek
 OrderFail=Hiba történt a megrendelések készítése közben
 CreateOrders=Megrendelések készítése
 ToBillSeveralOrderSelectCustomer=Több megrendeléshez tartozó számla elkészítéséhez először kattintson a partnerre, majd válassza ki: "%s"
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

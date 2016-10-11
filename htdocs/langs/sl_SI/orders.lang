@@ -157,3 +157,4 @@ OrderCreated=Vaša naročila so bila ustvarjena
 OrderFail=Pri ustvarjanju naročil je prišlo do napake
 CreateOrders=Ustvari naročila
 ToBillSeveralOrderSelectCustomer=Za ustvarjanje računa za več naročil najprej kliknite na kupca, nato izberite "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

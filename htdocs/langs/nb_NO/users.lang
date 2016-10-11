@@ -100,3 +100,6 @@ WeeklyHours=Uketimer
 ColorUser=Farge på bruker
 DisabledInMonoUserMode=Deaktivert i vedlikeholds-modus
 UserAccountancyCode=Regnskapskonto for bruker
+UserLogoff=Brukerutlogging
+UserLogged=Bruker innlogget
+DateEmployment=Ansettelsesdato

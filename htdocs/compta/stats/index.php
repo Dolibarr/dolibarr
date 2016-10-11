@@ -85,6 +85,11 @@ $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
 
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 
 if ($modecompta == 'CREANCES-DETTES')
 {

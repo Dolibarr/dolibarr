@@ -157,3 +157,4 @@ OrderCreated=Siparişleriniz oluşturulmuştur
 OrderFail=Siparişiniz oluşturulması sırasında hata oluştu
 CreateOrders=Sipariş oluştur
 ToBillSeveralOrderSelectCustomer=Birden çok siparişe fatura oluşturmak için, önce müşteriye tıkla, sonra "%s" seç
+CloseReceivedSupplierOrdersAutomatically=Bütün ürünler teslim alındıysa siparişi "%s" olarak kapat.

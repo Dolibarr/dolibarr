@@ -8,7 +8,7 @@ NoResourceLinked=Keine Ressource verknüpft
 
 ResourcePageIndex=Liste der Ressourcen
 ResourceSingular=Ressource
-ResourceCard=Ressourcen-Karte
+ResourceCard=Ressource - Karte
 AddResource=Ressource erstellen
 ResourceFormLabel_ref=Ressourcen-Name
 ResourceType=Ressourcen-Typ

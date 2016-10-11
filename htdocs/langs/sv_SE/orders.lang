@@ -157,3 +157,4 @@ OrderCreated=Din order har skapats
 OrderFail=Ett fel inträffade under din order skapande
 CreateOrders=Skapa order
 ToBillSeveralOrderSelectCustomer=För att skapa en faktura för flera ordrar, klicka först på kunden och välj sedan "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

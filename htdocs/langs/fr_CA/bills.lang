@@ -30,6 +30,7 @@ MaxPeriodNumber=Nombre maximal de génération de facture
 NbOfGenerationDone=Nombre de génération de facture déjà faite
 GeneratedFromRecurringInvoice=Généré à partir du modèle facture récurrente %s
 InvoiceGeneratedFromTemplate=Facture %s générée depuis le modèle de facture %s récurrentes
+BankAccountNumberKey=Clé RIB
 ChequeMaker=Émetteur du chèque/transfert
 PaymentByChequeOrderedTo=Règlement (tx incl.) par chèque à l'ordre de %s envoyé à
 PaymentByChequeOrderedToShort=Règlement (tx incl.) par chèque à l'ordre de

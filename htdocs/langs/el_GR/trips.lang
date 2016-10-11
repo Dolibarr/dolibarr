@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
+ExpenseReport=Αναφορά εξόδων
 ExpenseReports=Αναφορές εξόδων
 Trips=Αναφορές εξόδων
 TripsAndExpenses=Αναφορές εξόδων
 TripsAndExpensesStatistics=Στατιστικές αναφορές εξόδων
-TripCard=Expense report card
-AddTrip=Create expense report
+TripCard=Κάρτα αναφοράς εξόδων
+AddTrip=Δημιουργία αναφοράς εξόδων
 ListOfTrips=Λίστα αναφορών εξόδων
 ListOfFees=Λίστα φόρων
 ShowTrip=Show expense report
-NewTrip=New expense report
+NewTrip=Νέα αναφορά εξόδων
 CompanyVisited=Έγινε επίσκεψη σε εταιρία/οργανισμό
 FeesKilometersOrAmout=Σύνολο χλμ
 DeleteTrip=Διαγραφή αναφοράς εξόδων
 ConfirmDeleteTrip=Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την αναφορά εξόδων;
 ListTripsAndExpenses=Λίστα αναφορών εξόδων
-ListToApprove=Waiting for approval
+ListToApprove=Αναμονή έγγρισης
 ExpensesArea=Περιοχή αναφοράς εξόδων
-ClassifyRefunded=Ταξινομήστε «επιστραφεί»
+ClassifyRefunded=Κατηγοριοποίηση ως «επιστράφει»
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
@@ -47,13 +47,13 @@ VALIDATOR=User responsible for approval
 VALIDOR=Εγκρίθηκε από
 AUTHOR=Αποθηκεύτηκε από
 AUTHORPAIEMENT=Πληρώθηκε από
-REFUSEUR=Denied by
+REFUSEUR=Απορρίφθηκε από
 CANCEL_USER=Διαγράφηκε από
 
 MOTIF_REFUS=Αιτία
 MOTIF_CANCEL=Αιτία
 
-DATE_REFUS=Deny date
+DATE_REFUS=Ημερομηνία απόρριψης
 DATE_SAVE=Ημερομηνία Επικύρωσης
 DATE_CANCEL=Ημερομηνία ακύρωσης
 DATE_PAIEMENT=Ημερομηνία πληρωμής
@@ -77,7 +77,7 @@ ConfirmCancelTrip=Είστε σίγουροι ότι θέλετε να ακυρ�
 BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
-SaveTrip=Validate expense report
+SaveTrip=Επικύρωση αναφοράς εξόδων
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
 NoTripsToExportCSV=No expense report to export for this period.

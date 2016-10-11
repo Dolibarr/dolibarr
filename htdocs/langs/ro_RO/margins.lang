@@ -41,3 +41,4 @@ rateMustBeNumeric=Rata trebuie să fie numerică
 markRateShouldBeLesserThan100=Rata mîrcii trebuie să fie mai mica de 100
 ShowMarginInfos=Arată informaţii marjă
 CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

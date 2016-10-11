@@ -100,3 +100,6 @@ WeeklyHours=Nedeljni broj sati
 ColorUser=Boja korisnika
 DisabledInMonoUserMode=Onemogućeno u modu održavanja
 UserAccountancyCode=Korisnikov računovodstveni kod
+UserLogoff=User logout
+UserLogged=User logged
+DateEmployment=Date of Employment

@@ -157,3 +157,4 @@ OrderCreated=Sinu tellimused on loodud
 OrderFail=Sinu tellimuste loomise ajal tekkis viga
 CreateOrders=Loo tellimused
 ToBillSeveralOrderSelectCustomer=Mitme erineva tellimuse põhjal müügiarve loomiseks klõpsa kõigepealt kliendi kaardile ning seejärel vali "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

@@ -11,12 +11,14 @@ PHPSupportSessions=このPHPは、セッションをサポートしています�
 PHPSupportPOSTGETOk=このPHPは、変数はPOSTとGETをサポートしています。
 PHPSupportPOSTGETKo=それはあなたのPHPの設定は変数のPOSTおよび/をサポートしたり、取得していない可能性があります。 php.iniのパラメータ<b>に、variables_orderを</b>確認<b>して</b>ください。
 PHPSupportGD=このPHPのサポートGDグラフィック機能。
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=このPHPは、UTF8の機能をサポートしています。
 PHPMemoryOK=あなたのPHPの最大のセッションメモリは<b>%s</b>に設定されています。これは十分なはずです。
 PHPMemoryTooLow=あなたのPHPの最大セッション·メモリーが<b>%s</b>バイトに設定されています。これはあまりにも低くする必要があります。少なくとも<b>%s</b>バイト<b>にmemory_limit</b>パラメータを設定するには、php.ini <b>を</b>変更してください。
 Recheck=もっと意味のあるテストはここをクリック
 ErrorPHPDoesNotSupportSessions=PHPのインストールでは、セッションをサポートしていません。この機能はDolibarrの作業を行う必要があります。 PHPの設定を確認してください。
 ErrorPHPDoesNotSupportGD=PHPのインストールはグラフィカル関数GDをサポートしていません。ないグラフは利用できません。
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=PHPのインストールは、UTF8の機能をサポートしていません。 Dolibarrが正しく動作することはできません。 Dolibarrをインストールする前にこの問題を解決する。
 ErrorDirDoesNotExists=ディレクトリの%sが存在しません。
 ErrorGoBackAndCorrectParameters=後方に移動して、不正なパラメータを修正してください。
@@ -133,6 +135,10 @@ ActivateModule=モジュール%sをアクティブにする
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=アクション上でデータを更新する
 MigrationPaymentMode=支払い·モードのデータ移行
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

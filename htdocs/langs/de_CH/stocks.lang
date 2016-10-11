@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - stocks
+WarehouseCard=Warenlagerkarte
 CancelSending=Lieferung abbrechen
 StockTransfer=Lagerumbuchung
 MassStockTransferShort=Massen Lagerumbuchungen
+StockLowerThanLimit=Bestand unterhalb des Sicherungsbestandes
 DeStockOnShipmentOnClosing=Verringere echten Bestände bei Lieferbestätigung
 ReStockOnDispatchOrder=Reale Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
 StockLimit=Sicherungsbestand für autom. Benachrichtigung

@@ -157,3 +157,4 @@ OrderCreated=Twoje zamówienia zostały utworzone
 OrderFail=Błąd podczas tworzenia się zamówień
 CreateOrders=Tworzenie zamówień
 ToBillSeveralOrderSelectCustomer=Aby utworzyć fakturę za kilka rzędów, kliknij pierwszy na klienta, a następnie wybrać "% s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

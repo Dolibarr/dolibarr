@@ -41,3 +41,4 @@ rateMustBeNumeric=Le taux doit être une valeure numérique
 markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
 ShowMarginInfos=Afficher les infos de marges
 CheckMargins=Détails des marges
+MarginPerSaleRepresentativeWarning=Les données de marge par utilisateur sont calculées en fonction du lien entre les tiers et l'utilisateur affecté en tant que commercial. Les tiers peuvent ne pas avoir de commercial ou en avoir plusieurs. De ce fait, certaines lignes du rapport peuvent ne pas être affichées ou l'être plusieurs fois.

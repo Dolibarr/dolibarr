@@ -2,7 +2,7 @@
 AddThisPageToBookmarks=添加此页面到书签
 Bookmark=书签
 Bookmarks=书签
-NewBookmark=新的书签
+NewBookmark=新建书签
 ShowBookmark=显示书签
 OpenANewWindow=打开一个新窗口
 ReplaceWindow=替换当前窗口
@@ -14,5 +14,5 @@ BehaviourOnClick=点击网址时的行为
 CreateBookmark=创建书签
 SetHereATitleForLink=设置书签标题
 UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部的HTTP URL或相对Dolibarr网址
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=选择链接页面必须在新窗口中打开或不打开
 BookmarksManagement=书签管理

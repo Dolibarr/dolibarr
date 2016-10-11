@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
+$langs->load("other");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("projects");

@@ -157,3 +157,4 @@ OrderCreated=I tuoi ordini sono stati creati
 OrderFail=C'è stato un errore durante la creazione del tuo ordine
 CreateOrders=Crea ordini
 ToBillSeveralOrderSelectCustomer=Per creare una fattura per ordini multipli, clicca prima sul cliente, poi scegli "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

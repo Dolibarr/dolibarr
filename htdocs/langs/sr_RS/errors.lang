@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Greška, PHP mora imati modul <b>%s</b> da biste koristili ov
 ErrorOpenIDSetupNotComplete=Podesili ste konfiguracioni fajl da odobrava OpenID autentifikaciju, ali URL OpenID servisa nije definisan u konstanti %s
 ErrorWarehouseMustDiffers=Izvorni i ciljani magacini moraju biti različiti
 ErrorBadFormat=Pogrešan format!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Greška, ovaj član još nije povezan ni sa jednim subjektom. Povežite člana sa postojećim subjektom ili napravite nov subjekat pre kreiranja pretplate sa fakturom.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Greška, postoje objekti vezani za ovu isporuku. Brisanje je odbijeno.
 ErrorCantDeletePaymentReconciliated=Nemoguće obrisati uplatu koja je generisala bankovnu transakciju koja je već proknjižena
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nemoguće obrisati uplatu koja je vezana za bar jednu fakturu sa statusom Plaćeno
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.

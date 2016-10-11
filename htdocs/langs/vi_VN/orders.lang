@@ -157,3 +157,4 @@ OrderCreated=Đơn hàng của bạn đã được tạo
 OrderFail=Một lỗi đã xảy ra khi tạo đơn hàng của bạn
 CreateOrders=Tạo đơn hàng
 ToBillSeveralOrderSelectCustomer=Để tạo một hóa đơn cho nhiều đơn hàng, đầu tiên nhấp vào khách hàng, sau đó chọn "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

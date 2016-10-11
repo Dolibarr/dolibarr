@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - sms
-SmsSetup=Configuraçao sms
+Sms=SMS
+SmsSetup=Configuração do SMS
 SmsDesc=Esta pagina permite definir as opçoes globais para os SMS
-SmsCard=Cartao SMS
+SmsCard=Chip SMS
 AllSms=Todas as campnhas SMS
 SmsTargets=Alvos
 SmsRecipients=Alvos
-SmsTitle=Descriçao
 SmsTopic=Topico do SMS
 ShowSms=Mostrar SMS
 ListOfSms=Listar campanhas SMS
@@ -31,3 +31,4 @@ NbOfSms=Numero de numeros telefonicos
 ThisIsATestMessage=Isto e uma mensagem de teste
 SmsInfoCharRemain=Nr de caracteres restantes
 SmsInfoNumero=(formato internacional ex: +33899701761)
+SmsNoPossibleSenderFound=Nenhum expedidor disponível. Verifique a configuração do seu provedor de SMS.

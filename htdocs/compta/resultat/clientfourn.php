@@ -149,6 +149,11 @@ $hselected = 'report';
 
 report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 // Show report array
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

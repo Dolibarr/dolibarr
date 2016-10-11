@@ -11,12 +11,14 @@ PHPSupportSessions=Ta PHP podpira seje.
 PHPSupportPOSTGETOk=Ta PHP podpira spremenljivke POST in GET.
 PHPSupportPOSTGETKo=Morda vaše PHP nastavitve ne podpirajo spremenljivk POST in/ali GET. Preverite parameter <b>variables_order</b> v datoteki php.ini.
 PHPSupportGD=Ta PHP podpira GD grafične funkcije.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Ta PHP podpira UTF8 funkcije.
 PHPMemoryOK=Maksimalni spomin za sejo vašega PHP je nastavljen na <b>%s</b>. To bi moralo zadoščati.
 PHPMemoryTooLow=Maksimalni spomin za sejo vašega PHP je nastavljen na <b>%s</b> bytov. To je morda premalo. Spremenite datoteko <b>php.ini</b> in nastavite parameter <b>memory_limit</b> najmanj na <b>%s</b> bytov.
 Recheck=Kliknite tukaj za pomembnejše teste
 ErrorPHPDoesNotSupportSessions=Vaša PHP instalacija ne podpira sej. Ta funkcija je zahtevana za delovanje Dolibarr. Preverite vaše PHP nastavitve.
 ErrorPHPDoesNotSupportGD=Vaša PHP instalacija ne podpira grafične funkcije GD. Grafi ne bodo na voljo.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Vaša PHP instalacija ne podpira funkcij UTF8. Dolibarr zato ne bo mogel pravilno delovati. Zadevo rešite pred namestitvijo Dolibarr.
 ErrorDirDoesNotExists=Mapa %s ne obstaja.
 ErrorGoBackAndCorrectParameters=Vrnite se nazaj in popravite napačne parametre.
@@ -133,6 +135,10 @@ ActivateModule=Vključite modul %s
 ShowEditTechnicalParameters=Kliknite tukaj za prikaz/popravek naprednih parametrov (expertni način)
 WarningUpgrade=Pozor:\nAli ste najprej pognali varnostno kopiranje baze ?\nTo je zelo priporočeno: na primer, zaradi napak v sistemu baze (na primer mysql verzija 5.5.40/41/42/43), se lahko nekateri podatki ali tabele v tem postopku izgubijo, zato močno priporočamo kopiranje celotne baze pred začetkom migracije.\n\nKliknite OK za začetek postopka migracije...
 ErrorDatabaseVersionForbiddenForMigration=Verzija vaše baze podatkov je %s. Vsebuje kritičnega hrošča, ki povzroči izgubo podatkov, če naredite strukturno spremembo baze, kot jo zahteva postopek migracije. Zato migracija ne bo dovoljena, dokler ne posodobite baze na višjo stabilno verzijo (seznam znanih hroščastih verzij: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Posodobitev podatkov o aktivnostih
 MigrationPaymentMode=Podatki, migracije za način plačila
 MigrationCategorieAssociation=Migracija kategorij
 MigrationEvents=Migracija dogodkov za dodajanje lastnika dogodka v dodelitveno tabelo
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ponovno naložite modul %s
 ShowNotAvailableOptions=Prikaži opcije, ki niso na voljo
 HideNotAvailableOptions=Skrij opcije, ki niso na voljo

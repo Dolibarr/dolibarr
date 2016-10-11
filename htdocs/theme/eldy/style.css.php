@@ -1388,7 +1388,7 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	position: absolute;
-	text-align: right;
+	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 5px;
 	top: 3px;
 	font-weight: bold;

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - members
 MembersArea=Mitglieder-Übersicht
 MemberCard=Mitglied - Karte
-SubscriptionCard=Abonnementkarte
+SubscriptionCard=Abonnement - Karte
 Member=Mitglied
 Members=Mitglieder
 ShowMember=Zeige Mitgliedskarte
@@ -152,7 +152,7 @@ MenuMembersStats=Statistik
 LastMemberDate=Letztes Mitgliedsdatum
 Nature=Art
 Public=Informationen sind öffentlich (Nein = Privat)
-Exports=Exports
+Exports=Exporte
 NewMemberbyWeb=Neues Mitgliede hinzugefügt, warte auf Genehmigung.
 NewMemberForm=Neues Mitgliederformular
 SubscriptionsStatistics=Statistik über Abonnements

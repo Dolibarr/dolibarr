@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 SuppliersInvoice=Faturas do Fornecedor
-BuyingPriceMin=Preco de compra minimo
-BuyingPriceMinShort=Preco de compra min
+ShowSupplierInvoice=Mostrar Fatura de Suprimentos
 SomeSubProductHaveNoPrices=Algums dos sub-produtos nao tem um preco definido
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Esta referencia de fornecedor ja esta asociada com a referenca: %s
 Availability=Entrega
@@ -18,4 +17,8 @@ ListOfSupplierOrders=Lista de pedidos do fornecedor
 MenuOrdersSupplierToBill=Pedidos a se faturar do foprnecedor
 NbDaysToDelivery=Atraso de entrega em dias
 DescNbDaysToDelivery=O maior atraso de entregar os produtos a partir deste fim
-UseDoubleApproval=Use dupla aprovação quando quantidade (sem impostos) é superior (A segunda aprovação pode ser feito por qualquer usuário com a permissão dedicado. Defina para 0 para não aprovação de casal)
+SupplierReputation=Reputação do fornecedor
+DoNotOrderThisProductToThisSupplier=Não pedir
+NotTheGoodQualitySupplier=Qualidade inadequada
+ReputationForThisProduct=Reputação
+BuyerName=Nome do comprador

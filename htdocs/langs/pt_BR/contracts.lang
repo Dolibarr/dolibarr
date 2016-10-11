@@ -11,6 +11,7 @@ ServiceStatusNotLateShort=Não vencido
 ServiceStatusLate=Em vigência, vencido
 ServiceStatusLateShort=Vencido
 ServiceStatusClosed=Encerrado
+ShowContractOfService=Mostrar contrato de serviço
 Contracts=Contratos
 ContractsSubscriptions=Contratos
 ContractLine=Linha contrato

@@ -11,12 +11,14 @@ PHPSupportSessions=يدعم هذا الـ PHP ميزة الجلسات الزمن
 PHPSupportPOSTGETOk=يدعم هذا الـ PHP وظائف POST و GET.
 PHPSupportPOSTGETKo=من المحتمل أن نسخة الـ PHP لديك لاتدعم وظائف POST - GET. تحقق من <b>variables_order</b> في ملف php.ini
 PHPSupportGD=يدعم اصدار الـ PHP هذا وظائف GD الرسومية.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=يدعم هذاا الاصدار من PHP وظائف الترميز UTF8.
 PHPMemoryOK=تم إعداد الجلسة الزمنية للذاكرة في  PHP الى <b>%s</b> . من المفترض ان تكون كافية.
 PHPMemoryTooLow=الحد الأقصى الخاص بك PHP دورة الذاكرة ومن المقرر <b>٪ ق</b> بايت. لهذا ينبغي أن يكون منخفضا جدا. تغيير <b>php.ini</b> وضع <b>memory_limit</b> المعلم إلى ما لا يقل عن <b>٪ ق</b> بايت.
 Recheck=اضغط هنا لمزيد من الاختبار ذو معنى
 ErrorPHPDoesNotSupportSessions=PHP تركيب الخاص بك لا يدعم الدورات. هذه الميزة هو مطلوب لجعل العمل Dolibarr. التحقق من اتصالك PHP الإعداد.
 ErrorPHPDoesNotSupportGD=PHP تركيب الخاص بك لا يدعم وظيفة بيانية ش ج. لا الرسم البياني سيكون متاحا.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=PHP تركيب الخاص بك لا يدعم UTF8 المهام. Dolibarr لا يمكن أن تعمل بشكل صحيح. لحل هذه قبل تثبيت Dolibarr.
 ErrorDirDoesNotExists=دليل ٪ ق لا يوجد.
 ErrorGoBackAndCorrectParameters=العودة إلى الوراء وتصحيح الخطأ البارامترات.
@@ -133,6 +135,10 @@ ActivateModule=تفعيل وحدة %s
 ShowEditTechnicalParameters=انقر هنا لعرض/تحرير المعلمات المتقدمة (وضع الخبراء)
 WarningUpgrade=تحذير: \n\nهل قمت بأخذ النسخة الاحتياطية لقاعدة البيانات أولا؟ \n\nينصح به بشدة: على سبيل المثال، بسبب بعض الخلل في نظام قاعدة البيانات (على سبيل المثال MySQL النسخة 5.5.40 / 41/42/43)، وبعض البيانات أو الجداول قد تفقد خلال هذه العملية، لذلك الأفضل لك أن يكون هنالك نسخ احتياطي كامل لقاعدة البيانات الخاصة بك قبل البدء الترحيل.\n\n\nانقر فوق موافق لبدء عملية الترحيل...
 ErrorDatabaseVersionForbiddenForMigration=إصدار قاعدة البيانات الخاصة بك هي%s.   يوجد بعض الخلل أدى لفقدان بعض البيانات إذا قمت بإجراء تغيير هيكلي على قاعدة البيانات الخاصة بك، مثل كان مطلوبا خلال عملية ترحيل البيانات. لن يسمح لك بترحيل البيانات حتى تقوم بترقية قاعدة البيانات الخاصة بك إلى إصدار أعلى موثوق  (قائمة الاصدارات الموثوقة : %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=تحديث البيانات على الإجراءات
 MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
 MigrationCategorieAssociation=تحديث الفئات
 MigrationEvents=الترحيل من الأحداث لإضافة مالك الحدث في جدول الاحالة
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=إعادة تحديث الوحدات %s
 ShowNotAvailableOptions=عرض خيارات غير متوفرة
 HideNotAvailableOptions=إخفاء خيارات غير متوفرة
