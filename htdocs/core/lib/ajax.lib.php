@@ -35,7 +35,7 @@
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array 
+ *  @param	array	$ajaxoptions		Multiple options array
  *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                          Ex: array('disabled'=>
  *                                          Ex: array('show'=>
@@ -61,8 +61,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					$("input#search_'.$htmlname.'").keydown(function() {
 						$("#'.$htmlname.'").val("");
 					});
-						    
-					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code 
+
+					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code
 						$("input#search_'.$htmlname.'").change(function() {
 					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
 						$("#'.$htmlname.'").trigger("change");
@@ -291,7 +291,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 								    	needtotrigger="#" + fields[i];
 									}
 								}
-							
+
 								if (needtotrigger != "")	// To force select2 to refresh visible content
 								{
 									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
@@ -366,6 +366,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 
+	$widthTypeOfAutocomplete = (!empty($conf->global->MAIN_WIDTH_TYPE_OF_AUTOCOMPLETE) ? $conf->global->MAIN_WIDTH_TYPE_OF_AUTOCOMPLETE : 'resolve');
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
@@ -374,7 +375,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
-        			width: \'resolve\',		/* off or resolve */
+        			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
