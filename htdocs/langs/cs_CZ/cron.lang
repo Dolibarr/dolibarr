@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = O aplikaci
-CronAbout = O cronu
-CronAboutPage = Cron o stránce
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Nastavení naplánovaných úloh
-URLToLaunchCronJobs=URL ke kontrole a spuštění úlohy v případě potřeby
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Nebo zkontrolovat a zahájit konkrétní práci
 KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
 FileToLaunchCronJobs=Příkazový řádek pro spuštění úlohy
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následu
 CronExplainHowToRunWin=Na Microsoft Windows systémech můžete použít naplánováné nástroje úloh ke spuštění příkazového řádku každých 5 minut
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Naplánované úlohy
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Seznam vypnutých úloh
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Poslední úloha
 CronLastOutput=Výstup poslední úlohy
 CronLastResult=Výstup posledního kódu
-CronListOfCronJobs=Seznam naplánovaných úloh
 CronCommand=Příkaz
 CronList=Naplánované úlohy
 CronDelete=Smazat naplánované úlohy
 CronConfirmDelete=Jste si jisti, že chcete odstranit tyto naplánované úlohy?
-CronExecute=Spuštění naplánovaných úloh
+CronExecute=Launch scheduled job
 CronConfirmExecute=Jste si jisti, že chcete provést tyto naplánované úlohy nyní?
 CronInfo=Plánovací modul úloh umožňují provádět úlohy, které byly plánované
-CronWaitingJobs=Čekající úlohy
 CronTask=Práce
 CronNone=Nikdo
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Další provedení
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frekvence
 CronClass=Třída
 CronMethod=Metoda
 CronModule=Modul
-CronAction=Akce
-CronStatus=Status
-CronStatusActive=Povoleno
-CronStatusInactive=Vypnuto
 CronNoJobs=Žádné registrované úkoly
 CronPriority=Priorita
-CronLabel=Popis
+CronLabel=Label
 CronNbRun=Nb. zahájit
 CronMaxRun=Max nb. launch
 CronEach=Každý
 JobFinished=Práce zahájena a dokončena
 #Page card
 CronAdd= Přidat práci
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Vytvoření Instance/objektu 
 CronArgs=Parametry
-CronSaveSucess=Úspěšně uloženo
+CronSaveSucess=Save successfully
 CronNote=Komentář
 CronFieldMandatory=Pole %s je povinné
 CronErrEndDateStartDt=Datum ukončení nemůže být před datem zahájení
@@ -81,14 +67,13 @@ CronCommandHelp=Spustit příkazový řádek.
 CronCreateJob=Vytvořit novou naplánovanou úlohu
 CronFrom=From
 # Info
-CronInfoPage=Informace
 # Common
 CronType=Typ úlohy
 CronType_method=Volání metody třídy Dolibarr
 CronType_command=Shell příkaz
-CronMenu=Cron
 CronCannotLoadClass=Nelze načíst třídu nebo objekt %s %s
-UseMenuModuleToolsToAddCronJobs=Jděte do menu "Home- Moduly nářadí- Seznam úloh" kde vidíte a upravujete naplánované úlohy.
-TaskDisabled=Úloha vypnuta
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

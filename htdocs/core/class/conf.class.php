@@ -51,7 +51,7 @@ class Conf
 	public $standard_menu;
 
 	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
+	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array(), 'syslog' =>array());
 
 	var $logbuffer					= array();
 
@@ -123,6 +123,8 @@ class Conf
 	 */
 	function setValues($db)
 	{
+		global $conf;
+
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
@@ -203,7 +205,7 @@ class Conf
 
 		    $db->free($resql);
 		}
-		
+
         // Include other local consts.php files and fetch their values to the corresponding database constants
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
@@ -342,7 +344,7 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
-			
+
 			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
 			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
 			{
@@ -379,11 +381,13 @@ class Conf
 		// Set some default values
 
 		$this->global->MAIN_ACTIVATE_HTML5=1;
-		
+
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
+		if (empty($this->global->CHEQUERECEIPTS_ADDON))           $this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
         if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';         // Default mask
@@ -405,6 +409,7 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
@@ -428,7 +433,7 @@ class Conf
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
 		// conf->product->limit_size = constante de taille maximale des select de produit
-		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=100;
+		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=1000;
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// conf->theme et $this->css
@@ -480,8 +485,14 @@ class Conf
 		// Default max file size for upload
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
+		// By default, we propagate contacts
+		if (! isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) $this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN='*';  // Can be also '*' or '^(BILLING|SHIPPING|CUSTOMER|.*)$' (regex not yet implemented)
+
+		// By default, we use the zip town autofill
+		if (! isset($this->global->MAIN_USE_ZIPTOWN_DICTIONNARY)) $this->global->MAIN_USE_ZIPTOWN_DICTIONNARY=1;
+
 		// Define list of limited modules
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,supplier_proposal,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplier_proposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
@@ -499,17 +510,17 @@ class Conf
 		// Delay before warnings
 		// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
 		if (isset($this->agenda)) {
-		    $this->adherent->cotisation			= new stdClass();
-            $this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
+		    $this->adherent->subscription = new stdClass();
+            $this->adherent->subscription->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
 		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
-		if (isset($this->projet)) 
+		if (isset($this->projet))
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
 		    $this->projet->task                 = new StdClass();
-		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_TASKS_TODO:7)*24*60*60;
 		}
-		
+
         if (isset($this->commande)) {
             $this->commande->client				= new stdClass();
     		$this->commande->fournisseur		= new stdClass();
@@ -563,26 +574,40 @@ class Conf
         	if (is_object($mc)) $mc->setValues($this);
         }
 
-        // We init log handlers
-        if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(constant('SYSLOG_HANDLERS'));
-        else $handlers = array();
-        foreach ($handlers as $handler)
-        {
-        	$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
-           	if (!file_exists($file))
-        	{
-        		throw new Exception('Missing log handler file '.$handler.'.php');
-        	}
+		// We init log handlers
+		if (defined('SYSLOG_HANDLERS')) {
+			$handlers = json_decode(constant('SYSLOG_HANDLERS'));
+		} else {
+			$handlers = array();
+		}
+		foreach ($handlers as $handler) {
+			$handler_files = array();
+			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
+			foreach ($dirsyslogs as $reldir) {
+				$dir = dol_buildpath($reldir, 0);
+				$newdir = dol_osencode($dir);
+				if (is_dir($newdir)) {
+					$file = $newdir . $handler . '.php';
+					if (file_exists($file)) {
+						$handler_files[] = $file;
+					}
+				}
+			}
 
-        	require_once $file;
-        	$loghandlerinstance = new $handler();
-        	if (!$loghandlerinstance instanceof LogHandlerInterface)
-        	{
-        		throw new Exception('Log handler does not extend LogHandlerInterface');
-        	}
+			if (empty($handler_files)) {
+				throw new Exception('Missing log handler file ' . $handler . '.php');
+			}
 
-        	if (empty($this->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
-        }
+			require_once $handler_files[0];
+			$loghandlerinstance = new $handler();
+			if (!$loghandlerinstance instanceof LogHandlerInterface) {
+				throw new Exception('Log handler does not extend LogHandlerInterface');
+			}
+
+			if (empty($this->loghandlers[$handler])) {
+				$this->loghandlers[$handler] = $loghandlerinstance;
+			}
+		}
 	}
 }
 

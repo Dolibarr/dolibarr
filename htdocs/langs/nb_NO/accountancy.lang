@@ -3,84 +3,80 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Eksporter antall enheter
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Eksporter med hovedkonto
-ACCOUNTING_EXPORT_LABEL=Eksporter etikett
+ACCOUNTING_EXPORT_LABEL=Eksporter merker
 ACCOUNTING_EXPORT_AMOUNT=Eksporter beløp
 ACCOUNTING_EXPORT_DEVISE=Eksporter valuta
 Selectformat=Velg filformat
 ACCOUNTING_EXPORT_PREFIX_SPEC=Velg prefiks for filnavnet
 
-Accounting=Regnskap
-Globalparameters=Globale parametre
-Menuaccount=Regnskapskonti
-Menuthirdpartyaccount=Tredjepartskonti
-MenuTools=Verktøy
-
 ConfigAccountingExpert=Konfigurasjon av modulen regnskapsekspert
 Journaux=Journaler
 JournalFinancial=Finasielle journaler
-Exports=Eksporter
-Export=Eksport
-Modelcsv=Eksportmodell
-OptionsDeactivatedForThisExportModel=For denne eksportmodellen er opsjoner deaktivert
-Selectmodelcsv=Velg eksportmodell
-Modelcsv_normal=Klassisk eksport
-Modelcsv_CEGID=Eksport mot CEGID Expert
 BackToChartofaccounts=Returner kontotabell
 
-Definechartofaccounts=Definer en kontotabell
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=Velg kontotabell
 Addanaccount=Legg til regnskapskonto
 AccountAccounting=Regnskapskonto
+AccountAccountingShort=Konto
 AccountAccountingSuggest=Forslag til regnskapskonto
-Ventilation=Fordeling
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
 MenuAccountancy=Regnskap
-CustomersVentilation=Fordeling Kunder
-SuppliersVentilation=Fordeling Leverandører
-TradeMargin=Fortjenestemargin
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Rapporter
-ByCustomerInvoice=Etter kundefakturaer
 NewAccount=Ny regnskapskonto
 Create=Opprett
-CreateMvts=Opprett bevegelse
-UpdateAccount=Endring av reknskapskonto
-UpdateMvts=Endring av bevegelse
-WriteBookKeeping=Kontoposter i hovedboken
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=Hovedbok
 AccountBalance=Kontobalanse
 
-AccountingVentilation=Regnskapsmessig fordelingen
-AccountingVentilationSupplier=Regnskapsfordeling Leverandør
-AccountingVentilationCustomer=Regskapsfordeling Kunde
-
 CAHTF=Totalt leverandørkjøp eks. MVA
-InvoiceLines=Fakturalinjer som skal ventileres
-InvoiceLinesDone=Ventilerte fakturalinjer
-IntoAccount=Ventiler regnskapskontoen
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=Ventiler
-VentilationAuto=Automatisk fordeling
+Ventilate=Bind
 
 Processing=Behandler
 EndProcessing=Behandling ferdig
-AnyLineVentilate=Ingen linjer å ventilere
+AnyLineVentilate=Any lines to bind
 SelectedLines=Valgte linjer
 Lineofinvoice=Fakturalinje
-VentilatedinAccount=Vellykket ventilering i regnskapskonto
-NotVentilatedinAccount=Ikke ventilert i regnskapskonto
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_SEPARATORCSV=Kolonneseparator for exportfil
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Antall elementer for ventilering viset per side (maks anbefalt: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begynn sortering av ventilering "Må ventileres" etter de nyeste elementene
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begynn sortering av fordelingssidene "Fordeling" etter de nyeste elementene
-
-AccountLength=Lengde på regskapskontoer i Dolibarr
-AccountLengthDesc=Funksjon for å simulere lengde på regnskapskonto ved å erstatte mellomrom med tallet null. Denne funksjonen påvirker bare skjermen, det endrer ikke de regnskapskontoene som er registrert i Dolibarr. For eksport, er denne funksjonen nødvendig for å være kompatibel med enkelte programvarer.
 ACCOUNTING_LENGTH_DESCRIPTION=Lengde for visning av varer- og tjenesterbeskrivelser i lister (Anbefalt = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Lengde for visning av varer- og tjenesters kontobeskrivelser i lister (Anbefalt = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Lengde på generelle kontoer
-ACCOUNTING_LENGTH_AACCOUNT=Lengde på tredjeparts-kontoer
+ACCOUNTING_LENGTH_GACCOUNT=Lengde på hovedbokskontoer
+ACCOUNTING_LENGTH_AACCOUNT=Lengde på tredjepartskontoer
+ACCOUNTING_MANAGE_ZERO=Håndter nullen i slutten på en regnskapskonto. Trengs i noen land. Deaktivert som standard. Vær forsiktig med funksjonen "kontolengde".
+BANK_DISABLE_DIRECT_INPUT=Deaktiver fritekst på banktransaksjoner (Standard er aktivert for dennemodulen)
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
@@ -90,6 +86,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Sosialjournal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Overføring av regnskapskonto
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto på vent
+DONATION_ACCOUNTINGACCOUNT=Konto for å registrere donasjoner
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard regnskapskonto for kjøpte varer (hvis den ikke er definert på varekortet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (hvis den ikke er definert på varekortet)
@@ -99,81 +96,109 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (hv
 Doctype=Dokumenttype
 Docdate=Dato
 Docref=Referanse
-Numerocompte=Konto
 Code_tiers=Tredjepart
 Labelcompte=Kontoetikett
 Sens=som betyr
 Codejournal=Journal
 NumPiece=Del nummer
-
+AccountingCategory=Regnskapskategori
+NotMatch=Ikke valgt
+DeleteMvt=Slett linjer i hovedboken
+DelYear=År som skal slettes
+DelJournal=Journal som skal slettes
+ConfirmDeleteMvt=Dette vil slette alle linjer i hovedboken for et år eller fra en spesifikk journal
+ConfirmDeleteMvtPartial=Dette vil slette valgt linje(r) i hovedboken
 DelBookKeeping=Slett postene i hovedboken
-
 DescSellsJournal=Salgsjournal
 DescPurchasesJournal=Innkjøpsjournal
 FinanceJournal=Finansjournal
 DescFinanceJournal=Finansjournal med alle typer betalinger etter bankkonto
-
-CashPayment=Kontantbetaling
-
-SupplierInvoicePayment=Betaling av leverandørfaktura
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Betaling av kundefaktura
-
 ThirdPartyAccount=Tredjepart-konto
-
-NewAccountingMvt=Ny bevegelse
-NumMvts=Antall bevegelser
+NewAccountingMvt=Ny transaksjon
+NumMvts=Transaksjonsnummer
 ListeMvts=Liste over bevegelser
 ErrorDebitCredit=Debet og kredit kan ikke ha en verdi samtidig
 
-ReportThirdParty=Liste over tredjeparts-kontoer
-DescThirdPartyReport=Liste over kunder og leverandører og deres regnskapskontoer
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=Liste over regnskapskontoer
 
-Pcgversion=Versjon av plan
 Pcgtype=Kontoklasse
 Pcgsubtype=Underklasse av konto
 Accountparent=Rot/base-kontoer
 
-DescVentilCustomer=Viser den årlige økonomiske fordelingen av kundefakturaer
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
-DescVentilDoneCustomer=Liste over kundefakturalinjer og tilhørende regnskapskonto
-DescVentilTodoCustomer=Ventiler kundefakturalinjer med tildelt regnskapskonto
-ChangeAccount=Endre regnskapskonto for valgte linjer
-Vide=-
-DescVentilSupplier=Kontroller årlig fordeling for leverandørfakturaer
-DescVentilTodoSupplier=Ventiler leverandørfakturalinjer med regnskapskonto
-DescVentilDoneSupplier=Liste over leverandørfakturalinjer og tilhørende regnskapskonto
 
-ValidateHistory=Automatisk validering
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+Vide=-
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Bind automatisk
+AutomaticBindingDone=Automatisk binding utført
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
 MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
-FicheVentilation=Ventilasjonskort
+FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjonene ble registrert i hovedboken
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
-MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
+## Admin
+ApplyMassCategories=Masseinnlegging av kategorier
 
-##Export Journal Feature
-ExportFormat=Eksportformat
-Prefixname=Prefiks for ekportfil
-Separate=Eksportseparator
-Textframe=Verdi for tekstramme
-Headercol=Kolonnenavn i filheading
-Fieldname=Feltnavn
-Headername=Overskrift
-Type=Felttyper
-Param=Tilleggsparametre
-EnabledProduct=I varen
-EnabledTiers=I tredjepart
-EnabledVat=I MVA
+## Export
+Exports=Eksporter
+Export=Eksport
+Modelcsv=Eksportmodell
+OptionsDeactivatedForThisExportModel=For denne eksportmodellen er opsjoner deaktivert
+Selectmodelcsv=Velg eksportmodell
+Modelcsv_normal=Klassisk eksport
+Modelcsv_CEGID=Eksport til CEGID Expert Comptabilité
+Modelcsv_COALA=Eksport til Saga Coala
+Modelcsv_bob50=Eksport til Sage BOB 50
+Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
+Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
+Modelcsv_ebp=Eksporter mot EBP
+Modelcsv_cogilog=Eksport mot Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
-InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har regnskap konto definert for salg og kjøp. Sjekk først at oppsett av  regnskapsmodulen er komplett.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
 Options=Innstillinger
 OptionModeProductSell=Salgsmodus
 OptionModeProductBuy=Innkjøpsmodus
 OptionModeProductSellDesc=Vis alle produkter for salg uten regnskapskonto
 OptionModeProductBuyDesc=Vis alle produkter for innkjøp uten regnskapskonto
+CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontodiagram
+CleanHistory=Nullstill alle bindinger for valgt år
+
+## Dictionary
+Range= Oversikt over regnskapskonto
+Calculated=Kalkulert
+Formula=Formel
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Ingen regnskapskategori er tilgjengelig for dette landet
+ExportNotSupported=Eksportformatet som er satt  opp støttes ikke på denne siden
+BookeppingLineAlreayExists=Linjene eksisterer allerede i bokføringen
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

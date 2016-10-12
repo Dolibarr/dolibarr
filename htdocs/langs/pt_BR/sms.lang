@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - sms
-SmsSetup=Configuraçao sms
+Sms=SMS
+SmsSetup=Configuração do SMS
 SmsDesc=Esta pagina permite definir as opçoes globais para os SMS
-SmsCard=Cartao SMS
+SmsCard=Chip SMS
 AllSms=Todas as campnhas SMS
 SmsTargets=Alvos
 SmsRecipients=Alvos
-SmsTitle=Descriçao
 SmsTopic=Topico do SMS
 ShowSms=Mostrar SMS
 ListOfSms=Listar campanhas SMS
@@ -26,11 +26,9 @@ SmsSuccessfulySent=SMS enviado coretamente (de %s a %s)
 ErrorSmsRecipientIsEmpty=Numero de alvos vazio
 WarningNoSmsAdded=Falta numero telefone para adicionar a lista de alvos
 ConfirmValidSms=Voce confiram a validaçao desta campanha ?
-ConfirmResetMailing=Atençao, se voce reinicializar a campanha SMS <b>%s</b>, voce permitira o envio de masa da mesma pela segunda vez. E veramente isto o que se quer ?
-ConfirmDeleteMailing=Voce confirma a remoçao da campanha ?
-NbOfRecipients=Numero de alvos
 NbOfUniqueSms=Nr. de numeros telefonicos unicos
 NbOfSms=Numero de numeros telefonicos
 ThisIsATestMessage=Isto e uma mensagem de teste
 SmsInfoCharRemain=Nr de caracteres restantes
 SmsInfoNumero=(formato internacional ex: +33899701761)
+SmsNoPossibleSenderFound=Nenhum expedidor disponível. Verifique a configuração do seu provedor de SMS.

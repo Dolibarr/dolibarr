@@ -182,6 +182,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		global $langs, $user, $conf;
 	
 		// Trick to get result into a var from a function that makes print instead of return
+		// TODO Replace ob_start with param nooutput=1 into showBox
 		ob_start();
 		$result = $this->showBox($head, $contents);
 		$output = ob_get_contents();
@@ -191,14 +192,14 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	}
 	
 	/**
-	 *Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
+	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
 	 * @param   array   $head       Array with properties of box title
 	 * @param   array   $contents   Array with properties of box lines
-	 *
-	 * @return  void
+	 * @param	int		$nooutput	No print, only return string
+	 * @return  string
 	 */
-	function showBox($head = null, $contents = null)
+	function showBox($head = null, $contents = null, $nooutput=0)
 	{
 		global $langs, $user, $conf;
 
@@ -242,7 +243,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td>';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflow maxwidth300onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
@@ -250,12 +251,15 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= $s;
                 }
                 $out.= ' ';
-                if (! empty($head['sublink'])) $out.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                if (! empty($head['subpicto'])) $out.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                if (! empty($head['sublink'])) '</a>';
+
+                $sublink='';
+                if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                if (! empty($head['sublink']))  $sublink.= '</a>';
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $out.= '</td><td class="nocellnopadd boxclose nowrap">';
+                    $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
                     $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
                     $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
@@ -358,13 +362,16 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             }
         } else {
             dol_syslog(get_class($this).'::showBoxCached');
-            $out = dol_readcachefile($cachedir, $filename);
-            print "<!-- Box ".get_class($this)." from cache -->";
-
+            $out = "<!-- Box ".get_class($this)." from cache -->";
+            $out.= dol_readcachefile($cachedir, $filename);
         }
-        print $out;
-    }
-
+        
+        if ($nooutput) return $out;
+        else print $out;
+    
+        return '';
+	}
+	
 }
 
 

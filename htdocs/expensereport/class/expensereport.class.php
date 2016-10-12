@@ -36,12 +36,14 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
 
     var $lignes=array();
-    var $date_debut;
-    var $date_fin;
+    
+    public $date_debut;
+    
+    public $date_fin;
 
     var $fk_user_validator;
     var $status;
-    var $fk_statut;     // -- 1=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
     var $fk_c_paiement;
     var $paid;
 
@@ -262,8 +264,8 @@ class ExpenseReport extends CommonObject
     /**
      *  Load an object from database
      *
-     *  @param  int     $id     Id
-     *  @param  string  $ref    Ref
+     *  @param  int     $id     Id                      {@min 1}
+     *  @param  string  $ref    Ref                     {@name ref}
      *  @return int             <0 if KO, >0 if OK
      */
     function fetch($id, $ref='')
@@ -806,11 +808,10 @@ class ExpenseReport extends CommonObject
     /**
      * delete
      *
-     * @param   int     $rowid      Id to delete (optional)
      * @param   User    $fuser      User that delete
      * @return  int                 <0 if KO, >0 if OK
      */
-    function delete($rowid=0, User $fuser=null)
+    function delete(User $fuser=null)
     {
         global $user,$langs,$conf;
 
@@ -1613,6 +1614,28 @@ class ExpenseReport extends CommonObject
             return -1;
         }
     }
+    
+    /**
+     * Return if an expense report is late or not
+     *
+     * @param  string  $option          'topay' or 'toapprove'
+     * @return boolean                  True if late, False if not late
+     */
+    public function hasDelay($option)
+    {
+        global $conf;
+    
+        //Only valid members
+        if ($option == 'toapprove' && $this->status != 2) return false;
+        if ($option == 'topay' && $this->status != 5) return false;
+    
+        $now = dol_now();
+    
+        if ($option == 'toapprove')
+            return $this->datevalid < ($now - $conf->expensereport->approve->warning_delay);
+        else
+            return $this->datevalid < ($now - $conf->expensereport->payment->warning_delay);
+    }    
 }
 
 
@@ -1788,6 +1811,7 @@ class ExpenseReportLine
         // Clean parameters
         $this->comments=trim($this->comments);
         $this->vatrate = price2num($this->vatrate);
+        $this->value_unit = price2num($this->value_unit);
 
         $this->db->begin();
 

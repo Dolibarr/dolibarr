@@ -54,7 +54,10 @@ class Project extends CommonObject
     var $date_start;
     var $date_end;
     var $date_close;
-    var $socid;
+
+    var $socid;             // To store id of thirdparty
+    var $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
+
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
@@ -231,7 +234,7 @@ class Project extends CommonObject
         global $langs, $conf;
 
 		$error=0;
-		
+
         // Clean parameters
         $this->title = trim($this->title);
         $this->description = trim($this->description);
@@ -248,7 +251,7 @@ class Project extends CommonObject
             $sql.= ", description = '" . $this->db->escape($this->description) . "'";
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
-            $sql.= ", fk_opp_status = " . ((is_numeric($this->opp_status) && $this->opp_status != '') ? $this->opp_status : 'null');
+            $sql.= ", fk_opp_status = " . ((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
 			$sql.= ", opp_percent = " . ((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
             $sql.= ", public = " . ($this->public ? 1 : 0);
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
@@ -460,9 +463,9 @@ class Project extends CommonObject
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
         $elements = array();
-        
+
         if ($this->id <= 0) return $elements;
-        
+
 		if ($type == 'agenda')
         {
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
@@ -767,7 +770,7 @@ class Project extends CommonObject
 
             if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
             {
-            	// TODO What to do if fk_opp_status is not code 'WIN' or 'LOST'
+            	// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
             }
 
             dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
@@ -893,6 +896,8 @@ class Project extends CommonObject
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->title))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
+        if (! empty($this->thirdparty_name))
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('ThirdParty') . ': </b>' . $this->thirdparty_name;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->dateo))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateStart') . ': </b>' . dol_print_date($this->dateo, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->datee))
@@ -900,7 +905,7 @@ class Project extends CommonObject
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if ($option != 'nolink') 
+        if ($option != 'nolink')
         {
             if (preg_match('/\.php$/',$option)) {
                 $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
@@ -1061,7 +1066,7 @@ class Project extends CommonObject
         }
         else dol_print_error($this->db);
         if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
-        
+
         if ($mode == 0)
         {
             $sql.= " AND ec.element_id = p.rowid";
@@ -1118,16 +1123,17 @@ class Project extends CommonObject
       * Load an object from its id and create a new one in database
 	  *
 	  *	@param	int		$fromid     	Id of object to clone
-	  *	@param	bool	$clone_contact	clone contact of project
-	  *	@param	bool	$clone_task		clone task of project
-	  *	@param	bool	$clone_project_file		clone file of project
-	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
-      *	@param	bool	$clone_note		clone note of project
-      * @param	bool	$move_date		move task date on clone
-      *	@param	integer	$notrigger		no trigger flag
+	  *	@param	bool	$clone_contact	Clone contact of project
+	  *	@param	bool	$clone_task		Clone task of project
+	  *	@param	bool	$clone_project_file		Clone file of project
+	  *	@param	bool	$clone_task_file		Clone file of task (if task are copied)
+      *	@param	bool	$clone_note		Clone note of project
+      * @param	bool	$move_date		Move task date on clone
+      *	@param	integer	$notrigger		No trigger flag
+      * @param  int     $newthirdpartyid  New thirdparty id
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0,$newthirdpartyid=0)
 	{
 		global $user,$langs,$conf;
 
@@ -1145,6 +1151,8 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_optionals();
+		if ($newthirdpartyid > 0) $clone_project->socid = $newthirdpartyid;
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;
@@ -1601,11 +1609,11 @@ class Project extends CommonObject
     function load_board($user)
     {
         global $conf, $langs;
-    
+
         $mine=0; $socid=$user->societe_id;
-        
+
         $projectsListId = $this->getProjectsAuthorizedForUser($user,$mine?$mine:($user->rights->projet->all->lire?2:0),1,$socid);
-        
+
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
@@ -1618,33 +1626,33 @@ class Project extends CommonObject
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $project_static = new Project($this->db);
-    
+
             $response = new WorkboardResponse();
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
-            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/index.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/index.php?mode=mine&search_status=1&mainmenu=project';
+            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
             $response->img = img_object($langs->trans("Projects"),"project");
-    
+
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
-    
+
                 $project_static->statut = $obj->status;
                 $project_static->opp_status = $obj->opp_status;
                 $project_static->datee = $this->db->jdate($obj->datee);
-    
+
                 if ($project_static->hasDelay()) {
                     $response->nbtodolate++;
                 }
             }
-    
+
             return $response;
         }
         else
@@ -1653,8 +1661,8 @@ class Project extends CommonObject
             return -1;
         }
     }
-    
-    
+
+
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
@@ -1671,8 +1679,8 @@ class Project extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-	
-	
+
+
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
@@ -1681,16 +1689,16 @@ class Project extends CommonObject
 	function load_state_board()
 	{
 	    global $conf;
-	
+
 	    $this->nb=array();
-	
+
 	    $sql = "SELECT count(u.rowid) as nb";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
 	    $sql.= " WHERE";
 	    //$sql.= " WHERE u.fk_statut > 0";
 	    //$sql.= " AND employee != 0";
 	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
-	
+
 	    $resql=$this->db->query($sql);
 	    if ($resql)
 	    {
@@ -1708,25 +1716,133 @@ class Project extends CommonObject
 	        return -1;
 	    }
 	}
-	
-	
+
+
 	/**
-	 * Is the action delayed?
+	 * Is the project delayed?
 	 *
 	 * @return bool
 	 */
 	public function hasDelay()
 	{
 	    global $conf;
-	
-        if (! ($this->statut == 1)) {
-            return false;
-        }
+
+        if (! ($this->statut == 1)) return false;
+        if (! $this->datee) return false;
 
         $now = dol_now();
 
         return $this->datee < ($now - $conf->projet->warning_delay);
-	}	
+	}
+
+
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+	    $sql = 'SELECT c.rowid, datec as datec, tms as datem,';
+	    $sql.= ' date_close as datecloture,';
+	    $sql.= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+	    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet as c';
+	    $sql.= ' WHERE c.rowid = '.$id;
+	    $result=$this->db->query($sql);
+	    if ($result)
+	    {
+	        if ($this->db->num_rows($result))
+	        {
+	            $obj = $this->db->fetch_object($result);
+	            $this->id = $obj->rowid;
+	            if ($obj->fk_user_author)
+	            {
+	                $cuser = new User($this->db);
+	                $cuser->fetch($obj->fk_user_author);
+	                $this->user_creation   = $cuser;
+	            }
+
+	            if ($obj->fk_user_cloture)
+	            {
+	                $cluser = new User($this->db);
+	                $cluser->fetch($obj->fk_user_cloture);
+	                $this->user_cloture   = $cluser;
+	            }
+
+	            $this->date_creation     = $this->db->jdate($obj->datec);
+	            $this->date_modification = $this->db->jdate($obj->datem);
+	            $this->date_cloture      = $this->db->jdate($obj->datecloture);
+	        }
+
+	        $this->db->free($result);
+
+	    }
+	    else
+	    {
+	        dol_print_error($this->db);
+	    }
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 */
+	public function setCategories($categories)
+	{
+		// Decode type
+		$type_id = Categorie::TYPE_PROJECT;
+		$type_text = 'project';
+
+
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, $type_id, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$result=$c->del_type($this, $type_text);
+				if ($result<0) {
+					$this->errors=$c->errors;
+					$this->error=$c->error;
+					return -1;
+				}
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$result=$c->add_type($this, $type_text);
+				if ($result<0) {
+					$this->errors=$c->errors;
+					$this->error=$c->error;
+					return -1;
+				}
+			}
+		}
+
+		return 1;
+	}
 
 }
 

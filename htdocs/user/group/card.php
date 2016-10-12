@@ -450,7 +450,7 @@ else
 
             		print "<tr ".$bc[$var].">";
             		print '<td>';
-            		print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
+            		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
@@ -491,7 +491,7 @@ else
             }
             else
             {
-                print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
+                print '<tr><td colspan=2 class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             print "</table>";
             print "<br>";

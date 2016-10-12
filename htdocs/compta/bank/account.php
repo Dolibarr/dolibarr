@@ -52,6 +52,7 @@ $langs->load("salaries");
 $langs->load("loan");
 $langs->load("donations");
 $langs->load("trips");
+$langs->load("members");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
@@ -80,6 +81,8 @@ $req_enddtday=GETPOST('req_enddtday', 'int');
 $req_enddtyear=GETPOST('req_enddtyear', 'int');
 $req_enddt = dol_mktime(23, 59, 59, $req_enddtmonth, $req_enddtday, $req_enddtyear);
 
+$search_reconciled = GETPOST('search_reconciled');
+
 $vline=GETPOST("vline");
 $page=GETPOST('page','int');
 $negpage=GETPOST('negpage','int');
@@ -107,6 +110,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$req_enddtday="";
 	$req_enddtyear="";
 	$req_enddt = "";
+	$search_reconciled = '';
 }
 
 /*
@@ -177,8 +181,9 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->m
 /*
  * View
  */
-
-llxHeader('',$langs->trans("FinancialAccount").'-'.$langs->trans("Transactions"));
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $societestatic=new Societe($db);
 $userstatic=new User($db);
@@ -279,6 +284,8 @@ if ($id > 0 || ! empty($ref))
 			$mode_search = 1;
 	}
 	
+	if ($search_reconciled == 'reconciled')    $sql_rech.=" AND num_releve IS NOT NULL";
+	if ($search_reconciled == 'notreconciled') $sql_rech.=" AND num_releve IS NULL";
 
 	$sql = "SELECT count(*) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -292,7 +299,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
-
+	
 	dol_syslog("account.php count transactions -", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result)
@@ -366,16 +373,11 @@ if ($id > 0 || ! empty($ref))
 		{
 			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
 			{
-                if (empty($conf->accounting->enabled))
-                {
-                    if ($user->rights->banque->modifier) {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
-                    } else {
-                        print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                    }
-                } else {
-                    print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                }
+				if ($user->rights->banque->modifier) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				} else {
+					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				}
 			} else {
                 print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
             }
@@ -495,6 +497,11 @@ if ($id > 0 || ! empty($ref))
 	 * Show list of bank transactions
 	 */
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" name="search" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="search">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 	print '<table class="noborder" width="100%">';
 
 	// Ligne de titre tableau des ecritures
@@ -507,19 +514,16 @@ if ($id > 0 || ! empty($ref))
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
-	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
-	print '<td align="center" width="60">';
+	print '<td align="right">'.$langs->trans("BankBalance").'</td>';
+	print '<td align="center">';
 	if ($object->canBeConciliated() > 0) {
 		print $langs->trans("AccountStatementShort");
 	} else {
 		print '&nbsp;';
 	}
-	print '</td></tr>';
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" name="search" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="search">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
 
 	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,0,1);
 	$period_filter .= '&nbsp;';
@@ -533,12 +537,16 @@ if ($id > 0 || ! empty($ref))
 	$form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
 	print '</td>';
 	print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
-	print '<td><input type="text" class="flat" name="req_desc" value="'.$req_desc.'" size="24"></td>';
+	print '<td><input type="text" class="flat" name="req_desc" value="'.$req_desc.'" size="14"></td>';
 	print '<td><input type="text" class="flat" name="thirdparty" value="'.$thirdparty.'" size="14"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
+	print '<td align="center">';
+	$array=array('reconciled'=>$langs->trans("Reconciled"), 'notreconciled'=>$langs->trans("NotReconciled"));
+	print $form->selectarray('search_reconciled', $array, $search_reconciled, 1);
+	print '</td>';
+	print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
@@ -734,7 +742,7 @@ if ($id > 0 || ! empty($ref))
 						{
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
-							$bankstatic->label=$banklinestatic->bank_account_label;
+							$bankstatic->label=$banklinestatic->bank_account_ref;
 							print ' ('.$langs->trans("TransferFrom").' ';
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ' '.$langs->trans("toward").' ';
@@ -752,7 +760,7 @@ if ($id > 0 || ! empty($ref))
 							print ' '.$langs->trans("toward").' ';
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
-							$bankstatic->label=$banklinestatic->bank_account_label;
+							$bankstatic->label=$banklinestatic->bank_account_ref;
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ')';
 						}
@@ -922,6 +930,8 @@ if ($id > 0 || ! empty($ref))
 					print '</td>';
 				}
 
+				print '<td></td>';
+				
 				print "</tr>";
 			}
 
@@ -938,6 +948,7 @@ if ($id > 0 || ! empty($ref))
 			print ' '.$object->currency_code.'</td>';
 			print '<td align="right" class="nowrap"><b>'.price($total).'</b></td>';
 			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
 			print '</tr>';
 		} else {
 			// Only total according row displays
@@ -948,6 +959,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1).'</b></td>';
 			print '<td align="right" class="nowrap"><b>'.price($total_cred).'</b></td>';
 			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1)).'</b></td>';
+			print '<td>&nbsp;</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

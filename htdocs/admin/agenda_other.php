@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2008-2015	Laurent Destailleur             <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin                   <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2008-2015	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2013  	Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,11 @@ $langs->load("admin");
 $langs->load("other");
 
 $action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
+$param = GETPOST('param','alpha');
 $cancel = GETPOST('cancel','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type = 'action';
 
 
 /*
@@ -71,13 +76,106 @@ if (preg_match('/del_(.*)/',$action,$reg))
 		dol_print_error($db);
 	}
 }
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
+{
 
+	if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+        setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 if ($action == 'set')
 {
 	dolibarr_set_const($db, 'AGENDA_USE_EVENT_TYPE_DEFAULT', GETPOST('AGENDA_USE_EVENT_TYPE_DEFAULT'), 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+}
+else if ($action == 'specimen')  // For orders
+{
+    $modele=GETPOST('module','alpha');
+
+    $commande = new CommandeFournisseur($db);
+    $commande->initAsSpecimen();
+    $commande->thirdparty=$specimenthirdparty;
+
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php",0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+
+    if ($filefound)
+    {
+    	require_once $file;
+
+    	$module = new $classname($db,$commande);
+
+    	if ($module->write_file($commande,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		setEventMessages($module->error, $module->errors, 'errors');
+    		dol_syslog($module->error, LOG_ERR);
+    	}
+    }
+    else
+    {
+    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
+}
+
+// Activate a model
+else if ($action == 'setmodel')
+{
+	//print "sssd".$value;
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+else if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF',$conf->entity);
+	}
+}
+
+// Set default model
+else if ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->ACTION_EVENT_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
 
@@ -86,7 +184,7 @@ if ($action == 'set')
  */
 
 $formactions=new FormActions($db);
-
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -95,14 +193,151 @@ print "<br>\n";
 
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
-print '<input type="hidden" name="action" value="set">';
 
 $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
 
+
+/*
+ *  Documents models for supplier orders
+ */
+
+print load_fiche_titre($langs->trans("AgendaModelModule"),'','');
+
+// Define array def of models
+$def = array();
+
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = 'action'";
+$sql.= " AND entity = ".$conf->entity;
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
+}
+else
+{
+    dol_print_error($db);
+}
+
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
+print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
 $var=true;
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/action/doc/");
+
+    if (is_dir($dir))
+    {
+        $handle=opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+                {
+			$name = substr($file, 4, dol_strlen($file) -16);
+			$classname = substr($file, 0, dol_strlen($file) -12);
+			
+			require_once $dir.'/'.$file;
+			$module = new $classname($db, new ActionComm($db));
+			
+			$var=!$var;
+			print "<tr ".$bc[$var].">\n";
+			print "<td>";
+			print (empty($module->name)?$name:$module->name);
+			print "</td>\n";
+			print "<td>\n";
+			require_once $dir.$file;
+			$module = new $classname($db,$specimenthirdparty);
+			if (method_exists($module,'info')) 
+				print $module->info($langs);
+			else 
+				print $module->description;
+			print "</td>\n";
+			
+			// Active
+			if (in_array($name, $def))
+			{
+			    
+			print '<td align="center">'."\n";
+			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
+				print img_picto($langs->trans("Enabled"),'switch_on');
+				print '</a>';
+			}
+			else
+			{
+				print img_picto($langs->trans("Enabled"),'switch_on');
+			}
+				print "</td>";
+			}
+			else
+			{
+				print '<td align="center">'."\n";
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+				print "</td>";
+			}
+			
+			// Default
+			print '<td align="center">';
+			if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name")
+			{
+				print img_picto($langs->trans("Default"),'on');
+			}
+			else
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+			}
+			print '</td>';
+			
+			// Info
+			$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+			$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+			print '<td align="center">';
+			print $form->textwithpicto('',$htmltooltip,1,0);
+			print '</td>';
+			print '<td align="center">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+			print '</td>';
+			
+			print "</tr>\n";
+                }
+            }
+            closedir($handle);
+        }
+    }
+}
+print '</table><br>';
+
+$var=true;
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";

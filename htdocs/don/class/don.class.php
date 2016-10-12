@@ -4,6 +4,7 @@
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ class Don extends CommonObject
     var $fk_projet;
     var $fk_typepayment;
 	var $num_payment;
+	var $date_valid;
 
 	/**
 	 * @deprecated
@@ -155,6 +157,8 @@ class Don extends CommonObject
     {
         global $conf, $user,$langs;
 
+        $now = dol_now();
+        
         // Charge tableau des id de societe socids
         $socids = array();
 
@@ -185,7 +189,8 @@ class Don extends CommonObject
         $this->lastname = 'Doe';
         $this->firstname = 'John';
         $this->socid = 1;
-        $this->date = dol_now();
+        $this->date = $now;
+        $this->date_valid = $now;
         $this->amount = 100;
         $this->public = 1;
         $this->societe = 'The Company';
@@ -453,6 +458,7 @@ class Don extends CommonObject
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
+        $sql .= ",date_valid=".($this->date_valid?"'".$this->db->idate($this->date)."'":"null");
         $sql .= ",email='".$this->email."'";
         $sql .= ",phone='".$this->phone."'";
         $sql .= ",phone_mobile='".$this->phone_mobile."'";
@@ -592,7 +598,7 @@ class Don extends CommonObject
     {
         global $conf;
 
-        $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
+        $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet, d.model_pdf,";
@@ -623,6 +629,7 @@ class Don extends CommonObject
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
                 $this->datec          = $this->db->jdate($obj->datec);
+                $this->date_valid     = $this->db->jdate($obj->date_valid);
                 $this->datem          = $this->db->jdate($obj->datem);
                 $this->date           = $this->db->jdate($obj->datedon);
                 $this->firstname      = $obj->firstname;
@@ -633,7 +640,7 @@ class Don extends CommonObject
                 $this->town           = $obj->town;
                 $this->zip            = $obj->zip;
                 $this->town           = $obj->town;
-                $this->country_id     = $obj->country_id;
+                $this->country_id     = $obj->fk_country;
                 $this->country_code   = $obj->country_code;
                 $this->country        = $obj->country;
                 $this->country_olddata= $obj->country_olddata;	// deprecated

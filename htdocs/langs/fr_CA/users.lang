@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - users
-AdministratorDescEntity=Administrateur (pour cette compagnie)
-MenuMyUserCard=Ma carte d'utilisateur
+UserAccountancyCode=code comptabie de l'utilisateur

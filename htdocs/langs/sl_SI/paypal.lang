@@ -3,7 +3,6 @@ PaypalSetup=Nastavitev modula PayPal
 PaypalDesc=Ta modul ponuja stran, ki kupcem omogoča plačila na <a href="http://www.paypal.com" target="_blank">PayPal</a>. Lahko se uporablja za prosta plačila ali za plačila določenih Dolibarr objektov (računi, naročila, ...)
 PaypalOrCBDoPayment=Plačilo s kreditnimi karticami ali Paypal
 PaypalDoPayment=Plačilo z Paypal
-PaypalCBDoPayment=Plačilo s kreditno kartico
 PAYPAL_API_SANDBOX=Način test/sandbox
 PAYPAL_API_USER=API ime uporabnika
 PAYPAL_API_PASSWORD=API geslo
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=Samo PayPal
 PAYPAL_CSS_URL=Opcijski Url ali list CSS oblike na plačilni strani
 ThisIsTransactionId=To je ID transakcije: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Pri pošiljanju dokumenta po pošti dodaj url Paypal plačila
-PAYPAL_IPN_MAIL_ADDRESS=Naslov e-pošte za takojšnje obvestilo o plačilu (IPN)
 PredefinedMailContentLink=Za izvedbo vašega plačila (PayPal)lahko kliknete na spodnjo varno povezavo, če plačilo še ni bilo izvršeno.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Trenutno ste v &quot;peskovniku&quot; načinu
 NewPaypalPaymentReceived=Novo Paypal plačilo prejeto

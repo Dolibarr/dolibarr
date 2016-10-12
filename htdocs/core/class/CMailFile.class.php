@@ -134,6 +134,13 @@ class CMailFile
 		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
+		if (empty($subject))
+		{
+            dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
+            $this->error='ErrorSubjectIsRequired';
+            return;
+		}
+
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
 		{
@@ -436,8 +443,7 @@ class CMailFile
 		{
 			// Send mail method not correctly defined
 			// --------------------------------------
-
-			return 'Bad value for MAIN_MAIL_SENDMODE constant';
+            $this->error = 'Bad value for MAIN_MAIL_SENDMODE constant';
 		}
 
 	}
@@ -1099,12 +1105,12 @@ class CMailFile
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
-		while ( substr($server_response,3,1) != ' ' )
+		while (substr($server_response,3,1) != ' ')
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)) )
 			{
 				$this->error="Couldn't get mail server response codes";
-				$_retVal = false;
+				return false;
 			}
 		}
 

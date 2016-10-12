@@ -48,7 +48,7 @@ class ModelePDFCards
 	{
 		global $conf;
 
-		$type='members_card';
+		$type='member';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -99,7 +99,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		}
 	}
 	else $code=$modele;
-		
+
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$template,2);
 	if (! empty($tmp[1]))

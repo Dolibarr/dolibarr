@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
@@ -39,12 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -547,6 +551,7 @@ if (empty($reshook))
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';
+	$trackid='shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 }
@@ -562,6 +567,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $product_static = new Product($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create2')
 {
@@ -1224,18 +1230,19 @@ else if ($id || $ref)
 		$head=shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
 
+		$formconfirm='';
+		
 		/*
 		 * Confirmation de la suppression
 		*/
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-
+			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
 		}
 
 		/*
 		 * Confirmation de la validation
-		*/
+ 		 */
 		if ($action == 'valid')
 		{
 			$objectref = substr($object->ref, 1, 4);
@@ -1258,7 +1265,7 @@ else if ($id || $ref)
 				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid, $object);
 			}
 
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
+			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
 
 		}
 		/*
@@ -1266,10 +1273,20 @@ else if ($id || $ref)
 		 */
 		if ($action == 'annuler')
 		{
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
+			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
 
 		}
 
+		if (! $formconfirm) {
+		    $parameters = array();
+		    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+		}
+		
+		// Print form confirm
+		print $formconfirm;
+		
 		
 		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
@@ -1277,11 +1294,62 @@ else if ($id || $ref)
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
 		
+		
+		// Warehouse card
+		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+		
+		$morehtmlref='<div class="refidno">';
+		// Ref customer shipment
+		$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+		// Thirdparty
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+        // Project
+        /*
+        if (! empty($conf->projet->enabled)) {
+            $langs->load("projects");
+            $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+            if ($user->rights->supplier_proposal->creer) {
+                if ($action != 'classify') {
+                    $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                }
+                if ($action == 'classify') {
+                    // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+                    $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+                    $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+                    $morehtmlref .= '</form>';
+                } else {
+                    $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
+            } else {
+                if (! empty($object->fk_project)) {
+                    $proj = new Project($db);
+                    $proj->fetch($object->fk_project);
+                    $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                    $morehtmlref .= $proj->ref;
+                    $morehtmlref .= '</a>';
+                } else {
+                    $morehtmlref .= '';
+                }
+            }
+        }*/
+		$morehtmlref.='</div>';
+		
+		
+    	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    	
+    	
+    	print '<div class="fichecenter">';
+    	print '<div class="fichehalfleft">';
+    	print '<div class="underbanner clearboth"></div>';
+    	
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
-
 		// Ref
+		/*
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
@@ -1290,7 +1358,7 @@ else if ($id || $ref)
 		// Customer
 		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
 		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-		print "</tr>";
+		print "</tr>";*/
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -1316,13 +1384,8 @@ else if ($id || $ref)
 			print '</tr>';
 		}
 
-		// Ref customer
-		print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-		print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-		print '</tr>';
-
 		// Date creation
-		print '<tr><td>'.$langs->trans("DateCreation").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
 		print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
 		print '</tr>';
 
@@ -1455,9 +1518,22 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td>';
+		/*print '<tr><td>'.$langs->trans("Status").'</td>';
 		print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
-		print '</tr>';
+		print '</tr>';*/
+
+		// Other attributes
+		$cols = 2;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		
+		print '</table>';
+		
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+		
+		print '<table class="border centpercent">';
 
 		// Sending method
 		print '<tr><td height="10">';
@@ -1490,9 +1566,9 @@ else if ($id || $ref)
 		}
 		print '</td>';
 		print '</tr>';
-
+		
 		// Tracking Number
-		print '<tr><td>'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
 		print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,$object,$user->rights->expedition->creer,'string',$object->tracking_number);
 		print '</td></tr>';
 
@@ -1519,11 +1595,14 @@ else if ($id || $ref)
 	        print '</td></tr>';
 		}
 
-		// Other attributes
-		$cols = 3;
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		print "</table>";
 		
-		print "</table>\n";
+		print '</div>';
+		print '</div>';
+		print '</div>';
+			
+		print '<div class="clearboth"></div>';
+			
 
 		/*
 		 * Lines of products
@@ -1676,7 +1755,7 @@ else if ($id || $ref)
 							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
 						}
 					}
-					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
+					print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"),$detail);
 				}
 				print '</td>';
 			}
@@ -1694,7 +1773,7 @@ else if ($id || $ref)
 						{
 							$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
 						}
-						print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+						print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 					}
 					else 
 					{
@@ -1719,11 +1798,12 @@ else if ($id || $ref)
 
 			$var=!$var;
 		}
+		
+		print "</table>\n";
 	}
 
-	print "</table>\n";
 
-	print "\n</div>\n";
+	dol_fiche_end();
 
 
 	$object->fetchObjectLinked($object->id,$object->element);
@@ -1831,13 +1911,12 @@ else if ($id || $ref)
 
 		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
-
+		
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
+		
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
@@ -1924,8 +2003,9 @@ else if ($id || $ref)
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
+		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 
-		//Find the good contact adress
 		//Find the good contact adress
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
 			$objectsrc=new Commande($db);
@@ -1937,8 +2017,11 @@ else if ($id || $ref)
 		}
 		$custcontact='';
 		$contactarr=array();
-		$contactarr=$objectsrc->liste_contact(-1,'external');
-
+		if (is_object($objectsrc))    // For the case the shipment was created without orders
+		{
+    		$contactarr=$objectsrc->liste_contact(-1,'external');
+		}
+		
 		if (is_array($contactarr) && count($contactarr)>0) {
 			foreach($contactarr as $contact) {
 

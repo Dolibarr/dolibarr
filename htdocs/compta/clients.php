@@ -43,7 +43,6 @@ accessforbidden();
 $langs->load("companies");
 
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode_search");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -70,20 +69,15 @@ if ($action == 'note')
 	$result = $db->query($sql);
 }
 
-if ($mode == 'search') {
-	if ($modesearch == 'soc') {
-		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-	}
-
+if ($mode == 'search') 
+{
 	$resql=$db->query($sql);
 	if ($resql) {
 		if ( $db->num_rows($resql) == 1) {
 			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
-		$db->free();
+		$db->free($resql);
 	}
 }
 

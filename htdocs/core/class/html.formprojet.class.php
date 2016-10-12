@@ -48,7 +48,7 @@ class FormProjets
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
-	 *	@param  string	$htmlname   	Nom de la zone html
+	 *	@param  string	$htmlname   	Name of HTML field
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
@@ -57,12 +57,15 @@ class FormProjets
 	 *  @param	int		$disabled		Disabled
 	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
 	 *  @param  string  $filterkey      Key to filter
-	 *	@return int         			Nber of project if OK, <0 if KO
+	 *  @param  int     $nooutput       No print output. Return it only.
+	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '')
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0)
 	{
 		global $langs,$conf,$form;
 
+		$out='';
+		
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';
@@ -75,26 +78,33 @@ class FormProjets
 				$selected_input_value=$project->ref;
 			}
 			$urloption='socid='.$socid.'&htmlname='.$htmlname;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
+			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 //				'update' => array(
 //					'projectid' => 'id'
 //				)
 			));
 
-			print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+			$out.='<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
-			print $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1);
 			if ($discard_closed) 
 			{
 			    if (class_exists('Form'))
 			    {
     			    if (empty($form)) $form=new Form($this->db);
-                    print $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
+                    $out.=$form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			    }
 			}
 		}
+		
+		if (empty($nooutput)) 
+		{
+		    print $out;
+		    return '';
+		}
+		else return $out;
 	}
 
 	/**
@@ -111,9 +121,10 @@ class FormProjets
      * @param  int     $disabled           Disabled
 	 * @param  int     $mode               0 for HTML mode and 1 for array return (to be used by json_encode for example)
 	 * @param  string  $filterkey          Key to filter
+	 * @param  int     $nooutput           No print output. Return it only.
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '')
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0)
 	{
 		global $user,$conf,$langs;
 
@@ -140,8 +151,8 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
-			$sql .= ' AND p.title LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= " AND p.title LIKE '%".$this->db->escape($filterkey)."%'";
+			$sql .= " OR p.ref LIKE '%".$this->db->escape($filterkey)."%'";
 		}
 		$sql.= " ORDER BY p.ref ASC";
 
@@ -149,7 +160,7 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$minmax='';
+			$minmax='maxwidth500';
 
 			// Use select2 selector
 			$nodatarole='';
@@ -250,10 +261,13 @@ class FormProjets
 			$this->db->free($resql);
 
 			if (!$mode) {
-				if (empty($option_only)) {
-					$out.= '</select>';
+				if (empty($option_only)) $out.= '</select>';
+				if (empty($nooutput)) 
+				{
+				    print $out;
+				    return '';
 				}
-				print $out;
+				else return $out;
 			} else {
 				return $outarray;
 			}
@@ -314,7 +328,7 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$minmax='';
+			$minmax='maxwidth500';
 
 			// Use select2 selector
 			$nodatarole='';
@@ -324,7 +338,7 @@ class FormProjets
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
-            	$minmax='minwidth200';
+            	$minmax='minwidth200 maxwidth500';
 			}
 
 			if (empty($option_only)) {
@@ -464,12 +478,14 @@ class FormProjets
 				$sql = "SELECT t.id as rowid, t.label as ref";
 				$projectkey="fk_project";
 				break;
-			case "expensereport_det":
+			case "expensereport":
 				return '';
+			case "expensereport_det":
 				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
 				$projectkey="fk_projet";
 				break;*/
-		    case "commande":
+				return '';
+			case "commande":
 		    case "contrat":
 			case "fichinter":
 			    $sql = "SELECT t.rowid, t.ref";
@@ -567,7 +583,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'"';
+					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'" elemcode="'.$obj->code.'"';
 					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
 					$sellist .= '>';
 					if ($useshortlabel)

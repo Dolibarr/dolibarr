@@ -119,12 +119,14 @@ function dolGetModulesDirs($subdir='')
  *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
  *	@return		string							Default paper format code
  */
-function dol_getDefaultFormat($outputlangs='')
+function dol_getDefaultFormat(Translate $outputlangs = null)
 {
     global $langs;
 
     $selected='EUA4';
-    if (empty($outputlangs) || ! is_object($outputlangs)) $outputlangs=$langs;
+    if (!$outputlangs) {
+    	$outputlangs=$langs;
+    }
 
     if ($outputlangs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
     if ($outputlangs->defaultlang == 'en_US') $selected='USLetter';    // US
@@ -484,7 +486,7 @@ function dol_print_object_info($object, $usetable=0)
  *
  *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
- *	@return boolean     			True if domain email is OK, False if KO
+ *	@return string     			    Return email tracker string
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
@@ -606,8 +608,8 @@ function clean_url($url,$http=1)
  * 	Returns an email value with obfuscated parts.
  *
  * 	@param 		string		$mail				Email
- * 	@param 		string		$replace			Replacement character (defaul : *)
- * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		string		$replace			Replacement character (defaul: *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default: 8)
  * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
  * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
  * 	@param 		bool		$displaytld			Display tld (default: true)
@@ -1239,7 +1241,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return int					Number of week
+ *	@return string					Number of week
  */
 function numero_semaine($time)
 {
@@ -1522,7 +1524,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
             // If this generation module needs to scan a directory, then description field is filled
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
-            if (! empty($obj->description))	// List of directories to scan is defined
+            if (! empty($obj->description))	// A list of directories to scan is defined
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1560,7 +1562,19 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
             }
             else
             {
-                $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                if ($type == 'member' && $obj->lib == 'standard')   // Special case, if member template, we add variant per format
+                {
+                    global $_Avery_Labels;
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+                    foreach($_Avery_Labels as $key => $val)
+                    {
+                        $liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->lib).' '.$val['name'];
+                    }
+                }
+                else    // Common usage
+                {
+                    $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                }
             }
             $i++;
         }
@@ -1577,7 +1591,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
- *
+ * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
+ *   
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */
@@ -1617,7 +1632,7 @@ function dol_buildlogin($lastname,$firstname)
 /**
  *  Return array to use for SoapClient constructor
  *
- *  @return     param
+ *  @return     array
  */
 function getSoapParams()
 {
@@ -1970,6 +1985,11 @@ function getElementProperties($element_type)
         $classpath = 'resource/class';
         $module='resource';
         $subelement='dolresource';
+    }
+    if ($element_type == 'propaldet') {
+        $classpath = 'comm/propal/class';
+        $module='propal';
+        $subelement='propaleligne';
     }
     $classfile = strtolower($subelement);
     $classname = ucfirst($subelement);

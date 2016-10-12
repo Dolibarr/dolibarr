@@ -53,9 +53,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_textarea').hover(
 				function () {
+					console.log("We are hover (entry) an editkey_textarea");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover (exit) an editkey_textarea");
 					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 				}
 		);
@@ -104,9 +106,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_ckeditor').hover(
 				function () {
+					console.log("We are hover (entry) an editkey_ckeditor");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover (exit) an editkey_ckeditor");
 					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 				}
 		);
@@ -127,7 +131,7 @@ $(document).ready(function() {
 		$('.editval_string').editable(urlSaveInPlace, {
 			type		: 'text',
 			id			: 'field',
-			width		: 300,
+			width		: withInPlace,				/* Size of string area in px ? */
 			tooltip		: tooltipInPlace,
 			placeholder	: placeholderInPlace,
 			cancel		: cancelInPlace,
@@ -145,9 +149,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_string').hover(
 				function () {
+					console.log("We are hover (entry) an editkey_string");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover an editkey_string");
 					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 				}
 		);
@@ -186,9 +192,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_numeric').hover(
 				function () {
+					console.log("We are hover an editkey_numeric");
 					$( '#viewval_' + $(this).attr('id') ).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover (exit) an editkey_textarea");
 					$( '#viewval_' + $(this).attr('id') ).removeClass("viewval_hover");
 				}
 		);
@@ -227,9 +235,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_datepicker').hover(
 				function () {
+					console.log("We are hover (entry) editkey_datepicker");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover (exit) an editkey_datepicker");
 					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 				}
 		);
@@ -270,9 +280,11 @@ $(document).ready(function() {
 		});
 		$('.editkey_select').hover(
 				function () {
+					console.log("We are hover (entry) an editkey_select");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {
+					console.log("We are no more hover (exit) an editkey_select");
 					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 				}
 		);
@@ -316,6 +328,7 @@ $(document).ready(function() {
 		});
 		$('.editkey_autocomplete').hover(
 				function () {
+					console.log("We are no more hover (exit) an editkey_autocomplete");
 					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 				},
 				function () {

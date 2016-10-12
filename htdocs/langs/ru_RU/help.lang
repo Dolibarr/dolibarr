@@ -4,7 +4,6 @@ EMailSupport=Поддержка по email
 RemoteControlSupport=Поддержка через Интернет в реальном времени/удаленно
 OtherSupport=Другие виды поддержки
 ToSeeListOfAvailableRessources=Связаться/Смотреть имеющиеся ресурсы:
-ClickHere=Нажмите здесь
 HelpCenter=Справочный центр
 DolibarrHelpCenter=Центр справки и поддержки Dolibarr
 ToGoBackToDolibarr=В противном случае, нажмите <a href="%s">здесь, чтобы использовать Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Иногда, нет доступной в данны�
 BackToHelpCenter=В противном случае, нажмите здесь, чтобы вернуться <a href="%s">обратно к главной странице Справочного центра</a>.
 LinkToGoldMember=Вы можете позвонить одному из отобранных тренеров Dolibarr на вашем языке (%s), выбрав его Виджет (статус и максимальная цена звонка обновляются автоматически):
 PossibleLanguages=Поддерживаемые языки
-MakeADonation=Помогите проекту Dolibarr, сделайте пожертвование
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

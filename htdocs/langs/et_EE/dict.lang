@@ -138,7 +138,7 @@ CountryLS=Lesotho
 CountryLR=Libeeria
 CountryLY=Liibüa
 CountryLI=Liechtenstein
-CountryLT=Leedu
+CountryLT=Lithuania
 CountryLU=Luksemburg
 CountryMO=Macao
 CountryMK=Makedoonia
@@ -253,7 +253,6 @@ CivilityMR=Hr
 CivilityMLE=Prl
 CivilityMTRE=Master
 CivilityDR=Dr
-
 ##### Currencies #####
 Currencyeuros=Eurod
 CurrencyAUD=AU dollarid
@@ -290,10 +289,10 @@ CurrencyXOF=CFA frangid BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frangid
 CurrencySingXPF=CFP frank
-
 CurrencyCentSingEUR=sent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=tuhandik
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Kirja kampaania
@@ -306,7 +305,6 @@ DemandReasonTypeSRC_WOM=Suusõnaline
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Töötaja
 DemandReasonTypeSRC_SPONSORING=Sponsorlus
-
 #### Paper formats ####
 PaperFormatEU4A0=4A0 formaat
 PaperFormatEU2A0=2A0 formaat

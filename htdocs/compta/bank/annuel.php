@@ -36,10 +36,10 @@ $id=GETPOST('account');
 $ref=GETPOST('ref');
 
 // Security check
-$fieldid = (! empty($ref)?$ref:$id);
-$fieldname = isset($ref)?'ref':'rowid';
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
+$fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
+$result=restrictedArea($user,'banque',$fieldvalue,'bank_account&bank_account','','',$fieldtype);
 
 $year_start=GETPOST('year_start');
 $year_current = strftime("%Y",time());
@@ -53,8 +53,9 @@ else
 	$year_end=$year_start+2;
 }
 
-
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
@@ -146,7 +147,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("B
 // Ref
 print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
-if ($_GET["account"])
+if (!empty($id))
 {
 	if (! preg_match('/,/', $id))
 	{
@@ -286,7 +287,7 @@ print "</table>";
 
 $year = $year_end;
 
-$result=dol_mkdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -377,7 +378,7 @@ else
 	}
 
 	// Fabrication tableau 4b
-	$file= $conf->banque->dir_temp."/credmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/credmovement".$id."-".$year.".png";
 	$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/credmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();
@@ -464,7 +465,7 @@ else
 		$datamin[$i] = 0;
 	}
 
-	$file= $conf->banque->dir_temp."/debmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/debmovement".$id."-".$year.".png";
 	$fileurl= DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/debmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Debit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();

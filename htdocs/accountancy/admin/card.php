@@ -19,12 +19,11 @@
 
 /**
  * \file 		htdocs/accountancy/admin/card.php
- * \ingroup 	Advanced accountancy
+ * \ingroup     Advanced accountancy
  * \brief 		Card of accounting account
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -43,13 +42,17 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+
 
 $object = new AccountingAccount($db);
 
-// Action
-if ($action == 'add') {
+
+/*
+ * Action
+ */
+
+if ($action == 'add' && $user->rights->accounting->chartofaccount)
+{
 	if (! $cancel) {
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 		
@@ -58,11 +61,21 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -75,20 +88,30 @@ if ($action == 'add') {
 		$object->active = 1;
 		
 		$res = $object->create($user);
-		
 		if ($res == - 3) {
 			$error = 1;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		if ($res == - 4) {
+		elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		elseif ($res < 0)
+		{
+		    $error++;
+		    setEventMessages($object->error, $object->errors, 'errors');
+		    $action = "create";
+		}
+		if (! $error)
+		{
+		    header("Location: account.php");
+		    exit;
 		}
 	}
-	header("Location: account.php");
-	exit;
-} else if ($action == 'edit') {
-	if (! GETPOST('cancel', 'alpha')) {
+} else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+	if (! $cancel) {
 		$result = $object->fetch($id);
 		
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
@@ -98,11 +121,21 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result2);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -125,7 +158,7 @@ if ($action == 'add') {
 		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 		exit();
 	}
-} else if ($action == 'delete') {
+} else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
 	
 	if (! empty($object->id)) {
@@ -145,7 +178,9 @@ if ($action == 'add') {
 /*
  * View
  */
-llxheader('', $langs->trans('AccountAccounting'));
+$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
+$helpurl = '';
+llxheader('', $title, $helpurl);
 
 $form = new Form($db);
 $htmlacc = new FormVentilation($db);
@@ -153,7 +188,7 @@ $formaccounting = new FormAccounting($db);
 
 // Create mode
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans('NewAccount'));
+	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 	
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -164,7 +199,7 @@ if ($action == 'create') {
 	print '<table class="border" width="100%">';
 
 	// Account number
-	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 
 	// Label
@@ -227,7 +262,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 			print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 			
 			// Label
@@ -279,7 +314,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
+			print '<tr><td class="titlefield">' . $langs->trans("AccountNumber") . '</td>';
 			print '<td>' . $object->account_number . '</td>';
 			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
 
@@ -307,14 +342,14 @@ if ($action == 'create') {
 			print '<td colspan="2">' . $object->pcg_subtype . '</td></tr>';
 
 			// Active
-			print '<tr><td>' . $langs->trans("Activated") . '</td>';
+			print '<tr><td>' . $langs->trans("Status") . '</td>';
 			print '<td colspan="2">';
-			
-			if (empty($object->active)) {
+			print $object->getLibStatut(4);
+			/*if (empty($object->active)) {
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 			} else {
 				print img_picto($langs->trans("Activated"), 'switch_on');
-			}
+			}*/
 			
 			print '</td></tr>';
 			
@@ -328,13 +363,13 @@ if ($action == 'create') {
 			
 			print '<div class="tabsAction">';
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
 			}
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';

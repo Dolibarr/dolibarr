@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/fiscalyear.php
- * \ingroup fiscal year
- * \brief Setup page to configure fiscal year
+ * \file        htdocs/accountancy/admin/fiscalyear.php
+ * \ingroup     Advanced accountancy
+ * \brief       Setup page to configure fiscal year
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
@@ -42,12 +42,15 @@ if (! $sortorder) $sortorder="ASC";
 $langs->load("admin");
 $langs->load("compta");
 
-if (! $user->admin)
+// Security check
+if ($user->societe_id > 0)
 	accessforbidden();
-
+if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we shoul be able to see fiscal year.
+    accessforbidden();
+	
 $error = 0;
 
-// List of statut
+// List of status
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
 		'1' => 'CloseFiscalYear' 
@@ -61,6 +64,7 @@ foreach ( $tmpstatut2label as $key => $val )
 $errors = array ();
 
 $object = new Fiscalyear($db);
+
 
 /*
  * Actions
@@ -77,8 +81,8 @@ $max = 100;
 $form = new Form($db);
 
 $title = $langs->trans('FiscalYears');
-
-llxHeader('', $title, LOG_ERR);
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
@@ -91,7 +95,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-}	
+}
 
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -99,12 +103,12 @@ $result = $db->query($sql);
 if ($result) {
 	$var = false;
 	$num = $db->num_rows($result);
-	
+
 	$i = 0;
 
 	$title = $langs->trans('FiscalYears');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit, 1);
-	
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 1);
+
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -114,10 +118,10 @@ if ($result) {
 	print '<td>' . $langs->trans("DateEnd") . '</td>';
 	print '<td align="right">' . $langs->trans("Statut") . '</td>';
 	print '</tr>';
-	
+
 	if ($num) {
 		$fiscalyearstatic = new Fiscalyear($db);
-		
+
 		while ( $i < $num && $i < $max ) {
 			$obj = $db->fetch_object($result);
 			$fiscalyearstatic->id = $obj->rowid;
@@ -132,9 +136,8 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
-	
 	print '</table>';
 } else {
 	dol_print_error($db);
@@ -144,7 +147,14 @@ dol_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
-print '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
+if (! empty($user->rights->accounting->fiscalyear))
+{
+    print '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
+}
+else
+{
+    print '<a class="butActionRefused" href="#">' . $langs->trans("NewFiscalYear") . '</a>';
+}
 print '</div>';
 
 llxFooter();

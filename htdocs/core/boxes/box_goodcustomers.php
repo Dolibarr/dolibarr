@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_clients.php
+ *	\file       htdocs/core/boxes/box_goodcustomers.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module to generated widget of best customers (the most invoiced)
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -59,6 +59,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database 
 	}
 
 	/**
@@ -81,7 +82,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			
+
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1','1','0').") as nbfactpaye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
@@ -127,7 +128,7 @@ class box_goodcustomers extends ModeleBoxes
 					    'td' => 'align="right"',
 					    'text' => $nbfact.( $nbimpaye != 0 ? ' ('.$nbimpaye.')':'')
 					);
-					
+
 					$this->info_box_contents[$line][] = array(
 					    'td' => 'align="right" width="18"',
 					    'text' => $thirdpartystatic->LibStatut($objp->status,3)
@@ -158,11 +159,12 @@ class box_goodcustomers extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
 

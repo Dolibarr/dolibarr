@@ -3,84 +3,80 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Exportovať názov
+ACCOUNTING_EXPORT_AMOUNT=Exportovať sumu
+ACCOUNTING_EXPORT_DEVISE=Exportovať menu
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Účtovníctvo
-Globalparameters=Globálne parametre
-Menuaccount=Účty účtovníctva
-Menuthirdpartyaccount=Účty tretích strán
-MenuTools=Nástroje
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
-Exports=Exports
-Export=Export
-Modelcsv=Model of export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
 
-Definechartofaccounts=Define a chart of accounts
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=Select a chart of accounts
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
+AccountAccountingShort=Účet
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Rozpis
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
-MenuAccountancy=Accountancy
-CustomersVentilation=Rozpis zákazníkov
-SuppliersVentilation=Rozpis dodávateľov
-TradeMargin=Trade margin
+MenuAccountancy=Účtovníctvo
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Zostavy
-ByCustomerInvoice=Podľa faktúr zákazníkov
 NewAccount=New accounting account
 Create=Create
-CreateMvts=Create movement
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=General ledger
-AccountBalance=Account balance
-
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountBalance=Stav účtu
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=Ventilate in the accounting account
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=Bind
 
 Processing=Processing
 EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Any lines to bind
 SelectedLines=Selected lines
 Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
-
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_GACCOUNT=Trvanie prístupových údajov pre všeobecné účtovníctvo
+ACCOUNTING_LENGTH_AACCOUNT=Trvanie prístupových údajov pre účtovníctvo tretej strany
+ACCOUNTING_MANAGE_ZERO=Upravte nulu na konci účtovného účtu. Potrebné pre niektoré krajiny. V základe vypnuté. 
+BANK_DISABLE_DIRECT_INPUT=Vypnite voľné vkladanie bankovych prevodov ( Zapnuté v základe s tymto modulom )
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -90,6 +86,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+DONATION_ACCOUNTINGACCOUNT=Účet pre registráciu príspevkov
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -99,81 +96,109 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
-Numerocompte=Account
 Code_tiers=Thirdparty
 Labelcompte=Label account
 Sens=Sens
 Codejournal=Journal
-NumPiece=Piece number
-
+NumPiece=Číslo kusu
+AccountingCategory=Účtovná kategória
+NotMatch=Nenastavené
+DeleteMvt=Zmazať riadky hlavnej účtovnej knihy
+DelYear=Rok na zmazanie
+DelJournal=Žurnále na zmazanie
+ConfirmDeleteMvt=Táto akcia zmaže riadky hlavnej účtovnej knihy  pre rok a/alebo konkrétny žurnál.
+ConfirmDeleteMvtPartial=Táto akcia zmaže vybrané riadky z hlavnej účtovnej knihy
 DelBookKeeping=Delete the records of the general ledger
-
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-
-CashPayment=Cash Payment
-
-SupplierInvoicePayment=Payment of invoice supplier
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
-
 ThirdPartyAccount=Thirdparty account
-
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
+NewAccountingMvt=New transaction
+NumMvts=Numero of transaction
+ListeMvts=List of movements
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=List of the accounting accounts
 
-Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Priradzovať automaticky
+AutomaticBindingDone=Automatické priradenie dokončené
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=Breakdown card
+MvtNotCorrectlyBalanced=Pohyby nie sú vyvážené. Kredit = %S Debit = %s
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Použiť hromadne kategóriu
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Exports
+Export=Export
+Modelcsv=Model of export
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Select a model of export
+Modelcsv_normal=Classic export
+Modelcsv_CEGID=Exportovať pre CEGID Expert
+Modelcsv_COALA=Exportovať pre Sage Coala
+Modelcsv_bob50=Exportovať pre Sage BOB 50
+Modelcsv_ciel=Exportovať pre Sage Ciel Compta alebo Compta Evolution
+Modelcsv_quadratus=Exportovať pre Quadratus QuadraCompta
+Modelcsv_ebp=Exportovať pre EBP
+Modelcsv_cogilog=Exportovať pre Cogilog
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
-Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+InitAccountancy=Načítať účtovníctvo
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
+Options=Možnosti
+OptionModeProductSell=Mód predaja
+OptionModeProductBuy=Mód nákupu
+OptionModeProductSellDesc=Zobrazit produkty ktoré nemjú priradené účtovné účty pre predaj.
+OptionModeProductBuyDesc=Zobrazit produkty ktoré nemjú priradené účtovné účty pre nákup.
+CleanFixHistory=Odstrániť účtovný kód z riadkov, ktorý neexistuje v tabuľke účtov
+CleanHistory=Resetovať všetky priradenia pre zvolený rok
+
+## Dictionary
+Range=Rozsah účtovného účtu
+Calculated=Vypočítané
+Formula=Vzorec
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Pre túto krajinu nie je dostupná žiadna účtovná kategória
+ExportNotSupported=Exportovaný formát nie je podporovaný pre túto stránku
+BookeppingLineAlreayExists=Riadky už existujú v archíve
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

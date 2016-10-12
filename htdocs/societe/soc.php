@@ -106,7 +106,7 @@ if (empty($reshook))
         {
             header("Location: ".$backtopage);
             exit;
-        }    
+        }
     }
 
 	if ($action == 'confirm_merge' && $confirm == 'yes')
@@ -168,6 +168,7 @@ if (empty($reshook))
 					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
 					{
 						$errors++;
+						setEventMessages($db->lasterror(), null, 'errors');
 					}
 				}
 
@@ -199,9 +200,10 @@ if (empty($reshook))
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				} 
-				else 
+				}
+				else
 				{
+				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
@@ -226,14 +228,14 @@ if (empty($reshook))
     	//obtidre selected del combobox
     	$value=GETPOST('lt1');
     	$object->fetch($socid);
-    	$res=$object->setValueFrom('localtax1_value', $value);
+    	$res=$object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
     }
     if($action=='set_localtax2')
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt2');
     	$object->fetch($socid);
-    	$res=$object->setValueFrom('localtax2_value', $value);
+    	$res=$object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
     }
 
     // Add new or update third party
@@ -260,8 +262,8 @@ if (empty($reshook))
             $error++;
             $action='create';
         }
-        
-        
+
+
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
@@ -285,7 +287,7 @@ if (empty($reshook))
 	        $object->name_alias   = GETPOST('name_alias');
         }
 
-        $object->address               = GETPOST('address', 'alpha');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
         $object->country_id            = GETPOST('country_id', 'int');
@@ -338,13 +340,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
-		
+
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled))
 		{
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 		}
-		
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -403,7 +405,7 @@ if (empty($reshook))
             // Only for companies
 	        if (!($object->particulier || $private))
         	{
-	        	for ($i = 1; $i < 5; $i++)
+	        	for ($i = 1; $i <= 6; $i++)
 	        	{
 	        	    $slabel="idprof".$i;
 	    			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -418,15 +420,18 @@ if (empty($reshook))
 						}
 					}
 
-					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-					{
-						$langs->load("errors");
-						$error++;
-						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-						$action = (($action=='add'||$action=='create')?'create':'edit');
-					}
+            		// Check for mandatory prof id (but only if country is than than ours)
+					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
+            		{
+    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+    					{
+    						$langs->load("errors");
+    						$error++;
+    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+    						$action = (($action=='add'||$action=='create')?'create':'edit');
+    					}
+            		}
 	        	}
         	}
         }
@@ -441,7 +446,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                if ($result >= 0)
+				if ($result >= 0)
                 {
                     if ($object->particulier)
                     {
@@ -504,6 +509,13 @@ if (empty($reshook))
                 }
                 else
 				{
+					
+					if($result == -3) {
+						$duplicate_code_error = true;
+						$object->code_fournisseur = null;
+						$object->code_client = null;
+					}
+					
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -700,6 +712,7 @@ if (empty($reshook))
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
+    $trackid='thi'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
     // Actions to build doc
@@ -727,7 +740,7 @@ if ($socid > 0 && empty($object->id))
 }
 
 $title=$langs->trans("ThirdParty");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Card');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
@@ -797,8 +810,14 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client', 'alpha');
-        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        
+        if(empty($duplicate_code_error)) {
+	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        }		else {
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
+		}
+		
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -921,13 +940,13 @@ else
 	        print '<label for="radiocompany">';
             print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked').'>';
 	        print '&nbsp;';
-            print $langs->trans("Company/Fundation");
+            print $langs->trans("CreateThirdPartyOnly");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
 	        print '<label for="radioprivate">';
             $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked':'').'>';
 	        $text.='&nbsp;';
-	        $text.= $langs->trans("Individual");
+	        $text.= $langs->trans("CreateThirdPartyAndContact");
 	        $htmltext=$langs->trans("ToCreateContactWithSameName");
 	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';
@@ -963,7 +982,7 @@ else
 			print '<span span id="TypeName" class="fieldrequired">'.fieldLabel('ThirdPartyName','name').'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-	    print '<input type="text" size="60" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
+	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
 	    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -983,7 +1002,7 @@ else
 
         // Alias names (commercial, trademark or alias names)
         print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
+	    print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'"></td></tr>';
 
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
@@ -997,11 +1016,11 @@ else
         print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
 
-        print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
+        print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td>';
         print '<table class="nobordernopadding"><tr><td>';
-        $tmpcode=$object->code_client;
+		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
-        print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+        print '<input type="text" name="code_client" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
         $s=$modCodeClient->getToolTip($langs,$object,0);
         print $form->textwithpicto('',$s,1);
@@ -1021,7 +1040,7 @@ else
             print '<table class="nobordernopadding"><tr><td>';
             $tmpcode=$object->code_fournisseur;
             if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-            print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             print '</td><td>';
             $s=$modCodeFournisseur->getToolTip($langs,$object,1);
             print $form->textwithpicto('',$s,1);
@@ -1044,7 +1063,7 @@ else
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1056,7 +1075,7 @@ else
         print '</td></tr>';
 
         // Country
-        print '<tr><td width="25%">'.fieldLabel('Country','selectcountry_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+        print '<tr><td>'.fieldLabel('Country','selectcountry_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
@@ -1085,9 +1104,9 @@ else
 
         // Phone / Fax
         print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
-	    print '<td><input type="text" name="phone" id="phone" value="'.$object->phone.'"></td>';
+	    print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
         print '<td>'.fieldLabel('Fax','fax').'</td>';
-	    print '<td><input type="text" name="fax" id="fax" value="'.$object->fax.'"></td></tr>';
+	    print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1101,12 +1120,9 @@ else
                 if (($j % 2) == 0) print '<tr>';
 
                 $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-               	if(empty($conf->global->$idprof_mandatory))
-                	print '<td>'.fieldLabel($idprof,$key).'</td><td>';
-                else
-                    print '<td>'.fieldLabel($idprof,$key,1).'</td><td>';
+                print '<td>'.fieldLabel($idprof,$key, (empty($conf->global->$idprof_mandatory)?0:1)).'</td><td>';
 
-                print $formcompany->get_input_id_prof($i,$key,$object->$key,$object->country_code);
+                print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
                 print '</td>';
                 if (($j % 2) == 1) print '</tr>';
                 $j++;
@@ -1122,7 +1138,7 @@ else
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
-        $s = '<input type="text" class="flat" name="tva_intra" id="intra_vat" size="12" maxlength="20" value="'.$object->tva_intra.'">';
+        $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
         if (empty($conf->global->MAIN_DISABLEVATCHECK))
         {
@@ -1150,12 +1166,12 @@ else
         print '</tr>';
 
         // Type - Size
-        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
+        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
-        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
@@ -1205,7 +1221,7 @@ else
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.fieldLabel('DefaultLang','default_lang').'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-            print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+            print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1,0,0,'maxwidth200onsmartphone');
             print '</td>';
             print '</tr>';
         }
@@ -1492,14 +1508,14 @@ else
             	print $object->ref;
             	print '</td></tr>';
 			}
-			
+
             // Name
             print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
-	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
+	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
 	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	        print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
+	        print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1520,13 +1536,13 @@ else
 
             // Prospect/Customer
             print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	        print '<td><select class="flat" name="client" id="customerprospect">';
+	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
             print '<option value="0"'.($object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
             print '</select></td>';
-            print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
+            print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td>';
 
             print '<table class="nobordernopadding"><tr><td>';
             if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto)
@@ -1556,7 +1572,7 @@ else
             if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
-                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
+                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
@@ -1601,7 +1617,7 @@ else
 
             // Address
             print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	        print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -1641,9 +1657,9 @@ else
 
             // Phone / Fax
             print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
-	        print '<td><input type="text" name="phone" id="phone" value="'.$object->phone.'"></td>';
+	        print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
             print '<td>'.fieldLabel('Fax','fax').'</td>';
-	        print '<td><input type="text" name="fax" id="fax" value="'.$object->fax.'"></td></tr>';
+	        print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
             // Prof ids
             $i=1; $j=0;
@@ -1679,7 +1695,7 @@ else
             // VAT Code
             print '<td>'.fieldLabel('VATIntra','intra_vat').'</td>';
             print '<td>';
-            $s ='<input type="text" class="flat" name="tva_intra" id="intra_vat" size="12" maxlength="20" value="'.$object->tva_intra.'">';
+            $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
             {
@@ -1757,17 +1773,17 @@ else
             }
 
             // Type - Size
-            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>';
+            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
-            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td class="maxwidthonsmartphone" colspan="3">';
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
@@ -1889,7 +1905,7 @@ else
         /*
          * View
          */
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -1920,13 +1936,13 @@ else
         dol_htmloutput_errors($error,$errors);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -1934,12 +1950,12 @@ else
     	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
-	    
+
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     	print yn($object->fournisseur);
     	print '</td></tr>';
-    	
+
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
@@ -2017,7 +2033,7 @@ else
         print yn($object->tva_assuj);
         print '</td>';
 		print '</tr>';
-		
+
         // VAT Code
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
@@ -2025,7 +2041,7 @@ else
         {
             $s='';
             $s.=$object->tva_intra;
-            $s.='<input type="hidden" id="tva_intra" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
+            $s.='<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
             {
@@ -2161,15 +2177,15 @@ else
         print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
 
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-        
+
         // Legal
-        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -2242,7 +2258,7 @@ else
 	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
 			print '</td></tr>';
 		}
-		
+
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2250,22 +2266,6 @@ else
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
         	print $object->showOptionals($extrafields);
-        }
-
-        // Ban
-        if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
-        {
-            print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
-            print $langs->trans('RIB');
-            print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
-            else print '&nbsp;';
-            print '</td></tr></table>';
-            print '</td>';
-            print '<td colspan="3">';
-            print $object->display_rib();
-            print '</td></tr>';
         }
 
         // Parent company
@@ -2323,10 +2323,10 @@ else
 
         print '</table>';
 		print '</div>';
-		
+
         print '</div></div>';
         print '<div style="clear:both"></div>';
-        
+
         dol_fiche_end();
 
 
@@ -2343,13 +2343,13 @@ else
 			$TContact = $object->contact_array_objects();
 			foreach ($TContact as &$contact)
 			{
-				if (!empty($contact->email)) 
+				if (!empty($contact->email))
 				{
 					$at_least_one_email_contact = true;
 					break;
 				}
 			}
-			
+
 	        if (! empty($object->email) || $at_least_one_email_contact)
 	        {
 	        	$langs->load("mails");
@@ -2406,7 +2406,7 @@ else
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();
-			
+
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -2442,6 +2442,8 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Tableau des substitutions
+			//$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
@@ -2520,8 +2522,11 @@ else
 	        print '<div class="fichecenter"><br></div>';
 
 	        // Subsidiaries list
-	        $result=show_subsidiaries($conf,$langs,$db,$object);
-
+	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+	        {	        
+	           $result=show_subsidiaries($conf,$langs,$db,$object);
+	        }
+	        
 	        // Contacts list
 	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 	        {

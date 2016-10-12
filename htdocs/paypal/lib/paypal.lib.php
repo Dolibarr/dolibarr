@@ -209,7 +209,7 @@ function showPaypalPaymentUrl($type,$ref)
     $out='<br><br>';
     $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
     $url=getPaypalPaymentUrl(0,$type,$ref);
-    $out.='<input type="text" id="paypalurl" value="'.$url.'" size="60"><br>';
+    $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     return $out;
 }
 
@@ -228,6 +228,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 {
 	global $conf;
 
+	$ref=str_replace(' ','',$ref);
+	
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');

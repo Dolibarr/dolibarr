@@ -105,7 +105,7 @@ function clean_account($account)
 }
 
 /**
- * Return general accounting account with defined length
+ * Return General accounting account with defined length
  *
  * @param 	string	$account		General accounting account
  * @return	string          		String with defined length
@@ -114,6 +114,8 @@ function length_accountg($account)
 {
 	global $conf;
 
+	if ($account < 0 || empty($account)) return 'NotDefined';
+	
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
 
 	if (! empty($g)) {
@@ -137,15 +139,18 @@ function length_accountg($account)
 }
 
 /**
- * Return auxiliary accounting account with defined length
+ * Return Auxiliary accounting account with defined length
+ * TODO For thirdparty accounts only, or products too ?
  *
  * @param 	string	$accounta		Auxiliary accounting account
  * @return	string          		String with defined length
  */
 function length_accounta($accounta)
 {
-	global $conf;
+	global $conf, $langs;
 
+	if ($accounta < 0 || empty($accounta)) return 'NotDefined';
+	
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
 
 	if (! empty($a)) {

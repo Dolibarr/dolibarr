@@ -396,6 +396,11 @@ class SMTPs
 		$host=$this->getHost();
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+		{
+		    $host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		    $host='tls://'.$host;
+		}
 		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
 		{
 			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))

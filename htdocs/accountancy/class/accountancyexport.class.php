@@ -1,10 +1,11 @@
 <?php
 /*
- * Copyright (C) 2007-2012 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2015 Florian Henry <florian.henry@open-concept.pro>
- * Copyright (C) 2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016 Pierre-Henry Favre <phf@atm-consulting.fr>
+ * Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
+ * Copyright (C) 2016		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountancyexport.class.php
+ * \file		htdocs/accountancy/class/accountancyexport.class.php
+ * \ingroup		Advanced accountancy
+ * \brief 		Class accountancy export
  */
 
 /**
@@ -43,6 +46,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_CIEL = 5;
 	public static $EXPORT_TYPE_QUADRATUS = 6;
 	public static $EXPORT_TYPE_EBP = 7;
+	public static $EXPORT_TYPE_COGILOG = 8;
 
 	/**
 	 *
@@ -91,6 +95,7 @@ class AccountancyExport
 				self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
 				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
 				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
+				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 		);
 	}
 
@@ -137,7 +142,10 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_EBP :
 				$this->exportEbp($TData);
 				break;
-			default :
+			case self::$EXPORT_TYPE_COGILOG :
+				$this->exportCogilog($TData);
+				break;
+			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
 		}
@@ -151,6 +159,8 @@ class AccountancyExport
 	 * @return void
 	 */
 	public function exportNormal($objectLines) {
+		global $conf;
+
 		foreach ( $objectLines as $line ) {
 			// Std export
 			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
@@ -175,15 +185,47 @@ class AccountancyExport
 	public function exportCegid($objectLines) {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$separator = ";";
 
-			print $date . $this->separator;
+			print $date . $separator;
+			print $line->code_journal . $separator;
+			print length_accountg($line->numero_compte) . $separator;
+			print length_accounta($line->code_tiers) . $separator;
+			print $line->sens . $separator;
+			print price($line->montant) . $separator;
+			print $line->label_compte . $separator;
+			print $line->doc_ref;
+			print $this->end_line;
+		}
+	}
+
+	/**
+	 * Export format : COGILOG
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportCogilog($objectLines) {
+		foreach ( $objectLines as $line ) {
+			$date = dol_print_date($line->doc_date, '%d%m%Y');
+
 			print $line->code_journal . $this->separator;
+			print $date . $this->separator;
+			print $line->piece_num . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
-			print ' ' . $this->separator;
-			print $line->sens . $this->separator;
-			print price($line->montant) . $this->separator;
-			print dol_trunc($line->label_compte, 32) . $this->separator;
+			print '' . $this->separator;
+			print $line->label_compte . $this->separator;
+			print $date . $this->separator;
+			if ($line->sens=='D') {
+				print price($line->montant) . $this->separator;
+				print '' . $this->separator;
+			}elseif ($line->sens=='C') {
+				print '' . $this->separator;
+				print price($line->montant) . $this->separator;
+			}
 			print $line->doc_ref . $this->separator;
+			print $line->label_compte . $this->separator;
 			print $this->end_line;
 		}
 	}
@@ -257,6 +299,8 @@ class AccountancyExport
 	public function exportCiel(&$TData) {
 		global $conf;
 
+		$this->end_line ="\r\n";
+
 		$i = 1;
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ( $TData as $data ) {
@@ -294,6 +338,8 @@ class AccountancyExport
 	 */
 	public function exportQuadratus(&$TData) {
 		global $conf;
+
+		$this->end_line ="\r\n";
 
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {

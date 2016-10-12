@@ -44,9 +44,10 @@ function versiontostring($versionarray)
 /**
  *	Compare 2 versions (stored into 2 arrays).
  *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
- *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 beta or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 alpha or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
+ *  Alternative way to compare: if ((float) DOL_VERSION >= 4.0) is true if version is 4.0 alpha or higher (works only to compare first and second level)
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -568,6 +569,37 @@ function security_prepare_head()
 
 
 /**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function translation_prepare_head()
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
+    $head[$h][1] = $langs->trans("TranslationOverwriteKey");
+    $head[$h][2] = 'overwrite';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
+    $head[$h][1] = $langs->trans("TranslationKeySearch");
+    $head[$h][2] = 'searchkey';
+    $h++;
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'translation_admin');
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'translation_admin','remove');
+
+
+    return $head;
+}
+
+
+
+/**
  * 	Return list of session
  *
  *	@return		array			Array list of sessions
@@ -676,7 +708,7 @@ function purgeSessions($mysessionid)
  *
  *  @param      string		$value      Name of module to activate
  *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     string      			Error message or '';
+ *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
 function activateModule($value,$withdeps=1)
 {
@@ -685,7 +717,7 @@ function activateModule($value,$withdeps=1)
     // Check parameters
     if (empty($value)) return 'ErrorBadParameter';
 
-    $ret='';
+    $ret=array('nbmodules'=>0, 'errors'=>array(), 'nbperms'=>0);
     $modName = $value;
     $modFile = $modName . ".class.php";
 
@@ -729,43 +761,67 @@ function activateModule($value,$withdeps=1)
     }
 
     $result=$objMod->init();
-    if ($result <= 0) $ret=$objMod->error;
-
-    if (! $ret && $withdeps)
+    if ($result <= 0) 
     {
-        if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
+        $ret['errors'][]=$objMod->error;
+    }
+    else
+    {
+        if ($withdeps)
         {
-            // Activation des modules dont le module depend
-            $num = count($objMod->depends);
-            for ($i = 0; $i < $num; $i++)
+            if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
-            	foreach ($modulesdir as $dir)
-            	{
-            		if (file_exists($dir.$objMod->depends[$i].".class.php"))
-            		{
-            			activateModule($objMod->depends[$i]);
-            		}
-            	}
+                // Activation des modules dont le module depend
+                $num = count($objMod->depends);
+                for ($i = 0; $i < $num; $i++)
+                {
+                	$activate = false;
+                	foreach ($modulesdir as $dir)
+                	{
+                		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+                		{
+                			$resarray = activateModule($objMod->depends[$i]);
+    						if (empty($resarray['errors'])) $activate = true;
+    						break;
+                		}
+                	}
+    				
+    				if ($activate)
+    				{
+    				    $ret['nbmodules']+=$resarray['nbmodules'];
+    				    $ret['nbperms']+=$resarray['nbperms'];
+    				}
+    				else 
+    				{
+    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+    				}
+                }
             }
-        }
-
-        if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
-        {
-            // Desactivation des modules qui entrent en conflit
-            $num = count($objMod->conflictwith);
-            for ($i = 0; $i < $num; $i++)
+    
+            if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
             {
-            	foreach ($modulesdir as $dir)
-            	{
-            		if (file_exists($dir.$objMod->conflictwith[$i].".class.php"))
-            		{
-            			unActivateModule($objMod->conflictwith[$i],0);
-            		}
-            	}
+                // Desactivation des modules qui entrent en conflit
+                $num = count($objMod->conflictwith);
+                for ($i = 0; $i < $num; $i++)
+                {
+                	foreach ($modulesdir as $dir)
+                	{
+                		if (file_exists($dir.$objMod->conflictwith[$i].".class.php"))
+                		{
+                			unActivateModule($objMod->conflictwith[$i],0);
+                		}
+                	}
+                }
             }
         }
     }
 
+    if (! count($ret['errors'])) 
+    {
+        $ret['nbmodules']++;
+        $ret['nbperms']+=count($objMod->rights);
+    }
+    
     return $ret;
 }
 

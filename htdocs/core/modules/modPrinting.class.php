@@ -97,7 +97,7 @@ class modPrinting extends DolibarrModules
         $this->rights[$r][0] = 64001;
         $this->rights[$r][1] = 'DirectPrint';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'read';
 
         // Main menu entries
@@ -108,8 +108,7 @@ class modPrinting extends DolibarrModules
         $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
                                 'type'=>'left',                 // This is a Top menu entry
                                 'titre'=>'MenuDirectPrinting',
-                                'mainmenu'=>'printing',
-                                'url'=>'/printing/index.php',
+                                'url'=>'/printing/index.php?mainmenu=home&leftmenu=admintools',
                                 'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>300,
                                 'enabled'=>'$conf->printing->enabled && $leftmenu==\'admintools\'',

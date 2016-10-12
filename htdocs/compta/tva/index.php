@@ -123,17 +123,9 @@ print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
 print '<br>';
 
-print '<table width="100%" class="notopnoleftnoright">';
-print '<tr><td class="notopnoleft" width="50%">';
-print load_fiche_titre($langs->trans("VATSummary"), '', '');
-// The report mode is the one defined by defaut in tax module setup
-//print $modetax;
-//print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-print '</td><td>';
-print load_fiche_titre($langs->trans("VATPaid"), '', '');
-print '</td></tr>';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<tr><td class="notopnoleft" width="50%" valign="top">';
+print load_fiche_titre($langs->trans("VATSummary"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -223,18 +215,12 @@ print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("To
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
-/*}
- else
- {
- print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
- print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
- }*/
-
 print '</table>';
 
 
-print '</td>';
-print '<td class="notopnoleftnoright" valign="top" width="50%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 /*
  * Payed
@@ -250,10 +236,7 @@ $sql.= " GROUP BY dm ORDER BY dm ASC";
 pt($db, $sql,$langs->trans("Year")." $y");
 
 
-print "</td></tr></table>";
-
-print '</td></tr>';
-print '</table>';
+print '</div></div>';
 
 llxFooter();
 $db->close();

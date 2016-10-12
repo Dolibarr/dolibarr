@@ -18,18 +18,11 @@ ExportableFields=زمینه های صادراتی
 ExportedFields=زمینه های صادراتی
 ImportModelName=پروفایل واردات
 ImportModelSaved=مشخصات واردات تحت <b>نام٪ s را</b> نجات داد.
-ImportableFields=زمینه واردات
-ImportedFields=رشته های وارداتی
 DatasetToExport=مجموعه داده برای صادرات
 DatasetToImport=واردات فایل را به مجموعه داده
-NoDiscardedFields=بدون زمینه در فایل منبع دور انداخته شده
-Dataset=مجموعه داده
 ChooseFieldsOrdersAndTitle=رشته های سفارش ...
-FieldsOrder=منظور زمینه
 FieldsTitle=عنوان زمینه
-FieldOrder=منظور درست است
 FieldTitle=عنوان درست
-ChooseExportFormat=فرمت صادرات را انتخاب کنید
 NowClickToGenerateToBuildExportFile=در حال حاضر، فرمت فایل را انتخاب کنید در جعبه دسته کوچک موسیقی جاز و کلیک بر روی "ایجاد" برای ساخت فایل صادرات ...
 AvailableFormats=فرمت های موجود
 LibraryShort=کتابخانه
@@ -45,7 +38,7 @@ FormatedExportDesc2=گام اول برای انتخاب یک مجموعه داد
 FormatedExportDesc3=هنگامی که داده به صادرات انتخاب می شوند، شما می توانید فرمت فایل خروجی شما می خواهید به صادرات داده خود را به کار گیرید.
 Sheet=ورق
 NoImportableData=بدون اطلاعات واردات (بدون ماژول با تعاریف به اجازه واردات داده ها)
-FileSuccessfullyBuilt=فایل صادرات تولید
+FileSuccessfullyBuilt=File generated
 SQLUsedForExport=درخواست SQL مورد استفاده برای ایجاد فایل صادرات
 LineId=کد خط
 LineLabel=Label of line
@@ -72,13 +65,10 @@ MoveField=درست است حرکت شماره ستون از٪ s
 ExampleOfImportFile=مثالی از فایل ورودی
 SaveImportProfile=ذخیره سازی این مشخصات واردات
 ErrorImportDuplicateProfil=برای صرفه جویی در این پروفایل واردات با این نام انجام نشد. مشخصات موجود در حال حاضر با این نام وجود دارد.
-ImportSummary=خلاصه راه اندازی واردات
 TablesTarget=جداول هدفمند
 FieldsTarget=رشته های هدفمند
-TableTarget=جدول هدفمند
 FieldTarget=درست هدفمند
 FieldSource=درست است منبع
-DoNotImportFirstLine=آیا خط اول از فایل منبع وارد نشده است
 NbOfSourceLines=تعداد خطوط در فایل منبع
 NowClickToTestTheImport=پارامترهای واردات شما تعریف شده اند را بررسی کنید. اگر آنها درست هستند، بر روی دکمه کلیک کنید <b>"٪ s"</b> را برای راه اندازی یک شبیه سازی از روند واردات (هیچ داده ای را در پایگاه داده خود را تغییر، آن را تنها یک شبیه سازی برای لحظه ای) ...
 RunSimulateImportFile=راه اندازی شبیه سازی واردات
@@ -119,11 +109,6 @@ ExportFieldAutomaticallyAdded=<b>٪</b> درست <b>ها</b> به طور خود�
 CsvOptions=گزینه CSV
 Separator=تفکیک کننده
 Enclosure=محوطه
-SuppliersProducts=تولید کنندگان محصولات
-BankCode=کد بانک
-DeskCode=کد میز
-BankAccountNumber=شماره حساب
-BankAccountNumberKey=کلید
 SpecialCode=کد ویژه
 ExportStringFilter=٪٪ اجازه می دهد تا به جای یک یا چند کاراکتر در متن
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
@@ -134,7 +119,6 @@ SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude th
 KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 ## filters
 SelectFilterFields=اگر می خواهید برای فیلتر کردن در برخی از ارزش ها، فقط مقادیر ورودی در اینجا.
-FilterableFields=Filterable Fields
 FilteredFields=رشته های فیلتر شده
 FilteredFieldsValues=ارزش فیلتر
 FormatControlRule=Format control rule

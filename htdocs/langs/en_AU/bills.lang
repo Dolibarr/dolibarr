@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - bills
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+BankCode=BSB
+ChequeNumber=Cheque N°
+ChequeOrTransferNumber=Cheque/Transfer N°
+ChequeMaker=Cheque/Transfer transmitter
+ChequeBank=Bank of Cheque
+CheckBank=Cheque
+PaymentByChequeOrderedTo=Cheque payment (including GST) is payable to %s send to
+PaymentByChequeOrderedToShort=Cheque payment (including GST) is payable to
+MenuChequeDeposits=Cheque deposits
+MenuCheques=Cheques
+MenuChequesReceipts=Cheque receipts
+NewChequeDeposit=New Cheque deposit
+ChequesReceipts=Cheque receipts
+ChequesArea=Cheque deposits area
+ChequeDeposits=Cheque deposits
+Cheques=Cheques
+NbCheque=Number of cheques

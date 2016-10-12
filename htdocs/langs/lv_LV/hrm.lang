@@ -12,9 +12,6 @@ CloseEtablishment=Close establishment
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module
-ListOfEmployees=Darbinieku saraksts
 Employees=Darbinieki
 Employee=Darbinieks
-Employe=Employe
 NewEmployee=Jauns darbinieks
-EmployeeCard=Darbinieka kartiņa

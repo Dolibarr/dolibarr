@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = O
-CronAbout = O Cron
-CronAboutPage = Strona o cron
 # Right
 Permission23101 = Przeglądaj zaplanowane zadania
 Permission23102 = Stwórz/zaktualizuj zaplanowane zadanie
@@ -10,7 +7,7 @@ Permission23103 = Usuń zaplanowane zadanie
 Permission23104 = Wykonaj zaplanowane zadanie
 # Admin
 CronSetup= Konfiguracja zarządzania zaplanowanymi zadaniami
-URLToLaunchCronJobs=Adres URL, aby sprawdzić i uruchomić wymagane cron, jeśli
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Albo sprawdzić i uruchomić określonej pracy
 KeyForCronAccess=Klucz zabezpieczeń dla URL, aby uruchomić cron
 FileToLaunchCronJobs=Linia poleceń do uruchamiania zadań crona
@@ -18,48 +15,37 @@ CronExplainHowToRunUnix=W środowisku Unix należy użyć następującego wpisu 
 CronExplainHowToRunWin=W środowisku Microsoft Windows(tm) można użyć narzędzia  Zaplanowane zadania, aby uruchomić linię poleceń co 5 minut
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Zaplanowane zadania
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Lista wyłączonych zadań
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Ostatni bieg
 CronLastOutput=Ostatnie wyjście prowadzony
 CronLastResult=Ostatni kod wynikowy
-CronListOfCronJobs=Lista zaplanowanych zadań
 CronCommand=Komenda
 CronList=Zaplanowane zadania
 CronDelete=Usuwanie zaplanowanych zadań
 CronConfirmDelete=Czy jesteś pewny, że chcesz usunąć te zaplanowane zadania?
-CronExecute=Uruchom zaplanowane zadania
+CronExecute=Launch scheduled job
 CronConfirmExecute=Jesteś pewny, że chcesz teraz wykonać te zaplanowane zadania?
 CronInfo=Moduł zaplanowanych zadań pozwala na uruchamianie zadań, ktore były zaplanowane
-CronWaitingJobs=Oczekujące zadania
 CronTask=Zadanie
 CronNone=Żaden
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Kolejne wykonanie
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Częstotliwość
 CronClass=Klasa
 CronMethod=Metoda
 CronModule=Moduł
-CronAction=Akcja
-CronStatus=Status
-CronStatusActive=Włączone
-CronStatusInactive=Wyłączony
 CronNoJobs=Brak zarejestrowanych zadań
 CronPriority=Priorytet
-CronLabel=Opis
+CronLabel=Etykieta
 CronNbRun=Ilość uruchomień
-CronMaxRun=Max nb. launch
+CronMaxRun=Maksymalna liczba uruchomień
 CronEach=Każdy
 JobFinished=Zadania uruchomione i zakończone
 #Page card
 CronAdd= Dodaj zadanie
-CronHourStart= Data i godzina rozpoczęcia zadania
 CronEvery=Wykonaj każde zadanie
 CronObject=Instancja/Obiekt do utworzenia
 CronArgs=Parametry
@@ -81,14 +67,13 @@ CronCommandHelp=System linii poleceń do wykonania.
 CronCreateJob=Utwórz nowe zaplanowane zadanie
 CronFrom=Z
 # Info
-CronInfoPage=Informacja
 # Common
 CronType=Typ zadania
 CronType_method=Wywołanie metody z klasy Dolibarr
 CronType_command=Polecenie powłoki
-CronMenu=Cron
 CronCannotLoadClass=Nie można załadować klasy s% lub obiektu %s
-UseMenuModuleToolsToAddCronJobs=Wejdź w menu "Home - modułów narzędzi - Lista zadań", aby zobaczyć i edytować zaplanowane zadania.
-TaskDisabled=Zadanie wyłączone
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Zadanie wyłączone
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

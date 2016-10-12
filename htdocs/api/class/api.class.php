@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,27 @@ class DolibarrApi
     function _cleanObjectDatas($object) {
 
         // Remove $db object property for object
-		unset($object->db);
+        unset($object->db);
+        
+        // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+        unset($object->linkedObjects);
+        
+        unset($object->lignes); // should be lines
+        
+        unset($object->statuts);
+        unset($object->statuts_short);
+        unset($object->statuts_logo);
+        
+        // Remove the $oldcopy property because it is not supported by the JSON
+        // encoder. The following error is generated when trying to serialize
+        // it: "Error encoding/decoding JSON: Type is not supported"
+        // Note: Event if this property was correctly handled by the JSON
+        // encoder, it should be ignored because keeping it would let the API
+        // have a very strange behavior: calling PUT and then GET on the same
+        // resource would give different results:
+        // PUT /objects/{id} -> returns object with oldcopy = previous version of the object
+        // GET /objects/{id} -> returns object with oldcopy empty
+        unset($object->oldcopy);
 
         // If object has lines, remove $db property
         if(isset($object->lines) && count($object->lines) > 0)  {
@@ -98,13 +119,15 @@ class DolibarrApi
         }
 
         // If object has linked objects, remove $db property
+        /*
         if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
             foreach($object->linkedObjects as $type_object => $linked_object) {
                 foreach($linked_object as $object2clean) {
                     $this->_cleanObjectDatas($object2clean);
                 }
             }
-        }
+        }*/
+        
 		return $object;
     }
 

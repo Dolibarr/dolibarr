@@ -65,12 +65,25 @@ $invoicestatic=new Facture($db);
 
 $form = new Form($db);
 
-
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
+    
+    $title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
 
-	llxHeader("","",$langs->trans("CardProduct".$object->type));
+	llxHeader('', $title, $helpurl);
 
 	/*
 	 *  En mode visu
@@ -222,7 +235,7 @@ if ($id > 0 || ! empty($ref))
                     $markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
                 }
                 else
-              {
+                {
                     $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
                     $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
                 }

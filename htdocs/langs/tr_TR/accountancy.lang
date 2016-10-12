@@ -3,84 +3,80 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışaaktar
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla birlikte dışaaktar
-ACCOUNTING_EXPORT_LABEL=Etiketi dışaaktar
+ACCOUNTING_EXPORT_LABEL=Etiket dışaaktar
 ACCOUNTING_EXPORT_AMOUNT=Tutarı dışaaktar
-ACCOUNTING_EXPORT_DEVISE=Cihazı dışaaktar
+ACCOUNTING_EXPORT_DEVISE=Para birimi dışaaktar
 Selectformat=Dosya için biçimi seçin
 ACCOUNTING_EXPORT_PREFIX_SPEC=Dosya adı için öneki belirtin
-
-Accounting=Muhasebe
-Globalparameters=Genel parametreler
-Menuaccount=Muhasebe hesapları
-Menuthirdpartyaccount=Üçüncü parti hesapları
-MenuTools=Araçlar
 
 ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
 Journaux=Günlükler
 JournalFinancial=Mali günlükler
-Exports=Dışaaktarımlar
-Export=Dışaaktar
-Modelcsv=Dışaaktarım modeli
-OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
-Selectmodelcsv=Bir dışaaktarım modeli seç
-Modelcsv_normal=Klasik dışaaktarım
-Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
 BackToChartofaccounts=Hesap planı cirosu
 
-Definechartofaccounts=Hesap planı tanımla
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=Hesap planı seç
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
+AccountAccountingShort=Hesap
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Analiz
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
 MenuAccountancy=Muhasebe
-CustomersVentilation=Müşteri analizi
-SuppliersVentilation=Tedarikçi analizi
-TradeMargin=Ticaret kar oranı
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Raporlar
-ByCustomerInvoice=Müşteri faturalarına göre
 NewAccount=Yeni muhasebe hesabı
 Create=Oluştur
-CreateMvts=Hareket oluştur
-UpdateAccount=Bir muhasebe hesabının değiştirilmesi
-UpdateMvts=Bir hareketin değiştirilmesi
-WriteBookKeeping=Büyük defter hesap kayıtları
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=Büyük Defter
 AccountBalance=Hesap bakiyesi
 
-AccountingVentilation=Analiz muhasebesi
-AccountingVentilationSupplier=Tedarikçi hesabı analizi
-AccountingVentilationCustomer=Müşteri hesabı analizi
-
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Analiz edilecek fatura kalemleri
-InvoiceLinesDone=Analiz edilen fatura kalemleri
-IntoAccount=Muhasebe hesapları analizi
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=Analiz
-VentilationAuto=Otomatik analiz
+Ventilate=Bind
 
 Processing=İşleme
 EndProcessing=İşleme sonu
-AnyLineVentilate=Analiz edilecek herhangi bir satır
+AnyLineVentilate=Any lines to bind
 SelectedLines=Seçilen satırlar
 Lineofinvoice=Fatura satırı
-VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
-NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_SEPARATORCSV=Dışaaktarma dosyası sütün ayırıcısı
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Analiz syfasında gösterilecek öğe sayısı (önerilen ençok:50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Analiz sayfalarında "Analiz edileceklerin" sıralandırılmasını en son öğelerden göre başlatın
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Analiz sayfalarında "Analiz edilmişlerin" sıralandırılmasını en son öğelerden göre başlatın
-
-AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
-AccountLengthDesc=Boşlukların sıfır figürü ile değiştirilmesiyle muhasebe hesap uzunluğunun uydurulmasını sağlayan işlevdir. Bu işlev yalnızca görüntüyü değiştirir, Dolibarr'da kayıtlı muhasebe hesaplarını değiştirmez. Dışaaktarma için bu fonksiyonun belirli yazılımla uyumlu olması gerekir.
 ACCOUNTING_LENGTH_DESCRIPTION=Listelemede ürün & hizmet tanımlaması için yer uzunluğu (En iyi = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Listelemede ürün & hizmet hesap tanımlama formu için yer uzunluğu (En iyi = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Genel hesapların uzunluğu
-ACCOUNTING_LENGTH_AACCOUNT=Üçüncü parti hesaplarının uzunluğu
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
+ACCOUNTING_MANAGE_ZERO=Bir muhasebe hesabı sonunda sıfır kullanın. Bazı ülkelerde gerelidir. Varsayılan olarak engelleyin.  "Hesapların uzunluğu" işlevinde dikkatli olun.
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=Satış günlüğü
 ACCOUNTING_PURCHASE_JOURNAL=Alış günlüğü
@@ -90,6 +86,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Sosyal günlük
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transfer hesabı
 ACCOUNTING_ACCOUNT_SUSPENSE=Bekleme hesabı
+DONATION_ACCOUNTINGACCOUNT=Bağış kayıtları hesabı
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Satınalınan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
@@ -99,81 +96,109 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe ko
 Doctype=Belge türü
 Docdate=Tarih
 Docref=Referans
-Numerocompte=Hesap
-Code_tiers=Üçüncü parti
+Code_tiers=Üçüncü taraf
 Labelcompte=Hesap etiketi
 Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
 NumPiece=Parça sayısı
-
+AccountingCategory=Muhasebe kategorisi
+NotMatch=Ayarlanmamış
+DeleteMvt=Büyük defter satırı sil
+DelYear=Silinecek yıl
+DelJournal=Silinecek günlük
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 DelBookKeeping=Büyük defter kayıtlarını sil
-
 DescSellsJournal=Satış günlüğü
 DescPurchasesJournal=Alış günlüğü
 FinanceJournal=Finance journal
 DescFinanceJournal=Banka hesabından yapılan tüm ödeme türlerini içeren finans günlüğü
-
-CashPayment=Nakit ödeme
-
-SupplierInvoicePayment=Tedarikçi faturası ödemesi
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Müşteri faturası ödemesi
-
-ThirdPartyAccount=Üçüncü parti hesabı
-
-NewAccountingMvt=Yeni hareket
-NumMvts=Hareket sayısı
-ListeMvts=Hareket listesi
+ThirdPartyAccount=Üçüncü taraf hesabı
+NewAccountingMvt=New transaction
+NumMvts=Numero of transaction
+ListeMvts=List of movements
 ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
 
-ReportThirdParty=Üçüncü parti hesabını listele
-DescThirdPartyReport=Burada üçüncü parti müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=Muhasebe hesapları listesi
 
-Pcgversion=Plan sürümü
 Pcgtype=Hesap sınıfı
 Pcgsubtype=Hesap sınıfı altında
 Accountparent=Hesabın kökü
 
-DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
 TotalVente=Vergi öncesi toplam gelir
 TotalMarge=Toplam satışlar kar oranı
-DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
-DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
-ChangeAccount=Muhasebe hesabını, hesap tarafından seçilen satırlar için değiştirin:
-Vide=-
-DescVentilSupplier=Tedarikçi faturalarınızın yıllık hesap analizi için buraya danışın
-DescVentilTodoSupplier=Bir muhasebe hesabıyla tedarikçi faturanızın kalemlerini analiz edin
-DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
 
-ValidateHistory=Otomatikman doğrula
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+Vide=-
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Bind Automatically
+AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç = %s
-FicheVentilation=Analiz kartı
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=İşlemler büyük deftere yazılır
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
-MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç = %s
+## Admin
+ApplyMassCategories=Toplu kategori uygula
 
-##Export Journal Feature
-ExportFormat=Dışaktarım biçimi
-Prefixname=Dışaktarım dosyası öneki
-Separate=Dışaaktarım ayırıcısı
-Textframe=Metin değeri çerçevesi
-Headercol=Dosya başlığındaki kolon adı
-Fieldname=Alan Adı
-Headername=Başlıktaki ad
-Type=Alan türü
-Param=Ek parametreler
-EnabledProduct=Ürünlerde
-EnabledTiers=Üçüncü partide
-EnabledVat=KDV nde
+## Export
+Exports=Dışaaktarımlar
+Export=Dışaaktar
+Modelcsv=Dışaaktarım modeli
+OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
+Selectmodelcsv=Bir dışaaktarım modeli seç
+Modelcsv_normal=Klasik dışaaktarım
+Modelcsv_CEGID=CEGID Expert Comptabilité'ye doğru dışaaktar
+Modelcsv_COALA=Sage Coala'ya doğru dışaaktar
+Modelcsv_bob50=Sage BOB 50'ye doğru dişaaktar
+Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
+Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
+Modelcsv_ebp=EBP'ye yönelik dışaaktarım
+Modelcsv_cogilog=Cogilog'a dışaaktar
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
-InitAccountancyDesc=Bu sayfa, satışlar ve satınalmalar için muhasebe hesabı tanımlanmamış ürünler ve hizmetlere muhasebe hesabı başlatmak üzere kullanılabilir.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
 Options=Seçenekler
 OptionModeProductSell=Satış modu
 OptionModeProductBuy=Satınalma modu
 OptionModeProductSellDesc=Satışlar için muhasebe hesabı tanımlanmamış tüm ürünleri göster.
 OptionModeProductBuyDesc=Satınalmalar için muhasebe hesabı tanımlanmamış tüm ürünleri göster.
+CleanFixHistory=Hesap planında bulunmayan muhasebe kodlarını satırlardan kaldırın
+CleanHistory=Reset all bindings for selected year
+
+## Dictionary
+Range=Muhasebe hesabı aralığı
+Calculated=Hesaplanmış
+Formula=Formül
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Bu ülke için mevcut muhasebe kategorisi yok
+ExportNotSupported=Ayarlanan dışaaktarım biçimi bu sayfada desteklenmiyor
+BookeppingLineAlreayExists=Satırlar zaten muhasebede bulunmaktadır
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

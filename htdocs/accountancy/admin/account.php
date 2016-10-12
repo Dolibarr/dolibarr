@@ -19,12 +19,11 @@
 
 /**
  * \file 		htdocs/accountancy/admin/account.php
- * \ingroup		Advanced accountancy
+ * \ingroup     Advanced accountancy
  * \brief		List accounting account
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -35,6 +34,7 @@ $langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action');
+$cancel = GETPOST('cancel');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $search_account = GETPOST("search_account");
@@ -80,34 +80,39 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (empty($reshook))
 {
-	$search_account = "";
-	$search_label = "";
-	$search_accountparent = "";
-	$search_pcgtype = "";
-	$search_pcgsubtype = "";
-}
-
-if ($action == 'disable') {
-	if ($accounting->fetch($id)) {
-		$result = $accounting->account_desactivate($id);
-	}
-	
-	$action = 'update';
-	if ($result < 0) {
-		setEventMessages($accounting->error, $accounting->errors, 'errors');
-	}
-} else if ($action == 'enable') {
-	if ($accounting->fetch($id)) {
-		$result = $accounting->account_activate($id);
-	}
-	$action = 'update';
-	if ($result < 0) {
-		setEventMessages($accounting->error, $accounting->errors, 'errors');
-	}
+    if (! empty($cancel)) $action = '';
+    
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+    
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    {
+    	$search_account = "";
+    	$search_label = "";
+    	$search_accountparent = "";
+    	$search_pcgtype = "";
+    	$search_pcgsubtype = "";
+    }
+    
+    if ($action == 'disable') {
+    	if ($accounting->fetch($id)) {
+    		$result = $accounting->account_desactivate($id);
+    	}
+    	
+    	$action = 'update';
+    	if ($result < 0) {
+    		setEventMessages($accounting->error, $accounting->errors, 'errors');
+    	}
+    } else if ($action == 'enable') {
+    	if ($accounting->fetch($id)) {
+    		$result = $accounting->account_activate($id);
+    	}
+    	$action = 'update';
+    	if ($result < 0) {
+    		setEventMessages($accounting->error, $accounting->errors, 'errors');
+    	}
+    }
 }
 
 
@@ -172,7 +177,7 @@ if ($result) {
 	if ($search_pcgsubtype != "") $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy');
 	
 	$i = 0;
 	
@@ -194,7 +199,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $params, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $params, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';

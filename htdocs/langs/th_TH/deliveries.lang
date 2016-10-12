@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=การจัดส่งสินค้า
-Deliveries=การส่งมอบ
+DeliveryRef=Ref Delivery
 DeliveryCard=การ์ดจัดส่งสินค้า
 DeliveryOrder=ใบตราส่ง
-DeliveryOrders=การสั่งซื้อการจัดส่งสินค้า
 DeliveryDate=วันที่ส่งมอบ
-DeliveryDateShort=deliv วันที่
 CreateDeliveryOrder=เพื่อสร้างการส่งมอบ
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=จำนวนการจัดส่ง
 SetDeliveryDate=ตั้งวันที่จัดส่ง
 ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
 ValidateDeliveryReceiptConfirm=คุณแน่ใจหรือว่าต้องการตรวจสอบการจัดส่งใบเสร็จรับเงินนี้หรือไม่?
@@ -30,3 +27,4 @@ Recipient=ผู้รับ
 ErrorStockIsNotEnough=มีไม่มากพอที่หุ้น
 Shippable=shippable
 NonShippable=ไม่ shippable
+ShowReceiving=Show delivery receipt

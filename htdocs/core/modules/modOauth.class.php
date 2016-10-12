@@ -97,7 +97,7 @@ class modOauth extends DolibarrModules
         $this->rights[$r][0] = 66000;
         $this->rights[$r][1] = 'OauthAccess';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'read';*/
 
         // Main menu entries
@@ -137,11 +137,6 @@ class modOauth extends DolibarrModules
 
         // Clean before activation
         $this->remove($options);
-
-        $sql = array(
-            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."oauth_state (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), state varchar(128), fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."oauth_token (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), token text, fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-            );
 
         return $this->_init($sql,$options);
     }

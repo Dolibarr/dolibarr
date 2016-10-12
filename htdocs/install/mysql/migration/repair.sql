@@ -41,10 +41,11 @@ delete from llx_livraisondet where fk_livraison in (select rowid from llx_livrai
 delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
+delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
-update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
+update llx_subscription set fk_bank = null where fk_bank not in (select rowid from llx_bank);
 
 update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
@@ -202,6 +203,8 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 
 UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
 -- Requests to clean old tables or external modules tables
 
@@ -263,7 +266,7 @@ delete from llx_menu where menu_handler = 'smartphone';
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
-update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid)
+update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid);
  
 
 -- Remove duplicate of shipment mode (keep the one with tracking defined)

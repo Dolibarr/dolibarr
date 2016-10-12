@@ -1,4 +1,3 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-Withdrawals=Retiros
-Withdrawal=Retiro
 StatusRefused=Rechazado
+DoStandingOrdersBeforePayments=This tab allows you to request a direct debit payment order. Once done, go into menu Bank->Withdrawal to manage the direct debit payment order. When payment order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.

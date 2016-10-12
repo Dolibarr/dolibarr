@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
+$langs->load("other");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("projects");
@@ -561,6 +562,8 @@ if ($step == 2 && $datatoexport)
 
         print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
+        //print $code.'-'.$label.'-'.$entity;
+        
         $tmparray=explode(':',$entityicon);
         if (count($tmparray) >=2)
         {
@@ -636,7 +639,14 @@ if ($step == 2 && $datatoexport)
 
 if ($step == 3 && $datatoexport)
 {
-	llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	/*
 	 * Affichage onglets
@@ -790,6 +800,13 @@ if ($step == 3 && $datatoexport)
 
 if ($step == 4 && $datatoexport)
 {
+    if (count($array_selected) < 1)     // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
     asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -1015,6 +1032,13 @@ if ($step == 4 && $datatoexport)
 
 if ($step == 5 && $datatoexport)
 {
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
 	asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -1187,15 +1211,16 @@ exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 
  */
 function getablenamefromfield($code,$sqlmaxforexport)
 {
+	$alias=preg_replace('/\.(.*)$/i','',$code);         // Keep only 'Alias' and remove '.Fieldname'
+	$regexstring='/([a-zA-Z_]+) as '.preg_quote($alias).'[, \)]/i';
+    
 	$newsql=$sqlmaxforexport;
-	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);
-	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// We must keep the ' ' before WHERE
-	$alias=preg_replace('/\.(.*)$/i','',$code);
-	//print $newsql.' '.$alias;
-	$regexstring='/([a-zA-Z_]+) as '.$alias.'[, \)]/i';
+	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);  // Remove part before the FROM
+	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
+	
 	if (preg_match($regexstring,$newsql,$reg))
 	{
-		return $reg[1];
+		return $reg[1];   // The tablename
 	}
 	else return '';
 }

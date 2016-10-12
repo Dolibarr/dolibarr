@@ -4,7 +4,6 @@ EMailSupport=E-kirja tugi
 RemoteControlSupport=Online reaalaja/kaudtoe tugi
 OtherSupport=Muu tugi
 ToSeeListOfAvailableRessources=Kontakteerumiseks/saadaval olevate ressursside nägemiseks:
-ClickHere=Klõpsa siia
 HelpCenter=Abiinfo
 DolibarrHelpCenter=Dolibarri abi ja tugikeskus
 ToGoBackToDolibarr=Muul juhul klõpsa Dolibarri kasutamiseks <a href="%s">siia</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Vahepeal ei ole otsingu tegemise hetkel ühtki ettevõ
 BackToHelpCenter=Muul juhul klõpsa <a href="%s">siia, et minna tagasi abiinfo kodulehele</a>.
 LinkToGoldMember=Võid helistada ühele Dolibarri poolt eelvalitud koolitajale Sinu keele (%s) jaoks tema vidinal klõpsates (staatust ja maksimaalset hinda uuendatakse automaatselt):
 PossibleLanguages=Toetatud keeled
-MakeADonation=Aita Dolibarri projekti annetades
 SubscribeToFoundation=Aita Dolibarri projekti, liitu sihtasutusega
 SeeOfficalSupport=Ametlikuks Dolibarri toeks Sinu keeles: <br><b><a href="%s" target="_blank">%s</a></b>

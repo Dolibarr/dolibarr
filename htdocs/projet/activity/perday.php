@@ -87,7 +87,7 @@ if (GETPOST('submitdateselect'))
 }
 
 
-if ($action == 'addtime' && GETPOST('assigntask'))
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
     $action = 'assigntask';
 
@@ -163,7 +163,7 @@ if ($action == 'addtime' && GETPOST('assigntask'))
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timespent_duration=array();
 
@@ -234,9 +234,9 @@ if ($action == 'addtime' && $user->rights->projet->creer)
         	exit;
     	}
     }
-    else
-    {
-	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
+    else    
+    {   
+   	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
     }
 }
 
@@ -386,7 +386,7 @@ if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("T
 else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
-print '<td>'.$langs->trans("Note").'</td>';
+print '<td align="right">'.$langs->trans("Note").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
@@ -395,7 +395,7 @@ $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
+	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
 }
 else
 {

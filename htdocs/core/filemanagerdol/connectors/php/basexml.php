@@ -102,6 +102,8 @@ function SendError($number, $text)
 	{
 		SetXmlHeaders();
 
+		dol_syslog('Error: '.$number.' '.$text, LOG_ERR);
+		
 		// Create the XML document header
 		echo '<?xml version="1.0" encoding="utf-8" ?>' ;
 

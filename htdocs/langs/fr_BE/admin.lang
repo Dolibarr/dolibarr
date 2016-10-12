@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Fondation
-VersionLastInstall=Version initiale d'installation
-VersionLastUpgrade=Version de la dernière mise à jour
 VersionExperimental=Expérimentale
 VersionRecommanded=Recommandée
 SessionId=ID de session
@@ -14,12 +12,10 @@ ConfirmLockNewSessions=Êtes-vous certain de vouloir restreindre toute nouvelle 
 UnlockNewSessions=Éliminer le blocage des connexions
 WebUserGroup=Utilisateur/groupe du serveur web
 NoSessionFound=Votre configuration PHP ne semble pas permettre de faire une liste des sessions actives. Le répertoire utilisé pour stocker les sessions (<b>%s</b>) pourrait être protégé (par exemple, par des permissions du système d'exploitation ou par la directive PHP open_basedir).
-HTMLCharset=Codification de caractères pour les pages HTML générées
 DBStoringCharset=Codification de caractères de base de données pour stocker les données
 DBSortingCharset=Codification de caractères de base de données pour trier les données
 WarningModuleNotActive=Le module <b>%s</b> doit être activé
 WarningOnlyPermissionOfActivatedModules=Seules les permissions liées à des modules activés sont montrées ici. Vous pouvez activer d'autres modules sur la page Accueil->Configuration->Modules.
-GlobalSetup=Configuration globale
 SetupArea=Zone de configuration
 FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
 IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
@@ -27,4 +23,3 @@ RemoveLock=Supprimez le fichier <b>%s</b> s'il existe pour autoriser l'utilisati
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>

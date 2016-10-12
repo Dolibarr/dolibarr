@@ -34,27 +34,28 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class CommandeFournisseurDispatch extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='commandefournisseurdispatch';			//!< Id that identify managed objects
-	var $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
+	public $db;							//!< To store db handler
+	public $error;							//!< To return error code (or message)
+	public $errors=array();				//!< To return several error codes (or messages)
+	public $element='commandefournisseurdispatch';			//!< Id that identify managed objects
+	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
+	public $lines=array();
 
-    var $id;
+    public $id;
 
-	var $fk_commande;
-	var $fk_product;
-	var $fk_commandefourndet;
-	var $qty;
-	var $fk_entrepot;
-	var $fk_user;
-	var $datec='';
-	var $comment;
-	var $status;
-	var $tms='';
-	var $batch;
-	var $eatby='';
-	var $sellby='';
+	public $fk_commande;
+	public $fk_product;
+	public $fk_commandefourndet;
+	public $qty;
+	public $fk_entrepot;
+	public $fk_user;
+	public $datec='';
+	public $comment;
+	public $status;
+	public $tms='';
+	public $batch;
+	public $eatby='';
+	public $sellby='';
 
 
 
@@ -537,6 +538,102 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->sellby='';
 
 
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int    $limit     offset limit
+	 * @param int    $offset    offset limit
+	 * @param array  $filter    filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+ 		$sql = "SELECT";
+		$sql.= " t.rowid,";
+
+		$sql.= " t.fk_commande,";
+		$sql.= " t.fk_product,";
+		$sql.= " t.fk_commandefourndet,";
+		$sql.= " t.qty,";
+		$sql.= " t.fk_entrepot,";
+		$sql.= " t.fk_user,";
+		$sql.= " t.datec,";
+		$sql.= " t.comment,";
+		$sql.= " t.status,";
+		$sql.= " t.tms,";
+		$sql.= " t.batch,";
+		$sql.= " t.eatby,";
+		$sql.= " t.sellby";
+
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key=='t.comment') {
+					$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				} elseif ($key=='t.datec' || $key=='t.tms' || $key=='t.eatby' || $key=='t.sellby' || $key=='t.batch') {
+					$sqlwhere [] = $key . ' = \'' . $this->db->escape($value) . '\'';
+				} else {
+					$sqlwhere [] = $key . ' = ' . $this->db->escape($value);
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield,$sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		}
+		$this->lines = array();
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$line = new self($this->db);
+
+				$line->id    = $obj->rowid;
+
+				$line->fk_commande = $obj->fk_commande;
+				$line->fk_product = $obj->fk_product;
+				$line->fk_commandefourndet = $obj->fk_commandefourndet;
+				$line->qty = $obj->qty;
+				$line->fk_entrepot = $obj->fk_entrepot;
+				$line->fk_user = $obj->fk_user;
+				$line->datec = $this->db->jdate($obj->datec);
+				$line->comment = $obj->comment;
+				$line->status = $obj->status;
+				$line->tms = $this->db->jdate($obj->tms);
+				$line->batch = $obj->batch;
+				$line->eatby = $this->db->jdate($obj->eatby);
+				$line->sellby = $this->db->jdate($obj->sellby);
+
+				$this->lines[$line->id] = $line;
+			}
+			$this->db->free($resql);
+
+			return $num;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+
+			return - 1;
+		}
 	}
 
 }

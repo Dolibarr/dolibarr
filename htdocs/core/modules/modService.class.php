@@ -88,7 +88,7 @@ class modService extends DolibarrModules
 		$this->rights[$r][0] = 531; // id de la permission
 		$this->rights[$r][1] = 'Lire les services'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
         $r++;
 
@@ -130,7 +130,12 @@ class modService extends DolibarrModules
 		*/
 
 
-		// Exports
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        
+        
+        // Exports
 		//--------
 		$r=0;
 

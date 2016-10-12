@@ -107,11 +107,18 @@ class MultiCurrency extends CommonObject
 	 */
 	public function create(User $user, $trigger = true)
 	{
-		global $conf;
+		global $conf,$langs;
 		
 		dol_syslog('Currency::create', LOG_DEBUG);
 
 		$error = 0;
+		
+		if (self::checkCodeAlreadyExists($this->code))
+		{
+			$error++;
+			$this->errors[] = $langs->trans('multicurrency_code_already_added');
+			return -1;
+		}
 		
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
 		$now=date('Y-m-d H:i:s');
@@ -133,6 +140,7 @@ class MultiCurrency extends CommonObject
 
 		$this->db->begin();
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
@@ -177,9 +185,10 @@ class MultiCurrency extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' AS c';
-		if (!empty($code)) $sql .= ' WHERE c.code = "'.$this->db->escape($code).'"';
+		if (!empty($code)) $sql .= ' WHERE c.code = \''.$this->db->escape($code).'\'';
 		else $sql .= ' WHERE c.rowid = ' . $id;
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
@@ -219,8 +228,6 @@ class MultiCurrency extends CommonObject
 	 */
 	public function fetchAllCurrencyRate()
 	{
-		dol_syslog('Currency::fetchAllCurrencyRate', LOG_DEBUG);
-
 		$sql = 'SELECT cr.rowid';
 		$sql.= ' FROM ' . MAIN_DB_PREFIX . $this->table_element_line. ' as cr';
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
@@ -228,6 +235,7 @@ class MultiCurrency extends CommonObject
 		
 		$this->rates = array();
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -277,10 +285,11 @@ class MultiCurrency extends CommonObject
 		
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= ' name="'.$this->db->escape($this->name).'"';
-		$sql .= ' code="'.$this->db->escape($this->code).'"';
+		$sql .= ' name=\''.$this->db->escape($this->name).'\'';
+		$sql .= ' code=\''.$this->db->escape($this->code).'\'';
 		$sql .= ' WHERE rowid=' . $this->id;
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
@@ -340,6 +349,7 @@ class MultiCurrency extends CommonObject
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
 
+			dol_syslog(__METHOD__,LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error ++;
@@ -418,7 +428,9 @@ class MultiCurrency extends CommonObject
 		$currency->code = $code;
 		$currency->name = $code;
 		
-	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = "'.$db->escape($code).'"';
+	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = \''.$db->escape($code).'\'';
+	 	
+	 	dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && ($line = $db->fetch_object($resql)))
 		{
@@ -468,6 +480,7 @@ class MultiCurrency extends CommonObject
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
 		$sql.= ' AND cr.date_sync >= ALL (SELECT cr2.date_sync FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr.rowid = cr2.rowid)';
 		
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql && ($obj = $this->db->fetch_object($resql))) {
 			$this->rate = new CurrencyRate($this->db);
@@ -486,7 +499,9 @@ class MultiCurrency extends CommonObject
 	 */
 	 public static function getIdFromCode(&$db, $code)
 	 {
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = "'.$db->escape($code).'"';
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\'';
+	 	
+	 	dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
@@ -505,9 +520,11 @@ class MultiCurrency extends CommonObject
 	 {
 	 	$sql = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		// FIXME Is this comptible with SQL ?
-		$sql.= ' WHERE m.code = "'.$db->escape($code).'" AND mc.date_sync >= ALL (SELECT date_sync FROM '.MAIN_DB_PREFIX.'multicurrency_rate)';
-		$sql.= " AND m.entity IN '".getEntity('multicurrency', 1)."'";
+		$sql.= ' WHERE m.code = \''.$db->escape($code).'\'';
+		$sql.= " AND m.entity IN (".getEntity('multicurrency', 1).")";
+		$sql.= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
 		else return array(0, 1);
@@ -548,6 +565,8 @@ class MultiCurrency extends CommonObject
 		 global $db;
 		 
 		 $sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		 
+		 dol_syslog(__METHOD__,LOG_DEBUG);
 		 $resql = $db->query($sql);
 		 if ($resql && ($line = $db->fetch_object($resql)))
 		 {
@@ -616,6 +635,21 @@ class MultiCurrency extends CommonObject
 			}	
 		}
 	}
+	
+	/**
+	 * Check in database if the current code already exists
+	 * 
+	 * @param	string	$code 	current code to search
+	 * @return	boolean         True if exists, false if not exists
+	 */
+	 public static function checkCodeAlreadyExists($code)
+	 {
+	 	global $db;
+		
+	 	$currency = new MultiCurrency($db);
+		if ($currency->fetch('', $code) > 0) return true;
+		else return false;
+	 }
 }
 
 /**
@@ -698,6 +732,7 @@ class CurrencyRate extends CommonObjectLine
 
 		$this->db->begin();
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
@@ -742,6 +777,7 @@ class CurrencyRate extends CommonObjectLine
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS cr';
 		$sql .= ' WHERE cr.rowid = ' . $id;
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -793,6 +829,7 @@ class CurrencyRate extends CommonObjectLine
 
 		$this->db->begin();
 
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
@@ -843,6 +880,7 @@ class CurrencyRate extends CommonObjectLine
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.$this->id;
 
+			dol_syslog(__METHOD__,LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error ++;

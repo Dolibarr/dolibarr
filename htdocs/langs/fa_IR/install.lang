@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=لطفا دستورالعمل‌ها را گام به گام اجرا کنید. 
 MiscellaneousChecks=بررسی پیش‌نیازها 
-DolibarrWelcome=به Dolibarr خوش آمدید
 ConfFileExists=فایل پیکربندی <b>%s</b> موجود است
-ConfFileDoesNotExists=فایل <b>پیکربندی٪ s</b> وجود ندارد!
 ConfFileDoesNotExistsAndCouldNotBeCreated=فایل <b>پیکربندی٪ s</b> وجود ندارد و نمی توان آن را!
 ConfFileCouldBeCreated=فایل <b>پیکربندی٪ s را</b> می تواند ایجاد شود.
 ConfFileIsNotWritable=فایل <b>پیکربندی٪ است</b> قابل نوشتن نیست. مجوز بررسی کنید. برای اولین بار نصب کنید، وب سرور شما باید اعطا می شود که قادر به ارسال این فایل در فرایند پیکربندی (به عنوان مثال در یونیکس مانند سیستم عامل "سطح دسترسی 666").
@@ -13,12 +11,14 @@ PHPSupportSessions=این جلسات PHP پشتیبانی می کند.
 PHPSupportPOSTGETOk=این PHP پشتیبانی از متغیر های POST و GET.
 PHPSupportPOSTGETKo=این امکان وجود دارد راه اندازی PHP شما از متغیر های POST پشتیبانی نمی کند و / یا. بررسی کنید <b>variables_order</b> پارامتر خود را در php.ini.
 PHPSupportGD=این GD پشتیبانی از PHP توابع گرافیکی.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=این پشتیبانی از PHP توابع UTF8.
 PHPMemoryOK=PHP حداکثر شما حافظه جلسه <b>به٪ s</b> تنظیم شده است. این باید به اندازه کافی باشد.
 PHPMemoryTooLow=PHP حداکثر شما حافظه را وارد نمایید <b>به٪ s</b> بایت تنظیم شده است. این باید بسیار کم باشد. تغییر <b>فایل php.ini</b> خود را به تنظیم پارامتر <b>memory_limit را</b> به <b>حداقل٪ s</b> بایت.
 Recheck=برای تست نشانگر بیشتر اینجا را کلیک کنید
 ErrorPHPDoesNotSupportSessions=نصب و راه اندازی PHP شما جلسات را پشتیبانی نمی کند. این ویژگی مورد نیاز است تا Dolibarr کار. راه اندازی PHP خود را چک کنید.
 ErrorPHPDoesNotSupportGD=نصب و راه اندازی PHP شما از عملکرد گرافیکی GD پشتیبانی نمی کند. بدون نمودار در دسترس خواهد بود.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=نصب و راه اندازی PHP شما توابع UTF8 را پشتیبانی نمی کند. Dolibarr نمی تواند به درستی کار می کنند. حل این قبل از نصب Dolibarr.
 ErrorDirDoesNotExists=شاخه٪ s وجود ندارد.
 ErrorGoBackAndCorrectParameters=برو به عقب و اصلاح پارامترهای اشتباه است.
@@ -27,14 +27,12 @@ ErrorFailedToCreateDatabase=برای ایجاد پایگاه داده '٪ s »ش
 ErrorFailedToConnectToDatabase=برای اتصال به پایگاه داده '٪ s »شکست خورد.
 ErrorDatabaseVersionTooLow=نسخه پایگاه داده (٪ بازدید کنندگان) خیلی قدیمی است. نسخه٪ s یا بالاتر مورد نیاز است.
 ErrorPHPVersionTooLow=نسخه PHP خیلی قدیمی است. نسخه٪ s مورد نیاز است.
-WarningPHPVersionTooLow=نسخه PHP خیلی قدیمی است. نسخه٪ یا بیشتر مورد انتظار است. این نسخه باید اجازه نصب اما پشتیبانی نمی شود.
 ErrorConnectedButDatabaseNotFound=اتصال به موفق سرور، اما پایگاه داده '٪ s' یافت نشد.
 ErrorDatabaseAlreadyExists=پایگاه داده '٪ s' از قبل وجود دارد.
 IfDatabaseNotExistsGoBackAndUncheckCreate=اگر پایگاه داده وجود دارد، به عقب برگردید و گزینه تیک بزنید "ایجاد پایگاه داده".
 IfDatabaseExistsGoBackAndCheckCreate=اگر پایگاه داده در حال حاضر وجود دارد، بازگشت و تیک گزینه "ایجاد پایگاه داده" گزینه است.
 WarningBrowserTooOld=نسخه خیلی قدیمی از مرورگر. به روز رسانی مرورگر خود را به آخرین ورژن فایرفاکس، کروم و اپرا است که به شدت توصیه.
 PHPVersion=PHP نسخه
-YouCanContinue=شما می توانید ادامه ...
 License=با استفاده از مجوز
 ConfigurationFile=فایل پیکربندی
 WebPagesDirectory=دایرکتوری که در آن صفحات وب ذخیره می شوند
@@ -43,7 +41,6 @@ URLRoot=URL ریشه
 ForceHttps=مجبور ارتباط امن (HTTPS)
 CheckToForceHttps=این گزینه به زور ارتباط امن را بررسی کنید (صفحه ی). <br> این مستلزم آن است که وب سرور با گواهی SSL پیکربندی شده است.
 DolibarrDatabase=پایگاه داده Dolibarr
-DatabaseChoice=انتخاب پایگاه داده
 DatabaseType=نوع پایگاه داده
 DriverType=نوع درایور
 Server=سرور
@@ -63,7 +60,6 @@ CheckToCreateUser=جعبه چک کنید اگر صاحب پایگاه داده �
 DatabaseRootLoginDescription=ورود از کاربر مجاز به ایجاد پایگاه داده جدید و یا کاربران جدید، اجباری اگر بانک اطلاعاتی شما و یا صاحب آن می کند در حال حاضر وجود ندارد.
 KeepEmptyIfNoPassword=دیدگاهتان را خالی اگر کاربر هیچ رمز عبور (جلوگیری از این)
 SaveConfigurationFile=صرفه جویی در مقدار
-ConfigurationSaving=صرفه جویی در فایل پیکربندی
 ServerConnection=اتصال به سرور
 DatabaseCreation=ایجاد پایگاه داده
 UserCreation=ایجاد کاربر
@@ -82,7 +78,7 @@ SetupEnd=پایان از راه اندازی
 SystemIsInstalled=این نصب کامل شده است.
 SystemIsUpgraded=Dolibarr با موفقیت به روز رسانی شده است.
 YouNeedToPersonalizeSetup=شما نیاز به پیکربندی Dolibarr را با توجه به نیاز خود (ظاهر، امکانات، ...). برای این کار، لطفا لینک زیر را دنبال کنید:
-AdminLoginCreatedSuccessfuly=Dolibarr مدیر ورود <b>'٪ s' را</b> ایجاد موفقیت.
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfully.
 GoToDolibarr=برو به Dolibarr
 GoToSetupArea=برو به Dolibarr (منطقه راه اندازی)
 MigrationNotFinished=نسخه از پایگاه داده خود را به طور کامل به روز نیست، بنابراین شما باید برای اجرای عملیات ارتقا دوباره.
@@ -92,10 +88,9 @@ DirectoryRecommendation=این است توصیه به استفاده از یک �
 LoginAlreadyExists=در حال حاضر وجود دارد
 DolibarrAdminLogin=Dolibarr مدیر در انجمن
 AdminLoginAlreadyExists=حساب مدیر Dolibarr <b>'٪ s' از</b> قبل وجود دارد. برو به عقب، اگر شما می خواهید برای ایجاد یک دیگر.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=اخطار، به دلایل امنیتی، پس از نصب و یا ارتقا کامل است، برای جلوگیری از استفاده از ابزار را دوباره نصب کنید، شما باید یک فایل <b>install.lock</b> به دایرکتوری سند Dolibarr نام اضافه، به منظور جلوگیری از سوء استفاده از آن را.
-ThisPHPDoesNotSupportTypeBase=این سیستم PHP هیچ رابط کاربری را پشتیبانی نمی کند برای دسترسی به نوع پایگاه داده از٪ s
 FunctionNotAvailableInThisPHP=در این پی اچ پی در دسترس نیست
-MigrateScript=اسکریپت مهاجرت
 ChoosedMigrateScript=را انتخاب کنید اسکریپت مهاجرت
 DataMigration=اطلاعات مهاجرت
 DatabaseMigration=مهاجرت پایگاه داده ساختار
@@ -113,22 +108,12 @@ AlreadyDone=در حال حاضر مهاجرت
 DatabaseVersion=بانک اطلاعات نسخه
 ServerVersion=نسخه سرور پایگاه داده
 YouMustCreateItAndAllowServerToWrite=شما باید این پوشه ایجاد کنید و اجازه می دهد برای وب سرور برای ارسال به آن.
-CharsetChoice=انتخاب شخصیت مجموعه
-CharacterSetClient=مجموعه کاراکتر های مورد استفاده برای تولید صفحات وب HTML
-CharacterSetClientComment=مجموعه کاراکتر برای نمایش وب را انتخاب کنید. <br/> به طور پیش فرض پیشنهاد مجموعه کاراکتر یکی از پایگاه داده خود را است.
 DBSortingCollation=شخصیت منظور مرتب سازی
-DBSortingCollationComment=کد صفحه ای که تعریف منظور مرتب سازی شخصیت استفاده شده توسط پایگاه داده را انتخاب کنید. این پارامتر نیز 'میترا' از سوی برخی از پایگاه های داده نامیده می شود. <br/> این پارامتر نمی تواند تعریف شود اگر پایگاه داده در حال حاضر وجود دارد.
-CharacterSetDatabase=مجموعه کاراکتر برای پایگاه داده
-CharacterSetDatabaseComment=را انتخاب کنید مجموعه کاراکتر می خواستم برای ایجاد پایگاه داده باشد. <br/> این پارامتر نمی تواند تعریف شود اگر پایگاه داده در حال حاضر وجود دارد.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=از شما درخواست برای ایجاد پایگاه <b>داده٪ است،</b> اما برای این، Dolibarr نیاز به اتصال <b>به٪ s</b> سرور با مجوز فوق العاده <b>کاربر٪ s را.</b>
 YouAskLoginCreationSoDolibarrNeedToConnect=از شما درخواست برای ایجاد پایگاه داده ورود <b>به٪ s را،</b> اما برای این، Dolibarr نیاز به اتصال <b>به٪ s</b> سرور با مجوز فوق العاده <b>کاربر٪ s را.</b>
 BecauseConnectionFailedParametersMayBeWrong=به عنوان اتصال، میزبان یا پارامترهای کاربر فوق العاده باید اشتباه باشد.
 OrphelinsPaymentsDetectedByMethod=یتیمان پرداخت شناسایی شده با استفاده از روش از٪ s
 RemoveItManuallyAndPressF5ToContinue=حذف آن دستی و F5 را فشار دهید تا ادامه خواهد داد.
-KeepDefaultValuesWamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliWamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
-KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr راه اندازی از یک بسته لینوکس (اوبونتو، دبیان، فدورا ...)، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تنها رمز صاحب پایگاه داده برای ایجاد باید پر شوند. تغییر پارامترهای دیگر تنها در صورتی شما می دانید آنچه شما انجام دهد.
-KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
-KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 FieldRenamed=درست است تغییر نام داد
 IfLoginDoesNotExistsCheckCreateUser=اگر وارد کند وجود دارد نشده است، شما باید گزینه را تیک "ایجاد کاربر"
 ErrorConnection=سرور <b>"٪ s"،</b> نام پایگاه داده <b>"٪ s"،</b> برای ورود اینجا <b>"٪ s"،</b> و یا رمز عبور پایگاه داده ممکن است اشتباه باشد و یا نسخه PHP مشتری ممکن است خیلی قدیمی در مقایسه با نسخه پایگاه داده باشد.
@@ -150,6 +135,10 @@ ActivateModule=فعال بخش٪ s
 ShowEditTechnicalParameters=برای نشان دادن پارامترهای پیشرفته / ویرایش اینجا را کلیک کنید (حالت کارشناسی)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -159,7 +148,7 @@ MigrationSupplierOrder=اطلاعات مهاجرت برای سفارشات کن�
 MigrationProposal=مهاجرت داده ها برای طرح های تجاری
 MigrationInvoice=اطلاعات مهاجرت برای صورت حساب مشتری
 MigrationContract=اطلاعات مهاجرت برای قرارداد
-MigrationSuccessfullUpdate=به روز رسانی موفق
+MigrationSuccessfullUpdate=Upgrade successfull
 MigrationUpdateFailed=روند ارتقاء شکست خورده
 MigrationRelationshipTables=مهاجرت به داده ها برای جداول رابطه (٪ بازدید کنندگان)
 MigrationPaymentsUpdate=پرداخت اصلاح داده ها
@@ -173,7 +162,7 @@ MigrationContractsLineCreation=ایجاد خط قرارداد برای قرار�
 MigrationContractsNothingToUpdate=هیچ چیز بیشتری برای انجام
 MigrationContractsFieldDontExist=fk_facture درست می کند وجود دارد نیست. هیچ چیز به انجام.
 MigrationContractsEmptyDatesUpdate=قرارداد تصحیح تاریخ خالی
-MigrationContractsEmptyDatesUpdateSuccess=قرارداد تصحیح تاریخ emtpy انجام موفقیت
+MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfully
 MigrationContractsEmptyDatesNothingToUpdate=بدون قرارداد تاریخ خالی برای اصلاح
 MigrationContractsEmptyCreationDatesNothingToUpdate=تاریخ ایجاد قرارداد برای اصلاح
 MigrationContractsInvalidDatesUpdate=تاریخ مقدار بد اصلاح قرارداد
@@ -181,7 +170,7 @@ MigrationContractsInvalidDateFix=قرارداد صحیح از٪ s (تاریخ ق
 MigrationContractsInvalidDatesNumber=٪ s در قرارداد اصلاح شده
 MigrationContractsInvalidDatesNothingToUpdate=تاریخ با ارزش بد برای اصلاح
 MigrationContractsIncoherentCreationDateUpdate=بد قرارداد ارزش تصحیح تاریخ ایجاد
-MigrationContractsIncoherentCreationDateUpdateSuccess=بد قرارداد ارزش تصحیح تاریخ ایجاد انجام succesfuly
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done successfully
 MigrationContractsIncoherentCreationDateNothingToUpdate=بدون مقدار بد برای تاریخ ایجاد قرارداد برای اصلاح
 MigrationReopeningContracts=قرارداد باز کردن بسته های خطا
 MigrationReopenThisContract=بازگشایی قرارداد از٪ s
@@ -202,6 +191,9 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست
+ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

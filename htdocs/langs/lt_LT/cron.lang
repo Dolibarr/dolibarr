@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Apie
-CronAbout = Apie Cron
-CronAboutPage = Cron apie puslapį
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Numatytos užduoties valdymo nustatymas
-URLToLaunchCronJobs=URL patikrinti ir pradėti cron darbą, jei reikės
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Arba patikrinti ir pradėti spec. darbą
 KeyForCronAccess=Apsaugos raktas URL pradėti cron darbus
 FileToLaunchCronJobs=Komandinė eilutė paleisti cron darbą
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Suplanuoti darbai
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Išjungtų darbų sąrašas
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Paskutinis paleistas
 CronLastOutput=Paskutinė paleista išvestis
 CronLastResult=Paskutinio rezultato kodas
-CronListOfCronJobs=Numatytų darbų sąrašas
 CronCommand=Komanda
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch scheduled jobs
+CronExecute=Launch scheduled job
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=Darbas
 CronNone=Nė vienas
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Kitas vykdymas
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequency
 CronClass=Class
 CronMethod=Metodas
 CronModule=Modulis
-CronAction=Veiksmas
-CronStatus=Būklė
-CronStatusActive=Įjungtas
-CronStatusInactive=Išjungtas
 CronNoJobs=Nėra registruotų darbų
 CronPriority=Prioritetas
-CronLabel=Aprašymas
+CronLabel=Label
 CronNbRun=Pradėti skaičių
 CronMaxRun=Max nb. launch
 CronEach=Kiekvienas
 JobFinished=Darbas pradėtas ir baigtas
 #Page card
 CronAdd= Pridėti darbus
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Sukurti Instanciją.Objektą
 CronArgs=Parametrai
-CronSaveSucess=Išsaugota sėkmingai
+CronSaveSucess=Save successfully
 CronNote=Komentaras
 CronFieldMandatory=Laukai %s yra privalomi
 CronErrEndDateStartDt=Pabaigos data negali būti ankstesnė už pradžios datą
@@ -81,14 +67,13 @@ CronCommandHelp=Sistemos komandinė eilutė vykdymui
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
 # Info
-CronInfoPage=Informacija
 # Common
 CronType=Job type
 CronType_method=Dolibarr klasės kvietimo metodas
 CronType_command=Apvalkalo komanda
-CronMenu=Cron
 CronCannotLoadClass=Nepavyko įkelti klasės %s arba objekto %s
-UseMenuModuleToolsToAddCronJobs=Eikite į meniu "Pagrindinis - Modulių įrankiai - Darbo sąrašas" norėdami peržiūrėti ir redaguoti numatytus darbus.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

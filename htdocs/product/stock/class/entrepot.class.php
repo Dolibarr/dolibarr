@@ -35,6 +35,7 @@ class Entrepot extends CommonObject
 {
 	public $element='stock';
 	public $table_element='entrepot';
+	public $picto='stock';
 	
 	/**
 	 * Warehouse closed, inactive
@@ -108,7 +109,9 @@ class Entrepot extends CommonObject
 	function create($user)
 	{
 		global $conf;
-
+		
+		$this->libelle = trim($this->libelle);
+		
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{
@@ -211,24 +214,40 @@ class Entrepot extends CommonObject
 	/**
 	 *	Delete a warehouse
 	 *
-	 *	@param		User	$user		Object user that made deletion
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@param		User	$user		   Object user that made deletion
+	 *  @param      int     $notrigger     1=No trigger
+	 *	@return		int					   <0 if KO, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql1=$this->db->query($sql);
+		if (! $error && empty($notrigger))
+		{
+            // Call trigger
+            $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+		}
+		
+		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
+		foreach($elements as $table)
+		{
+			if (! $error)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql.= " WHERE fk_entrepot = " . $this->id;
+				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+				$result=$this->db->query($sql);
+				if (! $result)
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql2=$this->db->query($sql);
-
-		if ($resql1 && $resql2)
+		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
@@ -546,7 +565,7 @@ class Entrepot extends CommonObject
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
-        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
@@ -554,7 +573,7 @@ class Entrepot extends CommonObject
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->libelle.$linkend;
+		$result.=$link.(empty($this->label)?$this->libelle:$this->label).$linkend;
 		return $result;
 	}
 

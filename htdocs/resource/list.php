@@ -97,35 +97,29 @@ if($ret == -1) {
 } else {
     print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
 }
-if(!$ret) {
-        print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
-}
-else
+
+$var=true;
+
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre('',"","","","",'width="60" align="center"',"","");
+print "</tr>\n";
+
+if ($ret)
 {
-        $var=true;
-
-        print '<table class="noborder" width="100%">'."\n";
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('Id'),$_SERVER['PHP_SELF'],'t.rowid','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Action'),"","","","",'width="60" align="center"',"","");
-        print "</tr>\n";
-
         foreach ($object->lines as $resource)
         {
                 $var=!$var;
 
                 $style='';
-                if($resource->id == GETPOST('lineid'))
-                        $style='style="background: orange;"';
+                if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
 
-                print '<tr '.$bc[$var].' '.$style.'><td>';
-                print '<a href="./card.php?id='.$resource->id.'">'.$resource->id.'</a>';
-                print '</td>';
+                print '<tr '.$bc[$var].' '.$style.'>';
 
                 print '<td>';
-                print $resource->ref;
+                print $resource->getNomUrl(5);
                 print '</td>';
 
                 print '<td>';
@@ -146,7 +140,10 @@ else
         }
 
         print '</table>';
-
+}
+else
+{
+    print '<tr><td class="opacitymedium">'.$langs->trans('NoResourceInDatabase').'</td></tr>';
 }
 
 llxFooter();

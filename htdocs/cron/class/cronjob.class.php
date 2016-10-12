@@ -191,7 +191,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->params)?'NULL':"'".$this->db->escape($this->params)."'").",";
 		$sql.= " ".(! isset($this->md5params)?'NULL':"'".$this->db->escape($this->md5params)."'").",";
 		$sql.= " ".(! isset($this->module_name)?'NULL':"'".$this->db->escape($this->module_name)."'").",";
-		$sql.= " ".(! isset($this->priority)?'NULL':"'".$this->priority."'").",";
+		$sql.= " ".(! isset($this->priority)?'0':$this->priority).",";
 		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':$this->db->idate($this->datelastrun)).",";
 		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':$this->db->idate($this->datenextrun)).",";
 		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':$this->db->idate($this->dateend)).",";
@@ -200,13 +200,13 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':$this->db->idate($this->datelastresult)).",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
 		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
-		$sql.= " ".(! isset($this->frequency)?'NULL':"'".$this->frequency."'").",";
-		$sql.= " ".(! isset($this->status)?'0':"'".$this->status."'").",";
+		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
+		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
-		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
-		$sql.= " ".(empty($this->maxrun)?'null':"'".$this->db->escape($this->maxrun)."'").",";
+		$sql.= " ".(! isset($this->nbrun)?'0':$this->db->escape($this->nbrun)).",";
+		$sql.= " ".(empty($this->maxrun)?'0':$this->db->escape($this->maxrun)).",";
 		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'").",";
 		$sql.= " ".(! isset($this->test)?'NULL':"'".$this->db->escape($this->test)."'")."";
 		$sql.= ")";
@@ -363,8 +363,12 @@ class Cronjob extends CommonObject
     function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='')
     {
     	global $langs;
+    	
+    	$this->lines=array();
+    	
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
+    	$sql.= " t.entity,";
     	$sql.= " t.tms,";
     	$sql.= " t.datec,";
     	$sql.= " t.jobtype,";
@@ -399,8 +403,10 @@ class Cronjob extends CommonObject
     	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
-    		foreach($filter as $key => $value) {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    		foreach($filter as $key => $value) 
+    		{
+    		    if ($key == 't.rowid') $sql.= ' AND '.$key.' = '.$this->db->escape($value);
+   				else $sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     		}
     	}
 
@@ -411,9 +417,6 @@ class Cronjob extends CommonObject
 
     	$sqlwhere = array();
 
-    	if (!empty($module_name)) {
-    		$sqlwhere[]='(t.module_name='.$module_name.')';
-    	}
     	if (count($sqlwhere)>0) {
     		$sql.= " WHERE ".implode(' AND ',$sqlwhere);
     	}
@@ -427,8 +430,6 @@ class Cronjob extends CommonObject
 
     		if ($num)
     		{
-    			$this->lines=array();
-
 	    		while ($i < $num)
 	    		{
 
@@ -439,6 +440,7 @@ class Cronjob extends CommonObject
 	    			$line->id    = $obj->rowid;
 	    			$line->ref = $obj->rowid;
 
+	    			$line->entity = $obj->entity;
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->datec = $this->db->jdate($obj->datec);
 	    			$line->label = $obj->label;
@@ -518,7 +520,7 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
-		if (isset($this->maxrun)) $this->maxrun=trim($this->maxrun);
+		if (empty($this->maxrun)) $this->maxrun=0;
         if (isset($this->libname)) $this->libname = trim($this->libname);
         if (isset($this->test)) $this->test = trim($this->test);
         
@@ -589,7 +591,7 @@ class Cronjob extends CommonObject
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
-		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"null").",";
+		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"0").",";
 		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null").",";
 		$sql.= " test=".(isset($this->test)?"'".$this->db->escape($this->test)."'":"null");
 		$sql.= " WHERE rowid=".$this->id;
@@ -893,6 +895,7 @@ class Cronjob extends CommonObject
 
 		// Update last run date start (to track running jobs)
 		$this->datelastrun=$now;
+		$this->datelastresult=null;
 		$this->lastoutput='';
 		$this->lastresult='';
 		$this->nbrun=$this->nbrun + 1;
@@ -1078,19 +1081,23 @@ class Cronjob extends CommonObject
 				}
 				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
-		}
 
-		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
-
-		// Update with result
-		if (is_array($output_arr) && count($output_arr)>0)
-		{
-			foreach($output_arr as $val)
-			{
-				$this->lastoutput.=$val."\n";
-			}
+			// Update with result
+    		if (is_array($output_arr) && count($output_arr)>0)
+    		{
+    			foreach($output_arr as $val)
+    			{
+    				$this->lastoutput.=$val."\n";
+    			}
+    		}
+    		
+    		$this->lastresult=$retval;
+		
+    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
-		$this->lastresult=$retval;
+		
+		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
+		
 		$this->datelastresult=dol_now();
 		$result = $this->update($user);       // This include begin/commit
 		if ($result < 0)

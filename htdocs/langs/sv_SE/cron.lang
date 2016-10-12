@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Om
-CronAbout = Om Cron
-CronAboutPage = Cron om sidan
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Planerad jobbhantering installation
-URLToLaunchCronJobs=URL för att kontrollera och starta cron-jobb om det behövs
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Eller för att kontrollera och starta ett specifikt arbete
 KeyForCronAccess=Säkerhetsnyckel för URL för att lansera cron-jobb
 FileToLaunchCronJobs=Kommandorad för att starta cron jobb
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab s�
 CronExplainHowToRunWin=I Microsoft(tm) Windows-miljö kan schemalagd aktivitet användas för att exekvera kommandoraden var 5:e minut
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Schemalagda jobb
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Lista över handikappade jobb
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Senaste körning
 CronLastOutput=Sista loppet utgång
 CronLastResult=Senaste resultat code
-CronListOfCronJobs=Lista över schemalagda jobb
 CronCommand=Kommando
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch scheduled jobs
+CronExecute=Launch scheduled job
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=Jobb
 CronNone=Ingen
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Nästa exekvering
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequency
 CronClass=Class
 CronMethod=Metod
 CronModule=Modul
-CronAction=Åtgärd
-CronStatus=Status
-CronStatusActive=Aktiverat
-CronStatusInactive=Funktionshindrade
 CronNoJobs=Inga jobb registrerade
 CronPriority=Prioritet
-CronLabel=Beskrivning
+CronLabel=Label
 CronNbRun=Nb. lanseringen
 CronMaxRun=Max nb. launch
 CronEach=Varje
 JobFinished=Job lanserad och klar
 #Page card
 CronAdd= Lägg till jobb
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Instans / Object för att skapa
 CronArgs=Parametrar
-CronSaveSucess=Spara framgångsrikt
+CronSaveSucess=Save successfully
 CronNote=Kommentar
 CronFieldMandatory=Fält %s är obligatoriskt
 CronErrEndDateStartDt=Slutdatum kan inte vara före startdatum
@@ -81,14 +67,13 @@ CronCommandHelp=Systemet kommandoraden som ska köras.
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
 # Info
-CronInfoPage=Information
 # Common
 CronType=Job type
 CronType_method=Call metod för en Dolibarr klass
 CronType_command=Skalkommando
-CronMenu=Cron
 CronCannotLoadClass=Det går inte att läsa in klassen% s eller objekt% s
-UseMenuModuleToolsToAddCronJobs=Gå in på menyn "Home - Moduler verktyg - Job list" för att se och redigera schemalagda jobb.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

@@ -112,8 +112,8 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->cre
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Order"), "Commande");
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('',$langs->trans("Order"),$help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="2">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td>';

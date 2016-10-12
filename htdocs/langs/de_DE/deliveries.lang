@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Lieferung
-Deliveries=Lieferungen
-DeliveryCard=Lieferkarte
+DeliveryRef=Fer. Lieferung
+DeliveryCard=Lieferung - Karte
 DeliveryOrder=Lieferschein
-DeliveryOrders=Lieferscheine
 DeliveryDate=Liefertermin
-DeliveryDateShort=Liefertermin
 CreateDeliveryOrder=Erstelle Lieferschein
 DeliveryStateSaved=Lieferstatus gespeichert.
-QtyDelivered=Gelieferte Menge
 SetDeliveryDate=Liefertermin setzen
 ValidateDeliveryReceipt=Lieferschein freigeben
 ValidateDeliveryReceiptConfirm=Möchten Sie die Lieferung wirklich bestätigen?
@@ -30,3 +27,4 @@ Recipient=Empfänger
 ErrorStockIsNotEnough=Nicht genügend Bestand
 Shippable=Versandfertig
 NonShippable=Nicht versandfertig
+ShowReceiving=Zustellbestätigung anzeigen

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -138,7 +139,8 @@ if ($resql)
 	$var=true;
 
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($year)   $param.='&amp;year='.$year;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
@@ -210,6 +212,8 @@ if ($resql)
         print '</td>';
 		print "</tr>\n";
 
+		$i=0;
+		$totalarray=array();
 		while ($i < min($num,$limit))
 		{
 			$obj = $db->fetch_object($resql);
@@ -229,7 +233,7 @@ if ($resql)
 			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
 
 			// Type
-			print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
+			print '<td>'.$obj->type_lib.'</td>';
 
 			// Date end period
 			print '<td align="center">';
@@ -243,12 +247,16 @@ if ($resql)
 			}
 			print '</td>';
 
+			// Amount
 			print '<td align="right" width="100">'.price($obj->amount).'</td>';
-
+			if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
+			$totalarray['totalttc'] += $obj->amount;
+			
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
-			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5,$obj->alreadypayed).'</a></td>';
+			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5,$obj->alreadypayed).'</td>';
 
 			print '<td></td>';
 
@@ -256,6 +264,22 @@ if ($resql)
 			$i++;
 		}
 
+		// Show total line
+		if (isset($totalarray['totalttcfield']))
+		{
+		    print '<tr class="liste_total">';
+            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            print '<td></td>';
+            print '<td></td>';
+            print '<td></td>';
+            print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+	        print '<td></td>';
+	        print '<td></td>';
+	        print '<td></td>';
+	        print '</tr>';
+		}
+		
 		print '</table>';
 	}
 	print '</form>';

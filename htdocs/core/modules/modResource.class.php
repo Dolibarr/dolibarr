@@ -119,7 +119,7 @@ class modResource extends DolibarrModules
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
 
-		$this->langfiles = array("resource@resource"); // langfiles@resource
+		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -190,12 +190,17 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 63004;
-		$this->rights[$r][1] = 'Link resources';
+		$this->rights[$r][1] = 'Link resources to agenda events';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'link';
 		$r++;
 
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Add here list of permission defined by
 		// an id, a label, a boolean and two constant strings.
 		// Example:
@@ -204,7 +209,7 @@ class modResource extends DolibarrModules
 		//// Permission label
 		//$this->rights[$r][1] = 'Permision label';
 		//// Permission by default for new user (0/1)
-		//$this->rights[$r][3] = 1;
+		//$this->rights[$r][3] = 0;
 		//// In php code, permission will be checked by test
 		//// if ($user->rights->permkey->level1->level2)
 		//$this->rights[$r][4] = 'level1';

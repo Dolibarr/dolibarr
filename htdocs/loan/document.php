@@ -116,7 +116,7 @@ if ($object->id)
     }
 
     // Amount
-    print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+    print '<tr><td>'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	// Date start
     print "<tr><td>".$langs->trans("DateStart")."</td>";

@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livrare
-Deliveries=Livrări
+DeliveryRef=Ref Livrare
 DeliveryCard=Fişă Livrarea 
 DeliveryOrder=Ordin de livrare 
-DeliveryOrders=Ordine de livrare
 DeliveryDate=Data de livrare
-DeliveryDateShort=Dată livr.
 CreateDeliveryOrder=Generare ordine de livrare 
-DeliveryStateSaved=Delivery state saved
-QtyDelivered=Cantitate livrată
+DeliveryStateSaved=Stare livrare salvata
 SetDeliveryDate=Setaţi data de expediere
 ValidateDeliveryReceipt=Validare recepţie  livrare
 ValidateDeliveryReceiptConfirm=Sigur doriţi  să validaţi această receptie ?
@@ -17,9 +14,9 @@ DeleteDeliveryReceiptConfirm=Sunteţi sigur că doriţi să ştergeţi recepţia
 DeliveryMethod=Metoda de livrare
 TrackingNumber=Număr de urmărire
 DeliveryNotValidated=Livrare  nevalidată
-StatusDeliveryCanceled=Canceled
+StatusDeliveryCanceled=Anulata
 StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryValidated=Primit
 # merou PDF model
 NameAndSignature=Nume şi Semnătura:
 ToAndDate=To___________________________________ pe ____ / _____ / __________
@@ -30,3 +27,4 @@ Recipient=Recipient
 ErrorStockIsNotEnough=Nu există stoc suficient
 Shippable=Livrabil
 NonShippable=Nelivrabil
+ShowReceiving= Afișare notă de recepție

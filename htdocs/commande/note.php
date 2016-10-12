@@ -105,6 +105,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
+	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';

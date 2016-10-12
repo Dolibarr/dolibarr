@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,11 @@ $id=GETPOST('id','int');
 
 $search_all=GETPOST('search_all');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) $search_projectstatus=1;
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
+{
+    if ($search_all != '') $search_projectstatus=-1;
+    else $search_projectstatus=1;
+}
 else $search_projectstatus=GETPOST('search_projectstatus');
 $search_project_ref=GETPOST('search_project_ref');
 $search_project_title=GETPOST('search_project_title');
@@ -58,8 +62,8 @@ $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$contextpage='tasklist';
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
@@ -213,12 +217,12 @@ else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update";
 $sql.= ", t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
-// Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -237,7 +241,7 @@ if ($search_task_user > 0)
 }
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity IN (".getEntity('project',1).')';
-if (! $user->rights->projet->all->lire) $sql.=" p.rowid IN (".join(',',$projectsListId).")";    // public and assigned to projects, or restricted to company for external users
+if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
@@ -303,7 +307,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
-
+//print $sql;
 
 dol_syslog("list allowed project", LOG_DEBUG);
 //print $sql;
@@ -314,6 +318,7 @@ if ($resql)
     $num = $db->num_rows($resql);
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
@@ -357,8 +362,8 @@ if ($resql)
     if ($search_task_user == $user->id) print $langs->trans("MyTasksDesc").'<br><br>';
     else
     {
-        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-        else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksOnProjectsDesc").'<br><br>';
+        else print $langs->trans("TasksOnProjectsPublicDesc").'<br><br>';
     }
     
     if ($search_all)
@@ -540,7 +545,15 @@ if ($resql)
     print '</tr>';
     
     
-    $i = 0;
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+     
+    $now = dol_now();
+    $i=0;
+    $var=true;
+    $totalarray=array();
     while ($i < min($num,$limit))
     {
     	$obj = $db->fetch_object($resql);
@@ -550,12 +563,15 @@ if ($resql)
     	$projectstatic->title = $obj->projecttitle;
     	$projectstatic->public = $obj->public;
     	$projectstatic->statut = $obj->projectstatus;
+    	$projectstatic->datee = $db->jdate($obj->projectdatee);
     	
     	$taskstatic->id = $obj->id;
     	$taskstatic->ref = $obj->ref;
     	$taskstatic->label = $obj->label;
     	$taskstatic->fk_statut = $obj->fk_statut;
     	$taskstatic->progress = $obj->progress;
+    	$taskstatic->datee = $db->jdate($obj->date_end);	// deprecated
+    	$taskstatic->date_end = $db->jdate($obj->date_end);
     	
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
@@ -568,7 +584,9 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1, 'task');
+        		if ($projectstatic->hasDelay()) print img_warning("Late");
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Title
         	if (! empty($arrayfields['p.title']['checked']))
@@ -576,6 +594,7 @@ if ($resql)
             	print '<td>';
         		print dol_trunc($obj->projecttitle,80);
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Company
         	if (! empty($arrayfields['s.nom']['checked']))
@@ -592,6 +611,7 @@ if ($resql)
         			print '&nbsp;';
         		}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Status
         	if (! empty($arrayfields['p.fk_statut']['checked']))
@@ -599,13 +619,16 @@ if ($resql)
         	    print '<td>';
         	    print $projectstatic->getLibStatut(1);
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Ref
         	if (! empty($arrayfields['t.ref']['checked']))
         	{
         	    print '<td>';
         	    print $taskstatic->getNomUrl(1,'withproject');
+        		if ($taskstatic->hasDelay()) print img_warning("Late");
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}        	 
     	    // Label
         	if (! empty($arrayfields['t.label']['checked']))
@@ -613,6 +636,7 @@ if ($resql)
         	    print '<td>';
         	    print $taskstatic->label;
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Date start
         	if (! empty($arrayfields['t.dateo']['checked']))
@@ -620,19 +644,16 @@ if ($resql)
 				print '<td class="center">';
 	    		print dol_print_date($db->jdate($obj->date_start),'day');
 	    		print '</td>';
-			}
+    		    if (! $i) $totalarray['nbfield']++;
+        	}
     		// Date end
         	if (! empty($arrayfields['t.datee']['checked']))
         	{
     			print '<td class="center">';
         		print dol_print_date($db->jdate($obj->date_end),'day');
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
-        	
-        	$plannedworkloadoutputformat='allhourmin';
-        	$timespentoutputformat='allhourmin';
-        	if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
-        	if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
         	
         	// Planned workload
         	if (! empty($arrayfields['t.planned_workload']['checked']))
@@ -648,6 +669,9 @@ if ($resql)
         	    }
         	    //else print '--:--';
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalplannedworkloadfield']=$totalarray['nbfield'];
+    		    $totalarray['totalplannedworkload'] += $obj->planned_workload;
         	}
         	// Time spent
         	if (! empty($arrayfields['t.duration_effective']['checked']))
@@ -661,6 +685,9 @@ if ($resql)
 				if ($showlineingray) print '</i>';
 				else print '</a>';
         	    print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
+    		    $totalarray['totaldurationeffective'] += $obj->duration_effective;
         	}    		
     	    // Calculated progress
         	if (! empty($arrayfields['t.progress_calculated']['checked']))
@@ -672,6 +699,7 @@ if ($resql)
 					else print $langs->trans('WorkloadNotDefined');
 				}
         		print '</td>';
+                if (! $i) $totalarray['nbfield']++;
         	}    		
     	    // Declared progress
         	if (! empty($arrayfields['t.progress']['checked']))
@@ -682,6 +710,7 @@ if ($resql)
 					print $obj->progress.' %';
 				}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Extra fields
         	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -697,6 +726,7 @@ if ($resql)
     		            $tmpkey='options_'.$key;
     		            print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
     		            print '</td>';
+    		            if (! $i) $totalarray['nbfield']++;
     		        }
     		    }
     		}
@@ -710,6 +740,7 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
     		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
     		}
     		// Date modification
     		if (! empty($arrayfields['t.tms']['checked']))
@@ -717,6 +748,7 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_update), 'dayhour');
     		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
     		}
     		// Status
     		/*if (! empty($arrayfields['p.fk_statut']['checked']))
@@ -724,9 +756,17 @@ if ($resql)
         		$projectstatic->statut = $obj->fk_statut;
         		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
     		}*/
-    		// Action column
-    		print '<td></td>';
-
+            // Action column
+            print '<td class="nowrap" align="center">';
+            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            {
+                $selected=0;
+        		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+        		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+            }
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+    		
     		print "</tr>\n";
         
     		//print projectLinesa();
@@ -734,6 +774,27 @@ if ($resql)
 
     	$i++;    
     }
+
+    // Show total line
+    if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']))
+    {
+        print '<tr class="liste_total">';
+        $i=0;
+        while ($i < $totalarray['nbfield'])
+        {
+            $i++;
+            if ($i == 1)
+            {
+                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+            elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totalplannedworkload'],$plannedworkloadoutputformat).'</td>';
+            elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totaldurationeffective'],$timespentoutputformat).'</td>';
+            else print '<td></td>';
+        }
+        print '</tr>';
+    }
+    
     $db->free($resql);
     
     $parameters=array('sql' => $sql);

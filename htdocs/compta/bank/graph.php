@@ -53,7 +53,9 @@ $error=0;
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
@@ -76,7 +78,7 @@ if ($_GET["ref"])
 	$account=$acct->id;
 }
 
-$result=dol_mkdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -221,7 +223,7 @@ else
 		//exit;
 
 		// Fabrication tableau 1
-		$file= $conf->banque->dir_temp."/balance".$account."-".$year.$month.".png";
+		$file= $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
@@ -358,7 +360,7 @@ else
 		}
 
 		// Fabrication tableau 2
-		$file= $conf->banque->dir_temp."/balance".$account."-".$year.".png";
+		$file= $conf->bank->dir_temp."/balance".$account."-".$year.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
@@ -473,7 +475,7 @@ else
 		}
 
 		// Fabrication tableau 3
-		$file= $conf->banque->dir_temp."/balance".$account.".png";
+		$file= $conf->bank->dir_temp."/balance".$account.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
 		$title=$langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
 		$graph_datas=array();
@@ -607,7 +609,7 @@ else
 		}
 
 		// Fabrication tableau 4a
-		$file= $conf->banque->dir_temp."/movement".$account."-".$year.$month.".png";
+		$file= $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
@@ -716,7 +718,7 @@ else
 		}
 
 		// Fabrication tableau 4b
-		$file= $conf->banque->dir_temp."/movement".$account."-".$year.".png";
+		$file= $conf->bank->dir_temp."/movement".$account."-".$year.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();

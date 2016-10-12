@@ -106,11 +106,14 @@ abstract class ModeleNumRefSuppliersInvoices
 		return true;
 	}
 
-	/**  Returns next value assigned
-	 *
-	 *   @return     string      Valeur
-	 */
-	function getNextValue()
+    /**  Returns next value assigned
+     *
+     * @param	Societe		$objsoc     Object third party
+     * @param  	Object	    $object		Object
+     * @param	string		$mode       'next' for next value or 'last' for last value
+     * @return 	string      			Value if OK, 0 if KO
+     */
+    function getNextValue($objsoc,$object,$mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

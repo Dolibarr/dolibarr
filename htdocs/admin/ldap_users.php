@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,7 +437,7 @@ if (function_exists("ldap_connect"))
 			print "search: *<br>\n";
 			print "userDN: ".$conf->global->LDAP_USER_DN."<br>\n";
 			print "useridentifier: ".$conf->global->LDAP_KEY_USERS."<br>\n";
-			print "required_fields: ".join(',',$required_fields)."<br>\n";
+			print "required_fields: ".implode(',',$required_fields)."<br>\n";
 			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		}

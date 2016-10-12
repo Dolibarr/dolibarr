@@ -44,7 +44,7 @@ class DoliDBPgsql extends DoliDB
     //! Collate used to force collate when creating database
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	const VERSIONMIN='8.4.0';	// Version min database
+	const VERSIONMIN='9.0.0';	// Version min database
 	/** @var resource Resultset of last query */
 	private $_results;
 
@@ -163,10 +163,13 @@ class DoliDBPgsql extends DoliDB
 		}
 		if ($line != "")
 		{
-			// group_concat support (PgSQL >= 9.1)
-			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
+			// group_concat support (PgSQL >= 9.0)
+			// Replace group_concat(x) or group_concat(x SEPARATOR ',') with string_agg(x, ',')
+		    $line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
-
+			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
+			//print $line."\n";
+					
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
@@ -858,10 +861,13 @@ class DoliDBPgsql extends DoliDB
 		$like = '';
 		if ($table) $like = " AND table_name LIKE '".$table."'";
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
-		while($row = $this->fetch_row($result))
-		{
-			$listtables[] = $row[0];
-		}
+        if ($result)
+        {
+    		while($row = $this->fetch_row($result))
+    		{
+    			$listtables[] = $row[0];
+    		}
+        }
 		return $listtables;
 	}
 
@@ -1096,7 +1102,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$table." DROP COLUMN ".$field_name;
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{

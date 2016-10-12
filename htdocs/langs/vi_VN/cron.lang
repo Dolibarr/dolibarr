@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Về
-CronAbout = Về Cron
-CronAboutPage = Định kỳ về trang web
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Theo lịch trình thiết lập quản lý công việc
-URLToLaunchCronJobs=URL để kiểm tra và khởi động công việc cron nếu được yêu cầu
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Hoặc để kiểm tra và khởi động một công việc cụ thể
 KeyForCronAccess=Khóa bảo mật cho URL để khởi động công việc cron
 FileToLaunchCronJobs=Dòng lệnh để khởi động công việc cron
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Việc theo lịch trình
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Danh sách việc làm người khuyết tật
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Chạy cuối
 CronLastOutput=Bài đầu ra chạy
 CronLastResult=Cuối mã kết quả
-CronListOfCronJobs=Danh sách công việc dự kiến
 CronCommand=Lệnh
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch scheduled jobs
+CronExecute=Launch scheduled job
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=Công việc
 CronNone=Không
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Thực hiện tiếp theo
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequency
 CronClass=Class
 CronMethod=Phương pháp
 CronModule=Mô-đun
-CronAction=Hành động
-CronStatus=Tình trạng
-CronStatusActive=Bật
-CronStatusInactive=Người khuyết tật
 CronNoJobs=Không có công ăn việc làm đăng ký
 CronPriority=Ưu tiên
-CronLabel=Mô tả
+CronLabel=Label
 CronNbRun=Nb. ra mắt
 CronMaxRun=Max nb. launch
 CronEach=Mỗi
 JobFinished=Việc đưa ra và hoàn thành
 #Page card
 CronAdd= Thêm công việc
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Ví dụ / đối tượng để tạo ra
 CronArgs=Các thông số
-CronSaveSucess=Lưu thành công
+CronSaveSucess=Save successfully
 CronNote=Nhận xét
 CronFieldMandatory=Fields% s là bắt buộc
 CronErrEndDateStartDt=Ngày kết thúc không thể trước ngày bắt đầu
@@ -81,14 +67,13 @@ CronCommandHelp=Các dòng lệnh hệ thống để thực thi.
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
 # Info
-CronInfoPage=Thông tin
 # Common
 CronType=Job type
 CronType_method=Gọi phương thức của một lớp Dolibarr
 CronType_command=Shell lệnh
-CronMenu=Cron
 CronCannotLoadClass=Không thể tải lớp% s hoặc đối tượng% s
-UseMenuModuleToolsToAddCronJobs=Đi vào menu "Trang chủ - module công cụ - danh sách công việc" để xem và chỉnh sửa các công việc theo lịch trình.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

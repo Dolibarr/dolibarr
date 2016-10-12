@@ -84,7 +84,7 @@ class box_members extends ModeleBoxes
 		{
 			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
-			$sql.= " t.cotisation";
+			$sql.= " t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE a.entity = ".$conf->entity;
 			$sql.= " AND a.fk_adherent_type = t.rowid";
@@ -135,7 +135,7 @@ class box_members extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $memberstatic->LibStatut($objp->status,$objp->cotisation,$db->jdate($objp->date_end_subscription),3),
+                        'text' => $memberstatic->LibStatut($objp->status,$objp->subscription,$db->jdate($objp->date_end_subscription),3),
                     );
 
                     $line++;
@@ -169,11 +169,12 @@ class box_members extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

@@ -14,6 +14,5 @@ BehaviourOnClick=Verhalten wenn ein Link geklickt wird
 CreateBookmark=Lesezeichen erstellen
 SetHereATitleForLink=Erfasse hier einen Titel für das Lesezeichen
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine absolute externe URL oder eine relative Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bitte wählen Sie, ob sich ein geklickter Link in einem neuen oder im  selben Fenster öffnet
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wählen Sie aus, ob die Seite in einen neuem Fenster geöffnet werden soll
 BookmarksManagement=Verwalten von Lesezeichen
-ListOfBookmarks=Liste der Lesezeichen

@@ -24,7 +24,6 @@ Notify_MEMBER_RESILIATE=Mitglied resiliated
 PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Hier finden Sie unser Bestellformular __ORDERREF__ \n\nMit freundlichen Grüßen\n\n__SIGNATURE__
 PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Hier finden Sie die Versandkosten __SHIPPINGREF__ \n\nSincerely \n\n__SIGNATURE__
 PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Hier finden Sie die Intervention __FICHINTERREF__ \n\nSincerely \n\n__SIGNATURE__
-FeatureNotYetAvailableShort=Erhältlich in einer der nächsten Versionen
 Bottom=Boden
 Right=Recht
 CalculatedWeight=Errechnetes Gewicht

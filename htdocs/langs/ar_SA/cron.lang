@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = حول
-CronAbout = حول كرون
-CronAboutPage = كرون حول الصفحة
 # Right
 Permission23101 = قراءة مهمة مجدولة
 Permission23102 = إنشاء / تحديث المجدولة وظيفة
@@ -10,7 +7,7 @@ Permission23103 = حذف مهمة مجدولة
 Permission23104 = تنفيذ مهمة مجدولة
 # Admin
 CronSetup= من المقرر إعداد إدارة العمل
-URLToLaunchCronJobs=URL لفحص وإطلاق كرون الوظائف إذا لزم الأمر
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=أو لفحص وإطلاق وظيفة محددة
 KeyForCronAccess=مفتاح أمان للURL لإطلاق كرون الوظائف
 FileToLaunchCronJobs=سطر الأوامر لإطلاق كرون الوظائف
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=على بيئة يونكس يجب عليك استخدا�
 CronExplainHowToRunWin=على مايكروسوفت (TM) ويندوز environement يمكنك استخدام أدوات مهمة مجدولة لتشغيل سطر الأوامر كل 5 دقائق
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=المهام المجدولة
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=قائمة وظائف ذوي الاحتياجات الخاصة
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=الماضي البعيد
 CronLastOutput=نشاط انتاج المدى
 CronLastResult=آخر رمز النتيجة
-CronListOfCronJobs=قائمة المهام المجدولة
 CronCommand=أمر
 CronList=المهام المجدولة
 CronDelete=حذف المهام المجدولة
 CronConfirmDelete=هل أنت متأكد أنك تريد حذف هذه المهام المجدولة؟
-CronExecute=إطلاق المهام المجدولة
+CronExecute=Launch scheduled job
 CronConfirmExecute=هل أنت متأكد أنك تريد تنفيذ هذه المهام المجدولة الآن؟
 CronInfo=وحدة مهمة مجدولة تسمح لتنفيذ المهمة التي تم التخطيط لها
-CronWaitingJobs=في انتظار وظيفة
 CronTask=وظيفة
 CronNone=بلا
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=إعدام المقبل
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=تردد
 CronClass=الصف
 CronMethod=الطريقة
 CronModule=وحدة
-CronAction=إجراء
-CronStatus=حالة
-CronStatusActive=مكن
-CronStatusInactive=المعاقين
 CronNoJobs=أي وظيفة سجلت
 CronPriority=الأولوية
-CronLabel=وصف
+CronLabel=Label
 CronNbRun=ملحوظة. إطلاق
 CronMaxRun=Max nb. launch
 CronEach=كل
 JobFinished=العمل بدأ وانتهى
 #Page card
 CronAdd= إضافة وظائف
-CronHourStart= بدء ساعة وتاريخ وظيفة
 CronEvery=العمل كل تنفيذ
 CronObject=المثال / إنشاء عنصر
 CronArgs=البارامترات
-CronSaveSucess=حفظ بنجاح
+CronSaveSucess=Save successfully
 CronNote=التعليق
 CronFieldMandatory=الحقول%s إلزامي
 CronErrEndDateStartDt=تاريخ نهاية لا يمكن أن يكون قبل تاريخ البدء
@@ -81,14 +67,13 @@ CronCommandHelp=سطر الأوامر لتنفيذ النظام.
 CronCreateJob=إنشاء مهمة مجدولة جديدة
 CronFrom=من عند
 # Info
-CronInfoPage=معلومات
 # Common
 CronType=نوع العمل
 CronType_method=استدعاء الأسلوب من فئة Dolibarr
 CronType_command=الأمر Shell
-CronMenu=كرون
 CronCannotLoadClass=لا يمكن تحميل الطبقة %s أو الكائن %s
-UseMenuModuleToolsToAddCronJobs=الذهاب إلى قائمة "الرئيسية - أدوات الوحدات - قائمة الوظيفي" لرؤية وتعديل المهام المجدولة.
-TaskDisabled=تعطيل وظيفة
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

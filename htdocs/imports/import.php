@@ -44,7 +44,7 @@ $entitytoicon=array(
 	'order'=>'order' ,'order_line'=>'order',
 	'intervention'=>'intervention' ,'inter_line'=>'intervention',
 	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
-	'tax'=>'generic' ,'tax_type'=>'generic',
+	'tax'=>'bill' ,'tax_type'=>'generic',
 	'account'=>'account',
 	'payment'=>'payment',
 	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
@@ -634,6 +634,10 @@ if ($step == 4 && $datatoimport)
         }
         
     }
+	
+	if (GETPOST('update')) {
+		$array_match_file_to_database=array();
+	}
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -757,7 +761,7 @@ if ($step == 4 && $datatoimport)
 		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
 		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
-		print '<input type="submit" value="'.$langs->trans('Update').'" class="button" />';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
 		print '</form>';
 		print '</td></tr>';
     }

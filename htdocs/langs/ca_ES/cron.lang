@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Sobre
-CronAbout = Sobre Cron
-CronAboutPage = Sobre Cron
 # Right
 Permission23101 = Consulta les tasques programades
 Permission23102 = Crea/modifica la tasca programada
@@ -10,7 +7,7 @@ Permission23103 = Elimina la tasca programada
 Permission23104 = Executa les tasques programades
 # Admin
 CronSetup= Pàgina de configuració del mòdul - Gestió de tasques planificades
-URLToLaunchCronJobs=URL per llançar les tasques automàtiques
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=O per llançar una tasca específica
 KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques automàtiques
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=A entorns Unix s'ha d'utilitzar la següent entrada cron
 CronExplainHowToRunWin=En entorns Microsoft (tm) Windows, pot utilitzar l'eina 'tareas programadas' per executar la comanda cada 5 minuts
 CronMethodDoesNotExists=La classe %s no conté cap mètode %s
 # Menu
-CronJobs=Tasques programades
-CronListActive=Tasques programades habilitades
-CronListInactive=Llistat de tasques planificades inactives
 EnabledAndDisabled=Habilitat i deshabilitat
 # Page list
-CronDateLastRun=Última execució
 CronLastOutput=Última sortida d'execució
 CronLastResult=Últim codi retornat
-CronListOfCronJobs=Llista de tasques programades
 CronCommand=Comando
 CronList=Tasques programades
 CronDelete=Elimina les tasques programades
 CronConfirmDelete=Esteu segur de voler eliminar aquesta tasca programada?
-CronExecute=Llançar tasques programades
+CronExecute=Llança la tasca programada
 CronConfirmExecute=Esteu segur de voler executar ara aquesta tasca programada?
 CronInfo=Tasques programades li permet executar tasques que han sigut programades
-CronWaitingJobs=Treballs en espera
 CronTask=Tasca
 CronNone=Ningún
 CronDtStart=No abans
 CronDtEnd=No després
 CronDtNextLaunch=Propera execució
 CronDtLastLaunch=Data d'inici de l'última execució
-CronDtLastResult=Data final de l'última execució
+CronDtLastResult=Data del final de l'última execució
 CronFrequency=Freqüència
 CronClass=Classe
 CronMethod=Mètod
 CronModule=Mòdul
-CronAction=Acció
-CronStatus=Estat
-CronStatusActive=Activa
-CronStatusInactive=Inactiva
 CronNoJobs=Sense treballs actualment
 CronPriority=Prioritat
-CronLabel=Descripció
+CronLabel=Etiqueta
 CronNbRun=Nº execucions
 CronMaxRun=Nº màx. d'exec.
 CronEach=Tota (s)
 JobFinished=Tasques llançades i finalitzades
 #Page card
 CronAdd= Afegir una tasca
-CronHourStart= Hora d'inici i data de treball
 CronEvery=Executa cada tasca
 CronObject=Instància/Objecte a crear
 CronArgs=Argument
-CronSaveSucess=Registre guardat
+CronSaveSucess=S'ha desat correctament
 CronNote=Nota
 CronFieldMandatory=El camp %s és obligatori
 CronErrEndDateStartDt=La data de fi no pot ser anterior a la d'inici
@@ -81,14 +67,13 @@ CronCommandHelp=El comando del sistema a executar
 CronCreateJob=Crear nova tasca programada
 CronFrom=De
 # Info
-CronInfoPage=Informació
 # Common
 CronType=Tipus de tasca
 CronType_method=Mètode d'una classe d'un mòdul Dolibarr
 CronType_command=Comando Shell
-CronMenu=Cron
 CronCannotLoadClass=impossible carregar la classe %s de l'objecte %s
-UseMenuModuleToolsToAddCronJobs=Anar a "inici - Utilitats mòduls - Llista de tasques Cron" per veure i editar tasques programades
-TaskDisabled=Tasca desactivada
+UseMenuModuleToolsToAddCronJobs=Ves a menú "Inici - Utilitats de sistema - Tasques programades" per veure i editar les tasques programades.
+JobDisabled=Tasca desactivada
 MakeLocalDatabaseDumpShort=Còpia de seguretat de la base de dades local
 MakeLocalDatabaseDump=Crea un bolcat de base de dades local
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

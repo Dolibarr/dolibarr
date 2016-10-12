@@ -289,17 +289,18 @@ if ($conf->use_javascript_ajax)
 	  - la chaine a afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/
+    
 	//il faut d'abord declarer un element racine de l'arbre
 
-	$data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
-
+    $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
+    
 	//puis tous les elements enfants
 
-	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
+	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.module";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
 	$sql.= " AND entity = ".$conf->entity;
-	$sql.= " AND fk_menu >= 0";
+	//$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 
 	$res  = $db->query($sql);
@@ -314,9 +315,10 @@ if ($conf->use_javascript_ajax)
 			$titre = $langs->trans($menu['titre']);
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
+			    'module'=>$menu['module'],
 				'fk_menu'=>$menu['fk_menu'],
 				'title'=>$titre,
-				'mainmenu'=>$menu['mainmenu'],
+			    'mainmenu'=>$menu['mainmenu'],
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
@@ -334,17 +336,54 @@ if ($conf->use_javascript_ajax)
 		}
 	}
 
+	global $tree_recur_alreadyadded;       // This var was def into tree_recur
+	
 	// Appelle de la fonction recursive (ammorce)
 	// avec recherche depuis la racine.
 	//var_dump($data);
-	tree_recur($data,$data[0],0);
+	tree_recur($data, $data[0], 0, 'iddivjstree');  // $data[0] is virtual record 'racine'
+	
 
 	print '</td>';
-
+	
 	print '</tr>';
-
+	
 	print '</table>';
-
+	
+	
+	// Process remaining records (records that are not linked to root by any path)
+    $remainingdata = array();
+	foreach($data as $datar)
+	{
+	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+	    $remainingdata[] = $datar;
+	}
+	
+	if (count($remainingdata))
+	{
+    	print '<table class="noborder centpercent">';
+    	
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+    	print '<td align="right"></td>';
+    	print '</tr>';
+    	
+    	print '<tr>';
+    	print '<td colspan="2">';	
+    	
+    	foreach($remainingdata as $datar)
+    	{
+            $father = array('rowid'=>$datar['rowid'],'title'=>"???",'mainmenu'=>$datar['fk_mainmenu'],'leftmenu'=>$datar['fk_leftmenu'],'fk_mainmenu'=>'','fk_leftmenu'=>'');
+    	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+    	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+    	}
+    
+    	print '</td>';
+    
+    	print '</tr>';
+    
+    	print '</table>';
+	}
 
 	print '</div>';
 

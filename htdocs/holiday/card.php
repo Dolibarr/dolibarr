@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
@@ -95,36 +95,41 @@ if ($action == 'create')
 	    // If no start date
 	    if (empty($date_debut))
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=nodatedebut');
-	        exit;
+	        setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If no end date
 	    if (empty($date_fin))
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=nodatefin');
-	        exit;
+	        setEventMessages($langs->trans("NoDateFin"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If start date after end date
 	    if ($date_debut > $date_fin)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=datefin');
-	        exit;
+	        setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // Check if there is already holiday for this period
 	    $verifCP = $cp->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=alreadyCP');
-	        exit;
+	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // If there is no Business Days within request
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 	    if($nbopenedday < 0.5)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=DureeHoliday');
-	        exit;
+	        setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // If no validator designated
@@ -321,6 +326,7 @@ if ($action == 'confirm_send')
 
             if (!$emailTo)
             {
+                dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
@@ -433,6 +439,7 @@ if ($action == 'confirm_valid')
 
             if (!$emailTo)
             {
+                dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
@@ -789,7 +796,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // User
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
+        print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
@@ -823,10 +830,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
-            $form->select_date(-1,'date_debut_');
+            $form->select_date(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-            $form->select_date($tmpdate,'date_debut_');
+            $form->select_date($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
@@ -839,10 +846,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
-            $form->select_date(-1,'date_fin_');
+            $form->select_date(-1,'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-            $form->select_date($tmpdate,'date_fin_');
+            $form->select_date($tmpdate,'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
@@ -861,7 +868,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
-        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
+        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.GETPOST('description').'</textarea>';
         print '</td>';
         print '</tr>';
 
@@ -1005,7 +1012,7 @@ else
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1, 'leave');
+        		print $userRequest->getNomUrl(-1, 'leave');
         		print '</td></tr>';
 
 		        // Type
@@ -1115,14 +1122,14 @@ else
                 	$userCreate->fetch($cp->fk_user_create);
 	                print '<tr>';
 	                print '<td>'.$langs->trans('RequestByCP').'</td>';
-	                print '<td>'.$userCreate->getNomUrl(1).'</td>';
+	                print '<td>'.$userCreate->getNomUrl(-1).'</td>';
 	                print '</tr>';
                 }
 
                 if (!$edit) {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-                    print '<td>'.$valideur->getNomUrl(1).'</td>';
+                    print '<td>'.$valideur->getNomUrl(-1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';

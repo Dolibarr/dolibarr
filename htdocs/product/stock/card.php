@@ -111,6 +111,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
+	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
 		exit;
 	}
@@ -175,7 +176,7 @@ if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewWarehouse"));
 
-	print "<form action=\"card.php\" method=\"post\">\n";
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -197,7 +198,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
@@ -234,7 +235,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -259,66 +264,141 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
+			$formconfirm = '';
+			
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			print '<table class="border" width="100%">';
-
+			if (! $formconfirm) {
+			    $parameters = array();
+			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+			}
+			
+			// Print form confirm
+			print $formconfirm;
+				
+			// Warehouse card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			
+
+			$morehtmlref='<div class="refidno">';
+			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
+            /*
+			// Ref supplier
+        	//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
+        	//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
+        	// Thirdparty
+        	//$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+        	// Project
+        	if (! empty($conf->projet->enabled))
+        	{
+        	    $langs->load("projects");
+        	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        	    if ($user->rights->supplier_proposal->creer)
+        	    {
+        	        if ($action != 'classify')
+        	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+        	            if ($action == 'classify') {
+        	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+        	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+        	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+        	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+        	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+        	                $morehtmlref.='</form>';
+        	            } else {
+        	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+        	            }
+        	    } else {
+        	        if (! empty($object->fk_project)) {
+        	            $proj = new Project($db);
+        	            $proj->fetch($object->fk_project);
+        	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+        	            $morehtmlref.=$proj->ref;
+        	            $morehtmlref.='</a>';
+        	        } else {
+        	            $morehtmlref.='';
+        	        }
+        	    }
+        	}*/
+        	$morehtmlref.='</div>';
+        	
+        	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+        	
+        	
+        	print '<div class="fichecenter">';
+        	print '<div class="fichehalfleft">';
+        	print '<div class="underbanner clearboth"></div>';
+        	
+        	print '<table class="border" width="100%">';
+
 
 			// Ref
+			/*
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
-			print '</td>';
+			print '</td>';*/
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
+			//print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
 
 			// Description
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description).'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
 
 			// Address
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
+			/*
+			print '<tr><td>'.$langs->trans('Address').'</td><td>';
 			print $object->address;
 			print '</td></tr>';
 
 			// Town
-			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->zip.'</td>';
-			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->town.'</td></tr>';
+			print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$object->zip.'</td></tr>';
+			print '<tr><td>'.$langs->trans('Town').'</td><td>'.$object->town.'</td></tr>';
 
 			// Country
-			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Country').'</td><td>';
 			if (! empty($object->country_code))
 			{
 				$img=picto_from_langcode($object->country_code);
 				print ($img?$img.' ':'');
 			}
 			print $object->country;
-			print '</td></tr>';
+			print '</td></tr>';*/
 
 			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			//print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
-        	$calcproductsunique=$object->nb_different_products();
+			$calcproductsunique=$object->nb_different_products();
 			$calcproducts=$object->nb_products();
-
-	        // Total nb of different products
-	        print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
-	        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
-	        print "</td></tr>";
-
+				
+			// Total nb of different products
+			print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
+			print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+			print "</td></tr>";
+				
 			// Nb of products
-			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
 			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
 			print "</td></tr>";
-
+				
+			print '</table>';
+			
+			print '</div>';
+			print '<div class="fichehalfright">';
+			print '<div class="ficheaddleft">';
+			print '<div class="underbanner clearboth"></div>';
+			
+			print '<table class="border centpercent">';
+				
 			// Value
-			print '<tr><td>'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("EstimatedStockValueShort").'</td><td>';
 			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
-
+			
 			// Last movement
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -326,14 +406,14 @@ else
 			$resqlbis = $db->query($sql);
 			if ($resqlbis)
 			{
-				$obj = $db->fetch_object($resqlbis);
-				$lastmovementdate=$db->jdate($obj->datem);
+			    $obj = $db->fetch_object($resqlbis);
+			    $lastmovementdate=$db->jdate($obj->datem);
 			}
 			else
 			{
-				dol_print_error($db);
+			    dol_print_error($db);
 			}
-			print '<tr><td>'.$langs->trans("LastMovement").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -341,13 +421,19 @@ else
 			}
 			else
 			{
-			     print $langs->trans("None");
+			    print $langs->trans("None");
 			}
 			print "</td></tr>";
-
+			
 			print "</table>";
 
 			print '</div>';
+			print '</div>';
+			print '</div>';
+			
+			print '<div class="clearboth"></div>';
+			
+			dol_fiche_end();
 
 
 			/* ************************************************************************** */
@@ -546,7 +632,7 @@ else
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 

@@ -42,13 +42,12 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
-if (! $user->admin) {
-	accessforbidden();
-}
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-	
+if (! $user->rights->accounting->ventilation->read)
+    accessforbidden();
+
 // search & action GETPOST
 $action = GETPOST('action');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
@@ -111,14 +110,14 @@ if ($action == 'update') {
 	}
 	
 	if (! empty($btn_changeaccount)) {
-		$msg = '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		if (! empty($chk_prod)) {
 			
 			$accounting = new AccountingAccount($db);
 			
-			$msg .= '<div><font color="red">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
+			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			
-			$cpt = 0;
+			$cpt = 0; $ok = 0; $ko = 0;
 			foreach ( $chk_prod as $productid ) {
 				
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
@@ -140,18 +139,22 @@ if ($action == 'update') {
 					
 					dol_syslog("/accountancy/admin/productaccount.php sql=" . $sql, LOG_DEBUG);
 					if ($db->query($sql)) {
-						$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
+					    $ok++;
+						//$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
 					} else {
-						$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+					    $ko++;
+						//$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 					}
 				}
 				
 				$cpt ++;
 			}
 		} else {
-			$msg .= '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
+			//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("AnyLineVentilate") . '</span></div>';
 		}
-		$msg .= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
+		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
+		if ($ok) setEventMessages($langs->trans("XLineSuccessfullyBinded", $ok), null, 'mesgs');
+		//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("EndProcessing") . '</span></div>';
 	}
 }
 
@@ -173,18 +176,19 @@ $aacompta_servsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? 
 $aacompta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_ref = '';
 	$search_label = '';
 	$search_desc = '';
 }
 
+
 /*
  * View
  */
 
-llxHeader('', $langs->trans("InitAccountancy"));
+llxHeader('', $langs->trans("ProductsBinding"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -203,7 +207,7 @@ print '<script type="text/javascript">
 			});
 			 </script>';
 
-$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
+$sql = "SELECT p.rowid, p.ref, p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 $sql .= " WHERE (";
 
@@ -241,7 +245,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print_barre_liste($langs->trans("ModulesSystemTools"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';
@@ -265,17 +269,16 @@ if ($result) {
 	
 	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
-	print "<br><br>\n";
+	print "<br>\n";
 	
-	if (! empty($msg)) {
-		print $msg;
-	}
+	
+	print_barre_liste($langs->trans("ListOfProductsWithoutAccountingAccount"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines, '', '');
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
 	/*
 	 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 	 print_liste_field_titre($langs->trans("Accountancy_code_buy"));
@@ -284,19 +287,19 @@ if ($result) {
 	 }
 	 */
 	print_liste_field_titre($langs->trans("AccountAccounting"));
-	print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	//print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
+	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="center" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-	print '&nbsp;';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
+	print $searchpitco;
 	print '</td>';
 	print '</tr>';
 	
@@ -328,10 +331,10 @@ if ($result) {
 		
 		$product_static = new Product($db);
 		
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		
 		print "</tr>";
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
@@ -372,13 +375,13 @@ if ($result) {
 		
 		// Checkbox select
 		print '<td align="center">';
-		print '<input type="checkbox" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
+		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
 		
 		print "</tr>";
 		$i ++;
 	}
 	print '</table>';
-	print '<br><div align="right"><input type="submit" class="butAction" name="changeaccount" value="' . $langs->trans("Validate") . '"></div>';
+	print '<br><div align="right"><input type="submit" class="butAction" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
 	print '</form>';
 	
 	$db->free($result);

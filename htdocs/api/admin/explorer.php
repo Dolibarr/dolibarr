@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 
+$langs->load("admin");
+
 
 /*
  * View
@@ -36,14 +38,12 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
-    $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
 
-use \Luracast\Restler\Defaults;
 
 $api = new DolibarrApi($db);
 
@@ -59,7 +59,7 @@ foreach ($modulesdir as $dir)
     /*
      * Search available module
      */
-    dol_syslog("Scan directory ".$dir." for API modules");
+    //dol_syslog("Scan directory ".$dir." for API modules");
 
     $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
@@ -104,17 +104,43 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
+                            // Support of the deprecated API.
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
+                            {
+                                $classname = ucwords($reg[1]).'Api';
+                                require_once $dir_part.$file_searched;
+                                if (class_exists($classname))
+                                {
+                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
+                                    $api->r->addAPIClass($classname, '');
+                                }
+                            }
+                            elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                            {
+                                $classname = ucwords($reg[1]);
+                                require_once $dir_part.$file_searched;
+                                if (class_exists($classname))
+                                {
+                                    dol_syslog("Found API classname=".$classname." into ".$dir);
+                                    $listofapis[] = $classname;
+                                }
+                            }                                
+                        
+                            /*
                             if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
                             {
                                 $classname=$reg[1];
                                 $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
+                                //$classname = str_replace('Api_','',ucwords($reg[1]));
                                 $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
+
                                 if (class_exists($classname)) 
                                 {
                                     dol_syslog("Found API classname=".$classname);    
                                     $api->r->addAPIClass($classname,'');
                                     
+
                                     /*
                                     require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
                                     $tmpclass = new ReflectionClass($classname);
@@ -125,8 +151,9 @@ foreach ($modulesdir as $dir)
                                     }*/
                                     
                                     //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
-                                }
-                            }
+                           /*     }
+                                
+                            }*/
                         }
                     }
                 }
@@ -135,8 +162,8 @@ foreach ($modulesdir as $dir)
     }
 }
 
-
-$listofapis=Routes::toArray();
+//var_dump($listofapis);
+$listofapis=Routes::toArray();          // TODO api for "status" is lost here
 //var_dump($listofapis);
 
 
@@ -166,6 +193,7 @@ print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
+    if ($key == 'index') continue;
     
     if ($key)
     {

@@ -3,93 +3,90 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το �
 ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Λογιστική
-Globalparameters=Βασικοί Παράμετροι
-Menuaccount=Λογαριασμοί Λογιστικής
-Menuthirdpartyaccount=Λογαριασμοί Πελ./Προμ.
-MenuTools=Εργαλεία
 
 ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστικής expert
 Journaux=Ημερολόγια
 JournalFinancial=Οικονιμικά ημερολόγια
-Exports=Εξαγωγές
-Export=Εξαγωγή
-Modelcsv=Πρότυπο εξαγωγής
-OptionsDeactivatedForThisExportModel=Γι 'αυτό το μοντέλο εξαγωγών, οι επιλογές είναι απενεργοποιημένες
-Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγή
-Modelcsv_normal=Κλασική εξαγωγή
-Modelcsv_CEGID=Εξαγωγή προς CEGID εμπειρογνωμόνων
 BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
 
-Definechartofaccounts=Ορίστε ένα διάγραμμα των λογαριασμών
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογαριασμών
 Addanaccount=Προσθέστε ένα λογιστικό λογαριασμό
 AccountAccounting=Λογιστική λογαριασμού
+AccountAccountingShort=Λογαριασμός
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Ανάλυση
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
-MenuAccountancy=Accountancy
-CustomersVentilation=Ανάλυση πελατών
-SuppliersVentilation=Ανάλυση προμηθευτών
-TradeMargin=Εμπορικό Περιθώριο
+MenuAccountancy=Λογιστική
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Αναφορές
-ByCustomerInvoice=Με τιμολόγια πελατών
 NewAccount=Νέος λογιστικός λογαριασμός
 Create=Δημιουργία
-CreateMvts=Create movement
-UpdateAccount=Τροποποίηση του λογιστικού λογαριασμού
-UpdateMvts=Τροποποίηση μιας κίνησης
-WriteBookKeeping=Εγγραφή λογαριασμών στο γενικό καθολικό
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=Γενικό Καθολικό
 AccountBalance=Account balance
 
-AccountingVentilation=Ανάλυση των λογαριασμών
-AccountingVentilationSupplier=Ανάλυση λογιστικών προμηθευτή
-AccountingVentilationCustomer=Ανάλυση λογιστικών των πελατών
-
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Εγγραφές τιμολογίου για ανανέωση
-InvoiceLinesDone=Ανανεωμένες εγγραφές τιμολογίου
-IntoAccount=Ventilate in the accounting account
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=Ανανέωση
-VentilationAuto=Αυτόματη ανάλυση
+Ventilate=Bind
 
 Processing=Επεξεργασία
 EndProcessing=Τέλος της επεξεργασίας
-AnyLineVentilate=Εγγραφές προς ανανέωση
+AnyLineVentilate=Any lines to bind
 SelectedLines=Επιλεγμένες γραμμές
 Lineofinvoice=Γραμμή τιμολογίου
-VentilatedinAccount=Ανανεώθηκε επιτυχώς στον λογιστικό λογαριασμό
-NotVentilatedinAccount=Δεν ανανεώθηκε στον λογιστικό λογαριασμό
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_SEPARATORCSV=Διαχωριστικό στήλης στο αρχείο εξαγωγής
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Αριθμός αντικειμένων για ανάλυση ανά σελίδα (προτείνεται μέγιστο : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Έχει για κατανομή» από τα πιο πρόσφατα στοιχεία
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Ανάλυση" με τα πιο πρόσφατα στοιχεία
-
-AccountLength=Μήκος των λογιστικών λογαριασμών που φαίνονται στο Dolibarr
-AccountLengthDesc=Λειτουργία που επιτρέπει να υποκρίνεαι μήκος του λογιστικού λογαριασμού αντικαθιστώντας χώρους από τον αριθμό μηδέν. Η λειτουργία αυτή αγγίζει μόνο την οθόνη, δεν τροποποιούν τους λογιστικούς λογαριασμούς στο Dolibarr. Για την εξαγωγή, αυτή η λειτουργία είναι απαραίτητη για να είναι συμβατή με το συγκεκριμένο λογισμικό.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Μήκος γενικών λογαριασμών
-ACCOUNTING_LENGTH_AACCOUNT=Μήκος λογαριασμών τρίτων
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
 ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Διάφορα ημερολόγια
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Ημερολόγιο εξόδων
 ACCOUNTING_SOCIAL_JOURNAL=Κοινωνικό ημερολόγιο
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Λογαριασμός μεταφοράς
 ACCOUNTING_ACCOUNT_SUSPENSE=Λογαριασμός σε αναμονή
+DONATION_ACCOUNTINGACCOUNT=Λογαριασμός για την κατοχύρωση δωρεών
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για αγορά προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για πώληση προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
@@ -99,81 +96,109 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικό�
 Doctype=Τύπος εγγράφου
 Docdate=Ημερομηνία
 Docref=Παραπομπή
-Numerocompte=Λογαριασμός
 Code_tiers=Πελ./Προμ.
 Labelcompte=Ετικέτα λογαριασμού
 Sens=Σημασία
 Codejournal=Ημερολόγιο
 NumPiece=Piece number
-
+AccountingCategory=Accounting category
+NotMatch=Not Set
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 DelBookKeeping=Διαγράψτε τα αρχεία της γενικής λογιστικής
-
 DescSellsJournal=Ημερολόγιο πωλήσεων
 DescPurchasesJournal=Ημερολόγιο αγορών
-FinanceJournal=Finance journal
+FinanceJournal=Ημερολόγιο οικονομικών
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-
-CashPayment=Καταβολή Μετρητών
-
-SupplierInvoicePayment=Πληρωμή τιμολογίου προμηθευτή
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Πληρωμή τιμολογίου προμηθευτή
-
 ThirdPartyAccount=Λογαριασμός Πελ./Προμ.
-
-NewAccountingMvt=Νέα κίνηση
-NumMvts=Αριθμός κίνησης
-ListeMvts=Λίστα των κινήσεων
+NewAccountingMvt=New transaction
+NumMvts=Numero of transaction
+ListeMvts=List of movements
 ErrorDebitCredit=Χρεωστικές και Πιστωτικές δεν μπορούν να χουν την ίδια αξία ταυτόχρονα
 
-ReportThirdParty=Λίστα λογαριασμού Πελ./Προμ.
-DescThirdPartyReport=Συμβουλευτείτε εδώ τη λίστα των πελατών και των προμηθευτών και των λογιστικών τους λογαριασμούς τους
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=Λίστα των λογιστικών λογαριασμών
 
-Pcgversion=Έκδοση του σχεδίου
 Pcgtype=Τύπος λογαριασμού
 Pcgsubtype=Δευτερεύουσα κατηγορία λογαριασμού
 Accountparent=Ρίζα του λογαριασμού
 
-DescVentilCustomer=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των πελατών σας
 TotalVente=Total turnover before tax
 TotalMarge=Συνολικό περιθώριο πωλήσεων
-DescVentilDoneCustomer=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων των πελατών και τη λογιστική των λογαριασμών τους
-DescVentilTodoCustomer=Ανανεώστε τις εγγραφές ενός τιμολογίου πελάτη με έναν λογιστικό λογαριασμό
-ChangeAccount=Αλλαγή λογιστικού λογαριασμού για εγγραφές επιλεγμένες από τον λογαριασμό:
-Vide=-
-DescVentilSupplier=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των προμηθευτών σας
-DescVentilTodoSupplier=Ανανέωσε τις εγγραφές του τιμολογίου προμηθευτή με έναν λογιστικό λογαριασμό
-DescVentilDoneSupplier=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων του προμηθευτή και τη λογιστική του λογαριασμού τους
 
-ValidateHistory=Αυτόματη επικύρωση
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+Vide=-
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Bind Automatically
+AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=Φόρμα ανάλυσης
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Τύπος εξαγωγής
-Prefixname=Prefix of export File
-Separate=Διαχωριστικό εξαγωγής
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Όνομα πεδίου
-Headername=Όνομα στην επικεφαλίδα
-Type=Τύπος πεδίων
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Εξαγωγές
+Export=Εξαγωγή
+Modelcsv=Πρότυπο εξαγωγής
+OptionsDeactivatedForThisExportModel=Γι 'αυτό το μοντέλο εξαγωγών, οι επιλογές είναι απενεργοποιημένες
+Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγή
+Modelcsv_normal=Κλασική εξαγωγή
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
 Options=Επιλογές
 OptionModeProductSell=Κατάσταση πωλήσεων
 OptionModeProductBuy=Κατάσταση αγορών
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanHistory=Reset all bindings for selected year
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

@@ -50,7 +50,6 @@ $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
 
-if ($dolibarr_main_db_type == "mysql") $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
 if ($dolibarr_main_db_type == "mssql") $choix=3;
@@ -72,6 +71,12 @@ $actiondone=0;
 $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
+
+print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos')?GETPOST('restore_thirdparties_logos'):'0').'<br>'."\n";
+print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements')?GETPOST('clean_linked_elements'):'0').'<br>'."\n";
+print 'Option clean_orphelin_dir (1 or confirmed) is '.(GETPOST('clean_orphelin_dir')?GETPOST('clean_orphelin_dir'):'0').'<br>'."\n";
+print 'Option clean_product_stock_batch (1 or confirmed) is '.(GETPOST('clean_product_stock_batch')?GETPOST('clean_product_stock_batch'):'0').'<br>'."\n";
+print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 $error=0;
@@ -196,7 +201,8 @@ if ($ok)
 }
 
 
-// sync_extrafields: Search list of fields declared and list of fields created into databases and create fields missing
+// sync_extrafields: Search list of fields declared and list of fields created into databases, then create fields missing
+
 if ($ok)
 {
 	$extrafields=new ExtraFields($db);
@@ -204,6 +210,7 @@ if ($ok)
 				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
 				'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
 				'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
+	print '<tr><td colspan="2"><br>Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach($listofmodulesextra as $tablename => $elementtype)
 	{
 	    // Get list of fields
@@ -292,6 +299,8 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 	//$exts=array('gif','png','jpg');
 
 	$ext='';
+	
+	print '<tr><td colspan="2"><br>';
 	//foreach($exts as $ext)
 	//{
 		$sql="SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
@@ -353,6 +362,8 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 			$ok=0;
 			dol_print_error($db);
 		}
+
+	print '</td></tr>';
 	//}
 }
 
@@ -360,23 +371,24 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_linked_elements'))
 {
+    print '<tr><td colspan="2"><br>Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
-	print "</td><td>".checkLinkedElements('propal', 'commande')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('propal', 'commande')."</td></tr>\n";
 
 	// propal => invoice
-	print "</td><td>".checkLinkedElements('propal', 'facture')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('propal', 'facture')."</td></tr>\n";
 
 	// order => invoice
-	print "</td><td>".checkLinkedElements('commande', 'facture')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('commande', 'facture')."</td></tr>\n";
 
 	// order => shipping
-	print "</td><td>".checkLinkedElements('commande', 'shipping')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('commande', 'shipping')."</td></tr>\n";
 
 	// shipping => delivery
-	print "</td><td>".checkLinkedElements('shipping', 'delivery')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('shipping', 'delivery')."</td></tr>\n";
 
 	// order_supplier => invoice_supplier
-	print "</td><td>".checkLinkedElements('order_supplier', 'invoice_supplier')."</td></tr>\n";
+	print '<tr><td colspan="2">'.checkLinkedElements('order_supplier', 'invoice_supplier')."</td></tr>\n";
 }
 
 
@@ -399,11 +411,16 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 
         if (empty($upload_dir)) continue;
 
-        print '<tr><td colspan="2">Clean orphelins files into files '.$upload_dir.'</td></tr>';
+        print '<tr><td colspan="2"><br>Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1);
+        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
 
         // To show ref or specific information according to view to show (defined by $module)
+        if ($modulepart == 'company')
+        {
+            include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+            $object_instance=new Societe($db);
+        }
         if ($modulepart == 'invoice')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -460,7 +477,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'invoice_supplier') {
-                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=empty($reg[1])?'':$reg[1];
                 }
                 if ($modulepart == 'propal')           {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
@@ -488,7 +505,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
                         // Clean of orphelins directories are done into repair.php
                         print '<tr><td colspan="2">';
                         print 'Delete orphelins file '.$file['fullname'].'<br>';
-                        if (GETPOST('purge') == 2)
+                        if (GETPOST('clean_orphelin_dir') == 'confirmed')
                         {
                             dol_delete_file($file['fullname'],1,1,1);
                             dol_delete_dir(dirname($file['fullname']),1);
@@ -502,6 +519,107 @@ if ($ok && GETPOST('clean_orphelin_dir'))
     }
 }
 
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('clean_product_stock_batch'))
+{
+    print '<tr><td colspan="2"><br>Clean table product_batch</td></tr>';
+    
+    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
+    $sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
+    $sql.=" AND p.tobatch = 1";
+    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+    $sql.=" HAVING reel != SUM(pb.qty)";
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
+                
+                // Fix
+                if ($obj->reel != $obj->reelbatch)
+                {
+                    $methodtofix='updatestock';
+                    
+                    if ($methodtofix == 'updatebatch')
+                    {
+                        // Method 1
+                        print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+                        if (GETPOST('clean_product_stock_batch') == 'confirmed')
+                        {
+                            $sql2 ="INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+                            $sql2.="VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+                            $resql2=$db->query($sql2);
+                            if (! $resql2)
+                            {
+                                // TODO If it fails, we must make update
+                                //$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
+                                //$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+                                //$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
+                            }
+                        }
+                    }
+                    if ($methodtofix == 'updatestock')
+                    {
+                        // Method 2
+                        print ' -> Update qty of stock with qty = '.$obj->reelbatch.' for ps.rowid = '.$obj->psrowid;
+                        if (GETPOST('clean_product_stock_batch') == 'confirmed')
+                        {
+                            $error=0;
+                            
+                            $db->begin();
+                            
+                            $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
+                            $sql2.=" SET reel = ".$obj->reelbatch." WHERE rowid = ".$obj->psrowid;
+                            $resql2=$db->query($sql2);
+                            if ($resql2)
+                            {
+                                // We update product stock, so we must update product.stock too.
+                                $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+                                $resql3=$db->query($sql3);
+                                if (! $resql3) 
+                                {
+                                    $error++;
+                                    dol_print_error($db);
+                                }
+                            }
+                            else 
+                            {
+                                $error++;
+                                dol_print_error($db);
+                            }
+                            
+                            if (!$error) $db->commit();
+                            else $db->rollback();
+                        }
+                    }
+                }
+                
+                print'</td></tr>';
+            
+                $i++;
+            }
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+    
+    
+}
+
+
+
+
+
 print '</table>';
 
 
@@ -512,7 +630,7 @@ if (empty($actiondone))
 }
 
 
-print '<div class="center"><a href="../index.php?mainmenu=home&leftmenu=home&'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 print $langs->trans("GoToDolibarr");
 print '</a></div>';
 

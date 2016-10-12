@@ -5,33 +5,32 @@
 $form= new Form($db);
 
 
+print '<div class="tagtable centpercent noborder allwidth">';
+
+if($mode == 'edit' )
+{
+    print '<form class="tagtr liste_titre">';
+    print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
+    print '<div class="tagtd">'.$langs->trans('Type').'</div>';
+    print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd"></div>';
+    print '</form>';
+}
+else
+{
+    print '<form class="tagtr liste_titre">';
+    print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
+    print '<div class="tagtd">'.$langs->trans('Type').'</div>';
+    print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd"></div>';
+    print '</form>';
+}
+
 if( (array) $linked_resources && count($linked_resources) > 0)
 {
 	$var=true;
-
-	print '<div class="tagtable centpercent noborder allwidth">';
-	
-	if($mode == 'edit' )
-	{	
-		print '<form class="tagtr liste_titre">';
-		print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Type').'</div>';
-		print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
-		print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
-		print '<div class="tagtd"></div>';
-		print '</form>';
-	}
-	else
-	{
-		print '<form class="tagtr liste_titre">';
-		print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Type').'</div>';
-		print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
-		print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
-		print '<div class="tagtd"></div>';
-		print '</form>';
-	}
-
 
 	foreach ($linked_resources as $linked_resource)
 	{
@@ -56,7 +55,6 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '<div class="tagtd" align="center">'.$form->selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
 			print '<div class="tagtd" align="right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</form>';
-
 		}
 		else
 		{
@@ -96,11 +94,18 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 		}
 	}
 
-	print '</div>';
 }
 else {
-	print '<div class="warning">'.$langs->trans('NoResourceLinked').'</div>';
-
+	print '<div class="tagtr '.($var==true?"pair":"impair").'">';
+	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '</div>';
 }
+
+print '</div>';
+
 ?>
 <!-- END TEMPLATE resource_view.tpl.php -->

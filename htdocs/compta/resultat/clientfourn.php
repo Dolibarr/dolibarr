@@ -149,6 +149,11 @@ $hselected = 'report';
 
 report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 // Show report array
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -279,7 +284,7 @@ if ($total_ttc == 0)
 {
     $var=!$var;
     print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-    print '<td colspan="3">'.$langs->trans("None").'</td>';
+    print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
 
@@ -362,7 +367,7 @@ if ($result) {
     {
         $var=!$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 
@@ -439,7 +444,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -517,7 +522,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -606,7 +611,7 @@ if (! empty($conf->salaries->enabled))
 	    {
 	        $var = !$var;
 	        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-	        print '<td colspan="3">'.$langs->trans("None").'</td>';
+	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
 	    }
 	}
@@ -629,7 +634,7 @@ if (! empty($conf->expensereport->enabled))
 {
 	$langs->load('trips');
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
@@ -688,7 +693,7 @@ if (! empty($conf->expensereport->enabled))
 			{
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 		}
@@ -710,13 +715,22 @@ if (! empty($conf->expensereport->enabled))
 if (! empty($conf->don->enabled))
 {
 	print '<tr><td colspan="4">'.$langs->trans("Donation").'</td></tr>';
-	$sql = "SELECT p.societe as name, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
-	$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
-	$sql.= " WHERE p.entity = ".$conf->entity;
 	if ($modecompta == 'CREANCES-DETTES')
-	   $sql.= " AND fk_statut in (1,2)";
+	{
+    	$sql = "SELECT p.societe as name, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+    	$sql.= " WHERE p.entity = ".$conf->entity;
+    	$sql.= " AND fk_statut in (1,2)";
+	}
 	else
-	   $sql.= " AND fk_statut=2";
+	{
+	    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
+	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+	    $sql.= " WHERE p.entity = ".getEntity('donation',1);
+	    $sql.= " AND fk_statut >= 2";	 
+	}
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
@@ -757,7 +771,7 @@ if (! empty($conf->don->enabled))
 		{
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-			print '<td colspan="3">'.$langs->trans("None").'</td>';
+			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
 	}

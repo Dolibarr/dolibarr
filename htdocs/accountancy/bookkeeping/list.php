@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  */
 
 /**
- * \file 		htdocs/accountancy/bookkeeping/list.php
- * \ingroup 	Advanced accountancy
+ * \file		htdocs/accountancy/bookkeeping/list.php
+ * \ingroup		Advanced accountancy
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
@@ -167,7 +167,7 @@ if (! empty($search_mvt_num)) {
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_mvt_num = '';
 	$search_doc_type = '';
@@ -202,14 +202,32 @@ if ($action == 'delbookkeeping') {
 if ($action == 'delbookkeepingyearconfirm') {
 
 	$delyear = GETPOST('delyear', 'int');
+	if ($delyear==-1) {
+		$delyear=0;
+	}
+	$deljournal = GETPOST('deljournal','alpha');
+	if ($deljournal==-1) {
+		$deljournal=0;
+	}
 
-	if (! empty($delyear)) {
-		$result = $object->deleteByYear($delyear);
+	if (! empty($delyear) || ! empty($deljournal)) 
+	{
+		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+		else
+		{
+		    setEventMessages("RecordDeleted", null, 'mesgs');
+		}
 		Header("Location: list.php");
-		exit();
+		exit;
+	}
+	else
+	{
+	    setEventMessages("NothingDeleted", null, 'warnings');
+	    Header("Location: list.php");
+	    exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -219,10 +237,14 @@ if ($action == 'delmouvconfirm') {
 	if (! empty($mvt_num)) {
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		Header("Location: list.php");
-		exit();
+		exit;
 	}
 }
 if ($action == 'export_csv') {
@@ -249,8 +271,8 @@ if ($action == 'export_csv') {
  * View
  */
 
-$title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
-
+$title_page = $langs->trans("Bookkeeping");
+if ($search_date_start || $search_date_end) $title_page .= ' ' . dol_print_date($search_date_start, 'day') . ' - ' . dol_print_date($search_date_end, 'day');
 llxHeader('', $title_page);
 
 // List
@@ -269,18 +291,20 @@ if ($result < 0) {
 }
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
 
 	$form_question = array ();
 	$delyear = GETPOST('delyear');
+	$deljournal = GETPOST('deljournal');
 
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
 	$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$journal_array = $formventilation->selectjournal_accountancy_bookkepping($deljournal, 'deljournal', 0, 'array');
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',
@@ -289,39 +313,47 @@ if ($action == 'delbookkeepingyear') {
 			'values' => $year_array,
 			'default' => $delyear
 	);
+	$form_question['deljournal'] = array (
+			'name' => 'deljournal',
+			'type' => 'select',
+			'label' => $langs->trans('DelJournal'),
+			'values' => $journal_array,
+			'default' => $deljournal
+	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1);
 	print $formconfirm;
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy');
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="tabsAction">' . "\n";
-print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+print '<div class="inline-block divButAction"><a class="butAction" href="./listbyaccount.php">' . $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . strtolower($langs->trans("AccountAccounting")) . '</a></div>';
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
+print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butActionDelete" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 
 print '</div>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
 print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
-print '<td class="liste_titre">';
+print '<td class="liste_titre center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '<br>';
@@ -368,7 +400,7 @@ foreach ( $object->lines as $line ) {
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-	print "<tr $bc[$var]>";
+	print '<tr'. $bc[$var].'>';
 
 	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
