@@ -357,7 +357,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	int		$forcefocus					Force focus on field
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0)
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
 
@@ -366,7 +366,6 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	$widthTypeOfAutocomplete = (!empty($conf->global->MAIN_WIDTH_TYPE_OF_AUTOCOMPLETE) ? $conf->global->MAIN_WIDTH_TYPE_OF_AUTOCOMPLETE : 'resolve');
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
