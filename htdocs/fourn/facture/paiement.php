@@ -404,7 +404,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $i = 0;
 	                    print '<br>';
 
-						if(!empty($conf->global->INVOICE_AUTO_FILLJS)){
+	                    if (!empty($conf->use_javascript_ajax)){
 							//Add js for AutoFill
 							print "\n".'<script type="text/javascript" language="javascript">';
 							print ' $(document).ready(function () {';
@@ -470,7 +470,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
-							if(!empty($conf->global->INVOICE_AUTO_FILLJS))
+	                        if (!empty($conf->use_javascript_ajax))
 								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print "</td>";
@@ -480,7 +480,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							{
 								print '<td align="center">';
 			                    $namef = 'multicurrency_amount_'.$objp->facid;
-								if(!empty($conf->global->INVOICE_AUTO_FILLJS))
+			                    if (!empty($conf->use_javascript_ajax))
 									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
 		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 			                    print "</td>";
