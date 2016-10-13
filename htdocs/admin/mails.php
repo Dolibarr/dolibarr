@@ -77,6 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -410,13 +411,24 @@ if ($action == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
-	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    // Default from type
+    $var=!$var;
+    $liste = array();
+    $liste['user'] = $langs->trans('User');
+    $liste['company'] = $langs->trans('Company');
+
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
+    print '</td></tr>';
+
+    print '</table>';
+
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
 
 	print '</form>';
 }
@@ -539,6 +551,18 @@ else
 		print '&nbsp;';
 	}
 	print '</td></tr>';
+
+    //Default from type
+    $var=!$var;
+
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+    print '<td>';
+    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
+        print $langs->trans('User');
+    } else {
+        print $langs->trans('Company');
+    }
+    print '</td></tr>';
 
 	print '</table>';
 
