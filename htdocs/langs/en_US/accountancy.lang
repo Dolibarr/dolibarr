@@ -72,7 +72,7 @@ ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services descripti
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
-ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
 BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
@@ -103,7 +103,7 @@ NotMatch=Not Set
 DeleteMvt=Delete general ledger lines
 DelYear=Year to delete
 DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specific journal. At least one criteria is required.
 ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 DelBookKeeping=Delete the record of the general ledger
 FinanceJournal=Finance journal

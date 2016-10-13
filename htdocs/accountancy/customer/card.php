@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 	/*
  * Actions
  */
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 	if (! GETPOST('cancel', 'alpha')) {
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;

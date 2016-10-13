@@ -38,8 +38,10 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 $langs->load("accountancy");
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+if (empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount))
+{
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
