@@ -941,6 +941,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$permtoshowmenu=(! empty($conf->accounting->enabled) || $user->rights->accounting->ventilation->read || $user->rights->accounting->ventilation->dispatch || $user->rights->compta->resultat->lire);
 				$newmenu->add("/accountancy/index.php?leftmenu=accountancy",$langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $mainmenu, 'accountancy');
 
+				// Chart of account
+				$langs->load("admin");
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
+				
 				// Binding
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&amp;leftmenu=accountancy", $langs->trans("ProductsBinding"), 1, $user->admin);
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/customer/index.php?leftmenu=accountancy_dispatch_customer&amp;mainmenu=accountancy",$langs->trans("CustomersVentilation"),1,$user->rights->accounting->ventilation->read, '', $mainmenu, 'dispatch_customer');
@@ -1006,9 +1010,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
 
-				// Admin
-				$langs->load("admin");
-				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
+				// Fiscal year
 				if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // Not yet used. In a future will lock some periods.
 				{
 				    if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Fiscalyear"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');

@@ -28,6 +28,7 @@ NoTemplateDefined=No template defined for this email type
 AvailableVariables=Available substitution variables
 NoTranslation=No translation
 NoRecordFound=No record found
+NoRecordDeleted=No record deleted
 NotEnoughDataYet=Not enough data
 NoError=No error
 Error=Error
