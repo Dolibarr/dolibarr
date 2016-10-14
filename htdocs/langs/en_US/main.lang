@@ -730,8 +730,12 @@ BackOffice=Back office
 View=View
 Export=Export
 Exports=Exports
+ExportFilteredList=Export filtered list
+ExportList=Export list
 Miscellaneous=Miscellaneous
 Calendar=Calendar
+GroupBy=Group by...
+ViewFlatList=View flat list
 # Week day
 Monday=Monday
 Tuesday=Tuesday

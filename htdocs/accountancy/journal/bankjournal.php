@@ -407,9 +407,6 @@ if (! $error && $action == 'writebookkeeping') {
     					$objmid = $db->fetch_object($resultmid);
     					$bookkeeping->doc_ref = $objmid->facnumber;
     				}
-    				// FIXME Should be
-    				//$bookkeeping->code_tiers = $k;
-    				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
     				$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
     				$bookkeeping->numero_compte = $k;
     			} else if ($tabtype[$key] == 'payment_supplier') {           // If payment is payment of supplier invoice, we get ref of invoice
@@ -425,13 +422,10 @@ if (! $error && $action == 'writebookkeeping') {
     					$objmid = $db->fetch_object($resultmid);
     					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
     				}
-    				// FIXME Should be
-    				//$bookkeeping->code_tiers = $k;
-    				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
                     $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
     				$bookkeeping->numero_compte = $k;
     			} else {
-    			    // FIXME Should be a temporary account
+    			    // FIXME Should be a temporary account ???
     				$bookkeeping->doc_ref = $k;
     				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
     				$bookkeeping->numero_compte = 'CodeNotDef';
@@ -666,14 +660,17 @@ if (empty($action) || $action == 'view') {
 
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
+	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
 		function launch_export() {
+	        console.log("Set value into form and submit");
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
+	        console.log("Set value into form and submit");
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
@@ -758,12 +755,12 @@ if (empty($action) || $action == 'view') {
 		foreach ( $tabbq[$key] as $k => $mt ) {
 
 		    print "<tr " . $bc[$var] . ">";
-		    print "<td><!-- Bank --></td>";
+		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $ref . "</td>";
 			print "<td>";
 			$accountoshow = length_accountg($k);
-			if ($accountoshow == 'NotDefined')
+			if (empty($accountoshow) || $accountoshow == 'NotDefined')
 			{
 			    print '<span class="error">'.$langs->trans("BankAccountNotDefined").'</span>';
 			}
@@ -785,12 +782,12 @@ if (empty($action) || $action == 'view') {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($k != 'type') {
 					print "<tr " . $bc[$var] . ">";
-					print "<td><!-- Thirdparty --></td>";
+					print "<td><!-- Thirdparty bank.rowid=".$key." --></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
 					print "<td>";
         			$accountoshow = length_accounta($k);
-        			if ($accountoshow == 'NotDefined')
+        			if (empty($accountoshow) || $accountoshow == 'NotDefined')
         			{
         			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
         			}
@@ -806,11 +803,15 @@ if (empty($action) || $action == 'view') {
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print "<tr " . $bc[$var] . ">";
-				print "<td><!-- Wait --></td>";
+				print "<td><!-- Wait bank.rowid=".$key." --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
 				print "<td>";
-				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . 
+			    if (empty($accountoshow) || $accountoshow == 'NotDefined')
+        		{
+        		    print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
+        		}
+				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . 
 				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";

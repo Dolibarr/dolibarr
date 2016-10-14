@@ -60,29 +60,29 @@ $search_mvt_label = GETPOST('search_mvt_label', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-if ($page == -1) { $page = 0 ; }
-$offset = $limit * $page ;
+// Load variable for pagination
+$limit = GETPOST('limit') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page','int');
+if ($page < 0) { $page = 0; }
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if ($sortorder == "") $sortorder = "ASC";
+if ($sortfield == "") $sortfield = "t.rowid";
+
+if (empty($search_date_start)) {
+	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+}
+
 
 $object = new BookKeeping($db);
 
 $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
 $form = new Form($db);
-
-
-
-
-if (empty($search_date_start)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
-}
-if ($sortorder == "")
-	$sortorder = "ASC";
-if ($sortfield == "")
-	$sortfield =  "t.rowid";
 
 
 $options = '';
@@ -223,12 +223,15 @@ print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '</div>';
 
+print ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a><br><br>';
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("AccountAccounting") . '</td>';
-print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("TransactionNumShort"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
-print '<td>' . $langs->trans("SuppliersInvoices") . ' / ' . $langs->trans("CustomersInvoices") . '</td>';
+print_liste_field_titre($langs->trans("SuppliersInvoices") . ' / ' . $langs->trans("CustomersInvoices"));
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
@@ -237,8 +240,9 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
-print '<td width >' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
-print '<td class="liste_titre">';
+print '<td>' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
+print '<td></td>';
+print '<td class="liste_titre" align="center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '<br>';
@@ -263,7 +267,7 @@ $total_debit = 0;
 $total_credit = 0;
 $sous_total_debit = 0;
 $sous_total_credit = 0;
-$displayed_account_number = "";
+$displayed_account_number = null;       // Start with undefined to be able to distinguish with empty 
 
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
@@ -271,38 +275,47 @@ foreach ( $object->lines as $line ) {
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-  // Permet d'afficher le compte comptable
-  if (length_accountg($line->numero_compte) != $displayed_account_number) {
-
-    // Affiche un Sous-Total par compte comptable
-    if ($displayed_account_number != "") {
-      print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
-      print "<td>&nbsp;</td>\n";
-      print '</tr>';
+    $accountg = length_accountg($line->numero_compte);
+	//if (empty($accountg)) $accountg = '-';
+	
+	// Is it a break ?
+    if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
+        
+        // Affiche un Sous-Total par compte comptable
+        if (isset($displayed_account_number)) {
+          print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+          print "<td>&nbsp;</td>\n";
+          print '</tr>';
+        }
+        
+        // Show the break account
+        $colspan = 9;
+        print "<tr>";
+        print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+        if (! empty($line->numero_compte) && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+        else print '<span class="error">'.$langs->trans("Unknown").'</span>';
+        print '</td>';
+        print '</tr>';
+        
+        $displayed_account_number = $accountg;
+        //if (empty($displayed_account_number)) $displayed_account_number='-';
+        $sous_total_debit = 0;
+        $sous_total_credit = 0;
     }
 
-    // Affiche le compte comptable en début de ligne
-    print "<tr>";
-  	print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte).'</td>';
-  	print '</tr>';
-
-    $displayed_account_number = length_accountg($line->numero_compte);
-    $sous_total_debit = 0;
-    $sous_total_credit = 0;
-  }
-
-	print '<tr'. $bc[$var].'>';
+	print '<tr '. $bc[$var].'>';
 	print '<td>&nbsp;</td>';
+	print '<td align="right">'.$line->piece_num.'</td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->doc_ref . '</a></td>';
-
-  // Affiche un lien vers la facture client/fournisseur
-  $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-  if ($line->doc_type == 'supplier_invoice')
-	 print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
-  elseif ($line->doc_type == 'customer_invoice')
+    
+    // Affiche un lien vers la facture client/fournisseur
+    $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
+    if ($line->doc_type == 'supplier_invoice')
+     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
+    elseif ($line->doc_type == 'customer_invoice')
     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
-  else
+    else
     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
 
 

@@ -301,9 +301,11 @@ if ($action == 'create') {
 
 		print load_fiche_titre($langs->trans("UpdateMvts"), '<a href="list.php">' . $langs->trans('BackToList') . '</a>');
 
+		dol_fiche_head();
+		
 		print '<table class="border" width="100%">';
 		print '<tr class="pair">';
-		print '<td width="25%">' . $langs->trans("NumMvts") . '</td>';
+		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 		print '<tr class="impair">';
@@ -323,14 +325,17 @@ if ($action == 'create') {
 		print '<td>' . $book->doc_type . '</td>';
 		print '</tr>';
 		print '</table>';
-		print '<br />';
+		
+		dol_fiche_end();
 
+		print '<br>';
+		
 		$result = $book->fetch_all_per_mvt($piece_num);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
 
-			print load_fiche_titre($langs->trans("ListeMvts"));
+			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '" method="post">';
 			print '<input type="hidden" name="doc_date" value="' . $book->doc_date . '">' . "\n";
@@ -424,7 +429,7 @@ if ($action == 'create') {
 					print '<td align="right"><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';
 					print '<td></td>';
-					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '"></td>';
+					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}
 				print '</table>';

@@ -529,7 +529,7 @@ if (empty($action) || $action == 'view') {
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>";
     			$accountoshow = length_accountg($k);
-    			if ($accountoshow == 'NotDefined')
+    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
     			{
     			    print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
     			}
@@ -553,7 +553,7 @@ if (empty($action) || $action == 'view') {
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>";
     			$accountoshow = length_accountg($k);
-    			if ($accountoshow == 'NotDefined')
+    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
     			{
     			    print '<span class="error">'.$langs->trans("VatAccountNotDefined").'</span>';
     			}
@@ -576,7 +576,7 @@ if (empty($action) || $action == 'view') {
 			$companystatic->name = $tabcompany[$key]['name'];
 			print "<td>";
 			$accountoshow = length_accounta($k);
-			if ($accountoshow == 'NotDefined')
+			if (empty($accountoshow) || $accountoshow == 'NotDefined')
 			{
 			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 			}

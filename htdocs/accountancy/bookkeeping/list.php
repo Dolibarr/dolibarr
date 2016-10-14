@@ -98,7 +98,7 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 
-if (! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction'])) {
+if ($action != 'export_csv' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction'])) {
     $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
     $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
@@ -268,6 +268,7 @@ if ($action == 'export_csv') {
     include DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 
     $result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+
     if ($result < 0)
     {
         setEventMessages($object->error, $object->errors, 'errors');
@@ -353,16 +354,20 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 print '<div class="tabsAction">' . "\n";
-print '<div class="inline-block divButAction"><a class="butAction" href="./listbyaccount.php">' . $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . strtolower($langs->trans("AccountAccounting")) . '</a></div>';
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '<div class="inline-block divButAction"><a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">' . $langs->trans("Export") . '</a></div>';
+print '<div class="inline-block divButAction"><a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
+if (count($filter)) print $langs->trans("ExportFilteredList");
+else print $langs->trans("ExportList");
+print '</a></div>';
 print '<div class="inline-block divButAction"><a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a></div>';
 
 print '</div>';
 
+print ' <a href="./listbyaccount.php">' . $langs->trans("GroupByAccountAccounting") . '</a><br><br>';
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("TransactionNumShort"), $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);

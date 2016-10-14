@@ -197,7 +197,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_type", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
@@ -269,10 +269,10 @@ $var = True;
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
 
-	print '<tr'. $bc[$var].'>';
+	print '<tr '. $bc[$var].'>';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
-	print '<td>' . dol_print_date($line->doc_date) . '</td>';
+	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->code_tiers) . '</td>';
