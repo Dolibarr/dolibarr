@@ -967,6 +967,28 @@ if (empty($reshook))
 			}
 		}
 	}
+
+	// Action clone object
+	if ($action == 'confirm_clone' && $confirm == 'yes')
+	{
+		if (! GETPOST('socid', 3))
+		{
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		}
+		else
+		{
+			if ($object->id > 0) {
+				$result = $object->createFromClone($socid);
+				if ($result > 0) {
+					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+					exit();
+				} else {
+					if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
+					$action = '';
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -1263,6 +1285,12 @@ else
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setremise">';
+        }
+
+        // Clone confirmation
+        if ($action == 'clone') {
+        	$formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+        	print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
         }
 
         print '<table class="border" width="100%">';
@@ -1963,6 +1991,11 @@ else
             	$langs->load("bills");
             	if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
             	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
+            }
+            
+            // Clone
+            if ($user->rights->contrat->creer) {
+            	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
             }
 
             if ($object->nbofservicesclosed < $nbofservices)
