@@ -137,6 +137,6 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN numero_compte SET NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN code_journal SET NOT NULL;
 
-ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint
