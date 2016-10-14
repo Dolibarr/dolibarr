@@ -82,7 +82,7 @@ if (! $sortorder) {
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->ventilation->dispatch)
+if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);

@@ -419,6 +419,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         
             // Reload modules (this must be always and only into last targeted version)
             $listofmodule=array(
+                'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
                 'MAIN_MODULE_BARCODE'=>'newboxdefonly',
                 'MAIN_MODULE_CRON'=>'newboxdefonly',
                 'MAIN_MODULE_FACTURE'=>'newboxdefonly',

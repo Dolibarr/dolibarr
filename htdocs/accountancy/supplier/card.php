@@ -44,7 +44,7 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 	if (! GETPOST('cancel', 'alpha')) {
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;

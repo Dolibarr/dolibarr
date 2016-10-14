@@ -4102,6 +4102,11 @@ class Form
 		$out='';
         $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) $out .= '<option value=""></option>';
+		// If company current currency not in table, we add it into list. Should always be available.
+		if (! in_array($conf->currency, $TCurrency))
+		{
+		    $TCurrency[$conf->currency] = $conf->currency;
+		}
 		if (count($TCurrency) > 0)
 		{
 			foreach ($langs->cache_currencies as $code_iso => $currency)
