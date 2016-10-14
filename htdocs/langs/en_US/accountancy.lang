@@ -39,6 +39,7 @@ Ventilation=Binding to accounts
 ProductsBinding=Products binding
 
 MenuAccountancy=Accountancy
+MenuDefaultAccounts=Default accounts
 CustomersVentilation=Customer invoice binding
 SuppliersVentilation=Supplier invoice binding
 CreateMvts=Create new transaction
@@ -53,12 +54,12 @@ InvoiceLinesDone=Bound lines of invoices
 IntoAccount=Bind line with the accounting account
 
 Ventilate=Bind
-
+LineId=Id line
 Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to bind
+EndProcessing=Process terminated.
 SelectedLines=Selected lines
 Lineofinvoice=Line of invoice
+NoAccountSelected=No accounting account selected
 VentilatedinAccount=Binded successfully to the accounting account
 NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
@@ -68,12 +69,12 @@ ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maxi
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
 ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
-BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
+BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -186,7 +187,7 @@ Calculated=Calculated
 Formula=Formula
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 

@@ -52,30 +52,20 @@ $search_vat = GETPOST('search_vat', 'alpha');
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
-// Getpost Order and column and limit page
+// Load variable for pagination
+$limit = GETPOST('limit') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page < 0)
-	$page = 0;
-
+if ($page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
-	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-} else {
-	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-}
 $offset = $limit * $page;
-
 if (! $sortfield)
 	$sortfield = "f.datef, f.facnumber, fd.rowid";
-
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
-		$sortorder = " DESC ";
+		$sortorder = "DESC";
 	}
 }
 
@@ -128,6 +118,8 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	}
+	
+	$account_parent = '';   // Protection to avoid to mass apply it a second time
 }
 
 /*
@@ -207,25 +199,27 @@ if (strlen(trim($search_tvaintra))) {
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
-// Count total nb of records with no order and no limits
-$nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	if ($resql)
-		$nbtotalofrecords = $db->num_rows($resql);
-	else
-		dol_print_error($db);
-}
 $sql .= $db->order($sortfield, $sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountancy/customer/lines.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/customer/lines.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
-	$param = "";
+	$param='';
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($search_invoice)
 		$param .= "&search_invoice=" . $search_invoice;
 	if ($search_ref)
@@ -243,17 +237,26 @@ if ($result) {
 	if ($search_tvaintra)
 		$param .= "&search_tvaintra=" . $search_tvaintra;
 
-
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy');
-	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
-
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	print '<table class="noborder" width="100%">';
+	
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
+	print '<input type="hidden" name="action" value="ventil">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	print $langs->trans("DescVentilDoneCustomer") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account($account_parent, 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '"/></div>';
 
+	$moreforfilter = '';
+	
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -264,6 +267,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
@@ -273,10 +277,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_country" size="5" value="' . $search_country . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_tavintra" size="5" value="' . $search_tavintra . '"></td>';
+	print '<td class="liste_titre" align="right"></td>';
 	print '<td class="liste_titre" align="center">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1);
 	print $searchpitco;
@@ -290,7 +295,7 @@ if ($result) {
 		$var = ! $var;
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
-		print '<tr'. $bc[$var].'>';
+		print '<tr '. $bc[$var].'>';
 
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
@@ -301,6 +306,7 @@ if ($result) {
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->product_type;
+		$product_static->label = $objp->product_label;
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
@@ -317,6 +323,7 @@ if ($result) {
 		print '</a></td>';
 		print '<td>' . $objp->country .'</td>';
 		print '<td>' . $objp->tva_intra . '</td>';
+		print '<td align="right">' . $objp->rowid . '</td>';
 		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
 
 		print "</tr>";
@@ -326,11 +333,14 @@ if ($result) {
 	print $db->error();
 }
 
-print "</table></form>";
+print "</table>";
 
-if ($num_lines > $conf->liste_limit) {
-	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '');
+if ($nbtotalofrecords > $limit) {
+    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
 }
+
+print '</form>';
+
 
 llxFooter();
 $db->close();

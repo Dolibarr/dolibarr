@@ -50,12 +50,12 @@ $action = GETPOST('action', 'alpha');
 
 // Parameters ACCOUNTING_* and others
 $list = array (
-		'ACCOUNTING_LIMIT_LIST_VENTILATION',
-		'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
-		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
+		//'ACCOUNTING_LIMIT_LIST_VENTILATION',  Useless, we can change value dynamically, so we use default global setup
 		'ACCOUNTING_MANAGE_ZERO',
 		'ACCOUNTING_LENGTH_GACCOUNT',
-		'ACCOUNTING_LENGTH_AACCOUNT' 
+		'ACCOUNTING_LENGTH_AACCOUNT' ,
+		'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
+		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
 
 $list_account = array (
@@ -246,24 +246,20 @@ if (! empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount)
     $var = true;
     
     print '<tr class="liste_titre">';
-    print '<td colspan="3">';
+    print '<td colspan="2">';
     print $langs->trans("Chartofaccounts") . '</td>';
     print "</tr>\n";
     $var = ! $var;
     print '<tr ' . $bc[$var] . '>';
     print "<td>" . $langs->trans("Selectchartofaccounts") . "</td>";
-    print "<td>";
+    print '<td align="right">';
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
-    
     $sql = "SELECT rowid, pcg_version, label, active";
     $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
     $sql .= " WHERE active = 1";
-    
     dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
     $resql = $db->query($sql);
-    
     $var = true;
-    
     if ($resql) {
     	$num = $db->num_rows($resql);
     	$i = 0;
@@ -286,9 +282,8 @@ if (! empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount)
 }
 
 
-/*
- *  Others params
- */
+// Others params
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans('OtherOptions') . '</td>';
@@ -301,11 +296,11 @@ if (! empty($user->admin))
     print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -315,11 +310,11 @@ if (! empty($user->admin))
     print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -329,11 +324,11 @@ if (! empty($user->admin))
     print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
     if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -349,15 +344,14 @@ if (! empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount)
     	if ($key != 'ACCOUNTING_MANAGE_ZERO')
     	{
         	print '<tr ' . $bc[$var] . ' class="value">';
-        	
         	// Param
         	$label = $langs->trans($key);
-        	print '<td><label for="' . $key . '">' . $label . '</label></td>';
-        	
+        	print '<td>'.$label.'</td>';
         	// Value
-        	print '<td>';
+        	print '<td align="right">';
         	print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
-        	print '</td></tr>';
+        	print '</td>';
+        	print '</tr>';
     	}
     	if ($key == 'ACCOUNTING_MANAGE_ZERO')
     	{
@@ -365,11 +359,11 @@ if (! empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount)
     	    print "<tr " . $bc[$var] . ">";
     	    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
     	    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-    	        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+    	        print '<td align="right""><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
     	        print img_picto($langs->trans("Activated"), 'switch_on');
     	        print '</a></td>';
     	    } else {
-    	        print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+    	        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
     	        print img_picto($langs->trans("Disabled"), 'switch_off');
     	        print '</a></td>';
     	    }
@@ -381,15 +375,14 @@ if (! empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount)
     	$var = ! $var;
     	
     	print '<tr ' . $bc[$var] . ' class="value">';
-    	
     	// Param
     	$label = $langs->trans($key);
-    	print '<td><label for="' . $key . '">' . $label . '</label></td>';
-    	
+    	print '<td>' . $label . '</td>';
     	// Value
-    	print '<td>';
+    	print '<td align="right">';
     	print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
-    	print '</td></tr>';
+    	print '</td>';
+    	print '</tr>';
     }
 }
 

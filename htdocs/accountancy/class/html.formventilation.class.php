@@ -125,7 +125,7 @@ class FormVentilation extends Form
 			$options[$select_value_out] = $label;
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		$this->db->free($resql);
 		return $out;
 	}

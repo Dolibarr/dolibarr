@@ -40,25 +40,34 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 	
-	/*
+	
+	
+/*
  * Actions
  */
+
 if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 	if (! GETPOST('cancel', 'alpha')) {
+	    if ($codeventil < 0) $codeventil = 0;
+	    
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
 		
-		dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	} else {
 		header("Location: ./lines.php");
 		exit();
 	}
 }
+
 
 /*
  * View

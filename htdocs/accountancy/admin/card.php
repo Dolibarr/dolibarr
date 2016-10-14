@@ -37,6 +37,7 @@ $langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action');
+$backtopage = GETPOST('backtopage');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
@@ -51,6 +52,13 @@ $object = new AccountingAccount($db);
  * Action
  */
 
+if (GETPOST('cancel'))
+{
+	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+	header("Location: ".$urltogo);
+	exit;
+}
+		
 if ($action == 'add' && $user->rights->accounting->chartofaccount)
 {
 	if (! $cancel) {
@@ -106,7 +114,9 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		}
 		if (! $error)
 		{
-		    header("Location: account.php");
+		    setEventMessages("RecordCreatedSuccessfully",null,'mesgs');
+		    $urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+		    header("Location: ".$urltogo);
 		    exit;
 		}
 	}

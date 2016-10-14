@@ -44,22 +44,34 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
+	
+/*
+ * Actions
+ */
+
 if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 	if (! GETPOST('cancel', 'alpha')) {
+	    if ($codeventil < 0) $codeventil = 0;
+	    
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
 		
-		dol_syslog('accountancy/supplier/card.php:: $sql=' . $sql);
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	} else {
 		header("Location: ./lines.php");
 		exit();
 	}
 }
+
+
 
 /*
  * View
@@ -70,9 +82,7 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
-/*
- * Create
- */
+// Create
 $form = new Form($db);
 $facturefournisseur_static = new FactureFournisseur($db);
 $formventilation = new FormVentilation($db);
