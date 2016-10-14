@@ -172,6 +172,16 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
+		// Check if new parent is already a child of current warehouse
+		if(!empty($this->fk_parent)) {
+			$TChildWarehouses = array();
+			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
+			if(in_array($this->fk_parent, $TChildWarehouses)) {
+				$this->error = 'ErrorCannotAddThisParentWarehouse';
+				return -2;
+			}
+		}
+		
 		$this->libelle=trim($this->libelle);
 		$this->description=trim($this->description);
 
@@ -632,6 +642,24 @@ class Entrepot extends CommonObject
 		 }
 
 		 return implode(' >> ', array_reverse($TArbo));
+		
+	}
+	
+	function get_children_warehouses($id, &$TChildWarehouses) {
+		
+		$sql = 'SELECT rowid
+				FROM '.MAIN_DB_PREFIX.'entrepot
+				WHERE fk_parent = '.$id;
+		
+		$resql = $this->db->query($sql);
+		if($resql) {
+			while($res = $this->db->fetch_object($resql)) {
+				$TChildWarehouses[] = $res->rowid;
+				$this->get_children_warehouses($res->rowid, $TChildWarehouses);
+			}
+		}
+		
+		return $TChildWarehouses;
 		
 	}
 
