@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Laissez vide si l'administrateur n'a pas de mot de passe
 SaveConfigurationFile=Enregistrement du fichier de configuration
 ServerConnection=Connexion au serveur
 DatabaseCreation=Création de la base de données
-UserCreation=Création de l'utilisateur
 CreateDatabaseObjects=Création des objets de la base
 ReferenceDataLoading=Chargement des données de référence
 TablesAndPrimaryKeysCreation=Création des tables et des clés primaires

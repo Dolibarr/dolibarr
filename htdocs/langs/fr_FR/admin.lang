@@ -54,7 +54,7 @@ ErrorDecimalLargerThanAreForbidden=Erreur, les précisions supérieures à <b>%s
 DictionarySetup=Dictionnaires
 Dictionary=Dictionnaires
 Chartofaccounts=Plan comptable
-Fiscalyear=Exercice fiscal
+FiscalPeriod=Période fiscale
 ErrorReservedTypeSystemSystemAuto=Erreur, les valeurs 'system' et 'systemauto' sont réservées. Vous pouvez utiliser la valeur 'user' pour ajouter vos propres enregistrements
 ErrorCodeCantContainZero=Erreur, le code ne peut contenir la valeur 0
 DisableJavascript=Désactive les fonctions Javascript et Ajax (Recommandé pour les personnes aveugles ou navigateurs text).
@@ -1105,9 +1105,8 @@ WatermarkOnDraft=Filigrane sur les documents brouillons
 JSOnPaimentBill=Activer la fonctionnalité de remplissage automatique des lignes de paiement sur le formulaire de paiement
 CompanyIdProfChecker=Règles sur les Identifiants professionnels
 MustBeUnique=Doit être unique ?
-MustBeMandatory=Obligatoire pour creer tiers ?
-MustBeInvoiceMandatory=Obligatoire pour valider factures ?
-Miscellaneous=Divers
+MustBeMandatory=Obligatoire pour créer des tiers ?
+MustBeInvoiceMandatory=Obligatoire pour valider des factures ?
 ##### Webcal setup #####
 WebCalUrlForVCalExport=Un lien d'exportation du calendrier au format <b>%s</b> sera disponible à l'url :<br>%s
 ##### Invoices #####
@@ -1524,14 +1523,14 @@ TaskModelModule=Modèles de document de rapport tâches
 UseSearchToSelectProject=Utilisez un champ avec auto-complétion pour choisir les projets (plutôt qu'une liste déroulante).
 ##### ECM (GED) #####
 ##### Fiscal Year #####
-FiscalYears=Exercices fiscaux
-FiscalYearCard=Fiche exercice fiscal
-NewFiscalYear=Nouvel exercice fiscal
-OpenFiscalYear=Exercice fiscal ouvert
-CloseFiscalYear=Exercice fiscal cloturé
-DeleteFiscalYear=Effacer exercice fiscal
-ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cet exercice fiscal ?
-ShowFiscalYear=Voir l'exercice fiscal
+AccountingPeriods=Période fiscales
+AccountingPeriodCard=Période fiscale
+NewFiscalYear=Nouvelle période fiscale
+OpenFiscalYear=Ouvrir période fiscale
+CloseFiscalYear=Fermer période fiscale
+DeleteFiscalYear=Effacer période fiscale
+ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cette période fiscale ?
+ShowFiscalYear=Afficher période fiscale
 AlwaysEditable=Peut toujours être édité
 MAIN_APPLICATION_TITLE=Forcer la valeur visible du nom de l'application (attention : positionner ici son propre nom rendra inopérante la fonction de remplissage automatique de l'identifiant lorsque vous utilisez l'application mobile DoliDroid)
 NbMajMin=Nombre minimal de caractères majuscules

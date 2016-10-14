@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Code de sécurité
-Calendar=Calendrier
 NumberingShort=N°
 Tools=Outils
 ToolsDesc=Cet espace est dédié au regroupement d'outils divers non disponibles dans les autres entrées du menu.<br><br>La liste de ces outils est accessible par le menu sur le côté.
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Taille totale fichiers/documents liés
 MaxSize=Taille maximum
 AttachANewFile=Ajouter un nouveau fichier/document
 LinkedObject=Objet lié
-Miscellaneous=Divers
 NbOfActiveNotifications=Nombre de notifications (nb de destinataires emails)
 PredefinedMailTest=Ceci est un message de test.\nLes 2 lignes sont séparées par un retour à la ligne.\n\n__SIGNATURE__
 PredefinedMailTestHtml=Ceci est un message de <b>test</b> (le mot test doit être en gras).<br>Les 2 lignes sont séparées par un retour à la ligne.<br><br>__SIGNATURE__
@@ -201,33 +199,13 @@ IfAmountHigherThan=Si le montant est supérieur à <strong>%s</strong>
 SourcesRepository=Répertoire pour les sources
 Chart=Graphique
 
-##### Calendar common #####
-NewCompanyToDolibarr=Société %s ajoutée
-ContractValidatedInDolibarr=Contrat %s validé
-PropalClosedSignedInDolibarr=Proposition %s signée
-PropalClosedRefusedInDolibarr=Proposition %s refusée
-PropalValidatedInDolibarr=Proposition %s validée
-PropalClassifiedBilledInDolibarr=Proposition %s classée payée
-InvoiceValidatedInDolibarr=Facture %s validée
-InvoicePaidInDolibarr=Facture %s passée à payée
-InvoiceCanceledInDolibarr=Facture %s annulée
-MemberValidatedInDolibarr=Adhérent %s validé
-MemberResiliatedInDolibarr=Adhérent %s résilié
-MemberDeletedInDolibarr=Adhérent %s supprimé
-MemberSubscriptionAddedInDolibarr=Souscription adhérent %s
-ShipmentValidatedInDolibarr=Expédition %s validée
-ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
-ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
-ShipmentDeletedInDolibarr=Expédition %s supprimée
 ##### Export #####
-Export=Export
 ExportsArea=Espace exports
 AvailableFormats=Formats disponibles
-LibraryUsed=Librairie utilisée
-LibraryVersion=Version
+LibraryUsed=Bibliothèque utilisée
+LibraryVersion=Version bibliothèque
 ExportableDatas=Données exportables
 NoExportableData=Pas de données exportables (pas de module avec données exportables chargé, ou manque de permissions)
-NewExport=Nouvel export
 ##### External sites #####
 WebsiteSetup=Configuration du module Sites webs
 WEBSITE_PAGEURL=URL de la page

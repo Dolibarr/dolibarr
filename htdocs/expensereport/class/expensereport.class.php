@@ -34,6 +34,7 @@ class ExpenseReport extends CommonObject
     var $table_element='expensereport';
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
+    var $picto = 'trip';
 
     var $lignes=array();
     
