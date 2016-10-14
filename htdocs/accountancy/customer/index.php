@@ -212,10 +212,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_factu
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-}
+$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
 
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -259,12 +256,9 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")"; // We don't share object for accountancy
 
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-}
-
-dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
+dol_syslog('htdocs/accountancy/customer/index.php');
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -303,10 +297,7 @@ if (! empty($conf->margin->enabled)) {
 	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-	}
+	$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
 
 	dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 	$resql = $db->query($sql);

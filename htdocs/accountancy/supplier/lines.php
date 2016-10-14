@@ -175,9 +175,8 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
 }
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
-}
+$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't share object for accountancy
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records

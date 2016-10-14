@@ -96,9 +96,7 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
-	}
+	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
 	
 	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);

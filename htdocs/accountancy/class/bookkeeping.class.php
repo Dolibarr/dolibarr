@@ -110,6 +110,8 @@ class BookKeeping extends CommonObject
 	 * @return int                 <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false) {
+	    global $langs;
+	    
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		
 		$error = 0;
@@ -164,9 +166,10 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) $this->credit = 0;
 		
 		// Check parameters
-		if (empty($this->numero_compte))
+		if (empty($this->numero_compte) || $this->numero_compte == '-1')
 		{
-            $this->errors[]='ErrorFieldAccountNotDefined';		    
+		    $langs->load("errors");
+            $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet);		    
 		    return -1;
 		}
 		

@@ -96,9 +96,7 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_factu
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 ";
 $sql .= " AND fd.fk_code_ventilation > 0 ";
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
-}
+$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't share object for accountancy
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	$sql .= " AND f.type IN (0,1,2)";
 else
