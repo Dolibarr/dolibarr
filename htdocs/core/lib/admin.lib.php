@@ -1292,7 +1292,8 @@ function showModulesExludedForExternal($modules)
 
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
-
+			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
+				
 			if ($i > 0) $text.=', ';
 			else $text.=' ';
 			$i++;
