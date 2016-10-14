@@ -56,6 +56,7 @@ class FormProduct
 	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
 	 * @param	int		$status		      	additional filter on status other then 1
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
+	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
 	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true, $exclude='')
@@ -148,6 +149,7 @@ class FormProduct
 	 *  @param	int		$forcecombo		force combo iso ajax select2
 	 *  @param	array	$events			events to add to select2
 	 *  @param  string  $morecss        Add more css classes
+	 *  @param	array	$exclude		warehouses ids to exclude
 	 * 	@return	string					HTML select
 	 */
 	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='')
