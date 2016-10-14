@@ -80,8 +80,8 @@ $max = 100;
 $form = new Form($db);
 
 $title = $langs->trans('FiscalYears');
-
-llxHeader('', $title, LOG_ERR);
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
