@@ -121,6 +121,7 @@ if ($id > 0 || ! empty($ref))
 
 		$modulepart = 'commande';
 		$permission = $user->rights->commande->creer;
+		$permtoedit = $user->rights->commande->creer;
 		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 	}

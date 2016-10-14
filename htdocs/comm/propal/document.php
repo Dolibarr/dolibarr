@@ -133,6 +133,7 @@ if ($object->id > 0)
 
 	$modulepart = 'propal';
 	$permission = $user->rights->propal->creer;
+	$permtoedit = $user->rights->propal->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

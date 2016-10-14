@@ -161,6 +161,7 @@ if ($object->id > 0)
 
 	$modulepart = 'commande_fournisseur';
 	$permission = $user->rights->fournisseur->commande->creer;
+	$permtoedit = $user->rights->fournisseur->commande->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
