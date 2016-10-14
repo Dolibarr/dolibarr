@@ -88,6 +88,10 @@ if ($action == 'builddoc' && $permissioncreate)
             setEventMessages($object->error, $object->errors, 'errors');
             $action='';
         }
+        else
+        {
+            setEventMessages($langs->trans("FileGenerated"), null);
+        }
     }
 }
 

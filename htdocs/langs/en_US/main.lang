@@ -70,6 +70,7 @@ SeeHere=See here
 BackgroundColorByDefault=Default background color
 FileRenamed=The file was successfully renamed
 FileUploaded=The file was successfully uploaded
+FileGenerated=The file was successfully generated
 FileWasNotUploaded=A file is selected for attachment but was not yet uploaded. Click on "Attach file" for this.
 NbOfEntries=Nb of entries
 GoToWikiHelpPage=Read online help (Internet access needed)
