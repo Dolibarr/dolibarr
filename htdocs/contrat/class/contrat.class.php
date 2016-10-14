@@ -2358,6 +2358,7 @@ class Contrat extends CommonObject
 		if (! $notrigger && empty($error))
 		{
 			// Call trigger
+			$clonedObj->old_copy=$this;
 			$result = $clonedObj->call_trigger('CONTRACT_CLONE', $user);
 			if ($result < 0) {
 				$error ++;
