@@ -370,29 +370,30 @@ class FormMail extends Form
         			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
         			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
         			$out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
-        			if ($this->fromtype == 'user' && $this->fromid > 0)
-        			{
-        				$langs->load("users");
-        				$fuser=new User($this->db);
-        				$fuser->fetch($this->fromid);
-        				$out.= $fuser->getNomUrl(1);
-        			}
-        			else
-        			{
-        				$out.= $this->fromname;
-        			}
-        			if ($this->frommail)
-        			{
-        				$out.= " &lt;".$this->frommail."&gt;";
-        			}
-        			else
-        			{
-        				if ($this->fromtype)
-        				{
-        					$langs->load("errors");
-        					$out.= '<font class="warning"> &lt;'.$langs->trans("ErrorNoMailDefinedForThisUser").'&gt; </font>';
-        				}
-        			}
+
+                    if (!($this->fromtype === 'user' && $this->fromid > 0) && !($this->fromtype === 'company'))
+                    {
+                        $out.= $this->fromname;
+                        if ($this->frommail)
+                        {
+                            $out.= ' &lt;'.$this->frommail.'&gt;';
+                        }
+                        else
+                        {
+                            if ($this->fromtype)
+                            {
+                                $langs->load('errors');
+                                $out.= '<span class="warning"> &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt; </span>';
+                            }
+                        }
+                    }else{
+                        $liste = array();
+                        $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
+                        $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+                        $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0);
+                    }
+
+
         			$out.= "</td></tr>\n";
         			$out.= "</td></tr>\n";
         		}
