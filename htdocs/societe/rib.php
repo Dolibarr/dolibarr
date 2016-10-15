@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'societe','','');
 
 $id=GETPOST("id","int");
 $ribid=GETPOST("ribid","int");
-$action=GETPOST("action");
+$action=GETPOST("action", 'alpha', 3);
 
 $object = new Societe($db);
 $object->fetch($socid);

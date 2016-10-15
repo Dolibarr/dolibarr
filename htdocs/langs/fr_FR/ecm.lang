@@ -41,4 +41,3 @@ CannotRemoveDirectoryContainsFiles=Suppression impossible car des fichiers sont 
 ECMFileManager=Gestionnaire de fichier
 ECMSelectASection=Sélectionner un répertoire sur l'arbre de gauche…
 DirNotSynchronizedSyncFirst=Ce répertoire a été crée ou modifié en dehors du module GED. Cliquer sur le bouton "Rafraîchir" afin de resyncroniser les informations sur disque et la base pour voir le contenu de ce répertoire.
-

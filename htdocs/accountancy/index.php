@@ -75,10 +75,6 @@ print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step,
 print "<br>\n";
 print "<br>\n";
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>');
-print "<br>\n";
-print "<br>\n";
-$step++;
 //$textlink='<strong>'.$langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("Modules")."-".$langs->transnoentitiesnoconv("Accountancy").'</strong>';
 $textlink='<strong>'.$langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>';
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, $textlink);
@@ -121,6 +117,9 @@ print '<hr>';
 print "<br>\n";
 $step = 0;
 
+$step++;
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>')."<br>\n";
+print "<br>\n";
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescCustomer", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>')."<br>\n";
 print "<br>\n";

@@ -80,7 +80,7 @@ $max = 100;
 
 $form = new Form($db);
 
-$title = $langs->trans('FiscalYears');
+$title = $langs->trans('AccountingPeriods');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
@@ -106,7 +106,7 @@ if ($result) {
 
 	$i = 0;
 
-	$title = $langs->trans('FiscalYears');
+	$title = $langs->trans('AccountingPeriods');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 1);
 
 	// Load attribute_label

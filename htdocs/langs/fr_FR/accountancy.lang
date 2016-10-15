@@ -39,11 +39,9 @@ Ventilation=Liés aux comptes
 ProductsBinding=Liaison produits
 
 MenuAccountancy=Comptabilité
+MenuDefaultAccounts=Comptes par défaut
 CustomersVentilation=Factures client liées
 SuppliersVentilation=Factures fournisseurs liées
-Reports=Rapports
-NewAccount=Nouveau compte comptable
-Create=Créer
 CreateMvts=Créer nouvelle transaction
 UpdateMvts=Modification d'une transaction
 WriteBookKeeping=Enregistrer les opérations dans le Grand Livre
@@ -56,12 +54,12 @@ InvoiceLinesDone=Lignes de factures liées
 IntoAccount=Lier ligne avec le compte comptable
 
 Ventilate=Lier
-
+LineId=Id ligne
 Processing=Traitement en cours
 EndProcessing=Fin du traitement
-AnyLineVentilate=Toutes lignes à lier
 SelectedLines=Lignes sélectionnées
 Lineofinvoice=Ligne de la facture
+NoAccountSelected=Pas de compte comptable sélectionné
 VentilatedinAccount=Liée avec succès sur compte comptable
 NotVentilatedinAccount=Non lié au compte comptable
 XLineSuccessfullyBinded=%s produits/services liés avec succès à un compte comptable
@@ -71,12 +69,12 @@ ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à lier représentés par 
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Trier de la page "Lien à réaliser" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Trier la page "Liens réalisés" par les éléments les plus récents
 
-ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour afficher la description des produits & services dans les listes (Idéalement = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour afficher la description du compte des produits & services dans les listes (Idéalement = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits & services dans les listes à n caractères (Idéalement = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer la description du compte des produits & services dans les listes à n caractères (Idéalement = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
-ACCOUNTING_MANAGE_ZERO=Ajouter des 0  à la fin des codes comptable. Fonctionnalité nécessaire pour certains pays, désactivée par défaut. Attention à la fonction "longueur des comptes" de vos codes comptables.
-BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque (Activé par défaut avec ce module).
+ACCOUNTING_MANAGE_ZERO=Ajouter des 0  à la fin des codes comptables. Fonctionnalité nécessaire pour certains pays. Désactivée par défaut. Si vous positionnez cette option à Oui, il vous faut aussi définir les 2 paramètres suivants (sinon celui-ci sera ignoré)
+BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
 
 ACCOUNTING_SELL_JOURNAL=Journal des ventes
 ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
@@ -101,16 +99,16 @@ Labelcompte=Libellé du compte
 Sens=Sens
 Codejournal=Journal
 NumPiece=Numéro de pièce
+TransactionNumShort=Num. transaction
 AccountingCategory=Catégorie comptable
+GroupByAccountAccounting=Grouper par compte comptable
 NotMatch=Non défini
 DeleteMvt=Supprimer les lignes du grand livre
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
-ConfirmDeleteMvt=Cela supprimera toutes les lignes du Grand Livre pour l'année et/ou un journal spécifique
+ConfirmDeleteMvt=Cela supprimera toutes les lignes du Grand Livre pour l'année et/ou un journal spécifique. Au moins un critère est requis.
 ConfirmDeleteMvtPartial=Ceci va supprimer la(les) ligne(s) sélectionnée(s) du Grand Livre
 DelBookKeeping=Supprimer les écritures du grand livre
-DescSellsJournal=Journal des ventes
-DescPurchasesJournal=Journal des achats
 FinanceJournal=Journal de trésorerie
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
 DescJournalOnlyBindedVisible=Ceci est une vue de enregistrements qui sont liés à un compte comptable produits et qui peuvent être enregistrées dans le Grand Livre.
@@ -127,12 +125,10 @@ ErrorDebitCredit=Débit et crédit ne peuvent pas avoir la même valeur en même
 
 ReportThirdParty=Liste des comptes tiers
 DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et leurs codes comptables
-
 ListAccounts=Liste des comptes comptables
 
 Pcgtype=Classe de compte
 Pcgsubtype=Sous classe de compte
-Accountparent=Racine des comptes
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -193,7 +189,7 @@ Calculated=Calculé
 Formula=Formule
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=Pas de catégories comptable disponibles pour ce pays
+ErrorNoAccountingCategoryForThisCountry=Pas de catégories comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
 ExportNotSupported=Le format de l'export n'est pas supporté par cette page
 BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 
@@ -201,4 +197,3 @@ Binded=Lignes liées
 ToBind=Lignes à lier
 
 WarningReportNotReliable=Attention, ce rapport ne se fonde pas sur le Grand Livre, donc n'est pas précis pour l'instant. Il sera remplacé par un rapport plus fiable dans une prochaine version.
-

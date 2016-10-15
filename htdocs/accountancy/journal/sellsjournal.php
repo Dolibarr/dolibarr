@@ -99,9 +99,7 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0";
-if (! empty($conf->multicompany->enabled)) {
-    $sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-}
+$sql .= " AND f.entity IN (".getEntity('facture', 0).')';    // We don't share object for accountancy
 $sql .= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
     $sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
@@ -544,7 +542,7 @@ if (empty($action) || $action == 'view') {
 			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>";
 			$accountoshow = length_accounta($k);
-			if ($accountoshow == 'NotDefined')
+			if (empty($accountoshow) || $accountoshow == 'NotDefined')
 			{
 			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 			}
@@ -570,7 +568,7 @@ if (empty($action) || $action == 'view') {
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>";
     			$accountoshow = length_accountg($k);
-    			if ($accountoshow == 'NotDefined')
+    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
     			{
     			    print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
     			}
@@ -593,7 +591,7 @@ if (empty($action) || $action == 'view') {
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>";
     			$accountoshow = length_accountg($k);
-    			if ($accountoshow == 'NotDefined')
+    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
     			{
     			    print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
     			}

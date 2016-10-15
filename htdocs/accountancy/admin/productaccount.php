@@ -45,7 +45,7 @@ $langs->load("accountancy");
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if (! $user->rights->accounting->ventilation->read)
+if (! $user->rights->accounting->bind->write)
     accessforbidden();
 
 // search & action GETPOST

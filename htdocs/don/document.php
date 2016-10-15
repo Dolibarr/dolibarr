@@ -122,6 +122,7 @@ if ($object->id)
 
     $modulepart = 'don';
     $permission = $user->rights->don->lire;
+    $permtoedit = $user->rights->don->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 

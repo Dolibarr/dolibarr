@@ -115,6 +115,7 @@ if ($object->id > 0)
 
 	$modulepart = 'supplier_proposal';
 	$permission = $user->rights->supplier_proposal->creer;
+	$permtoedit = $user->rights->supplier_proposal->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

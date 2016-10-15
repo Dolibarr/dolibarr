@@ -105,12 +105,13 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param User $user User that creates
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *       
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User    $user       User that creates
+	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int                 <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false) {
+	    global $langs;
+	    
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		
 		$error = 0;
@@ -161,11 +162,14 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
+		if (empty($this->debit)) $this->debit = 0;
+		if (empty($this->credit)) $this->credit = 0;
 		
 		// Check parameters
-		if (empty($this->numero_compte))
+		if (empty($this->numero_compte) || $this->numero_compte == '-1')
 		{
-            $this->errors[]='ErrorFieldAccountNotDefined';		    
+		    $langs->load("errors");
+            $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet);		    
 		    return -1;
 		}
 		
@@ -321,10 +325,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param User $user User that creates
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *       
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User    $user       User that creates
+	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int                 <0 if KO, Id of created object if OK
 	 */
 	public function createStd(User $user, $notrigger = false) {
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -378,6 +381,8 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
+		if (empty($this->debit)) $this->debit = 0;
+		if (empty($this->credit)) $this->credit = 0;
 		
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -410,9 +415,9 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ',';
 		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
-		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : "'" . $this->debit . "'") . ',';
-		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : "'" . $this->credit . "'") . ',';
-		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : "'" . $this->montant . "'") . ',';
+		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : $this->debit ). ',';
+		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : $this->credit ). ',';
+		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
 		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
@@ -1060,8 +1065,8 @@ class BookKeeping extends CommonObject
 		$sql = "DELETE";
 		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql.= " WHERE 1 = 1";
-		if ($delyear) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
-		if ($journal) $sql.= " AND code_journal = ".$journal;
+		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
+		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
 		$resql = $this->db->query($sql);
 		
 		if (! $resql) {

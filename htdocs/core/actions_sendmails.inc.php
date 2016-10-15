@@ -201,8 +201,26 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$langs->load("commercial");
 
-			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+			$fromtype = GETPOST('fromtype');
+            if ($fromtype === 'user') {
+                $from = $user->getFullName($langs) .' <'.$user->email.'>';
+            }
+            elseif ($fromtype === 'company') {
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+            }
+		    elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
+		        $tmp=explode(',', $user->email_aliases);
+                $from = trim($tmp[($reg[1] - 1)]);
+            }
+		    elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
+                $tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                $from = trim($tmp[($reg[1] - 1)]);
+            }
+            else {
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+            }
+
+            $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
 			$sendtobcc= GETPOST('sendtoccc');
 			if ($mode == 'emailfromproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));

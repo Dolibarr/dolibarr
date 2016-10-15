@@ -11,7 +11,6 @@ RequestAccess=Cliquez ici pour demander/renouveler un accès et recevoir un nouv
 DeleteAccess=Cliquez ici pour effacer le jeton
 UseTheFollowingUrlAsRedirectURI=Utilisez l'URL suivante comme URI de redirection quand vous créez un crédit avec votre fournisseur OAuth :
 ListOfSupportedOauthProviders=Saisissez ici le crédit fourni par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Ce paramétrage est potentiellement utilisé par d'autres modules qui nécessitent une authentification OAuth2.
-TOKEN_ACCESS=
 TOKEN_REFRESH=Token Refresh présent
 TOKEN_EXPIRED=Token expiré
 TOKEN_EXPIRE_AT=Token expire le

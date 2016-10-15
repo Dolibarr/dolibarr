@@ -1432,71 +1432,120 @@ else
 
 				if ($action == 'save')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
 				}
 
 				if ($action == 'save_from_refuse')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
 				}
 
 				if ($action == 'delete')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
 				}
 
 				if ($action == 'validate')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 				}
 
 				if ($action == 'paid')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
 				}
 
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
 				}
 
-				if ($action == 'brouillonner'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'brouillonner')
+				{
+				    $formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				}
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 				}
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 				}
 
+				// Print form confirm
+				print $formconfirm;
+				
+				
+				// Expense report card
+				
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+				
+				
+				$morehtmlref='<div class="refidno">';
+				/*
+				// Ref customer
+				$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
+				$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+				// Thirdparty
+				$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+				// Project
+				if (! empty($conf->projet->enabled))
+				{
+				    $langs->load("projects");
+				    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+				    if ($user->rights->commande->creer)
+				    {
+				        if ($action != 'classify')
+				            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				            if ($action == 'classify') {
+				                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+				                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				                $morehtmlref.='</form>';
+				            } else {
+				                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				            }
+				    } else {
+				        if (! empty($object->fk_project)) {
+				            $proj = new Project($db);
+				            $proj->fetch($object->fk_project);
+				            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				            $morehtmlref.=$proj->ref;
+				            $morehtmlref.='</a>';
+				        } else {
+				            $morehtmlref.='';
+				        }
+				    }
+				}*/
+				$morehtmlref.='</div>';
+				
+				
+				dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+				
+				
+				print '<div class="fichecenter">';
+				print '<div class="fichehalfleft">';
+				print '<div class="underbanner clearboth"></div>';
+				
 				print '<table class="border centpercent">';
 
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
             	// Ref
+            	/*
             	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
             	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-            	print '</td></tr>';
+            	print '</td></tr>';*/
 
 				print '<tr>';
-				print '<td>'.$langs->trans("Period").'</td>';
-				print '<td colspan="2">';
+				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
+				print '<td>';
 				print get_date_range($object->date_debut,$object->date_fin,'',$langs,0);
 				print '</td>';
 				print '</tr>';
@@ -1504,22 +1553,24 @@ else
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
-					print '<td colspan="2">'.$object->libelle_paiement.'</td>';
+					print '<td>'.$object->libelle_paiement.'</td>';
 					print '</tr>';
 				}
 				// Status
+				/*
 				print '<tr>';
 				print '<td>'.$langs->trans("Statut").'</td>';
 				print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
+				*/
 
 				print '<tr>';
 				print '<td>'.$langs->trans("NotePublic").'</td>';
-				print '<td colspan="2">'.$object->note_public.'</td>';
+				print '<td>'.$object->note_public.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("NotePrivate").'</td>';
-				print '<td colspan="2">'.$object->note_private.'</td>';
+				print '<td>'.$object->note_private.'</td>';
 				print '</tr>';
 				// Amount
 				print '<tr>';
@@ -1531,75 +1582,14 @@ else
 				else $rowspan+=2;
 				if ($object->fk_statut==99 || !empty($object->detail_refuse)) $rowspan+=2;
 				if($object->fk_statut==6) $rowspan+=2;
-
-				print '<td rowspan="'.$rowspan.'" valign="top">';
-				
-				// List of payments
-				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-				$sql.= "c.code as type_code,c.libelle as payment_type";
-				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
-				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-				$sql.= ", ".MAIN_DB_PREFIX."expensereport as e";
-				$sql.= " WHERE e.rowid = '".$id."'";
-				$sql.= " AND p.fk_expensereport = e.rowid";
-				$sql.= " AND e.entity = ".$conf->entity;
-				$sql.= " AND p.fk_typepayment = c.id";
-				$sql.= " ORDER BY dp";
-
-				$resql = $db->query($sql);
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
-					$i = 0; $total = 0;
-					print '<table class="nobordernopadding paymenttable" width="100%">';
-					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans("RefPayment").'</td>';
-					print '<td>'.$langs->trans("Date").'</td>';
-					print '<td>'.$langs->trans("Type").'</td>';
-					print '<td align="right">'.$langs->trans("Amount").'</td>';
-					print '<td>&nbsp;</td>';
-					print '</tr>';
-
-					$var=True;
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($resql);
-						$var=!$var;
-						print "<tr ".$bc[$var]."><td>";
-						print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
-						print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-							$labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->fk_typepayment;
-						print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-						print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-						print "</tr>";
-						$totalpaid += $objp->amount;
-						$i++;
-					}
-
-					if ($object->paid == 0)
-					{
-						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->total_ttc)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-
-						$remaintopay = $object->total_ttc - $totalpaid;
-
-						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-						print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($remaintopay)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-					}
-					print "</table>";
-					$db->free($resql);
-				}
-				else
-				{
-					dol_print_error($db);
-				}
 				print "</td>";
-
 				print '</tr>';
+				
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountVAT").'</td>';
 				print '<td>'.price($object->total_tva).'</td>';
 				print '</tr>';
+				
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountTTC").'</td>';
 				print '<td>'.price($object->total_ttc).'</td>';
@@ -1658,6 +1648,7 @@ else
 						print $userfee->getNomUrl(-1);
 					}
 					print '</td></tr>';
+					
 					print '<tr>';
 					print '<td>'.$langs->trans("MOTIF_CANCEL").'</td>';
 					print '<td>'.$object->detail_cancel.'</td></tr>';
@@ -1679,6 +1670,7 @@ else
 						print $userapp->getNomUrl(-1);
 					}
 					print '</td></tr>';
+					
 					print '<tr>';
 					print '<td>'.$langs->trans("DateApprove").'</td>';
 					print '<td>'.dol_print_date($object->date_approve,'dayhour').'</td></tr>';
@@ -1694,6 +1686,7 @@ else
 					$userfee->fetch($object->fk_user_refuse);
 					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
+					
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
 					print '<td>'.dol_print_date($object->date_refuse,'dayhour');
@@ -1725,6 +1718,77 @@ else
 				
 				print '</table>';
 
+				print '</div>';
+				print '<div class="fichehalfright">';
+				print '<div class="ficheaddleft">';
+				//print '<div class="underbanner clearboth"></div>';
+				
+				// List of payments
+				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
+				$sql.= "c.code as type_code,c.libelle as payment_type";
+				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
+				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+				$sql.= ", ".MAIN_DB_PREFIX."expensereport as e";
+				$sql.= " WHERE e.rowid = '".$id."'";
+				$sql.= " AND p.fk_expensereport = e.rowid";
+				$sql.= " AND e.entity = ".$conf->entity;
+				$sql.= " AND p.fk_typepayment = c.id";
+				$sql.= " ORDER BY dp";
+				
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+				    $num = $db->num_rows($resql);
+				    $i = 0; $total = 0;
+				    print '<table class="noborder paymenttable" width="100%">';
+				    print '<tr class="liste_titre">';
+				    print '<td>'.$langs->trans("RefPayment").'</td>';
+				    print '<td>'.$langs->trans("Date").'</td>';
+				    print '<td>'.$langs->trans("Type").'</td>';
+				    print '<td align="right">'.$langs->trans("Amount").'</td>';
+				    print '<td>&nbsp;</td>';
+				    print '</tr>';
+				
+				    $var=True;
+				    while ($i < $num)
+				    {
+				        $objp = $db->fetch_object($resql);
+				        $var=!$var;
+				        print "<tr ".$bc[$var]."><td>";
+				        print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->fk_typepayment;
+				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+				        print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+				        print "</tr>";
+				        $totalpaid += $objp->amount;
+				        $i++;
+				    }
+				
+				    if ($object->paid == 0)
+				    {
+				        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaid)."</td></tr>\n";
+				        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->total_ttc)."</td></tr>\n";
+				
+				        $remaintopay = $object->total_ttc - $totalpaid;
+				
+				        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay)."</td></tr>\n";
+				    }
+				    print "</table>";
+				    $db->free($resql);
+				}
+				else
+				{
+				    dol_print_error($db);
+				}				
+				
+				print '</div>';
+				print '</div>';
+				print '</div>';
+				
+				print '<div class="clearboth"></div><br>';
+				
 				print '<br>';
 
 				// Fetch Lines of current expense report
