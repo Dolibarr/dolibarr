@@ -175,7 +175,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-	$sql = "SELECT SUM(amount_capital + amount_insurance + amount_interest) as total";
+	$sql = "SELECT SUM(amount_capital) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
 	$sql.= " WHERE fk_loan = ".$chid;
 	$resql = $db->query($sql);
