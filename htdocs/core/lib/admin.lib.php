@@ -714,8 +714,11 @@ function activateModule($value,$withdeps=1)
 {
     global $db, $modules, $langs, $conf;
 
-    // Check parameters
-    if (empty($value)) return 'ErrorBadParameter';
+	// Check parameters
+	if (empty($value)) {
+		$ret['errors'][] = 'ErrorBadParameter';
+		return $ret;
+	}
 
     $ret=array('nbmodules'=>0, 'errors'=>array(), 'nbperms'=>0);
     $modName = $value;
@@ -740,25 +743,25 @@ function activateModule($value,$withdeps=1)
     // Test if PHP version ok
     $verphp=versionphparray();
     $vermin=isset($objMod->phpmin)?$objMod->phpmin:0;
-    if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
-    {
-        return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
-    }
+	if (is_array($vermin) && versioncompare($verphp, $vermin) < 0) {
+		$ret['errors'][] = $langs->trans("ErrorModuleRequirePHPVersion", versiontostring($vermin));
+		return $ret;
+	}
 
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
     //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
-    if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
-    {
-        return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
-    }
+	if (is_array($vermin) && versioncompare($verdol, $vermin) < 0) {
+		$ret['errors'][] = $langs->trans("ErrorModuleRequireDolibarrVersion", versiontostring($vermin));
+		return $ret;
+	}
 
-    // Test if javascript requirement ok
-    if (! empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax))
-    {
-        return $langs->trans("ErrorModuleRequireJavascript");
-    }
+	// Test if javascript requirement ok
+	if (!empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax)) {
+		$ret['errors'][] = $langs->trans("ErrorModuleRequireJavascript");
+		return $ret;
+	}
 
     $result=$objMod->init();
     if ($result <= 0) 
