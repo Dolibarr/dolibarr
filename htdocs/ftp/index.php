@@ -458,7 +458,7 @@ else
 
 
 		// Construit liste des repertoires
-		print '<table width="100%" class="nobordernopadding">'."\n";
+		print '<table width="100%" class="noborder">'."\n";
 
 		print '<tr class="liste_titre">'."\n";
 		print '<td class="liste_titre" align="left">'.$langs->trans("Content").'</td>'."\n";
