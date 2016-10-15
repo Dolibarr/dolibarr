@@ -313,7 +313,7 @@ if ($action == 'writebookkeeping') {
 
     }
 
-    if (empty($error)) {
+    if (empty($error) && count($tabpay) > 0) {
         setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
     }
     elseif (count($tabpay) == $error)

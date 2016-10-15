@@ -278,7 +278,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_country" size="5" value="' . $search_country . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_tavintra" size="5" value="' . $search_tavintra . '"></td>';
 	print '<td class="liste_titre" align="right"></td>';
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre" align="right">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1);
 	print $searchpitco;
 	print "</td></tr>\n";

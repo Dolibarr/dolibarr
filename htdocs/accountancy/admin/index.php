@@ -48,6 +48,17 @@ if (empty($user->admin))
 
 $action = GETPOST('action', 'alpha');
 
+// Parameters ACCOUNTING_* and others
+$list = array (
+    //'ACCOUNTING_LIMIT_LIST_VENTILATION',  Useless, we can change value dynamically, so we use default global setup
+    'ACCOUNTING_MANAGE_ZERO',
+    'ACCOUNTING_LENGTH_GACCOUNT',
+    'ACCOUNTING_LENGTH_AACCOUNT' ,
+    'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
+    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
+);
+
+
 
 /*
  * Actions
@@ -79,6 +90,70 @@ if ($action == 'update') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+
+    foreach ( $list as $constname ) {
+        $constvalue = GETPOST($constname, 'alpha');
+
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
+
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+// TO DO Mutualize code for yes/no constants
+if ($action == 'setlistsorttodo') {
+    $setlistsorttodo = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
+}
+
+if ($action == 'setlistsortdone') {
+    $setlistsortdone = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
+}
+
+if ($action == 'setmanagezero') {
+    $setmanagezero = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
+}
+
+if ($action == 'setdisabledirectinput') {
+    $setdisabledirectinput = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
 }
 
 
@@ -103,9 +178,9 @@ print '<input type="hidden" name="action" value="update">';
 dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
 
 
-print '<table class="noborder" width="100%">';
+// Default mode for calculating turnover (parameter ACCOUNTING_MODE)
 
-// Cas du parametre ACCOUNTING_MODE
+print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('OptionMode') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -128,6 +203,108 @@ print '<tr ' . $bc[true] . '><td width="200"><input type="radio" name="accountin
 print '<td colspan="2">' . nl2br($langs->trans('OptionModeVirtualDesc')) . "</td></tr>\n";
 
 print "</table>\n";
+
+
+print '<br>';
+
+
+// Others params
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">' . $langs->trans('OtherOptions') . '</td>';
+print "</tr>\n";
+
+if (! empty($user->admin))
+{
+    // TO DO Mutualize code for yes/no constants
+    $var = ! $var;
+    print "<tr " . $bc[$var] . ">";
+    print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
+
+    $var = ! $var;
+    print "<tr " . $bc[$var] . ">";
+    print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
+
+    $var = ! $var;
+    print "<tr " . $bc[$var] . ">";
+    print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+    if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
+}
+
+
+// Param a user $user->rights->accountancy->chartofaccount can access
+foreach ( $list as $key ) {
+    $var = ! $var;
+
+    if ($key != 'ACCOUNTING_MANAGE_ZERO')
+    {
+        print '<tr ' . $bc[$var] . ' class="value">';
+        // Param
+        $label = $langs->trans($key);
+        print '<td>'.$label.'</td>';
+        // Value
+        print '<td align="right">';
+        print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+        print '</td>';
+        print '</tr>';
+    }
+    if ($key == 'ACCOUNTING_MANAGE_ZERO')
+    {
+        $var = ! $var;
+        print "<tr " . $bc[$var] . ">";
+        print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+        if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+            print '<td align="right""><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+            print img_picto($langs->trans("Activated"), 'switch_on');
+            print '</a></td>';
+        } else {
+            print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+            print img_picto($langs->trans("Disabled"), 'switch_off');
+            print '</a></td>';
+        }
+        print '</tr>';
+    }
+}
+
+
+print '</table>';
+
+
+
+
+
+
+
 
 dol_fiche_end();
 

@@ -31,7 +31,10 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.
 
 // Langs
 $langs->load("compta");
+$langs->load("bills");
+$langs->load("admin");
 $langs->load("accountancy");
+$langs->load("salaries");
 
 $mesg = '';
 $action = GETPOST('action');
