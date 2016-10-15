@@ -505,6 +505,7 @@ ReportPeriod=Report period
 ReportDescription=Description
 Report=Report
 Keyword=Keyword
+Origin=Origin
 Legend=Legend
 Fill=Fill
 Reset=Reset
