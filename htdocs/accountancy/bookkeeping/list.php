@@ -204,19 +204,22 @@ $param = '';
 $filter = array ();
 if (! empty($search_date_start)) {
     $filter['t.doc_date>='] = $search_date_start;
-    $param .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
+    $tmp=dol_getdate($search_date_start);
+    $param .= '&date_startmonth=' . $tmp['mon'] . '&date_startday=' . $tmp['mday'] . '&date_startyear=' . $tmp['year'];
 }
 if (! empty($search_date_end)) {
     $filter['t.doc_date<='] = $search_date_end;
-    $param .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
+    $tmp=dol_getdate($search_date_end);
+    $param .= '&date_endmonth=' . $tmp['mon'] . '&date_endday=' . $tmp['mday'] . '&date_endyear=' . $tmp['year'];
+}
+if (! empty($search_doc_date)) {
+    $filter['t.doc_date'] = $search_doc_date;
+    $tmp=dol_getdate($search_doc_date);
+    $param .= '&doc_datemonth=' . $tmp['mon'] . '&doc_dateday=' . $tmp['mday'] . '&doc_dateyear=' . $tmp['year'];
 }
 if (! empty($search_doc_type)) {
     $filter['t.doc_type'] = $search_doc_type;
     $param .= '&search_doc_type=' . $search_doc_type;
-}
-if (! empty($search_doc_date)) {
-    $filter['t.doc_date'] = $search_doc_date;
-    $param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
 }
 if (! empty($search_doc_ref)) {
     $filter['t.doc_ref'] = $search_doc_ref;
