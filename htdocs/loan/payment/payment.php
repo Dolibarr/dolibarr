@@ -116,7 +116,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result = $payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+                $result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
                     setEventMessages($payment->error, $payment->errors, 'errors');
