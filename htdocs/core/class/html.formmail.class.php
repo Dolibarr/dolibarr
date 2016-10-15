@@ -371,8 +371,12 @@ class FormMail extends Form
         			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
         			$out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
 
-                    if (!($this->fromtype === 'user' && $this->fromid > 0) && !($this->fromtype === 'company'))
+                    if (! ($this->fromtype === 'user' && $this->fromid > 0)
+                        && ! ($this->fromtype === 'company')
+                        && ! preg_match('/user_aliases/', $this->fromtype)
+                        && ! preg_match('/global_aliases/', $this->fromtype))
                     {
+                        // Use this->fromname and this->frommail or error if not defined
                         $out.= $this->fromname;
                         if ($this->frommail)
                         {
@@ -386,13 +390,31 @@ class FormMail extends Form
                                 $out.= '<span class="warning"> &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt; </span>';
                             }
                         }
-                    }else{
+                    } else {
                         $liste = array();
                         $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
                         $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+                        // Add also email aliases if there is one
+                        $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                        foreach($listaliases as $typealias => $listalias)
+                        {
+                            $posalias=0;
+                            $listaliasarray=explode(',', $listalias);
+                            foreach ($listaliasarray as $listaliasval)
+                            {
+                                $posalias++;
+                                $listaliasval=trim($listaliasval);
+                                if ($listaliasval) 
+                                {
+                                    $listaliasval=preg_replace('/</', '&lt;', $listaliasval);
+                                    $listaliasval=preg_replace('/>/', '&gt;', $listaliasval);
+                                    if (! preg_match('/&lt;/', $listaliasval)) $listaliasval='&lt;'.$listaliasval.'&gt;';
+                                    $liste[$typealias.'_'.$posalias]=$listaliasval;
+                                }
+                            }
+                        }
                         $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0);
                     }
-
 
         			$out.= "</td></tr>\n";
         			$out.= "</td></tr>\n";

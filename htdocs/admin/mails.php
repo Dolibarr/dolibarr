@@ -393,13 +393,27 @@ if ($action == 'edit')
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
-
+	
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
 
+    // Default from type
+    $var=!$var;
+    $liste = array();
+    $liste['user'] = $langs->trans('UserEmail');
+    $liste['company'] = $langs->trans('CompanyEmail');
+
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
+    print '</td></tr>';
+
+    // Separator
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+    
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
@@ -411,16 +425,6 @@ if ($action == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
-
-    // Default from type
-    $var=!$var;
-    $liste = array();
-    $liste['user'] = $langs->trans('User');
-    $liste['company'] = $langs->trans('Company');
-
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
-    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
-    print '</td></tr>';
 
     print '</table>';
 
@@ -530,7 +534,22 @@ else
 	if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
-	// Errors To
+	// Default from type
+    $var=!$var;
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+    print '<td>';
+    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
+        print $langs->trans('UserEmail');
+    } else {
+        print $langs->trans('CompanyEmail');
+    }
+    print '</td></tr>';
+
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+
+    // Errors To
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
@@ -552,18 +571,7 @@ else
 	}
 	print '</td></tr>';
 
-    //Default from type
-    $var=!$var;
-
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
-    print '<td>';
-    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
-        print $langs->trans('User');
-    } else {
-        print $langs->trans('Company');
-    }
-    print '</td></tr>';
-
+    
 	print '</table>';
 
     if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
@@ -583,6 +591,7 @@ else
    	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
     }
 
+    
 	// Boutons actions
 	print '<div class="tabsAction">';
 
