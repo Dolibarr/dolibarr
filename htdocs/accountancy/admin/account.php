@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -44,10 +45,8 @@ $search_pcgtype = GETPOST("search_pcgtype");
 $search_pcgsubtype = GETPOST("search_pcgsubtype");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accounting->chartofaccount)
-	accessforbidden();
+if ($user->societe_id > 0) accessforbidden();
+if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
@@ -95,6 +94,20 @@ if (empty($reshook))
     	$search_pcgsubtype = "";
     }
     
+    if (GETPOST('change_chart'))
+    {
+        $chartofaccounts = GETPOST('chartofaccounts', 'int');
+        
+        if (! empty($chartofaccounts)) {
+        
+            if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+                $error ++;
+            }
+        } else {
+            $error ++;
+        }
+    }
+    
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
     		$result = $accounting->account_desactivate($id);
@@ -128,6 +141,8 @@ if ($action == 'delete') {
 }
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
+
+
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
@@ -183,7 +198,34 @@ if ($result) {
 	
 	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
 	
-	print '<br/>';
+	// Box to select active chart of accoun
+    $var = ! $var;
+    print $langs->trans("Selectchartofaccounts") . " : ";
+    print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+    $sql = "SELECT rowid, pcg_version, label, active";
+    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
+    $sql .= " WHERE active = 1";
+    dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
+    $resql = $db->query($sql);
+    $var = true;
+    if ($resql) {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ( $i < $num ) {
+            $var = ! $var;
+            $row = $db->fetch_row($resql);
+    
+            print '<option value="' . $row[0] . '"';
+            print $pcgver == $row[0] ? ' selected' : '';
+            print '>' . $row[1] . ' - ' . $row[2] . '</option>';
+    
+            $i ++;
+        }
+    }
+    print "</select>";
+    print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+    print '<br>';    
+    print "<br>\n";
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
@@ -210,6 +252,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
+	
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '&nbsp;';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';

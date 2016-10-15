@@ -943,8 +943,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Chart of account
 				$langs->load("admin");
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/accountmodel.php?id=31&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Pcg_version"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_chartmodel', 1);
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_chart', 1);
-				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 2);
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 2);
 				
 				// Binding
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&amp;leftmenu=accountancy", $langs->trans("ProductsBinding"), 1, $user->admin);

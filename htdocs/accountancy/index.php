@@ -70,6 +70,11 @@ print_fiche_titre($langs->trans("AccountancyAreaDescActionOnce"), '', 'object_ca
 print '<hr>';
 print "<br>\n";
 
+// STEPS
+$step++;
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChartModel", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("Pcg_version").'</strong>');
+print "<br>\n";
+print "<br>\n";
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("Chartofaccounts").'</strong>');
 print "<br>\n";

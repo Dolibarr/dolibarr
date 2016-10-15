@@ -27,12 +27,12 @@
  */
 
 /**
- *	    \file       htdocs/admin/dict.php
- *		\ingroup    setup
- *		\brief      Page to administer data tables
+ *	    \file       htdocs/accountancy/admin/accountmodel.php
+ *		\ingroup    Advanced accountancy
+ *		\brief      Page to administer model of chart of accounts
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -55,8 +55,6 @@ $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
 
-if (!$user->admin) accessforbidden();
-
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
@@ -77,6 +75,11 @@ $pagenext = $page + 1;
 $search_country_id = GETPOST('search_country_id','int');
 
 
+// Security check
+if ($user->societe_id > 0) accessforbidden();
+if (! $user->rights->accounting->chartofaccount) accessforbidden();
+
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('admin'));
 
@@ -88,412 +91,61 @@ $taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,
 
 // Name of SQL tables of dictionaries
 $tabname=array();
-$tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
-$tabname[2] = MAIN_DB_PREFIX."c_departements";
-$tabname[3] = MAIN_DB_PREFIX."c_regions";
-$tabname[4] = MAIN_DB_PREFIX."c_country";
-$tabname[5] = MAIN_DB_PREFIX."c_civility";
-$tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
-$tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
-$tabname[8] = MAIN_DB_PREFIX."c_typent";
-$tabname[9] = MAIN_DB_PREFIX."c_currencies";
-$tabname[10]= MAIN_DB_PREFIX."c_tva";
-$tabname[11]= MAIN_DB_PREFIX."c_type_contact";
-$tabname[12]= MAIN_DB_PREFIX."c_payment_term";
-$tabname[13]= MAIN_DB_PREFIX."c_paiement";
-$tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
-$tabname[15]= MAIN_DB_PREFIX."c_paper_format";
-$tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
-$tabname[17]= MAIN_DB_PREFIX."c_type_fees";
-$tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
-$tabname[19]= MAIN_DB_PREFIX."c_effectif";
-$tabname[20]= MAIN_DB_PREFIX."c_input_method";
-$tabname[21]= MAIN_DB_PREFIX."c_availability";
-$tabname[22]= MAIN_DB_PREFIX."c_input_reason";
-$tabname[23]= MAIN_DB_PREFIX."c_revenuestamp";
-$tabname[24]= MAIN_DB_PREFIX."c_type_resource";
-$tabname[25]= MAIN_DB_PREFIX."c_email_templates";
-$tabname[26]= MAIN_DB_PREFIX."c_units";
-$tabname[27]= MAIN_DB_PREFIX."c_stcomm";
-$tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
-$tabname[29]= MAIN_DB_PREFIX."c_lead_status";
-$tabname[30]= MAIN_DB_PREFIX."c_format_cards";
-//$tabname[31]= MAIN_DB_PREFIX."accounting_system";
+
+$tabname[31]= MAIN_DB_PREFIX."accounting_system";
 $tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
-$tabname[33]= MAIN_DB_PREFIX."c_hrm_department";
-$tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
 
 // Dictionary labels
 $tablib=array();
-$tablib[1] = "DictionaryCompanyJuridicalType";
-$tablib[2] = "DictionaryCanton";
-$tablib[3] = "DictionaryRegion";
-$tablib[4] = "DictionaryCountry";
-$tablib[5] = "DictionaryCivility";
-$tablib[6] = "DictionaryActions";
-$tablib[7] = "DictionarySocialContributions";
-$tablib[8] = "DictionaryCompanyType";
-$tablib[9] = "DictionaryCurrency";
-$tablib[10]= "DictionaryVAT";
-$tablib[11]= "DictionaryTypeContact";
-$tablib[12]= "DictionaryPaymentConditions";
-$tablib[13]= "DictionaryPaymentModes";
-$tablib[14]= "DictionaryEcotaxe";
-$tablib[15]= "DictionaryPaperFormat";
-$tablib[16]= "DictionaryProspectLevel";
-$tablib[17]= "DictionaryFees";
-$tablib[18]= "DictionarySendingMethods";
-$tablib[19]= "DictionaryStaff";
-$tablib[20]= "DictionaryOrderMethods";
-$tablib[21]= "DictionaryAvailability";
-$tablib[22]= "DictionarySource";
-$tablib[23]= "DictionaryRevenueStamp";
-$tablib[24]= "DictionaryResourceType";
-$tablib[25]= "DictionaryEMailTemplates";
-$tablib[26]= "DictionaryUnits";
-$tablib[27]= "DictionaryProspectStatus";
-$tablib[28]= "DictionaryHolidayTypes";
-$tablib[29]= "DictionaryOpportunityStatus";
-$tablib[30]= "DictionaryFormatCards";
-//$tablib[31]= "DictionaryAccountancysystem";
+$tablib[31]= "Pcg_version";
 $tablib[32]= "DictionaryAccountancyCategory";
-$tablib[33]= "DictionaryDepartment";
-$tablib[34]= "DictionaryFunction";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite FROM ".MAIN_DB_PREFIX."c_country AS c";
-$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
-$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
-$tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
-$tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
-$tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
-$tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
-$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
-$tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
-$tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
-$tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
-$tabsql[17]= "SELECT id      as rowid, code, label, accountancy_code, active FROM ".MAIN_DB_PREFIX."c_type_fees";
-$tabsql[18]= "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
-$tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
-$tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
-$tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
-$tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
-$tabsql[23]= "SELECT t.rowid as rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
-$tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template',1).")";
-$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
-$tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
-$tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
-$tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
-$tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
-//$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
+$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
 $tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
-$tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
-$tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
-$tabsqlsort[1] ="country ASC, code ASC";
-$tabsqlsort[2] ="country ASC, code ASC";
-$tabsqlsort[3] ="country ASC, code ASC";
-$tabsqlsort[4] ="code ASC";
-$tabsqlsort[5] ="label ASC";
-$tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] ="country ASC, code ASC, a.libelle ASC";
-$tabsqlsort[8] ="country DESC,".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?' t.position ASC,':'')." libelle ASC";
-$tabsqlsort[9] ="label ASC";
-$tabsqlsort[10]="country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
-$tabsqlsort[11]="t.element ASC, t.source ASC, t.position ASC, t.code ASC";
-$tabsqlsort[12]="sortorder ASC, code ASC";
-$tabsqlsort[13]="code ASC";
-$tabsqlsort[14]="country ASC, e.organization ASC, code ASC";
-$tabsqlsort[15]="rowid ASC";
-$tabsqlsort[16]="sortorder ASC";
-$tabsqlsort[17]="code ASC";
-$tabsqlsort[18]="code ASC, libelle ASC";
-$tabsqlsort[19]="id ASC";
-$tabsqlsort[20]="code ASC, libelle ASC";
-$tabsqlsort[21]="code ASC, label ASC";
-$tabsqlsort[22]="code ASC, label ASC";
-$tabsqlsort[23]="country ASC, taux ASC";
-$tabsqlsort[24]="code ASC,label ASC";
-$tabsqlsort[25]="label ASC";
-$tabsqlsort[26]="code ASC";
-$tabsqlsort[27]="code ASC";
-$tabsqlsort[28]="country ASC, code ASC";
-$tabsqlsort[29]="position ASC";
-$tabsqlsort[30]="code ASC";
-//$tabsqlsort[31]="pcg_version ASC";
+$tabsqlsort[31]="pcg_version ASC";
 $tabsqlsort[32]="position ASC";
-$tabsqlsort[33]="code ASC";
-$tabsqlsort[34]="code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[1] = "code,libelle,country";
-$tabfield[2] = "code,libelle,region_id,region,country";   // "code,libelle,region,country_code-country"
-$tabfield[3] = "code,libelle,country_id,country";
-$tabfield[4] = "code,label";
-$tabfield[5] = "code,label";
-$tabfield[6] = "code,libelle,type,color,position";
-$tabfield[7] = "code,libelle,country,accountancy_code,deductible";
-$tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
-$tabfield[9] = "code,label,unicode";
-$tabfield[10]= "country_id,country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
-$tabfield[11]= "element,source,code,libelle,position";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
-$tabfield[13]= "code,libelle,type,accountancy_code";
-$tabfield[14]= "code,libelle,price,organization,country_id,country";
-$tabfield[15]= "code,libelle,width,height,unit";
-$tabfield[16]= "code,libelle,sortorder";
-$tabfield[17]= "code,label,accountancy_code";
-$tabfield[18]= "code,libelle,tracking";
-$tabfield[19]= "code,libelle";
-$tabfield[20]= "code,libelle";
-$tabfield[21]= "code,label";
-$tabfield[22]= "code,label";
-$tabfield[23]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfield[24]= "code,label";
-$tabfield[25]= "label,type_template,private,position,topic,content";
-$tabfield[26]= "code,label,short_label";
-$tabfield[27]= "code,libelle";
-$tabfield[28]= "code,label,affect,delay,newbymonth,country_id,country";
-$tabfield[29]= "code,label,percent,position";
-$tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-//$tabfield[31]= "pcg_version,label";
+$tabfield[31]= "pcg_version,label";
 $tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
-$tabfield[33]= "code,label";
-$tabfield[34]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[1] = "code,libelle,country";
-$tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
-$tabfieldvalue[3] = "code,libelle,country";
-$tabfieldvalue[4] = "code,label";
-$tabfieldvalue[5] = "code,label";
-$tabfieldvalue[6] = "code,libelle,type,color,position";
-$tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
-$tabfieldvalue[8] = "code,libelle,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
-$tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10]= "country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldvalue[11]= "element,source,code,libelle,position";
-$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
-$tabfieldvalue[13]= "code,libelle,type,accountancy_code";
-$tabfieldvalue[14]= "code,libelle,price,organization,country";
-$tabfieldvalue[15]= "code,libelle,width,height,unit";
-$tabfieldvalue[16]= "code,libelle,sortorder";
-$tabfieldvalue[17]= "code,label,accountancy_code";
-$tabfieldvalue[18]= "code,libelle,tracking";
-$tabfieldvalue[19]= "code,libelle";
-$tabfieldvalue[20]= "code,libelle";
-$tabfieldvalue[21]= "code,label";
-$tabfieldvalue[22]= "code,label";
-$tabfieldvalue[23]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldvalue[24]= "code,label";
-$tabfieldvalue[25]= "label,type_template,private,position,topic,content";
-$tabfieldvalue[26]= "code,label,short_label";
-$tabfieldvalue[27]= "code,libelle";
-$tabfieldvalue[28]= "code,label,affect,delay,newbymonth,country";
-$tabfieldvalue[29]= "code,label,percent,position";
-$tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-//$tabfieldvalue[31]= "pcg_version,label";
+$tabfieldvalue[31]= "pcg_version,label";
 $tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
-$tabfieldvalue[33]= "code,label";
-$tabfieldvalue[34]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[1] = "code,libelle,fk_pays";
-$tabfieldinsert[2] = "code_departement,nom,fk_region";
-$tabfieldinsert[3] = "code_region,nom,fk_pays";
-$tabfieldinsert[4] = "code,label";
-$tabfieldinsert[5] = "code,label";
-$tabfieldinsert[6] = "code,libelle,type,color,position";
-$tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
-$tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
-$tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10]= "fk_pays,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldinsert[11]= "element,source,code,libelle,position";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
-$tabfieldinsert[13]= "code,libelle,type,accountancy_code";
-$tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
-$tabfieldinsert[15]= "code,label,width,height,unit";
-$tabfieldinsert[16]= "code,label,sortorder";
-$tabfieldinsert[17]= "code,label,accountancy_code";
-$tabfieldinsert[18]= "code,libelle,tracking";
-$tabfieldinsert[19]= "code,libelle";
-$tabfieldinsert[20]= "code,libelle";
-$tabfieldinsert[21]= "code,label";
-$tabfieldinsert[22]= "code,label";
-$tabfieldinsert[23]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldinsert[24]= "code,label";
-$tabfieldinsert[25]= "label,type_template,private,position,topic,content,entity";
-$tabfieldinsert[26]= "code,label,short_label";
-$tabfieldinsert[27]= "code,libelle";
-$tabfieldinsert[28]= "code,label,affect,delay,newbymonth,fk_country";
-$tabfieldinsert[29]= "code,label,percent,position";
-$tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-//$tabfieldinsert[31]= "pcg_version,label";
+$tabfieldinsert[31]= "pcg_version,label";
 $tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
-$tabfieldinsert[33]= "code,label";
-$tabfieldinsert[34]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
 //          "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid=array();
-$tabrowid[1] = "";
-$tabrowid[2] = "";
-$tabrowid[3] = "";
-$tabrowid[4] = "rowid";
-$tabrowid[5] = "rowid";
-$tabrowid[6] = "id";
-$tabrowid[7] = "id";
-$tabrowid[8] = "id";
-$tabrowid[9] = "code_iso";
-$tabrowid[10]= "";
-$tabrowid[11]= "rowid";
-$tabrowid[12]= "rowid";
-$tabrowid[13]= "id";
-$tabrowid[14]= "";
-$tabrowid[15]= "";
-$tabrowid[16]= "code";
-$tabrowid[17]= "id";
-$tabrowid[18]= "rowid";
-$tabrowid[19]= "id";
-$tabrowid[20]= "";
-$tabrowid[21]= "rowid";
-$tabrowid[22]= "rowid";
-$tabrowid[23]= "";
-$tabrowid[24]= "";
-$tabrowid[25]= "";
-$tabrowid[26]= "";
-$tabrowid[27]= "id";
-$tabrowid[28]= "";
-$tabrowid[29]= "";
-$tabrowid[30]= "";
-//$tabrowid[31]= "";
+$tabrowid[31]= "";
 $tabrowid[32]= "";
-$tabrowid[33]= "rowid";
-$tabrowid[34]= "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
-$tabcond[1] = (! empty($conf->societe->enabled));
-$tabcond[2] = true;
-$tabcond[3] = true;
-$tabcond[4] = true;
-$tabcond[5] = (! empty($conf->societe->enabled) || ! empty($conf->adherent->enabled));
-$tabcond[6] = ! empty($conf->agenda->enabled);
-$tabcond[7] = ! empty($conf->tax->enabled);
-$tabcond[8] = ! empty($conf->societe->enabled);
-$tabcond[9] = true;
-$tabcond[10]= true;
-$tabcond[11]= (! empty($conf->societe->enabled));
-$tabcond[12]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
-$tabcond[13]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
-$tabcond[14]= (! empty($conf->product->enabled) && ! empty($conf->ecotax->enabled));
-$tabcond[15]= true;
-$tabcond[16]= (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[17]= (! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled));
-$tabcond[18]= ! empty($conf->expedition->enabled);
-$tabcond[19]= ! empty($conf->societe->enabled);
-$tabcond[20]= ! empty($conf->fournisseur->enabled);
-$tabcond[21]= ! empty($conf->propal->enabled);
-$tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled));
-$tabcond[23]= true;
-$tabcond[24]= ! empty($conf->resource->enabled);
-$tabcond[25]= true; // && ! empty($conf->global->MAIN_EMAIL_EDIT_TEMPLATE_FROM_DIC);
-$tabcond[26]= ! empty($conf->product->enabled);
-$tabcond[27]= ! empty($conf->societe->enabled);
-$tabcond[28]= ! empty($conf->holiday->enabled);
-$tabcond[29]= ! empty($conf->projet->enabled);
-$tabcond[30]= ! empty($conf->label->enabled);
-//$tabcond[31]= ! empty($conf->accounting->enabled);
+$tabcond[31]= ! empty($conf->accounting->enabled);
 $tabcond[32]= ! empty($conf->accounting->enabled);
-$tabcond[33]= ! empty($conf->hrm->enabled);
-$tabcond[34]= ! empty($conf->hrm->enabled);
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[1]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[2]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[3]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[4]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[5]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[7]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
-$tabhelp[10] = array('code'=>$langs->trans("EnterAnyCode"), 'taux'=>$langs->trans("SellTaxRate"), 'recuperableonly'=>$langs->trans("RecuperableOnly"), 'localtax1_type'=>$langs->trans("LocalTaxDesc"), 'localtax2_type'=>$langs->trans("LocalTaxDesc"));
-$tabhelp[11] = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[12] = array('code'=>$langs->trans("EnterAnyCode"), 'type_cdr'=>$langs->trans("TypeCdr"));
-$tabhelp[13] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[14] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[15] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[16] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[17] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[18] = array('code'=>$langs->trans("EnterAnyCode"), 'tracking'=>$langs->trans("UrlTrackingDesc"));
-$tabhelp[19] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[20] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[23] = array();
-$tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[25] = array('topic'=>$langs->trans('SeeSubstitutionVars'),'content'=>$langs->trans('SeeSubstitutionVars'),'type_template'=>$langs->trans("TemplateForElement"),'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$langs->trans("MinimumNoticePeriod"), 'newbymonth'=>$langs->trans("NbAddedAutomatically"));
-$tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
-//$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
+$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
 $tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
-$tabfieldcheck[1]  = array();
-$tabfieldcheck[2]  = array();
-$tabfieldcheck[3]  = array();
-$tabfieldcheck[4]  = array();
-$tabfieldcheck[5]  = array();
-$tabfieldcheck[6]  = array();
-$tabfieldcheck[7]  = array();
-$tabfieldcheck[8]  = array();
-$tabfieldcheck[9]  = array();
-$tabfieldcheck[10] = array();
-$tabfieldcheck[11] = array();
-$tabfieldcheck[12] = array();
-$tabfieldcheck[13] = array();
-$tabfieldcheck[14] = array();
-$tabfieldcheck[15] = array();
-$tabfieldcheck[16] = array();
-$tabfieldcheck[17] = array();
-$tabfieldcheck[18] = array();
-$tabfieldcheck[19] = array();
-$tabfieldcheck[20] = array();
-$tabfieldcheck[21] = array();
-$tabfieldcheck[22] = array();
-$tabfieldcheck[23] = array();
-$tabfieldcheck[24] = array();
-$tabfieldcheck[25] = array();
-$tabfieldcheck[26] = array();
-$tabfieldcheck[27] = array();
-$tabfieldcheck[28] = array();
-$tabfieldcheck[29] = array();
-$tabfieldcheck[30] = array();
-//$tabfieldcheck[31] = array();
+$tabfieldcheck[31] = array();
 $tabfieldcheck[32] = array();
-$tabfieldcheck[33] = array();
-$tabfieldcheck[34] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -903,14 +555,10 @@ $formadmin=new FormAdmin($db);
 
 llxHeader();
 
-$titre=$langs->trans("DictionarySetup");
+$titre=$langs->trans($tablib[$id]);
 $linkback='';
-if ($id)
-{
-    $titre.=' - '.$langs->trans($tablib[$id]);
-    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
-}
-print load_fiche_titre($titre,$linkback,'title_setup');
+
+print load_fiche_titre($titre,$linkback,'title_accountancy');
 
 if (empty($id))
 {
