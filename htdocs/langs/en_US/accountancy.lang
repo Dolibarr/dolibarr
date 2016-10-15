@@ -46,6 +46,7 @@ AccountAccounting=Accounting account
 AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 MenuDefaultAccounts=Default accounts
+MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
 CustomersVentilation=Customer invoice binding
