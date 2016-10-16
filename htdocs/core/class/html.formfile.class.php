@@ -157,7 +157,7 @@ class FormFile
             	$out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 	            $out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" checked name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+				$out .= '<input type="checkbox" checked class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
             	$out .= '</td>';
             	$out .= '</tr>';
             }

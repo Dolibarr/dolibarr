@@ -529,17 +529,6 @@ div.confirmmessage {
 div.myavailability {
 	padding-top: 6px;
 }
-/* Style to move picto into left of button */
-/*
-.buttonactionview {
-	padding-left: 15px;
-}
-.pictoactionview {
-	padding-left: 10px;
-	margin-right: -24px;
-	z-index: 999999;
-}
-*/
 .googlerefreshcal {
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -587,6 +576,10 @@ div.myavailability {
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
+}
+.savingdocmask {
+	margin-top: 6px;
+	margin-bottom: 12px;
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */

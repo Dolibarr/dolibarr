@@ -4245,7 +4245,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';	
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{

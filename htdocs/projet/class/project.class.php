@@ -1327,9 +1327,9 @@ class Project extends CommonObject
 
 				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
 
-				//manage new parent clone task id
 				$tab_conv_child_parent=array();
 
+				// Loop on each task, to clone it
 			    foreach ($tasksarray as $tasktoclone)
 			    {
 					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,$move_date,true,false,$clone_task_file,true,false);
