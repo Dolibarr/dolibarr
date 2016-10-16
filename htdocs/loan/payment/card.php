@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("LoanPayment"), 0, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), 0, 'payment');
 
 /*
  * Confirm deletion of the payment
