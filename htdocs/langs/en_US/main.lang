@@ -737,6 +737,7 @@ Miscellaneous=Miscellaneous
 Calendar=Calendar
 GroupBy=Group by...
 ViewFlatList=View flat list
+RemoveString=Remove string '%s'
 # Week day
 Monday=Monday
 Tuesday=Tuesday

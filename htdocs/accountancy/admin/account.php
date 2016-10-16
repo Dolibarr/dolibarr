@@ -31,7 +31,10 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.
 
 // Langs
 $langs->load("compta");
+$langs->load("bills");
+$langs->load("admin");
 $langs->load("accountancy");
+$langs->load("salaries");
 
 $mesg = '';
 $action = GETPOST('action');
@@ -172,17 +175,18 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 }	
 
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
-$result = $db->query($sql);
+$resql = $db->query($sql);
 
-if ($result) {
-	$num = $db->num_rows($result);
+if ($resql) {
+    
+	$num = $db->num_rows($resql);
 	
     $params='';
 	if ($search_account != "") $params.= '&amp;search_account='.urlencode($search_account);
@@ -206,14 +210,14 @@ if ($result) {
     $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
     $sql .= " WHERE active = 1";
     dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
-    $resql = $db->query($sql);
+    $resqlchart = $db->query($sql);
     $var = true;
-    if ($resql) {
-        $num = $db->num_rows($resql);
+    if ($resqlchart) {
+        $numbis = $db->num_rows($resqlchart);
         $i = 0;
-        while ( $i < $num ) {
+        while ( $i < $numbis ) {
             $var = ! $var;
-            $row = $db->fetch_row($resql);
+            $row = $db->fetch_row($resqlchart);
     
             print '<option value="' . $row[0] . '"';
             print $pcgver == $row[0] ? ' selected' : '';

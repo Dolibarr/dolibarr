@@ -705,6 +705,13 @@ class Project extends CommonObject
 
         if ($this->statut != 1)
         {
+            // Check parameters
+            if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title))
+            {
+                $this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("Label")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+                return -1;
+            }
+            
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet";
@@ -1196,6 +1203,7 @@ class Project extends CommonObject
     	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 		$clone_project->ref=$defaultref;
+		$clone_project->title=$langs->trans("CopyOf").' '.$clone_project->title;
 
 		// Create clone
 		$result=$clone_project->create($user,$notrigger);

@@ -401,10 +401,6 @@ foreach ($accounts as $key=>$type)
 		$var = !$var;
 		$solde = $acc->solde(1);
 
-		
-		
-		
-		
 		print '<tr '.$bc[$var].'>';
 		print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
 		print '<td>';
@@ -450,7 +446,7 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td><td></td></tr>';
 }
 
 print '</table>';
