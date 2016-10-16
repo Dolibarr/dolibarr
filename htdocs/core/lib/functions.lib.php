@@ -4239,13 +4239,13 @@ function yn($yesno, $case=1, $color=0)
  *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')
  *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
  */
-function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
+function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 {
 	global $conf;
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','supplier_invoice','invoice_supplier','mailing');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';	
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
