@@ -1242,6 +1242,9 @@ class Task extends CommonObject
 
 		// Load source object
 		$clone_task->fetch($fromid);
+		$clone_task->fetch_optionals();
+		//var_dump($clone_task->array_options);exit;
+		
 		$origin_task->fetch($fromid);
 
 		$defaultref='';

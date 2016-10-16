@@ -76,7 +76,10 @@ class modFTP extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array();			// List of parameters
+		$this->const = array(
+		    1=>array('FTP_CONNECT_WITH_SSL','chaine','0','Use FTPS for FTP module', 1, 'current', 1),
+		    2=>array('FTP_CONNECT_WITH_SFTP','chaine','0','Use SFTP for FTP module', 1, 'current', 1)
+		);			// List of parameters
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

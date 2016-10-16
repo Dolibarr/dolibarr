@@ -150,6 +150,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $day='';
     $month='';
     $year='';
+    $search_array_options=array();
 }
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
 

@@ -491,7 +491,6 @@ if ($id > 0)
 			print '<td align="center">'.$langs->trans("Insurance").'</td>';
 			print '<td align="center">'.$langs->trans("Interest").'</td>';
       		print '<td align="center">'.$langs->trans("LoanCapital").'</td>';
-      		print '<td>&nbsp;</td>';
       		print '</tr>';
 
 			$var=True;
