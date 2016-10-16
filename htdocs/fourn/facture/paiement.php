@@ -439,12 +439,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $objp = $db->fetch_object($resql);
 	                        $var=!$var;
 	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        // Ref
 	                        print '<td>';
 	                        $invoicesupplierstatic->ref=$objp->ref;
 	                        $invoicesupplierstatic->id=$objp->facid;
 	                        print $invoicesupplierstatic->getNomUrl(1);
 	                        print '</td>';
+	                        
+	                        // Ref supplier
 	                        print '<td>'.$objp->ref_supplier.'</td>';
+	                        
+	                        // Date
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
@@ -455,12 +461,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
 	                        
-	                        // Currency
-	                        print '<td align="center">'.$objp->multicurrency_code."</td>\n";
-	                        
 	                        // Multicurrency
 	                        if (!empty($conf->multicurrency->enabled)) 
 	                        {
+    	                        // Currency
+	                            print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+	                        
 	                            print '<td align="right">';
 	                            if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 	                            {
@@ -520,13 +526,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        // Print total
 	                        print '<tr class="liste_total">';
-	                        print '<td colspan="4" align="left">'.$langs->trans('TotalTTC').':</td>';
+	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
-	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 	                        print '<td align="center">&nbsp;</td>';
+	                        if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";
