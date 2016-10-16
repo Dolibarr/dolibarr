@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -363,7 +363,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                             if (code == \'CHQ\' || code == \'VIR\')
             				{
-            					$(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+            					if (code == \'CHQ\')
+			                    {
+			                        $(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+			                    }
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
             						var emetteur = ('.$facture->type.' == 2) ? \''.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'\' : jQuery(\'#thirdpartylabel\').val();
