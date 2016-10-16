@@ -568,6 +568,16 @@ div.myavailability {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+.amountalreadypaid {
+}
+.amountpaymentcomplete {
+	color: #008800;
+	font-weight: bold;
+}
+.amountremaintopay {
+	color: #880000;
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;

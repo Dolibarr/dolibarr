@@ -570,6 +570,8 @@ div.myavailability {
 	margin-top: 25px !important;
 }
 .amountalreadypaid {
+}
+.amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
 }

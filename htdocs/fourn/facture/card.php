@@ -214,7 +214,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			// Define output language
-			$outputlangs = $langs;
+			/*$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
 				$newlang = GETPOST('lang_id');
@@ -227,7 +227,7 @@ if (empty($reshook))
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			}
+			}*/
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;

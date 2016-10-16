@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
@@ -149,7 +149,7 @@ if ($object->id > 0)
 	if ($object->fournisseur)
 	{
 		print '<tr>';
-        print '<td class="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
+        print '<td class="titlefield">'.$langs->trans("SupplierCode"). '</td><td>';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td>';
@@ -159,7 +159,7 @@ if ($object->id > 0)
         print '<tr>';
         print '<td>';
         print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
-        print '</td><td colspan="3">';
+        print '</td><td>';
         print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
         print '</td>';
         print '</tr>';
@@ -167,7 +167,7 @@ if ($object->id > 0)
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print '<td class="titlefield">'.$langs->trans('VATIsUsed').'</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -175,19 +175,19 @@ if ($object->id > 0)
 	// Local Taxes
 	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+		print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
 	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+		print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
 
     // TVA Intra
-    print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
+    print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
     print $object->tva_intra;
     print '</td></tr>';
 
@@ -200,7 +200,7 @@ if ($object->id > 0)
 	print '<td>';
 	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	if ($action == 'editconditions')
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_supplier_id,'cond_reglement_supplier_id',-1,1);
@@ -219,7 +219,7 @@ if ($object->id > 0)
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	if ($action == 'editmode')
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'mode_reglement_supplier_id');
@@ -236,7 +236,7 @@ if ($object->id > 0)
 	{
 	    $langs->load("categories");
     	print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
-    	print '<td colspan="3">';
+    	print '<td>';
     	print $form->showCategories($object->id, 'supplier', 1);
     	print "</td></tr>";
 	}
@@ -255,8 +255,8 @@ if ($object->id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
-        print '<td colspan="3">';
+        print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<td>';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);
         if ($result > 0)
