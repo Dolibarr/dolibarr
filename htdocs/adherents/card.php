@@ -253,6 +253,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
+		$societe=$_POST["societe"];
 		$morphy=$_POST["morphy"];
 		$login=$_POST["login"];
 		if ($morphy != 'mor' && empty($lastname)) {
