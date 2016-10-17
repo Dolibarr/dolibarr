@@ -314,7 +314,6 @@ class Facture extends CommonInvoice
 			$this->brouillon = 1;
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
-			var_dump($this->linked_objects);
 				
 			$forceduedate = $this->calculate_date_lim_reglement();
 
