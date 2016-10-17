@@ -38,6 +38,7 @@ else
 {
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
+$search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
@@ -61,6 +62,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $actioncode='';
+    $search_agenda_label='';
 }
 
 
@@ -163,7 +165,9 @@ if (!empty($object->id))
     //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
     
     // List of all actions
-    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '');
+    $filters=array();
+    $filters['search_agenda_label']=$search_agenda_label;
+    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
 }
 
 
