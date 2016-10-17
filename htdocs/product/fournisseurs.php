@@ -623,7 +623,7 @@ if ($id > 0 || $ref)
 					{
 						$var=!$var;
 
-						print "<tr ".$bc[$var].">";
+						print "<tr ".$bc[$var?1:0].">";
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';

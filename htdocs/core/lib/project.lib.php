@@ -365,7 +365,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$lastprojectid=$lines[$i]->fk_project;
 				}
 
-				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
+				print '<tr '.$bc[$var?1:0].' id="row-'.$lines[$i]->id.'">'."\n";
 
 				if ($showproject)
 				{
@@ -607,7 +607,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				$taskstatic->id=$lines[$i]->id;
 
-				print "<tr ".$bc[$var].">\n";
+				print "<tr ".$bc[$var?1:0].">\n";
 
 				// Project
 				print "<td>";
@@ -794,7 +794,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     $workloadforid[$projectstatic->id]=1;
 			    }
 			    
-				print "<tr ".$bc[$var].">\n";
+				print "<tr ".$bc[$var?1:0].">\n";
 
 				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 				{
@@ -1127,7 +1127,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			    $projectstatic->dateo = $db->jdate($objp->dateo);
 			     
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
 				if (! in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title,24);

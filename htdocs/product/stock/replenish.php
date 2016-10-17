@@ -612,7 +612,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), './img/no', '', 1);
 		}
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 
 		// Select field
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';

@@ -137,7 +137,7 @@ $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
@@ -166,7 +166,7 @@ print '</form>';
 
 // DISPLAY MARGIN RATES
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -190,7 +190,7 @@ print '</tr>';
 
 // DISPLAY MARK RATES
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -213,7 +213,7 @@ print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$lang
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -246,7 +246,7 @@ $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td align="left">';
 print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
@@ -263,7 +263,7 @@ $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td align="left">';
 $formcompany = new FormCompany($db);

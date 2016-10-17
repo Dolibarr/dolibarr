@@ -130,7 +130,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -184,7 +184,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -244,7 +244,7 @@ if ($db->type != 'pgsql')
     	while ($row = $db->fetch_object($resql))
     	{
     		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -300,7 +300,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     
     	while ($row = $db->fetch_object($resql))
     	{
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -351,7 +351,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	{
 		while ($row = $db->fetch_object($resql))
 		{
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>';
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
@@ -477,7 +477,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			//print '<td>'.$username.'</td>';
 			print '<td>';
 			$projectstatic->id=$obj->projectid;

@@ -276,7 +276,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print '<tr '.$bc[$var?1:0].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -412,7 +412,7 @@ foreach ($dirmodels as $reldir)
 
 		    			if ($modulequalified)
 		    			{
-		    				print '<tr '.$bc[$var].'><td width="100">';
+		    				print '<tr '.$bc[$var?1:0].'><td width="100">';
 		    				print (empty($module->name)?$name:$module->name);
 		    				print "</td><td>\n";
 		    				if (method_exists($module,'info')) print $module->info($langs);
@@ -506,7 +506,7 @@ print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnExpenseReports").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='EXPENSEREPORT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -523,7 +523,7 @@ print '</td></tr>'."\n";
 
 //Use draft Watermark
 $var=!$var;
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftOrders").'<br>';
 print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";

@@ -155,7 +155,7 @@ if ($year)
                     $var=!$var;
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print "<tr ".$bc[$var].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print "<tr ".$bc[$var?1:0].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
                 }

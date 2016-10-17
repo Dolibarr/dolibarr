@@ -166,7 +166,7 @@ if ( $resql )
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{

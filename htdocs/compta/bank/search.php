@@ -439,7 +439,7 @@ if ($resql)
             
             $var=!$var;
 
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
 
             // Ref
         	if (! empty($arrayfields['b.rowid']['checked']))            

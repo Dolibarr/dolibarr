@@ -166,7 +166,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td  class="nowrap">';
+				print '<tr '.$bc[$var?1:0].'><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
                 $propalstatic->ref_client=$obj->ref_client;
@@ -197,7 +197,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -247,7 +247,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print '<tr '.$bc[$var].'><td  class="nowrap">';
+                print '<tr '.$bc[$var?1:0].'><td  class="nowrap">';
                 $supplierproposalstatic->id=$obj->rowid;
                 $supplierproposalstatic->ref=$obj->ref;
                 $supplierproposalstatic->total_ht = $obj->total_ht;
@@ -277,7 +277,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         else
         {
             $var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
+            print '<tr '.$bc[$var?1:0].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table><br>";
 
@@ -326,7 +326,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
                 $orderstatic->ref=$obj->ref;
                 $orderstatic->ref_client=$obj->ref_client;
@@ -357,7 +357,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -407,7 +407,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print '<tr '.$bc[$var].'><td class="nowrap">';
+                print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
                 $supplierorderstatic->ref=$obj->ref;
                 $supplierorderstatic->ref_supplier=$obj->ref_suppliert;
@@ -438,7 +438,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         else
         {
 			$var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
+            print '<tr '.$bc[$var?1:0].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 
@@ -501,7 +501,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
 				print $companystatic->getLibCustProspStatut();
@@ -517,7 +517,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -560,7 +560,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
@@ -571,7 +571,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -635,7 +635,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var]."><td><a href=\"../contrat/card.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"), 'contract')." ".$obj->ref."</a></td>";
+				print "<tr ".$bc[$var?1:0]."><td><a href=\"../contrat/card.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"), 'contract')." ".$obj->ref."</a></td>";
 				print '<td>';
                 $companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
@@ -694,7 +694,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" width="140">';
@@ -793,7 +793,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" width="140">';

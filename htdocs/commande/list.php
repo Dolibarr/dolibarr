@@ -787,7 +787,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
 
         $notshippable=0;
         $warning = 0;

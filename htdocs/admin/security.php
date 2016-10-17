@@ -250,7 +250,7 @@ foreach ($arrayhandler as $key => $module)
 	if ($module->isEnabled())
 	{
         $var = !$var;
-        print '<tr '.$bc[$var].'><td width="100">';
+        print '<tr '.$bc[$var?1:0].'><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
         print $module->getDescription().'<br>';
@@ -300,37 +300,37 @@ $var=!$var;
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("MinLength")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("NbMajMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("NbNumMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("NbSpeMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("NbIteConsecutive")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td>' . $langs->trans("NoAmbiCaracAutoGeneration")."</td>";
 	print '<td colspan="2"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
 	print '</tr>';
@@ -408,7 +408,7 @@ print '</tr>';
 
 // Disable clear password in database
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
@@ -442,7 +442,7 @@ print '</tr>';
 
 // Cryptage du mot de base de la base dans conf.php
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
@@ -477,7 +477,7 @@ print '</tr>';
 
 // Disable link "Forget password" on logon
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
 print '<td align="center" width="60">';
 if(! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))

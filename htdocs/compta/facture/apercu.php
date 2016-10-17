@@ -273,7 +273,7 @@ if ($id > 0 || ! empty($ref))
             print '<table class="nobordernopadding" width="100%">';
             print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
-            print "<tr ".$bc[$var]."><td>".$langs->trans("Bill")." PDF</td>";
+            print "<tr ".$bc[$var?1:0]."><td>".$langs->trans("Bill")." PDF</td>";
 
             print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
             print '<td align="right">'.dol_print_size(dol_filesize($file)). '</td>';
@@ -283,7 +283,7 @@ if ($id > 0 || ! empty($ref))
             // Si fichier detail PDF existe
             if (file_exists($filedetail)) // facture detaillee supplementaire
             {
-                print "<tr ".$bc[$var]."><td>Facture detaillee</td>";
+                print "<tr ".$bc[$var?1:0]."><td>Facture detaillee</td>";
 
                 print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';

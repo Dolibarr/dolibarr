@@ -132,7 +132,7 @@ if ($resql)
 		if ($obj)
 		{
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print "<td>".$obj->df."</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';

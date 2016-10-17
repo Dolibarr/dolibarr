@@ -202,7 +202,7 @@ if ($result) {
 		while ( $objp = $db->fetch_object($result) ) {
 			$var = ! $var;
 			
-			print "<tr " . $bc[$var] . ">";
+			print "<tr " . $bc[$var?1:0] . ">";
 			print '<td>';
 			$result_inner = $invoicestatic->fetch($objp->invoiceid);
 			if ($result_inner < 0) {

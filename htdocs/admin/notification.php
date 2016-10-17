@@ -136,7 +136,7 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
@@ -165,7 +165,7 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>';
 
 $var=true;
@@ -222,7 +222,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
 	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
-    print '<tr '.$bc[$var].'>';
+    print '<tr '.$bc[$var?1:0].'>';
     print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';

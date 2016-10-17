@@ -512,7 +512,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($objp->date_start)) $type=1;
 				if (! empty($objp->date_end)) $type=1;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				// Product label
 				if ($objp->fk_product > 0)
@@ -652,7 +652,7 @@ if ($id > 0 || ! empty($ref))
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr '.$bc[$var].'><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr '.$bc[$var?1:0].'><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';

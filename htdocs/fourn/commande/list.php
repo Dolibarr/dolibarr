@@ -709,7 +709,7 @@ if ($resql)
         $objectstatic->date_delivery = $db->jdate($obj->date_delivery);
         $objectstatic->statut = $obj->fk_statut;
         
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		// Ref
         if (! empty($arrayfields['cf.ref']['checked']))

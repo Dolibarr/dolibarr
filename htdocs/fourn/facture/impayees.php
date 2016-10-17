@@ -237,7 +237,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				$classname = "impayee";
 
 				print '<td class="nowrap">';

@@ -747,7 +747,7 @@ if ($resql)
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;
     		
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{

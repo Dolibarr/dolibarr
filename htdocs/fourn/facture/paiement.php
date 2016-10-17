@@ -438,7 +438,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        $objp = $db->fetch_object($resql);
 	                        $var=!$var;
-	                        print '<tr '.$bc[$var].'>';
+	                        print '<tr '.$bc[$var?1:0].'>';
 	                        
 	                        // Ref
 	                        print '<td>';
@@ -686,7 +686,7 @@ if (empty($action))
         {
             $objp = $db->fetch_object($resql);
             $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
 
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';

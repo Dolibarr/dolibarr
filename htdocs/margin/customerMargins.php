@@ -256,7 +256,7 @@ if ($result)
 
 			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			if ($client) {
 		        print '<td>';
 				$invoicestatic->id=$objp->facid;

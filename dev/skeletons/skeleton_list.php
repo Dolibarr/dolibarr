@@ -413,7 +413,7 @@ if ($resql)
             $var = !$var;
             
             // Show here line of result
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             // LIST_OF_TD_FIELDS_LIST
             /*
             if (! empty($arrayfields['t.field1']['checked'])) 

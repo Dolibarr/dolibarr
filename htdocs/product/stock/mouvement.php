@@ -698,7 +698,7 @@ if ($resql)
 		}
 
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         // Id movement
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date

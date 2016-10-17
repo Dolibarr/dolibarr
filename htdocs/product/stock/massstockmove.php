@@ -359,7 +359,7 @@ print getTitleFieldOfList('',0);
 print '</tr>';
 
 
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 // Product
 print '<td>';
 $filtertype=0;
@@ -405,7 +405,7 @@ foreach($listofdata as $key => $val)
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>';
 	print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 	print '</td>';

@@ -184,7 +184,7 @@ foreach ($data as $val)
     {	// If we have empty year
         $oldyear--;
         $var=!$var;
-        print '<tr '.$bc[$var].' height="24">';
+        print '<tr '.$bc[$var?1:0].' height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
@@ -196,7 +196,7 @@ foreach ($data as $val)
         print '</tr>';
     }
     $var=!$var;
-    print '<tr '.$bc[$var].' height="24">';
+    print '<tr '.$bc[$var?1:0].' height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;

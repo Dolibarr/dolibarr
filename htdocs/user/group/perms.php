@@ -276,7 +276,7 @@ if ($id)
 
                 if ($caneditperms)
                 {
-                    print '<tr '. $bc[$var].'>';
+                    print '<tr '. $bc[$var?1:0].'>';
                     print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                     print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
                     print '<td align="center" class="nowrap">';
@@ -289,7 +289,7 @@ if ($id)
                 }
             }
 
-            print '<tr '. $bc[$var].'>';
+            print '<tr '. $bc[$var?1:0].'>';
 
             // Module
             print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';

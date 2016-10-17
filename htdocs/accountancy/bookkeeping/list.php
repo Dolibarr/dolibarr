@@ -429,7 +429,7 @@ foreach ($object->lines as $line ) {
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-	print '<tr '. $bc[$var].'>';
+	print '<tr '. $bc[$var?1:0].'>';
 
 	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';

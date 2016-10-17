@@ -173,7 +173,7 @@ if ($result)
             $userstatic->id=$obj->uid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
             print '<td align="right">'.$obj->km.'</td>';
@@ -187,7 +187,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var?1:0].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

@@ -266,7 +266,7 @@ if (GETPOST("action") == 'create')
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		print '<td align="right">'.price($objp->total_ttc)."</td>";
 

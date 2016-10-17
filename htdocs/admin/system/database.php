@@ -100,7 +100,7 @@ else
 		foreach($listtouse as $param => $paramval)
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td>';
 			print $param;
 			print '</td>';

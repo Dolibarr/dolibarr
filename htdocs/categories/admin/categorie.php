@@ -97,7 +97,7 @@ $form = new Form($db);
 
 // Mail required for members
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
 print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 

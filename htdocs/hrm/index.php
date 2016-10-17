@@ -190,7 +190,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->login=$obj->login;
                 $userstatic->photo=$obj->photo;
                 $userstatic->statut=$obj->statut;
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
@@ -210,7 +210,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            print '<tr '.$bc[$var?1:0].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table><br>';
     }
@@ -264,7 +264,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
@@ -278,7 +278,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -331,7 +331,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -345,7 +345,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

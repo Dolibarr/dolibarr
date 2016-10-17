@@ -753,7 +753,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 		    $var = ! $var;
 		    
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 
 			// Label of price
 			print '<td>';
@@ -1239,7 +1239,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			$var = !$var;
 
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td>';
 			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
@@ -1380,7 +1380,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		{
     			$objp = $db->fetch_object($result);
     			$var = ! $var;
-    			print '<tr '. $bc[$var].'>';
+    			print '<tr '. $bc[$var?1:0].'>';
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
     
@@ -1707,7 +1707,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			foreach ($prodcustprice->lines as $line)
 			{
 				$var = ! $var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1788,7 +1788,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		
 		
 		// Line for default price
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print "<td>" . $langs->trans("Default") . "</td>";
 		print "<td>" . "</td>";
 		
@@ -1823,7 +1823,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			{
 			    $var = ! $var;
 			    
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);

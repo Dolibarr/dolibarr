@@ -578,7 +578,7 @@ if ($resql)
     	if ($userAccess >= 0)
     	{
     		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		print "<tr ".$bc[$var?1:0].">";
 
     		// Project url
         	if (! empty($arrayfields['p.ref']['checked']))

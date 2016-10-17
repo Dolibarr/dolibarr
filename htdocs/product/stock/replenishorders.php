@@ -261,7 +261,7 @@ if ($resql)
         if ($showline)
         {
             $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
-            print '<tr ' . $bc[$var] . '>'.
+            print '<tr ' . $bc[$var?1:0] . '>'.
             // Ref
                  '<td>'.
                  '<a href="' . $href . '">'.

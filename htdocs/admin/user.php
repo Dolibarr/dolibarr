@@ -114,7 +114,7 @@ $form = new Form($db);
 
 // Mail required for members
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 

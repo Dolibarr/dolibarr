@@ -91,7 +91,7 @@ $var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
     $var=!$var;
-    print "<tr ".$bc[$var].">";
+    print "<tr ".$bc[$var?1:0].">";
     print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
     print "<td>".$key."</td>\n";

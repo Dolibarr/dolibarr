@@ -91,7 +91,7 @@ print '</tr>';
 
 // Hide unauthorized menu
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))

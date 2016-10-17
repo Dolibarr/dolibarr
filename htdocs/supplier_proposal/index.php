@@ -65,7 +65,7 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '</tr>';
 print "</table></form><br>\n";
@@ -122,7 +122,7 @@ if ($resql)
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
@@ -176,7 +176,7 @@ if (! empty($conf->supplier_proposal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				$supplier_proposalstatic->id=$obj->rowid;
 				$supplier_proposalstatic->ref=$obj->ref;
@@ -235,7 +235,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td width="20%" class="nowrap">';
 
 			$supplier_proposalstatic->id=$obj->rowid;
@@ -314,7 +314,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" width="140">';

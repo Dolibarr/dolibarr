@@ -64,7 +64,7 @@ $var=True;
 foreach ($triggers as $trigger)
 {
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
 	print '<td valign="top">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';

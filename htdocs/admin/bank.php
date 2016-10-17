@@ -199,7 +199,7 @@ while ($i < $nbofbank)
 {
 	$var = !$var;
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';
@@ -306,7 +306,7 @@ foreach ($dirmodels as $reldir)
                             
                             if ($modulequalified) {
                                 $var = ! $var;
-                                print '<tr ' . $bc[$var] . '><td width="100">';
+                                print '<tr ' . $bc[$var?1:0] . '><td width="100">';
                                 print(empty($module->name) ? $name : $module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module, 'info'))

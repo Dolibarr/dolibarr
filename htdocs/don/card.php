@@ -708,7 +708,7 @@ if (! empty($id) && $action != 'edit')
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
-			print "<tr ".$bc[$var]."><td>";
+			print "<tr ".$bc[$var?1:0]."><td>";
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		    $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;

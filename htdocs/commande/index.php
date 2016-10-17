@@ -69,7 +69,7 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("CustomerOrder").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
@@ -140,7 +140,7 @@ if ($resql)
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
@@ -206,7 +206,7 @@ if (! empty($conf->commande->enabled))
 				$companystatic->code_client=$obj->code_client;
 				$companystatic->canvas=$obj->canvas;
 
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap">';
 				print $commandestatic->getNomUrl(1);
                 print "</td>";
@@ -219,7 +219,7 @@ if (! empty($conf->commande->enabled))
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -269,7 +269,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td width="20%" class="nowrap">';
 
 			$commandestatic->id=$obj->rowid;
@@ -349,7 +349,7 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td class="nowrap" width="20%">';
 
 				$commandestatic->id=$obj->rowid;
@@ -431,7 +431,7 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td width="20%" class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;

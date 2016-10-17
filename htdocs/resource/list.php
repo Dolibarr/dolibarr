@@ -116,7 +116,7 @@ if ($ret)
                 $style='';
                 if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
 
-                print '<tr '.$bc[$var].' '.$style.'>';
+                print '<tr '.$bc[$var?1:0].' '.$style.'>';
 
                 print '<td>';
                 print $resource->getNomUrl(5);

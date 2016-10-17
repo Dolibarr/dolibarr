@@ -210,7 +210,7 @@ if ($result)
 			$type = '<td>&nbsp;</td>';
 		}
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;

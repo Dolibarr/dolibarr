@@ -244,7 +244,7 @@ if ($result > 0)
  			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']]=$label;
         }
-        print '<tr '.$bc[$var].'><td class="maxwidthonsmartphone">';
+        print '<tr '.$bc[$var?1:0].'><td class="maxwidthonsmartphone">';
         print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td class="maxwidthonsmartphone">';
@@ -259,7 +259,7 @@ if ($result > 0)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">';
+        print '<tr '.$bc[$var?1:0].'><td colspan="4" class="opacitymedium">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
     }
@@ -323,7 +323,7 @@ if ($result > 0)
             $contactstatic->id=$obj->contactid;
             $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
+            print '<tr '.$bc[$var?1:0].'><td>'.$contactstatic->getNomUrl(1);
             if ($obj->type == 'email')
             {
                 if (isValidEmail($obj->email))
@@ -358,7 +358,7 @@ if ($result > 0)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
     	$var = ! $var;
-		print '<tr '.$bc[$var].'><td>';
+		print '<tr '.$bc[$var?1:0].'><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
 		foreach($listtmp as $keyemail => $valemail)
@@ -397,7 +397,7 @@ if ($result > 0)
     if ($user->admin)
     {
 	    $var = ! $var;
-		print '<tr '.$bc[$var].'><td colspan="4">';
+		print '<tr '.$bc[$var?1:0].'><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
     }
@@ -455,7 +455,7 @@ if ($result > 0)
 
             $obj = $db->fetch_object($resql);
 
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr '.$bc[$var?1:0].'><td>';
             if ($obj->id > 0)
             {
 	            $contactstatic->id=$obj->id;

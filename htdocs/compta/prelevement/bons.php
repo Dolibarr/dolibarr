@@ -98,7 +98,7 @@ if ($result)
       $obj = $db->fetch_object($result);
       $var=!$var;
 
-      print "<tr ".$bc[$var]."><td>";
+      print "<tr ".$bc[$var?1:0]."><td>";
 
       print $bon->LibStatut($obj->statut,2);
       print "&nbsp;";

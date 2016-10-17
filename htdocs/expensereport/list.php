@@ -512,7 +512,7 @@ if ($resql)
 			$expensereportstatic->date_fin=$obj->date_fin;
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			if (! empty($arrayfields['d.ref']['checked'])) {
     			print '<td>';
     			print $expensereportstatic->getNomUrl(1);

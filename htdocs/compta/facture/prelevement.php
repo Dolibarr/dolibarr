@@ -548,7 +548,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result_sql);
 			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
@@ -599,7 +599,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result);
 			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 

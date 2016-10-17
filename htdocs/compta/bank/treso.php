@@ -308,7 +308,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
                 $var=!$var;
 
     			// Show line
-    			print "<tr ".$bc[$var].">";
+    			print "<tr ".$bc[$var?1:0].">";
     			print '<td>';
     			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr),"day");
     			else print $langs->trans("NotDefined");

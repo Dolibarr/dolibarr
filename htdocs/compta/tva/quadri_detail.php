@@ -355,7 +355,7 @@ else
 				if (! empty($fields['ddate_end'])) $type=1;
 
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -512,7 +512,7 @@ else
 				if (! empty($fields['ddate_end'])) $type=1;
 
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

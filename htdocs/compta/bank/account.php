@@ -644,7 +644,7 @@ if ($id > 0 || ! empty($ref))
 					print '</tr>';
 				}
 
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				print '<td class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 

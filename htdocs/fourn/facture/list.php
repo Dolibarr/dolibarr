@@ -709,7 +709,7 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 	
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
                 print '<td class="nowrap">';

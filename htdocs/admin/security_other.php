@@ -117,7 +117,7 @@ print '</tr>';
 
 // Enable Captcha code
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
@@ -147,7 +147,7 @@ print '</td></tr>';
 
 // Enable advanced perms
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if (! empty($conf->use_javascript_ajax))
@@ -185,7 +185,7 @@ print "</tr>\n";
 $var=!$var;
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -197,7 +197,7 @@ print '</tr>';
 $var=!$var;
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';

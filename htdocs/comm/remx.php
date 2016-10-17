@@ -359,7 +359,7 @@ if ($socid > 0)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{
@@ -518,7 +518,7 @@ if ($socid > 0)
 		{
 			$obj = array_shift($tab_sqlobj);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{

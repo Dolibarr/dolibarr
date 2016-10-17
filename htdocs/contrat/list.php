@@ -556,7 +556,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">';

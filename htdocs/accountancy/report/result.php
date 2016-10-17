@@ -143,7 +143,7 @@ if (!empty($cats))
 			}
 			$sommes[$code]['NP'] += $resultNP;
 			$sommes[$code]['N'] += $resultN;
-			print '<tr'. $bc[$var].'>';
+			print '<tr'. $bc[$var?1:0].'>';
 			print '<td>' . $cpt['account_number'] . '</td>';
 			print '<td>' . $cpt['name_cpt'] . '</td>';
 			print '<td>' . price($resultNP)  . '</td>';

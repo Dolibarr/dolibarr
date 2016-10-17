@@ -547,7 +547,7 @@ foreach ($listofreferent as $key => $value)
 			}
 
 			$var = ! $var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Module
 			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			// Nb
@@ -731,7 +731,7 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task')

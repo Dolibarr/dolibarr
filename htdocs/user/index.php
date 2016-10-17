@@ -460,7 +460,7 @@ if ($result)
         
 		$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         if (! empty($arrayfields['u.login']['checked']))
 		{
 		    print '<td>';

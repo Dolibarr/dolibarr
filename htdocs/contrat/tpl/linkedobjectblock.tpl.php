@@ -34,7 +34,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     $objectlink->fetch_lines();
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> >
+<tr <?php echo $bc[$var?1:0]; ?> >
     <td><?php echo $langs->trans("Contract"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>

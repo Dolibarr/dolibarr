@@ -498,7 +498,7 @@ if ($action == 'new')
 				$accounts[$bid]=0;
 			$accounts[$bid] += 1;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>'.dol_print_date($value["date"],'day').'</td>';
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
@@ -704,7 +704,7 @@ else
 				$accounts[$objp->bid]=0;
 			$accounts[$objp->bid] += 1;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td align="center">'.$i.'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
 			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';

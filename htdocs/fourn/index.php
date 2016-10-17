@@ -83,7 +83,7 @@ if ($resql)
 		$row = $db->fetch_row($resql);
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
@@ -134,7 +134,7 @@ if (! empty($conf->fournisseur->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td  class="nowrap">';
+				print '<tr '.$bc[$var?1:0].'><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);
@@ -191,7 +191,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -265,7 +265,7 @@ if ($resql)
 	{
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
@@ -301,7 +301,7 @@ if (count($companystatic->SupplierCategories))
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">\n";
+		print "<tr ".$bc[$var?1:0].">\n";
 		print '<td>';
 		$categstatic->id=$rowid;
 		$categstatic->ref=$label;

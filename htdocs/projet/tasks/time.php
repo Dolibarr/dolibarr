@@ -775,7 +775,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			$date1=$db->jdate($task_time->task_date);
 			$date2=$db->jdate($task_time->task_datehour);

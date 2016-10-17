@@ -67,14 +67,14 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td><td'.($canreadperms?' rowspan="2"':'').'><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 
 // Search Group
 if ($canreadperms)
 {
 	$var=false;
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr '.$bc[$var?1:0].'><td>';
 	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
@@ -127,7 +127,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td>';
         $fuserstatic->id = $obj->rowid;
         $fuserstatic->statut = $obj->statut;
@@ -240,7 +240,7 @@ if ($canreadperms)
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
 			if (! $obj->entity)
 			{

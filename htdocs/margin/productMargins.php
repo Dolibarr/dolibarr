@@ -253,7 +253,7 @@ if ($result)
 
 			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			if ($id > 0) {
 				print '<td>';
 				$invoicestatic->id=$objp->facid;

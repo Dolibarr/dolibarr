@@ -141,7 +141,7 @@ if ($action == 'display' || $action == 'delete') {
 		if (is_array($AccCat->lines_display) && count($AccCat->lines_display) > 0) {
 			foreach ( $AccCat->lines_display as $cpt ) {
 				$var = ! $var;
-				print '<tr' . $bc[$var] . '>';
+				print '<tr' . $bc[$var?1:0] . '>';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print $form->formconfirm($_SERVER["PHP_SELF"] . "?account_category=$cat_id&cptid=" . $cpt->rowid, $langs->trans("DeleteCptCategory"), $langs->trans("ConfirmDeleteCptCategory"), "delete", '', 0, "action-delete" . $j);

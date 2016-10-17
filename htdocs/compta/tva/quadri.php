@@ -260,7 +260,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$x_paye_ht = 0;
 		foreach($x_both as $rate => $both){
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td>$rate%</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['totalht'])."</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['vat'])."</td>";
@@ -283,7 +283,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$subtotal = $subtotal + $diff;
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td colspan="7"></td>';
 		print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
 		print "</tr>\n";

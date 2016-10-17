@@ -448,7 +448,7 @@ else
             	{
             		$var=!$var;
 
-            		print "<tr ".$bc[$var].">";
+            		print "<tr ".$bc[$var?1:0].">";
             		print '<td>';
             		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');

@@ -107,20 +107,20 @@ if ($action == 'edit')
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_UNIT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_UNIT . '"></td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_TOT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_TOT . '"></td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_ROUNDING_RULE_TOT" size="3" value="' . $conf->global->MAIN_ROUNDING_RULE_TOT . '"></td></tr>';
 
@@ -141,20 +141,20 @@ else
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
 

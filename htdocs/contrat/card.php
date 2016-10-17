@@ -1472,7 +1472,7 @@ else
 
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
-                    print '<tr '.$bc[$var].' valign="top">';
+                    print '<tr '.$bc[$var?1:0].' valign="top">';
                     // Libelle
                     if ($objp->fk_product > 0)
                     {
@@ -1561,7 +1561,7 @@ else
 		                    $colspan = 7;
 	                    }
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr '.$bc[$var?1:0].'>';
                         print '<td colspan="'.$colspan.'">';
 
                         // Date planned
@@ -1597,10 +1597,10 @@ else
 
                     // Display lines extrafields
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bc[$var?1:0].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var?1:0], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
                 }
@@ -1608,7 +1608,7 @@ else
                 else
               {
                     // Ligne carac
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bc[$var?1:0].">";
                     print '<td>';
                     if ($objp->fk_product)
                     {
@@ -1662,7 +1662,7 @@ else
 	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bc[$var?1:0].">";
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
@@ -1671,10 +1671,10 @@ else
                     print '</td>';
 
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bc[$var?1:0].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var?1:0], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
 
@@ -1690,7 +1690,7 @@ else
 
             if ($object->statut > 0)
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr></td>';
                 print "</tr>\n";
             }
@@ -1706,7 +1706,7 @@ else
             if ($action == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == GETPOST('rowid'))
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
-                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var?1:0].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1726,7 +1726,7 @@ else
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var?1:0].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1738,7 +1738,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var?1:0].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1750,7 +1750,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var?1:0].' height="6"><td></td></tr></table>';
             }
 
 
@@ -1759,7 +1759,7 @@ else
             {
                 print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
                 print '<td width="30" align="right">';
                 if ($user->societe_id == 0)
@@ -1778,7 +1778,7 @@ else
                 print '</td>';
                 print "</tr>\n";
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
 
                 print '<td>';
                 // Si pas encore active
@@ -1836,7 +1836,7 @@ else
                     }
                 }
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
@@ -1852,7 +1852,7 @@ else
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr '.$bc[$var?1:0].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
                 print '</table>';
 
@@ -1889,7 +1889,7 @@ else
                 $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
-                print '<tr '.$bc[$var].'><td colspan="2" class="nohover">';
+                print '<tr '.$bc[$var?1:0].'><td colspan="2" class="nohover">';
                 if ($objp->statut >= 4)
                 {
                     if ($objp->statut == 4)
@@ -1905,7 +1905,7 @@ else
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
-                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[$var?1:0].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
                 print '</table>';
 
                 print '</form>';

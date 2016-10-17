@@ -450,7 +450,7 @@ if ($step == 2 && $datatoimport)
 	foreach($liste as $key)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
     	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
@@ -546,7 +546,7 @@ if ($step == 3 && $datatoimport)
 
 	// Input file name box
 	$var=false;
-	print '<tr '.$bc[$var].'><td colspan="6">';
+	print '<tr '.$bc[$var?1:0].'><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
 	print '<input type="hidden" value="'.$step.'" name="step">';
@@ -579,7 +579,7 @@ if ($step == 3 && $datatoimport)
 			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.$param.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
     		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
@@ -868,7 +868,7 @@ if ($step == 4 && $datatoimport)
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="'.$height.'">';
+		print '<tr '.$bc[$var?1:0].' height="'.$height.'">';
 
 		$i++;
 
@@ -1085,7 +1085,7 @@ if ($step == 4 && $datatoimport)
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 		$var=false;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td><input name="import_name" size="48" value=""></td><td align="right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
@@ -1105,7 +1105,7 @@ if ($step == 4 && $datatoimport)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr '.$bc[$var?1:0].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
@@ -1832,7 +1832,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr '.($nostyle?'':$bc[$var?1:0]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
@@ -1843,7 +1843,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	elseif ($key == 'none')	// Empty line
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr '.($nostyle?'':$bc[$var?1:0]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -1854,7 +1854,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	else	// Print field of source file
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr '.($nostyle?'':$bc[$var?1:0]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');

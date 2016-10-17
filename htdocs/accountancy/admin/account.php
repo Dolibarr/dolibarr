@@ -275,7 +275,7 @@ if ($resql) {
 		$accountstatic->label = $obj->label;
 		$accountstatic->account_number = $obj->account_number;
 		
-		print '<tr ' . $bc[$var] . '>';
+		print '<tr ' . $bc[$var?1:0] . '>';
 		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
 

@@ -462,7 +462,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
     	$shipment->id=$obj->rowid;
     	$shipment->ref=$obj->ref;

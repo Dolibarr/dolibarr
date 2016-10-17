@@ -134,7 +134,7 @@ print '<td width="200">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("ConnectionTimeout").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -144,7 +144,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("ResponseTimeout").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -154,7 +154,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bc[$var?1:0].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';

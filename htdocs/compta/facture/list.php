@@ -867,7 +867,7 @@ if ($resql)
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             $facturestatic->type=$obj->type;
             
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';

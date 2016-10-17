@@ -218,7 +218,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				print '<tr '.$bc[$var?1:0].'><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
 			}
@@ -280,7 +280,7 @@ if ($result)
             $objp = $db->fetch_object($result);
 
             $var=!$var;
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             // Name
             print '<td class="nowrap">';
             $thirdparty_static->id=$objp->rowid;

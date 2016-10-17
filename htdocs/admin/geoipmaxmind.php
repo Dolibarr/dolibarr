@@ -106,7 +106,7 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
+print '<tr '.$bc[$var?1:0].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
 if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';

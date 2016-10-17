@@ -565,7 +565,7 @@ if ($id > 0 || ! empty($ref))
 							}
 						}
 						$var=!$var;
-						print "\n<tr ".$bc[$var].">";
+						print "\n<tr ".$bc[$var?1:0].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
 						$productstatic->label=$objp->label;

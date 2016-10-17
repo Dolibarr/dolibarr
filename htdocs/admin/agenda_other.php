@@ -263,7 +263,7 @@ foreach ($dirmodels as $reldir)
 			$module = new $classname($db, new ActionComm($db));
 			
 			$var=!$var;
-			print "<tr ".$bc[$var].">\n";
+			print "<tr ".$bc[$var?1:0].">\n";
 			print "<td>";
 			print (empty($module->name)?$name:$module->name);
 			print "</td>\n";
@@ -348,7 +348,7 @@ print '</tr>'."\n";
 
 // Manual or automatic
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -366,7 +366,7 @@ print '</td></tr>'."\n";
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
     $var=!$var;
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr '.$bc[$var?1:0].'>'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right" class="nowrap">'."\n";
@@ -376,7 +376,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 
 // AGENDA_DEFAULT_FILTER_TYPE
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
@@ -385,7 +385,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -394,7 +394,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";

@@ -272,7 +272,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -352,7 +352,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -450,7 +450,7 @@ if ($special_report) {
 						$intra = '';
 					}
 				}
-				print "<tr " . $bc[$var] . ">";
+				print "<tr " . $bc[$var?1:0] . ">";
 				print '<td class="nowrap">' . $i . "</td>";
 				$company_static->id = $coll->socid;
 				$company_static->name = $coll->name;
@@ -531,7 +531,7 @@ if ($special_report) {
 						$intra = '';
 					}
 				}
-				print "<tr " . $bc[$var] . ">";
+				print "<tr " . $bc[$var?1:0] . ">";
 				print '<td class="nowrap">' . $i . "</td>";
 				$company_static->id = $coll->socid;
 				$company_static->name = $coll->name;

@@ -186,7 +186,7 @@ if ($result)
             $userstatic->login=$obj->login;
             $userstatic->statut=$obj->statut;
             $userstatic->photo=$obj->photo;
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -204,7 +204,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var?1:0].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

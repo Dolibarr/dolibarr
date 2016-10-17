@@ -177,7 +177,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->isEnabled())
                         {
                             $var = !$var;
-                            print '<tr '.$bc[$var].'><td width="100">';
+                            print '<tr '.$bc[$var?1:0].'><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_payment_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
 
@@ -263,7 +263,7 @@ print "</tr>\n";
 
 // Allow payments on different thirdparties bills but same parent company
 $var=! $var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS,1);
@@ -273,7 +273,7 @@ print "</td></tr>\n";
 // Add js auto fill amount on paiement form
 /* always on now
 $var=! $var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var?1:0].'><td>';
 print $langs->trans("JSOnPaimentBill");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);

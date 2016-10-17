@@ -548,7 +548,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		while ( $i < $num ) {
 			$objp = $db->fetch_object($resql);
 			$var = ! $var;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr ' . $bc[$var?1:0] . '>';
 			print '<td class="nowrap">';
 
 			$generic_commande->id = $objp->rowid;

@@ -240,7 +240,7 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Ref
 			print '<td>';
 			$socialcontrib->fetch($objp->scid);

@@ -213,7 +213,7 @@ if ($mode == 'overwrite')
     $var=false;
     print "\n";
     
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, 0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
@@ -269,7 +269,7 @@ if ($mode == 'overwrite')
     
     		print "\n";
     
-    		print '<tr '.$bc[$var].'>';
+    		print '<tr '.$bc[$var?1:0].'>';
     		
     		print '<td>'.$obj->lang.'</td>'."\n";
     		print '<td>'.$obj->transkey.'</td>'."\n";
@@ -379,7 +379,7 @@ if ($mode == 'searchkey')
     $var=false;
     print "\n";
 
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr '.$bc[$var?1:0].'><td>';
     //print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
     print $formadmin->select_language($langcode,'langcode', 0, null, 0, 0, 0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
@@ -419,7 +419,7 @@ if ($mode == 'searchkey')
         if ($i <= $offset) continue;
         if ($i > ($offset + $limit)) break;
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langcode.'</td><td>'.$key.'</td><td>';
+        print '<tr '.$bc[$var?1:0].'><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
         print '</td><td align="right">';
         if ($val != $newlangfileonly->tab_translate[$key]) 

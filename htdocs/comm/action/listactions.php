@@ -375,7 +375,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->label=$obj->label;
 		
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		// Action (type)
 		print '<td>';

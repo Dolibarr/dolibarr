@@ -526,7 +526,7 @@ else
 
 					$var=!$var;
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr ".$bc[$var].">";
+					print "<tr ".$bc[$var?1:0].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
                     $productstatic->ref = $objp->ref;

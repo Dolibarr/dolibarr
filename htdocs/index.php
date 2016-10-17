@@ -541,7 +541,7 @@ foreach($valid_dashboardlines as $board)
 foreach($valid_dashboardlines as $board)
 {
     $var=!$var;
-    $boxwork.= '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
+    $boxwork.= '<tr '.$bc[$var?1:0].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     $boxwork.= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
     $boxwork.= '<td align="right">';
     //if ($board->nbtodolate > 0)

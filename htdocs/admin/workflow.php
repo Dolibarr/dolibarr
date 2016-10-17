@@ -115,7 +115,7 @@ foreach($workflowcodes as $key => $params)
    	}
 
    	$var = !$var;
-   	print "<tr ".$bc[$var].">\n";
+   	print "<tr ".$bc[$var?1:0].">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
    	if (! empty($params['warning']))
    	{

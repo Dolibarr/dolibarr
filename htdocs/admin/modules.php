@@ -474,7 +474,7 @@ if ($mode != 'marketplace')
         $var=!$var;
 
         //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
-        print '<tr '.$bc[$var].">\n";
+        print '<tr '.$bc[$var?1:0].">\n";
 
         // Picto
         print '  <td valign="top" width="14" align="center">';
@@ -779,7 +779,7 @@ else
     print '</tr>';
 
     $var=!$var;
-    print "<tr ".$bc[$var].">\n";
+    print "<tr ".$bc[$var?1:0].">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
@@ -787,7 +787,7 @@ else
     print '</tr>';
 
     $var=!$var;
-    print "<tr ".$bc[$var].">\n";
+    print "<tr ".$bc[$var?1:0].">\n";
     $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
     print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
