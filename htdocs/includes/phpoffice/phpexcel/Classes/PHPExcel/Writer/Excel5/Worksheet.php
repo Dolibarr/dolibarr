@@ -3064,7 +3064,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
 		// $szValue1 : size of the formula data for first value or formula
 		// $szValue2 : size of the formula data for second value or formula
 		$arrConditions = $conditional->getConditions();
-		$numConditions = sizeof($arrConditions);
+		$numConditions = count($arrConditions);
 		if($numConditions == 1){
 			$szValue1 = ($arrConditions[0] <= 65535 ? 3 : 0x0000);
 			$szValue2 = 0x0000;

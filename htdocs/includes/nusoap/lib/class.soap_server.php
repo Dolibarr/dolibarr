@@ -660,10 +660,10 @@ class nusoap_server extends nusoap_base {
 			$this->debug('got a(n) '.gettype($this->methodreturn).' from method');
 			$this->debug('serializing return value');
 			if($this->wsdl){
-				if (sizeof($this->opData['output']['parts']) > 1) {
+				if (count($this->opData['output']['parts']) > 1) {
 					$this->debug('more than one output part, so use the method return unchanged');
 			    	$opParams = $this->methodreturn;
-			    } elseif (sizeof($this->opData['output']['parts']) == 1) {
+			    } elseif (count($this->opData['output']['parts']) == 1) {
 					$this->debug('exactly one output part, so wrap the method return in a simple array');
 					// TODO: verify that it is not already wrapped!
 			    	//foreach ($this->opData['output']['parts'] as $name => $type) {
