@@ -33,7 +33,8 @@ class Task extends CommonObject
 {
     public $element='project_task';		//!< Id that identify managed objects
     public $table_element='projet_task';	//!< Name of table without prefix where object is stored
-
+    public $picto = 'task';
+    
     var $fk_task_parent;
     var $label;
     var $description;
