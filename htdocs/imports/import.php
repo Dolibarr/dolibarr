@@ -229,7 +229,7 @@ if ($step == 3 && $datatoimport)
 		$ret=dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
 }

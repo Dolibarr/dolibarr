@@ -130,7 +130,7 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
                 setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
             }
             
-        Header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
         exit;
     }
 }
@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
     }
 }
 else {
-    Header('Location: index.php');
+    header('Location: index.php');
     exit;
 }
 

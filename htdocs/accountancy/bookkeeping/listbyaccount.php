@@ -150,7 +150,7 @@ if ($action == 'delmouvconfirm') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: listbyaccount.php");
+		header("Location: listbyaccount.php");
 		exit();
 	}
 }
