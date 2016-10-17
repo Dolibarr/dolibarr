@@ -479,8 +479,8 @@ if ($mode != 'marketplace')
         // Picto
         print '  <td valign="top" width="14" align="center">';
         $alttext='';
-        //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
-        //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
+        //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.implode('.',$objMod->need_dolibarr_version);
+        //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.implode('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
         	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);

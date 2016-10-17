@@ -177,21 +177,21 @@ if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
 else { $colortextbacktab='111111'; }
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));
-$colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));
-$colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));
-$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
-$colorbacktabactive=join(',',colorStringToArray($colorbacktabactive));
-$colorbacklineimpair1=join(',',colorStringToArray($colorbacklineimpair1));
-$colorbacklineimpair2=join(',',colorStringToArray($colorbacklineimpair2));
-$colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
-$colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
-if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
-$colorbackbody=join(',',colorStringToArray($colorbackbody));
-$colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
-$colortexttitle=join(',',colorStringToArray($colortexttitle));
-$colortext=join(',',colorStringToArray($colortext));
-$colortextlink=join(',',colorStringToArray($colortextlink));
+$colorbackhmenu1=implode(',',colorStringToArray($colorbackhmenu1));
+$colorbackvmenu1=implode(',',colorStringToArray($colorbackvmenu1));
+$colorbacktitle1=implode(',',colorStringToArray($colorbacktitle1));
+$colorbacktabcard1=implode(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabactive=implode(',',colorStringToArray($colorbacktabactive));
+$colorbacklineimpair1=implode(',',colorStringToArray($colorbacklineimpair1));
+$colorbacklineimpair2=implode(',',colorStringToArray($colorbacklineimpair2));
+$colorbacklinepair1=implode(',',colorStringToArray($colorbacklinepair1));
+$colorbacklinepair2=implode(',',colorStringToArray($colorbacklinepair2));
+if ($colorbacklinepairhover != '') $colorbacklinepairhover=implode(',',colorStringToArray($colorbacklinepairhover));
+$colorbackbody=implode(',',colorStringToArray($colorbackbody));
+$colortexttitlenotab=implode(',',colorStringToArray($colortexttitlenotab));
+$colortexttitle=implode(',',colorStringToArray($colortexttitle));
+$colortext=implode(',',colorStringToArray($colortext));
+$colortextlink=implode(',',colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 

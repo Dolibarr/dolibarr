@@ -232,7 +232,7 @@ class modExpedition extends DolibarrModules
 		$shipment=new Commande($this->db);
 		$contact_arrays=$shipment->liste_type_contact('external','',0,0,'');
 		if (is_array($contact_arrays) && count($contact_arrays)>0){
-			$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
+			$idcontacts=implode(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
 		} else {
 			$idcontacts=0;
 		}

@@ -609,8 +609,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			if ($result < 0)	// If virus or error, we stop here
 			{
 				$reterrors=$antivir->errors;
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.join(',',$antivir->errors), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors);
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.implode(',',$antivir->errors), LOG_WARNING);
+				return 'ErrorFileIsInfectedWithAVirus: '.implode(',',$reterrors);
 			}
 		}
 
@@ -646,7 +646,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 	if ($reshook < 0)	// At least one blocking error returned by one hook
 	{
-		$errmsg = join(',', $hookmanager->errors);
+		$errmsg = implode(',', $hookmanager->errors);
 		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks';	// Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
 		return $errmsg;
 	}
@@ -984,9 +984,9 @@ function dol_init_file_process($pathtoscan='', $trackid='')
 		}
 	}
     $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
-	$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-	$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-	$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+	$_SESSION["listofpaths".$keytoavoidconflict]=implode(';',$listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict]=implode(';',$listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict]=implode(';',$listofmimes);
 }
 
 

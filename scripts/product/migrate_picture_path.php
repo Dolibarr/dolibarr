@@ -54,7 +54,7 @@ $forcecommit=0;
 
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',',$argv));
 
 if (! isset($argv[1]) || $argv[1] != 'product') {
     print "Usage:  $script_file product\n";

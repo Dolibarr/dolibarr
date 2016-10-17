@@ -1337,7 +1337,7 @@ if ($step == 5 && $datatoimport)
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
-	print count($listfields)?(join(', ',$listfields)):$langs->trans("Error");
+	print count($listfields)?(implode(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
@@ -1705,7 +1705,7 @@ if ($step == 6 && $datatoimport)
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
-	print count($listfields)?(join(', ',$listfields)):$langs->trans("Error");
+	print count($listfields)?(implode(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';

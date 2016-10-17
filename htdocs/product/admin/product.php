@@ -489,7 +489,7 @@ if ($resql)
         						if (versioncompare($module->phpmin,versionphparray()) > 0)
         						{
         							print "<td align=\"center\">\n";
-        							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'switch_off');
+        							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",implode('.',$module->phpmin))),'switch_off');
         							print "</td>";
         						}
         						else

@@ -162,7 +162,7 @@ if ($id > 0 || ! empty($ref))
 	if (! $user->rights->projet->all->lire)
 	{
 		$objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-		$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+		$object->next_prev_filter=" rowid in (".(count($objectsListId)?implode(',',array_keys($objectsListId)):'0').")";
 	}
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';

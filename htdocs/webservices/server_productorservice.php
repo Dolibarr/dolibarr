@@ -906,8 +906,8 @@ function deleteProductOrService($authentication,$listofidstring)
     }
     else if (count($listofiddeleted) == 0)
     {
-   		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'nbdeleted'=>0);
+   		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
+   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',',$listofid).' found'), 'nbdeleted'=>0);
     }
 
     return $objectresp;

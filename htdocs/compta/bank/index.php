@@ -239,7 +239,7 @@ print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 }
 
 $moreforfilter='';

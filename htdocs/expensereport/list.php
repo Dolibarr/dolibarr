@@ -252,7 +252,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 {
 	$childids = $user->getAllChildIds();
 	$childids[]=$user->id;
-	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+	$sql.= " AND d.fk_user_author IN (".implode(',',$childids).")\n";
 }
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
@@ -331,7 +331,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
 	$moreforfilter='';

@@ -380,7 +380,7 @@ abstract class CommonObject
      */
     function errorsToString()
     {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').implode(', ',$this->errors)):'');
     }
 
     /**

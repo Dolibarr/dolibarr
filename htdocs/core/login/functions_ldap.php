@@ -89,9 +89,9 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 
 		if ($ldapdebug)
 		{
-			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
+			dol_syslog("functions_ldap::check_user_password_ldap Server:".implode(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
 			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
-			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
+			print "DEBUG: Server:".implode(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
 			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."<br>\n";
 		}
 
@@ -160,7 +160,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 						if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
 						$resultFetchLdapUser = $ldap->fetch($login,$userSearchFilter);
 
-						if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
+						if ($ldapdebug) print "DEBUG: UACF = ".implode(',',$ldap->uacf)."<br>\n";
 						if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
 						if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime,'day')."<br>\n";
 

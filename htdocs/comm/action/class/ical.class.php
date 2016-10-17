@@ -61,7 +61,7 @@ class ICal
         $tmparray=file($file);
         if (is_array($tmparray))
         {
-        	$file_text = join("", $tmparray); //load file
+        	$file_text = implode("", $tmparray); //load file
         	$file_text = preg_replace("/[\r\n]{1,} /","",$file_text);
         }
         return $file_text; // return all text

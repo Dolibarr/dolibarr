@@ -313,7 +313,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			if (! $user->rights->projet->all->lire)
 			{
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
 			}
 			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';

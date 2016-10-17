@@ -396,7 +396,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(1,$result);
 
         $result=dol_uncompress($fileout, $dirout);
-        print __METHOD__." result=".join(',',$result)."\n";
+        print __METHOD__." result=".implode(',',$result)."\n";
         $this->assertEquals(0,count($result));
     }
     

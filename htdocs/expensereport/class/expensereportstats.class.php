@@ -71,7 +71,7 @@ class ExpenseReportStats extends Stats
 		{
 			$childids = $user->getAllChildIds();
 			$childids[]=$user->id;
-			$this->where.=" AND fk_user_author IN (".(join(',',$childids)).")";
+			$this->where.=" AND fk_user_author IN (".(implode(',',$childids)).")";
 		}
 
 		if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;

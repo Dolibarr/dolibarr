@@ -405,7 +405,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".implode(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -459,7 +459,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::modify dn=".$dn." info=".implode(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -601,11 +601,11 @@ class Ldap
 		// Create file content
 		if (preg_match('/^ldap/',$this->server[0]))
 		{
-			$target="-H ".join(',',$this->server);
+			$target="-H ".implode(',',$this->server);
 		}
 		else
 		{
-			$target="-h ".join(',',$this->server)." -p ".$this->serverPort;
+			$target="-h ".implode(',',$this->server)." -p ".$this->serverPort;
 		}
 		$content.="# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
 		$content.="# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
@@ -678,7 +678,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".implode(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -730,7 +730,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".implode(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -782,7 +782,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".implode(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -922,7 +922,7 @@ class Ldap
 	{
 		$fulllist=array();
 
-		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).") activefilter=".$activefilter);
+		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".implode(',',$attributeArray).") activefilter=".$activefilter);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory")
@@ -956,7 +956,7 @@ class Ldap
 		{
 			// Return list with required fields
 			$attributeArray=array_values($attributeArray);	// This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".implode(',',$attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		}

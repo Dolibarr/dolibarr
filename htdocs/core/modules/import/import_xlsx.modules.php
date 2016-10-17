@@ -385,7 +385,7 @@ class Importxlsx extends ModeleImports
 						    // We convert field if required
 						    if (! empty($objimport->array_import_convertvalue[0][$val]))
 						    {
-                                //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
+                                //print 'Must convert '.$newval.' with rule '.implode(',',$objimport->array_import_convertvalue[0][$val]).'. ';
                                 if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid'
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref'
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
@@ -608,7 +608,7 @@ class Importxlsx extends ModeleImports
 						//print($sql).'<br>';
 						dol_syslog("import_csv.modules", LOG_DEBUG);
 
-						//print '> '.join(',',$arrayrecord);
+						//print '> '.implode(',',$arrayrecord);
 						//print 'sql='.$sql;
 						//print '<br>'."\n";
 

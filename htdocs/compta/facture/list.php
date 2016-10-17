@@ -578,8 +578,8 @@ if ($resql)
 		$formmail->param['action']=$action;
 		$formmail->param['models']=$modelmail;
 		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['facid']=join(',',$arrayofselected);
-		// TODO We should use $formmail->param['id']=join(',',$arrayofselected);
+		$formmail->param['facid']=implode(',',$arrayofselected);
+		// TODO We should use $formmail->param['id']=implode(',',$arrayofselected);
 		//$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		print $formmail->get_form();
@@ -590,7 +590,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
  	// If the user can view prospects other than his'

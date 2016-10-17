@@ -132,7 +132,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',',$rep));
+		dol_syslog("getURLContent response array is ".implode(',',$rep));
     }
     else
     {

@@ -330,7 +330,7 @@ if ($action == 'add')
         }
         else
         {
-            $errmsg .= join('<br>',$adh->errors);
+            $errmsg .= implode('<br>',$adh->errors);
         }
     }
 }

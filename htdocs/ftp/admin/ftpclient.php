@@ -229,7 +229,7 @@ else
 
 		    preg_match('/([0-9]+)$/i',$obj->name,$reg);
 			$idrss = $reg[0];
-			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
+			//print "x".implode(',',$reg)."=".$obj->name."=".$idrss;
 
 			$var=true;
 

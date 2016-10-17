@@ -47,7 +47,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog("GET is ".join(',',$_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
+dol_syslog("GET is ".implode(',',$_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
 //var_dump($_GET);
 
 // Generation of list of zip-town

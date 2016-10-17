@@ -813,7 +813,7 @@ class nusoap_server extends nusoap_base {
 			header($hdr, false);
 		}
 		print $payload;
-		$this->response = join("\r\n",$this->outgoing_headers)."\r\n\r\n".$payload;
+		$this->response = implode("\r\n",$this->outgoing_headers)."\r\n\r\n".$payload;
 	}
 
 	/**
