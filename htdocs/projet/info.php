@@ -76,6 +76,7 @@ llxHeader("",$title,$help_url);
 
 $object = new Project($db);
 $object->fetch($id);
+$object->fetch_thirdparty();
 $object->info($id);
 
 $head = project_prepare_head($object);
@@ -83,11 +84,38 @@ $head = project_prepare_head($object);
 dol_fiche_head($head, 'agenda', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 
-print '<table width="100%"><tr><td>';
+// Project card
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref='<div class="refidno">';
+// Title
+$morehtmlref.=$object->title;
+// Thirdparty
+if ($object->thirdparty->id > 0)
+{
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+}
+$morehtmlref.='</div>';
+
+// Define a complementary filter for search of next/prev ref.
+if (! $user->rights->projet->all->lire)
+{
+    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+}
+
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 dol_print_object_info($object, 1);
 
-print '</td></tr></table>';
+print '</div>';
+
+print '<div class="clearboth"></div>';
 
 dol_fiche_end();
 
