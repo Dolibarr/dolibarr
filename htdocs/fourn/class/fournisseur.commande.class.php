@@ -1589,7 +1589,7 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $this->error=$mouv->error;
                         $this->errors=$mouv->errors;
-                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',',$this->errors), LOG_ERR);
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".implode(',',$this->errors), LOG_ERR);
                         $error++;
                     }
                 }

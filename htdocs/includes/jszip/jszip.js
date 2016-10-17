@@ -4276,7 +4276,7 @@ function fill_window(s) {
 
     // JS ints have 32 bit, block below not needed
     /* Deal with !@#$% 64K limit: */
-    //if (sizeof(int) <= 2) {
+    //if (count(int) <= 2) {
     //    if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
     //        more = wsize;
     //

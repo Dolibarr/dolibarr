@@ -188,7 +188,7 @@ class PHPExcel_Shared_OLE_ChainedBlockStream
 			$this->pos = $offset;
 		} elseif ($whence == SEEK_CUR && -$offset <= $this->pos) {
 			$this->pos += $offset;
-		} elseif ($whence == SEEK_END && -$offset <= sizeof($this->data)) {
+		} elseif ($whence == SEEK_END && -$offset <= count($this->data)) {
 			$this->pos = strlen($this->data) + $offset;
 		} else {
 			return false;

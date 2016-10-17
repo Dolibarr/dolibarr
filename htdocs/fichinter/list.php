@@ -26,7 +26,7 @@
  *	\ingroup    ficheinter
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -241,7 +241,7 @@ if ($result)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
 
     $moreforfilter='';
@@ -378,7 +378,7 @@ if ($result)
 		$interventionstatic->statut=$obj->fk_statut;
 		
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
         if (! empty($arrayfields['f.ref']['checked']))
 		{
 			print "<td>";

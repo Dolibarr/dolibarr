@@ -23,7 +23,7 @@
  *  \brief      Page to list replenishment orders
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -261,7 +261,7 @@ if ($resql)
         if ($showline)
         {
             $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
-            print '<tr ' . $bc[$var] . '>'.
+            print '<tr ' . $bc[$var?1:0] . '>'.
             // Ref
                  '<td>'.
                  '<a href="' . $href . '">'.

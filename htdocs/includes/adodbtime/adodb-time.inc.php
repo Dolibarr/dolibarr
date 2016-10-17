@@ -558,7 +558,7 @@ function adodb_date_test()
 		$a1 = getdate($ts);
 		$a2 = adodb_getdate($ts);
 		$rez = array_diff($a1,$a2);
-		if (sizeof($rez)>0) {
+		if (count($rez)>0) {
 			print "<b>Error getdate() $ts</b><br>";
 				print_r($a1);
 			print "<br>";

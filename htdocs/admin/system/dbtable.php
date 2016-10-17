@@ -24,7 +24,7 @@
  *  \brief          Page d'info des contraintes d'une table
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $langs->load("admin");
 
@@ -112,7 +112,7 @@ else
 			{
 				$row = $db->fetch_row($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				print "<td>$row[0]</td>";
 				print "<td>$row[1]</td>";

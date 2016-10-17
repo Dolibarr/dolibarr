@@ -25,7 +25,7 @@
  *       \brief      Onglet user et permissions de la fiche utilisateur
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -328,7 +328,7 @@ if ($result)
         	if ($caneditperms && (empty($objMod->rights_admin_allowed) || empty($object->admin)))
         	{
         		// On affiche ligne pour modifier droits
-        		print '<tr '. $bc[$var].'>';
+        		print '<tr '. $bc[$var?1:0].'>';
         		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
         		print '<td align="center" class="nowrap">';
@@ -341,7 +341,7 @@ if ($result)
         	}
         }
 
-		print '<tr '. $bc[$var].'>';
+		print '<tr '. $bc[$var?1:0].'>';
 
 		// Picto and label of permission
 		print '<td>'.img_object('',$picto).' '.$objMod->getName().'</td>';

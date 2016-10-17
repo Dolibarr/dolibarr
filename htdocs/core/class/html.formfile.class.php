@@ -597,7 +597,7 @@ class FormFile
 					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
 					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
-					$out.= "<tr ".$bc[$var].">";
+					$out.= "<tr ".$bc[$var?1:0].">";
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
@@ -829,7 +829,7 @@ class FormFile
 	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
 	                }
 					$var=!$var;
-					print '<tr '.$bc[$var].'>';
+					print '<tr '.$bc[$var?1:0].'>';
 					print '<td class="tdoverflow">';
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
@@ -1102,7 +1102,7 @@ class FormFile
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
                 $var=!$var;
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
@@ -1255,7 +1255,7 @@ class FormFile
         foreach ($links as $link)
         {
             $var =! $var;
-            print '<tr ' . $bc[$var] . '>';
+            print '<tr ' . $bc[$var?1:0] . '>';
             //edit mode
             if ($action == 'update' && $selected === $link->id)
             {

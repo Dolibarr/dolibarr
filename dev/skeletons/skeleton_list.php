@@ -296,7 +296,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $all) . implode(', ',$fieldstosearchall);
     }
     
     $moreforfilter = '';
@@ -416,7 +416,7 @@ if ($resql)
             $var = !$var;
             
             // Show here line of result
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             // LIST_OF_TD_FIELDS_LIST
             /*
             if (! empty($arrayfields['t.field1']['checked'])) 

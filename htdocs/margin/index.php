@@ -22,7 +22,7 @@
  *	\brief      Page d'index du module margin
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 if ($user->rights->produit->lire) {
 	$page = 'productMargins';

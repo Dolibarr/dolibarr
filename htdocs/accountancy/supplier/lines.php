@@ -24,7 +24,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Page of detail of the lines of ventilation of invoices suppliers
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -242,7 +242,7 @@ if ($result) {
 		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 		
-		print '<tr'. $bc[$var].'>';
+		print '<tr'. $bc[$var?1:0].'>';
 		
 		// Ref Invoice
 		$facturefournisseur_static->ref = $objp->facnumber;

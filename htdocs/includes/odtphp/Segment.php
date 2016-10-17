@@ -1,5 +1,5 @@
 <?php
-require 'SegmentIterator.php';
+require __DIR__.'/SegmentIterator.php';
 class SegmentException extends Exception
 {}
 /**

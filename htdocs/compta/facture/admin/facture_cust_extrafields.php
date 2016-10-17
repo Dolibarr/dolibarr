@@ -25,7 +25,7 @@
 * \brief Page to setup extra fields of customer invoice
 */
 
-require '../../../main.inc.php';
+require __DIR__.'/../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 

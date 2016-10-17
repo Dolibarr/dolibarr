@@ -148,7 +148,7 @@ if ($ok)
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
     print '<td align="right">'.$version.'</td></tr>';
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
-    //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+    //print '<td align="right">'.implode('.',$versionarray).'</td></tr>';
 }
 
 // Show wait message

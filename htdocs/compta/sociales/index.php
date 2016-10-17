@@ -23,7 +23,7 @@
  *		\brief      Page to list all social contributions
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
@@ -218,7 +218,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			// Ref
 			print '<td width="60">';

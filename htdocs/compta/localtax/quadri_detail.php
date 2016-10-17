@@ -27,7 +27,7 @@
  */
 global $mysoc;
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -339,7 +339,7 @@ else
 					if (! empty($fields['ddate_end'])) $type=1;
 
 					$var=!$var;
-					print '<tr '.$bc[$var].'>';
+					print '<tr '.$bc[$var?1:0].'>';
 
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -502,7 +502,7 @@ else
 					if (! empty($fields['ddate_end'])) $type=1;
 
 					$var=!$var;
-					print '<tr '.$bc[$var].'>';
+					print '<tr '.$bc[$var?1:0].'>';
 
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

@@ -26,7 +26,7 @@
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
 
-require 'main.inc.php';
+require __DIR__.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
@@ -541,7 +541,7 @@ foreach($valid_dashboardlines as $board)
 foreach($valid_dashboardlines as $board)
 {
     $var=!$var;
-    $boxwork.= '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
+    $boxwork.= '<tr '.$bc[$var?1:0].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     $boxwork.= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
     $boxwork.= '<td align="right">';
     //if ($board->nbtodolate > 0)

@@ -1580,7 +1580,7 @@ class Facture extends CommonInvoice
 			{
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql.= ' SET fk_facture = NULL, fk_facture_line = NULL';
-				$sql.= ' WHERE fk_facture_line IN ('.join(',',$list_rowid_det).')';
+				$sql.= ' WHERE fk_facture_line IN ('.implode(',',$list_rowid_det).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (! $this->db->query($sql))

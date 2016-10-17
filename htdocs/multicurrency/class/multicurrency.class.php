@@ -145,7 +145,7 @@ class MultiCurrency extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::create ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('Currency::create ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -215,7 +215,7 @@ class MultiCurrency extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::fetch ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('Currency::fetch ' . implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -251,7 +251,7 @@ class MultiCurrency extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::fetchAllCurrencyRate ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('Currency::fetchAllCurrencyRate ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -296,7 +296,7 @@ class MultiCurrency extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::update ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('Currency::update ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && $trigger) {
@@ -343,7 +343,7 @@ class MultiCurrency extends CommonObject
 			if (!$this->deleteRates()) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog('Currency::delete  ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog('Currency::delete  ' . implode(',', $this->errors), LOG_ERR);
 			}
 			
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -354,7 +354,7 @@ class MultiCurrency extends CommonObject
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog('Currency::delete ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog('Currency::delete ' . implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -737,7 +737,7 @@ class CurrencyRate extends CommonObjectLine
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('CurrencyRate::create ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('CurrencyRate::create ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -799,7 +799,7 @@ class CurrencyRate extends CommonObjectLine
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('CurrencyRate::fetch ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('CurrencyRate::fetch ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -834,7 +834,7 @@ class CurrencyRate extends CommonObjectLine
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('CurrencyRate::update ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('CurrencyRate::update ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && $trigger) {
@@ -885,7 +885,7 @@ class CurrencyRate extends CommonObjectLine
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog('CurrencyRate::delete ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog('CurrencyRate::delete ' . implode(',', $this->errors), LOG_ERR);
 			}
 		}
 

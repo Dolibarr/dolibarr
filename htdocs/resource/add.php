@@ -23,7 +23,7 @@
  *  \brief      Page to manage resource object
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
@@ -90,7 +90,7 @@ if ($action == 'confirm_add_resource')
                                 // Creation OK
                                 $db->commit();
                                 setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
-                                Header("Location: card.php?id=" . $object->id);
+                                header("Location: card.php?id=" . $object->id);
                                 return;
                         }
                         else
@@ -107,7 +107,7 @@ if ($action == 'confirm_add_resource')
         }
         else
         {
-                Header("Location: list.php");
+                header("Location: list.php");
         }
 }
 

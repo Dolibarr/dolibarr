@@ -27,7 +27,7 @@
  *  \brief      Page de la fiche produit
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -564,7 +564,7 @@ if ($id > 0 || ! empty($ref))
 							}
 						}
 						$var=!$var;
-						print "\n<tr ".$bc[$var].">";
+						print "\n<tr ".$bc[$var?1:0].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
 						$productstatic->label=$objp->label;

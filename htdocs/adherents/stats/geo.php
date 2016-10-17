@@ -21,7 +21,7 @@
  *		\brief      Page with geographical statistics on members
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -296,7 +296,7 @@ if ($mode)
     {
         $year = $val['year'];
         $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';

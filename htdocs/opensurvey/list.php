@@ -158,7 +158,7 @@ while ($i < min($num,$limit))
 	$opensurvey_static->status=$obj->status;
 	
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
 	print '</td><td>'.dol_htmlentities($obj->titre).'</td><td>';

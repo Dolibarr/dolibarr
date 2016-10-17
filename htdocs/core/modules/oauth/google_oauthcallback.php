@@ -22,7 +22,7 @@
  *      \brief      Page to get oauth callback
  */
 
-require '../../../main.inc.php';
+require __DIR__.'/../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;

@@ -24,7 +24,7 @@
  *      \brief      Page with warehouse and stock value
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("stocks");
@@ -141,7 +141,7 @@ if ($result)
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 	}
 	
 	$moreforfilter='';
@@ -193,7 +193,7 @@ if ($result)
             $entrepot->id = $objp->rowid;
             $entrepot->libelle = $objp->ref;
             $entrepot->lieu = $objp->lieu;
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             print '<td>' . $entrepot->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';

@@ -26,7 +26,7 @@
  *    \brief      Page de configuration du module externalsite
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 
@@ -96,14 +96,14 @@ print "</tr>";
 $var=true;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL','alpha')?GETPOST('EXTERNALSITE_LABEL','alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
 print "<td>".$langs->trans("ExampleMyMenuEntry")."</td>";
 print "</tr>";
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". (GETPOST('EXTERNALSITE_URL','alpha')?GETPOST('EXTERNALSITE_URL','alpha'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL)) . "\" size=\"40\"></td>";
 print "<td>http://localhost/myurl/";

@@ -23,7 +23,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Book keeping by year
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -269,7 +269,7 @@ $var = True;
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
 
-	print '<tr'. $bc[$var].'>';
+	print '<tr'. $bc[$var?1:0].'>';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td>' . dol_print_date($line->doc_date) . '</td>';

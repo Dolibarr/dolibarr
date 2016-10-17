@@ -24,7 +24,7 @@
  *	\brief      List of donations
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -150,7 +150,7 @@ if ($resql)
     if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $search_all) . implode(', ',$fieldstosearchall);
     }
     
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -202,7 +202,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;

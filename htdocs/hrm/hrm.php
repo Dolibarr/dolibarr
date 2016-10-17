@@ -149,7 +149,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
     $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE u.rowid = x.fk_user";
     $sql.= " AND x.entity = ".$conf->entity;
-    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.join(',',$childids).')';
+    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.implode(',',$childids).')';
     //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     //if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
     $sql.= $db->order("x.tms","DESC");
@@ -187,7 +187,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->id=$obj->uid;
                 $userstatic->lastname=$obj->lastname;
                 $userstatic->firstname=$obj->firstname;
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[$var?1:0].'>';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
@@ -207,7 +207,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            print '<tr '.$bc[$var?1:0].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table><br>';
     }
@@ -223,7 +223,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";
 	$sql.= " AND d.entity = ".$conf->entity;
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.implode(',',$childids).')';
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid;
 	$sql.= $db->order("d.tms","DESC");
@@ -258,7 +258,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->id=$obj->uid;
 				$userstatic->lastname=$obj->lastname;
 				$userstatic->firstname=$obj->firstname;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
@@ -272,7 +272,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -287,7 +287,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = x.fk_user_author";
 	$sql.= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.join(',',$childids).')';
+	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.implode(',',$childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
 	$sql.= $db->order("x.tms","DESC");
@@ -322,7 +322,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->id=$obj->uid;
 				$userstatic->lastname=$obj->lastname;
 				$userstatic->firstname=$obj->firstname;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -336,7 +336,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

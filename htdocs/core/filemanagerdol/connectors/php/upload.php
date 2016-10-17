@@ -22,10 +22,10 @@
  * This is the "File Uploader" for PHP.
  */
 
-require 'config.php';
-require 'util.php';
-require 'io.php';
-require 'commands.php';
+require __DIR__.'/config.php';
+require __DIR__.'/util.php';
+require __DIR__.'/io.php';
+require __DIR__.'/commands.php';
 
 /**
  * SendError

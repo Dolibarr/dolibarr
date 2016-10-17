@@ -29,7 +29,7 @@
  *  \brief      Page of tab suppliers for products
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -623,7 +623,7 @@ if ($id > 0 || $ref)
 					{
 						$var=!$var;
 
-						print "<tr ".$bc[$var].">";
+						print "<tr ".$bc[$var?1:0].">";
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';

@@ -32,7 +32,7 @@
  *	\brief      	Page of commercial proposals card and list
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
@@ -394,7 +394,7 @@ if ($result)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         //sort($fieldstosearchall);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
 	
 	$i = 0;
@@ -626,7 +626,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{

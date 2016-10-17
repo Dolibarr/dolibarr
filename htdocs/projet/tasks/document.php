@@ -24,7 +24,7 @@
  *	\brief      Page de gestion des documents attachees a une tache d'un projet
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -144,7 +144,7 @@ if ($object->id > 0)
 		if (! $user->rights->projet->all->lire)
 		{
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-			$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+			$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
 		}
 		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
 		print '</td></tr>';

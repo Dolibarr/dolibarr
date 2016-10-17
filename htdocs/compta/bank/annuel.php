@@ -214,7 +214,7 @@ $var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var?1:0].'>';
 	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{

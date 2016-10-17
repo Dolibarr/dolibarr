@@ -23,7 +23,7 @@
  * \brief       Setup page to configure oauth access api
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 // required Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -334,7 +334,7 @@ foreach ($list as $key)
     {
         $redirect_uri=$urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
         $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr '.$bc[$var?1:0].' class="value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
@@ -342,7 +342,7 @@ foreach ($list as $key)
     else
     {
         $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr '.$bc[$var?1:0].' class="value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
         print '</td></tr>';
@@ -350,14 +350,14 @@ foreach ($list as $key)
         
     // Api Id
     $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr '.$bc[$var?1:0].' class="value">';
     print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
     print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
     print '</td></tr>';
 
     // Api Secret
     $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr '.$bc[$var?1:0].' class="value">';
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
     print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';

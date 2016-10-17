@@ -251,7 +251,7 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				$this->error=join(',',$this->errors);
+				$this->error=implode(',',$this->errors);
 				dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 				return -1;
 			}

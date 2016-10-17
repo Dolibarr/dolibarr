@@ -24,7 +24,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Ventilation page from suppliers invoices
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
@@ -314,7 +314,7 @@ if ($result) {
 		if ($objp->code_buy_l != $objp->code_buy_p)
 			$code_buy_p_l_differ = 'color:red';
 		
-		print '<tr'. $bc[$var].'>';
+		print '<tr'. $bc[$var?1:0].'>';
 
 		// Ref Invoice
 		$facturefourn_static->ref = $objp->ref;

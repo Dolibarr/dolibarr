@@ -26,7 +26,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
@@ -171,7 +171,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			// Date
 			$date=$obj->periode;
 			if (empty($date)) $date=$obj->date_ech;
@@ -283,7 +283,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        $total = $total + $obj->amount;
 
 		        $var=!$var;
-		        print "<tr ".$bc[$var].">";
+		        print "<tr ".$bc[$var?1:0].">";
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
@@ -385,7 +385,7 @@ while($j<$numlt)
 				$total = $total + $obj->amount;
 
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
@@ -467,7 +467,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
                 $total = $total + $obj->amount;
 
                 $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print "<tr ".$bc[$var?1:0].">";
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 

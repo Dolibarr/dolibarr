@@ -24,7 +24,7 @@
  * 	\ingroup    banque
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
-require('../../main.inc.php');
+require __DIR__.'/../../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php");
@@ -49,12 +49,12 @@ if (isset($_SESSION['DolMessage'])) {
 }
 
 // Security check
-if ($user->societe_id) {
+if ($user->socid) {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
-if ($user->societe_id)
-    $socid = $user->societe_id;
+if ($user->socid)
+    $socid = $user->socid;
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '',
         $fieldtype);
 
@@ -130,7 +130,7 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
                 setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
             }
             
-        Header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
         exit;
     }
 }
@@ -215,7 +215,7 @@ if ($id > 0 || !empty($ref)) {
     }
 }
 else {
-    Header('Location: index.php');
+    header('Location: index.php');
 }
 
 

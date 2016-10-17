@@ -102,7 +102,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		print "<tr ".$bc[$var]."><td>";
+		print "<tr ".$bc[$var?1:0]."><td>";
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 

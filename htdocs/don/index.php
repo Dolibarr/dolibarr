@@ -23,7 +23,7 @@
  *  \brief      Home page of donation module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 $langs->load("donations");
@@ -138,7 +138,7 @@ $var=true;
 foreach ($listofstatus as $status)
 {
     $var=!$var;
-    print "<tr ".$bc[$var].">";
+    print "<tr ".$bc[$var?1:0].">";
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
     print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
@@ -190,7 +190,7 @@ if ($resql)
             $var=!$var;
             $obj = $db->fetch_object($resql);
 
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
 
             $donation_static->id=$obj->rowid;
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;

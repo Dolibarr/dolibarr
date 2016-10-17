@@ -26,7 +26,7 @@
  *  \brief      Page liste des paiements des factures clients
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -288,7 +288,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;

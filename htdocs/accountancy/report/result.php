@@ -21,7 +21,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Page for accounting result
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -140,7 +140,7 @@ if(!empty($cats))
 			}
 			$sommes[$code]['NP'] += $resultNP;
 			$sommes[$code]['N'] += $resultN;
-			print '<tr'. $bc[$var].'>';
+			print '<tr'. $bc[$var?1:0].'>';
 			print '<td>' . $cpt['account_number'] . '</td>';
 			print '<td>' . $cpt['name_cpt'] . '</td>';
 			print '<td>' . price($resultNP)  . '</td>';

@@ -110,7 +110,7 @@ if ($id > 0 || ! empty($ref))
     if (! $user->rights->projet->all->lire)
     {
         $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
     }
     print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
     print '</td></tr>';
@@ -245,7 +245,7 @@ if (count($tasksarray)>0)
 			}
 		}
 		if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
-		/* For JSGanttImproved if ($s) $tasks[$taskcursor]['task_resources']=join(',',$idofusers); */
+		/* For JSGanttImproved if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers); */
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$taskcursor++;
 	}

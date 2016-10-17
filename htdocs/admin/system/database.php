@@ -23,7 +23,7 @@
  *   \brief      Page with system information of database
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $langs->load("admin");
 
@@ -100,7 +100,7 @@ else
 		foreach($listtouse as $param => $paramval)
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			print '<td>';
 			print $param;
 			print '</td>';

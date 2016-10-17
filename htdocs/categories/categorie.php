@@ -29,7 +29,7 @@
  *  \brief      Page to show category tab
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("categories");
@@ -686,7 +686,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 			foreach ($ways as $way)
 			{
 				$var = ! $var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 
 				// Categorie
 				print "<td>".img_object('','category').' '.$way."</td>";

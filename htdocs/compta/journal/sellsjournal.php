@@ -29,7 +29,7 @@
  */
 global $mysoc;
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -262,7 +262,7 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
+				print "<tr ".$bc[$var?1:0]." >";
 				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";

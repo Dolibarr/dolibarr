@@ -64,7 +64,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 
 
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
@@ -394,7 +394,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
             $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
-            $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+            $tplcontent.= '<meta name="keywords" content="'.implode(', ', explode(',',$objectpage->keywords)).'" />'."\n";
             $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
             $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
             $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
@@ -469,7 +469,7 @@ if ($action == 'updatecontent')
     	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
     	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
     	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
-    	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+    	    $tplcontent.= '<meta name="keywords" content="'.implode(', ', explode(',',$objectpage->keywords)).'" />'."\n";
     	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
     	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
     	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";

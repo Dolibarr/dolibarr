@@ -22,7 +22,7 @@
  *		\brief      Page de fiche recap supplier
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
@@ -115,7 +115,7 @@ if ($socid > 0)
                 $totalpaye = $fac->getSommePaiement();
 
                 $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print "<tr ".$bc[$var?1:0].">";
 
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
@@ -151,7 +151,7 @@ if ($socid > 0)
                     {
                         $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
-                        print "<tr ".$bc[$var].">";
+                        print "<tr ".$bc[$var?1:0].">";
                         print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
                         print '<td>';
                         print '&nbsp; &nbsp; &nbsp; '; // Decalage

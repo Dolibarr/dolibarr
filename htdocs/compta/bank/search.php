@@ -276,7 +276,7 @@ if ($resql)
         if ($printline) {
             $var=!$var;
 
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
 
             // Ref
             print '<td align="left" class="nowrap">';

@@ -25,7 +25,7 @@
  */
 
 $res=0;
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -64,7 +64,7 @@ if (! empty($_REQUEST['socid_id']))
 
 // Security check
 $id=GETPOST("id",'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', 0, 'expensereport');
 
 
@@ -152,7 +152,7 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 		if ($id > 0)
 		{
 			$db->commit();
-			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 		else
@@ -384,7 +384,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 						$result=$mailfile->sendfile();
 						if ($result)
 						{
-							Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 							exit;
 						}
 						else
@@ -492,7 +492,7 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 					$result=$mailfile->sendfile();
 					if ($result):
 						setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 						exit;
 					else:
 						setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
@@ -578,7 +578,7 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 				if ($result)
 				{
 					setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-					Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 					exit;
 				}
 				else
@@ -800,7 +800,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 
 			// Retour
 			if($result):
-				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			else:
 				dol_print_error($db);
@@ -1455,7 +1455,7 @@ else
 					{
 						$objp = $db->fetch_object($resql);
 						$var=!$var;
-						print "<tr ".$bc[$var]."><td>";
+						print "<tr ".$bc[$var?1:0]."><td>";
 						print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 						print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 							$labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->fk_typepayment;
@@ -1672,7 +1672,7 @@ else
 							$var=!$var;
 							if ($action != 'editline' || $objp->rowid != GETPOST('rowid'))
 							{
-								print '<tr '.$bc[$var].'>';
+								print '<tr '.$bc[$var?1:0].'>';
 								print '<td style="text-align:center;">';
 								print img_picto($langs->trans("Document"), "object_generic");
 								print ' <span>'.$piece_comptable.'</span></td>';
@@ -1720,7 +1720,7 @@ else
 							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
 									//modif ligne!!!!!
-									print '<tr '.$bc[$var].'>';
+									print '<tr '.$bc[$var?1:0].'>';
 									
 									print '<td></td>';
 

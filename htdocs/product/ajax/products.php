@@ -36,7 +36,7 @@ if (! defined('NOCSRFCHECK'))
 if (empty($_GET ['keysearch']) && ! defined('NOREQUIREHTML'))
 	define('NOREQUIREHTML', '1');
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'alpha');
 $socid = GETPOST('socid', 'int');
@@ -58,7 +58,7 @@ $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int
 
 // print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog(join(',', $_GET));
+dol_syslog(implode(',', $_GET));
 // print_r($_GET);
 
 if (! empty($action) && $action == 'fetch' && ! empty($id))

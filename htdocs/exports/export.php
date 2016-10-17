@@ -551,7 +551,7 @@ if ($step == 2 && $datatoexport)
     foreach($fieldsarray as $code=>$label)
     {
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         $i++;
 
@@ -722,7 +722,7 @@ if ($step == 3 && $datatoexport)
 	foreach($fieldsarray as $code => $label)
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 
 		$i++;
 		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
@@ -896,7 +896,7 @@ if ($step == 4 && $datatoexport)
     foreach($array_selected as $code=>$value)
     {
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
         $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
@@ -976,7 +976,7 @@ if ($step == 4 && $datatoexport)
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 		$var=false;
-		print '<tr '.$bc[$var].'>';
+		print '<tr '.$bc[$var?1:0].'>';
 		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
@@ -996,7 +996,7 @@ if ($step == 4 && $datatoexport)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr '.$bc[$var?1:0].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
@@ -1137,7 +1137,7 @@ if ($step == 5 && $datatoexport)
     	}
 
         $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];

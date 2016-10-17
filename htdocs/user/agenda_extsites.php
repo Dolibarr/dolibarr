@@ -22,7 +22,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -185,7 +185,7 @@ while ($i <= $MAXAGENDA)
 	$color='AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

@@ -27,7 +27,7 @@
  *  \brief      Tab of calendar events per user
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -1040,8 +1040,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 		$ids1='';$ids2='';
-		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',',array_keys($cases1[$h]));
-		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',',array_keys($cases2[$h]));
+		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=implode(',',array_keys($cases1[$h]));
+		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=implode(',',array_keys($cases2[$h]));
 
 		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
 		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';

@@ -1022,7 +1022,7 @@ class Categorie extends CommonObject
 			print 'id: '.$this->cats[$key]['id'];
 			print ' label: '.$this->cats[$key]['label'];
 			print ' mother: '.$this->cats[$key]['fk_parent'];
-			//print ' children: '.(is_array($this->cats[$key]['id_children'])?join(',',$this->cats[$key]['id_children']):'');
+			//print ' children: '.(is_array($this->cats[$key]['id_children'])?implode(',',$this->cats[$key]['id_children']):'');
 			print ' fullpath: '.$this->cats[$key]['fullpath'];
 			print ' fulllabel: '.$this->cats[$key]['fulllabel'];
 			print "<br>\n";

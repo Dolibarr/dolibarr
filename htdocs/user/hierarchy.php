@@ -25,7 +25,7 @@
  *      \brief      Page of hierarchy view of user module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)

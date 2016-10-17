@@ -57,7 +57,7 @@ $confirmed=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',',$argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -125,7 +125,7 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "Mapped LDAP fields=".join(',',$required_fields)."\n";
+print "Mapped LDAP fields=".implode(',',$required_fields)."\n";
 print "\n";
 
 // Check parameters

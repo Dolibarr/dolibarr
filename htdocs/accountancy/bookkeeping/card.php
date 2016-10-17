@@ -22,7 +22,7 @@
  * \ingroup Advanced accountancy
  * \brief Page to show book-entry
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -346,7 +346,7 @@ if ($action == 'create') {
 
 				foreach ( $book->linesmvt as $line ) {
 					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr' . $bc[$var?1:0] . '>';
 
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -398,7 +398,7 @@ if ($action == 'create') {
 
 				if ($action == "" || $action == 'add') {
 					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr' . $bc[$var?1:0] . '>';
 					print '<td>';
 					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';

@@ -25,7 +25,7 @@
  *	\ingroup    stock
  *	\brief      Page d'administration/configuration du module gestion de stock
  */
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
@@ -145,7 +145,7 @@ $var=true;
 $found=0;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("DeStockOnBill").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->facture->enabled))
@@ -165,7 +165,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->commande->enabled))
@@ -187,7 +187,7 @@ $found++;
 //if (! empty($conf->expedition->enabled))
 //{
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->expedition->enabled))
@@ -207,7 +207,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->expedition->enabled))
@@ -229,7 +229,7 @@ $found++;
 /*if (! $found)
 {
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
 	print "</tr>\n";
 }*/
@@ -249,7 +249,7 @@ $var=true;
 $found=0;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("ReStockOnBill").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -270,7 +270,7 @@ $found++;
 
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -290,7 +290,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -312,7 +312,7 @@ $found++;
 /*if (! $found)
 {
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
 	print "</tr>\n";
 }*/
@@ -331,7 +331,7 @@ if ($conf->invoice->enabled || $conf->order->enabled || $conf->expedition->enabl
 
 	if($conf->invoice->enabled) {
 		$var = !$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 		print '<td width="160" align="right">';
 		print "<form method=\"post\" action=\"stock.php\">";
@@ -346,7 +346,7 @@ if ($conf->invoice->enabled || $conf->order->enabled || $conf->expedition->enabl
 
 	if($conf->order->enabled) {
 		$var = !$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 		print '<td width="160" align="right">';
 		print "<form method=\"post\" action=\"stock.php\">";
@@ -361,7 +361,7 @@ if ($conf->invoice->enabled || $conf->order->enabled || $conf->expedition->enabl
 
 	if($conf->expedition->enabled) {
 		$var = !$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 		print '<td width="160" align="right">';
 		print "<form method=\"post\" action=\"stock.php\">";
@@ -390,7 +390,7 @@ if ($virtualdiffersfromphysical)
 	print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 	print '</tr>'."\n";
 	$var = !$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td width="60%">'.$langs->trans("UseVirtualStockByDefault").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -415,7 +415,7 @@ print '</tr>'."\n";
 
 $var=!$var;
 
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 
 print '<td width="160" align="right">';
@@ -435,7 +435,7 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 {
 	$var=!$var;
 	
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	print '<td width="60%">'.$langs->trans("IndependantSubProductStock").'</td>';
 	
 	print '<td width="160" align="right">';

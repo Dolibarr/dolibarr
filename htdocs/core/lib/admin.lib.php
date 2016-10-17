@@ -81,7 +81,7 @@ function versioncompare($versionarray1,$versionarray2)
         if ($operande1 < $operande2) { $ret = -$level; break; }
         if ($operande1 > $operande2) { $ret = $level; break; }
     }
-    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
+    //print implode('.',$versionarray1).'('.count($versionarray1).') / '.implode('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
     return $ret;
 }
 
@@ -717,7 +717,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'eee '.versioncompare($verdol,$vermin).' - '.implode(',',$verdol).' - '.implode(',',$vermin);exit;
     if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
     {
         return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
@@ -1115,7 +1115,7 @@ function form_constantes($tableau,$strictw3c=0)
 
             if (empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
 
             // Show constant
             print '<td>';

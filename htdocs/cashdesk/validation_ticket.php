@@ -21,7 +21,7 @@
  *	\brief      validation_ticket.php
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');

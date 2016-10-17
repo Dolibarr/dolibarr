@@ -23,7 +23,7 @@
  *		\brief      Page de consultation et insertion d'une cotisation
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -233,7 +233,7 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         // Ref
         print '<td>'.$cotisation->getNomUrl(1).'</td>';

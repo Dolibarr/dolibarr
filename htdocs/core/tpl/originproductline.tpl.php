@@ -18,7 +18,7 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo $bc[$var?1:0]; ?>>
 	<td><?php echo $this->tpl['label']; ?></td>
 	<td><?php echo $this->tpl['description']; ?></td>
 	<td align="right"><?php echo $this->tpl['vat_rate']; ?></td>

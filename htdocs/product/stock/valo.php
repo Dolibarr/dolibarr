@@ -23,7 +23,7 @@
  *  \brief      Page with stock values
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("stocks");
@@ -102,7 +102,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
             print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value

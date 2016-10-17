@@ -27,7 +27,7 @@
  *  \brief      Page d'administration-configuration du module Fournisseur
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -263,7 +263,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
                         $var=!$var;
-                        print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+                        print '<tr '.$bc[$var?1:0].'><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -386,7 +386,7 @@ foreach ($dirmodels as $reldir)
 	                $module = new $classname($db, new CommandeFournisseur($db));
 
                     $var=!$var;
-                    print "<tr ".$bc[$var].">\n";
+                    print "<tr ".$bc[$var?1:0].">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -476,7 +476,7 @@ print "</tr>\n";
 $var=false;
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr '.$bc[$var?1:0].'><td>';
 	print $langs->trans("UseDoubleApproval").'<br>';
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
@@ -487,7 +487,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	$var=!$var;
 }
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -522,7 +522,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr '.$bc[$var?1:0].'><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

@@ -360,7 +360,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$lastprojectid=$lines[$i]->fk_project;
 				}
 
-				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
+				print '<tr '.$bc[$var?1:0].' id="row-'.$lines[$i]->id.'">'."\n";
 
 				if ($showproject)
 				{
@@ -602,7 +602,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				$taskstatic->id=$lines[$i]->id;
 
-				print "<tr ".$bc[$var].">\n";
+				print "<tr ".$bc[$var?1:0].">\n";
 
 				// Project
 				print "<td>";
@@ -789,7 +789,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     $workloadforid[$projectstatic->id]=1;
 			    }
 			    
-				print "<tr ".$bc[$var].">\n";
+				print "<tr ".$bc[$var?1:0].">\n";
 
 				// Project
 				print '<td class="nowrap">'.$var;
@@ -1060,7 +1060,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	$sql2.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-	$sql2.= " WHERE p.rowid IN (".join(',',$arrayidofprojects).")";
+	$sql2.= " WHERE p.rowid IN (".implode(',',$arrayidofprojects).")";
 	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
 	$sql2.= " ORDER BY p.title, p.ref";
 
@@ -1111,7 +1111,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			    $projectstatic->dateo = $db->jdate($objp->dateo);
 			     
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
 				if (! in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title,24);

@@ -20,8 +20,8 @@
  */
 
 //define('NOTOKENRENEWAL',1); // Disables token renewal
-//require '../../../../main.inc.php';
-require '../../connectors/php/config.php';      // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
+//require __DIR__.'/../../../../main.inc.php';
+require __DIR__.'/../../connectors/php/config.php';      // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
 
 global $Config;
 

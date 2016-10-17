@@ -197,7 +197,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 {
 	$childids = $user->getAllChildIds();
 	$childids[]=$user->id;
-	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+	$sql.= " AND d.fk_user_author IN (".implode(',',$childids).")\n";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -245,7 +245,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
 	print '<table class="noborder" width="100%">';
@@ -330,7 +330,7 @@ if ($resql)
 			$expensereportstatic->date_fin=$objp->date_fin;
 
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td>';
 			print $expensereportstatic->getNomUrl(1);
 			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));

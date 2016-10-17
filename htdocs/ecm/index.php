@@ -26,7 +26,7 @@
 if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
 if (! defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -583,7 +583,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     				$expandedsectionarray[]=$idcursor;
     			}
     		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+    		$_SESSION['dol_ecmexpandedsectionarray']=implode(',',$expandedsectionarray);
     	}
     	if ($section && GETPOST('sectionexpand') == 'false')
     	{
@@ -595,7 +595,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			// is_in_subtree(fulltree,sectionparent,sectionchild)
     			if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
     		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+    		$_SESSION['dol_ecmexpandedsectionarray']=implode(',',$expandedsectionarray);
     	}
     	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 

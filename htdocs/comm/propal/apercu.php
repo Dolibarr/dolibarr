@@ -26,7 +26,7 @@
  *  \brief		Preview tab of propal
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -136,7 +136,7 @@ if ($id > 0 || ! empty($ref))
             print '<table class="nobordernopadding" width="100%">';
             print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans("Proposal").' PDF</td>';
+            print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("Proposal").' PDF</td>';
 
 			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 

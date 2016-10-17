@@ -118,7 +118,7 @@ class Export
 							{
 							    foreach($module->export_code as $r => $value)
 								{
-                                    //print $i.'-'.$filter.'-'.$modulename.'-'.join(',',$module->export_code).'<br>';
+                                    //print $i.'-'.$filter.'-'.$modulename.'-'.implode(',',$module->export_code).'<br>';
 								    if ($filter && ($filter != $module->export_code[$r])) continue;
 
                                     // Test if condition to show are ok

@@ -22,7 +22,7 @@
  *       \brief      Page for project statistics
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
@@ -323,7 +323,7 @@ foreach ($data_all_year as $val)
 	{	// If we have empty year
 		$oldyear--;
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+		print '<tr '.$bc[$var?1:0].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
@@ -335,7 +335,7 @@ foreach ($data_all_year as $val)
 		print '</tr>';
 	}
 	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+	print '<tr '.$bc[$var?1:0].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))

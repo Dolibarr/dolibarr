@@ -23,7 +23,7 @@
  * \ingroup margin
  * \brief Check margins
  */
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -197,7 +197,7 @@ if ($result) {
 		while ( $objp = $db->fetch_object($result) ) {
 			$var = ! $var;
 			
-			print "<tr " . $bc[$var] . ">";
+			print "<tr " . $bc[$var?1:0] . ">";
 			print '<td>';
 			$result_inner = $invoicestatic->fetch($objp->invoiceid);
 			if ($result_inner < 0) {

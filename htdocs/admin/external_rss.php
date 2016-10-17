@@ -27,7 +27,7 @@
  *      \brief      Page to setupe module ExternalRss
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
 
@@ -264,19 +264,19 @@ if ($resql)
 		print "</tr>";
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
 		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_title_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $idrss) . "\" size=\"64\"></td>";
 		print "</tr>";
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print "<td>".$langs->trans("URL")."</td>";
 		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $idrss) . "\" size=\"64\"></td>";
 		print "</tr>";
 
 		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr ".$bc[$var?1:0].">";
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 	    if ($result > 0 && empty($rss->error))
@@ -297,7 +297,7 @@ if ($resql)
 	    if ($result > 0 && empty($rss->error))
 	    {
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
 			$imageurl=$rssparser->getImageUrl();

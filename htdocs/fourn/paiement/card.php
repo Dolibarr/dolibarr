@@ -25,7 +25,7 @@
  *	\remarks	Fichier presque identique a compta/paiement/card.php
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -274,7 +274,7 @@ if ($result > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 				print ($objp->ref?$objp->ref:$objp->rowid);

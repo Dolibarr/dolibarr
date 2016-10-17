@@ -26,7 +26,7 @@
  *      \brief      Home page of category area
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -112,7 +112,7 @@ if ($catname || $id > 0)
 	foreach ($cats as $cat)
 	{
 		$var = ! $var;
-		print "\t<tr ".$bc[$var].">\n";
+		print "\t<tr ".$bc[$var?1:0].">\n";
 		print "\t\t<td>";
 		$categstatic->id=$cat->id;
 		$categstatic->ref=$cat->label;

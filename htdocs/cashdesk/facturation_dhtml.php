@@ -36,7 +36,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 // Change this following line to use the correct relative path (../, ../../, etc)
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
 //header("Content-type: text/html; charset=UTF-8");

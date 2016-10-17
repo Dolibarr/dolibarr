@@ -24,7 +24,7 @@
  *       \brief      Onglet groupes utilisateurs
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -448,7 +448,7 @@ else
             	{
             		$var=!$var;
 
-            		print "<tr ".$bc[$var].">";
+            		print "<tr ".$bc[$var?1:0].">";
             		print '<td>';
             		print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');

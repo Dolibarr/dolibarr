@@ -24,11 +24,11 @@
 
 
 $res=0;
-$res=@include("../main.inc.php");                               // For root directory
-if (! $res) $res=@include("../../main.inc.php");        // For "custom" directory
+$res=@include __DIR__.'/../main.inc.php';                               // For root directory
+if (! $res) $res=@include __DIR__.'/../../main.inc.php';        // For "custom" directory
 if (! $res) die("Include of main fails");
 
-require 'class/dolresource.class.php';
+require __DIR__.'/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 

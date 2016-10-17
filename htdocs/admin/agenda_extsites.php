@@ -24,7 +24,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -156,7 +156,7 @@ print "</tr>";
 
 // Show external agenda
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td align="center">';
 if ($conf->use_javascript_ajax)
@@ -179,7 +179,7 @@ print "</tr>";
 
 // Nb of agenda
 $var=!$var;
-print "<tr ".$bc[$var].">";
+print "<tr ".$bc[$var?1:0].">";
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td align="center">';
 print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
@@ -211,7 +211,7 @@ while ($i <= $MAXAGENDA)
 	$enabled='AGENDA_EXT_ENABLED'.$key;
 
 	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr ".$bc[$var?1:0].">";
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

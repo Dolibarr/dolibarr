@@ -328,7 +328,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
     /*$moreforfilter = '';
@@ -460,7 +460,7 @@ if ($resql)
             $var = !$var;
             
             // You can use here results
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
             if (! empty($arrayfields['t.entity']['checked'])) 
             {
                 print '<td>'.$obj->entity.'</td>';

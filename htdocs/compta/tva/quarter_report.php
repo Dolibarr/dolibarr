@@ -26,7 +26,7 @@
  *		TODO 		Deal with recurrent invoices as well
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -409,7 +409,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -577,7 +577,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var?1:0].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

@@ -188,9 +188,9 @@ startgetmess:
 	AddrHexa[8]=0;
 	printf("Connect socket to: %s\n",AddrHexa);
 #ifdef _WIN32
-	if (connect(sc,(LPSOCKADDR) &sin,sizeof(sin)))
+	if (connect(sc,(LPSOCKADDR) &sin,count(sin)))
 #else
-	if (connect(sc,(const struct sockaddr *) &sin,sizeof(sin))) 
+	if (connect(sc,(const struct sockaddr *) &sin,count(sin)))
 #endif
 	{
 		printf("Failed to connect !\n");
@@ -260,7 +260,7 @@ for (noarg=1;noarg<argc;noarg++) {
 		curseurarg=2;
 		if (strlen(argv[noarg]) < 3) { ++noarg; curseurarg=0; }
 		switch (option) {
-			case 's': strncpy(Host,argv[noarg]+curseurarg,sizeof(Host)); break;
+			case 's': strncpy(Host,argv[noarg]+curseurarg,count(Host)); break;
 			case 'p': Port=atoi(argv[noarg]+curseurarg); break;
 			case '?': help=-1;break;											// Help
 			case 'h': help=-1;break;											// Help

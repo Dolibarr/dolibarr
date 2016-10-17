@@ -552,7 +552,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
                         $var = !$var;
-                        print "<tr ".$bc[$var].">";
+                        print "<tr ".$bc[$var?1:0].">";
 
                         // Ref
                         print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
@@ -573,7 +573,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -746,7 +746,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $country_code = getCountry($obj->country_id, 2);
             $contactstatic->country_code = $country_code;
             
-            print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var?1:0].">";
 
             print '<td>';
             print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
@@ -846,7 +846,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 		{
 			$var = !$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print '<td>';
 			$addressstatic->id = $address->id;
@@ -882,7 +882,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	}
 	else
 	{
-		//print "<tr ".$bc[$var].">";
+		//print "<tr ".$bc[$var?1:0].">";
 		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
 		//print "</tr>\n";
 	}
@@ -988,7 +988,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     $datep=$db->jdate($obj->dp);
                     $datep2=$db->jdate($obj->dp2);
 
-                    $out.="<tr ".$bc[$var].">";
+                    $out.="<tr ".$bc[$var?1:0].">";
 
                     // Date
                     $out.='<td width="120" align="left" class="nowrap">';
@@ -1248,7 +1248,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         foreach ($histo as $key=>$value)
         {
             $var=!$var;
-            $out.="<tr ".$bc[$var].">";
+            $out.="<tr ".$bc[$var?1:0].">";
 			$actionstatic->fetch($histo[$key]['id']);
             // Champ date
             $out.='<td width="120" class="nowrap">';
@@ -1420,7 +1420,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			$obj = $db->fetch_object($result);
 			$var = !$var;
 
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 
 			print '<td>';
 			$socstatic->id = $obj->rowid;

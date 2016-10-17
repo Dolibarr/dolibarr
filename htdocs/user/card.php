@@ -33,7 +33,7 @@
  *       \brief      Tab of user card
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -1693,7 +1693,7 @@ else
                     {
                         $var=!$var;
 
-                        print "<tr ".$bc[$var].">";
+                        print "<tr ".$bc[$var?1:0].">";
                         print '<td>';
                         if ($caneditgroup)
                         {

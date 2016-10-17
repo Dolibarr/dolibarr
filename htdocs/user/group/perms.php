@@ -24,7 +24,7 @@
  *       \brief      Onglet user et permissions de la fiche utilisateur
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -276,7 +276,7 @@ if ($id)
 
                 if ($caneditperms)
                 {
-                    print '<tr '. $bc[$var].'>';
+                    print '<tr '. $bc[$var?1:0].'>';
                     print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                     print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
                     print '<td align="center" class="nowrap">';
@@ -289,7 +289,7 @@ if ($id)
                 }
             }
 
-            print '<tr '. $bc[$var].'>';
+            print '<tr '. $bc[$var?1:0].'>';
 
             // Module
             print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';

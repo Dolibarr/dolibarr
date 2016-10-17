@@ -22,7 +22,7 @@
  */
 
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translations files required by page
@@ -116,7 +116,7 @@ if ($ret)
                 $style='';
                 if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
 
-                print '<tr '.$bc[$var].' '.$style.'>';
+                print '<tr '.$bc[$var?1:0].' '.$style.'>';
 
                 print '<td>';
                 print $resource->getNomUrl(5);

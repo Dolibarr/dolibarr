@@ -23,7 +23,7 @@
  *      \brief       Page reporting Salesover by user
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -343,7 +343,7 @@ if (count($amount)) {
 
     foreach($arrayforsort as $key => $value) {
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
 
         // Third party
         $fullname=$name[$key];

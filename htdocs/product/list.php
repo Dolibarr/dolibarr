@@ -32,7 +32,7 @@
  *  \brief      Page to list products and services
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -403,7 +403,7 @@ else
     	    if ($sall)
             {
                 foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-                print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+                print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
             }
             
     		// Filter on categories
@@ -625,7 +625,7 @@ else
 				 
 				
     			$var=!$var;
-    			print '<tr '.$bc[$var].'>';
+    			print '<tr '.$bc[$var?1:0].'>';
 
     			// Ref
 			    if (! empty($arrayfields['p.ref']['checked']))

@@ -29,8 +29,8 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once 'class/dolresource.class.php';
-require_once 'class/html.formresource.class.php';
+require_once __DIR__.'/class/dolresource.class.php';
+require_once __DIR__.'/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
 // Load traductions files requiredby by page
@@ -91,7 +91,7 @@ if (empty($reshook))
 				$result=$object->update($user);
 				if ($result > 0)
 				{
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				}
 				else
@@ -123,7 +123,7 @@ if (empty($reshook))
 			if ($result >= 0)
 			{
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
-				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
+				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			}
 			else 

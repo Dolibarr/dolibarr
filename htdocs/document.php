@@ -53,7 +53,7 @@ function llxHeader() { }
 function llxFooter() { }
 
 
-require 'main.inc.php';	// Load $user and permissions
+require __DIR__.'/main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $encoding = '';

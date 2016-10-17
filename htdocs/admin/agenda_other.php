@@ -24,7 +24,7 @@
  *      \brief      Autocreate actions for agenda module setup page
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
@@ -49,7 +49,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$value=(GETPOST($code) ? GETPOST($code) : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -63,7 +63,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -113,7 +113,7 @@ print '</tr>'."\n";
 
 // Manual or automatic
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -131,7 +131,7 @@ print '</td></tr>'."\n";
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
     $var=!$var;
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr '.$bc[$var?1:0].'>'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right" class="nowrap">'."\n";
@@ -141,7 +141,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 
 // AGENDA_DEFAULT_FILTER_TYPE
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
@@ -150,7 +150,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -159,7 +159,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 $var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr '.$bc[$var?1:0].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";

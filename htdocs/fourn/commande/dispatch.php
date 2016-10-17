@@ -27,7 +27,7 @@
  *	\brief     Page to dispatch receiving
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -449,7 +449,7 @@ if ($id > 0 || ! empty($ref))
 
 							print "\n";
 							print '<!-- Line '.$suffix.' -->'."\n";
-							print "<tr ".$bc[$var].">";
+							print "<tr ".$bc[$var?1:0].">";
 
 							$linktoprod='<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 							$linktoprod.=' - '.$objp->label."\n";
@@ -496,7 +496,7 @@ if ($id > 0 || ! empty($ref))
 								print '<td></td>';																													// Warehouse column
 								print '</tr>';
 
-								print '<tr '.$bc[$var].' name="'.$type.$suffix.'">';
+								print '<tr '.$bc[$var?1:0].' name="'.$type.$suffix.'">';
 								print '<td>';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
@@ -525,7 +525,7 @@ if ($id > 0 || ! empty($ref))
 								print '<td align="right">'.img_picto($langs->trans('AddStockLocationLine'),'split.png','onClick="addDispatchLine('.$i.',\''.$type.'\')"').'</td>';	// Dispatch column
 								print '<td></td>';
 								print '</tr>';
-								print '<tr '.$bc[$var].' name="'.$type.$suffix.'">';
+								print '<tr '.$bc[$var?1:0].' name="'.$type.$suffix.'">';
 								print '<td colspan="6">';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
@@ -642,7 +642,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$objp = $db->fetch_object($resql);
 
-					print "<tr ".$bc[$var].">";
+					print "<tr ".$bc[$var?1:0].">";
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 					print ' - '.$objp->label;

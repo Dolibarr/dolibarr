@@ -25,7 +25,7 @@
  *		\brief      Page with customers or suppliers orders statistics
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -294,7 +294,7 @@ foreach ($data as $val)
 	{ // If we have empty year
 		$oldyear--;
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+		print '<tr '.$bc[$var?1:0].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
 		print '<td align="right">0</td>';
@@ -307,7 +307,7 @@ foreach ($data as $val)
 	}
 
 	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+	print '<tr '.$bc[$var?1:0].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

@@ -26,7 +26,7 @@
  *		\brief      Member's type setup
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -196,7 +196,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		{
 			$objp = $db->fetch_object($result);
 			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var?1:0].">";
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
@@ -517,7 +517,7 @@ if ($rowid > 0)
 
 		        // Lastname
 		        $var=!$var;
-		        print '<tr '.$bc[$var].'>';
+		        print '<tr '.$bc[$var?1:0].'>';
 		        if ($objp->societe != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";

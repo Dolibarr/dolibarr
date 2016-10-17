@@ -21,7 +21,7 @@
  *		\brief      Page to purge files (temporary or not)
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");

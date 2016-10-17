@@ -44,7 +44,7 @@ function llxHeader() { }
 function llxFooter() { }
 
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 global $user, $conf, $langs;

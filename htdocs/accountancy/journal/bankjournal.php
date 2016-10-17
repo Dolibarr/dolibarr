@@ -27,7 +27,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Page with bank journal
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
@@ -640,7 +640,7 @@ else {
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
-			print "<tr " . $bc[$var] . ">";
+			print "<tr " . $bc[$var?1:0] . ">";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $ref . "</td>";
 			print "<td>" . length_accountg($k) . "</td>";
@@ -659,7 +659,7 @@ else {
 		if (is_array($tabtp[$key])) {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($k != 'type') {
-					print "<tr " . $bc[$var] . ">";
+					print "<tr " . $bc[$var?1:0] . ">";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
 					print "<td>" . length_accounta($k) . "</td>";
@@ -672,7 +672,7 @@ else {
 			}
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
-				print "<tr " . $bc[$var] . ">";
+				print "<tr " . $bc[$var?1:0] . ">";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
 				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";

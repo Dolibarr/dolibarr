@@ -24,7 +24,7 @@
  *	\brief      Workflows setup page
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
@@ -113,7 +113,7 @@ foreach($workflowcodes as $key => $params)
    	}   	
    	
    	$var = !$var;
-   	print "<tr ".$bc[$var].">\n";
+   	print "<tr ".$bc[$var?1:0].">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
    	if (! empty($params['warning']))
    	{

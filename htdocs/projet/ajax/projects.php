@@ -31,7 +31,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 $htmlname=GETPOST('htmlname','alpha');
 $socid=GETPOST('socid','int');
@@ -43,7 +43,7 @@ $id=GETPOST('id', 'int');
  * View
  */
 
-dol_syslog(join(',',$_GET));
+dol_syslog(implode(',',$_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 

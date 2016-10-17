@@ -21,7 +21,7 @@
  *  \brief		Page for configuring dynamic prices
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
@@ -164,7 +164,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
     $var=True;
     foreach ($price_globals->listGlobalVariables() as $i=>$entry) {
         $var = !$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         print '<td>'.$entry->code.'</td>';
         print '<td>'.$entry->description.'</td>';
         print '<td>'.price($entry->value).'</td>';
@@ -251,7 +251,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
             }
         }
         $var = !$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr '.$bc[$var?1:0].'>';
         print '<td>'.$code.'</td>';
         print '<td>'.$entry->description.'</td>';
         print '<td>'.$langs->trans("GlobalVariableUpdaterType".$entry->type).'</td>';

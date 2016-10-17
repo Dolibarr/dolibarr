@@ -1,5 +1,5 @@
 <?php
-require 'Segment.php';
+require __DIR__.'/Segment.php';
 class OdfException extends Exception
 {}
 /**

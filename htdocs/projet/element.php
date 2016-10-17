@@ -26,7 +26,7 @@
  *		\brief      Page of project referrers
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -127,7 +127,7 @@ print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 if (! $user->rights->projet->all->lire)
 {
     $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-    $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    $object->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
 }
 print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 print '</td></tr>';
@@ -528,7 +528,7 @@ foreach ($listofreferent as $key => $value)
 			}
 
 			$var = ! $var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr '.$bc[$var?1:0].'>';
 			// Module
 			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			// Nb
@@ -712,7 +712,7 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print "<tr ".$bc[$var?1:0].">";
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task')

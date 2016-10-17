@@ -200,7 +200,7 @@ else
             if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
         }
         
-        print '<tr '.$bc[$var].' style="height: 20px;">';
+        print '<tr '.$bc[$var?1:0].' style="height: 20px;">';
         print '<td>';
         $userstatic->id=$users['rowid'];
         $userstatic->lastname=$users['lastname'];

@@ -32,7 +32,7 @@
  *	\brief      List of customer invoices
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -387,13 +387,13 @@ if (empty($reshook))
 					$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 		
 					$substitutionarray=array(
-						'__ID__' => join(', ',array_keys($listofqualifiedinvoice)),
+						'__ID__' => implode(', ',array_keys($listofqualifiedinvoice)),
 						'__EMAIL__' => $thirdparty->email,
 						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 						//'__LASTNAME__' => $obj2->lastname,
 						//'__FIRSTNAME__' => $obj2->firstname,
-						'__FACREF__' => join(', ',$listofqualifiedref),            // For backward compatibility
-					    '__REF__' => join(', ',$listofqualifiedref),
+						'__FACREF__' => implode(', ',$listofqualifiedref),            // For backward compatibility
+					    '__REF__' => implode(', ',$listofqualifiedref),
 						'__REFCLIENT__' => $thirdparty->name
 					);
 	
@@ -940,7 +940,7 @@ if ($resql)
 		$formmail->param['action']=$action;
 		$formmail->param['models']=$modelmail;
 		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['facid']=join(',',$arrayofselected);
+		$formmail->param['facid']=implode(',',$arrayofselected);
 		//$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		print $formmail->get_form();
@@ -951,7 +951,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
  	// If the user can view prospects other than his'
@@ -1212,7 +1212,7 @@ if ($resql)
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             
-            print '<tr '.$bc[$var].'>';
+            print '<tr '.$bc[$var?1:0].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';

@@ -2,7 +2,7 @@
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 if ($dolibarr_main_prod) {
 	accessforbidden();

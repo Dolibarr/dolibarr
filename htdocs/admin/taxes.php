@@ -25,7 +25,7 @@
  *     \brief      Page de configuration du module tax
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
@@ -206,7 +206,7 @@ foreach ($list as $key)
 {
 	$var=!$var;
 
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr '.$bc[$var?1:0].' class="value">';
 
 	// Param
 	$label = $langs->trans($key); 

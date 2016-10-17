@@ -300,7 +300,7 @@ class autoTranslator
 		//setting language pair
 		$lang_pair = $src_lang.'|'.$dest_lang;
 
-		$src_text_to_translate=preg_replace('/%s/','SSSSS',join('',$src_texts));
+		$src_text_to_translate=preg_replace('/%s/','SSSSS',implode('',$src_texts));
 		$src_text_to_translate=preg_replace('/'.preg_quote('\n\n').'/',' NNNNN ',$src_text_to_translate);
 
 		// Define GET URL v1
@@ -342,7 +342,7 @@ class autoTranslator
 		$rep=preg_replace('/NNNNN/i','\n\n',$rep);
 		$rep=preg_replace('/&#39;/i','\'',$rep);
 
-		//print "OK ".join('',$src_texts).' => '.$rep."\n";
+		//print "OK ".implode('',$src_texts).' => '.$rep."\n";
 
 		return $rep;
 	}

@@ -25,7 +25,7 @@
  *      \brief      Page of users
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 if (! empty($conf->multicompany->enabled))
 	dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
 
@@ -278,7 +278,7 @@ if ($result)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
 	
     $moreforfilter='';
@@ -454,7 +454,7 @@ if ($result)
         
 		$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         if (! empty($arrayfields['u.login']['checked']))
 		{
 		    print '<td>';

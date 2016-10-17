@@ -32,7 +32,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
 $res=0;
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 
 /*
@@ -48,7 +48,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog(join(',',$_GET));
+dol_syslog(implode(',',$_GET));
 
 
 // Generation liste des projets

@@ -24,7 +24,7 @@
  * \ingroup 	Advanced accountancy
  * \brief 		Ventilation page from customers invoices
  */
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -305,7 +305,7 @@ if ($result) {
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
 
-		print '<tr'. $bc[$var].'>';
+		print '<tr'. $bc[$var?1:0].'>';
 
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;

@@ -22,7 +22,7 @@
  * \brief		Setup page to configure salaries module
  */
 
-require '../main.inc.php';
+require __DIR__.'/../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -99,7 +99,7 @@ foreach ($list as $key)
 {
 	$var=!$var;
 
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr '.$bc[$var?1:0].' class="value">';
 
 	// Param
 	$label = $langs->trans($key);

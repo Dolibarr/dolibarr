@@ -24,7 +24,7 @@
  *      \brief      Page of user groups
  */
 
-require '../../main.inc.php';
+require __DIR__.'/../../main.inc.php';
 
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
@@ -95,7 +95,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
     
     $moreforfilter='';
@@ -120,7 +120,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var?1:0].">";
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
         if (! $obj->entity)
         {

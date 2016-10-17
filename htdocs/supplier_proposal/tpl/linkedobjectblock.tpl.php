@@ -34,7 +34,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> >
+<tr <?php echo $bc[$var?1:0]; ?> >
 	<td><?php echo $langs->trans("SupplierProposal"); ?></td>
 	<td><a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"),"supplier_proposal").' '.$objectlink->ref; ?></a></td>
 	<td></td>
