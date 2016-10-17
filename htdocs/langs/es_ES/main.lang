@@ -611,7 +611,6 @@ FreeLineOfType=Entrada libre del tipo
 CloneMainAttributes=Clonar el objeto con estos atributos principales
 PDFMerge=Fusión PDF
 Merge=Fusión
-MergeCreatePDF=Crear documentos PDF en el caso que no existan
 PrintContentArea=Mostrar página de impresión de la zona central
 MenuManager=Gestor de menú
 WarningYouAreInMaintenanceMode=Atención, está en modo mantenimiento, así que solamente el login <b>%s</b> está autorizado para utilizar la aplicación en este momento.
