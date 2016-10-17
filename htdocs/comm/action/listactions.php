@@ -309,7 +309,8 @@ if ($resql)
     $i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
@@ -321,6 +322,7 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
 	{
@@ -367,15 +369,22 @@ if ($resql)
 
 		$var=!$var;
 
+		$actionstatic->id=$obj->id;
+		$actionstatic->ref=$obj->id;
+		$actionstatic->type_code=$obj->type_code;
+		$actionstatic->type_label=$obj->type_label;
+		$actionstatic->label=$obj->label;
+		
 		print "<tr ".$bc[$var].">";
 
 		// Action (type)
 		print '<td>';
-		$actionstatic->id=$obj->id;
-		$actionstatic->type_code=$obj->type_code;
-		$actionstatic->type_label=$obj->type_label;
-		$actionstatic->label=$obj->label;
-		print $actionstatic->getNomUrl(1,36);
+		print $actionstatic->getNomUrl(1,-1);
+		print '</td>';
+
+		// Action (type)
+		print '<td>';
+		print $actionstatic->label;
 		print '</td>';
 
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))

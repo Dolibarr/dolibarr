@@ -1094,13 +1094,6 @@ else
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-        if (!empty($object->id))
-        {
-	        // List of actions on element
-	        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	        $formactions=new FormActions($db);
-	        $somethingshown=$formactions->showactions($object,'project',$socid);
-        }
 
         print '</div></div></div>';
     }

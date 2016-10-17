@@ -34,6 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("companies");
 
+if (GETPOST('actioncode','array'))
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,6 +60,12 @@ $hookmanager->initHooks(array('agendathirdparty'));
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+}
 
 
 
@@ -128,10 +144,8 @@ if ($socid)
 
 
 	
-	/*
-     * Barre d'action
-     */
-
+	// Actions buttons
+	
     $objthirdparty=$object;
     $objcon=new stdClass();
 	
@@ -147,6 +161,7 @@ if ($socid)
     	//$out.="</a>";
 	}
 
+	
 	print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
@@ -165,39 +180,16 @@ if ($socid)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        	
-		$actioncode = '';
-        if(!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-        	
-			if (GETPOST('actioncode','array'))
-			{
-			    $actioncode=GETPOST('actioncode','array',3);
-			    if (! count($actioncode)) $actioncode='0';
-			}
-			else
-			{
-			    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
-			}
-			
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-			$formactions=new FormActions($db);	
-				
-			print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
-			print '<input type="hidden" name="socid" value="'.$objthirdparty->id.'" />';
-			$formactions->select_type_actions($actioncode, "actioncode", '', 0, 0, 0);
-			print '<input type="submit" class="button" name="refresh" value="' . $langs->trans("Refresh") . '">';
-			print '</form><br />'	;
-			
-			
-		}
-		
 		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 		
         // List of todo actions
-        show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
-    
+        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+
         // List of done actions
-        show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+     
+        // List of all actions
+        show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '');
     }
 }
 

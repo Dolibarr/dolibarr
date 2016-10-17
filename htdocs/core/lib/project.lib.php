@@ -111,8 +111,13 @@ function project_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
+    $head[$h][1].= $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$h][1].= '/';
+        $head[$h][1].= $langs->trans("Agenda");
+    }
+	$head[$h][2] = 'agenda';
 	$h++;
 	
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project','remove');

@@ -1078,7 +1078,7 @@ class ActionComm extends CommonObject
         else if ($mode == 6)
         {
         	if ($percent==-1 && ! $hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
-        	else if ($percent==0) return $langs->trans('StatusActionToDo').'0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	else if ($percent==0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'),'statut1');
         	else if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
         	else if ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }

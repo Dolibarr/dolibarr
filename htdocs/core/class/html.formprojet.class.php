@@ -44,7 +44,7 @@ class FormProjets
 	}
 
 	/**
-	 *	Output a combo list with projects qualified for a third party
+	 *	Output a combo list with projects qualified for a third party / user
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
@@ -58,9 +58,10 @@ class FormProjets
 	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
 	 *  @param  string  $filterkey      Key to filter
 	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0)
 	{
 		global $langs,$conf,$form;
 
@@ -122,9 +123,10 @@ class FormProjets
 	 * @param  int     $mode               0 for HTML mode and 1 for array return (to be used by json_encode for example)
 	 * @param  string  $filterkey          Key to filter
 	 * @param  int     $nooutput           No print output. Return it only.
+	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0)
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0)
 	{
 		global $user,$conf,$langs;
 
@@ -142,6 +144,7 @@ class FormProjets
 			$projectstatic=new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		}
+
 
 		// Search all projects
 		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
