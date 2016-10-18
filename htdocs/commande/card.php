@@ -1981,7 +1981,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans('RefCustomer') . '</td><td align="left">';
 		print '</td>';
-		if ($action != 'refcustomer' && $object->brouillon)
+		if ($action != 'refcustomer')
 			print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refcustomer&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
