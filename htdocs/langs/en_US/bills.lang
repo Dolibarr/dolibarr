@@ -377,6 +377,7 @@ IBANNumber=IBAN number
 IBAN=IBAN
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT number
+ShowOnlyBicIban=Show only the BIC/IBAN
 ExtraInfos=Extra infos
 RegulatedOn=Regulated on
 ChequeNumber=Check N°
