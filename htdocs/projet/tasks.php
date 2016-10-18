@@ -235,31 +235,11 @@ if ($id > 0 || ! empty($ref))
     
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
-
-
-    // Ref
-    /*
-    print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-    print '</td></tr>';
-    */
-
-    // Label
-    //print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-    // Third party
-    /*
-    print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
-    if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
-    else print'&nbsp;';
-    print '</td></tr>';
-    */
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -267,10 +247,7 @@ if ($id > 0 || ! empty($ref))
     else print $langs->trans('PrivateProject');
     print '</td></tr>';
 
-    // Statut
-    //print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	/*if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
         // Opportunity status
         print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
@@ -287,18 +264,15 @@ if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
         if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
         print '</td></tr>';
-    }
+    }*/
 
-    // Date start
-    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+    // Date start - end
+    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
     print dol_print_date($object->date_start,'day');
+    $end=dol_print_date($object->date_end,'day');
+    if ($end) print ' - '.$end;
     print '</td></tr>';
     
-    // Date end
-    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print dol_print_date($object->date_end,'day');
-    print '</td></tr>';
-     
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td><td>';
     if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);

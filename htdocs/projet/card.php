@@ -567,7 +567,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
     print '</td></tr>';
 
-    if($conf->categorie->enabled) {
+    if ($conf->categorie->enabled) {
     	// Categories
     	print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
     	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
@@ -829,7 +829,6 @@ else
 
         print '<table class="border" width="100%">';
 
-
         // Ref
         /*
         print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
@@ -875,17 +874,14 @@ else
 	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
 	        print '</td></tr>';
 	    }
-
-	    // Date start
-	    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	    print dol_print_date($object->date_start,'day');
-	    print '</td></tr>';
-	    
-	    // Date end
-	    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	    print dol_print_date($object->date_end,'day');
-	    print '</td></tr>';
-	     
+    
+        // Date start - end
+        print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+        print dol_print_date($object->date_start,'day');
+        $end=dol_print_date($object->date_end,'day');
+        if ($end) print ' - '.$end;
+        print '</td></tr>';
+    	     
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
         if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);

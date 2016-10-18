@@ -99,14 +99,14 @@ $fieldstosearchall = array(
 if (empty($user->socid)) $fieldstosearchall['t.note_private']="NotePrivate";
 
 $arrayfields=array(
-    'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
-    'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
-    'p.fk_statut'=>array('label'=>$langs->trans("ProjectStatus"), 'checked'=>1),
     't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
     't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
     't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
     't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
+    'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
+    'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
+    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
+    'p.fk_statut'=>array('label'=>$langs->trans("ProjectStatus"), 'checked'=>1),
     't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>102),
     't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
     't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
@@ -232,14 +232,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid,";
 $sql.= " ".MAIN_DB_PREFIX."projet_task as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($search_project_user > 0)
-{
-    $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
-}
-if ($search_task_user > 0)
-{
-    $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
-}
+if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
+if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
@@ -277,7 +271,11 @@ else if ($year > 0)
     $sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_projectstatus >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_projectstatus);
+if ($search_projectstatus >= 0)
+{
+    if ($search_projectstatus == 99) $sql .= " AND p.fk_statut <> 2";
+    else $sql .= " AND p.fk_statut = ".$db->escape($search_projectstatus);
+}
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 if ($search_task_user > 0) $sql.= " AND ect.fk_c_type_contact IN (".join(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
@@ -405,14 +403,14 @@ if ($resql)
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'" id="tablelines3">';
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'],$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['p.fk_statut']['checked']))     print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['t.label']['checked']))         print_liste_field_titre($arrayfields['t.label']['label'],$_SERVER["PHP_SELF"],"t.label","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['t.dateo']['checked']))         print_liste_field_titre($arrayfields['t.dateo']['label'],$_SERVER["PHP_SELF"],"t.dateo","",$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['t.datee']['checked']))         print_liste_field_titre($arrayfields['t.datee']['label'],$_SERVER["PHP_SELF"],"t.datee","",$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
+    if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'],$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    if (! empty($arrayfields['p.fk_statut']['checked']))     print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_field_titre($arrayfields['t.planned_workload']['label'],$_SERVER["PHP_SELF"],"t.planned_workload","",$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'],$_SERVER["PHP_SELF"],"t.duration_effective","",$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'],$_SERVER["PHP_SELF"],"","",$param,'align="center"');
@@ -439,32 +437,6 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['p.ref']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'" size="4">';
-        print '</td>';
-    }
-    if (! empty($arrayfields['p.title']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_project_title" value="'.$search_project_title.'" size="6">';
-        print '</td>';
-    }
-    if (! empty($arrayfields['s.nom']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe).'" size="4">';
-        print '</td>';
-    }
-    if (! empty($arrayfields['p.fk_statut']['checked']))
-    {
-        print '<td class="liste_titre">';
-        $listofstatus=array(-1=>'&nbsp;');
-        foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-        print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
-        print '</td>';
-    }
     if (! empty($arrayfields['t.ref']['checked']))
     {
         print '<td class="liste_titre">';
@@ -493,6 +465,33 @@ if ($resql)
         if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
         print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
         $formother->select_year($year?$year:-1,'year',1, 20, 5);
+        print '</td>';
+    }
+    if (! empty($arrayfields['p.ref']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'" size="4">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['p.title']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_project_title" value="'.$search_project_title.'" size="6">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['s.nom']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe).'" size="4">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['p.fk_statut']['checked']))
+    {
+        print '<td class="liste_titre">';
+        $arrayofstatus = array();
+        foreach($projectstatic->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
+        $arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
+    	print $form->selectarray('search_projectstatus', $arrayofstatus, $search_projectstatus, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
         print '</td>';
     }
     if (! empty($arrayfields['t.planned_workload']['checked'])) print '<td></td>';
@@ -580,48 +579,6 @@ if ($resql)
     		$var=!$var;
     		print "<tr ".$bc[$var].">";
 
-    		// Project url
-        	if (! empty($arrayfields['p.ref']['checked']))
-        	{
-        		print '<td class="nowrap">';
-        		print $projectstatic->getNomUrl(1, 'task');
-        		if ($projectstatic->hasDelay()) print img_warning("Late");
-        		print '</td>';
-    		    if (! $i) $totalarray['nbfield']++;
-        	}
-    		// Title
-        	if (! empty($arrayfields['p.title']['checked']))
-        	{
-            	print '<td>';
-        		print dol_trunc($obj->projecttitle,80);
-        		print '</td>';
-    		    if (! $i) $totalarray['nbfield']++;
-        	}
-    		// Company
-        	if (! empty($arrayfields['s.nom']['checked']))
-        	{
-            	print '<td>';
-        		if ($obj->socid)
-        		{
-        			$socstatic->id=$obj->socid;
-        			$socstatic->name=$obj->name;
-        			print $socstatic->getNomUrl(1);
-        		}
-        		else
-        		{
-        			print '&nbsp;';
-        		}
-        		print '</td>';
-    		    if (! $i) $totalarray['nbfield']++;
-        	}
-        	// Status
-        	if (! empty($arrayfields['p.fk_statut']['checked']))
-        	{
-        	    print '<td>';
-        	    print $projectstatic->getLibStatut(1);
-        	    print '</td>';
-    		    if (! $i) $totalarray['nbfield']++;
-        	}
         	// Ref
         	if (! empty($arrayfields['t.ref']['checked']))
         	{
@@ -654,6 +611,48 @@ if ($resql)
         		print dol_print_date($db->jdate($obj->date_end),'day');
         		print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
+        	}
+        	// Project ref
+        	if (! empty($arrayfields['p.ref']['checked']))
+        	{
+        	    print '<td class="nowrap">';
+        	    print $projectstatic->getNomUrl(1, 'task');
+        	    if ($projectstatic->hasDelay()) print img_warning("Late");
+        	    print '</td>';
+        	    if (! $i) $totalarray['nbfield']++;
+        	}
+        	// Project title
+        	if (! empty($arrayfields['p.title']['checked']))
+        	{
+        	    print '<td>';
+        	    print dol_trunc($obj->projecttitle,80);
+        	    print '</td>';
+        	    if (! $i) $totalarray['nbfield']++;
+        	}
+        	// Third party
+        	if (! empty($arrayfields['s.nom']['checked']))
+        	{
+        	    print '<td>';
+        	    if ($obj->socid)
+        	    {
+        	        $socstatic->id=$obj->socid;
+        	        $socstatic->name=$obj->name;
+        	        print $socstatic->getNomUrl(1);
+        	    }
+        	    else
+        	    {
+        	        print '&nbsp;';
+        	    }
+        	    print '</td>';
+        	    if (! $i) $totalarray['nbfield']++;
+        	}
+        	// Project status
+        	if (! empty($arrayfields['p.fk_statut']['checked']))
+        	{
+        	    print '<td>';
+        	    print $projectstatic->getLibStatut(1);
+        	    print '</td>';
+        	    if (! $i) $totalarray['nbfield']++;
         	}
         	
         	// Planned workload

@@ -270,7 +270,11 @@ else if ($year > 0)
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
+if ($search_status >= 0) 
+{
+    if ($search_status == 99) $sql .= " AND p.fk_statut <> 2";
+    else $sql .= " AND p.fk_statut = ".$db->escape($search_status);
+}
 if ($search_opp_status) 
 {
     if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
@@ -575,7 +579,10 @@ if ($resql)
     if (! empty($arrayfields['p.fk_statut']['checked']))
     {
     	print '<td class="liste_titre nowrap" align="right">';
-    	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
+        $arrayofstatus = array();
+        foreach($projectstatic->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
+        $arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
+    	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
         print '</td>';
     }
     // Action column
