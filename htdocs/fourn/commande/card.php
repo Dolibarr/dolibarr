@@ -1059,7 +1059,7 @@ if (empty($reshook))
 									$array_option = $lines[$i]->array_options;
 								}
 
-								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
 								if ($result>=0)
 								{
 								    $tva_tx = $lines[$i]->tva_tx;
