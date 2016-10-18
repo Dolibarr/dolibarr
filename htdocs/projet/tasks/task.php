@@ -82,6 +82,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	if (! $error)
 	{
 		$object->fetch($id,$ref);
+        $object->oldcopy = clone $object;
 
 		$tmparray=explode('_',$_POST['task_parent']);
 		$task_parent=$tmparray[1];
