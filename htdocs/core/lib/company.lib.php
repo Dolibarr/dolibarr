@@ -952,15 +952,16 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	Adherent|Societe   $filterobj		   Object third party or member
+ * 		@param	Adherent|Societe|Project   $filterobj	   Object third party or member or project
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on avent 'done' or 'todo' or ''=nofilter.
+ *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter.
+ *      @param  array              $filters        Filter on other fields
  *      @return	mixed					           Return html part or void if noprint is 1
  *      TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done')
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array())
 {
     global $bc,$user,$conf;
     global $form;
@@ -1000,6 +1001,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (!empty($actioncode)) $sql.= " AND c.code='".$actioncode."' ";
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+        if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
@@ -1144,7 +1146,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td></td>';
 		}
 		$out.='<td></td>';
-		$out.='<td></td>';
+		$out.='<td><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out.='<td></td>';
 		$out.='<td>';
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -1216,11 +1218,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             }
             $out.="</td>\n";
             
-			if($conf->global->AGENDA_USE_EVENT_TYPE) {
-				$out.='<td>';
-				$out.=$actionstatic->type;
-				$out.='</td>';
-			}
+			$out.='<td>';
+			$out.=$actionstatic->type;
+			$out.='</td>';
+
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 

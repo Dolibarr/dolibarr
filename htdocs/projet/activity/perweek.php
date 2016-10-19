@@ -58,11 +58,12 @@ $nowtmp=dol_getdate($now);
 $nowday=$nowtmp['mday'];
 $nowmonth=$nowtmp['mon'];
 $nowyear=$nowtmp['year'];
-$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):date("Y"));
-$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):date("m"));
-$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):date("d"));
+$year=GETPOST('reyear')?GETPOST('reyear','int'):(GETPOST("year")?GETPOST("year","int"):date("Y"));
+$month=GETPOST('remonth')?GETPOST('remonth','int'):(GETPOST("month")?GETPOST("month","int"):date("m"));
+$day=GETPOST('reday')?GETPOST('reday','int'):(GETPOST("day")?GETPOST("day","int"):date("d"));
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
 
 $startdayarray=dol_get_first_day_week($day, $month, $year);
 
@@ -93,6 +94,17 @@ $object=new Task($db);
  * Actions
  */
 
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $action = '';
+    $search_project_ref = '';
+}
+if (GETPOST("button_search_x") || GETPOST("button_search.x") || GETPOST("button_search"))
+{
+    $action = '';
+}
+
 if (GETPOST('submitdateselect'))
 {
 	$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
@@ -103,7 +115,7 @@ if (GETPOST('submitdateselect'))
 if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
     $action = 'assigntask';
-    
+
     if ($taskid > 0)
     {
 		$result = $object->fetch($taskid, $ref);
@@ -119,6 +131,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
     	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
     	$error++;
     }
+    
     if (! $error)
     {
     	$idfortaskuser=$user->id;
@@ -176,7 +189,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->lire)
+if ($weclickonassign && $action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
@@ -276,7 +289,8 @@ if ($id)
 }
 
 $onlyopenedproject=1;	// or -1
-$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+$morewherefilter='';
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
@@ -288,12 +302,14 @@ llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
-$param=($mode?'&amp;mode='.$mode:'');
+$param='';
+$param.=($mode?'&amp;mode='.$mode:'');
+$param.=($search_project_ref?'&amp;search_project_ref='.$search_project_ref:'');
 
 // Show navigation bar
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
-$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
@@ -358,6 +374,9 @@ print "\n";
 //print '<input type="hidden" name="year" value="'.$year.'">';
 //print '<input type="hidden" name="month" value="'.$month.'">';
 //print '<input type="hidden" name="day" value="'.$day.'">';
+
+print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
+
 print '<div class="float">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
@@ -366,19 +385,19 @@ print '<input type="submit" class="button" name="assigntask" value="'.$langs->tr
 //print '</form>';
 print '</div>';
 
-print '<div class="floatright">'.$nav.'</div>';
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
 print '<table class="noborder" width="100%">';
+
 print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("RefTask").'</td>';
+print '<td>'.$langs->trans("LabelTask").'</td>';
+print '<td>'.$langs->trans("ProjectRef").'</td>';
 if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 {
     print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
-print '<td>'.$langs->trans("Project").'</td>';
-print '<td>'.$langs->trans("RefTask").'</td>';
-print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
@@ -389,10 +408,29 @@ $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['fi
 
 for($i=0;$i<7;$i++)
 {
-	print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
+    print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
 }
 print '<td class="liste_total"></td>';
+print "</tr>\n";
 
+print '<tr class="liste_titre">';
+print '<td class="liste_total"></td>';
+print '<td class="liste_total"></td>';
+print '<td class="liste_total"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_total"></td>';
+print '<td class="liste_total"></td>';
+print '<td class="liste_total"></td>';
+print '<td class="liste_total"></td>';
+print '<td class="liste_total"></td>';
+for($i=0;$i<7;$i++)
+{
+    print '<td class="liste_total"></td>';
+}
+// Action column
+print '<td class="liste_titre nowrap" align="right">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
+print '</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

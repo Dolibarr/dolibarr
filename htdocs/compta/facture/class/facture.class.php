@@ -314,7 +314,6 @@ class Facture extends CommonInvoice
 			$this->brouillon = 1;
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
-			var_dump($this->linked_objects);
 				
 			$forceduedate = $this->calculate_date_lim_reglement();
 
@@ -2147,7 +2146,8 @@ class Facture extends CommonInvoice
                 if (!empty($conf->global->INVOICE_USE_SITUATION))
                 {
     				$final = True;
-    				while ($i < count($this->lines) && $final == True) {
+    				$nboflines = count($this->lines);
+    				while (($i < $nboflines) && $final) {
     					$final = ($this->lines[$i]->situation_percent == 100);
     					$i++;
     				}

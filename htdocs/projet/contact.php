@@ -178,30 +178,7 @@ if ($id > 0 || ! empty($ref))
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
-        
-    /*
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-		$objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-		$object->next_prev_filter=" rowid in (".(count($objectsListId)?implode(',',array_keys($objectsListId)):'0').")";
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	print '</td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-	// Customer
-	print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-	print '<td colspan="3">';
-	if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td></tr>';
-        */
-        
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) print $langs->trans('SharedProject');
@@ -227,15 +204,12 @@ if ($id > 0 || ! empty($ref))
     	print '</td></tr>';
     }
     
-	// Date start
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'day');
-	print '</td></tr>';
-
-	// Date end
-	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'day');
-	print '</td></tr>';
+    // Date start - end
+    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+    print dol_print_date($object->date_start,'day');
+    $end=dol_print_date($object->date_end,'day');
+    if ($end) print ' - '.$end;
+    print '</td></tr>';
 
     // Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';

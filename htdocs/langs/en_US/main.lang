@@ -127,6 +127,7 @@ Activate=Activate
 Activated=Activated
 Closed=Closed
 Closed2=Closed
+NotClosed=Not closed
 Enabled=Enabled
 Deprecated=Deprecated
 Disable=Disable

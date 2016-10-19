@@ -211,64 +211,106 @@ if ($id > 0 || ! empty($ref))
 
 	$param=($mode=='mine'?'&mode=mine':'');
 
-	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-	
-	// Ref
-	print '<tr><td class="titlefield">';
-	print $langs->trans("Ref");
-	print '</td><td>';
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-		$projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-		$object->next_prev_filter=" rowid in (".(count($projectsListId)?implode(',',array_keys($projectsListId)):'0').")";
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
-	print '</td></tr>';
+    // Project card
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
-	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td>';
-	print '</tr>';
+    $morehtmlref='<div class="refidno">';
+    // Title
+    $morehtmlref.=$object->title;
+    // Thirdparty
+    if ($object->thirdparty->id > 0)
+    {
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    }
+    $morehtmlref.='</div>';
 
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?implode(',',array_keys($objectsListId)):'0').")";
+    }
 
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	// Date start
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'day');
-	print '</td></tr>';
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
 
-	// Date end
-	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'day');
-	print '</td></tr>';
+    print '<table class="border" width="100%">';
 
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
-	print '</td></tr>';
-	
-	// Other options
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
-	{
-		print $object->showOptionals($extrafields_project);
-	}
+    // Visibility
+    print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
 
-	print '</table>';
+	/*if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+        // Opportunity status
+        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+        if ($code) print $langs->trans("OppStatus".$code);
+        print '</td></tr>';
+
+        // Opportunity percent
+        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,'',$langs,1,0).' %';
+        print '</td></tr>';
+
+        // Opportunity Amount
+        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
+        print '</td></tr>';
+    }*/
+
+    // Date start - end
+    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+    print dol_print_date($object->date_start,'day');
+    $end=dol_print_date($object->date_end,'day');
+    if ($end) print ' - '.$end;
+    print '</td></tr>';
+
+    // Budget
+    print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+    if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
+    print '</td></tr>';
+
+    // Other attributes
+    $cols = 2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+
+    print '</table>';
+
+    print '</div>';
+    print '<div class="fichehalfright">';
+    print '<div class="ficheaddleft">';
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border" width="100%">';
+
+    // Description
+    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+    print nl2br($object->description);
+    print '</td></tr>';
+
+    // Categories
+    if($conf->categorie->enabled) {
+        print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+        print $form->showCategories($object->id,'project',1);
+        print "</td></tr>";
+    }
+
+    print '</table>';
+
+    print '</div>';
+    print '</div>';
+    print '</div>';
+
+    print '<div class="clearboth"></div>';
+
 
 	dol_fiche_end();
 }
