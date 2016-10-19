@@ -95,7 +95,7 @@ function resource_admin_prepare_head() {
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/resource.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][1] = $langs->trans("ResourceSetup");
 	$head[$h][2] = 'general';
 	$h++;
 

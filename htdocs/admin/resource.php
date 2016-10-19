@@ -44,26 +44,17 @@ $action = GETPOST('action', 'alpha');
  * Actions
  */
 
-if ($action == 'update')
+if ($action == 'updateoptions')
 {
-    $error = 0;
-
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
-
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
-
-    if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'))
+	{
+		if (dolibarr_set_const($db, "RESOURCE_USE_SEARCH_TO_SELECT", GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'), 'chaine', 0, '', $conf->entity))
+		{
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
 }
 
 /*
@@ -79,23 +70,24 @@ print load_fiche_titre($langs->trans('ResourceSetup'),$linkback,'title_setup');
 
 $head=resource_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), 0, 'action');
+dol_fiche_head($head, 'general', $langs->trans("ResourceSingular"), 0, 'action');
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="other">';
+print '<input type="hidden" name="action" value="updateoptions">';
 
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td></td>';
 
 
 // Utilisation formulaire Ajax sur choix produit
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UseSearchToSelectResource").'</td>';
+print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -111,7 +103,10 @@ else
 			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print '</td>';
+	print '<td align="right">';
+	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 }
 print '</tr>';
@@ -119,10 +114,10 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans('DisabledResourceLinkUser').'</td>';
-print '<input type="hidden" name="action" value="set_GRAPEFRUIT_DATEEND_NEEDED">';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_USER');
 print '</td>';
+print '<td></td>';
 print '</tr>';
 
 $var=!$var;
@@ -131,6 +126,7 @@ print '<td>'.$langs->trans('DisabledResourceLinkContact').'</td>';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
 print '</td>';
+print '<td></td>';
 print '</tr>';
 
 print '</table>';
