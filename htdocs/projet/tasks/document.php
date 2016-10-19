@@ -152,7 +152,7 @@ if ($object->id > 0)
         if (! $user->rights->projet->all->lire)
         {
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-            $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+            $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?implode(',',array_keys($objectsListId)):'0').")";
         }
 
         dol_banner_tab($projectstatic, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

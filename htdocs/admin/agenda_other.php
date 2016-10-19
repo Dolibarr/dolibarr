@@ -267,7 +267,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$module = new $classname($db, new ActionComm($db));
 
             			$var=!$var;
-            			print "<tr ".$bc[$var].">\n";
+            			print "<tr ".$bc[$var?1:0].">\n";
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
             			print "</td>\n";
