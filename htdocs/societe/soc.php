@@ -109,7 +109,7 @@ if (empty($reshook))
         }
     }
 
-	if ($action == 'confirm_merge' && $confirm == 'yes')
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->supprimer)
 	{
 		$object->fetch($socid);
 
