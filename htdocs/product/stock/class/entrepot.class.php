@@ -616,7 +616,12 @@ class Entrepot extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
     }
-
+	
+	/**
+	 *	Return full path to current warehouse
+	 *
+	 *	@return		string		String full path to current warehouse separated by " >> " 
+	 */
 	function get_full_arbo() {
 		
 		 global $user,$langs,$conf;
@@ -645,6 +650,13 @@ class Entrepot extends CommonObject
 		
 	}
 	
+	/**
+	 * Return array of children warehouses ids from $id warehouse (recursive function)
+	 * 
+	 * @param	int		$id					id parent warehouse
+	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return	array()	$TChildWarehouses	array which will contain all children
+	 */
 	function get_children_warehouses($id, &$TChildWarehouses) {
 		
 		$sql = 'SELECT rowid
