@@ -620,17 +620,20 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return full path to current warehouse
 	 *
-	 *	@return		string		String full path to current warehouse separated by " >> " 
+	 * 	@param		int		$protection		Deep counter to avoid infinite loop
+	 *	@return		string	String full path to current warehouse separated by " >> " 
 	 */
-	function get_full_arbo() {
+	function get_full_arbo($protection=1000) {
 		
 		 global $user,$langs,$conf;
 		 
 		 $TArbo = array($this->libelle);
 		 
 		 $id = $this->id;
+		
+		 $i=0;
 
-		 while(true) {
+		 while((empty($protection) || $i < $protection)) {
 			 $sql = 'SELECT fk_parent
 			 		FROM '.MAIN_DB_PREFIX.'entrepot
 			 		WHERE rowid = '.$id;
@@ -644,6 +647,9 @@ class Entrepot extends CommonObject
 				$o->fetch($id);
 				$TArbo[] = $o->libelle;
 			 } else break;
+			 
+			 $i++;
+			 
 		 }
 
 		 return implode(' >> ', array_reverse($TArbo));
