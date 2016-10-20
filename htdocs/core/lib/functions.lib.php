@@ -5349,11 +5349,15 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 						if ($values[3]) $langs->load($values[3]);
 						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 						{
-							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
-							$label=make_substitutions($reg[1], $substitutionarray);
+							$substitutionarray=head();
+							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]),'complete_head_from_modules');
+							if (count($substitutionarray)> 0 )
+								$head = $substitutionarray;
+							else
+								$label=make_substitutions($reg[1], $substitutionarray);
 						}
-						else $label=$langs->trans($values[2]);
+						else
+							$label=$langs->trans($values[2]);
 
 						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
 						$head[$h][1] = $label;
@@ -5369,9 +5373,12 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if ($values[3]) $langs->load($values[3]);
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 					{
-						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
-						$label=make_substitutions($reg[1], $substitutionarray);
+						$substitutionarray=head();
+						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]),'complete_head_from_modules');
+						if (count($substitutionarray)> 0 )
+							$head = $substitutionarray;
+						else
+							$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);
 
