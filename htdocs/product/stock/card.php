@@ -646,7 +646,7 @@ else
 		
 			// Parent entrepot
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array($object->id));
+			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1);
 			print '</td></tr>';
 
 			// Description

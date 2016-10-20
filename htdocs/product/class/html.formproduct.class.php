@@ -67,7 +67,7 @@ class FormProduct
 		
 		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
 		
-		$sql = "SELECT e.rowid, e.label, e.description";
+		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
 		if (!empty($fk_product)) 
 		{
 			if (!empty($batch)) 
@@ -118,14 +118,19 @@ class FormProduct
 			{
 				$obj = $this->db->fetch_object($resql);
 				if ($sumStock) $obj->stock = price2num($obj->stock,5);
-				$o = new Entrepot($this->db);
-				$o->fetch($obj->rowid);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
-				$this->cache_warehouses[$obj->rowid]['label']=$o->get_full_arbo();
+				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
+				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
 				$this->cache_warehouses[$obj->rowid]['description'] = $obj->description;
 				$this->cache_warehouses[$obj->rowid]['stock'] = $obj->stock;
 				$i++;
 			}
+			
+			// Full label init
+			foreach($this->cache_warehouses as $obj_rowid=>$tab) {
+				$this->cache_warehouses[$obj_rowid]['full_label'] = $this->get_parent_path($tab);
+			}
+
 			return $num;
 		}
 		else
@@ -133,6 +138,29 @@ class FormProduct
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+	
+	/**
+	 * Return full path to current warehouse in $tab (recursive function)
+	 * 
+	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
+	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
+	 * @return	String					full label with all parents, separated by ' >> '
+	 */
+	private function get_parent_path($tab, $final_label='') {
+		
+		if(empty($final_label)) $final_label = $tab['label'];
+		
+		if(empty($tab['parent_id'])) return $final_label;
+		else {
+			if(!empty($this->cache_warehouses[$tab['parent_id']])) {
+				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
+				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
+			}
+		}
+		
+		return $final_label;
+		
 	}
 
 	/**
@@ -178,7 +206,7 @@ class FormProduct
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
-			$out.=$arraytypes['label'];
+			$out.=$arraytypes['full_label'];
 			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
 			$out.='</option>';
 		}

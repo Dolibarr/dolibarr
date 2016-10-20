@@ -174,7 +174,7 @@ class Entrepot extends CommonObject
 	{
 		// Check if new parent is already a child of current warehouse
 		if(!empty($this->fk_parent)) {
-			$TChildWarehouses = array();
+			$TChildWarehouses = array($id);
 			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
 			if(in_array($this->fk_parent, $TChildWarehouses)) {
 				$this->error = 'ErrorCannotAddThisParentWarehouse';
