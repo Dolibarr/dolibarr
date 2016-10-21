@@ -86,6 +86,7 @@ Refund=Refund
 SocialContributionsPayments=Social/fiscal taxes payments
 ShowVatPayment=Show VAT payment
 TotalToPay=Total to pay
+BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted ascending on %s and filtered for 1 bank account
 CustomerAccountancyCode=Customer accountancy code
 SupplierAccountancyCode=Supplier accountancy code
 CustomerAccountancyCodeShort=Cust. account. code

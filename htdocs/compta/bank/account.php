@@ -92,30 +92,35 @@ if ($negpage)
     if ($page > GETPOST("nbpage")) $page = GETPOST("nbpage");
 }
 
+$sortfield = "b.datev, b.datec, b.rowid";
+
 $object = new Account($db);
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$paiementtype="";
-	$req_nb="";
-	$thirdparty="";
-	$req_desc="";
-    $req_debit="";
-	$req_credit="";
-	$req_stdtmonth="";
-	$req_stdtday="";
-	$req_stdtyear="";
-	$req_stdt = "";
-	$req_enddtmonth="";
-	$req_enddtday="";
-	$req_enddtyear="";
-	$req_enddt = "";
-	$search_reconciled = '';
-}
+
 
 /*
  * Action
  */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $paiementtype="";
+    $req_nb="";
+    $thirdparty="";
+    $req_desc="";
+    $req_debit="";
+    $req_credit="";
+    $req_stdtmonth="";
+    $req_stdtday="";
+    $req_stdtyear="";
+    $req_stdt = "";
+    $req_enddtmonth="";
+    $req_enddtday="";
+    $req_enddtyear="";
+    $req_enddt = "";
+    $search_reconciled = '';
+}
+
 $dateop=-1;
 
 if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
@@ -340,23 +345,10 @@ if ($id > 0 || ! empty($ref))
 	$head=bank_prepare_head($object);
 	dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
 
-
-	print '<table class="border" width="100%">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
-
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
-	print '</td></tr>';
-
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td>';
-	print '<td colspan="3">'.$object->label.'</td></tr>';
-
-	print '</table>';
-
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
 	dol_fiche_end();
 	
 
@@ -507,7 +499,7 @@ if ($id > 0 || ! empty($ref))
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print_liste_field_titre($langs->trans("Value"), '', 'b.datev, b.datec, b.rowid','',$param,'',$sortfield,$sortorder);
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Numero").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
@@ -603,7 +595,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
-	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
+	$sql.= $db->order($sortfield, "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
 
 	dol_syslog("account.php get transactions -", LOG_DEBUG);
