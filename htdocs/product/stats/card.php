@@ -210,9 +210,9 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 		//print '<table width="100%">';
 
 		// Generation des graphs
+    	$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
 		if ($object->id > 0)  // We are on statistics for a dedicated product
 		{
-    		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
     		if (! file_exists($dir.'/'.$object->id))
     		{
     			if (dol_mkdir($dir.'/'.$object->id) < 0)
