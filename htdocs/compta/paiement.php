@@ -512,8 +512,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
-		print '<td rowspan="'.$rowspan.'" valign="top">';
-        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+		print '<td valign="top">';
+		print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
         
         print '</table>';
 
