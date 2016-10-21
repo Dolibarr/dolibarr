@@ -107,6 +107,8 @@ else
 	{
 		dol_print_error($db);
 	}
+	if (empty($min)) $min = dol_now - 3600 * 24;
+	
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
