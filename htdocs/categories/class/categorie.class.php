@@ -5,7 +5,7 @@
  * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013-2016  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -618,17 +618,19 @@ class Categorie extends CommonObject
 				{
 					if ($this->db->num_rows($resql) > 0)
 					{
-						$objparent = $this->db->fetch_object($resql);
+                        $objparent = $this->db->fetch_object($resql);
 
 						if (!empty($objparent->fk_parent))
 						{
 							$cat = new Categorie($this->db);
-							$cat->id=$objparent->fk_parent;
-							$result=$cat->add_type($obj, $type);
-							if ($result < 0)
-							{
-								$this->error=$cat->error;
-								$error++;
+							$cat->id = $objparent->fk_parent;
+							if (!$cat->containsObject($type, $obj->id)) {
+								$result = $cat->add_type($obj, $type);
+								if ($result < 0)
+								{
+									$this->error = $cat->error;
+									$error++;
+								}
 							}
 						}
 					}

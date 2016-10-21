@@ -150,6 +150,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $day='';
     $month='';
     $year='';
+    $search_array_options=array();
 }
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
 
@@ -221,8 +222,8 @@ $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title 
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update";
 $sql.= ", t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
-// Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook

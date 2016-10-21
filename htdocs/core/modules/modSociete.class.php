@@ -335,7 +335,8 @@ class modSociete extends DolibarrModules
 		    's.code_client'=>array('rule'=>'getcustomercodeifauto'),
 		    's.code_fournisseur'=>array('rule'=>'getsuppliercodeifauto'),
 		    's.code_compta'=>array('rule'=>'getcustomeraccountancycodeifauto'),
-		    's.code_compta_fournisseur'=>array('rule'=>'getsupplieraccountancycodeifauto')
+		    's.code_compta_fournisseur'=>array('rule'=>'getsupplieraccountancycodeifauto'),
+		    's.capital'=>array('rule'=>'numeric')
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r]=array('s.status'=>'^[0|1]','s.client'=>'^[0|1|2|3]','s.fournisseur'=>'^[0|1]','s.fk_typent'=>'id@'.MAIN_DB_PREFIX.'c_typent','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
