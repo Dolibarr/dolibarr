@@ -28,7 +28,8 @@ create table llx_propaldet
   label								varchar(255) DEFAULT NULL,
   description						text,
   fk_remise_except					integer      NULL,               -- Lien vers table des remises fixes
-  tva_tx							double(6,3)  DEFAULT 0, 	     -- taux tva
+  vat_src_code						varchar(10)  DEFAULT '',		 -- Vat code used as source of vat fields. Not strict foreign key here.
+  tva_tx							double(6,3)  DEFAULT 0, 	     -- Vat rate
   localtax1_tx               		double(6,3)  DEFAULT 0,    		 -- localtax1 rate
   localtax1_type			 		varchar(10)	  	 NULL, 			 -- localtax1 type
   localtax2_tx               		double(6,3)  DEFAULT 0,    		 -- localtax2 rate
