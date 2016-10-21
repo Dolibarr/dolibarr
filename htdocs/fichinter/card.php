@@ -918,6 +918,7 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
+		$soc=new Societe($db);
 		$soc->fetch($socid);
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
