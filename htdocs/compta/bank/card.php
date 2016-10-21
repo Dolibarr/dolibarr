@@ -655,31 +655,6 @@ else
 		if ($object->url) print '</a>';
 		print "</td></tr>\n";
 
-        // Categories
-        if ($conf->categorie->enabled) {
-            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-            print $form->showCategories($object->id,'account',1);
-            print "</td></tr>";
-        }
-
-		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
-		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
-
-		// Other attributes
-		$cols = 2;
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-		
-		print '</table>';
-
-		
-		print '</div>';
-		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
-		print '<div class="underbanner clearboth"></div>';
-
-
-		print '<table class="border centpercent">';
-		
 		// Accountancy code
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
@@ -697,6 +672,31 @@ else
 		    print '<td>'.$object->accountancy_journal.'</td></tr>';
 		}
 		
+		// Other attributes
+		$cols = 2;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		
+		print '</table>';
+
+		
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+
+		print '<table class="border centpercent">';
+		
+        // Categories
+        if ($conf->categorie->enabled) {
+            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+            print $form->showCategories($object->id,'account',1);
+            print "</td></tr>";
+        }
+
+		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
+		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
+
 		print '</table>';
 		
 		

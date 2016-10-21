@@ -33,6 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+
 $langs->load("banks");
 $langs->load("bills");
 $langs->load("categories");
@@ -61,12 +71,24 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+$pageplusone = GETPOST("pageplusone",'int');
+if ($pageplusone) $page = $pageplusone - 1;
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
+
+$mode_balance_ok=false;
+//if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && $account > 0)
+{
+    $sortfield = 'b.datev, b.dateo, b.rowid';
+    $mode_balance_ok = true;
+}
+if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
+
 
 // Initialize technical object to manage context to save list fields
 $contextpage='banktransactionlist';
@@ -81,15 +103,16 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 
 $arrayfields=array(
     'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    'description'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
     'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
     'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
     'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
     'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
-    'description'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
     'bu.label'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>500),
+    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'position'=>1000),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
-    'ba.ref'=>array('label'=>$langs->trans("Account"), 'checked'=>1, 'position'=>1000),
+    'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1000),
     'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
 );
 // Extra fields
@@ -148,22 +171,35 @@ if (empty($reshook))
  * View
  */
 
-$companystatic=new Societe($db);
-$bankaccountstatic=new Account($db);
-
-llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
-
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($vline) $viewline = $vline;
-else $viewline = 50;
+$companystatic=new Societe($db);
+$bankaccountstatic=new Account($db);
+
+$societestatic=new Societe($db);
+$userstatic=new User($db);
+$chargestatic=new ChargeSociales($db);
+$loanstatic=new Loan($db);
+$memberstatic=new Adherent($db);
+$paymentstatic=new Paiement($db);
+$paymentsupplierstatic=new PaiementFourn($db);
+$paymentvatstatic=new TVA($db);
+$paymentsalstatic=new PaymentSalary($db);
+$donstatic=new Don($db);
+$expensereportstatic=new ExpenseReport($db);
+$bankstatic=new Account($db);
+$banklinestatic=new AccountLine($db);
+
+$now = dol_now();
+
+llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
-$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -183,7 +219,8 @@ if ($search_ref) $sql.=natural_search("b.rowid", $search_ref);
 if ($account > 0) $sql.=" AND b.fk_account = ".$account;
 if ($search_req_nb) $sql.= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql.= natural_search("b.num_releve", $search_num_releve);
-if ($search_thirdparty) $sql.=" AND s.nom LIKE '%".$db->escape($search_thirdparty)."%'";
+if ($search_thirdparty) $sql.= natural_search("s.nom", $search_thirdparty);
+if ($description) $sql.= natural_search("b.label", $description);       // Warning some text are just translation keys, not translated strings
 if ($bid) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
 if (! empty($type)) $sql.= " AND b.fk_type = '".$db->escape($type)."' ";
 // Search period criteria
@@ -219,6 +256,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    $nbtotalofpages = ceil($nbtotalofrecords/$limit);
 }
 
 $sql.= $db->plimit($limit+1,$offset);
@@ -280,14 +318,20 @@ if ($resql)
 	
 	// Title
 	$bankcateg=new BankCateg($db);
+	$morehtml='<div data-role="fieldcontain">';
+	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
+	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" size="1" class="flat" value="'.($page+1).'">';
+	$morehtml.='/'.$nbtotalofpages.' ';
+	$morehtml.='</div>';
+	
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, $morehtml, '', $limit);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, $morehtml, '', $limit);
 	}
 	
 	$moreforfilter = '';
@@ -320,16 +364,17 @@ if ($resql)
 	// Fields title
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'],$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'],$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'],$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'],$_SERVER['PHP_SELF'],'b.datev, b.dateo, b.rowid','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'],$_SERVER['PHP_SELF'],'b.num_chq','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'],$_SERVER['PHP_SELF'],'bu.label','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'balance','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -356,6 +401,12 @@ if ($resql)
     	print '<input type="text" class="flat" name="search_ref" size="4" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
 	}
+	if (! empty($arrayfields['description']['checked']))
+	{
+	    print '<td class="liste_titre">';
+    	//print '<input type="text" class="flat" name="description" size="10" value="'.dol_escape_htmltag($description).'">';
+    	print '</td>';
+	}
 	if (! empty($arrayfields['b.dateo']['checked']))
 	{
         print '<td class="liste_titre">&nbsp;</td>';
@@ -367,7 +418,7 @@ if ($resql)
 	if (! empty($arrayfields['type']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1);
+        $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1, 0, 1, 'maxwidth100');
         print '</td>';
 	}
 	if (! empty($arrayfields['b.num_chq']['checked']))
@@ -375,15 +426,15 @@ if ($resql)
         // Numero
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
-	if (! empty($arrayfields['description']['checked']))
-	{
-	    print '<td class="liste_titre">';
-    	print '<input type="text" class="flat" name="description" size="10" value="'.dol_escape_htmltag($description).'">';
-    	print '</td>';
-	}
 	if (! empty($arrayfields['bu.label']['checked']))
 	{
 	    print '<td class="liste_titre"><input type="text" class="flat" name="thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'" size="10"></td>';
+	}
+	if (! empty($arrayfields['ba.ref']['checked']))
+	{
+    	print '<td align="right">';
+    	$form->select_comptes($account,'account',0,'',1);
+    	print '</td>';
 	}
 	if (! empty($arrayfields['b.debit']['checked']))
 	{
@@ -397,16 +448,17 @@ if ($resql)
     	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['ba.ref']['checked']))
+	if (! empty($arrayfields['balance']['checked']))
 	{
     	print '<td align="right">';
-    	$form->select_comptes($account,'account',0,'',1);
+    	$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+    	print $form->textwithpicto('', $htmltext, 1);
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.num_releve']['checked']))
 	{
-        // Numero
-        print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="2"></td>';
+        // Numero statement
+        print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
 	}
 	print '<td  class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
@@ -415,168 +467,346 @@ if ($resql)
 	print "</tr>\n";
 
     // Loop on each record
+	$total = 0;    // For balance
+	$sign = 1;
+	
     $totalarray=array();
     while ($i < min($num,$limit)) 
     {
         $objp = $db->fetch_object($resql);
 
-        // Why this ?
-        $printline=false;
-        //Search Description
-        if ($description) {
-            preg_match('/\((.+)\)/i',$objp->label,$reg); // Si texte entoure de parenthese on tente recherche de traduction
-            if ($reg[1]) {
-                if ($langs->transnoentities($reg[1])==$description) {
-                    $printline=true;
-                }
-            } elseif ($objp->label==$description) {
-                $printline=true;
-            }
-        } else {
-            $printline=true;
+        $total = price2num($total + ($sign * $objp->amount),'MT');
+        
+        if (empty($cachebankaccount[$objp->bankid]))
+        {
+            $bankaccounttmp = new Account($db);
+            $bankaccounttmp->fetch($objp->bankid);
+            $cachebankaccount[$objp->bankid]=$bankaccounttmp;
+            $bankaccount = $bankaccounttmp;
         }
-        if ($printline) {
-            
-            $var=!$var;
+        else
+        {
+            $bankaccount = $cachebankaccount[$objp->bankid];
+        }
+         
+        $var=!$var;
 
-            print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var].">";
 
-            // Ref
-        	if (! empty($arrayfields['b.rowid']['checked']))            
-        	{
-                    print '<td align="left" class="nowrap">';
-                    print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'payment', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
-                    print '</td>';
-                    if (! $i) $totalarray['nbfield']++;
-        	}
-            // Date ope
-        	if (! empty($arrayfields['b.dateo']['checked']))            
-        	{
-        	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
-                    if (! $i) $totalarray['nbfield']++;
-        	}
-
-	        // Date value
-        	if (! empty($arrayfields['b.datev']['checked']))            
-        	{
-        	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
-                    if (! $i) $totalarray['nbfield']++;
-        	}
-
-	        // Payment type
-        	if (! empty($arrayfields['type']['checked']))            
-        	{
-            	print '<td align="center" class="nowrap">';
-    	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
-    	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
-    	        else print $labeltype;
-    	        print "</td>\n";
-                    if (! $i) $totalarray['nbfield']++;
-        	}
-
-	        // Num cheque
-        	if (! empty($arrayfields['b.num_releve']['checked']))
-        	{
-        	    print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
-        	    if (! $i) $totalarray['nbfield']++;
-        	}
-        	 
-	        // Description
-        	if (! empty($arrayfields['description']['checked']))            
-        	{
-            	print "<td>";
-    
-    			print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
-    			$reg=array();
-    			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
-    			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
-    			else print dol_trunc($objp->label,40);
-    			print "</a>&nbsp;";
-    
-      			print '</td>';
-                    if (! $i) $totalarray['nbfield']++;
-        	}
-
-			// Third party
-        	if (! empty($arrayfields['bu.label']['checked']))            
-        	{
-            	print "<td>";
-    			if ($objp->url_id)
-    			{
-    				$companystatic->id=$objp->url_id;
-    				$companystatic->name=$objp->nom;
-    				$companystatic->name_alias=$objp->name_alias;
-    				$companystatic->client=$objp->client;
-    				$companystatic->fournisseur=$objp->fournisseur;
-    				$companystatic->code_client=$objp->code_client;
-    				$companystatic->code_fournisseur=$objp->code_fournisseur;
-    				print $companystatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
+        // Ref
+    	if (! empty($arrayfields['b.rowid']['checked']))            
+    	{
+                print '<td align="left" class="nowrap">';
+                print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+                print '</td>';
                 if (! $i) $totalarray['nbfield']++;
-        	}
-        	
-        	// Debit
-        	if (! empty($arrayfields['b.debit']['checked']))
-        	{
-        	    print '<td align="right">';
-        	    if ($objp->amount < 0)
-        	    {
-        	    	print price($objp->amount * -1);
-        	        $totalarray['totaldeb'] += $objp->amount;
-        	    }
-        	    print "</td>\n";
-        	    if (! $i) $totalarray['nbfield']++;
-        	    if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
-        	}
-        	// Credit
-        	if (! empty($arrayfields['b.credit']['checked']))
-        	{
-        	    print '<td align="right">';
-        	    if ($objp->amount > 0)
-        	    {
-    				print price($objp->amount);
-        	        $totalarray['totalcred'] += $objp->amount;
-        	    }
-        	    print "</td>\n";
-        	    if (! $i) $totalarray['nbfield']++;
-        	    if (! $i) $totalarray['totalcredfield']=$totalarray['nbfield'];
-        	}
-        	 
-			// Bank account
-        	if (! empty($arrayfields['ba.ref']['checked']))            
-        	{
-            	print '<td align="right" class="nowrap">';
-    			$bankaccountstatic->id=$objp->bankid;
-    			$bankaccountstatic->label=$objp->bankref;
-    			print $bankaccountstatic->getNomUrl(1);
-    			print "</td>\n";
+    	}
+
+    	// Description
+    	if (! empty($arrayfields['description']['checked']))
+    	{
+    	    print "<td>";
+    	
+    	    //print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
+    	    $reg=array();
+    	    preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
+    	    if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
+    	    else print dol_trunc($objp->label,40);
+    	    //print "</a>&nbsp;";
+    	
+    	    // Add links after description
+    	    $links = $bankaccountstatic->get_url($objp->rowid);
+    	    $cachebankaccount=array();
+    	    foreach($links as $key=>$val)
+    	    {
+    	        if ($links[$key]['type']=='payment')
+    	        {
+    	            $paymentstatic->id=$links[$key]['url_id'];
+    	            $paymentstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_supplier')
+    	        {
+    	            $paymentsupplierstatic->id=$links[$key]['url_id'];
+    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentsupplierstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_sc')
+    	        {
+    	            print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
+    	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+    	            //print $langs->trans("SocialContributionPayment");
+    	            print '</a>';
+    	        }
+    	        elseif ($links[$key]['type']=='payment_vat')
+    	        {
+    	            $paymentvatstatic->id=$links[$key]['url_id'];
+    	            $paymentvatstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentvatstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_salary')
+    	        {
+    	            $paymentsalstatic->id=$links[$key]['url_id'];
+    	            $paymentsalstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentsalstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_loan')
+    	        {
+    	            print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+    	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+    	            print '</a>';
+    	        }
+    	        elseif ($links[$key]['type']=='payment_donation')
+    	        {
+    	            print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+    	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+    	            print '</a>';
+    	        }
+    	        elseif ($links[$key]['type']=='payment_expensereport')
+    	        {
+    	            print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$links[$key]['url_id'].'">';
+    	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+    	            print '</a>';
+    	        }
+    	        elseif ($links[$key]['type']=='banktransfert')
+    	        {
+    	            // Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
+    	            if ($objp->amount > 0)
+    	            {
+    	                $banklinestatic->fetch($links[$key]['url_id']);
+    	                $bankstatic->id=$banklinestatic->fk_account;
+    	                $bankstatic->label=$banklinestatic->bank_account_ref;
+    	                print ' ('.$langs->trans("TransferFrom").' ';
+    	                print $bankstatic->getNomUrl(1,'transactions');
+    	                print ' '.$langs->trans("toward").' ';
+    	                $bankstatic->id=$objp->bankid;
+    	                $bankstatic->label=$objp->bankref;
+    	                print $bankstatic->getNomUrl(1,'');
+    	                print ')';
+    	            }
+    	            else
+    	            {
+    	                $bankstatic->id=$objp->bankid;
+    	                $bankstatic->label=$objp->bankref;
+    	                print ' ('.$langs->trans("TransferFrom").' ';
+    	                print $bankstatic->getNomUrl(1,'');
+    	                print ' '.$langs->trans("toward").' ';
+    	                $banklinestatic->fetch($links[$key]['url_id']);
+    	                $bankstatic->id=$banklinestatic->fk_account;
+    	                $bankstatic->label=$banklinestatic->bank_account_ref;
+    	                print $bankstatic->getNomUrl(1,'transactions');
+    	                print ')';
+    	            }
+    	            //var_dump($links);
+    	        }
+    	        elseif ($links[$key]['type']=='company')
+    	        {
+    	            	
+    	        }
+    	        elseif ($links[$key]['type']=='user')
+    	        {
+    	            	
+    	        }
+    	        elseif ($links[$key]['type']=='member')
+    	        {
+    	            	
+    	        }
+    	        elseif ($links[$key]['type']=='sc')
+    	        {
+    	            	
+    	        }
+    	        else
+    	        {
+    	            // Show link with label $links[$key]['label']
+    	            if (! empty($objp->label) && ! empty($links[$key]['label'])) print ' - ';
+    	            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+    	            if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+    	            {
+    	                // Label generique car entre parentheses. On l'affiche en le traduisant
+    	                if ($reg[1]=='paiement') $reg[1]='Payment';
+    	                print ' '.$langs->trans($reg[1]);
+    	            }
+    	            else
+    	            {
+    	                print ' '.$links[$key]['label'];
+    	            }
+    	            print '</a>';
+    	        }
+    	    }
+    	    	
+    	    print '</td>';
+    	    if (! $i) $totalarray['nbfield']++;
+    	}
+    	
+        // Date ope
+    	if (! empty($arrayfields['b.dateo']['checked']))            
+    	{
+    	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
-        	}
-        	
-            if (! empty($arrayfields['b.num_releve']['checked']))            
-        	{
-        	    print '<td class="nowrap" align="center">'.($objp->num_releve?$objp->num_releve:"")."</td>\n";
+    	}
+
+        // Date value
+    	if (! empty($arrayfields['b.datev']['checked']))            
+    	{
+    	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
-        	}
-        	
-        	// Action column
-            print '<td class="nowrap" align="center">';
-            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-            {
-                $selected=0;
-        		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-        		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-            }
-            print '</td>';
+    	}
+
+        // Payment type
+    	if (! empty($arrayfields['type']['checked']))            
+    	{
+        	print '<td align="center" class="nowrap">';
+	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
+	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
+	        else print $labeltype;
+	        print "</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+    	}
+
+        // Num cheque
+    	if (! empty($arrayfields['b.num_releve']['checked']))
+    	{
+    	    print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+    	    if (! $i) $totalarray['nbfield']++;
+    	}
+    	 
+		// Third party
+    	if (! empty($arrayfields['bu.label']['checked']))            
+    	{
+        	print "<td>";
+			if ($objp->url_id)
+			{
+				$companystatic->id=$objp->url_id;
+				$companystatic->name=$objp->nom;
+				$companystatic->name_alias=$objp->name_alias;
+				$companystatic->client=$objp->client;
+				$companystatic->fournisseur=$objp->fournisseur;
+				$companystatic->code_client=$objp->code_client;
+				$companystatic->code_fournisseur=$objp->code_fournisseur;
+				$companystatic->code_compta=$objp->code_compta;
+				$companystatic->code_compta_fournisseur=$objp->code_compta_fournisseur;
+				print $companystatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
             if (! $i) $totalarray['nbfield']++;
-			
-			print "</tr>";
-		}
+    	}
+    	
+    	// Bank account
+    	if (! empty($arrayfields['ba.ref']['checked']))            
+    	{
+        	print '<td align="right" class="nowrap">';
+			print $bankaccount->getNomUrl(1);
+			print "</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+    	}
+    	
+    	// Debit
+    	if (! empty($arrayfields['b.debit']['checked']))
+    	{
+    	    print '<td align="right">';
+    	    if ($objp->amount < 0)
+    	    {
+    	    	print price($objp->amount * -1);
+    	        $totalarray['totaldeb'] += $objp->amount;
+    	    }
+    	    print "</td>\n";
+    	    if (! $i) $totalarray['nbfield']++;
+    	    if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
+    	}
+    	// Credit
+    	if (! empty($arrayfields['b.credit']['checked']))
+    	{
+    	    print '<td align="right">';
+    	    if ($objp->amount > 0)
+    	    {
+				print price($objp->amount);
+    	        $totalarray['totalcred'] += $objp->amount;
+    	    }
+    	    print "</td>\n";
+    	    if (! $i) $totalarray['nbfield']++;
+    	    if (! $i) $totalarray['totalcredfield']=$totalarray['nbfield'];
+    	}
+    	 
+    	// Balance
+    	if (! empty($arrayfields['balance']['checked']))
+    	{
+        	if ($mode_balance_ok)
+        	{
+        	    if ($total >= 0)
+        	    {
+        	        print '<td align="right" class="nowrap">&nbsp;'.price($total).'</td>';
+        	    }
+        	    else
+        	    {
+        	        print '<td align="right" class="error nowrap">&nbsp;'.price($total).'</td>';
+        	    }
+        	}
+        	else
+        	{
+        	    print '<td align="right">-</td>';
+        	}
+    	}
+    	
+    	// Transaction reconciliated or edit link
+    	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
+    	{
+    	    print '<td align="center" class="nowrap">';
+    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	    print img_edit();
+    	    print '</a>';
+    	    print "&nbsp; ";
+    	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$object->id.'">'.$objp->num_releve.'</a>';
+    	    print "</td>";
+    	}
+    	else
+    	{
+    	    print '<td align="center">';
+    	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+    	    {
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print img_edit();
+    	        print '</a>';
+    	    }
+    	    else
+    	    {
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print img_view();
+    	        print '</a>';
+    	    }
+    	    if ($bankaccount->canBeConciliated() > 0 && empty($objp->rappro))
+    	    {
+    	        if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
+    	        {
+    	            print ' '.img_warning($langs->trans("Late"));
+    	        }
+    	    }
+    	    print '&nbsp;';
+    	    if ($user->rights->banque->modifier)
+    	    {
+    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$object->id.'&amp;page='.$page.'">';
+    	        print img_delete();
+    	        print '</a>';
+    	    }
+    	    print '</td>';
+    	}
+    	
+    	// Action column
+        print '<td class="nowrap" align="center">';
+        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected=0;
+    		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+        print '</td>';
+        if (! $i) $totalarray['nbfield']++;
+		
+		print "</tr>";
+
 		$i++;
 	}
 	
