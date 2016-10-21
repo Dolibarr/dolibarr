@@ -49,7 +49,7 @@ if (! $user->rights->accounting->bind->write)
     accessforbidden();
 
 // search & action GETPOST
-$action = GETPOST('action');
+$action = GETPOST('action', 'alpha');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
@@ -65,28 +65,34 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount');
 $btn_changetype = GETPOST('changetype');
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if ($page < 0)
-	$page = 0;
+$limit = GETPOST("limit")?GETPOST("limit","int"):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-// bug in page limit if ACCOUNTING_LIMIT_LIST_VENTILATION < $conf->liste_limit there is no pagination displayed !
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION >= $conf->liste_limit) {
-	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else {
-	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-}
-$offset = $limit * $page;
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="ASC";
 
-if (! $sortfield) {
-	$sortfield = "p.ref";
+if (empty($action)) $action='list';
+
+$arrayfields=array();
+
+
+/*
+ * Actions
+ */
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $search_ref = '';
+    $search_label = '';
+    $search_desc = '';
 }
-if (! $sortorder) {
-	$sortorder = "ASC";
-}
-	
+
 // Sales or Purchase mode ?
 if ($action == 'update') {
 	if (! empty($btn_changetype)) {
@@ -158,6 +164,12 @@ if ($action == 'update') {
 	}
 }
 
+
+
+/*
+ * View
+ */
+
 $form = new FormVentilation($db);
 
 // Defaut AccountingAccount RowId Product / Service
@@ -175,44 +187,13 @@ $aacompta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $c
 $aacompta_servsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 $aacompta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 
-// Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
-{
-	$search_ref = '';
-	$search_label = '';
-	$search_desc = '';
-}
-
-
-/*
- * View
- */
-
 llxHeader('', $langs->trans("ProductsBinding"));
 
-print '<script type="text/javascript">
-			$(function () {
-				$(\'#select-all\').click(function(event) {
-				    // Iterate each checkbox
-				    $(\':checkbox\').each(function() {
-				    	this.checked = true;
-				    });
-			    });
-			    $(\'#unselect-all\').click(function(event) {
-				    // Iterate each checkbox
-				    $(\':checkbox\').each(function() {
-				    	this.checked = false;
-				    });
-			    });
-			});
-			 </script>';
+$pcgver = $conf->global->CHARTOFACCOUNTS;
 
 $sql = "SELECT p.rowid, p.ref, p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 $sql .= " WHERE (";
-
-$pcgver = $conf->global->CHARTOFACCOUNTS;
-
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') {
 	$sql .= " p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
 	$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN
@@ -222,39 +203,58 @@ if ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') {
 	$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN
 	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accounting_account as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
 }
-
 $sql .= ")";
-
+if (! empty($conf->multicompany->enabled)) {
+    $sql.= ' AND p.entity IN ('.getEntity('product', 1).')';
+}
 // Add search filter like
 if (strlen(trim($search_ref))) {
-	$sql .= " AND (p.ref like '" . $search_ref . "%')";
+	$sql .= natural_search("p.ref",$search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND (p.label like '" . $search_label . "%')";
+	$sql .= natural_search("p.label",$search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND (p.description like '%" . $search_desc . "%')";
+	$sql .= natural_search("p.description",$search_desc);
 }
 $sql .= $db->order($sortfield, $sortorder);
-
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) {
-	$num_lines = $db->num_rows($result);
+if ($result) 
+{
+	$num = $db->num_rows($result);
 	$i = 0;
 	
-	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($search_ref > 0) $param.="&amp;search_desc=".urlencode($search_ref);
+    if ($search_label > 0) $param.="&amp;search_desc=".urlencode($search_label);
+    if ($search_desc > 0) $param.="&amp;search_desc=".urlencode($search_desc);
+    
+    print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    
+    print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';
 	print '<br>';
 	
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-	print '<input type="hidden" name="action" value="update">';
-	
+    // Select mode	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans('Options') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -270,11 +270,17 @@ if ($result) {
 	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
 	print "<br>\n";
+
 	
+	// Filter on categories
+	$moreforfilter='';
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print_barre_liste($langs->trans("ListOfProductsWithoutAccountingAccount"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines, '', '');
+	$texte=$langs->trans("ListOfProductsWithoutAccountingAccount");
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 	
-	print '<table class="noborder" width="100%">';
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
@@ -292,12 +298,11 @@ if ($result) {
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
-	
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td align="center" class="liste_titre">';
+	print '<td align="right" class="liste_titre">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
 	print $searchpitco;
 	print '</td>';
@@ -305,7 +310,8 @@ if ($result) {
 	
 	$var = true;
 	
-	while ( $i < min($num_lines, 250) ) {
+    while ($i < min($num,$limit))
+    {
 		$obj = $db->fetch_object($result);
 		$var = ! $var;
 		
@@ -374,14 +380,15 @@ if ($result) {
 		}
 		
 		// Checkbox select
-		print '<td align="center">';
+		print '<td align="right">';
 		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
-		
 		print "</tr>";
 		$i ++;
 	}
 	print '</table>';
-	print '<br><div align="right"><input type="submit" class="butAction" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
+	
+	print '<br><div align="center"><input type="submit" class="butAction" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
+	
 	print '</form>';
 	
 	$db->free($result);
