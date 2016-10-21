@@ -56,6 +56,7 @@ $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
 
 $allowed=$user->admin;
+if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
 if ($id == 10 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Vat page allowed to manager of chart account
 if (! $allowed) accessforbidden();
 
@@ -912,11 +913,17 @@ if ($id)
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 $titlepicto='title_setup';
-if (GETPOST('from') == 'accountancy') 
+if ($id == 10 && GETPOST('from') == 'accountancy')
 {
     $titre=$langs->trans("MenuVatAccounts");
-    $titlepicto='title_accountancy'; 
+    $titlepicto='title_accountancy';
 }
+if ($id == 7 && GETPOST('from') == 'accountancy')
+{
+    $titre=$langs->trans("MenuTaxAccounts");
+    $titlepicto='title_accountancy';
+}
+
 print load_fiche_titre($titre,$linkback,$titlepicto);
 
 if (empty($id))
@@ -974,6 +981,7 @@ if ($id)
 
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
     
     print '<table class="noborder" width="100%">';
 
@@ -1134,7 +1142,7 @@ if ($id)
 
 
 
-    // List of available recod in database
+    // List of available record in database
     dol_syslog("htdocs/admin/dict", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
@@ -1148,6 +1156,7 @@ if ($id)
         $paramwithsearch = $param;
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
+        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
         
         // There is several pages
         if ($num > $listlimit)
@@ -1337,7 +1346,11 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
                                 }
                             }
-                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+                                $valuetoshow=yn($valuetoshow);
+                                $align="center";
+                            }
+                            else if ($fieldlist[$field]=='type_cdr') {
                 				if(empty($valuetoshow)) $valuetoshow = $langs->trans('None');
                 				elseif($valuetoshow == 1) $valuetoshow = $langs->trans('AtEndOfMonth');
                 				elseif($valuetoshow == 2) $valuetoshow = $langs->trans('CurrentNext');
@@ -1521,10 +1534,12 @@ if ($id)
                     else print '<td>&nbsp;</td>';
 
                     // Delete link
-                    if ($iserasable) 
+                    if ($iserasable)
                     {
-                        if ($user->admin) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
-                        //else print '<td align="center"><a href="#">'.img_delete().'</a></td>';    // Some dictionnary can be edited by other profile than admin
+                        print '<td align="center">';
+                        if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionnary can be edited by other profile than admin
+                        print '</td>';
                     }
                     else print '<td>&nbsp;</td>';
 
@@ -1786,8 +1801,8 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			$size=''; $class='';
 			if ($fieldlist[$field]=='code') $size='size="8" ';
 			if ($fieldlist[$field]=='position') $size='size="4" ';
-			if ($fieldlist[$field]=='libelle') $class='centpercent';
-			if ($fieldlist[$field]=='tracking') $class='centpercent';
+			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';
+			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
 			print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';

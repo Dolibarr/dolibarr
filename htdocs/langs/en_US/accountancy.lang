@@ -47,6 +47,7 @@ AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
+MenuTaxAccounts=Tax accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
