@@ -139,7 +139,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
-ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint
+ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 
 ALTER TABLE llx_facturedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
