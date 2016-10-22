@@ -197,9 +197,6 @@ License: GPL-2+
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
-Comment:
- Those files are not shipped in the binary package as we
- configure Dolibarr to use the library packaged in "libfpdi-php".
 
 Files: htdocs/includes/geoip/*
 Copyright: 2007 MaxMind LLC
