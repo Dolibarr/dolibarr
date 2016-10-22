@@ -291,13 +291,17 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 * Edit orig.tar.gz file to remove 
 - debian
 - htdocs/includes/ckeditor
+- htdocs/includes/jszip
+- htdocs/includes/jquery/plugins/datatables
+- htdocs/includes/mike42
 - htdocs/includes/phpexcel or htdocs/includes/phpoffice
-- htdocs/includes/tcpdf or htdocs/includes/tecnickom
+- htdocs/includes/restler/framework/Luracast/Restler/explorer
+- htdocs/includes/tcpdf or htdocs/includes/tecnickcom
 And rename file into 
 dolibarr-x.y.z+dfsgw.tgz
 (x.y.z = version, w start from 1 and is increased for each new git-import-orig already done)
 
-* Staying into git root directory, run
+* Staying into projet gitted root directory, run
 > git-import-orig -vv ../dolibarr-x.y.z+dfsgw.tgz --debian-branch=[master|jessie] --upstream-branch=[upstream|upstream-3.5.x]
 and enter version when requested with format
 x.y.z+dfsgw
