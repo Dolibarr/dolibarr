@@ -99,12 +99,12 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder='DESC';
-if (! $sortfield) $sortfield='b.dateo';
+if (! $sortorder) $sortorder='ASC';
+if (! $sortfield) $sortfield='b.datev';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && $account > 0)
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && ($id > 0 || ! empty($ref)))
 {
     $sortfield = 'b.datev, b.dateo, b.rowid';
     $mode_balance_ok = true;
@@ -178,13 +178,15 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$type="";
 	$debit="";
 	$credit="";
-	$account="";
 	$bid="";
 	$search_ref="";
 	$search_req_nb='';
 	$search_thirdparty='';
 	$search_num_releve='';
 	$thirdparty='';
+	
+	$account="";
+	if ($id > 0 || ! empty($ref)) $account=$object->id;
 }
 
 if (empty($reshook))
@@ -413,12 +415,37 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST) || ! empty($arrayfields['balance']['checked']))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
     $nbtotalofpages = ceil($nbtotalofrecords/$limit);
 }
+
+if (($id > 0 || ! empty($ref)) && GETPOST("page",'int') === '')
+{
+    // We open a list of transaction of a dedicated account and no page was set by defaut
+    // We force on last page.
+    $page = ($nbtotalofpages - 1);
+    $offset = $limit * $page;
+    if ($page < 0) $page = 0;
+}
+
+// Calculate balance start
+$balance = 0;    // For balance
+if (! empty($arrayfields['balance']['checked']))
+{
+    //Loop on each record
+    $sign = 1;
+    $i = 0;
+    while ($i < $offset)
+    {
+        $objp = $db->fetch_object($result);
+        $balance = price2num($balance + ($sign * $objp->amount),'MT');
+        $i++;
+    }
+}
+
 
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -555,6 +582,10 @@ if ($resql)
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
 	}
 	
+	// We can add page now to param
+	if ($page != '') $param.='&page='.urlencode($page);
+	
+	
 	$moreforfilter = '';
 	
 	$moreforfilter.='<div class="divsearchfield">';
@@ -688,7 +719,6 @@ if ($resql)
 	print "</tr>\n";
 
     // Loop on each record
-	$total = 0;    // For balance
 	$sign = 1;
 	
     $totalarray=array();
@@ -696,7 +726,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
-        $total = price2num($total + ($sign * $objp->amount),'MT');
+        $balance = price2num($balance + ($sign * $objp->amount),'MT');
         
         if (empty($cachebankaccount[$objp->bankid]))
         {
@@ -957,13 +987,13 @@ if ($resql)
     	{
     	    if ($mode_balance_ok)
         	{
-        	    if ($total >= 0)
+        	    if ($balance >= 0)
         	    {
-        	        print '<td align="right" class="nowrap">&nbsp;'.price($total).'</td>';
+        	        print '<td align="right" class="nowrap">&nbsp;'.price($balance).'</td>';
         	    }
         	    else
         	    {
-        	        print '<td align="right" class="error nowrap">&nbsp;'.price($total).'</td>';
+        	        print '<td align="right" class="error nowrap">&nbsp;'.price($balance).'</td>';
         	    }
         	}
         	else
