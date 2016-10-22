@@ -259,10 +259,10 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans('Options') . '</td><td>' . $langs->trans('Description') . '</td>';
 	print "</tr>\n";
-	print '<tr ' . $bc[false] . '><td width="25%"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"' . ($accounting_product_mode != 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSell') . '</td>';
+	print '<tr ' . $bc[false] . '><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"' . ($accounting_product_mode != 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSell') . '</td>';
 	print '<td colspan="2">' . nl2br($langs->trans('OptionModeProductSellDesc'));
 	print "</td></tr>\n";
-	print '<tr ' . $bc[true] . '><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuy') . '</td>';
+	print '<tr ' . $bc[true] . '><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuy') . '</td>';
 	print '<td colspan="2">' . nl2br($langs->trans('OptionModeProductBuyDesc')) . "</td></tr>\n";
 	
 	print "</table>\n";
@@ -284,7 +284,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
+    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
 	/*
 	 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 	 print_liste_field_titre($langs->trans("Accountancy_code_buy"));
@@ -301,7 +301,7 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" class="liste_titre">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
 	print $searchpitco;
@@ -340,23 +340,33 @@ if ($result)
 		print '<tr'. $bc[$var].'>';
 		
 		print "</tr>";
-		print '<tr'. $bc[$var].'>';
+		
+		print '<tr '. $bc[$var].'>';
+		
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->type;
+		$product_static->label = $obj->label;
+		$product_static->description = $obj->description;
+		
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
 			print '-&nbsp;';
 		print '</td>';
-		print '<td align="left">' . dol_trunc($obj->label, 24) . '</td>';
-		// TODO ADJUST DESCRIPTION SIZE
-		// print '<td align="left">' . $obj->description . '</td>';
-		// TODO: we shoul set a user defined value to adjust user square / wide screen size
-		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 64;
-		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
+		
+		print '<td align="left">'.$obj->label.'</td>';
+
+		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) 
+		{
+		    // TODO ADJUST DESCRIPTION SIZE
+    		// print '<td align="left">' . $obj->description . '</td>';
+    		// TODO: we shoul set a user defined value to adjust user square / wide screen size
+    		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 64;
+    		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
+		}
 		
 		// Accounting account buy
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
