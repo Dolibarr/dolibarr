@@ -126,24 +126,13 @@ if (empty($num))
 		$head=bank_prepare_head($object);
 		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
 
-		print '<table class="border" width="100%">';
-
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
-		print '</td></tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td>';
-		print '<td colspan="3">'.$object->label.'</td></tr>';
-
-		print '</table>';
-
+		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+		
 		dol_fiche_end();
 
+		
 		print '<div class="tabsAction">';
 
 		if ($object->canBeConciliated() > 0) {

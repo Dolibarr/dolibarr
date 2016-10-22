@@ -21,7 +21,7 @@
  */
 
 /**
- *		\file       htdocs/compta/bank/virement.php
+ *		\file       htdocs/compta/bank/transfer.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
  */
@@ -91,11 +91,11 @@ if ($action == 'add')
 			$result=0;
 
 			// By default, electronic transfert from bank to bank
-			$typefrom='PRE';
+			$typefrom='VIR';
 			$typeto='VIR';
 			if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
 			{
-				// This is transfert of change
+				// This is transfer of change
 				$typefrom='LIQ';
 				$typeto='LIQ';
 			}
@@ -112,7 +112,7 @@ if ($action == 'add')
 
 			if (! $error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone","<a href=\"bankentries.php?id=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"bankentries.php?id=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
@@ -157,7 +157,7 @@ print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_ban
 print $langs->trans("TransferDesc");
 print "<br><br>";
 
-print "<form name='add' method=\"post\" action=\"virement.php\">";
+print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<input type="hidden" name="action" value="add">';

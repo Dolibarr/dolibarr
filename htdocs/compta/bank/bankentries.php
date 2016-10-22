@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/compta/bank/search.php
+ *	\file       htdocs/compta/bank/bankentries.php
  *	\ingroup    banque
  *	\brief      List of bank transactions
  */
@@ -29,6 +29,7 @@
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -48,10 +49,31 @@ $langs->load("bills");
 $langs->load("categories");
 $langs->load("companies");
 $langs->load("margins");
+$langs->load("salaries");
+$langs->load("loan");
+$langs->load("donations");
+$langs->load("trips");
+$langs->load("members");
+
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+$cancel=GETPOST('cancel','alpha');
+$confirm=GETPOST('confirm','alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
+$fieldtype = (! empty($ref) ? 'ref' :'rowid');
+if ($fielvalue)
+{
+	if ($user->societe_id) $socid=$user->societe_id;
+	$result=restrictedArea($user,'banque',$fieldvalue,'bank_account&bank_account','','',$fieldtype);
+}
+else
+{
+	if ($user->societe_id) $socid=$user->societe_id;
+	$result=restrictedArea($user,'banque');
+}
 
 $search_ref=GETPOST('search_ref','alpha');
 $description=GETPOST("description",'alpha');
@@ -90,11 +112,20 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && $a
 if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
 
 
+$object = new Account($db);
+if ($id > 0 || ! empty($ref))
+{
+    $result=$object->fetch($id, $ref);
+    $account = $object->id;     // Force the search field on id of account
+}
+
+
 // Initialize technical object to manage context to save list fields
-$contextpage='banktransactionlist';
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
+//var_dump($contextpage);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array($contextpage));
+$hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -109,7 +140,7 @@ $arrayfields=array(
     'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
     'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
     'bu.label'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>500),
-    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'position'=>1000),
+    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || ! empty($ref))?0:1), 'position'=>1000),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
     'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1000),
@@ -166,6 +197,69 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+$dateop=-1;
+
+if (GETPOST('save') && $id && ! $cancel && $user->rights->banque->modifier)
+{
+    $error = 0;
+
+    if (price2num($_POST["addcredit"]) > 0)
+    {
+        $amount = price2num($_POST["addcredit"]);
+    }
+    else
+    {
+        $amount = - price2num($_POST["adddebit"]);
+    }
+
+    $dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
+    $operation=$_POST["operation"];
+    $num_chq=$_POST["num_chq"];
+    $label=$_POST["label"];
+    $cat1=$_POST["cat1"];
+
+    if (! $dateop) {
+        $error++;
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    }
+    if (! $operation) {
+        $error++;
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Type")), null, 'errors');
+    }
+    if (! $amount) {
+        $error++;
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+    }
+
+    if (! $error)
+    {
+        $object->fetch($id);
+        $insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
+        if ($insertid > 0)
+        {
+            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+            exit;
+        }
+        else
+        {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
+    else
+    {
+        $action='addline';
+    }
+}
+
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier)
+{
+    $accline=new AccountLine($db);
+    $result=$accline->fetch(GETPOST("rowid"));
+    $result=$accline->delete($user);
+}
+
+
 
 /*
  * View
@@ -193,7 +287,74 @@ $banklinestatic=new AccountLine($db);
 
 $now = dol_now();
 
-llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
+
+
+if ($id > 0 || ! empty($ref))
+{
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
+	$helpurl = "";
+	llxHeader('',$title,$helpurl);
+
+    // Load bank groups
+    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+    $bankcateg = new BankCateg($db);
+    $options = array();
+
+    foreach ($bankcateg->fetchAll() as $bankcategory) {
+        $options[$bankcategory->id] = $bankcategory->label;
+    }
+    
+    // Onglets
+    $head=bank_prepare_head($object);
+    dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+    
+    dol_fiche_end();
+ 
+
+
+    /*
+     * Buttons actions
+     */
+    
+    //if ($action != 'delete')
+    //{
+        print '<div class="tabsAction">';
+    
+        if ($action != 'addline')
+        {
+            if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
+            {
+                if ($user->rights->banque->modifier) {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+                } else {
+                    print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                }
+            } else {
+                print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+            }
+        }
+    
+        if ($object->canBeConciliated() > 0) {
+            // If not cash account and can be reconciliate
+            if ($user->rights->banque->consolidate) {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline ? '&amp;vline='.$vline : '').'">'.$langs->trans("Conciliate").'</a>';
+            } else {
+                print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            }
+        }
+    
+        print '</div>';
+    //}
+        
+}
+else
+{
+	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
+}
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
@@ -261,7 +422,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit+1,$offset);
 
-dol_syslog('compta/bank/search.php::', LOG_DEBUG);
+dol_syslog('compta/bank/bankentries.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -273,6 +434,8 @@ if ($resql)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($id > 0) $param.='&id='.urlencode($id);
+	if (!empty($ref)) $param.='&ref='.urlencode($ref);
 	if (!empty($search_ref)) $param.='&search_ref='.urlencode($search_ref);
 	if (!empty($description)) $param.='&description='.urlencode($description);
 	if (!empty($type)) $param.='&type='.urlencode($type);
@@ -303,6 +466,15 @@ if ($resql)
     if ($massaction == 'presend') $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
     
+    
+    // Confirmation delete
+    if ($action == 'delete')
+    {
+        $text=$langs->trans('ConfirmDeleteTransaction');
+        print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&rowid='.GETPOST("rowid"), $langs->trans('DeleteTransaction'), $text, 'confirm_delete', null, '', 1);
+    }
+    
+    
     // Lines of title fields
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -312,7 +484,54 @@ if ($resql)
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
+	
+	
+	// Form to add a transaction with no invoice
+	if ($user->rights->banque->modifier && $action == 'addline')
+	{
+	    print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
+	
+	    print '<table class="noborder" width="100%">';
+	    print '<tr class="liste_titre">';
+	    print '<td>'.$langs->trans("Date").'</td>';
+	    print '<td>&nbsp;</td>';
+	    print '<td>'.$langs->trans("Type").'</td>';
+	    print '<td>'.$langs->trans("Numero").'</td>';
+	    print '<td colspan="2">'.$langs->trans("Description").'</td>';
+	    print '<td align=right>'.$langs->trans("Debit").'</td>';
+	    print '<td align=right>'.$langs->trans("Credit").'</td>';
+	    print '<td colspan="2" align="center">&nbsp;</td>';
+	    print '</tr>';
+	
+	    print '<tr '.$bc[false].'>';
+	    print '<td class="nowrap" colspan="2">';
+	    $form->select_date($dateop,'op',0,0,0,'transaction');
+	    print '</td>';
+	    print '<td class="nowrap">';
+	    $form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
+	    print '</td><td>';
+	    print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
+	    print '<td colspan="2">';
+	    print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
+	    if ($options) {
+	        print '<br>'.$langs->trans("Rubrique").': ';
+	        print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
+	    }
+	    print '</td>';
+	    print '<td align=right><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit").'"></td>';
+	    print '<td align=right><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit").'"></td>';
+	    print '<td colspan="2" align="center">';
+	    print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
+	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	    print '</td></tr>';
+	    print '</table>';
+	    print '<br>';
+	}	
+	
+	
 	
 	$i = 0;
 	
@@ -324,14 +543,16 @@ if ($resql)
 	$morehtml.='/'.$nbtotalofpages.' ';
 	$morehtml.='</div>';
 	
+	$picto='title_bank';
+	if ($id > 0 || ! empty($ref)) $picto='';
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, $morehtml, '', $limit);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, $morehtml, '', $limit);
+		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
 	}
 	
 	$moreforfilter = '';
@@ -433,7 +654,7 @@ if ($resql)
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
     	print '<td align="right">';
-    	$form->select_comptes($account,'account',0,'',1);
+    	$form->select_comptes($account,'account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.debit']['checked']))
@@ -664,7 +885,7 @@ if ($resql)
     	}
 
         // Num cheque
-    	if (! empty($arrayfields['b.num_releve']['checked']))
+    	if (! empty($arrayfields['b.num_chq']['checked']))
     	{
     	    print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
     	    if (! $i) $totalarray['nbfield']++;
@@ -734,7 +955,7 @@ if ($resql)
     	// Balance
     	if (! empty($arrayfields['balance']['checked']))
     	{
-        	if ($mode_balance_ok)
+    	    if ($mode_balance_ok)
         	{
         	    if ($total >= 0)
         	    {
@@ -751,60 +972,68 @@ if ($resql)
         	}
     	}
     	
-    	// Transaction reconciliated or edit link
-    	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
+    	if (! empty($arrayfields['b.num_releve']['checked']))
     	{
-    	    print '<td align="center" class="nowrap">';
-    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
-    	    print img_edit();
-    	    print '</a>';
-    	    print "&nbsp; ";
-    	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$object->id.'">'.$objp->num_releve.'</a>';
-    	    print "</td>";
-    	}
-    	else
-    	{
-    	    print '<td align="center">';
-    	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
-    	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
-    	        print img_edit();
-    	        print '</a>';
-    	    }
-    	    else
-    	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
-    	        print img_view();
-    	        print '</a>';
-    	    }
-    	    if ($bankaccount->canBeConciliated() > 0 && empty($objp->rappro))
-    	    {
-    	        if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
-    	        {
-    	            print ' '.img_warning($langs->trans("Late"));
-    	        }
-    	    }
-    	    print '&nbsp;';
-    	    if ($user->rights->banque->modifier)
-    	    {
-    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$object->id.'&amp;page='.$page.'">';
-    	        print img_delete();
-    	        print '</a>';
-    	    }
-    	    print '</td>';
+            print '<td class="nowrap" align="center">';
+        	// Transaction reconciliated or edit link
+        	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
+        	{
+        	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+        	    print img_edit();
+        	    print '</a>';
+        	    print "&nbsp; ";
+        	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$object->id.'">'.$objp->num_releve.'</a>';
+        	}
+        	else
+        	{
+        	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+        	    {
+        	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+        	        print img_edit();
+        	        print '</a>';
+        	    }
+        	    else
+        	    {
+        	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+        	        print img_view();
+        	        print '</a>';
+        	    }
+        	    if ($bankaccount->canBeConciliated() > 0 && empty($objp->rappro))
+        	    {
+        	        if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
+        	        {
+        	            print ' '.img_warning($langs->trans("Late"));
+        	        }
+        	    }
+        	    print '&nbsp;';
+        	    if ($user->rights->banque->modifier)
+        	    {
+        	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$object->id.'&amp;page='.$page.'">';
+        	        print img_delete();
+        	        print '</a>';
+        	    }
+        	}
+        	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        	{
+        	    $selected=0;
+        	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+        	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        	}
+        	print '</td>';
+            if (! $i) $totalarray['nbfield']++;
     	}
     	
     	// Action column
-        print '<td class="nowrap" align="center">';
-        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-        {
-            $selected=0;
-    		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-        }
-        print '</td>';
-        if (! $i) $totalarray['nbfield']++;
-		
+    	print '<td class="nowrap" align="center">';
+    	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    	{
+    	    $selected=0;
+    	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+    	}
+    	print '</td>';
+    	if (! $i) $totalarray['nbfield']++;
+
 		print "</tr>";
 
 		$i++;

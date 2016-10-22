@@ -1234,7 +1234,7 @@ class Account extends CommonObject
         }
         else if ($mode == 'transactions')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$this->id.$linkclose;
             $linkend='</a>';
         }
         else if ($mode == 'receipts')

@@ -181,7 +181,7 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
+    print load_fiche_titre($langs->trans("Reconciliation").': <a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
     print '<br>';
 
     // Show last bank receipts
