@@ -2658,6 +2658,38 @@ class SupplierInvoiceLine extends CommonObjectLine
             $this->db->rollback();
             return -2;
         }
-    }
-}
+    } 
+            /**
+     *  Mise a jour de l'objet ligne de commande en base
+     *
+     *  @return		int		<0 si ko, >0 si ok
+     */
+    function update_total()
+    {
+        $this->db->begin();
 
+        // Mise a jour ligne en base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
+        $sql.= "  total_ht='".price2num($this->total_ht)."'";
+        $sql.= ", tva='".price2num($this->total_tva)."'";
+        $sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
+        $sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
+        $sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+        $sql.= " WHERE rowid = ".$this->rowid;
+
+        dol_syslog("FactureFournisseurLigne.class.php::update_total", LOG_DEBUG);
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -2;
+        }
+    }
+ }
