@@ -2,6 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +34,14 @@ $langs->load('other');
 
 if (! $user->admin) accessforbidden();
 
-$dirstandard = "/core/menus/standard";
-$dirsmartphone = "/core/menus/smartphone";
-
-$dirmenu = array($dirstandard,$dirsmartphone);
+$dirstandard = array();
+$dirsmartphone = array();
+$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+foreach($dirmenus as $dirmenu)
+{
+    $dirstandard[]=$dirmenu.'standard';
+    $dirsmartphone[]=$dirmenu.'smartphone';
+}
 
 $action=GETPOST('action');
 
@@ -244,7 +249,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
     $this->db->begin();
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
-    $db->query($sql);
+    $result=$db->query($sql);
 
     if ($result == 0)
     {
@@ -331,7 +336,7 @@ if ($action == 'create')
     // Handler
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td>';
     print '<td>';
-    $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
+    $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
     print '</td>';
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
