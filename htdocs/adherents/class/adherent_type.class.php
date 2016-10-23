@@ -33,17 +33,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class AdherentType extends CommonObject
 {
-    public $table_element = 'adherent_type';
-    public $element = 'adherent_type';
+	public $table_element = 'adherent_type';
+	public $element = 'adherent_type';
 
-    var $id;
-    var $ref;
-    var $libelle;
-    var $subscription;  	// Subscription required
-    var $note;		
-    var $vote;		        // Can vote
-    var $mail_valid;  	    // mail sent during validation
-    var $statut;
+	/** @var string Label */
+	public $libelle;
+	/**
+	 * @var bool
+	 * @deprecated Use subscription
+	 * @see subscription
+	 */
+	public $cotisation;
+	/**
+	 * @var bool Subsription required
+	 * @since 5.0
+	 */
+	public $subscription;
+	/** @var string Public note */
+	public $note;
+	/** @var bool Can vote*/
+	public $vote;
+	/** @var bool Email sent during validation */
+	public $mail_valid;
 
 
     /**
