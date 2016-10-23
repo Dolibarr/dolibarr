@@ -149,4 +149,7 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFA
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
-  
+ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT 0;
+
