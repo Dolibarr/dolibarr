@@ -49,6 +49,7 @@ AccountAccountingSuggest=Accounting account suggest
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
 MenuTaxAccounts=Tax accounts
+MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
@@ -94,9 +95,9 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
-DONATION_ACCOUNTINGACCOUNT=Account to register donations
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
+DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)

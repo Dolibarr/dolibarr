@@ -103,19 +103,19 @@ if (! empty($conf->tax->enabled))
     // htdocs/admin/salaries.php
     print "<br>\n";
     print "<br>\n";
-}
-if (! empty($conf->loan->enabled))
+}*/
+if (! empty($conf->loan->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 {
     $step++;
-    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescLoan", $step, '<strong>'.$langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Modules")."-".$langs->transnoentitiesnoconv("Loans").'</strong>');
-    // htdocs/admin/loan.php
+    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescLoan", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuLoanAccounts").'</strong>');
     print "<br>\n";
     print "<br>\n";
 }
+/*
 if (! empty($conf->don->enabled))
 {
     $step++;
-    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDonation", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDonation", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDonationAccounts").'</strong>');
     print "<br>\n";
     print "<br>\n";
 }*/
