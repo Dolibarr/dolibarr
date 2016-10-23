@@ -72,7 +72,7 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-
+        
 /*
  * View
  */
@@ -128,6 +128,7 @@ if ($resql)
 	$i = 0;
 
 	$param = '&statut='.$statut;
+    //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	if ($statut >= 0)
