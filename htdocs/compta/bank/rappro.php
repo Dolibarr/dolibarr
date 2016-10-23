@@ -184,7 +184,7 @@ if ($resql)
     print load_fiche_titre($langs->trans("Reconciliation").': <a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
     print '<br>';
 
-    // Show last bank receipts
+    // Show last bank statements
     $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
     $liste="";
     $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
