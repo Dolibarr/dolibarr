@@ -45,6 +45,7 @@ $langs->load("bills");
 $langs->load("accountancy");
 $langs->load("compta");
 $langs->load("banks");
+$langs->load("loans");
 
 /*
  * Actions
@@ -100,6 +101,14 @@ if (! empty($conf->tax->enabled))
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescSal", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
     // htdocs/admin/salaries.php
+    print "<br>\n";
+    print "<br>\n";
+}
+if (! empty($conf->loan->enabled))
+{
+    $step++;
+    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescLoan", $step, '<strong>'.$langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Modules")."-".$langs->transnoentitiesnoconv("Loans").'</strong>');
+    // htdocs/admin/loan.php
     print "<br>\n";
     print "<br>\n";
 }
