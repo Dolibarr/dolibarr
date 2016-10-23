@@ -53,7 +53,7 @@ $db_pass=GETPOST('db_pass');
 $db_port=GETPOST('db_port','int');
 $db_prefix=GETPOST('db_prefix','alpha');
 
-session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
+session_start();	// To be able to keep info into session (used for not losing password during navigation. The password must not transmit through parameters)
 
 // Save a flag to tell to restore input value if we do back
 $_SESSION['dol_save_pass']=$db_pass;
