@@ -364,6 +364,7 @@ if ($sql_select)
     print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('TotalHT'),$_SERVER['PHP_SELF'],'total_ht','',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('UnitPrice'),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     // Filters
     print '<tr class="liste_titre">';
@@ -378,6 +379,8 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
     print '</td>';
     print '<td class="liste_titre" align="center">';
     print '</td>';
@@ -563,6 +566,8 @@ if ($sql_select)
 		print '<td align="right">'.price($objp->total_ht).'</td>';
 		$total_ht+=$objp->total_ht;
 
+		print '<td align="right">'.price($objp->total_ht/(empty($objp->prod_qty)?1:$objp->prod_qty)).'</td>';
+
 
 		print "</tr>\n";
 		$i++;
@@ -573,6 +578,7 @@ if ($sql_select)
 	print '<td colspan="3"></td>';
 	print '<td align="right">' . $total_qty . '</td>';
 	print '<td align="right">' . price($total_ht) . '</td>';
+	print '<td align="right">' . price($total_ht/(empty($total_qty)?1:$total_qty)) . '</td>';
 	print "</table>";
 
 	if ($num > $limit) {
