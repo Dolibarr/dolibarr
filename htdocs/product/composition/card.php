@@ -207,12 +207,13 @@ if ($id > 0 || ! empty($ref))
 	    
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 		
-		print '<table class="noborder tableforfield" width="100%">';
+	    print '<div class="underbanner clearboth"></div>';	
+        print '<table class="border tableforfield" width="100%">';
 
 		// Nature
 		if($object->type!=Product::TYPE_SERVICE)
 		{
-			print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
 			print $object->getLibFinished();
 			print '</td></tr>';
 		}

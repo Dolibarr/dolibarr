@@ -410,8 +410,8 @@ if ($resql)
 
     if ($id > 0)
     {
-        $entrepot = new Entrepot($db);
-        $result = $entrepot->fetch($id);
+        $object = new Entrepot($db);
+        $result = $object->fetch($id);
         if ($result < 0)
         {
             dol_print_error($db);
@@ -430,69 +430,60 @@ if ($resql)
      */
     if ($id)
     {
-        $head = stock_prepare_head($entrepot);
+        $head = stock_prepare_head($object);
 
         dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), 0, 'stock');
 
-
+        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+        
+        $morehtmlref='<div class="refidno">';
+        $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
+        $morehtmlref.='</div>';
+        
+        dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+        
+         
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
+        print '<div class="underbanner clearboth"></div>';
+         
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
-
-        // Ref
-        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'libelle');
-        print '</td>';
-
-        print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
-
         // Description
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.dol_htmlentitiesbr($entrepot->description).'</td></tr>';
+        print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
-        // Address
-        print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-        print $entrepot->address;
-        print '</td></tr>';
-
-        // Town
-        print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->zip.'</td>';
-        print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->town.'</td></tr>';
-
-        // Country
-        print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        if (! empty($entrepot->country_code))
-        {
-        	$img=picto_from_langcode($entrepot->country_code);
-        	print ($img?$img.' ':'');
-        	print $entrepot->country;
-        }
-        print '</td></tr>';
-
-        // Status
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
-
-        $calcproductsunique=$entrepot->nb_different_products();
-        $calcproducts=$entrepot->nb_products();
+        $calcproductsunique=$object->nb_different_products();
+        $calcproducts=$object->nb_products();
 
         // Total nb of different products
-        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
         print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
         print "</td></tr>";
 
         // Nb of products
-        print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
         print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
         print "</td></tr>";
 
+        print '</table>';
+        	
+        print '</div>';
+        print '<div class="fichehalfright">';
+        print '<div class="ficheaddleft">';
+        print '<div class="underbanner clearboth"></div>';
+        	
+        print '<table class="border centpercent">';
+        
         // Value
-        print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+        print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
         print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
         print "</td></tr>";
 
         // Last movement
         $sql = "SELECT MAX(m.datem) as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-        $sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
+        $sql .= " WHERE m.fk_entrepot = '".$object->id."'";
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
@@ -504,7 +495,7 @@ if ($resql)
             dol_print_error($db);
         }
 
-        print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
         if ($lastmovementdate)
         {
             print dol_print_date($lastmovementdate,'dayhour');
@@ -517,6 +508,12 @@ if ($resql)
 
         print "</table>";
 
+        print '</div>';
+        print '</div>';
+        print '</div>';
+        	
+        print '<div class="clearboth"></div>';
+        
         dol_fiche_end();
     }
 
@@ -526,7 +523,6 @@ if ($resql)
 	 */
 	if ($action == "correction")
 	{
-		if ($id) $object=$entrepot;
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
 		print '<br>';
 	}
@@ -536,7 +532,6 @@ if ($resql)
 	 */
 	if ($action == "transfert")
 	{
-		if ($id) $object=$entrepot;
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br>';
 	}

@@ -438,11 +438,15 @@ print '<input type="hidden" name="sref" value="'.$sref.'">';
 print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print $langs->trans('Warehouse').' : '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
-print '<br />';
-print $langs->trans('Supplier').' : '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
-print '<br />';
-print ' <input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+print '</div>';
+print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+print '</div>';
+print '<div class="inline-block valignmiddle">';
+print '<input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '</div>';
 print '</form>';
 
 if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
