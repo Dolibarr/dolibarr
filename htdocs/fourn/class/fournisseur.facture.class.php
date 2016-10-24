@@ -1241,7 +1241,7 @@ class FactureFournisseur extends CommonInvoice
      *
      *	@param    	string	$desc            	Description de la ligne
      *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
-     *	@param    	double	$txtva           	Taux de tva force, sinon -1
+     *	@param    	double	$txtva           	Force Vat rate to use, -1 for auto.
      *	@param		double	$txlocaltax1		LocalTax1 Rate
      *	@param		double	$txlocaltax2		LocalTax2 Rate
      *	@param    	double	$qty             	Quantite
@@ -1277,21 +1277,23 @@ class FactureFournisseur extends CommonInvoice
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
+
+        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
+        	
         // Clean vat code
+        $vat_src_code='';
         if (preg_match('/\((.*)\)/', $txtva, $reg))
         {
             $vat_src_code = $reg[1];
-            $txtva = preg_replace('/\((.*)\)/', '', $txtva);
+            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
         }
-
+        
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu=price2num($pu);
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
-
-        $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
 
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
         $total_ht  = $tabprice[0];
@@ -1317,8 +1319,9 @@ class FactureFournisseur extends CommonInvoice
         //$this->line->label=$label;	// deprecated
         $this->line->desc=$desc;
         $this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
-        $this->line->tva_tx=$txtva;
+        
         $this->line->vat_src_code=$vat_src_code;
+        $this->line->tva_tx=$txtva;
         $this->line->localtax1_tx=$txlocaltax1;
         $this->line->localtax2_tx=$txlocaltax2;
         $this->line->fk_product=$fk_product;

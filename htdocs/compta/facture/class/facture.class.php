@@ -2311,7 +2311,7 @@ class Facture extends CommonInvoice
 	 * 		@param    	string		$desc            	Description of line
 	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 * 		@param    	double		$qty             	Quantity
-	 * 		@param    	double		$txtva           	Force vat rate, -1 for auto
+	 * 		@param    	double		$txtva           	Force Vat rate, -1 for auto
 	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated)
 	 *		@param    	int			$fk_product      	Id of predefined product/service
@@ -2363,6 +2363,16 @@ class Facture extends CommonInvoice
 		if (empty($fk_prev_id)) $fk_prev_id = 'null';
 		if (! isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') $situation_percent = 100;
 
+		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+			
+		// Clean vat code
+		$vat_src_code='';
+		if (preg_match('/\((.*)\)/', $txtva, $reg))
+		{
+		    $vat_src_code = $reg[1];
+		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+		}
+		
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
@@ -2408,9 +2418,6 @@ class Facture extends CommonInvoice
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx);
 
 			$total_ht  = $tabprice[0];
@@ -2445,6 +2452,7 @@ class Facture extends CommonInvoice
 			$this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	    // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
 
+			$this->line->vat_src_code=$vat_src_code;
 			$this->line->tva_tx=$txtva;
 			$this->line->localtax1_tx=$txlocaltax1;
 			$this->line->localtax2_tx=$txlocaltax2;
@@ -4315,7 +4323,7 @@ class FactureLigne extends CommonInvoiceLine
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, fk_parent_line, label, description, qty,';
-		$sql.= ' tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql.= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, ';
 		$sql.= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
@@ -4329,6 +4337,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".price2num($this->qty).",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
 		$sql.= " ".price2num($this->tva_tx).",";
 		$sql.= " ".price2num($this->localtax1_tx).",";
 		$sql.= " ".price2num($this->localtax2_tx).",";

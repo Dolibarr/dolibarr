@@ -624,8 +624,9 @@ div.myavailability {
 .maxwidth500 { max-width: 500px; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
-.titlefield { width: 25%; }
 .titlefieldcreate { width: 20%; }
+.titlefield       { width: 25%; }
+.titlefieldmiddle { width: 50%; }
 
 /* Force values for small screen */
 @media only screen and (max-width: 1400px)

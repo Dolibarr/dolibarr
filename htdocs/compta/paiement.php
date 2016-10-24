@@ -461,7 +461,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<table class="border" width="100%">';
 
         // Third party
-        print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
+        print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
 
         // Date payment
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
@@ -513,7 +513,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td valign="top">';
-		print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
         
         print '</table>';
 
