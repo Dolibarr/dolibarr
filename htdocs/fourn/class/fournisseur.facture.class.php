@@ -584,7 +584,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function fetch_lines()
     {
-        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -609,7 +609,7 @@ class FactureFournisseur extends CommonInvoice
 	                $line = new SupplierInvoiceLine($this->db);
 
                     $line->id				= $obj->rowid;
-                    $line->rowid				= $obj->rowid;
+                    $line->rowid			= $obj->rowid;
                     $line->description		= $obj->description;
                     $line->product_ref		= $obj->product_ref;
                     $line->ref				= $obj->product_ref;
@@ -618,27 +618,29 @@ class FactureFournisseur extends CommonInvoice
                     $line->label  			= $obj->label;
                     $line->product_desc		= $obj->product_desc;
                     $line->subprice			= $obj->pu_ht;
-                    $line->pu_ht				= $obj->pu_ht;
+                    $line->pu_ht			= $obj->pu_ht;
                     $line->pu_ttc			= $obj->pu_ttc;
+                    
+                    $line->vat_src_code     = $obj->vat_src_code; 
                     $line->tva_tx			= $obj->tva_tx;
                     $line->localtax1_tx		= $obj->localtax1_tx;
                     $line->localtax2_tx		= $obj->localtax2_tx;
                     $line->qty				= $obj->qty;
-                    $line->remise_percent    = $obj->remise_percent;
+                    $line->remise_percent   = $obj->remise_percent;
                     $line->tva				= $obj->total_tva;
                     $line->total_ht			= $obj->total_ht;
-                    $line->total_tva			= $obj->total_tva;
+                    $line->total_tva		= $obj->total_tva;
                     $line->total_localtax1	= $obj->total_localtax1;
                     $line->total_localtax2	= $obj->total_localtax2;
-                    $line->total_ttc			= $obj->total_ttc;
+                    $line->total_ttc		= $obj->total_ttc;
                     $line->fk_product		= $obj->fk_product;
                     $line->product_type		= $obj->product_type;
-                    $line->product_label		= $obj->label;
-                    $line->info_bits		    = $obj->info_bits;
-                    $line->fk_parent_line    = $obj->fk_parent_line;
+                    $line->product_label	= $obj->label;
+                    $line->info_bits		= $obj->info_bits;
+                    $line->fk_parent_line   = $obj->fk_parent_line;
                     $line->special_code		= $obj->special_code;
                     $line->rang       		= $obj->rang;
-                    $line->fk_unit           = $obj->fk_unit;
+                    $line->fk_unit          = $obj->fk_unit;
 
 					// Multicurrency
 					$line->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1480,6 +1482,8 @@ class FactureFournisseur extends CommonInvoice
 	    $line->pu_ttc = $pu_ttc;
 	    $line->qty = $qty;
 	    $line->remise_percent = $remise_percent;
+        
+	    $this->line->vat_src_code=$vat_src_code;
 	    $line->tva_tx = $vatrate;
 	    $line->localtax1_tx = $txlocaltax1;
 	    $line->localtax2_tx = $txlocaltax2;
@@ -2458,6 +2462,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql.= ", qty = ".price2num($this->qty);
 		$sql.= ", remise_percent = ".price2num($this->remise_percent);
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
 		$sql.= ", tva_tx = ".price2num($this->tva_tx);
 		$sql.= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql.= ", localtax2_tx = ".price2num($this->localtax2_tx);
