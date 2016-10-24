@@ -342,12 +342,15 @@ if ($result) {
 		print price($objp->tva_tx_line);
 		print '</td>';
 		
+		// Accounting account suggested
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
-		if ($objp->code_sell_l == $objp->code_sell_p) {
+		if ($objp->code_sell_l == $objp->code_sell_p) {               // Test if there is a difference between code by default and code on product
 		    if ($objp->code_sell_l > 0) print $objp->code_sell_l;
 		    else print $langs->trans("Unknown");
 		} else {
-			print $langs->trans("Buy") . ' = ' . $objp->code_sell_l . '<br />' . $langs->trans("Sell") . ' = ' . $objp->code_sell_p;
+			print $langs->trans("Default") . ' = ' . ($objp->code_sell_l > 0 ? $objp->code_sell_l : $langs->trans("Unknown"));
+			print '<br>';
+			print $langs->trans("Product") . ' = ' . ($objp->code_sell_p > 0 ? $objp->code_sell_p : $langs->trans("Unknown"));
 		}
 		print '</td>';
 

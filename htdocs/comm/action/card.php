@@ -1472,7 +1472,7 @@ if ($id > 0)
 
             $var=true;
 
-            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+            print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

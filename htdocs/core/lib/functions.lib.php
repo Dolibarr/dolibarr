@@ -926,9 +926,10 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
  *  @return	void
  */
-function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='')
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='', $onlybanner=0)
 {
 	global $conf, $form, $user, $langs;
 
@@ -943,7 +944,6 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'user')    $modulepart='userphoto';
 	if ($object->element == 'product') $modulepart='product';
 	
-	print '<div class="arearef heightref valignmiddle" width="100%">';
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -957,7 +957,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			else {
+			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
@@ -968,21 +968,33 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	{
         if ($showimage) 
         {
-            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
-            if ($modulepart != 'unknown') $morehtmlleft.=$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
-            else if ($object->element == 'action') 
+            if ($modulepart != 'unknown') 
             {
-                $cssclass='photorefcenter';
-                $nophoto=img_picto('', 'title_agenda', '', false, 1);
-                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                if ($phototoshow)
+                {
+                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+                    $morehtmlleft.=$phototoshow;
+                    $morehtmlleft.='</div>';
+                }
             }
-            else
+            elseif ($conf->browser->layout != 'phone')      // Show no photo link
             {
-                $width=14; $cssclass='photorefcenter';
-				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+                if ($object->element == 'action') 
+                {
+                    $cssclass='photorefcenter';
+                    $nophoto=img_picto('', 'title_agenda', '', false, 1);
+                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                }
+                else
+                {
+                    $width=14; $cssclass='photorefcenter';
+    				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
+    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                }
+                $morehtmlleft.='</div>';
             }
-            $morehtmlleft.='</div>';
         }
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
@@ -1034,6 +1046,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref.='</div>';
 	}
+	
+	print '<div class="'.($onlybanner?'':'arearef ').'heightref valignmiddle" width="100%">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';

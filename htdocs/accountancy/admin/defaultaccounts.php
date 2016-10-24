@@ -126,9 +126,7 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-/*
- *  Define Chart of accounts
- */
+// Define Chart of accounts
 
 print '<table class="noborder" width="100%">';
 

@@ -174,7 +174,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accounta
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND product_type <= 2";
-$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='')";
+$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
 // Add search filter like
 if (strlen(trim($search_invoice))) {
 	$sql .= " AND (f.ref like '%" . $search_invoice . "%')";
@@ -352,13 +352,15 @@ if ($result) {
 		print price($objp->tva_tx_line);
 		print '</td>';
 
+		// Accounting account suggested
 		print '<td align="center" style="' . $code_buy_p_notset . '">';
-		// if not same kind of product_type stored in product & facturedet we display both account and let user choose
-		if ($objp->code_buy_l == $objp->code_buy_p) {
-			if ($objp->code_buy_l > 0) print $objp->code_buy_l;
-			else print $langs->trans("Unknown");			
-		} else {      // This can happen if user has change type of product after creation of invoice
-			print 'lines=' . $objp->code_buy_l . '<br />product=' . $objp->code_buy_p;
+		if ($objp->code_buy_l == $objp->code_buy_p) {               // Test if there is a difference between code by default and code on product
+		    if ($objp->code_buy_l > 0) print $objp->code_buy_l;
+		    else print $langs->trans("Unknown");
+		} else {
+		    print $langs->trans("Default") . ' = ' . ($objp->code_buy_l > 0 ? $objp->code_buy_l : $langs->trans("Unknown"));
+		    print '<br>';
+		    print $langs->trans("Product") . ' = ' . ($objp->code_buy_p > 0 ? $objp->code_buy_p : $langs->trans("Unknown"));
 		}
 		print '</td>';
 

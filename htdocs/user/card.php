@@ -1784,15 +1784,6 @@ else
 
             dol_fiche_head($head, 'user', $title, 0, 'user');
 
-        	$rowspan=22;
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
-            if (! empty($conf->societe->enabled)) $rowspan++;
-            if (! empty($conf->adherent->enabled)) $rowspan++;
-			if (! empty($conf->skype->enabled)) $rowspan++;
-			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
-			if (! empty($conf->agenda->enabled)) $rowspan++;
-			if (! empty($conf->accounting->enabled)) $rowspan++;
-
             print '<table width="100%" class="border">';
 
             // Ref/ID
@@ -1819,12 +1810,6 @@ else
                 print $object->lastname;
             }
             print '</td>';
-
-            // Photo
-            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
-            print '</td>';
-
             print '</tr>';
 
             // Firstname
@@ -1840,6 +1825,14 @@ else
                 print $object->firstname;
             }
             print '</td></tr>';
+
+            // Photo
+            print '<tr>';
+            print '<td>'.$langs->trans("Photo").'</td>';
+            print '<td valign="middle">';
+            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
+            print '</td>';
+            print '</tr>';
 
             // Employee
             print '<tr>';

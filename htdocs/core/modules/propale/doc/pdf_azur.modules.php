@@ -763,9 +763,6 @@ class pdf_azur extends ModelePDFPropales
 			$this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
 			return 0;
 		}
-
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**

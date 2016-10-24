@@ -618,8 +618,9 @@ div.myavailability {
 .maxwidth500 { max-width: 500px; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
-.titlefield { width: 25%; }
 .titlefieldcreate { width: 20%; }
+.titlefield       { width: 25%; }
+.titlefieldmiddle { width: 50%; }
 
 /* Force values for small screen */
 @media only screen and (max-width: 1400px)
@@ -1258,7 +1259,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices','websites');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices','websites');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -4444,6 +4445,20 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }
+	
 }
 
 

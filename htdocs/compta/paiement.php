@@ -461,24 +461,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<table class="border" width="100%">';
 
         // Third party
-        print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
+        print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
 
         // Date payment
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'') : $datepayment);
         $form->select_date($datepayment,'','','',0,"add_paiement",1,1,0,0,'','',$facture->date);
-        print '</td>';
-        print '<td>'.$langs->trans('Comments').'</td></tr>';
-
-        $rowspan=5;
+        print '</td></tr>';
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
         $form->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
-        print '<td rowspan="'.$rowspan.'" valign="top">';
-        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
         print '</tr>';
 
         // Bank account
@@ -493,7 +488,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         }
         else
         {
-            print '<td colspan="2">&nbsp;</td>';
+            print '<td>&nbsp;</td>';
         }
         print "</tr>\n";
 
@@ -515,6 +510,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '</td>';
         print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank').'"></td></tr>';
 
+		// Comments
+		print '<tr><td>'.$langs->trans('Comments').'</td>';
+		print '<td valign="top">';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+        
         print '</table>';
 
 		dol_fiche_end();
@@ -633,7 +633,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
                     
                     // Currency
-                    print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+                    if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
                     
 					// Multicurrency Price
 					if (!empty($conf->multicurrency->enabled)) 

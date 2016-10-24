@@ -355,243 +355,425 @@ if (empty($reshook))
 	// Create
 	elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 	{
-	    $error=0;
+		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
 
-	    $datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-	    $datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+		$db->begin();
 
-	    if (GETPOST('socid','int')<1)
-	    {
-		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), null, 'errors');
-	    	$action='create';
-	    	$error++;
-	    }
+		$error = 0;
 
-	    if ($datefacture == '')
-	    {
-		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), null, 'errors');
-	        $action='create';
-	        $_GET['socid']=$_POST['socid'];
-	        $error++;
-	    }
-	    if (! GETPOST('ref_supplier'))
-	    {
-		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), null, 'errors');
-	        $action='create';
-	        $_GET['socid']=$_POST['socid'];
-	        $error++;
-	    }
+		// Fill array 'array_options' with data from add form
+		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		if ($ret < 0) $error++;
 
-	    // Fill array 'array_options' with data from add form
+		$datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+		$datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
-	    if (! $error)
-	    {
-	        $db->begin();
+		// Replacement invoice
+		if ($_POST['type'] == FactureFournisseur::TYPE_REPLACEMENT)
+		{
+			if ($datefacture == '')
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), null, 'errors');
+				$action='create';
+				$_GET['socid']=$_POST['socid'];
+				$error++;
+			}
+			if (! ($_POST['fac_replacement'] > 0)) {
+				$error ++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
+			}
 
-	        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-			if ($ret < 0) $error++;
+			if (! $error) {
+				// This is a replacement invoice
+				$result = $object->fetch($_POST['fac_replacement']);
+				$object->fetch_thirdparty();
 
-	        $tmpproject = GETPOST('projectid', 'int');
+				$object->ref				= $_POST['ref'];
+				$object->ref_supplier		= $_POST['ref_supplier'];
+				$object->socid				= $_POST['socid'];
+				$object->libelle			= $_POST['label'];
+				$object->date				= $datefacture;
+				$object->date_echeance		= $datedue;
+				$object->note_public		= GETPOST('note_public');
+				$object->note_private		= GETPOST('note_private');
+				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
+				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
+				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
+				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
+				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
 
-	        // Creation facture
-	        $object->ref           = $_POST['ref'];
-			$object->ref_supplier  = $_POST['ref_supplier'];
-	        $object->socid         = $_POST['socid'];
-	        $object->libelle       = $_POST['label'];
-	        $object->date          = $datefacture;
-	        $object->date_echeance = $datedue;
-	        $object->note_public   = GETPOST('note_public');
-	        $object->note_private  = GETPOST('note_private');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id');
-	        $object->mode_reglement_id = GETPOST('mode_reglement_id');
-	        $object->fk_account        = GETPOST('fk_account', 'int');
-	        $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
-			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
-	        $object->location_incoterms = GETPOST('location_incoterms', 'alpha');
-			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				// Proprietes particulieres a facture de remplacement
+				$object->fk_facture_source = $_POST['fac_replacement'];
+				$object->type = FactureFournisseur::TYPE_REPLACEMENT;
 
-			// Auto calculation of date due if not filled by user
-			if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
+				$id = $object->createFromCurrent($user);
+				if ($id <= 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 
-	        // If creation from another object of another module
-	        if (! $error && $_POST['origin'] && $_POST['originid'])
-	        {
-	            // Parse element/subelement (ex: project_task)
-	            $element = $subelement = $_POST['origin'];
-	            /*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
-	             {
-	            $element = $regs[1];
-	            $subelement = $regs[2];
-	            }*/
+		// Credit note invoice
+		if ($_POST['type'] == FactureFournisseur::TYPE_CREDIT_NOTE)
+		{
+			$sourceinvoice = GETPOST('fac_avoir');
+			if (! ($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
+			{
+				$error ++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), null, 'errors');
+			}
+			if (GETPOST('socid','int')<1)
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), null, 'errors');
+				$action='create';
+				$error++;
+			}
+			if ($datefacture == '')
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), null, 'errors');
+				$action='create';
+				$_GET['socid']=$_POST['socid'];
+				$error++;
+			}
+			if (! GETPOST('ref_supplier'))
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), null, 'errors');
+				$action='create';
+				$_GET['socid']=$_POST['socid'];
+				$error++;
+			}
 
-	            // For compatibility
-	            if ($element == 'order')    {
-	                $element = $subelement = 'commande';
-	            }
-	            if ($element == 'propal')   {
-	                $element = 'comm/propal'; $subelement = 'propal';
-	            }
-	            if ($element == 'contract') {
-	                $element = $subelement = 'contrat';
-	            }
-	            if ($element == 'order_supplier') {
-	                $element = 'fourn'; $subelement = 'fournisseur.commande';
-	            }
-	            if ($element == 'project')
-	            {
-	            	$element = 'projet';
-	            }
-	            $object->origin    = $_POST['origin'];
-	            $object->origin_id = $_POST['originid'];
+			if (! $error)
+			{
+				$tmpproject = GETPOST('projectid', 'int');
 
-	            $id = $object->create($user);
+				// Creation facture
+				$object->ref				= $_POST['ref'];
+				$object->ref_supplier		= $_POST['ref_supplier'];
+				$object->socid				= $_POST['socid'];
+				$object->libelle			= $_POST['label'];
+				$object->date				= $datefacture;
+				$object->date_echeance		= $datedue;
+				$object->note_public		= GETPOST('note_public');
+				$object->note_private		= GETPOST('note_private');
+				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
+				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
+				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
+				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
+				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
 
-	            // Add lines
-	            if ($id > 0)
-	            {
-	                require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
-	                $classname = ucfirst($subelement);
-	                if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
-	                $srcobject = new $classname($db);
+				// Proprietes particulieres a facture avoir
+				$object->fk_facture_source	= $sourceinvoice > 0 ? $sourceinvoice : '';
+				$object->type = FactureFournisseur::TYPE_CREDIT_NOTE;
 
-	                $result=$srcobject->fetch($_POST['originid']);
-	                if ($result > 0)
-	                {
-	                    $lines = $srcobject->lines;
-	                    if (empty($lines) && method_exists($srcobject,'fetch_lines'))
-	                    {
-	                    	$srcobject->fetch_lines();
-	                    	$lines = $srcobject->lines;
-	                    }
+				$id = $object->create($user);
 
-	                    $num=count($lines);
-	                    for ($i = 0; $i < $num; $i++)
-	                    {
-	                        $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-	                        $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
+				{
+					$facture_source = new FactureFournisseur($db); // fetch origin object
+					if ($facture_source->fetch($object->fk_facture_source)>0)
+					{
+						$fk_parent_line = 0;
 
-	                        // Dates
-	                        // TODO mutualiser
-	                        $date_start=$lines[$i]->date_debut_prevue;
-	                        if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-	                        if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-	                        $date_end=$lines[$i]->date_fin_prevue;
-	                        if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-	                        if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+						foreach($facture_source->lines as $line)
+						{
+							// Reset fk_parent_line for no child products and special product
+							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+							$fk_parent_line = 0;
+							}
 
-	                        // FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
-	                        $result = $object->addline(
-	                            $desc,
-	                            $lines[$i]->subprice,
-	                            $lines[$i]->tva_tx,
-	                            $lines[$i]->localtax1_tx,
-	                            $lines[$i]->localtax2_tx,
-	                            $lines[$i]->qty,
-	                            $lines[$i]->fk_product,
-	                            $lines[$i]->remise_percent,
-	                            $date_start,
-	                            $date_end,
-	                            0,
-	                            $lines[$i]->info_bits,
-	                            'HT',
-	                            $product_type,
-	                        	$lines[$i]->rang,
-	                        	0,
-	                        	$lines[$i]->array_options,
-	                        	$lines[$i]->fk_unit,
-								$lines[$i]->id
-	                        );
+							$line->fk_facture = $object->id;
+							$line->fk_parent_line = $fk_parent_line;
 
-	                        if ($result < 0)
-	                        {
-	                            $error++;
-	                            break;
-	                        }
-	                    }
+							$line->subprice =-$line->subprice; // invert price for object
+							$line->pa_ht = -$line->pa_ht;
+							$line->total_ht=-$line->total_ht;
+							$line->total_tva=-$line->total_tva;
+							$line->total_ttc=-$line->total_ttc;
+							$line->total_localtax1=-$line->total_localtax1;
+							$line->total_localtax2=-$line->total_localtax2;
 
-	                    // Now reload line
-	                    $object->fetch_lines();
-	                }
-	                else
-	                {
-	                    $error++;
-	                }
-	            }
-	            else
-	            {
-	                $error++;
-	            }
-	        }
-	        else if (! $error)
-	        {
-	            $id = $object->create($user);
-	            if ($id < 0)
-	            {
-	                $error++;
-	            }
+							$result = $line->insert();
 
-	            if (! $error)
-	            {
-        	        // If some invoice's lines already known
-	                for ($i = 1 ; $i < 9 ; $i++)
-	                {
-	                    $label = $_POST['label'.$i];
-	                    $amountht  = price2num($_POST['amount'.$i]);
-	                    $amountttc = price2num($_POST['amountttc'.$i]);
-	                    $tauxtva   = price2num($_POST['tauxtva'.$i]);
-	                    $qty = $_POST['qty'.$i];
-	                    $fk_product = $_POST['fk_product'.$i];
-	                    if ($label)
-	                    {
-	                        if ($amountht)
-	                        {
-	                            $price_base='HT'; $amount=$amountht;
-	                        }
-	                        else
-	                        {
-	                            $price_base='TTC'; $amount=$amountttc;
-	                        }
-	                        $atleastoneline=1;
+							$object->lines[] = $line; // insert new line in current object
 
-	                        $product=new Product($db);
-	                        $product->fetch($_POST['idprod'.$i]);
+							// Defined the new fk_parent_line
+							if ($result > 0 && $line->product_type == 9) {
+							$fk_parent_line = $result;
+							}
+						}
 
-	                        $ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
-	                        if ($ret < 0) $error++;
-	                    }
-	                }
-	            }
-	        }
+						$object->update_price(1);
+					}
 
-	        if ($error)
-	        {
-	            $langs->load("errors");
-	            $db->rollback();
+				}
 
-		        setEventMessages($object->error, $object->errors, 'errors');
-	            $action='create';
-	            $_GET['socid']=$_POST['socid'];
-	        }
-	        else
-	        {
-	            $db->commit();
+				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
+				{
+					$facture_source = new FactureFournisseur($db); // fetch origin object if not previously defined
+					if ($facture_source->fetch($object->fk_facture_source)>0)
+					{
+						$totalpaye = $facture_source->getSommePaiement();
+						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
+						$totaldeposits = $facture_source->getSumDepositsUsed();
+						$remain_to_pay = abs($facture_source->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits);
 
-	            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-		            $outputlangs = $langs;
-		            $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	            	if ($result	< 0)
-	            	{
-	            		dol_print_error($db,$object->error,$object->errors);
-	            		exit;
-	            	}
-	            }
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');
+					}
+				}
 
-	            header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-	            exit;
-	        }
-	    }
+				// Add predefined lines
+				/*
+	             TODO delete
+	             for($i = 1; $i <= $NBLINES; $i ++) {
+					if ($_POST['idprod' . $i]) {
+						$product = new Product($db);
+						$product->fetch($_POST['idprod' . $i]);
+						$startday = dol_mktime(12, 0, 0, $_POST['date_start' . $i . 'month'], $_POST['date_start' . $i . 'day'], $_POST['date_start' . $i . 'year']);
+						$endday = dol_mktime(12, 0, 0, $_POST['date_end' . $i . 'month'], $_POST['date_end' . $i . 'day'], $_POST['date_end' . $i . 'year']);
+						$result = $object->addline($product->description, $product->price, $_POST['qty' . $i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod' . $i], $_POST['remise_percent' . $i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+					}
+				}*/
+			}
+		}
+
+		// Standard or deposit
+		if ($_POST['type'] == FactureFournisseur::TYPE_STANDARD || $_POST['type'] == FactureFournisseur::TYPE_DEPOSIT)
+		{
+			if (GETPOST('socid','int')<1)
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), null, 'errors');
+				$action='create';
+				$error++;
+			}
+
+			if ($datefacture == '')
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), null, 'errors');
+				$action='create';
+				$_GET['socid']=$_POST['socid'];
+				$error++;
+			}
+			if (! GETPOST('ref_supplier'))
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), null, 'errors');
+				$action='create';
+				$_GET['socid']=$_POST['socid'];
+				$error++;
+			}
+
+			if (! $error)
+			{
+				$db->begin();
+
+				$tmpproject = GETPOST('projectid', 'int');
+
+				// Creation facture
+				$object->ref           = $_POST['ref'];
+				$object->ref_supplier  = $_POST['ref_supplier'];
+				$object->socid         = $_POST['socid'];
+				$object->libelle       = $_POST['label'];
+				$object->date          = $datefacture;
+				$object->date_echeance = $datedue;
+				$object->note_public   = GETPOST('note_public');
+				$object->note_private  = GETPOST('note_private');
+				$object->cond_reglement_id = GETPOST('cond_reglement_id');
+				$object->mode_reglement_id = GETPOST('mode_reglement_id');
+				$object->fk_account        = GETPOST('fk_account', 'int');
+				$object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
+				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+
+				// Auto calculation of date due if not filled by user
+				if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
+
+				// If creation from another object of another module
+				if (! $error && $_POST['origin'] && $_POST['originid'])
+				{
+					// Parse element/subelement (ex: project_task)
+					$element = $subelement = $_POST['origin'];
+					/*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
+					 {
+					$element = $regs[1];
+					$subelement = $regs[2];
+					}*/
+
+					// For compatibility
+					if ($element == 'order')    {
+						$element = $subelement = 'commande';
+					}
+					if ($element == 'propal')   {
+						$element = 'comm/propal'; $subelement = 'propal';
+					}
+					if ($element == 'contract') {
+						$element = $subelement = 'contrat';
+					}
+					if ($element == 'order_supplier') {
+						$element = 'fourn'; $subelement = 'fournisseur.commande';
+					}
+					if ($element == 'project')
+					{
+						$element = 'projet';
+					}
+					$object->origin    = $_POST['origin'];
+					$object->origin_id = $_POST['originid'];
+
+					$id = $object->create($user);
+
+					// Add lines
+					if ($id > 0)
+					{
+						require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+						$classname = ucfirst($subelement);
+						if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
+						$srcobject = new $classname($db);
+
+						$result=$srcobject->fetch($_POST['originid']);
+						if ($result > 0)
+						{
+							$lines = $srcobject->lines;
+							if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+							{
+								$srcobject->fetch_lines();
+								$lines = $srcobject->lines;
+							}
+
+							$num=count($lines);
+							for ($i = 0; $i < $num; $i++)
+							{
+								$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+								$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+
+								// Dates
+								// TODO mutualiser
+								$date_start=$lines[$i]->date_debut_prevue;
+								if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+								if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+								$date_end=$lines[$i]->date_fin_prevue;
+								if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+								if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
+								$result = $object->addline(
+									$desc,
+									$lines[$i]->subprice,
+									$lines[$i]->tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->qty,
+									$lines[$i]->fk_product,
+									$lines[$i]->remise_percent,
+									$date_start,
+									$date_end,
+									0,
+									$lines[$i]->info_bits,
+									'HT',
+									$product_type,
+									$lines[$i]->rang,
+									0,
+									$lines[$i]->array_options,
+									$lines[$i]->fk_unit,
+									$lines[$i]->id
+								);
+
+								if ($result < 0)
+								{
+									$error++;
+									break;
+								}
+							}
+
+							// Now reload line
+							$object->fetch_lines();
+						}
+						else
+						{
+							$error++;
+						}
+					}
+					else
+					{
+						$error++;
+					}
+				}
+				else if (! $error)
+				{
+					$id = $object->create($user);
+					if ($id < 0)
+					{
+						$error++;
+					}
+
+					if (! $error)
+					{
+						// If some invoice's lines already known
+						for ($i = 1 ; $i < 9 ; $i++)
+						{
+							$label = $_POST['label'.$i];
+							$amountht  = price2num($_POST['amount'.$i]);
+							$amountttc = price2num($_POST['amountttc'.$i]);
+							$tauxtva   = price2num($_POST['tauxtva'.$i]);
+							$qty = $_POST['qty'.$i];
+							$fk_product = $_POST['fk_product'.$i];
+							if ($label)
+							{
+								if ($amountht)
+								{
+									$price_base='HT'; $amount=$amountht;
+								}
+								else
+								{
+									$price_base='TTC'; $amount=$amountttc;
+								}
+								$atleastoneline=1;
+
+								$product=new Product($db);
+								$product->fetch($_POST['idprod'.$i]);
+
+								$ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
+								if ($ret < 0) $error++;
+							}
+						}
+					}
+				}
+
+				if ($error)
+				{
+					$langs->load("errors");
+					$db->rollback();
+
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action='create';
+					$_GET['socid']=$_POST['socid'];
+				}
+				else
+				{
+					$db->commit();
+
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$outputlangs = $langs;
+						$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						if ($result	< 0)
+						{
+							dol_print_error($db,$object->error,$object->errors);
+							exit;
+						}
+					}
+
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
+				}
+			}
+		}
 	}
 
 	// Edit line
@@ -1847,24 +2029,6 @@ else
     	print '<div class="underbanner clearboth"></div>';
 
     	print '<table class="border" width="100%">';
-
-        // Ref
-        /*
-        print '<tr><td class="titlefield nowrap">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-        print '</td>';
-        print "</tr>\n";
-
-        // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer));
-        print '</td></tr>';
-
-        // Third party
-        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1,'supplier');
-        print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
-        print '</tr>';
-		*/
 
         // Type
         print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';

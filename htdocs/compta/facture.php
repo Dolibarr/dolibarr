@@ -1054,9 +1054,10 @@ if (empty($reshook))
 									$langs->trans('Deposit'),
 									$amountdeposit,		 	// subprice
 									1, 						// quantity
-									$lines[$i]->tva_tx, 0, // localtax1_tx
+									$lines[$i]->tva_tx,     // vat rate
+							        0,                      // localtax1_tx
 									0, 						// localtax2_tx
-									0, 						// fk_product
+									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
 									0, 						// remise_percent
 									0, 						// date_start
 									0, 						// date_end
@@ -3099,7 +3100,7 @@ else if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 	}
 
-	// Conditions de reglement
+	// Payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -3184,21 +3185,24 @@ else if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Multicurrency rate
-		print '<tr>';
-		print '<td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('CurrencyRate','multicurrency_tx');
-		print '</td>';
-		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editmulticurrencyrate') {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
-		} else {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-		}
-		print '</td></tr>';
+		//if ($object->multicurrency_code != $conf->currency)
+		//{
+    		print '<tr>';
+    		print '<td>';
+    		print '<table class="nobordernopadding" width="100%"><tr><td>';
+    		print fieldLabel('CurrencyRate','multicurrency_tx');
+    		print '</td>';
+    		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+    			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+    		print '</tr></table>';
+    		print '</td><td>';
+    		if ($action == 'editmulticurrencyrate') {
+    			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
+    		} else {
+    			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+    		}
+    		print '</td></tr>';
+		//}
 	}
 
 	// Bank Account
@@ -3307,9 +3311,29 @@ else if ($id > 0 || ! empty($ref))
 	
 	print '<table class="border centpercent">';
 	
+	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+	{
+	    // Multicurrency Amount HT
+	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	
+	    // Multicurrency Amount VAT
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	
+	    // Multicurrency Amount TTC
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	}
+	
 	// Amount
-	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
+	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	
+	// Vat
 	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" class="nowrap">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	print '</tr>';
 	
@@ -3354,24 +3378,6 @@ else if ($id > 0 || ! empty($ref))
 	
 	// Total with tax
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td class="nowrap">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	
-	if (!empty($conf->multicurrency->enabled))
-	{
-	    // Multicurrency Amount HT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount VAT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount TTC
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	}
 	
 	print '</table>';
 	

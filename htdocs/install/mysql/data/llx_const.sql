@@ -55,7 +55,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 -- IHM
 --
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLISTE_LIMIT','4','chaine','Longueur maximum des listes courtes (fiche client)',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Longueur maximum des listes courtes (fiche client)',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0,0);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0);

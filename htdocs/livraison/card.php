@@ -670,7 +670,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			print $formfile->showdocuments('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

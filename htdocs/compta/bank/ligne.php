@@ -271,7 +271,7 @@ if ($result)
 
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/search.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";

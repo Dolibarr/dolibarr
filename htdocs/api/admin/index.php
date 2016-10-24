@@ -27,6 +27,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -111,9 +112,15 @@ print '<br>';
 
 // Explorer
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-
+if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
+{
+    $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+else
+{
+    print $langs->trans("NotAvailableWithThisDistribution");
+}
 
 llxFooter();
 $db->close();

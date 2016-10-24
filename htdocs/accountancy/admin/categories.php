@@ -79,9 +79,11 @@ if ($action == 'delete') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxheader('', $langs->trans('AccountAccounting'));
 
 $formaccounting = new FormAccounting($db);
@@ -125,6 +127,7 @@ print '</table>';
 dol_fiche_end();
 
 print '</form>';
+
 
 if ($action == 'display' || $action == 'delete') {
 

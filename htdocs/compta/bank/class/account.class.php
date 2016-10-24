@@ -1234,7 +1234,7 @@ class Account extends CommonObject
         }
         else if ($mode == 'transactions')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$this->id.$linkclose;
             $linkend='</a>';
         }
         else if ($mode == 'receipts')
@@ -1535,7 +1535,7 @@ class AccountLine extends CommonObject
     var $fk_user_rappro;
     var $fk_type;
     var $rappro;        // Is it conciliated
-    var $num_releve;    // If conciliated, what is bank receipt
+    var $num_releve;    // If conciliated, what is bank statement
     var $num_chq;       // Num of cheque
     var $bank_chq;      // Bank of cheque
     var $fk_bordereau;  // Id of cheque receipt
@@ -1805,8 +1805,20 @@ class AccountLine extends CommonObject
      */
     function update_conciliation(User $user, $cat)
     {
+        global $conf;
+        
         $this->db->begin();
 
+        // Check statement field
+        if (! empty($conf->global->BANK_STATEMENT_REGEX_RULE))
+        {
+            if (! preg_match('/'.$conf->global->BANK_STATEMENT_REGEX_RULE.'/', $this->num_releve))
+            {
+                $this->errors[]=$langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
+                return -1;
+            }
+        }
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
         $sql.= ", num_releve = '".$this->num_releve."'";

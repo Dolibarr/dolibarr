@@ -2814,9 +2814,10 @@ class Form
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
      *      @param  int     $active         Active or not, -1 = all
+     *      @param  string  $morecss        Add more css
      * 		@return	void
      */
-    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
     {
         global $langs,$user;
 
@@ -2829,7 +2830,7 @@ class Form
 
         $this->load_cache_types_paiements();
 
-        print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes" name="'.$htmlname.'">';
+        print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
         if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {
@@ -3273,7 +3274,7 @@ class Form
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
      * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
-     *     @param	int			$width				Force width of bow
+     *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
      */
     function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=200, $width=500)
@@ -3288,7 +3289,8 @@ class Form
 
         // Clean parameters
         $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
-
+        if ($conf->browser->layout == 'phone') $width='95%';
+        
         if (is_array($formquestion) && ! empty($formquestion))
         {
         	// First add hidden fields and value
@@ -5522,7 +5524,11 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
 
-		if ($morehtmlleft) $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		if ($morehtmlleft) 
+		{
+		    if ($conf->browser->layout == 'phone') $ret.='<div class="center">'.$morehtmlleft.'</div>';
+		    else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		}
 
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
@@ -5726,7 +5732,10 @@ class Form
                 }
                 else
 				{
-                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+				    if ($conf->browser->layout != 'phone')
+				    {
+                        $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+				    }
                 }
             }
 

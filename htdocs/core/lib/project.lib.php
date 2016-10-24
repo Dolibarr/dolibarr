@@ -840,7 +840,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				{
 				    // Thirdparty
 				    print '<td class="nowrap">';
-				    $thirdpartystatic->id=$lines[$i]->socid;
+				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
 				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
 				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
 				    print '</td>';

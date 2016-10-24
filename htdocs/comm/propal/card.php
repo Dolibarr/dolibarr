@@ -2083,8 +2083,26 @@ if ($action == 'create')
 	
     print '<table class="border centpercent">';
     
+    if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+    {
+        // Multicurrency Amount HT
+        print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    
+        // Multicurrency Amount VAT
+        print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    
+        // Multicurrency Amount TTC
+        print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    }
+        
 	// Amount HT
-	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
+	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
@@ -2111,24 +2129,6 @@ if ($action == 'create')
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
-	if (!empty($conf->multicurrency->enabled))
-	{
-	    // Multicurrency Amount HT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount VAT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount TTC
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	}
 	
 	// Statut
 	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
@@ -2340,8 +2340,6 @@ if ($action == 'create')
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		// print '<table width="100%"><tr><td width="50%" valign="top">';
-		// print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -2354,7 +2352,7 @@ if ($action == 'create')
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
@@ -2362,14 +2360,12 @@ if ($action == 'create')
 		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-		// print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid);
 
-		// print '</td></tr></table>';
 		print '</div></div></div>';
 	}
 
