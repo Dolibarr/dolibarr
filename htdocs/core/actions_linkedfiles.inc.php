@@ -40,7 +40,7 @@ elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
         $link = GETPOST('link', 'alpha');
         if ($link)
         {
-            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://') {
+            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://') {
                 $link = 'http://' . $link;
             }
             dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link);
@@ -124,7 +124,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save') && GETPOST('link', 'a
     if ($f)
     {
         $link->url = GETPOST('link', 'alpha');
-        if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://')
+        if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://' && substr($link->url, 0, 7) != 'file://')
         {
             $link->url = 'http://' . $link->url;
         }
