@@ -1048,10 +1048,6 @@ else
 			print '</script>'."\n";
 		}
 
-		$rowspan=15;
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
-		if (! empty($conf->societe->enabled)) $rowspan++;
-
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 		print '<input type="hidden" name="action" value="update" />';
@@ -1064,7 +1060,7 @@ else
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1077,21 +1073,7 @@ else
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
 		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
-		print "</td>";
-
-		// Photo
-		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-		print $form->showphoto('memberphoto',$object)."\n";
-		if ($caneditfieldmember)
-		{
-			if ($object->photo) print "<br>\n";
-			print '<table class="nobordernopadding">';
-			if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-			print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-			print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
-			print '</table>';
-		}
-		print '</td>';
+		print "</td></tr>";
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -1122,6 +1104,21 @@ else
 		// Firstname
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
 		print '</tr>';
+
+		// Photo
+		print '<tr><td>'.$langs->trans("Photo").'</td>';
+		print '<td class="hideonsmartphone" valign="middle">';
+		print $form->showphoto('memberphoto',$object)."\n";
+		if ($caneditfieldmember)
+		{
+			if ($object->photo) print "<br>\n";
+			print '<table class="nobordernopadding">';
+			if ($object->photo) print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+			print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+			print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+			print '</table>';
+		}
+		print '</td></tr>';
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
