@@ -2185,7 +2185,7 @@ class Societe extends CommonObject
      *
      *  @param	int		$rowid      id of contact
      *  @param  string	$mode       'email' or 'mobile'
-     *  @return string  			email of contact
+     *  @return string  			Email of contact with format: "Full name <email>"
      */
     function contact_get_property($rowid,$mode)
     {
