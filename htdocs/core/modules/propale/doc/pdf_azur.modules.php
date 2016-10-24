@@ -1572,6 +1572,8 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
+		global $conf;
+		
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$tab_top = $posy + 4;
 		$tab_hl = 4;
@@ -1581,11 +1583,19 @@ class pdf_azur extends ModelePDFPropales
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
 		$useborder=0;
 		$index = 0;
+		
+		$y=0;
+		$label=$outputlangs->transnoentities("ProposalCustomerSignature");
+		if(!empty($conf->global->PROPOSAL_ADD_NAME_LABEL_ON_PDF)) {
+			$label = $outputlangs->transnoentities("ProposalCustomerSignatureName")."\n".$label;
+			$y-=3;
+		}
+		
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top + $y);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
+		$pdf->MultiCell($largcol, $tab_hl, $label, 0, 'L', 1);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
 		$pdf->MultiCell($largcol, $tab_hl*6, '', 1, 'R');
