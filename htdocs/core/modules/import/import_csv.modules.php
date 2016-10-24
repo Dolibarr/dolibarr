@@ -107,7 +107,7 @@ class ImportCsv extends ModeleImports
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
-		$s=join($this->separator,array_map('cleansep',$headerlinefields));
+		$s=implode($this->separator,array_map('cleansep',$headerlinefields));
 		return $s."\n";
 	}
 
@@ -120,7 +120,7 @@ class ImportCsv extends ModeleImports
 	 */
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
-		$s=join($this->separator,array_map('cleansep',$contentlinevalues));
+		$s=implode($this->separator,array_map('cleansep',$contentlinevalues));
 		return $s."\n";
 	}
 
@@ -358,7 +358,7 @@ class ImportCsv extends ModeleImports
 						    // We convert field if required
 						    if (! empty($objimport->array_import_convertvalue[0][$val]))
 						    {
-                                //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
+                                //print 'Must convert '.$newval.' with rule '.implode(',',$objimport->array_import_convertvalue[0][$val]).'. ';
                                 if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid'
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref'
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
@@ -579,7 +579,7 @@ class ImportCsv extends ModeleImports
 						$sql.=')';
 						dol_syslog("import_csv.modules", LOG_DEBUG);
 
-						//print '> '.join(',',$arrayrecord);
+						//print '> '.implode(',',$arrayrecord);
 						//print 'sql='.$sql;
 						//print '<br>'."\n";
 

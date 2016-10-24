@@ -403,7 +403,7 @@ else
     	    if ($sall)
             {
                 foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-                print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+                print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
             }
             
     		// Filter on categories

@@ -1057,7 +1057,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                             //	Custom filters can an AND or an OR join;
                                             //		and there should only ever be one or two entries
                                             if ((isset($customFilters["and"])) && ($customFilters["and"] == 1)) {
-                                                $column->setJoin(PHPExcel_Worksheet_AutoFilter_Column::AUTOFILTER_COLUMN_JOIN_AND);
+                                                $column->setimplode(PHPExcel_Worksheet_AutoFilter_Column::AUTOFILTER_COLUMN_JOIN_AND);
                                             }
                                             foreach ($customFilters->customFilter as $filterRule) {
                                                 $column->createRule()->setRule(

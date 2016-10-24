@@ -102,7 +102,7 @@ if ($action == 'confirm_add_resource')
                                 // Creation OK
                                 $db->commit();
                                 setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
-                                Header("Location: card.php?id=" . $object->id);
+                                header("Location: card.php?id=" . $object->id);
                                 return;
                         }
                         else
@@ -119,7 +119,7 @@ if ($action == 'confirm_add_resource')
         }
         else
         {
-                Header("Location: list.php");
+                header("Location: list.php");
         }
 }
 

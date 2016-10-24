@@ -416,7 +416,7 @@ if ($result)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
     }
 	if ($search_firstlast_only)
 	{

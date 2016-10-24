@@ -306,7 +306,7 @@ if ($result)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	    //sort($fieldstosearchall);
-	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 	}
 	
 	$i = 0;

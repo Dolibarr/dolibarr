@@ -43,7 +43,7 @@ $id=GETPOST('id', 'int');
  * View
  */
 
-dol_syslog(join(',',$_GET));
+dol_syslog(implode(',',$_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 

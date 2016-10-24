@@ -1654,7 +1654,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if (in_array('region_id',$fieldlist))
 			{
 				print '<td>';
-				//print join(',',$fieldlist);
+				//print implode(',',$fieldlist);
 				print '</td>';
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)

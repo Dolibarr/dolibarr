@@ -138,7 +138,7 @@ class modDeplacement extends DolibarrModules
 		$childids = $user->getAllChildIds();
 		$childids[]=$user->id;
 		
-		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.implode(',',$childids).')';
 	}
 
 

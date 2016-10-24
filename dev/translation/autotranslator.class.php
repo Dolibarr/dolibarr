@@ -342,7 +342,7 @@ class autoTranslator
 		$rep=preg_replace('/NNNNN/i','\n\n',$rep);
 		$rep=preg_replace('/&#39;/i','\'',$rep);
 
-		//print "OK ".join('',$src_texts).' => '.$rep."\n";
+		//print "OK ".implode('',$src_texts).' => '.$rep."\n";
 
 		return $rep;
 	}

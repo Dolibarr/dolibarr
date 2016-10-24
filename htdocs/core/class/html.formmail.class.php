@@ -164,9 +164,9 @@ class FormMail extends Form
             $listofpaths[]=$path;
             $listofnames[]=$file;
             $listofmimes[]=$type;
-            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+            $_SESSION["listofpaths".$keytoavoidconflict]=implode(';',$listofpaths);
+            $_SESSION["listofnames".$keytoavoidconflict]=implode(';',$listofnames);
+            $_SESSION["listofmimes".$keytoavoidconflict]=implode(';',$listofmimes);
         }
     }
 
@@ -191,9 +191,9 @@ class FormMail extends Form
             unset ($listofpaths[$keytodelete]);
             unset ($listofnames[$keytodelete]);
             unset ($listofmimes[$keytodelete]);
-            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+            $_SESSION["listofpaths".$keytoavoidconflict]=implode(';',$listofpaths);
+            $_SESSION["listofnames".$keytoavoidconflict]=implode(';',$listofnames);
+            $_SESSION["listofmimes".$keytoavoidconflict]=implode(';',$listofmimes);
             //var_dump($_SESSION['listofpaths']);
         }
     }

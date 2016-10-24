@@ -220,7 +220,7 @@ if (empty($reshook))
     		if ($id > 0)
     		{
     			$db->commit();
-    			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     			exit;
     		}
     		else
@@ -479,7 +479,7 @@ if (empty($reshook))
     						$result=$mailfile->sendfile();
     						if ($result)
     						{
-    							Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     							exit;
     						}
     						else
@@ -587,7 +587,7 @@ if (empty($reshook))
     					$result=$mailfile->sendfile();
     					if ($result):
     						setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-    						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     						exit;
     					else:
     						setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
@@ -673,7 +673,7 @@ if (empty($reshook))
     				if ($result)
     				{
     					setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-    					Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     					exit;
     				}
     				else
@@ -895,7 +895,7 @@ if (empty($reshook))
     
     			// Retour
     			if($result):
-    				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     				exit;
     			else:
     				dol_print_error($db);

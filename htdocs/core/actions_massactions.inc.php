@@ -214,13 +214,13 @@ if (! $error && $massaction == 'confirm_presend')
                 $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 
                 $substitutionarray=array(
-                    '__ID__' => join(', ',array_keys($listofqualifiedinvoice)),
+                    '__ID__' => implode(', ',array_keys($listofqualifiedinvoice)),
                     '__EMAIL__' => $thirdparty->email,
                     '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-                    '__FACREF__' => join(', ',$listofqualifiedref),            // For backward compatibility
-                    '__ORDERREF__' => join(', ',$listofqualifiedref),          // For backward compatibility
-                    '__PROPREF__' => join(', ',$listofqualifiedref),           // For backward compatibility
-                    '__REF__' => join(', ',$listofqualifiedref),
+                    '__FACREF__' => implode(', ',$listofqualifiedref),            // For backward compatibility
+                    '__ORDERREF__' => implode(', ',$listofqualifiedref),          // For backward compatibility
+                    '__PROPREF__' => implode(', ',$listofqualifiedref),           // For backward compatibility
+                    '__REF__' => implode(', ',$listofqualifiedref),
                     '__REFCLIENT__' => $thirdparty->name
                 );
 

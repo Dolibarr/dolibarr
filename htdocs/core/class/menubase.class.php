@@ -444,7 +444,7 @@ class Menubase
         	//var_dump($tabMenu);
         	if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
         	{
-        		//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
+        		//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.implode(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
         		//var_dump($this->newmenu->liste);exit;
 
         		if (empty($val['fk_leftmenu']))
@@ -470,7 +470,7 @@ class Menubase
         				}
         				if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
         				{
-        					//print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
+        					//print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.implode(',',$valparent).'<br>';
         					// Now we look to find last subelement of this parent (we add at end)
         					$searchlastsub=($valparent['level']+1);
         					$lastid=$keyparent;

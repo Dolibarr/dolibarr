@@ -837,7 +837,7 @@ class ActionComm extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::update ".join(',',$this->errors),LOG_ERR);
+                dol_syslog(get_class($this)."::update ".implode(',',$this->errors),LOG_ERR);
                 return -2;
             }
         }

@@ -93,7 +93,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
+		header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }

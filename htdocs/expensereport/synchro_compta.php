@@ -52,7 +52,7 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
+			header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);
@@ -78,7 +78,7 @@ if ($_GET["action"] == 'confirm_account_to_ndf' && $_GET["confirm"] == "yes"):
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
+			header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);

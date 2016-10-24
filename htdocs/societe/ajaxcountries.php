@@ -47,7 +47,7 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog(join(',',$_POST));
+dol_syslog(implode(',',$_POST));
 
 // Generate list of countries
 if (! empty($country))

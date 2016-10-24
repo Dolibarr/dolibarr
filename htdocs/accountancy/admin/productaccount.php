@@ -228,7 +228,7 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
@@ -239,7 +239,7 @@ if ($result)
     if ($search_ref > 0) $param.="&amp;search_desc=".urlencode($search_ref);
     if ($search_label > 0) $param.="&amp;search_desc=".urlencode($search_label);
     if ($search_desc > 0) $param.="&amp;search_desc=".urlencode($search_desc);
-    
+
     print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -247,14 +247,14 @@ if ($result)
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
+
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';
 	print '<br>';
 	
-    // Select mode	
+    // Select mode
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans('Options') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -271,12 +271,12 @@ if ($result)
 	
 	print "<br>\n";
 
-	
+
 	// Filter on categories
 	$moreforfilter='';
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
 	$texte=$langs->trans("ListOfProductsWithoutAccountingAccount");
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 	
@@ -340,26 +340,26 @@ if ($result)
 		print '<tr'. $bc[$var].'>';
 		
 		print "</tr>";
-		
+
 		print '<tr '. $bc[$var].'>';
-		
+
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->type;
 		$product_static->label = $obj->label;
 		$product_static->description = $obj->description;
-		
+
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
 			print '-&nbsp;';
 		print '</td>';
-		
+
 		print '<td align="left">'.$obj->label.'</td>';
 
-		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) 
+		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC))
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
     		// print '<td align="left">' . $obj->description . '</td>';
@@ -396,9 +396,9 @@ if ($result)
 		$i ++;
 	}
 	print '</table>';
-	
+
 	print '<br><div align="center"><input type="submit" class="butAction" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
-	
+
 	print '</form>';
 	
 	$db->free($result);

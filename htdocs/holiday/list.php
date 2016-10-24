@@ -192,7 +192,7 @@ if (!empty($sall))
 	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
-if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
+if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.implode(',',$childids).')';
 
 if ($type) $filter.=' AND cp.fk_type IN ('.$type.')';
 
@@ -286,7 +286,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
 }
 
 print '<table class="noborder" width="100%;">';

@@ -406,7 +406,7 @@ if ($action == 'edit')
     $liste['user'] = $langs->trans('UserEmail');
     $liste['company'] = $langs->trans('CompanyEmail');
 
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
     print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
     print '</td></tr>';
 
@@ -536,7 +536,7 @@ else
 
 	// Default from type
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
     print '<td>';
     if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
         print $langs->trans('UserEmail');

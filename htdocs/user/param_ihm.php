@@ -121,7 +121,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = implode(',',
 					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
 			}
 
@@ -129,7 +129,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
+				$tabparam['THEME_ELDY_BACKTITLE1'] = implode(',',
 					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
 			}
 

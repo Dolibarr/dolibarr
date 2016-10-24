@@ -141,7 +141,7 @@ if ($action == 'delbookkeeping') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit();
 	}
 }
@@ -166,13 +166,13 @@ if ($action == 'delbookkeepingyearconfirm') {
 		{
 		    setEventMessages("RecordDeleted", null, 'mesgs');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit;
 	}
 	else
 	{
 	    setEventMessages("NoRecordDeleted", null, 'warnings');
-	    Header("Location: list.php");
+	    header("Location: list.php");
 	    exit;
 	}
 }
@@ -189,7 +189,7 @@ if ($action == 'delmouvconfirm') {
 		{
 		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
-		Header("Location: list.php");
+		header("Location: list.php");
 		exit;
 	}
 }

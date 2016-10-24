@@ -182,7 +182,7 @@ if ($mode == 'setup' && $user->admin)
                 //print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
                 //var_dump($tokenobj->getExtraParams());
                 /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
-                print ''.join(',',$tokenobj->getExtraParams());
+                print ''.implode(',',$tokenobj->getExtraParams());
                 print '</textarea>';*/
             }
             print '</td>';

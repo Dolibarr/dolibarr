@@ -537,7 +537,7 @@ class RssParser
         elseif ($this->_format == 'atom' and $this->incontent )
         {
             // if tags are inlined, then flatten
-            $attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+            $attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
             $this->append_content("<$element $attrs_str>");
 
@@ -582,7 +582,7 @@ class RssParser
         }
         else
         {
-            $current_el = join('_', array_reverse($this->stack));
+            $current_el = implode('_', array_reverse($this->stack));
             $this->append($current_el, $text);
         }
     }

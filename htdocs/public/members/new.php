@@ -325,12 +325,12 @@ if ($action == 'add')
 
             if (! empty($entity)) $urlback.='&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-            Header("Location: ".$urlback);
+            header("Location: ".$urlback);
             exit;
         }
         else
         {
-            $errmsg .= join('<br>',$adh->errors);
+            $errmsg .= implode('<br>',$adh->errors);
         }
     }
 }

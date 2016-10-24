@@ -86,7 +86,7 @@ class nusoap_xmlschema extends nusoap_base  {
 	function parseFile($xml,$type){
 		// parse xml file
 		if($xml != ""){
-			$xmlStr = @join("",@file($xml));
+			$xmlStr = @implode("",@file($xml));
 			if($xmlStr == ""){
 				$msg = 'Error reading XML from '.$xml;
 				$this->setError($msg);
@@ -553,7 +553,7 @@ class nusoap_xmlschema extends nusoap_base  {
 		$schemaPrefix = $this->getPrefixFromNamespace($this->XMLSchemaVersion);
 		$xml = '';
 		// imports
-		if (sizeof($this->imports) > 0) {
+		if (count($this->imports) > 0) {
 			foreach($this->imports as $ns => $list) {
 				foreach ($list as $ii) {
 					if ($ii['location'] != '') {

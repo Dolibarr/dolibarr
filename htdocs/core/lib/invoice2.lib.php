@@ -118,13 +118,13 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',',$thirdpartiesid).')';
+	    $sqlwhere.=' f.fk_soc NOT IN ('.implode(',',$thirdpartiesid).')';
 	}
 	if (in_array('onlythirdparties',$filter) && is_array($thirdpartiesid))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc IN ('.join(',',$thirdpartiesid).')';
+	    $sqlwhere.=' f.fk_soc IN ('.implode(',',$thirdpartiesid).')';
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
@@ -203,8 +203,8 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	        $page_hauteur = $formatarray['height'];
 	        $format = array($page_largeur,$page_hauteur);
 
-	        if ($usestdout) print "Using output PDF format ".join('x',$format)."\n";
-	        else dol_syslog("Using output PDF format ".join('x',$format), LOG_ERR);
+	        if ($usestdout) print "Using output PDF format ".implode('x',$format)."\n";
+	        else dol_syslog("Using output PDF format ".implode('x',$format), LOG_ERR);
 
 
 	        // Now, build a merged files with all files in $files array

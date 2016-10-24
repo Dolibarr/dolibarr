@@ -277,8 +277,8 @@ if ($search_projectstatus >= 0)
     else $sql .= " AND p.fk_statut = ".$db->escape($search_projectstatus);
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
-if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
-if ($search_task_user > 0) $sql.= " AND ect.fk_c_type_contact IN (".join(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".implode(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+if ($search_task_user > 0) $sql.= " AND ect.fk_c_type_contact IN (".implode(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -368,7 +368,7 @@ if ($resql)
     if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $search_all) . implode(', ',$fieldstosearchall);
     }
     
     // If the user can view users

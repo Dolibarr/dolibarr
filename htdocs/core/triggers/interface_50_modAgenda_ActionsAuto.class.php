@@ -865,7 +865,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		else
 		{
-            $error ="Failed to insert event : ".$actioncomm->error." ".join(',',$actioncomm->errors);
+            $error ="Failed to insert event : ".$actioncomm->error." ".implode(',',$actioncomm->errors);
             $this->error=$error;
             $this->errors=$actioncomm->errors;
 

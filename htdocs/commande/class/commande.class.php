@@ -1950,7 +1950,7 @@ class Commande extends CommonOrder
         {
             $sql = "SELECT fk_product, sum(ps.reel) as total";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-            $sql.= " WHERE ps.fk_product IN (".join(',',$array_of_product).")";
+            $sql.= " WHERE ps.fk_product IN (".implode(',',$array_of_product).")";
             $sql.= ' GROUP BY fk_product ';
             $result = $this->db->query($sql);
             if ($result)

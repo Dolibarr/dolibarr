@@ -54,7 +54,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$value=(GETPOST($code) ? GETPOST($code) : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -68,7 +68,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -203,6 +203,7 @@ dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
  *  Documents models for supplier orders
  */
 
+print load_fiche_titre($langs->trans("AgendaModelModule"),'','');
 
 // Define array def of models
 $def = array();
@@ -232,7 +233,7 @@ else
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print load_fiche_titre($langs->trans("AgendaModelModule"),'','');
-    
+
     print '<table class="noborder" width="100%">'."\n";
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -242,14 +243,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
     print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
     print '</tr>'."\n";
-    
+
     clearstatcache();
-    
+
     $var=true;
     foreach ($dirmodels as $reldir)
     {
     	$dir = dol_buildpath($reldir."core/modules/action/doc/");
-    
+
         if (is_dir($dir))
         {
             $handle=opendir($dir);
@@ -261,10 +262,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                     {
             			$name = substr($file, 4, dol_strlen($file) -16);
             			$classname = substr($file, 0, dol_strlen($file) -12);
-            			
+
             			require_once $dir.'/'.$file;
             			$module = new $classname($db, new ActionComm($db));
-            			
+
             			$var=!$var;
             			print "<tr ".$bc[$var].">\n";
             			print "<td>";
@@ -273,16 +274,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print "<td>\n";
             			require_once $dir.$file;
             			$module = new $classname($db,$specimenthirdparty);
-            			if (method_exists($module,'info')) 
+            			if (method_exists($module,'info'))
             				print $module->info($langs);
-            			else 
+            			else
             				print $module->description;
             			print "</td>\n";
-            			
+
             			// Active
             			if (in_array($name, $def))
             			{
-            			    
+
             			print '<td align="center">'."\n";
             			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
             			{
@@ -302,7 +303,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
             				print "</td>";
             			}
-            			
+
             			// Default
             			print '<td align="center">';
             			if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name")
@@ -314,7 +315,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
             			}
             			print '</td>';
-            			
+
             			// Info
             			$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
             			$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
@@ -327,7 +328,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print '<td align="center">';
             			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
             			print '</td>';
-            			
+
             			print "</tr>\n";
                     }
                 }

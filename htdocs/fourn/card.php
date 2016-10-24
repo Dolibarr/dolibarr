@@ -84,7 +84,7 @@ if (empty($reshook))
 	    $result=$object->update($object->id,$user,1,0,1);
 	    if ($result < 0)
 	    {
-	        $mesg=join(',',$object->errors);
+	        $mesg=implode(',',$object->errors);
 	    }
 	}
 	// conditions de reglement
