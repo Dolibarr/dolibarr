@@ -107,6 +107,8 @@ else
 	{
 		dol_print_error($db);
 	}
+	if (empty($min)) $min = dol_now - 3600 * 24;
+	
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
@@ -769,7 +771,7 @@ if ($account)
 		if ($_GET["option"]!='all')
 		{
 			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
-    		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam);
+    		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
 		}
 		else
 		{

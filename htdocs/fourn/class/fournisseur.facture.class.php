@@ -584,7 +584,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function fetch_lines()
     {
-        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -609,7 +609,7 @@ class FactureFournisseur extends CommonInvoice
 	                $line = new SupplierInvoiceLine($this->db);
 
                     $line->id				= $obj->rowid;
-                    $line->rowid				= $obj->rowid;
+                    $line->rowid			= $obj->rowid;
                     $line->description		= $obj->description;
                     $line->product_ref		= $obj->product_ref;
                     $line->ref				= $obj->product_ref;
@@ -618,27 +618,29 @@ class FactureFournisseur extends CommonInvoice
                     $line->label  			= $obj->label;
                     $line->product_desc		= $obj->product_desc;
                     $line->subprice			= $obj->pu_ht;
-                    $line->pu_ht				= $obj->pu_ht;
+                    $line->pu_ht			= $obj->pu_ht;
                     $line->pu_ttc			= $obj->pu_ttc;
+                    
+                    $line->vat_src_code     = $obj->vat_src_code; 
                     $line->tva_tx			= $obj->tva_tx;
                     $line->localtax1_tx		= $obj->localtax1_tx;
                     $line->localtax2_tx		= $obj->localtax2_tx;
                     $line->qty				= $obj->qty;
-                    $line->remise_percent    = $obj->remise_percent;
+                    $line->remise_percent   = $obj->remise_percent;
                     $line->tva				= $obj->total_tva;
                     $line->total_ht			= $obj->total_ht;
-                    $line->total_tva			= $obj->total_tva;
+                    $line->total_tva		= $obj->total_tva;
                     $line->total_localtax1	= $obj->total_localtax1;
                     $line->total_localtax2	= $obj->total_localtax2;
-                    $line->total_ttc			= $obj->total_ttc;
+                    $line->total_ttc		= $obj->total_ttc;
                     $line->fk_product		= $obj->fk_product;
                     $line->product_type		= $obj->product_type;
-                    $line->product_label		= $obj->label;
-                    $line->info_bits		    = $obj->info_bits;
-                    $line->fk_parent_line    = $obj->fk_parent_line;
+                    $line->product_label	= $obj->label;
+                    $line->info_bits		= $obj->info_bits;
+                    $line->fk_parent_line   = $obj->fk_parent_line;
                     $line->special_code		= $obj->special_code;
                     $line->rang       		= $obj->rang;
-                    $line->fk_unit           = $obj->fk_unit;
+                    $line->fk_unit          = $obj->fk_unit;
 
 					// Multicurrency
 					$line->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1241,7 +1243,7 @@ class FactureFournisseur extends CommonInvoice
      *
      *	@param    	string	$desc            	Description de la ligne
      *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
-     *	@param    	double	$txtva           	Taux de tva force, sinon -1
+     *	@param    	double	$txtva           	Force Vat rate to use, -1 for auto.
      *	@param		double	$txlocaltax1		LocalTax1 Rate
      *	@param		double	$txlocaltax2		LocalTax2 Rate
      *	@param    	double	$qty             	Quantite
@@ -1277,6 +1279,16 @@ class FactureFournisseur extends CommonInvoice
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
+
+        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
+        	
+        // Clean vat code
+        $vat_src_code='';
+        if (preg_match('/\((.*)\)/', $txtva, $reg))
+        {
+            $vat_src_code = $reg[1];
+            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+        }
         
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
@@ -1284,8 +1296,6 @@ class FactureFournisseur extends CommonInvoice
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
-
-        $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
 
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
         $total_ht  = $tabprice[0];
@@ -1311,6 +1321,8 @@ class FactureFournisseur extends CommonInvoice
         //$this->line->label=$label;	// deprecated
         $this->line->desc=$desc;
         $this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
+        
+        $this->line->vat_src_code=$vat_src_code;
         $this->line->tva_tx=$txtva;
         $this->line->localtax1_tx=$txlocaltax1;
         $this->line->localtax2_tx=$txlocaltax2;
@@ -1470,6 +1482,8 @@ class FactureFournisseur extends CommonInvoice
 	    $line->pu_ttc = $pu_ttc;
 	    $line->qty = $qty;
 	    $line->remise_percent = $remise_percent;
+        
+	    $this->line->vat_src_code=$vat_src_code;
 	    $line->tva_tx = $vatrate;
 	    $line->localtax1_tx = $txlocaltax1;
 	    $line->localtax2_tx = $txlocaltax2;
@@ -2448,6 +2462,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql.= ", qty = ".price2num($this->qty);
 		$sql.= ", remise_percent = ".price2num($this->remise_percent);
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
 		$sql.= ", tva_tx = ".price2num($this->tva_tx);
 		$sql.= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql.= ", localtax2_tx = ".price2num($this->localtax2_tx);
@@ -2571,7 +2586,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         // Insertion dans base de la ligne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' (fk_facture_fourn, fk_parent_line, label, description, qty,';
-        $sql.= ' tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+        $sql.= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' fk_product, product_type, remise_percent, pu_ht, pu_ttc,';
         $sql.= ' date_start, date_end, fk_code_ventilation, rang, special_code,';
         $sql.= ' info_bits, total_ht, tva, total_ttc, total_localtax1, total_localtax2, fk_unit';
@@ -2582,6 +2597,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".price2num($this->qty).",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
@@ -2650,6 +2666,38 @@ class SupplierInvoiceLine extends CommonObjectLine
             $this->db->rollback();
             return -2;
         }
-    }
-}
+    } 
+            /**
+     *  Mise a jour de l'objet ligne de commande en base
+     *
+     *  @return		int		<0 si ko, >0 si ok
+     */
+    function update_total()
+    {
+        $this->db->begin();
 
+        // Mise a jour ligne en base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
+        $sql.= "  total_ht='".price2num($this->total_ht)."'";
+        $sql.= ", tva='".price2num($this->total_tva)."'";
+        $sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
+        $sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
+        $sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+        $sql.= " WHERE rowid = ".$this->rowid;
+
+        dol_syslog("FactureFournisseurLigne.class.php::update_total", LOG_DEBUG);
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -2;
+        }
+    }
+ }

@@ -171,7 +171,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			// Recipient was provided from combo list
 			if ($_POST['receiver'] == 'thirdparty') // Id of third party
 			{
-				$sendto = $thirdparty->email;
+				$sendto = $thirdparty->name.' <'.$thirdparty->email.'>';
 				$sendtoid = 0;
 			}
 			else	// Id du contact
@@ -189,7 +189,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			// Recipient was provided from combo list
 			if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
 			{
-				$sendtocc = $thirdparty->email;
+				$sendtocc = $thirdparty->name.' <'.$thirdparty->email.'>';
 			}
 			else	// Id du contact
 			{
@@ -199,6 +199,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 		if (dol_strlen($sendto))
 		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		    
 			$langs->load("commercial");
 
 			$fromtype = GETPOST('fromtype');
@@ -235,11 +237,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($action == 'send' || $action == 'relance')
 			{
 				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
-				$actionmsg2=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+				$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
 				if ($message)
 				{
-					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+					$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
 					$actionmsg = dol_concatdesc($actionmsg, $message);
@@ -300,7 +303,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 
 			// Send mail
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 			if ($mailfile->error)
 			{

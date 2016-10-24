@@ -296,7 +296,7 @@ if ($resql)
     
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escpae_htmltag($search_myfield).'">';
+    $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
     $moreforfilter.= '</div>';
     
     $parameters=array();

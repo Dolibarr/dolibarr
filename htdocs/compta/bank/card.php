@@ -580,7 +580,7 @@ else
 		
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 		
-		
+		$morehtmlref='';
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 		
 		
@@ -648,12 +648,6 @@ else
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
 		print '<td>'.$object->min_desired.'</td></tr>';
-
-		print '<tr><td>'.$langs->trans("Web").'</td><td>';
-		if ($object->url) print '<a href="'.$object->url.'" target="_gobank">';
-		print $object->url;
-		if ($object->url) print '</a>';
-		print "</td></tr>\n";
 
 		// Accountancy code
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';

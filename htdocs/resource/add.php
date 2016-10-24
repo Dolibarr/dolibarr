@@ -27,6 +27,7 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load traductions files required by page
 $langs->load("resource");
@@ -60,6 +61,11 @@ if ($user->societe_id > 0)
 
 $object = new DolResource($db);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($action == 'confirm_add_resource')
 {
         if (! $cancel)
@@ -83,6 +89,12 @@ if ($action == 'confirm_add_resource')
                         $object->ref=$ref;
                         $object->description=$description;
                         $object->fk_code_type_resource=$fk_code_type_resource;
+
+                        // Fill array 'array_options' with data from add form
+                        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+                        if ($ret < 0) {
+                        	$error ++;
+                        }
 
                         $result=$object->create($user);
                         if ($result > 0)
@@ -161,6 +173,15 @@ if (! $action)
         $doleditor->Create();
         print '</td>';
         print '</tr>';
+
+        // Other attributes
+        $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	print $object->showOptionals($extrafields,'edit');
+        }
+
 
         print '</table>';
 

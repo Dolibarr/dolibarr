@@ -926,9 +926,10 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
  *  @return	void
  */
-function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='')
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='', $onlybanner=0)
 {
 	global $conf, $form, $user, $langs;
 
@@ -943,7 +944,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'user')    $modulepart='userphoto';
 	if ($object->element == 'product') $modulepart='product';
 	
-	print '<div class="arearef heightref valignmiddle" width="100%">';
+	print '<div class="'.($onlybanner?'':'arearef ').'heightref valignmiddle" width="100%">';
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
