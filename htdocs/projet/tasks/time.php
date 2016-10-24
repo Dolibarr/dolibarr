@@ -570,7 +570,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<td width="100">'.$langs->trans("Date").'</td>';
 		if (! $id && ! $ref)   // Not a dedicated task
         {
-		  print '<td>'.$langs->trans("Task").'</td>';
+		  print '<td>'.$langs->trans("RefTask").'</td>';
+		  print '<td>'.$langs->trans("LabelTask").'</td>';
         }
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td align="left">'.$langs->trans("Note").'</td>';
@@ -615,6 +616,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			$tasktmp->label = $task_time->label;
     			print $tasktmp->getNomUrl(1, 'withproject', 'time');	
     			print '</td>';
+    			print '<td class="nowrap">';
+    		    print $tasktmp->label;
+    			print '</td>';    			
 			}
 			
 			// User
@@ -702,7 +706,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			$total += $task_time->task_duration;
 			$totalvalue += price2num($task_time->thm * $task_time->task_duration / 3600);
 		}
-		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+		
+		$colspan=3;
+		if (! $id && ! $ref)   // Not a dedicated task
+		{
+		    $colspan+=2;
+		}
+		print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td>';
 		if ($conf->salaries->enabled)
 		{
