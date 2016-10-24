@@ -54,7 +54,6 @@ $confirm	= GETPOST('confirm','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $id			= GETPOST('id','int');
 $socid		= GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -74,6 +73,7 @@ if (! empty($canvas))
 }
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

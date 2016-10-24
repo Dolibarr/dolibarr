@@ -264,13 +264,13 @@ if ($id > 0)
 	// Local Taxes
 	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
 	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}

@@ -37,9 +37,22 @@ $id = GETPOST('id','int');
 $action = GETPOST("action");
 $confirm = GETPOST('confirm', 'alpha');
 
+$object = new Contact($db);
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$object->getCanvas($id);
+$objcanvas=null;
+$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('contact', 'contactcard', $canvas);
+}
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $id, '','');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -54,7 +67,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->societe->dir_output.'/contact/'.dol_sanitizeFileName($object->ref);
