@@ -76,7 +76,8 @@ DefaultLang=Language by default
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
 CopyAddressFromSoc=Fill address with third party address
-ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects  
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
+PaymentBankAccount=Payment bank account
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE is used

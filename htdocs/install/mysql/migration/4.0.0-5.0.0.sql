@@ -164,3 +164,5 @@ create table llx_resource_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
+
+INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);

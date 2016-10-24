@@ -280,7 +280,7 @@ if ($object->id > 0)
 
 	$var=true;
 
-	$MAXLIST=5;
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
 	print '<table class="noborder" width="100%">';
