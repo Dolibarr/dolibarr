@@ -139,6 +139,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
+
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 
@@ -153,3 +154,13 @@ ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT 0;
 
+
+create table llx_resource_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);

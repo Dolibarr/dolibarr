@@ -29,9 +29,10 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once 'class/dolresource.class.php';
-require_once 'class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("resource");
@@ -57,6 +58,11 @@ if( ! $user->rights->resource->read)
 	accessforbidden();
 
 $object = new Dolresource($db);
+
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $hookmanager->initHooks(array('resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
@@ -87,6 +93,12 @@ if (empty($reshook))
 				$object->ref          			= $ref;
 				$object->description  			= $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				if ($ret < 0) {
+					$error ++;
+				}
 
 				$result=$object->update($user);
 				if ($result > 0)
@@ -126,7 +138,7 @@ if (empty($reshook))
 				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			}
-			else 
+			else
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -188,6 +200,14 @@ if ( $object->fetch($id) > 0 )
 		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
 		print '</td></tr>';
 
+		// Other attributes
+		$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $object->showOptionals($extrafields,'edit');
+		}
+
 		print '</table>';
 
 		dol_fiche_end();
@@ -235,6 +255,15 @@ if ( $object->fetch($id) > 0 )
 		print '<td>';
 		print $object->description;
 		print '</td>';
+
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $object->showOptionals($extrafields);
+		}
+
 		print '</tr>';
 
 		print '</table>';
