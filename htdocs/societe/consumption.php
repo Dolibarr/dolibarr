@@ -568,7 +568,6 @@ if ($sql_select)
 
 		print '<td align="right">'.price($objp->total_ht/(empty($objp->prod_qty)?1:$objp->prod_qty)).'</td>';
 
-
 		print "</tr>\n";
 		$i++;
 	}
