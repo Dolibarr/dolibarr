@@ -1132,7 +1132,7 @@ else
 
         $var=true;
 
-        $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+        print $formfile->showdocuments('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -1909,7 +1909,7 @@ else if ($id || $ref)
 		$genallowed=$user->rights->expedition->lire;
 		$delallowed=$user->rights->expedition->supprimer;
 
-		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+		print $formfile->showdocuments('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		
 		// Show links to link elements

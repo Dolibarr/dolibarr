@@ -805,7 +805,7 @@ if (! empty($id) && $action != 'edit')
 	print "</div>";
 
 
-	print '<table width="100%"><tr><td width="50%" valign="top">';
+    print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
 	 * Documents generes
@@ -818,13 +818,11 @@ if (! empty($id) && $action != 'edit')
 
 	$var=true;
 
-	print '<br>';
-	$formfile->show_documents('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-	print '</td><td>&nbsp;</td>';
-
-	print '</tr></table>';
-
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	
+	print '</div></div></div>';
 }
 
 llxFooter();
