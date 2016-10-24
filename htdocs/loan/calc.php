@@ -345,7 +345,7 @@ if ($form_complete && $show_progress) {
 		$this_year_principal_paid = $this_year_principal_paid + $principal_paid;
 
 		$var = !$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 		print '<td align="right">' . $current_month . '</td>';
 		print '<td align="right">' . number_format($interest_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</td>';
 		print '<td align="right">' . number_format($principal_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</td>';

@@ -41,7 +41,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var?1:0]; ?> >
+<tr <?php echo $bc[$var]; ?> >
     <td><?php echo $langs->trans("Proposal"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td><?php echo $objectlink->ref_client; ?></td>

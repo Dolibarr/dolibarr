@@ -316,7 +316,7 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
-			print '<tr '.$bc[$var?1:0].'>';
+			print '<tr '.$bc[$var].'>';
 
             $invoice=new Facture($db);
             $invoice->fetch($objp->facid);

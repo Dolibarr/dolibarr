@@ -200,7 +200,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         $userstatic->id=$obj->uid;
         $userstatic->lastname=$obj->lastname;

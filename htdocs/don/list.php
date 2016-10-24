@@ -202,7 +202,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;

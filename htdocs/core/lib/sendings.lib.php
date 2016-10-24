@@ -216,7 +216,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			{
 				$var=!$var;
 				$objp = $db->fetch_object($resql);
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 
 				// Sending id
 				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';

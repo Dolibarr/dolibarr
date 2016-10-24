@@ -113,7 +113,7 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->lastname.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';

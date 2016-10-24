@@ -303,7 +303,7 @@ foreach ( $object->lines as $line ) {
         $sous_total_credit = 0;
     }
 
-	print '<tr '. $bc[$var?1:0].'>';
+	print '<tr '. $bc[$var].'>';
 	print '<td>&nbsp;</td>';
 	print '<td align="right">'.$line->piece_num.'</td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';

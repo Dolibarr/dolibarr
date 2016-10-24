@@ -120,7 +120,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
         if (! $obj->entity)
         {

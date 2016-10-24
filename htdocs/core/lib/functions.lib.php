@@ -1083,7 +1083,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
 function dol_bc($var,$moreclass='')
 {
 	global $bc;
-	$ret=' '.$bc[$var?1:0];
+	$ret=' '.$bc[$var];
 	if ($moreclass) $ret=preg_replace('/class=\"/','class="'.$moreclass.' ',$ret);
 	return $ret;
 }

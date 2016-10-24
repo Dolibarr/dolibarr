@@ -228,7 +228,7 @@ else {
 		if(empty($description)){
 			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() .'</a>';
 		}
-		print '<tr'. $bc[$var?1:0].'>';
+		print '<tr'. $bc[$var].'>';
 
 
     // Permet d'afficher le compte comptable

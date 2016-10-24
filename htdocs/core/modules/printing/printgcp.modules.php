@@ -165,7 +165,7 @@ class printing_printgcp extends PrintingDriver
         foreach ($list['available'] as $printer_det)
         {
             $var = !$var;
-            $html.= "<tr ".$bc[$var?1:0].">";
+            $html.= "<tr ".$bc[$var].">";
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
             $html.= '<td>'.$printer_det['id'].'</td>';  // id to identify printer to use
@@ -449,7 +449,7 @@ class printing_printgcp extends PrintingDriver
             foreach ($jobs as $value)
             {
                 $var = !$var;
-                $html .= '<tr '.$bc[$var?1:0].'>';
+                $html .= '<tr '.$bc[$var].'>';
                 $html .= '<td>'.$value['id'].'</td>';
                 $dates=dol_print_date((int) substr($value['createTime'], 0, 10), 'dayhour');
                 $html .= '<td>'.$dates.'</td>';
@@ -463,7 +463,7 @@ class printing_printgcp extends PrintingDriver
         }
         else
         {
-                $html .= '<tr '.$bc[$var?1:0].'>';
+                $html .= '<tr '.$bc[$var].'>';
                 $html .= '<td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';
         }

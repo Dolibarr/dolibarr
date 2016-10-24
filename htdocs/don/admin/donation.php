@@ -226,7 +226,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
 $var=! $var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 
 print '<td width="50%">';
 $label = $langs->trans("AccountAccounting");
@@ -250,7 +250,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 $var=! $var;
-print '<tr '.$bc[$var?1:0].'><td colspan="2">';
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="120">'.$conf->global->DONATION_MESSAGE.'</textarea>';
 print '</td><td align="right">';
@@ -274,7 +274,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print "</tr>\n";
 
 	$var=!$var;
-	print "<tr " . $bc[$var?1:0] . ">";
+	print "<tr " . $bc[$var] . ">";
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	if (! empty($conf->global->DONATION_ART200)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart200&value=0">';
@@ -288,7 +288,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr " . $bc[$var?1:0] . ">";
+	print "<tr " . $bc[$var] . ">";
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	if (! empty($conf->global->DONATION_ART238)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart238&value=0">';
@@ -302,7 +302,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '</tr>';
 
 	$var=!$var;
-	print "<tr " . $bc[$var?1:0] . ">";
+	print "<tr " . $bc[$var] . ">";
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	if (! empty($conf->global->DONATION_ART885)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart885&value=0">';
@@ -378,7 +378,7 @@ if (is_resource($handle))
 
             if ($module->isEnabled())
             {
-                print '<tr '.$bc[$var?1:0].'><td width=\"100\">';
+                print '<tr '.$bc[$var].'><td width=\"100\">';
                 echo $module->name;
                 print '</td>';
                 print '<td>';

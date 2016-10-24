@@ -198,7 +198,7 @@ if ($socid > 0)
 			// Display array
 			foreach($TData as $data) {
 				$var=!$var;
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 	
 				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
 				print '<td>'.$data['link']."</td>\n";

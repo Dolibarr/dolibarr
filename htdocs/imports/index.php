@@ -120,7 +120,7 @@ $liste=$model->liste_modeles($db);
 foreach($liste as $key)
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';

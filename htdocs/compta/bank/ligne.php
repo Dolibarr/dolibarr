@@ -633,7 +633,7 @@ if ($result)
         $objp = $db->fetch_object($result);
 
         $var=!$var;
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         print "<td>".$objp->label."</td>";
         print "<td align=\"center\"><a href=\"budget.php?bid=".$objp->rowid."\">".$langs->trans("ListBankTransactions")."</a></td>";

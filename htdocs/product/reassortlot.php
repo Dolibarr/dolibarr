@@ -322,7 +322,7 @@ if ($resql)
 		}
 
 		$var=!$var;
-		print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
+		print '<tr '.$bc[$var].'><td class="nowrap">';
 		$product_static->ref=$objp->ref;
 		$product_static->id=$objp->rowid;
         $product_static->label = $objp->label;

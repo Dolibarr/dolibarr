@@ -599,7 +599,7 @@ if ($resql)
 		}
 
 		$var=!$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 		
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{

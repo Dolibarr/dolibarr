@@ -67,7 +67,7 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var?1:0].'><td>';
+print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
@@ -123,7 +123,7 @@ if ($resql)
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
-            print "<tr ".$bc[$var?1:0].">";
+            print "<tr ".$bc[$var].">";
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
@@ -178,7 +178,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
@@ -239,7 +239,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
 			$propalstatic->id=$obj->rowid;
@@ -318,7 +318,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'>';
+				print '<tr '.$bc[$var].'>';
 
 				// Ref
 				print '<td class="nowrap" width="140">';
@@ -407,7 +407,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;
@@ -479,7 +479,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 				print '<td width="20%" class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;

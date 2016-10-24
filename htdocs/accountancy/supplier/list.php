@@ -317,7 +317,7 @@ if ($result) {
 		if ($objp->code_buy_l != $objp->code_buy_p)
 			$code_buy_p_l_differ = 'color:red';
 		
-		print '<tr '. $bc[$var?1:0].'>';
+		print '<tr '. $bc[$var].'>';
 
 		// Ref Invoice
 		$facturefourn_static->ref = $objp->ref;

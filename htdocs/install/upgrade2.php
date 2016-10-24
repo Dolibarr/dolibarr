@@ -1276,7 +1276,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
                             print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
                         }
 
-                        print '<tr '.$bc[$var?1:0].'>';
+                        print '<tr '.$bc[$var].'>';
                         print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
                         $insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';

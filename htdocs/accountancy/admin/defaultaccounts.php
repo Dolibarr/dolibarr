@@ -133,7 +133,7 @@ print '<table class="noborder" width="100%">';
 foreach ( $list_account as $key ) {
 	$var = ! $var;
 	
-	print '<tr ' . $bc[$var?1:0] . ' class="value">';
+	print '<tr ' . $bc[$var] . ' class="value">';
 	// Param
 	$label = $langs->trans($key);
 	print '<td>' . $label . '</td>';

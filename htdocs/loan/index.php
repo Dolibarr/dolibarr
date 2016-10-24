@@ -152,7 +152,7 @@ if ($resql)
         $loan_static->label = $obj->label;
 
 		$var = !$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 
 		// Ref
 		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';

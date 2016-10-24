@@ -215,7 +215,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print '<tr '.$bc[$var?1:0].'><td width="100">';
+		print '<tr '.$bc[$var].'><td width="100">';
 		print $obj->libelle;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
@@ -313,7 +313,7 @@ print '</tr>';
 if (! isset($_SERVER['WINDIR']))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
@@ -329,7 +329,7 @@ if (! isset($_SERVER['WINDIR']))
 if (! empty($conf->product->enabled))
 {
 	$var=!$var;
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
 	$formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
@@ -340,7 +340,7 @@ if (! empty($conf->product->enabled))
 if (! empty($conf->societe->enabled))
 {
 	$var=!$var;
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" align="right">';
 	print $formbarcode->select_barcode_type($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY,"GENBARCODE_BARCODETYPE_THIRDPARTY",1);
@@ -397,7 +397,7 @@ if ($conf->produit->enabled)
 	    			$modBarCode = new $file();
 	    			$var = !$var;
 
-	    			print '<tr '.$bc[$var?1:0].'>';
+	    			print '<tr '.$bc[$var].'>';
 	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
 	    			print $modBarCode->info($langs);
 	    			print '</td>';

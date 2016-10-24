@@ -179,7 +179,7 @@ if ($resql)
         if ($obj->socid) $soc->fetch($obj->socid);
 
         $var=!$var;
-        print '<tr '.$bc[$var?1:0].'>';
+        print '<tr '.$bc[$var].'>';
         // Id
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
         // Type

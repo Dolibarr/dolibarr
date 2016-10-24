@@ -125,7 +125,7 @@ if ($result) {
 		while ( $i < $num && $i < $max ) {
 			$obj = $db->fetch_object($result);
 			$fiscalyearstatic->id = $obj->rowid;
-			print '<tr ' . $bc[$var?1:0] . '>';
+			print '<tr ' . $bc[$var] . '>';
 			print '<td><a href="fiscalyear_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowFiscalYear"), "technic") . ' ' . $obj->rowid . '</a></td>';
 			print '<td align="left">' . $obj->label . '</td>';
 			print '<td align="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
@@ -136,7 +136,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var?1:0] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 } else {

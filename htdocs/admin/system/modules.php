@@ -118,7 +118,7 @@ foreach($sortorder as $numero=>$name)
 	$idperms="";
 	$var=!$var;
 	// Module
-	print "<tr ".$bc[$var?1:0].'><td width="300" class="nowrap">';
+	print "<tr ".$bc[$var].'><td width="300" class="nowrap">';
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {

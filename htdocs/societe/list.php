@@ -865,7 +865,7 @@ while ($i < min($num, $limit))
     $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
     $companystatic->name_alias=$obj->name_alias;
 	
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print "<td>";

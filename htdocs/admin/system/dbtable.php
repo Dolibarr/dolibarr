@@ -112,7 +112,7 @@ else
 			{
 				$row = $db->fetch_row($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 
 				print "<td>$row[0]</td>";
 				print "<td>$row[1]</td>";

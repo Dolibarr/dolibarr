@@ -133,7 +133,7 @@ if ($prev_id)
 		{
 			$row = $db->fetch_row($resql);
 
-			print "<tr ".$bc[$var?1:0]."><td>";
+			print "<tr ".$bc[$var]."><td>";
 
 			print $ligne->LibStatut($row[1],1);
 

@@ -143,7 +143,7 @@ if ($savehandler == 'files')
 	{
 		$var=!$var;
 
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';

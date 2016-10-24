@@ -193,7 +193,7 @@ if ($result)
             $entrepot->id = $objp->rowid;
             $entrepot->libelle = $objp->ref;
             $entrepot->lieu = $objp->lieu;
-            print "<tr ".$bc[$var?1:0].">";
+            print "<tr ".$bc[$var].">";
             print '<td>' . $entrepot->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';

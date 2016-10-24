@@ -156,7 +156,7 @@ print "</tr>";
 
 // Show external agenda
 $var=!$var;
-print "<tr ".$bc[$var?1:0].">";
+print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td align="center">';
 if ($conf->use_javascript_ajax)
@@ -179,7 +179,7 @@ print "</tr>";
 
 // Nb of agenda
 $var=!$var;
-print "<tr ".$bc[$var?1:0].">";
+print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td align="center">';
 print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
@@ -211,7 +211,7 @@ while ($i <= $MAXAGENDA)
 	$enabled='AGENDA_EXT_ENABLED'.$key;
 
 	$var=!$var;
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

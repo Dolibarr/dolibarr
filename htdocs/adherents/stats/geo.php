@@ -296,7 +296,7 @@ if ($mode)
     {
         $year = $val['year'];
         $var=!$var;
-        print '<tr '.$bc[$var?1:0].'>';
+        print '<tr '.$bc[$var].'>';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';

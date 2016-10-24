@@ -102,7 +102,7 @@ if ($resql)
 	{
 		$row = $db->fetch_row($resql);
 
-		print "<tr ".$bc[$var?1:0]."><td>";
+		print "<tr ".$bc[$var]."><td>";
 
 		print $ligne->LibStatut($row[2],1);
 		//print $st[$row[2]];
@@ -201,7 +201,7 @@ if ($resql)
 	{
 		$row = $db->fetch_row($resql);
 
-		print "<tr ".$bc[$var?1:0]."><td>";
+		print "<tr ".$bc[$var]."><td>";
 		print $Rejet->motifs[$row[2]];
 
 		print '</td><td align="center">'.$row[1];

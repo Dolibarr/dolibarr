@@ -160,7 +160,7 @@ else
         if (! $conditions[$const]) continue;
 
         $var=!$var;
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
         print '<td width="16">'.img_object("",$picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
         print '<td align="center" width="100">';

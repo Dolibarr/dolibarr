@@ -409,7 +409,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'>';
+				print '<tr '.$bc[$var].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -577,7 +577,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'>';
+				print '<tr '.$bc[$var].'>';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

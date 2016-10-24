@@ -313,7 +313,7 @@ foreach ($dirmodels as $reldir)
                             if ($modulequalified)
                             {
                                 $var = !$var;
-                                print '<tr '.$bc[$var?1:0].'><td width="100">';
+                                print '<tr '.$bc[$var].'><td width="100">';
                                 print (empty($module->name)?$name:$module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module,'info')) print $module->info($langs);
@@ -497,7 +497,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	        $obj = $db->fetch_object($resql);
 	        $var=!$var;
 
-	        print "<tr ".$bc[$var?1:0].">";
+	        print "<tr ".$bc[$var].">";
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';

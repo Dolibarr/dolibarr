@@ -3427,7 +3427,7 @@ else if ($id > 0 || ! empty($ref))
                 $totalpaye = $prev_invoice->getSommePaiement();
                 $total_prev_ht += $prev_invoice->total_ht;
                 $total_prev_ttc += $prev_invoice->total_ttc;
-                print '<tr ' . $bc[$var?1:0] . '>';
+                print '<tr ' . $bc[$var] . '>';
                 print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
                 if (! empty($conf->banque->enabled))
@@ -3440,7 +3440,7 @@ else if ($id > 0 || ! empty($ref))
                 $var = ! $var;
             }
             
-            print '<tr ' . $bc[$var?1:0] . '>';
+            print '<tr ' . $bc[$var] . '>';
             print '<td colspan="2" align="right"></td>';
             print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
@@ -3467,7 +3467,7 @@ else if ($id > 0 || ! empty($ref))
                 $totalpaye = $next_invoice->getSommePaiement();
                 $total_next_ht += $next_invoice->total_ht;
                 $total_next_ttc += $next_invoice->total_ttc;
-                print '<tr ' . $bc[$var?1:0] . '>';
+                print '<tr ' . $bc[$var] . '>';
                 print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
                 if (! empty($conf->banque->enabled))
@@ -3480,7 +3480,7 @@ else if ($id > 0 || ! empty($ref))
                 $var = ! $var;
             }
             
-            print '<tr ' . $bc[$var?1:0] . '>';
+            print '<tr ' . $bc[$var] . '>';
             print '<td colspan="2" align="right"></td>';
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
@@ -3530,7 +3530,7 @@ else if ($id > 0 || ! empty($ref))
             while ($i < $num) {
                 $objp = $db->fetch_object($result);
                 $var = ! $var;
-                print '<tr ' . $bc[$var?1:0] . '><td>';
+                print '<tr ' . $bc[$var] . '><td>';
                 $paymentstatic->id = $objp->rowid;
                 $paymentstatic->datepaye = $db->jdate($objp->dp);
                 $paymentstatic->ref = $objp->ref;

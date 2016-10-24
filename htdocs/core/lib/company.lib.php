@@ -565,7 +565,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
                         $var = !$var;
-                        print "<tr ".$bc[$var?1:0].">";
+                        print "<tr ".$bc[$var].">";
 
                         // Ref
                         print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
@@ -586,7 +586,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var?1:0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -768,7 +768,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             $contactstatic->setGenderFromCivility();
             
-            print "<tr ".$bc[$var?1:0].">";
+            print "<tr ".$bc[$var].">";
 
             // Photo
             print '<td width="50px">';
@@ -877,7 +877,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 		{
 			$var = !$var;
 
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 
 			print '<td>';
 			$addressstatic->id = $address->id;
@@ -913,7 +913,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	}
 	else
 	{
-		//print "<tr ".$bc[$var?1:0].">";
+		//print "<tr ".$bc[$var].">";
 		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
 		//print "</tr>\n";
 	}
@@ -1171,7 +1171,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $var=!$var;
 			$actionstatic->fetch($histo[$key]['id']);
 
-            $out.="<tr ".$bc[$var?1:0].">";
+            $out.="<tr ".$bc[$var].">";
 			
             // done or todo
             if ($donetodo)
@@ -1356,7 +1356,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			$obj = $db->fetch_object($result);
 			$var = !$var;
 
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 
 			print '<td>';
 			$socstatic->id = $obj->rowid;

@@ -58,9 +58,9 @@ if (! empty($conf->propal->enabled))
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
-	print '<tr '.$bc[$var?1:0].'><td>';
+	print '<tr '.$bc[$var].'><td>';
 	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var?1:0].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>\n";
 }
@@ -97,7 +97,7 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			print '<tr '.$bc[$var?1:0].'><td>';
+			print '<tr '.$bc[$var].'><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
 			print img_action($langs->trans("Show"),$obj->id).' ';
 			print $langs->trans("StatusProspect".$obj->id);
@@ -141,7 +141,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'><td>';
+				print '<tr '.$bc[$var].'><td>';
 				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
 				print '</td><td align="right">';
 				print price($obj->price);
@@ -206,7 +206,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'><td>';
+				print '<tr '.$bc[$var].'><td>';
 				print '<a href="../propal.php?id='.$obj->propalid.'">';
 				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
@@ -264,7 +264,7 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			print '<tr '.$bc[$var?1:0].'><td width="12%">';
+			print '<tr '.$bc[$var].'><td width="12%">';
             $companystatic->id=$obj->socid;
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;

@@ -367,7 +367,7 @@ foreach ($dirproduct as $dirroot)
     			if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
-    			print '<tr '.$bc[$var?1:0].'>'."\n";
+    			print '<tr '.$bc[$var].'>'."\n";
     			print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
@@ -468,7 +468,7 @@ if ($resql)
         				if ($modulequalified)
         				{
         					$var = !$var;
-        					print '<tr '.$bc[$var?1:0].'><td width="100">';
+        					print '<tr '.$bc[$var].'><td width="100">';
         					print $module->name;
         					print "</td><td>\n";
         					if (method_exists($module,'info')) print $module->info($langs);
@@ -575,7 +575,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
 
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("PricingRule").'</td>';
 print '<td width="60" align="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
@@ -598,7 +598,7 @@ print '</tr>';
 if (! empty($conf->global->PRODUIT_MULTIPRICES))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
 	print '</tr>';
@@ -606,7 +606,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 
 // sousproduits activation/desactivation
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
@@ -615,7 +615,7 @@ print '</tr>';
 
 // Utilisation formulaire Ajax sur choix produit
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
@@ -640,7 +640,7 @@ print '</tr>';
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
 	print '</tr>';
@@ -648,7 +648,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
@@ -658,7 +658,7 @@ print '</tr>';
 // Activate propal merge produt card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
@@ -669,7 +669,7 @@ print '</tr>';
 // Use units
 /* Kept as hidden feature only. PRODUCT_USE_UNITS is hidden for the moment. Because it seems to be a duplicated feature with already existing field to store unit of product
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseUnits").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
@@ -681,7 +681,7 @@ print '</tr>';
 if (! empty($conf->global->MAIN_MULTILANGS))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
@@ -723,7 +723,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
     				if ($conf->$module->enabled)
     				{
     					$var=!$var;
-    					print "<tr ".$bc[$var?1:0]."><td>";
+    					print "<tr ".$bc[$var]."><td>";
 
     					print $object->description;
 

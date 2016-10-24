@@ -348,7 +348,7 @@ if (count($amount)) {
 
     foreach($arrayforsort as $key => $value) {
         $var=!$var;
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         // Third party
         $fullname=$name[$key];

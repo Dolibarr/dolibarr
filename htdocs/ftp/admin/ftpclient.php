@@ -241,37 +241,37 @@ else
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td>".$langs->trans("Name")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . @constant("FTP_NAME_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td>".$langs->trans("Server")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . @constant("FTP_SERVER_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . @constant("FTP_PORT_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . @constant("FTP_USER_" . $idrss) . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
 			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . @constant("FTP_PASSWORD_" . $idrss) . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			$var=!$var;
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
 			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
 			print "</tr>";

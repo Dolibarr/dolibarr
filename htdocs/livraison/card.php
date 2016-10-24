@@ -537,7 +537,7 @@ else
 			{
 				$var=!$var;
 
-				print "<tr ".$bc[$var?1:0].">";
+				print "<tr ".$bc[$var].">";
 				if ($object->lines[$i]->fk_product > 0)
 				{
 					$product = new Product($db);
@@ -606,8 +606,8 @@ else
 					$mode = ($object->statut == 0) ? 'edit' : 'view';
 					$line = new LivraisonLigne($db);
 					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
-					print '<tr '.$bc[$var?1:0].'>';
-					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var?1:0], 'colspan'=>$colspan),$i);
+					print '<tr '.$bc[$var].'>';
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
 					print '</tr>';
 				}
 

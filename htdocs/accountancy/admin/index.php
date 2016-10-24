@@ -219,7 +219,7 @@ if (! empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
     $var = ! $var;
-    print "<tr " . $bc[$var?1:0] . ">";
+    print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
@@ -233,7 +233,7 @@ if (! empty($user->admin))
     print '</tr>';
 
     $var = ! $var;
-    print "<tr " . $bc[$var?1:0] . ">";
+    print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
@@ -247,7 +247,7 @@ if (! empty($user->admin))
     print '</tr>';
 
     $var = ! $var;
-    print "<tr " . $bc[$var?1:0] . ">";
+    print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
     if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
@@ -268,7 +268,7 @@ foreach ( $list as $key ) {
 
     if ($key != 'ACCOUNTING_MANAGE_ZERO')
     {
-        print '<tr ' . $bc[$var?1:0] . ' class="value">';
+        print '<tr ' . $bc[$var] . ' class="value">';
         // Param
         $label = $langs->trans($key);
         print '<td>'.$label.'</td>';
@@ -281,7 +281,7 @@ foreach ( $list as $key ) {
     if ($key == 'ACCOUNTING_MANAGE_ZERO')
     {
         $var = ! $var;
-        print "<tr " . $bc[$var?1:0] . ">";
+        print "<tr " . $bc[$var] . ">";
         print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
         if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
             print '<td align="right""><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';

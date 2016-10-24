@@ -248,7 +248,7 @@ if ($action == 'create')
 	$var=True;
 
 
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 
 	if ($loan->datestart > 0)
 	{

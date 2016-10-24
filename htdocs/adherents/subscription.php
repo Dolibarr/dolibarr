@@ -826,7 +826,7 @@ if ($rowid > 0)
             {
                 $objp = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr ".$bc[$var?1:0].">";
+                print "<tr ".$bc[$var].">";
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';

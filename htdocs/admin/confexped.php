@@ -111,7 +111,7 @@ print '</tr>'."\n";
 
 // expedition activation/desactivation
 $var=!$var;
-print "<tr ".$bc[$var?1:0].">";
+print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td align="center" width="20">';
 print '</td>';
@@ -130,7 +130,7 @@ print '</tr>';
 
 // Bon de livraison activation/desactivation
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'>';
+print '<tr '.$bc[$var].'>';
 print '<td>';
 print $langs->trans("DeliveriesOrderAbility");
 print '<br>'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1);

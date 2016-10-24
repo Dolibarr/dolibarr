@@ -113,7 +113,7 @@ if ($catname || $id > 0)
 	foreach ($cats as $cat)
 	{
 		$var = ! $var;
-		print "\t<tr ".$bc[$var?1:0].">\n";
+		print "\t<tr ".$bc[$var].">\n";
 		print "\t\t<td>";
 		$categstatic->id=$cat->id;
 		$categstatic->ref=$cat->label;

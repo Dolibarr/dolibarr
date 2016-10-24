@@ -144,7 +144,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>'."\n";
 		print '<td>'.$objp->societe.'</td>'."\n";
 		print '<td>'.$objp->email.'</td>'."\n";

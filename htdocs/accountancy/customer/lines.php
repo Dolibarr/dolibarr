@@ -291,7 +291,7 @@ if ($result) {
 		$var = ! $var;
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
-		print '<tr '. $bc[$var?1:0].'>';
+		print '<tr '. $bc[$var].'>';
 
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;

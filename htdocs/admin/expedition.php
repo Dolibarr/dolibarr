@@ -269,7 +269,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 						$var=!$var;
-						print '<tr '.$bc[$var?1:0].'><td>'.$module->nom."</td>\n";
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
 						print '<td>';
 						print $module->info();
 						print '</td>';
@@ -413,7 +413,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var?1:0].'><td width="100">';
+	                            print '<tr '.$bc[$var].'><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -510,7 +510,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SHIPPING_FREE_TEXT">';
-print '<tr '.$bc[$var?1:0].'><td colspan="2">';
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnShippings").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='SHIPPING_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -532,7 +532,7 @@ $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SHIPPING_DRAFT_WATERMARK">';
-print '<tr '.$bc[$var?1:0].'><td colspan="2">';
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraft").'<br>';
 print '<input size="50" class="flat" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';

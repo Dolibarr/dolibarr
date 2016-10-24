@@ -141,7 +141,7 @@ if ($mode == 'setup' && $user->admin)
         print "</tr>\n";
         $submit_enabled=0;
     
-        print '<tr '.$bc[$var?1:0].'>';
+        print '<tr '.$bc[$var].'>';
         print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
         print '<td>'.$langs->trans($key['info']).'</td>';
         print '<td>';
@@ -161,7 +161,7 @@ if ($mode == 'setup' && $user->admin)
         if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
         {
             // Token
-            print '<tr '.$bc[$var?1:0].'>';
+            print '<tr '.$bc[$var].'>';
             print '<td>'.$langs->trans("Token").'</td>';
             print '<td>';
             // Dolibarr storage
@@ -254,7 +254,7 @@ if ($mode == 'userconf' && $user->admin)
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
         $var=!$var;
-        print '<tr '.$bc[$var?1:0].'>';
+        print '<tr '.$bc[$var].'>';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';
         print '<td>'.$row['driver'].'</td>';

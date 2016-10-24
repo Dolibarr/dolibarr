@@ -146,7 +146,7 @@ if ($resql)
     {
 		$obj = $db->fetch_object($resql);
 
-		print "<tr ".$bc[$var?1:0]."><td>";
+		print "<tr ".$bc[$var]."><td>";
 
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 		print img_picto('', 'statut'.$obj->statut).' ';

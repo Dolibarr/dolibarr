@@ -382,7 +382,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->label=$obj->label;
 		
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 
 		// Action (type)
 		print '<td>';

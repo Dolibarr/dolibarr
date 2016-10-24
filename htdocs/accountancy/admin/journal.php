@@ -127,7 +127,7 @@ print "</tr>\n";
 foreach ( $list as $key ) {
 	$var = ! $var;
 
-	print '<tr ' . $bc[$var?1:0] . ' class="value">';
+	print '<tr ' . $bc[$var] . ' class="value">';
 
 	// Param
 	$label = $langs->trans($key);
@@ -174,7 +174,7 @@ if ($resql) {
 		$bankaccountstatic->number = $objp->number;
 		$bankaccountstatic->accountancy_journal = $objp->accountancy_journal;
 			
-		print '<tr ' . $bc[$var?1:0] . ' class="value">';
+		print '<tr ' . $bc[$var] . ' class="value">';
 			
 		// Param
 		print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal");

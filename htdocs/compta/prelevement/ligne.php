@@ -307,7 +307,7 @@ if ($id)
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr ".$bc[$var?1:0]."><td>";
+			print "<tr ".$bc[$var]."><td>";
 
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
 			print img_object($langs->trans("ShowBill"),"bill");

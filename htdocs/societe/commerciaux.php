@@ -268,7 +268,7 @@ if (! empty($socid))
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var?1:0]."><td>";
+				print "<tr ".$bc[$var]."><td>";
 				$tmpuser->id=$obj->rowid;
 				$tmpuser->firstname=$obj->firstname;
 				$tmpuser->lastname=$obj->lastname;

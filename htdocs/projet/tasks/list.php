@@ -577,7 +577,7 @@ if ($resql)
     	if ($userAccess >= 0)
     	{
     		$var=!$var;
-    		print "<tr ".$bc[$var?1:0].">";
+    		print "<tr ".$bc[$var].">";
 
         	// Ref
         	if (! empty($arrayfields['t.ref']['checked']))

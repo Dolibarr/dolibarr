@@ -1050,7 +1050,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var=!$var;
-        print '<tr '.$bc[$var?1:0].'>';
+        print '<tr '.$bc[$var].'>';
 
         $notshippable=0;
         $warning = 0;

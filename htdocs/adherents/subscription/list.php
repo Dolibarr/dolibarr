@@ -234,7 +234,7 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         // Ref
         print '<td>'.$subscription->getNomUrl(1).'</td>';

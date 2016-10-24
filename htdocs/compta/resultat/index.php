@@ -670,7 +670,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	$mois_modulo = $mois;
 	if($mois>12) {$mois_modulo = $mois-12;}
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,$annee),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{

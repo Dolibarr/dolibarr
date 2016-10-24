@@ -318,7 +318,7 @@ if ($id > 0)
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 
 			print "<td>";
 
@@ -357,7 +357,7 @@ if ($id > 0)
 
 		if($socid)
 		{
-			print "<tr ".$bc[$var?1:0].">";
+			print "<tr ".$bc[$var].">";
 
 			print '<td>'.$langs->trans("Total").'</td>';
 

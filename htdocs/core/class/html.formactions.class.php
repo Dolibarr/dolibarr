@@ -204,7 +204,7 @@ class FormActions
         		$label=$action->getNomUrl(0,38);
                 
         		$var=!$var;
-        		print '<tr '.$bc[$var?1:0].'>';
+        		print '<tr '.$bc[$var].'>';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.$action->type.'</td>';

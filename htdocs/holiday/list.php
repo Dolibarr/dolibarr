@@ -418,7 +418,7 @@ if (! empty($holiday->holiday))
 		
 		$date = $infos_CP['date_create'];
 
-		print '<tr '.$bc[$var?1:0].'>';
+		print '<tr '.$bc[$var].'>';
 		print '<td>';
 		$holidaystatic->id=$infos_CP['rowid'];
 		$holidaystatic->ref=$infos_CP['rowid'];

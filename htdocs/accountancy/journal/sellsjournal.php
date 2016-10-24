@@ -532,7 +532,7 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print "<tr " . $bc[$var?1:0] . ">";
+			print "<tr " . $bc[$var] . ">";
 			print "<td><!-- Thirdparty --></td>";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -562,7 +562,7 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount->fetch(null, $k);
 
 			if ($mt) {
-				print "<tr " . $bc[$var?1:0] . ">";
+				print "<tr " . $bc[$var] . ">";
 				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -585,7 +585,7 @@ if (empty($action) || $action == 'view') {
 		// VAT
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
-				print "<tr " . $bc[$var?1:0] . ">";
+				print "<tr " . $bc[$var] . ">";
 				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";

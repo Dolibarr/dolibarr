@@ -268,7 +268,7 @@ if ($action == 'create')
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 
 		if ($objp->date_ech > 0)
 		{

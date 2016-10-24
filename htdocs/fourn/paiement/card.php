@@ -274,7 +274,7 @@ if ($result > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var?1:0].'>';
+				print '<tr '.$bc[$var].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 				print ($objp->ref?$objp->ref:$objp->rowid);

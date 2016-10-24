@@ -150,7 +150,7 @@ foreach ($list as $key)
 {
 	$var=!$var;
 
-	print '<tr '.$bc[$var?1:0].' class="value">';
+	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
 	$libelle = $langs->trans($key);

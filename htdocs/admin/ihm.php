@@ -225,7 +225,7 @@ if ($action == 'edit')	// Edit
 
 	// Max size of short lists on customer card
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	

@@ -152,7 +152,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
 		print "<td>$obj->firstname</TD>";

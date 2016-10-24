@@ -52,7 +52,7 @@ if (in_array($object->element,array('propal','supplier_proposal','facture','invo
 <?php
 $coldisplay=-1; // We remove first td
 ?>
-<tr <?php echo $bc[$var?1:0]; ?>>
+<tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php $coldisplay+=(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))?2:1; ?>
 	<div id="line_<?php echo $line->id; ?>"></div>
 
@@ -216,13 +216,13 @@ $coldisplay=-1; // We remove first td
 	//Line extrafield
 	if (!empty($extrafieldsline))
 	{
-		print $line->showOptionals($extrafieldsline,'edit',array('style'=>$bc[$var?1:0],'colspan'=>$coldisplay));
+		print $line->showOptionals($extrafieldsline,'edit',array('style'=>$bc[$var],'colspan'=>$coldisplay));
 	}
 	?>
 </tr>
 
 <?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
-<tr id="service_duration_area" <?php echo $bc[$var?1:0]; ?>>
+<tr id="service_duration_area" <?php echo $bc[$var]; ?>>
 	<td colspan="11"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');

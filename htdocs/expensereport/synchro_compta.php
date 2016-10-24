@@ -165,7 +165,7 @@ else:
 				while($i<$num):
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
-						print '<tr'. $bc[$var?1:0].'>';
+						print '<tr'. $bc[$var].'>';
 							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.dol_print_date($db->jdate($objp->date_valid),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';

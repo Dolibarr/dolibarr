@@ -57,7 +57,7 @@ $var=false;
 
 // Recupere la version de PHP
 $phpversion=version_php();
-print "<tr ".$bc[$var?1:0].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+print "<tr ".$bc[$var].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 
 print '</table>';
 print '<br>';
@@ -83,7 +83,7 @@ foreach($phparray as $key => $value)
 		if (! is_array($keyvalue))
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var?1:0].'>';
+			print '<tr '.$bc[$var].'>';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
@@ -98,7 +98,7 @@ foreach($phparray as $key => $value)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var?1:0].'>';
+			print '<tr '.$bc[$var].'>';
 			print '<td>'.$keyparam.'</td>';
 			$i=0;
 			foreach($keyvalue as $keyparam2 => $keyvalue2)

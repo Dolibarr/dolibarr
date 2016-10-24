@@ -411,7 +411,7 @@ if ($result)
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 
-		print '<tr '.$bc[$var?1:0].'>';
+		print '<tr '.$bc[$var].'>';
 		print '<td class="nowrap">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';

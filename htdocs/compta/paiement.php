@@ -622,7 +622,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
 					}
 					
-                    print '<tr '.$bc[$var?1:0].'>';
+                    print '<tr '.$bc[$var].'>';
 
                     print '<td>';
                     print $invoice->getNomUrl(1,'');
@@ -860,7 +860,7 @@ if (! GETPOST('action'))
         {
             $objp = $db->fetch_object($resql);
             $var=!$var;
-            print '<tr '.$bc[$var?1:0].'>';
+            print '<tr '.$bc[$var].'>';
             print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";

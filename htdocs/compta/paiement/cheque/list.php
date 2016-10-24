@@ -176,7 +176,7 @@ if ($resql)
     	{
     		$objp = $db->fetch_object($resql);
     		$var=!$var;
-    		print "<tr ".$bc[$var?1:0].">";
+    		print "<tr ".$bc[$var].">";
     
     		// Num ref cheque
     		print '<td width="80">';
@@ -214,7 +214,7 @@ if ($resql)
     }
     else
     {
-   		print "<tr ".$bc[$var?1:0].">";
+   		print "<tr ".$bc[$var].">";
    		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }

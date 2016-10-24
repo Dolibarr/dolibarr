@@ -288,7 +288,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
         $var=!$var;
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;

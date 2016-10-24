@@ -252,7 +252,7 @@ if ($result)
 
 		$var=!$var;
 
-		print '<tr '.$bc[$var?1:0].'>';
+		print '<tr '.$bc[$var].'>';
 
 		// Date
 		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';

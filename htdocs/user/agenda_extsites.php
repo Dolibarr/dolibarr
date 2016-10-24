@@ -185,7 +185,7 @@ while ($i <= $MAXAGENDA)
 	$color='AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
 	$var=!$var;
-	print "<tr ".$bc[$var?1:0].">";
+	print "<tr ".$bc[$var].">";
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

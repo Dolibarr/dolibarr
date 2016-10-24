@@ -68,7 +68,7 @@ if (count($export->array_export_code))
 	foreach ($export->array_export_code as $key => $value)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var?1:0].'><td>';
+		print '<tr '.$bc[$var].'><td>';
 		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 		print $export->array_export_module[$key]->getName();
 		print '</td><td>';
@@ -135,7 +135,7 @@ foreach($liste as $key => $val)
     }
 
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'>';
+	print '<tr '.$bc[$var].'>';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	$label=$liste[$key];

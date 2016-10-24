@@ -240,11 +240,11 @@ if ($action == 'edit')
 
     // Landing page
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LandingPage").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var?1:0].' name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -254,13 +254,13 @@ if ($action == 'edit')
     
     // Langue par defaut
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("Language").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print $s?$s.' ':'';
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var?1:0].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -269,9 +269,9 @@ if ($action == 'edit')
 
     // Taille max des listes
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var?1:0].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
@@ -306,11 +306,11 @@ else
 
     // Landing page
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("LandingPage").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
-    print '<td align="left" class="nowrap"><input '.$bc[$var?1:0].' name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print '<td align="left" class="nowrap"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -324,13 +324,13 @@ else
     
     // Language
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("Language").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
     print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" class="nowrap"><input '.$bc[$var?1:0].' type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" class="nowrap"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $s=(isset($object->conf->MAIN_LANG_DEFAULT) ? picto_from_langcode($object->conf->MAIN_LANG_DEFAULT) : '');
     print ($s?$s.' ':'');
@@ -338,9 +338,9 @@ else
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var?1:0].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';
 
     print '</table><br>';

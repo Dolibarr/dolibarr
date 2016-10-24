@@ -253,7 +253,7 @@ function show_array_actions_to_do($max=5)
             $obj = $db->fetch_object($resql);
             $var=!$var;
 
-            print '<tr '.$bc[$var?1:0].'>';
+            print '<tr '.$bc[$var].'>';
 
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
@@ -349,7 +349,7 @@ function show_array_last_actions_done($max=5)
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
 
-			print '<tr '.$bc[$var?1:0].'>';
+			print '<tr '.$bc[$var].'>';
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;

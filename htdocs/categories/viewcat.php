@@ -284,7 +284,7 @@ else
 		foreach ($cats as $cat)
 		{
 			$var=!$var;
-			print "\t<tr ".$bc[$var?1:0].">\n";
+			print "\t<tr ".$bc[$var].">\n";
 			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
 			print "</td>\n";
@@ -355,7 +355,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 			foreach ($prods as $prod)
 			{
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1);
 				print "</td>\n";
@@ -406,7 +406,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 			foreach ($socs as $soc)
 			{
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
@@ -462,7 +462,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 
 				$i++;
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
 				print "</td>\n";
@@ -515,7 +515,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 			foreach ($prods as $key => $member)
 			{
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
 				print $member->getNomUrl(1,0);
@@ -570,7 +570,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 			{
 				$i++;
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1,'category');
 				print "</td>\n";
@@ -624,7 +624,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
             foreach ($accounts as $key => $account)
             {
                 $var=!$var;
-                print "\t<tr ".$bc[$var?1:0].">\n";
+                print "\t<tr ".$bc[$var].">\n";
                 print '<td class="nowrap" valign="top">';
                 print $account->getNomUrl(1,0);
                 print "</td>\n";
@@ -679,7 +679,7 @@ if ($object->type == Categorie::TYPE_PROJECT)
 			foreach ($projects as $key => $project)
 			{
 				$var=!$var;
-				print "\t<tr ".$bc[$var?1:0].">\n";
+				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $project->getNomUrl(1,0);
 				print "</td>\n";

@@ -204,7 +204,7 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
-            print '<tr '.$bc[$var?1:0].'>';
+            print '<tr '.$bc[$var].'>';
             print '<td>';
             $invoicestatic->id=$obj->rowid;
             $invoicestatic->ref=$obj->facnumber;
@@ -278,7 +278,7 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr ".$bc[$var?1:0].">";
+        print "<tr ".$bc[$var].">";
 
         print "<td>";
         $bprev->id=$obj->rowid;

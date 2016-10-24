@@ -503,7 +503,7 @@ if ($id)
 
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var?1:0].' id="rowid-'.$obj->rowid.'">';
+                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';

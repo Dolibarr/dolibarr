@@ -321,7 +321,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$var=!$var;
-		print '<tr '.$bc[$var?1:0].'><td class="nowrap">';
+		print '<tr '.$bc[$var].'><td class="nowrap">';
 		
 		$product=new Product($db);
 		$product->fetch($objp->rowid);

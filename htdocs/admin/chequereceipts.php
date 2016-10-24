@@ -166,7 +166,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->isEnabled())
 						{
 							$var = !$var;
-							print '<tr '.$bc[$var?1:0].'><td width="100">';
+							print '<tr '.$bc[$var].'><td width="100">';
 							print (empty($module->name)?$name:$module->name);
 							print "</td><td>\n";
 
@@ -257,7 +257,7 @@ $var=true;
 
 $var=! $var;
 
-print '<tr '.$bc[$var?1:0].'><td colspan="2">';
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnChequeReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='BANK_CHEQUERECEIPT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))

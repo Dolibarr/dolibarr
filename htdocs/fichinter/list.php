@@ -381,7 +381,7 @@ if ($result)
 		$objectstatic->statut=$obj->fk_statut;
 		
 		$var=!$var;
-		print "<tr ".$bc[$var?1:0].">";
+		print "<tr ".$bc[$var].">";
         if (! empty($arrayfields['f.ref']['checked']))
 		{
 			print "<td>";

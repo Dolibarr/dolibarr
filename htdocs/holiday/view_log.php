@@ -97,7 +97,7 @@ foreach($cp->logs as $logs_CP)
    	$user_update = new User($db);
    	$user_update->fetch($logs_CP['fk_user_update']);
 
-   	print '<tr '.$bc[$var?1:0].'>';
+   	print '<tr '.$bc[$var].'>';
    	print '<td>'.$logs_CP['rowid'].'</td>';
    	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
    	print '<td>'.$user_action->getNomUrl(-1).'</td>';

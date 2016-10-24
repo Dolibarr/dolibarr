@@ -208,7 +208,7 @@ if ($socid > 0)
 
     			$var=!$var;
 
-    			print "<tr ".$bc[$var?1:0].">";
+    			print "<tr ".$bc[$var].">";
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
     			$invoicestatic->ref=$objp->facnumber;

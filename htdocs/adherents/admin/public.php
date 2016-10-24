@@ -146,7 +146,7 @@ $var=true;
 // Allow public form
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var?1:0].'><td>';
+print '<tr '.$bc[$var].'><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td align="right">';
 print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
@@ -155,7 +155,7 @@ print "</td></tr>\n";
 // Type
 /*$var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var?1:0].' class="drag"><td>';
+print '<tr '.$bc[$var].' class="drag"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
@@ -164,7 +164,7 @@ print "</td></tr>\n"; */
 // Amount
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var?1:0].' id="tramount"><td>';
+print '<tr '.$bc[$var].' id="tramount"><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td align="right">';
 print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
@@ -173,7 +173,7 @@ print "</td></tr>\n";
 // Can edit
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var?1:0].' id="tredit"><td>';
+print '<tr '.$bc[$var].' id="tredit"><td>';
 print $langs->trans("CanEditAmount");
 print '</td><td align="right">';
 print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
@@ -183,7 +183,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 {
 	// Jump to an online payment page
 	$var=! $var;
-	print '<tr '.$bc[$var?1:0].' id="trpayment"><td>';
+	print '<tr '.$bc[$var].' id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
 	print '</td><td align="right">';
 	$listofval=array();
@@ -197,7 +197,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 {
     // Jump to an online payment page
     $var=! $var;
-    print '<tr '.$bc[$var?1:0].' id="tremail"><td>';
+    print '<tr '.$bc[$var].' id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
     print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';

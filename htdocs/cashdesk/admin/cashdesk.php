@@ -101,26 +101,26 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
-print '<tr '.$bc[$var?1:0].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
 print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,0,1,array(),0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",1);
 	print '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",1);
 	print '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",1);
 	print '</td></tr>';
@@ -129,7 +129,7 @@ if (! empty($conf->banque->enabled))
 if (! empty($conf->stock->enabled))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
 	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
@@ -146,7 +146,7 @@ if (! empty($conf->stock->enabled))
 	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
 
 	$var=!$var;
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (! $disabled)
 	{
@@ -163,7 +163,7 @@ if (! empty($conf->stock->enabled))
 if (! empty($conf->service->enabled))
 {
     $var=! $var;
-    print '<tr '.$bc[$var?1:0].'><td>';
+    print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
     print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
@@ -174,7 +174,7 @@ if (! empty($conf->service->enabled))
 if (! empty($conf->receiptprinter->enabled))
 {
     $var=! $var;
-    print '<tr '.$bc[$var?1:0].'><td>';
+    print '<tr '.$bc[$var].'><td>';
     print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
     print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER",$conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER,1);

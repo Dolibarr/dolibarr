@@ -625,7 +625,7 @@ else
 				 
 				
     			$var=!$var;
-    			print '<tr '.$bc[$var?1:0].'>';
+    			print '<tr '.$bc[$var].'>';
 
     			// Ref
 			    if (! empty($arrayfields['p.ref']['checked']))

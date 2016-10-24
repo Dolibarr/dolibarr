@@ -2351,7 +2351,7 @@ else
     	        {
     	            $objp = $db->fetch_object($result);
     	            $var=!$var;
-    	            print '<tr '.$bc[$var?1:0].'><td>';
+    	            print '<tr '.$bc[$var].'><td>';
     	            $paymentstatic->id=$objp->rowid;
     	            $paymentstatic->datepaye=$db->jdate($objp->dp);
     	            $paymentstatic->ref=$objp->ref;
@@ -2388,7 +2388,7 @@ else
     	    }
     	    else
     	    {
-    	        print '<tr '.$bc[$var?1:0].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+    	        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
     	    }
     	
     	    if ($object->paye == 0)
