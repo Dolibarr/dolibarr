@@ -48,7 +48,7 @@ class modResource extends DolibarrModules
 		// Use a free id here
 		// (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 63000;
-		
+
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'resource';
 
@@ -109,7 +109,7 @@ class modResource extends DolibarrModules
 
 		// Config pages. Put here list of php pages
 		// stored into resource/admin directory, used to setup module.
-		//$this->config_page_url = array("admin_resource.php@resource");
+		$this->config_page_url = array("resource.php");
 
 		// Dependencies
 		// List of modules id that must be enabled if this module is enabled
@@ -199,8 +199,8 @@ class modResource extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Add here list of permission defined by
 		// an id, a label, a boolean and two constant strings.
 		// Example:
@@ -266,7 +266,7 @@ class modResource extends DolibarrModules
 			'target'=> '',
 			'user'=> 0
 		);
-		
+
 		// Exports
 		$r = 1;
 
