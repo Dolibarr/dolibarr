@@ -2814,9 +2814,10 @@ class Form
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
      *      @param  int     $active         Active or not, -1 = all
+     *      @param  string  $morecss        Add more css
      * 		@return	void
      */
-    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
     {
         global $langs,$user;
 
@@ -2829,7 +2830,7 @@ class Form
 
         $this->load_cache_types_paiements();
 
-        print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes" name="'.$htmlname.'">';
+        print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
         if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {

@@ -2,6 +2,7 @@
 WarehouseCard=Warehouse card
 Warehouse=Warehouse
 Warehouses=Warehouses
+ParentWarehouse=Parent warehouse
 NewWarehouse=New warehouse / Stock area
 WarehouseEdit=Modify warehouse
 MenuNewWarehouse=New warehouse

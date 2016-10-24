@@ -423,7 +423,7 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bankentries.php?id='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
 		
 		// Action column

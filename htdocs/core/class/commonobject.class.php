@@ -522,7 +522,7 @@ abstract class CommonObject
 		}
     	if (! empty($this->url))
 		{
-			$out.=dol_print_url($this->url,'',0,1);
+			$out.=dol_print_url($this->url,'_goout',0,1);
 			$outdone++;
 		}
 		if (! empty($conf->skype->enabled))

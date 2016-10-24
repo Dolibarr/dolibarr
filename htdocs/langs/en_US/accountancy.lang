@@ -30,6 +30,7 @@ AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (
 AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on record related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Check the default binding between miscellaneous transaction lines and accounting account is done. Complete missing bindings.<br>For this you can use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescLoan=STEP %s: Check the binding between loans payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on record related to payment of loans.<br>For this you can use the menu entry %s. 
 
 AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to journalize transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
 AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to journalize transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
@@ -47,6 +48,8 @@ AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
+MenuTaxAccounts=Tax accounts
+MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
@@ -92,9 +95,9 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
-DONATION_ACCOUNTINGACCOUNT=Account to register donations
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
+DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)
