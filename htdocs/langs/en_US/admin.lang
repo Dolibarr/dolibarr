@@ -1132,6 +1132,7 @@ ProposalsPDFModules=Commercial proposal documents models
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
+PROPOSAL_ADD_NAME_LABEL_ON_PDF=Add "Name" and "First name" on PDF signature area
 ##### SupplierProposal #####
 SupplierProposalSetup=Price requests suppliers module setup
 SupplierProposalNumberingModules=Price requests suppliers numbering models

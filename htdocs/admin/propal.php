@@ -595,6 +595,26 @@ print "</td></tr>\n";
 print '</form>';
 
 $var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PROPOSAL_ADD_NAME_LABEL_ON_PDF").'</td><td>&nbsp</td><td align="right">';
+if (! empty($conf->use_javascript_ajax))
+{
+    print ajax_constantonoff('PROPOSAL_ADD_NAME_LABEL_ON_PDF');
+}
+else
+{
+    if (empty($conf->global->PROPOSAL_ADD_NAME_LABEL_ON_PDF))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PROPOSAL_ADD_NAME_LABEL_ON_PDF&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PROPOSAL_ADD_NAME_LABEL_ON_PDF&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    }
+}
+print '</td></tr>';
+
+$var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
