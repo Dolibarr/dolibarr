@@ -210,12 +210,14 @@ class modCategorie extends DolibarrModules
 		$this->export_icon[$r]='category';
         $this->export_enabled[$r]='$conf->adherent->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("adherent","lire"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'MemberId','p.lastname'=>'LastName','p.firstname'=>'Firstname');
-		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.lastname'=>'Text','p.firstname'=>'Text');
-		$this->export_entities_array[$r]=array('p.rowid'=>'member','p.lastname'=>'member','p.firstname'=>'member');	// We define here only fields that use another picto
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'a.rowid'=>'MemberId','a.lastname'=>'LastName','a.firstname'=>'Firstname','a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status");
+		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'a.lastname'=>'Text','a.firstname'=>'Text','a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status");
+		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.lastname'=>'member','a.firstname'=>'member','a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member");	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
-		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cm, '.MAIN_DB_PREFIX.'adherent as a, '.MAIN_DB_PREFIX.'c_departements as d, '.MAIN_DB_PREFIX.'c_country as co';
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cm.fk_categorie AND cm.fk_member = a.rowid';
+		$this->export_sql_end[$r] .=' AND a.state_id = d.rowid';
+		$this->export_sql_end[$r] .=' AND a.country = co.rowid';
 		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 3';	// Member categories
 
