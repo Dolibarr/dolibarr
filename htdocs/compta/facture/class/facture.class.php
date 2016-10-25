@@ -998,11 +998,14 @@ class Facture extends CommonInvoice
 	 *      @param  int		$max             Maxlength of ref
 	 *      @param  int		$short           1=Return just URL
 	 *      @param  string  $moretitle       Add more text to title tooltip
+     *      @param	int  	$notooltip		 1=Disable tooltip
 	 *      @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
 	{
 		global $langs, $conf;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
 
@@ -1015,28 +1018,44 @@ class Facture extends CommonInvoice
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a';	// Credit note
 		if ($this->type == self::TYPE_DEPOSIT) $picto.='d';	// Deposit invoice
-
-        $label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->ref_client))
-            $label .= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
-		if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
-		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
-		if ($this->type == self::TYPE_SITUATION) $label=$langs->transnoentitiesnoconv("ShowInvoiceSituation").': '.$this->ref;
-		if ($moretitle) $label.=' - '.$moretitle;
-
-        $linkstart='<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $label='';
+        
+        if ($user->rights->facture->lire) {
+            $label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
+            if (! empty($this->ref))
+                $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
+            if (! empty($this->ref_client))
+                $label .= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
+            if (! empty($this->total_ht))
+                $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_tva))
+                $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_ttc))
+                $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+    		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
+    		if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
+    		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
+    		if ($this->type == self::TYPE_SITUATION) $label=$langs->transnoentitiesnoconv("ShowInvoiceSituation").': '.$this->ref;
+    		if ($moretitle) $label.=' - '.$moretitle;
+        }
+        
+		$linkclose='';
+		if (empty($notooltip) && $user->rights->facture->lire)
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowInvoice");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+		
+        $linkstart='<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($max?dol_trunc($label,$max):$label), $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
 		return $result;

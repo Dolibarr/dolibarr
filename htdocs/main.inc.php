@@ -225,6 +225,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->tablet=$tmp['tablet'];	   // TODO deprecated, use ->layout
     //var_dump($conf->browser);
 
+    if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
     if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
 }
 
