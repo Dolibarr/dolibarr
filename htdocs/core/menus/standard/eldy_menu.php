@@ -152,9 +152,10 @@ class MenuManager
 		    
         if ($mode == 'jmobile')
         {
-
             print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
-            
+
+            // $this->menu->liste is top menu
+            //var_dump($this->menu->liste);exit;            
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
@@ -168,14 +169,15 @@ class MenuManager
 					$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
 
         			print '<a class="alilevel0" href="#">'.$val['titre'].'</a>'."\n";
-        			// Search submenu fot this entry
+        			// Search submenu fot this mainmenu entry
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
 	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
-        		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu);exit; }
+        		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
+                    //if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
 	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
-
+                    
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
         			//var_dump($canonrelurl);
