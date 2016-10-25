@@ -226,7 +226,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Validate fields before creating an object
      *
-     * @param array $data    Data to validate
+     * @param array|null    $data    Data to validate
      * @return array
      *
      * @throws RestException

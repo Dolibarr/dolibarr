@@ -262,6 +262,7 @@ class Categories extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
 			throw new RestException(401);
 		}
+
         // Check mandatory fields
         $result = $this->_validate($request_data);
         
@@ -341,7 +342,7 @@ class Categories extends DolibarrApi
     /**
      * Validate fields before create or update object
      * 
-     * @param array $data   Data to validate
+     * @param array|null    $data    Data to validate
      * @return array
      * 
      * @throws RestException
