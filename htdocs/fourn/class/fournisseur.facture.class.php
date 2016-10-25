@@ -1483,7 +1483,7 @@ class FactureFournisseur extends CommonInvoice
 	    $line->qty = $qty;
 	    $line->remise_percent = $remise_percent;
         
-	    $this->line->vat_src_code=$vat_src_code;
+	    $line->vat_src_code=$vat_src_code;
 	    $line->tva_tx = $vatrate;
 	    $line->localtax1_tx = $txlocaltax1;
 	    $line->localtax2_tx = $txlocaltax2;
