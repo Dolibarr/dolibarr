@@ -139,6 +139,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_code_ventilation integer DEFAULT 0;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
