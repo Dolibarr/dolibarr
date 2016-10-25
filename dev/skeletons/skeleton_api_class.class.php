@@ -98,7 +98,7 @@ class SkeletonApi extends DolibarrApi
      *
      * @url	GET /skeletons/
      */
-    function index($mode, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($mode, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();

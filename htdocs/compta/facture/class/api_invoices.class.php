@@ -94,7 +94,7 @@ class Invoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $status='', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
