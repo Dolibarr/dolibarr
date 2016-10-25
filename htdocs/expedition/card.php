@@ -1295,7 +1295,7 @@ else if ($id || $ref)
 		$totalVolume=$tmparray['volume'];
 		
 		
-		// Warehouse card
+		// Shipment card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 		
 		$morehtmlref='<div class="refidno">';
@@ -1347,18 +1347,6 @@ else if ($id || $ref)
     	print '<div class="underbanner clearboth"></div>';
     	
 		print '<table class="border" width="100%">';
-
-		// Ref
-		/*
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td></tr>';
-
-		// Customer
-		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-		print "</tr>";*/
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -1909,7 +1897,7 @@ else if ($id || $ref)
 		$genallowed=$user->rights->expedition->lire;
 		$delallowed=$user->rights->expedition->supprimer;
 
-		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+		print $formfile->showdocuments('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		
 		// Show links to link elements

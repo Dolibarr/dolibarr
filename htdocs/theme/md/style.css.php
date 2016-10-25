@@ -918,6 +918,11 @@ table.noborder tr.liste_titre td {
     padding-left: 2px;
     padding-right: 2px;
 }
+.pictostatus {
+	width: 15px;
+	vertical-align: middle;
+	margin-top: -3px
+}
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
@@ -941,26 +946,34 @@ div.arearef {
 	margin-bottom: 10px;
 }
 div.heightref {
-	min-height: 74px; 
+	min-height: 80px; 
 }
 div.divphotoref {
 	padding-right: 20px;
 }
 div.statusref {
 	float: right;
-	padding-right: 12px;
+	padding-left: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
 }
-img.photoref {
-	height: 80px;
-	width: 80px;
+img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+    padding: 4px;
+	height: 80px;
+	width: 80px;
+    object-fit: contain;
 }
+div.photoref {
+	display:table-cell;
+	vertical-align:middle;
+	text-align:center;
+}
+
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -2190,9 +2203,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+<?php if (empty($noborderline)) { ?>
 	border: 1px solid #f4f4f4;
+<?php } ?>
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
+}
+table.borderplus {
+	border: 1px solid #BBB;
 }
 
 .border tbody tr, .border tbody tr td {
@@ -2216,7 +2234,7 @@ td.border, div.tagtable div div.border {
 }
 
 .table-key-border-col {
-	width: 25%;
+	/* width: 25%; */
 	vertical-align:top;
 }
 .table-val-border-col {
@@ -2509,8 +2527,6 @@ div.pagination li.paginationafterarrows {
 {
 <?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	/* background: rgba(0, 0, 0, 0.05) !important; */
 <?php } ?>
 }
 
@@ -2585,7 +2601,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwith; ?>px;
+	border-top-width: <?php echo $borderwith ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     
@@ -2593,7 +2609,7 @@ div.liste_titre_bydiv {
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: 100%;	/* 1px more, i don't know why */
+	width: 100%;
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2601,10 +2617,6 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-    /* TO MATCH BOOTSTRAP */
-	/* background: #ddd; */
-
-	/* TO MATCH ELDY */
 	<?php if ($usegradient) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
@@ -2690,6 +2702,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-top-width: <?php echo $borderwith ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
+	margin: 0px 0px 0px 0px !important;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
@@ -2818,7 +2831,12 @@ tr.box_pair {
 
 tr.box_pair td, tr.box_impair td {
 	padding: 4px;
+}
+tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
     border-bottom: 1px solid #f4f4f4;
+}
+.noborderbottom {
+	border-bottom: none !important;
 }
 
 .formboxfilter {
@@ -3658,7 +3676,7 @@ ul.filedirelem li {
     border: solid 1px #f4f4f4;
 }
 
-ui-layout-north {
+.ui-layout-north {
 
 }
 
@@ -4056,6 +4074,9 @@ li.ui-li-divider .ui-link {
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
+.ui-body-c {
+	background: #fff;
+}
 
 .ui-btn-inner {
 	min-width: .4em;
@@ -4090,7 +4111,7 @@ select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
     /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
-    white-space: nowrap;
+    white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
@@ -4123,7 +4144,7 @@ a.tab span.ui-btn-inner
 	color: rgb(<?php print $colortext; ?>);
 }
 .liste_titre .ui-link {
-	color: rgb(<?php echo $colortexttitle; ?>) !important;
+	color: rgb(<?php print $colortexttitle; ?>) !important;
 }
 
 a.ui-link {
@@ -4135,7 +4156,7 @@ a.ui-link {
 {
 	white-space: normal;
 	overflow: hidden;
-	text-overflow: hidden;
+	text-overflow: clip; /* "hidden" : do not exists as a text-overflow value (https://developer.mozilla.org/fr/docs/Web/CSS/text-overflow) */
 }
 
 /* Warning: setting this may make screen not beeing refreshed after a combo selection */
@@ -4175,23 +4196,45 @@ ul.ulmenu {
 }
 
 /* Style for first level menu with jmobile */
+.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
+    padding: 1em 15px;
+    display: block;
+}
+.ui-btn-up-c {
+	font-weight: normal;
+}
+.ui-focus, .ui-btn:focus {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.ui-bar-b {
+    /*border: 1px solid #888;*/
+    border: none;
+    background: none;
+    text-shadow: none;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
+}
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #888 !important;
-    background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
+    border: none;
+    background: none;
+    text-shadow: none;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
+}
+.alilevel0 {
+	font-weight: normal !important;
+}
 
-	/*background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);*/
-    font-weight: bold;
-
-    color: rgb(<?php echo $colortexttitle; ?>) !important;
+.ui-li.ui-last-child, .ui-li.ui-field-contain.ui-last-child {
+    border-bottom-width: 0px !important;
 }
 .alilevel0 {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.ulmenu {
+	box-shadow: none !important;
+	border-bottom: 1px solid #444;
 }
 .ui-btn-icon-right {
 	border-right: 1px solid #ccc !important;
@@ -4201,7 +4244,7 @@ ul.ulmenu {
 	text-shadow: none;
 }
 .ui-btn-up-c, .ui-btn-hover-c {
-	border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 	text-shadow: none;
 }
 .ui-body-c .ui-link, .ui-body-c .ui-link:visited, .ui-body-c .ui-link:hover {
@@ -4211,33 +4254,43 @@ ul.ulmenu {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
 }
-.ui-controlgroup-horizontal .ui-btn.ui-first-child {
+/*
+.ui-btn-up-c {
+	background: transparent;
+}
+*/
+div.tabsElem a.tab {
+	background: transparent;
+}
+
+/*.ui-controlgroup-horizontal .ui-btn.ui-first-child {
 -webkit-border-top-left-radius: 6px;
 border-top-left-radius: 6px;
 }
 .ui-controlgroup-horizontal .ui-btn.ui-last-child {
 -webkit-border-top-right-radius: 6px;
 border-top-right-radius: 6px;
-}
+}*/
+
 .alilevel1 {
-    color: rgb(<?php echo $colortexttitle; ?>) !important;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
 }
 .lilevel1 {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #f4f4f4 ),to( #d1d1d1 )) !important;
-	background-image: -webkit-linear-gradient( #f4f4f4,#d1d1d1 ) !important;
-	background-image: -moz-linear-gradient( #f4f4f4,#d1d1d1 ) !important;
-	background-image: -ms-linear-gradient( #f4f4f4,#d1d1d1 ) !important;
-	background-image: -o-linear-gradient( #f4f4f4,#d1d1d1 ) !important;
-	background-image: linear-gradient( #f4f4f4,#d1d1d1 ) !important;
+    border-top: 2px solid #444;
+    background: #fff ! important;
+}
+.lilevel1 div div a {
+	font-weight: bold !important;
 }
 .lilevel2
 {
 	padding-left: 22px;
+    background: #fff ! important;
 }
 .lilevel3
 {
 	padding-left: 54px;
+    background: #fff ! important;
 }
 
 
@@ -4342,7 +4395,9 @@ img.demothumb {
 
 
 
-/***** CSS style used for small screen *****/
+/* ============================================================================== */
+/* CSS style used for small screen                                                */
+/* ============================================================================== */
 
 .imgopensurveywizard
 {
@@ -4357,6 +4412,13 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 	
+    img.demothumb {
+        box-shadow: 1px 1px 4px #BBB;
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
+
     div.tabBar {
         padding-left: 0px;
         padding-right: 0px;
@@ -4445,6 +4507,25 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
+	select {
+		width: 100%;
+		max-width: 100px;
+		min-width: 0 !important;
+	}
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }
+	
 }
 
 

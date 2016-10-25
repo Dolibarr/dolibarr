@@ -495,12 +495,15 @@ class Task extends CommonObject
      *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ')
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -511,17 +514,30 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
 
-        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowTask");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
-
+        
         $picto='projecttask';
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -575,7 +591,7 @@ class Task extends CommonObject
         $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
         $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
         $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
-        $sql.= " s.nom as thirdparty_name";
+        $sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
         if ($mode == 0)
@@ -692,6 +708,7 @@ class Task extends CommonObject
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
                     
+                    $tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
                     $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
 

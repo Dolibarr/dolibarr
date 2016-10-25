@@ -1454,13 +1454,16 @@ class FormFile
         global $langs, $conf;
 
         $out='';
-        $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath);
-        if ($urladvancedpreview)
+        if ($conf->browser->layout != 'phone')
         {
-            $out.= '<a data-ajax="false" class="pictopreview" href="'.$urladvancedpreview.'">';
-            if (empty($ruleforpicto)) $out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-            else $out.= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
-            $out.= '</a>';
+            $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath);      // Return if a file is qualified for preview
+            if ($urladvancedpreview)
+            {
+                $out.= '<a data-ajax="false" class="pictopreview" href="'.$urladvancedpreview.'">';
+                if (empty($ruleforpicto)) $out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
+                else $out.= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+                $out.= '</a>';
+            }
         }
         return $out;
     }

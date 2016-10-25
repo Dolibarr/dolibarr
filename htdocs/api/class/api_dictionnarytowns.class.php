@@ -47,26 +47,31 @@ class DictionnaryTowns extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $zipcode    To filter on zipcode
      * @param string    $town       To filter on city name
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return List of towns
      *            
      * @throws RestException
      */
-    function index($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '')
+    function index($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '', $sqlfilters = '')
     {
         $list = array();
 
         $sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown";
-        $sql.= " WHERE active = 1";
-        if ($zipcode) $sql.=" AND zip LIKE '%" . $this->db->escape($zipcode) . "%'";
-        if ($town)    $sql.=" AND town LIKE '%" . $this->db->escape($town) . "%'";
-        
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
+        $sql.= " WHERE t.active = 1";
+        if ($zipcode) $sql.=" AND t.zip LIKE '%" . $this->db->escape($zipcode) . "%'";
+        if ($town)    $sql.=" AND t.town LIKE '%" . $this->db->escape($town) . "%'";
+        // Add sql filters
+        if ($sqlfilters)
         {
-            $result = $this->db->query($sql);
-            $nbtotalofrecords = $this->db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
+        
         
         $sql.= $this->db->order($sortfield, $sortorder);
 

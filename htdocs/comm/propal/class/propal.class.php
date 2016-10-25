@@ -3214,44 +3214,67 @@ class Propal extends CommonObject
      *	@param      int		$withpicto		Add picto into link
      *	@param      string	$option			Where point the link ('expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
-        $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
-        if (! empty($this->ref))
-            $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (! empty($this->ref_client))
-            $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
+        $label='';
+        $url='';
+
+        if ($user->rights->propal->lire)
+        {
+            $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
+            if (! empty($this->ref))
+                $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            if (! empty($this->ref_client))
+                $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+            if (! empty($this->total_ht))
+                $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_tva))
+                $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_ttc))
+                $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+            if ($option == '') {
+                $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'compta') {  // deprecated
+                $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'expedition') {
+                $url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'document') {
+                $url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params;
+            }
         }
-        if ($option == 'compta') {  // deprecated
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowPropal");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
         }
-        if ($option == 'expedition') {
-            $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
-        }
-        if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
-        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';        
         $linkend='</a>';
 
         if ($withpicto)
-            $result.=($link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), $this->picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 

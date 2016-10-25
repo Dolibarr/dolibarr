@@ -2340,8 +2340,6 @@ if ($action == 'create')
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		// print '<table width="100%"><tr><td width="50%" valign="top">';
-		// print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -2354,7 +2352,7 @@ if ($action == 'create')
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
@@ -2362,14 +2360,12 @@ if ($action == 'create')
 		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-		// print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid);
 
-		// print '</td></tr></table>';
 		print '</div></div></div>';
 	}
 

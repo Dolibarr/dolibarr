@@ -889,15 +889,17 @@ class Project extends CommonObject
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$moreinpopup	Text to add into popup
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      * 	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ')
+    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result = '';
-        $link = '';
-        $linkend = '';
+        
         $label='';
         if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
         if (! empty($this->ref))
@@ -911,33 +913,44 @@ class Project extends CommonObject
         if (! empty($this->datee))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateEnd') . ': </b>' . dol_print_date($this->datee, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option != 'nolink')
         {
             if (preg_match('/\.php$/',$option)) {
-                $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = dol_buildpath($option,1) . '?id=' . $this->id;
             }
             else if ($option == 'task')
             {
-                $link = '<a href="' . DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id;
             }
             else
             {
-                $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = DOL_URL_ROOT . '/projet/card.php?id=' . $this->id;
             }
+        }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowProject");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
         }
 
         $picto = 'projectpub';
         if (!$this->public) $picto = 'project';
 
-
-        if ($withpicto) $result.=($link . img_object($label, $picto, 'class="classfortooltip"') . $linkend);
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+        
+        if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')) . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 

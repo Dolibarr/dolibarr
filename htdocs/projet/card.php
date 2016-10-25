@@ -494,7 +494,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Thirdparty
     if ($conf->societe->enabled)
     {
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
        	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
@@ -517,8 +517,8 @@ if ($action == 'create' && $user->rights->projet->creer)
 	    print '</td></tr>';
     }
 
-    // Public
-    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    // Visibility
+    print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
     $array=array();
     if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
     if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
@@ -539,13 +539,13 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
 	    // Opportunity status
 	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
-	    print '<td>';
+	    print '<td class="maxwidthonsmartphone">';
 	    print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status')?GETPOST('opp_status'):$object->opp_status);
 	    print '</tr>';
 
 	    // Opportunity probability
 	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"> %';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"><span class="hideonsmartphone"> %</span>';
 	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
 	    print '</td>';
 	    print '</tr>';
@@ -1132,7 +1132,7 @@ else
 
         $var=true;
 
-        $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+        print $formfile->showdocuments('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

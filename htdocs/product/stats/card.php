@@ -124,7 +124,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 		
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
         
 		dol_fiche_end();
 	}

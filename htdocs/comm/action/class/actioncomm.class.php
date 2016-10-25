@@ -1102,13 +1102,17 @@ class ActionComm extends CommonObject
      *		@param	string	$classname			Force style class on a link
      * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
      * 		@param	int		$overwritepicto		1=Overwrite picto
+     *      @param	int   	$notooltip		    1=Disable tooltip
      *		@return	string						Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0)
+    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
     {
-		global $conf,$langs, $hookmanager;
+		global $conf, $langs, $user, $hookmanager;
 
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		
 		$result='';
+		
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1118,27 +1122,43 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $label;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
-		
+
+		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color) 
-			$linkclose = ' style="background-color:#'.$this->type_color.'" class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
-		else
-			$linkclose = ' class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
+			$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
-		if (! is_object($hookmanager))
+		if (empty($notooltip) && $user->rights->propal->lire)
 		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowSupplierProposal");
+		        $linkclose.=' alt="'.dol_escape_htmltag($tooltip, 1).'"';
+		    }
+		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
+		    $linkclose.=' class="'.$classname.' classfortooltip"';
+		    
+		    if (! is_object($hookmanager))
+		    {
+		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		        $hookmanager=new HookManager($this->db);
+		    }
+		    $hookmanager->initHooks(array('actiondao'));
+		    $parameters=array('id'=>$this->id);
+		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
 		}
-		$hookmanager->initHooks(array('actiondao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		$linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
-
+		else $linkclose.=' class="'.$classname.'"';
+		
+		$url='';
 		if ($option=='birthday') 
-			$link = '<a href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'"'.$linkclose;
+			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
 		else 
-			$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'"'.$linkclose;
+			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+		
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
+		
 		//print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
@@ -1161,10 +1181,10 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$link.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$linkend;
+            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'':'class="classfortooltip"')).$linkend;
         }
         if ($withpicto==1) $result.=' ';
-        $result.=$link.$libelleshort.$linkend;
+        $result.=$linkstart.$libelleshort.$linkend;
         return $result;
     }
 

@@ -1828,16 +1828,16 @@ class Societe extends CommonObject
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier', 'project')
      *		@param	int		$maxlen			Max length of name
-     *      @param	integer	$notooltip		1=Disable tooltip
+     *      @param	int  	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
-        global $conf,$langs, $hookmanager;
+        global $conf, $langs, $hookmanager;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $name=$this->name?$this->name:$this->nom;
-
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
@@ -1853,46 +1853,46 @@ class Societe extends CommonObject
 	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
-        $link=''; $linkend='';
+        $linkstart=''; $linkend='';
 
         $label.= '<div width="100%">';
 
         if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
            $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
-           $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+           $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
             $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
             $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'agenda')
         {
             $label.= '<u>' . $langs->trans("ShowAgenda") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
         }
         else if ($option == 'project')
         {
             $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
         }
         else if ($option == 'margin')
         {
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
         }
         
         // By default
-        if (empty($link))
+        if (empty($linkstart))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -1919,7 +1919,8 @@ class Societe extends CommonObject
         $label.= '</div>';
 
         // Add type of canvas
-        $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkstart.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+
         $linkclose='';
         if (empty($notooltip))
         {
@@ -1932,22 +1933,21 @@ class Societe extends CommonObject
             $linkclose.=' class="classfortooltip"';
 
          	if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('societedao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-
+    		{
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+    			$hookmanager=new HookManager($this->db);
+    		}
+    		$hookmanager->initHooks(array('societedao'));
+    		$parameters=array('id'=>$this->id);
+    		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
         }
-        $link.=$linkclose.'>';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+        if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }

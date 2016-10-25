@@ -98,11 +98,12 @@ class Categories extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-     * @return array Array of category objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of category objects
      *
 	 * @throws RestException
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -111,21 +112,24 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
         
-        $sql = "SELECT s.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql = "SELECT t.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('categorie', 1).')';
         if (!empty($type))
         {
-            $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+            $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
         }
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
