@@ -43,8 +43,16 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+	    $result = dol_mkdir($conf->api->dir_temp);
+	    if ($result < 0)
+	    {
+	        setEventMessages($langs->trans("ErrorFaildToCreateDir", $conf->api->dir_temp), null, 'errors');
+	    }
+	    else
+	    {
+    		header("Location: ".$_SERVER["PHP_SELF"]);
+	   	    exit;
+	    }
 	}
 	else
 	{
