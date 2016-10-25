@@ -166,3 +166,9 @@ create table llx_resource_extrafields
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
 INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
+ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
+ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
+

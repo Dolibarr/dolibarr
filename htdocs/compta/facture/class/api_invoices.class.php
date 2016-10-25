@@ -89,11 +89,12 @@ class Invoices extends DolibarrApi
      * @param int		$page		Page number
      * @param int       $socid      Filter list with thirdparty ID
      * @param string	$status		Filter by invoice status : draft | unpaid | paid | cancelled
-     * @return array Array of invoice objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of invoice objects
      *
 	 * @throws RestException
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $status='') {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $status='', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -103,38 +104,38 @@ class Invoices extends DolibarrApi
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
-        $sql = "SELECT s.rowid";
+        $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as t";
         
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE s.entity IN ('.getEntity('facture', 1).')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
-        if ($socid) $sql.= " AND s.fk_soc = ".$socid;
-        if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        
+        $sql.= ' WHERE t.entity IN ('.getEntity('facture', 1).')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
+        if ($socid) $sql.= " AND t.fk_soc = ".$socid;
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         
 		// Filter by status
-        if ($status == 'draft') $sql.= " AND s.fk_statut IN (0)";
-        if ($status == 'unpaid') $sql.= " AND s.fk_statut IN (1)";
-        if ($status == 'paid') $sql.= " AND s.fk_statut IN (2)";
-        if ($status == 'cancelled') $sql.= " AND s.fk_statut IN (3)";
-        
+        if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
+        if ($status == 'unpaid')    $sql.= " AND t.fk_statut IN (1)";
+        if ($status == 'paid')      $sql.= " AND t.fk_statut IN (2)";
+        if ($status == 'cancelled') $sql.= " AND t.fk_statut IN (3)";
         // Insert sale filter
         if ($search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-        
-        // TODO remove this, useless for WS
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)

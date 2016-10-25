@@ -80,11 +80,12 @@ class Subscriptions extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
      * @return array Array of subscription objects
      *
      * @throws RestException
      */
-    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -94,15 +95,19 @@ class Subscriptions extends DolibarrApi
         }
 
         $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."subscription";
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        $sql.= " FROM ".MAIN_DB_PREFIX."subscription as t";
+        $sql.= ' WHERE 1 = 1';
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
