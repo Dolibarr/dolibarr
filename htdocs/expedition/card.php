@@ -1295,7 +1295,7 @@ else if ($id || $ref)
 		$totalVolume=$tmparray['volume'];
 		
 		
-		// Warehouse card
+		// Shipment card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 		
 		$morehtmlref='<div class="refidno">';
@@ -1347,18 +1347,6 @@ else if ($id || $ref)
     	print '<div class="underbanner clearboth"></div>';
     	
 		print '<table class="border" width="100%">';
-
-		// Ref
-		/*
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td></tr>';
-
-		// Customer
-		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-		print "</tr>";*/
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))

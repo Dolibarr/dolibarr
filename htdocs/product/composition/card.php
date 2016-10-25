@@ -205,14 +205,18 @@ if ($id > 0 || ! empty($ref))
 	{
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 	    
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 		
-		print '<table class="noborder tableforfield" width="100%">';
-
+        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
+        {
+    	    print '<div class="underbanner clearboth"></div>';	
+            print '<table class="border tableforfield" width="100%">';
+        }
+        
 		// Nature
-		if($object->type!=Product::TYPE_SERVICE)
+		if ($object->type!=Product::TYPE_SERVICE)
 		{
-			print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
 			print $object->getLibFinished();
 			print '</td></tr>';
 		}
@@ -244,7 +248,10 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
-		print '</table>';
+        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
+        {
+		  print '</table>';
+        }
 
 		dol_fiche_end();
 

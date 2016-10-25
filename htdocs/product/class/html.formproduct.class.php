@@ -105,7 +105,7 @@ class FormProduct
 		
 		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.implode(',', $exclude).')';
 		
-		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description";
+		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
 		$sql.= " ORDER BY e.label";
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);

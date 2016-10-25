@@ -4445,6 +4445,11 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
+	select {
+		width: 100%;
+		max-width: 100px;
+		min-width: 0 !important;
+	}
 	div.divphotoref {
 		padding-right: 5px;	
 	}

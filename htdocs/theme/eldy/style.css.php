@@ -4574,9 +4574,6 @@ img.demothumb {
     	background-size: 20px auto;
     	margin-top: 2px;
 	}
-	select {
-		width: 100%;
-	}
 }
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 8; ?>px)
