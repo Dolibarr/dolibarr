@@ -105,20 +105,17 @@ print '<table class="border" width="100%">';
 if ($id > 0) {
 
   print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-  print '<td colspan="4">';
-  print $form->select_produits($id,'id','',20,0,1,2,'',1);
+  print '<td class="maxwidthonsmartpone" colspan="4">';
+  print $form->select_produits($id,'id','',20,0,1,2,'',1, array(), 0, 'All');
   print '</td></tr>';
-
-  print '<tr><td>'.$langs->trans('AllProducts').'</td>';
-  print '<td colspan="4"><input type="checkbox" id="all" /></td></tr>';
 
   if (! $sortorder) $sortorder="DESC";
   if (! $sortfield) $sortfield="f.datef";
 }
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td colspan="4">';
-	print $form->select_produits('','id','',20,0,1,2,'',1);
+	print '<td class="maxwidthonsmartphone" colspan="4">';
+	print $form->select_produits('','id','',20,0,1,2,'',1, array(), 0, 'All');
 	print '</td></tr>';
 
 }
@@ -338,10 +335,6 @@ $db->free($result);
 print '
 <script type="text/javascript">
 $(document).ready(function() {
-
-  $("#all").change(function() {
-    $("#id").val(\'\').change();
-  });
 
   $("#id").change(function() {
      $("div.fiche form").submit();
