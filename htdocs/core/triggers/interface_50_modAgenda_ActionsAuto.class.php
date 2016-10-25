@@ -872,8 +872,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
             dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);
             return -1;
 		}
-
-		return 0;
     }
 
 }
