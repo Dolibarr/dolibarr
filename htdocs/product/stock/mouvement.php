@@ -646,7 +646,7 @@ if ($resql)
     // Warehouse
     if (! $id > 0) 
     {
-        print '<td class="liste_titre" align="left">';
+        print '<td class="liste_titre maxwidthonsmartphone" align="left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
         print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
         print '</td>';
