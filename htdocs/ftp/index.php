@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\author		Laurent Destailleur
  */
 
 require('../main.inc.php');
@@ -418,7 +417,6 @@ else
 		if ($action == 'delete_section')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-			
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
@@ -646,8 +644,21 @@ else
 	}
 	else
 	{
-	    $s_ftp_server='FTP_SERVER_1';
-	    if (empty($s_ftp_server))
+		$foundsetup=false;
+		$MAXFTP=20;
+		$i=1;
+		while ($i <= $MAXFTP)
+		{
+			$paramkey='FTP_NAME_'.$i;
+			//print $paramkey;
+			if (! empty($conf->global->$paramkey))
+			{
+				$foundsetup=true;
+				break;
+			}
+			$i++;
+		}		
+	    if (! $foundsetup)
 	    {
             print $langs->trans("SetupOfFTPClientModuleNotComplete");
 	    }
