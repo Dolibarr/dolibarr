@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
@@ -71,7 +71,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
+print '<td align="center">'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
