@@ -501,7 +501,9 @@ class MultiCurrency extends CommonObject
 	 */
 	 public static function getIdFromCode(&$db, $code)
 	 {
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\'';
+	 	global $conf;
+		
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
 	 	
 	 	dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);
