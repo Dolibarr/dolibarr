@@ -2030,24 +2030,6 @@ else
 
     	print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td class="titlefield nowrap">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-        print '</td>';
-        print "</tr>\n";
-
-        // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer));
-        print '</td></tr>';
-
-        // Third party
-        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1,'supplier');
-        print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
-        print '</tr>';
-		*/
-
         // Type
         print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
         print $object->getLibType();

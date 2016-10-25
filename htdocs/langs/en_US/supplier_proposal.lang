@@ -50,5 +50,5 @@ ListOfSupplierProposal=List of supplier proposal requests
 ListSupplierProposalsAssociatedProject=List of supplier proposals associated with project
 SupplierProposalsToClose=Supplier proposals to close
 SupplierProposalsToProcess=Supplier proposals to process
-LastSupplierProposals=Last price requests
+LastSupplierProposals=Latest %s price requests
 AllPriceRequests=All requests

@@ -510,7 +510,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print '<td width="100">'.$langs->trans("Date").'</td>';
+			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
 			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
@@ -520,20 +520,20 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<tr '.$bc[false].'>';
 
 			// Date
-			print '<td class="nowrap">';
+			print '<td class="maxwidthonsmartphone">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate,'time',1,1,2,"timespent_date",1,0,1);
+			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
 			print '</td>';
 
 			// Contributor
-			print '<td class="nowrap">';
+			print '<td class="maxwidthonsmartphone">';
 			print img_object('','user','class="hideonsmartphone"');
 			$contactsoftask=$object->getListContactId('internal');
 			if (count($contactsoftask)>0)
 			{
 				$userid=$contactsoftask[0];
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"));
+				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"), 'maxwidth200');
 			}
 			else
 			{
@@ -542,8 +542,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Note
-			print '<td class="nowrap">';
-			print '<textarea name="timespent_note" width="95%" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '<td>';
+			print '<textarea name="timespent_note" class="maxwidth100onsmartphone" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
 			// Progress declared
@@ -582,7 +582,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.task_date']=array('label'=>$langs->trans("Date"), 'checked'=>1);
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
 	    {
-    	    $arrayfields['t.task_ref']=array('label'=>$langs->trans("Task"), 'checked'=>1);
+    	    $arrayfields['t.task_ref']=array('label'=>$langs->trans("RefTask"), 'checked'=>1);
+    	    $arrayfields['t.task_label']=array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
 	    }
 	    $arrayfields['author']=array('label'=>$langs->trans("By"), 'checked'=>1);
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
@@ -710,6 +711,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$params,'',$sortfield,$sortorder);            
+            if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$params,'',$sortfield,$sortorder);            
         }
         if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$params,'',$sortfield,$sortorder);
 		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$params,'',$sortfield,$sortorder);
@@ -742,9 +744,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print '<td class="liste_titre"></td>';
+            if (! empty($arrayfields['t.task_label']['checked'])) print '<td class="liste_titre"></td>';
         }
         if (! empty($arrayfields['author']['checked'])) print '<td class="liste_titre"></td>';
-		if (! empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_note" value="'.$search_note.'" size="10"></td>';
+		if (! empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_note" value="'.$search_note.'"></td>';
 		if (! empty($arrayfields['t.task_duration']['checked'])) print '<td class="liste_titre right"></td>';
 		if (! empty($arrayfields['value']['checked'])) print '<td class="liste_titre"></td>';
 		// Extra fields
@@ -812,7 +815,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			if (! $i) $totalarray['nbfield']++;
 			}
 
-			// Task
+			// Task ref
             if (! empty($arrayfields['t.task_ref']['checked']))
             {
         		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
@@ -827,7 +830,19 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			}
             }
             
-			// User
+			// Task label
+            if (! empty($arrayfields['t.task_label']['checked']))
+            {
+        		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
+    			{
+        			print '<td class="nowrap">';
+        			print $task_time->label;	
+        			print '</td>';
+        			if (! $i) $totalarray['nbfield']++;
+    			}
+            }
+            
+            // User
             if (! empty($arrayfields['author']['checked'])) 
             {
                 print '<td>';

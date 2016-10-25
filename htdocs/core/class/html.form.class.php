@@ -1615,9 +1615,11 @@ class Form
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+     *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+     * 	@param		int			$forcecombo				Force to use combo box
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0)
     {
         global $langs,$conf;
 
@@ -1650,14 +1652,14 @@ class Form
             		print img_picto($langs->trans("Search"), 'search');
             	}
             }
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+            print '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
             if ($hidelabel == 3) {
             	print img_picto($langs->trans("Search"), 'search');
             }
         }
         else
 		{
-            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid);
+            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo);
         }
     }
 
@@ -1674,9 +1676,11 @@ class Form
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
      *  @param      int		$socid     		Thirdparty Id (to get also price dedicated to this customer)
+     *  @param		string	$showempty		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+     * 	@param		int		$forcecombo		Force to use combo box
      *  @return     array    				Array of keys for json
      */
-    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
+    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0)
     {
         global $langs,$conf,$user,$db;
 
@@ -1767,8 +1771,27 @@ class Form
             require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
             $num = $this->db->num_rows($result);
 
-            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-            $out.='<option value="0" selected>&nbsp;</option>';
+            $events=null;
+            
+            if ($conf->use_javascript_ajax && ! $forcecombo)
+            {
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            	$out.= $comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            }
+            
+            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'"'.$nodatarole.'>';
+            
+            $textifempty='';
+            // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+            //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+            if (! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
+            {
+                if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
+                else $textifempty.=$langs->trans("All");
+            }
+            if ($showempty) $out.='<option value="0" selected>'.$textifempty.'</option>';
 
             $i = 0;
             while ($num && $i < $num)
@@ -3274,7 +3297,7 @@ class Form
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
      * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
-     *     @param	int			$width				Force width of bow
+     *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
      */
     function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=200, $width=500)
@@ -3289,7 +3312,8 @@ class Form
 
         // Clean parameters
         $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
-
+        if ($conf->browser->layout == 'phone') $width='95%';
+        
         if (is_array($formquestion) && ! empty($formquestion))
         {
         	// First add hidden fields and value
@@ -4517,7 +4541,7 @@ class Form
             }
         }
 
-        if ($d && $h) $retstring.='&nbsp;';
+        if ($d && $h) $retstring.=($h==2?'<br>':' ');
 
         if ($h)
         {
@@ -4684,7 +4708,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="2" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
+        	$retstring.='<input type="text" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
@@ -4707,7 +4731,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="2" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
+        	$retstring.='<input type="text" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
         }
         $retstring.=' '.$langs->trans('MinuteShort');
         $retstring.="&nbsp;";
@@ -5523,7 +5547,11 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
 
-		if ($morehtmlleft) $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		if ($morehtmlleft) 
+		{
+		    if ($conf->browser->layout == 'phone') $ret.='<div class="center">'.$morehtmlleft.'</div>';
+		    else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		}
 
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
@@ -5727,7 +5755,10 @@ class Form
                 }
                 else
 				{
-                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+				    if ($conf->browser->layout != 'phone')
+				    {
+                        $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+				    }
                 }
             }
 

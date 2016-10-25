@@ -562,9 +562,9 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 		    }
 		    
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
-
+    		print '<div class="fichecenter"><div class="fichehalfleft">';
+    		print '<a name="builddoc"></a>'; // ancre
+    		
 			/*
 			 * Documents generes
 			 */
@@ -576,9 +576,11 @@ if ($id > 0 || ! empty($ref))
 
 			$var=true;
 
-			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-			print '</td></tr></table>';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+				
+			print '</div></div></div>';
 		}
 	}
 }

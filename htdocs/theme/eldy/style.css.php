@@ -4574,9 +4574,6 @@ img.demothumb {
     	background-size: 20px auto;
     	margin-top: 2px;
 	}
-	select {
-		width: 100%;
-	}
 }
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 8; ?>px)
@@ -4637,6 +4634,19 @@ img.demothumb {
 		max-width: 100px;
 		min-width: 0 !important;
 	}
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }
 	
 }
 
