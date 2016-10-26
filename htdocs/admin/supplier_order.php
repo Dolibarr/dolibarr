@@ -505,6 +505,7 @@ $var=false;
 //}
 
 // Ask for payment bank during supplier order
+/* Kept as hidden for the moment
 if ($conf->banque->enabled)
 {
     $var=!$var;
@@ -533,6 +534,7 @@ else
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
+*/
 
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
