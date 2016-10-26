@@ -49,6 +49,7 @@ AccountAccountingSuggest=Accounting account suggest
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
 MenuTaxAccounts=Tax accounts
+MenuExpenseReportAccounts=Expense report accounts
 MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
