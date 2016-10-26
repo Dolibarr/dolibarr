@@ -291,7 +291,7 @@ class FormFile
         }
         
         $printer=0;
-        if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -477,6 +477,15 @@ class FormFile
                 {
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/action/modules_action.php';
                     $modellist=ModeleAction::liste_modeles($this->db);
+                }
+            }
+            else if ($modulepart == 'expensereport')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
+                    $modellist=ModeleExpenseReport::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'unpaid')
@@ -1170,6 +1179,11 @@ class FormFile
         	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
         	$object_instance=new User($this->db);
         }
+        else if ($modulepart == 'expensereport')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+        	$object_instance=new ExpenseReport($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -1200,6 +1214,7 @@ class FormFile
                 if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
                 if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
                 if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'expensereport')    { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
                 $found=0;

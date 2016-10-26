@@ -32,6 +32,7 @@ ECMDocsByProducts=Documents linked to products
 ECMDocsByProjects=Documents linked to projects
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=No directory created
 ShowECMSection=Show directory
 DeleteSection=Remove directory
