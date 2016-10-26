@@ -22,7 +22,7 @@ WARNING:
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
 - Function delete of class Facture (invoice) need the object $user as first parameter. Also you must
-check you make a fetch on object before calling the delete.
+  check you make a fetch on object before calling the delete.
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
 - Remove not used function calculate_byte(). Use dol_print_size() instead.
 - Function pdf_getTotalQty is now deprecated. Not used by Dolibarr core.
@@ -36,7 +36,8 @@ check you make a fetch on object before calling the delete.
   So there is no reason to maintain its compatibility with other dolibarr components. If an external module need this 
   library, this external module must embed hte library in his own sources/packages.
 - Trigger name SUPPLIER_PROPOSAL_CREATE has been renamed into PROPOSAL_SUPPLIER_CREATE
-
+- A new paramater sqlfilters was introduced to allow filter on any fields int the REST API. Few old parameters
+  no more required were also removed. Use this new one if you ware using one of them.
 
 
 ***** ChangeLog for 4.0.1 compared to 4.0.0 *****
