@@ -138,6 +138,35 @@ if (empty($reshook))
 		else
 		{
 			if ($object->id > 0) {
+				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
+					//Get difference between old and new delivery date and change lines according to difference
+					$date_delivery = dol_mktime(12, 0, 0,
+						GETPOST('date_deliverymonth', 'int'),
+						GETPOST('date_deliveryday', 'int'),
+						GETPOST('date_deliveryyear', 'int')
+					);
+					if (!empty($object->date_livraison) && !empty($date_delivery))
+					{
+						//Attempt to get the date without possible hour rounding errors
+						$old_date_delivery = dol_mktime(12, 0, 0,
+							dol_print_date($object->date_livraison, '%m'),
+							dol_print_date($object->date_livraison, '%d'),
+							dol_print_date($object->date_livraison, '%Y')
+						);
+						//Calculate the difference and apply if necessary
+						$difference = $date_delivery - $old_date_delivery;
+						if ($difference != 0)
+						{
+							$object->date_livraison = $date_delivery;
+							foreach ($object->lines as $line)
+							{
+								if (isset($line->date_start)) $line->date_start = $line->date_start + $difference;
+								if (isset($line->date_end)) $line->date_end = $line->date_end + $difference;
+							}
+						}
+					}
+				}
+
 				$result = $object->createFromClone($socid);
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
@@ -1610,6 +1639,9 @@ if ($action == 'create')
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' =>
 							// 1),
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
+			$formquestion[] = array('type' => 'date','name' => 'date_delivery','label' => $langs->trans("DeliveryDate"),'value' => $object->date_livraison);
+		}
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
