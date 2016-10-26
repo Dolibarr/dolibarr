@@ -65,18 +65,6 @@ function product_prepare_head($object)
     		$h++;
     	}
 	}
-	
-	// Show category tab
-	/* No more required. Replaced with new multiselect component
-	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$type = Categorie::TYPE_PRODUCT;
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}*/
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
@@ -123,12 +111,18 @@ function product_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
-    /* Merged into the Join files tab
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
-	$h++;
-	*/
+    // Notes
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+        $nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+        if(!empty($object->note_public)) $nbNote++;
+        $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$h][2] = 'note';
+        $h++;
+    }
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -158,6 +152,47 @@ function product_prepare_head($object)
 
 	return $head;
 }
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   ProductLot	$object		Object related to tabs
+ * @return  array		     		Array of tabs to show
+ */
+function productlot_prepare_head($object)
+{
+    global $db, $langs, $conf, $user;
+    $langs->load("products");
+    $langs->load("productbatch");
+    
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_card.php?id=".$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot');
+
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot', 'remove');
+
+    // Log
+    /*
+    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
+    */
+    
+    return $head;
+}
+
+
 
 /**
 *  Return array head with list of tabs to view object informations.
@@ -201,6 +236,37 @@ function product_admin_prepare_head()
 
 	return $head;
 }
+
+
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function product_lot_admin_prepare_head()
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin');
+
+    $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin','remove');
+
+    return $head;
+}
+
 
 
 /**

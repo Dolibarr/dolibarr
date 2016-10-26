@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
@@ -27,6 +27,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -42,8 +43,16 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+	    $result = dol_mkdir($conf->api->dir_temp);
+	    if ($result < 0)
+	    {
+	        setEventMessages($langs->trans("ErrorFaildToCreateDir", $conf->api->dir_temp), null, 'errors');
+	    }
+	    else
+	    {
+    		header("Location: ".$_SERVER["PHP_SELF"]);
+	   	    exit;
+	    }
 	}
 	else
 	{
@@ -70,7 +79,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
+print '<td align="center">'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -95,11 +104,31 @@ print '</tr>';
 print '</table>';
 print '<br><br>';
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// Show message
+$message='';
+$url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
+$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message.=img_picto('','object_globe.png').' '.$url;
+print $message;
+print '<br>';
+print '<br>';
+
 // Explorer
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/admin/explorer.php';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-
+if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
+{
+    $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+else
+{
+    print $langs->trans("NotAvailableWithThisDistribution");
+}
 
 llxFooter();
 $db->close();

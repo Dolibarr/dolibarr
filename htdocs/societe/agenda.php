@@ -34,6 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("companies");
 
+if (GETPOST('actioncode','array'))
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
+
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,6 +61,13 @@ $hookmanager->initHooks(array('agendathirdparty'));
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+    $search_agenda_label='';
+}
 
 
 
@@ -81,7 +99,9 @@ if ($socid)
 
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
     print '<div class="fichecenter">';
     
@@ -113,10 +133,11 @@ if ($socid)
 
 	print '</table>';
 
-
-	print '<br>';
+	//print '<br>';
  
-	$object->info($socid);
+    //print '<div class="underbanner clearboth"></div>';
+
+    $object->info($socid);
 	print dol_print_object_info($object, 1);
 	
 	print '</div>';
@@ -125,10 +146,8 @@ if ($socid)
 
 
 	
-	/*
-     * Barre d'action
-     */
-
+	// Actions buttons
+	
     $objthirdparty=$object;
     $objcon=new stdClass();
 	
@@ -144,6 +163,7 @@ if ($socid)
     	//$out.="</a>";
 	}
 
+	
 	print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
@@ -162,15 +182,18 @@ if ($socid)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        print '<br>';
-    
-        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-    
+		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+		
         // List of todo actions
-        show_actions_todo($conf,$langs,$db,$object,null,0,1);
-    
+        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+
         // List of done actions
-        show_actions_done($conf,$langs,$db,$object);
+        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+     
+        // List of all actions
+		$filters=array();
+        $filters['search_agenda_label']=$search_agenda_label;
+		show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
     }
 }
 

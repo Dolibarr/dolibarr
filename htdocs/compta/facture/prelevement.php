@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -106,7 +106,9 @@ if ($action == "delete")
 
 $now=dol_now();
 
-llxHeader('', $langs->trans("Bill"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('StandingOrders');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -155,7 +157,7 @@ if ($object->id > 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="5">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	$morehtmlref='';
 	$discount=new DiscountAbsolute($db);
 	$result=$discount->fetch(0,$object->id);
@@ -171,24 +173,24 @@ if ($object->id > 0)
 	print "</td></tr>";
 
 	// Ref customer
-	print '<tr><td width="20%">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefCustomer');
 	print '</td>';
 	print '</tr></table>';
 	print '</td>';
-	print '<td colspan="5">';
+	print '<td colspan="3">';
 	print $object->ref_client;
 	print '</td></tr>';
 
 	// Third party
 	print '<tr><td>'.$langs->trans('Company').'</td>';
-	print '<td colspan="5">'.$object->thirdparty->getNomUrl(1,'compta');
+	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'compta');
 	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
 	print '</tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="3">';
 	print $object->getLibType();
 	if ($object->type == Facture::TYPE_REPLACEMENT)
 	{
@@ -229,7 +231,7 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Discounts
-	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
@@ -290,7 +292,7 @@ if ($object->id > 0)
 	// Date invoice
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
+	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 	print '</tr></table>';
@@ -443,7 +445,7 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans('Status').'</td>';
 	print '<td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
 	print $object->thirdparty->display_rib();
 	print '</td></tr>';
 
@@ -483,26 +485,33 @@ if ($object->id > 0)
 	// Add a withdraw request
 	if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 	{
-		if ($user->rights->prelevement->bons->creer)
-		{
-			print '<form method="POST" action="">';
-			print '<input type="hidden" name="id" value="' . $object->id . '" />';
-			print '<input type="hidden" name="action" value="new" />';
-			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
-			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
-			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
-			print '</form>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
-		}
+	    if ($resteapayer > 0)
+	    {
+    		if ($user->rights->prelevement->bons->creer)
+    		{
+    			print '<form method="POST" action="">';
+    			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+    			print '<input type="hidden" name="action" value="new" />';
+    			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+    			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
+    			print '</form>';
+    		}
+    		else
+    		{
+    			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+    		}
+	    }
+	    else
+        {
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+        }
 	}
 	else
 	{
 		if ($num == 0)
 		{
-			if ($object->statut > Facture::STATUS_DRAFT) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			if ($object->statut > Facture::STATUS_DRAFT) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 			else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';

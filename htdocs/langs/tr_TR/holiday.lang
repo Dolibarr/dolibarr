@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Değiştirilen son %s izin isteği
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
 HolidaysCancelation=İzin isteği iptali
+EmployeeLastname=Çalışanın soyadı
+EmployeeFirstname=Çalışanın adı
 
 ## Configuration du Module ##
 LastUpdateCP=İzin tahsislerinin son otomatik güncellenmesi

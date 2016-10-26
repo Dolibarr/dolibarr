@@ -147,10 +147,10 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
     {
       global $conf,$user,$langs,$db;
 
-      $url = $this->api_url.'/user/123456789?api_key='.$this->api_key;
+      $url = $this->api_url.'/users/123456789?api_key='.$this->api_key;
       //$addheaders=array('Content-Type: application/json');
       
-      print __METHOD__." Request url=".$url."\n";
+      print __METHOD__." Request GET url=".$url."\n";
       $result=getURLContent($url, 'GET', '', 1, array());
       //print __METHOD__." Result for unexisting user: ".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
@@ -159,9 +159,9 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertNotNull($object, "Parsing of json result must no be null");
       $this->assertEquals(404, $object['error']['code']);
       
-      $url = $this->api_url.'/user/1?api_key='.$this->api_key;
+      $url = $this->api_url.'/users/1?api_key='.$this->api_key;
 
-      print __METHOD__." Request url=".$url."\n";
+      print __METHOD__." Request GET url=".$url."\n";
       $result=getURLContent($url, 'GET', '', 1, array());
       //print __METHOD__." Result for existing user user: ".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
@@ -174,7 +174,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
     public function testRestCreateUser() {
       
       // attemp to create without mandatory fields :
-      $url = $this->api_url.'/user?api_key='.$this->api_key;
+      $url = $this->api_url.'/users?api_key='.$this->api_key;
       $addheaders=array('Content-Type: application/json');
       
       $bodyobj = array(
@@ -184,7 +184,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       );
       $body = json_encode($bodyobj);
       
-      print __METHOD__." Request url=".$url."\n";
+      print __METHOD__." Request POST url=".$url."\n";
       $result=getURLContent($url, 'POST', $body, 1, $addheaders);
       //print __METHOD__." Result for creating incomplete user".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
@@ -202,7 +202,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
         "email"=>"test@restuser.com"
       );
       $body = json_encode($bodyobj);
-      print __METHOD__." Request url=".$url."\n";
+      print __METHOD__." Request POST url=".$url."\n";
       $result=getURLContent($url, 'POST', $body, 1, $addheaders);
       print __METHOD__." Result code for creating user ".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
@@ -212,7 +212,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertGreaterThan(0, $object['id'], $object['error']['code'].' '.$object['error']['message']);
       
       // attempt to create duplicated user
-      print __METHOD__." Request url=".$url."\n";
+      print __METHOD__." Request POST url=".$url."\n";
       $result=getURLContent($url, 'POST', $body, 1, $addheaders);
       //print __METHOD__." Result for creating duplicate user".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";

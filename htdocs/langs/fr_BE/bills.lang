@@ -2,7 +2,6 @@
 BillsCustomer=Facture clients
 BillsCustomersUnpaidForCompany=Facture clients impayées pour %s
 BillsLate=Paiements en retard
-DisabledBecauseNotErasable=Désactivé pour impossibilité de supprimer
 InvoiceStandardDesc=Ce type de facture est le type commun.
 InvoiceDeposit=Facture d'accompte
 InvoiceDepositAsk=Facture d'accompte

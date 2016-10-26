@@ -13,7 +13,6 @@ Permission25=Enviar las cotizaciones
 Permission26=Cerrar cotizaciones
 Permission27=Eliminar cotizaciones
 Permission28=Exportar las cotizaciones
-VATIsUsedDesc=El tipo de IVA propuesto por defecto en las creaciones de cotizaciones, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVA, IVA por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones a cerrar
 Delays_MAIN_DELAY_PROPALS_TO_BILL=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones no facturadas
 PropalSetup=Configuración del módulo Cotizaciones

@@ -78,7 +78,9 @@ create table llx_user
   nb_holiday		integer DEFAULT 0,
   thm				double(24,8),
   tjm				double(24,8),
-  salary			double(24,8),
-  salaryextra		double(24,8),
-  weeklyhours		double(16,8)
+
+  salary			double(24,8),			-- denormalized value coming from llx_user_employment
+  salaryextra		double(24,8),			-- denormalized value coming from llx_user_employment
+  dateemployment	date,					-- denormalized value coming from llx_user_employment
+  weeklyhours		double(16,8)			-- denormalized value coming from llx_user_employment
 )ENGINE=innodb;

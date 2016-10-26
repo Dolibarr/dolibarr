@@ -5,8 +5,8 @@
  * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
@@ -43,13 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class Categorie extends CommonObject
 {
 	// Categories types
-	const TYPE_PRODUCT = 0;
-	const TYPE_SUPPLIER = 1;
-	const TYPE_CUSTOMER = 2;
-	const TYPE_MEMBER = 3;
-	const TYPE_CONTACT = 4;
-	const TYPE_USER = 4;    // categorie contact and user are same !
-    const TYPE_ACCOUNT = 5; // bank account
+	const TYPE_PRODUCT = 0;    // TODO Replace with value 'product'
+	const TYPE_SUPPLIER = 1;   // TODO Replace this value with 'supplier'
+	const TYPE_CUSTOMER = 2;   // TODO Replace this value with 'customer'
+	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
+	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
+	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
+    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
+    const TYPE_PROJECT = 6;
 
 	/**
 	 * @var array ID mapping from type string
@@ -63,7 +64,8 @@ class Categorie extends CommonObject
 		'member'   => 3,
 		'contact'  => 4,
 		'user'     => 4,
-        'account' => 5,
+        'account'  => 5,
+        'project'  => 6,
 	);
 	/**
 	 * @var array Foreign keys mapping from type string
@@ -78,6 +80,7 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'user'  => 'user',
         'account' => 'account',
+        'project' => 'project',
 	);
 	/**
 	 * @var array Category tables mapping from type string
@@ -92,6 +95,7 @@ class Categorie extends CommonObject
 		'contact'  => 'contact',
 		'user'  => 'user',
         'account' => 'account',
+        'project' => 'project',
 	);
 	/**
 	 * @var array Object class mapping from type string
@@ -106,6 +110,7 @@ class Categorie extends CommonObject
 		'contact'  => 'Contact',
 		'user'     => 'User',
         'account' => 'Account',
+        'project' => 'Project',
 	);
 	/**
 	 * @var array Object table mapping from type string
@@ -120,6 +125,7 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'user'     => 'user',
         'account' => 'bank_account',
+        'project' => 'projet',
 	);
 
 	public $element='category';
@@ -146,10 +152,11 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
 	 * @see Categorie::TYPE_ACCOUNT
+	 * @see Categorie::TYPE_PROJECT
 	 */
 	var $type;
 
-	var $cats=array();			// Tableau en memoire des categories
+	var $cats=array();			// Categories table in memory
 	var $motherof=array();
 
 	/**
@@ -232,9 +239,9 @@ class Categorie extends CommonObject
 	 * 	Add category into database
 	 *
 	 * 	@param	User	$user		Object user
-	 * 	@return	int 				-1 : erreur SQL
-	 *          					-2 : nouvel ID inconnu
-	 *          					-3 : categorie invalide
+	 * 	@return	int 				-1 : SQL error
+	 *          					-2 : new ID unknown
+	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
 	function create($user)
@@ -304,7 +311,7 @@ class Categorie extends CommonObject
 				$action='create';
 
 				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
+				// TODO the hook duplicates the trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -398,7 +405,7 @@ class Categorie extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
+			// TODO the hook duplicates the trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -451,7 +458,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		/* FIX #1317 : Check for child cat and move up 1 level*/
+		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
@@ -514,6 +521,18 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_project";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
@@ -618,17 +637,19 @@ class Categorie extends CommonObject
 				{
 					if ($this->db->num_rows($resql) > 0)
 					{
-						$objparent = $this->db->fetch_object($resql);
+                        $objparent = $this->db->fetch_object($resql);
 
 						if (!empty($objparent->fk_parent))
 						{
 							$cat = new Categorie($this->db);
-							$cat->id=$objparent->fk_parent;
-							$result=$cat->add_type($obj, $type);
-							if ($result < 0)
-							{
-								$this->error=$cat->error;
-								$error++;
+							$cat->id = $objparent->fk_parent;
+							if (!$cat->containsObject($type, $obj->id)) {
+								$result = $cat->add_type($obj, $type);
+								if ($result < 0)
+								{
+									$this->error = $cat->error;
+									$error++;
+								}
 							}
 						}
 					}
@@ -867,8 +888,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Reconstruit l'arborescence des categories sous la forme d'un tableau
-	 * Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
+	 * Rebuilding the category tree as an array
+	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
 	 *                id = id de la categorie
 	 *                id_mere = id de la categorie mere
 	 *                id_children = tableau des id enfant
@@ -1008,13 +1029,13 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Affiche contenu de $this->cats
+	 *	Display content of $this->cats
 	 *
 	 *	@return	void
 	 */
 	function debug_cats()
 	{
-		// Affiche $this->cats
+		// Display $this->cats
 		foreach($this->cats as $key => $val)
 		{
 			print 'id: '.$this->cats[$key]['id'];
@@ -1029,11 +1050,11 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * 	Retourne toutes les categories
+	 * 	Returns all categories
 	 *
 	 *	@param	int			$type		Type of category
 	 *	@param	boolean		$parent		Just parent categories if true
-	 *	@return	array					Tableau d'objet Categorie
+	 *	@return	array					Table of Object Category
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
@@ -1064,9 +1085,9 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Retourne le nombre total de categories
+	 * 	Returns total number of categories
 	 *
-	 *	@return		int		Nombre de categories
+	 *	@return		int		Number of categories
 	 *	@deprecated function not used ?
 	 */
 	function get_nb_categories()
@@ -1133,7 +1154,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Retourne les categories de premier niveau (qui ne sont pas filles)
+	 *	Returns the top level categories (which are not girls)
 	 *
 	 *	@param		int		$type		Type of category
 	 *	@return		array
@@ -1144,8 +1165,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Retourne les chemin de la categorie, avec les noms des categories
-	 * separes par $sep (" >> " par defaut)
+	 * Returns the path of the category, with the names of the categories
+	 * separated by $sep (" >> " by default)
 	 *
 	 * @param	string	$sep	     Separator
 	 * @param	string	$url	     Url
@@ -1183,7 +1204,7 @@ class Categorie extends CommonObject
     			        }
     			    }
 			    }
-			    
+
 				if ($url == '')
 				{
 			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color .'">';
@@ -1196,7 +1217,7 @@ class Categorie extends CommonObject
 				}
 			}
 			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));
-			
+
 			$ways[] = $newcategwithpath;
 		}
 
@@ -1205,7 +1226,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 *	Retourne un tableau contenant la liste des categories meres
+	 *	Returns an array containing the list of parent categories
 	 *
 	 *	@return	int|array <0 KO, array OK
 	 */
@@ -1239,8 +1260,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Retourne dans un tableau tous les chemins possibles pour arriver a la categorie
-	 * 	en partant des categories principales, representes par des tableaux de categories
+	 * 	Returns in a table all possible paths to get to the category
+	 * 	starting with the major categories represented by Tables of categories
 	 *
 	 *	@return	array
 	 */
@@ -1324,8 +1345,8 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * 	Retourne les categories dont l'id ou le nom correspond
-	 * 	ajoute des wildcards au nom sauf si $exact = true
+	 * 	Returns categories whose id or name match
+	 * 	add wildcards in the name unless $exact = true
 	 *
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name
@@ -1415,7 +1436,7 @@ class Categorie extends CommonObject
     		$b = hexdec($hex[4].$hex[5]);
     		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
     		if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
-		}		
+		}
 
         $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
 		$linkend='</a>';

@@ -42,7 +42,7 @@ class PaymentTerm // extends CommonObject
 	var $active;
 	var $libelle;
 	var $libelle_facture;
-	var $fdm;
+	var $type_cdr;
 	var $nbjour;
 	var $decalage;
 
@@ -80,7 +80,7 @@ class PaymentTerm // extends CommonObject
 		if (isset($this->active)) $this->active=trim($this->active);
 		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
 		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
-		if (isset($this->fdm)) $this->fdm=trim($this->fdm);
+		if (isset($this->type_cdr)) $this->type_cdr=trim($this->type_cdr);
 		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
 		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
 
@@ -98,7 +98,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= "active,";
 		$sql.= "libelle,";
 		$sql.= "libelle_facture,";
-		$sql.= "fdm,";
+		$sql.= "type_cdr,";
 		$sql.= "nbjour,";
 		$sql.= "decalage";
 
@@ -111,7 +111,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
 		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
 		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".$this->db->escape($this->libelle_facture)."'").",";
-		$sql.= " ".(! isset($this->fdm)?'NULL':"'".$this->fdm."'").",";
+		$sql.= " ".(! isset($this->type_cdr)?'NULL':"'".$this->type_cdr."'").",";
 		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->nbjour."'").",";
 		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->decalage."'")."";
 
@@ -178,7 +178,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.active,";
 		$sql.= " t.libelle,";
 		$sql.= " t.libelle_facture,";
-		$sql.= " t.fdm,";
+		$sql.= " t.type_cdr,";
 		$sql.= " t.nbjour,";
 		$sql.= " t.decalage";
 
@@ -201,7 +201,7 @@ class PaymentTerm // extends CommonObject
 				$this->active = $obj->active;
 				$this->libelle = $obj->libelle;
 				$this->libelle_facture = $obj->libelle_facture;
-				$this->fdm = $obj->fdm;
+				$this->type_cdr = $obj->type_cdr;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
 
@@ -274,7 +274,7 @@ class PaymentTerm // extends CommonObject
 		if (isset($this->active)) $this->active=trim($this->active);
 		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
 		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
-		if (isset($this->fdm)) $this->fdm=trim($this->fdm);
+		if (isset($this->type_cdr)) $this->type_cdr=trim($this->type_cdr);
 		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
 		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
 
@@ -291,7 +291,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
 		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
 		$sql.= " libelle_facture=".(isset($this->libelle_facture)?"'".$this->db->escape($this->libelle_facture)."'":"null").",";
-		$sql.= " fdm=".(isset($this->fdm)?$this->fdm:"null").",";
+		$sql.= " type_cdr=".(isset($this->type_cdr)?$this->type_cdr:"null").",";
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
 
@@ -471,7 +471,7 @@ class PaymentTerm // extends CommonObject
 		$this->active='';
 		$this->libelle='';
 		$this->libelle_facture='';
-		$this->fdm='';
+		$this->type_cdr='';
 		$this->nbjour='';
 		$this->decalage='';
 	}

@@ -319,7 +319,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, fk_mode_reglement, fk_account';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -334,7 +334,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
-
+            
             print load_fiche_titre($langs->trans('DoPayment'));
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -349,21 +349,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             
             print '<table class="border" width="100%">';
 
-            print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
+            print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
             $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
-            print '</td>';
-            print '<td>'.$langs->trans('Comments').'</td></tr>';
+            print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');
             print '</td>';
-            print '<td rowspan="3" valign="top">';
-            print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
-            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
@@ -372,8 +368,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             else
             {
-                print '<tr><td colspan="2">&nbsp;</td></tr>';
+                print '<tr><td>&nbsp;</td></tr>';
             }
+            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
+            print '<tr><td>'.$langs->trans('Comments').'</td>';
+            print '<td valign="top">';
+            print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '</table>';
             dol_fiche_end();
 
@@ -386,15 +386,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df';
-	            $sql.= ', SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -404,7 +404,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $i = 0;
 	                    print '<br>';
 
-						if(!empty($conf->global->INVOICE_AUTO_FILLJS)){
+	                    if (!empty($conf->use_javascript_ajax)){
 							//Add js for AutoFill
 							print "\n".'<script type="text/javascript" language="javascript">';
 							print ' $(document).ready(function () {';
@@ -419,13 +419,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
-	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	                    if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
-	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
-	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyRemainderToPay').'</td>';
-	                    print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
+	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
+	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+						print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 	                    print '</tr>';
 
@@ -438,12 +439,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $objp = $db->fetch_object($resql);
 	                        $var=!$var;
 	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        // Ref
 	                        print '<td>';
 	                        $invoicesupplierstatic->ref=$objp->ref;
 	                        $invoicesupplierstatic->id=$objp->facid;
 	                        print $invoicesupplierstatic->getNomUrl(1);
 	                        print '</td>';
+	                        
+	                        // Ref supplier
 	                        print '<td>'.$objp->ref_supplier.'</td>';
+	                        
+	                        // Date
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
@@ -453,24 +460,44 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
+	                        
+	                        // Multicurrency
+	                        if (!empty($conf->multicurrency->enabled)) 
+	                        {
+    	                        // Currency
+	                            print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+	                        
+	                            print '<td align="right">';
+	                            if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
+	                            {
+	                                print price($objp->multicurrency_total_ttc);
+	                            }
+	                            print '</td>';
+
+							    print '<td align="right">';
+							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) 
+						        {         
+						            print price($objp->multicurrency_am);
+							    }
+							    print '</td>';
+							    
+							    print '<td align="right">';
+							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) 
+						        {
+						            print price($objp->multicurrency_total_ttc - $objp->multicurrency_am);
+							    }
+							    print '</td>';
+	                        }
+
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_total_ttc).'</td>';
-	                        
 	                        print '<td align="right">'.price($objp->am).'</td>';
 							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_am).'</td>';
-	                        
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
-							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_total_ttc - $objp->multicurrency_am).'</td>';
 							
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
-							if(!empty($conf->global->INVOICE_AUTO_FILLJS))
+	                        if (!empty($conf->use_javascript_ajax))
 								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print "</td>";
@@ -479,10 +506,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if (!empty($conf->multicurrency->enabled)) 
 							{
 								print '<td align="center">';
-			                    $namef = 'multicurrency_amount_'.$objp->facid;
-								if(!empty($conf->global->INVOICE_AUTO_FILLJS))
-									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
-		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
+								{
+    			                    $namef = 'multicurrency_amount_'.$objp->facid;
+    			                    if (!empty($conf->use_javascript_ajax))
+    									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
+    		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+								}
 			                    print "</td>";
 							}
 							
@@ -497,12 +527,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        // Print total
 	                        print '<tr class="liste_total">';
 	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
-	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 	                        print '<td align="center">&nbsp;</td>';
+	                        if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";
@@ -544,6 +577,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</form>';
         }
     }
+    else dol_print_error($db);        
 }
 
 /*
@@ -674,7 +708,7 @@ if (empty($action))
             print '<td>'.$objp->num_paiement.'</td>';
             
             print '<td>';
-            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
+            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
             else print '&nbsp;';
             print '</td>';
 

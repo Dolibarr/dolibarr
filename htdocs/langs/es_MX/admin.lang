@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionProgram=Programa de versión
-VersionLastInstall=Versión inicial de la instalación
-VersionUnknown=Desconocido
-VersionRecommanded=Recomendado
+VersionProgram=Versión del programa
 SessionId=ID de sesión
+SessionSaveHandler=Modalidad para guardar sesiones
 SessionSavePath=Ubicación de la sesión guardada
 PurgeSessions=Depuración de sesiones
 ConfirmPurgeSessions=¿Realmente deseas depurar todas las sesiones? Ésto desconectará a todos los usuarios (excepto a ti).

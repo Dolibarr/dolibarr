@@ -948,6 +948,69 @@ function copyToClipboard(text,text2)
 	return false;
 }
 
+
+/*
+ * Function show document preview
+ *
+ * @params string file File path
+ * @params string type mime file
+ * @params string title
+ */
+function document_preview(file, type, title)
+{
+	console.log("document_preview A click was done");
+	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+	console.log("document_preview A click was done. file="+file+", type="+type);
+	
+	if ($.inArray(type, ValidImageTypes) < 0) {
+		var width='85%';
+		var object_width='100%';
+		var height = $( window ).height()*0.90;
+		var object_height='98%';
+
+		show_preview();
+
+	} else {
+		var object_width=0;
+		var object_height=0;
+
+		var img = new Image();
+
+		img.onload = function() {
+			object_width = this.width;
+			object_height = this.height;
+
+			width = $( window ).width()*0.90;
+			if(object_width < width){
+				width = object_width + 30
+			}
+			height = $( window ).height()*0.85;
+			if(object_height < height){
+				height = object_height + 80
+			}
+
+			show_preview();
+
+		};
+		img.src = file;
+
+	}
+	function show_preview(){
+
+		var newElem = '<object data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'"></object>';
+
+		$("#dialogforpopup").html(newElem);
+		$("#dialogforpopup").dialog({
+			closeOnEscape: true,
+			resizable: true,
+			width: width,
+			height: height,
+			modal: true,
+			title: title
+		});
+	}
+}
+
 /*
  * Provide a function to get an URL GET parameter in javascript 
  * 
@@ -1012,6 +1075,9 @@ function getParameterByName(name, valueifnotfound)
 	}
 })();
 
+// Another solution, easier, to build a javascript rounding function 
+function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price2num()
@@ -1024,7 +1090,7 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-				$dec = ',';
+		$dec = ',';
 		$thousand = ' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
 			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
@@ -1032,12 +1098,13 @@ function price2numjs(amount) {
 		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
 			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
 		}
-		print "var dec='" . $dec . "'; var thousand='" . $thousand . "';\n";    // Set var in javascript
+		if ($thousand == 'Space') $thousand=' ';
+		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
-	var main_max_dec_shown = <?php echo str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
 
 	var amount = amount.toString();
 
@@ -1050,11 +1117,17 @@ function price2numjs(amount) {
 	if (nbdec > rounding) rounding = nbdec;
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
-
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');            // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
-
-	return Math.round10(amount, rounding);
+	//console.log("amount before="+amount+" rouding="+rounding)
+	var res = Math.round10(amount, - rounding);
+	// Other solution is 
+	// var res = dolroundjs(amount, rounding)
+	console.log("res="+res)
+	return res;
 }
+
+    
+

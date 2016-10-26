@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,8 +130,8 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
 $checkedtypetiers=0;
 $arrayfields=array(
     'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>$conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER),
-    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'enabled'=>$conf->global->PROJECT_SHOW_REF_INTO_LISTS),
+    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>1),
+    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
     'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
@@ -399,6 +400,7 @@ if ($resql)
 	if ($socid > 0)             $param.='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)					$param.="&search_all=".$sall;
 	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
@@ -502,7 +504,7 @@ if ($resql)
 	if (! empty($arrayfields['typent.code']['checked']))       print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.fk_author']['checked']))      print_liste_field_titre($arrayfields['cf.fk_author']['label'],$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.date_commande']['checked']))  print_liste_field_titre($arrayfields['cf.date_commande']['label'],$_SERVER["PHP_SELF"],"cf.date_commande","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['cf.date_delivery']['checked']))  print_liste_field_titre($arrayfields['cf.date_delivery']['label'],$_SERVER["PHP_SELF"],'cf.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['cf.date_delivery']['checked']))  print_liste_field_titre($arrayfields['cf.date_delivery']['label'],$_SERVER["PHP_SELF"],'cf.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.total_ht']['checked']))       print_liste_field_titre($arrayfields['cf.total_ht']['label'],$_SERVER["PHP_SELF"],"cf.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.total_vat']['checked']))      print_liste_field_titre($arrayfields['cf.total_vat']['label'],$_SERVER["PHP_SELF"],"cf.tva","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.total_ttc']['checked']))      print_liste_field_titre($arrayfields['cf.total_ttc']['label'],$_SERVER["PHP_SELF"],"cf.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
@@ -712,11 +714,23 @@ if ($resql)
 		// Ref
         if (! empty($arrayfields['cf.ref']['checked']))
         {
-			print '<td class="nobordernopadding nowrap">';
+            print '<td class="nowrap">';
+            
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            // Picto + Ref
+            print '<td class="nobordernopadding nowrap">';
     	    print $objectstatic->getNomUrl(1);
+    	    print '</td>';
+    	    // Warning
+    	    //print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+    	    //print '</td>';
+    	    // Other picto tool
+    	    print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			print '</td></tr></table>';
+			
 			print '</td>'."\n";
             if (! $i) $totalarray['nbfield']++;
         }

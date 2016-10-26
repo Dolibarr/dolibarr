@@ -39,5 +39,6 @@ AgentContactType=Kontaktart Handelsvertreter
 AgentContactTypeDetails=Definieren Sie, welche Kontaktart (auf Rechnungen verknüpft)  für die Meldung von Gewinnspannen pro Handelsvertreter verwendet wird
 rateMustBeNumeric=Die Rate muss ein numerischer Wert sein
 markRateShouldBeLesserThan100=Die markierte Rate sollte kleiner sein als 100
-ShowMarginInfos=Zeige Spannen-Informationen
+ShowMarginInfos=Zeige Rand-Informationen
 CheckMargins=Detail zu Gewinnspanne
+MarginPerSaleRepresentativeWarning=Manche Partner sind mit keinem Handelsvertreter verknüpft, andere können mit mehreren Benutzer verknüpft sein, weswegen manche Gewinnspannen nicht in diesem Bericht erscheinen können oder aber mehrmals vorkommen.

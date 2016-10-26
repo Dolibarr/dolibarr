@@ -143,7 +143,7 @@ class Ccountry // extends CommonObject
      *
      *  @param      int		$id    	Id object
      *  @param		string	$code	Code
-     *  @return     int          	<0 if KO, >0 if OK
+     *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($id,$code='')
     {
@@ -171,10 +171,13 @@ class Ccountry // extends CommonObject
 				$this->code_iso = $obj->code_iso;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
-            }
-            $this->db->free($resql);
 
-            return 1;
+                $this->db->free($resql);
+                return 1;
+            }
+            else {
+                return 0;
+            }
         }
         else
         {

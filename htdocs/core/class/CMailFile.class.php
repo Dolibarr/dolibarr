@@ -134,6 +134,13 @@ class CMailFile
 		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
+		if (empty($subject))
+		{
+            dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
+            $this->error='ErrorSubjectIsRequired';
+            return;
+		}
+
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
 		{
@@ -436,8 +443,7 @@ class CMailFile
 		{
 			// Send mail method not correctly defined
 			// --------------------------------------
-
-			return 'Bad value for MAIN_MAIL_SENDMODE constant';
+            $this->error = 'Bad value for MAIN_MAIL_SENDMODE constant';
 		}
 
 	}
@@ -684,7 +690,7 @@ class CMailFile
 	 * @param string $stringtoencode String to encode
 	 * @return string                string encoded
 	 */
-	function encodetorfc2822($stringtoencode)
+	static function encodetorfc2822($stringtoencode)
 	{
 		global $conf;
 		return '=?'.$conf->file->character_set_client.'?B?'.base64_encode($stringtoencode).'?=';
@@ -1099,12 +1105,12 @@ class CMailFile
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
-		while ( substr($server_response,3,1) != ' ' )
+		while (substr($server_response,3,1) != ' ')
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)) )
 			{
 				$this->error="Couldn't get mail server response codes";
-				$_retVal = false;
+				return false;
 			}
 		}
 
@@ -1214,15 +1220,17 @@ class CMailFile
 	/**
 	 * Return a formatted address string for SMTP protocol
 	 *
-	 * @param	string		$address		Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
-	 * @param	int			$format			0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
-	 * @param	int			$encode			1=Encode name to RFC2822
-	 * @return	string						If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'
-	 * 										If format 1: '<john@doe.com>'
-	 *										If format 2: 'john@doe.com'
-	 *										If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
+	 * @param	string		$address		     Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
+	 * @param	int			$format			     0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
+	 * @param	int			$encode			     0=No encode name, 1=Encode name to RFC2822
+	 * @param   int         $maxnumberofemail    0=No limit. Otherwise, maximum number of emails returned ($address may contains several email separated with ','). Add '...' if there is more. 
+	 * @return	string						     If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'
+	 * 										     If format 1: '<john@doe.com>'
+	 *										     If format 2: 'john@doe.com'
+	 *										     If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
+	 *                                           If format 4: 'John Doe' or 'john@doe.com' if no label exists
 	 */
-	function getValidAddress($address,$format,$encode='')
+	static function getValidAddress($address,$format,$encode=0,$maxnumberofemail=0)
 	{
 		global $conf;
 
@@ -1231,6 +1239,7 @@ class CMailFile
 		$arrayaddress=explode(',',$address);
 
 		// Boucle sur chaque composant de l'adresse
+		$i=0;
 		foreach($arrayaddress as $val)
 		{
 			if (preg_match('/^(.*)<(.*)>$/i',trim($val),$regs))
@@ -1246,7 +1255,13 @@ class CMailFile
 
 			if ($email)
 			{
+			    $i++;
+			    
 				$newemail='';
+				if ($format == 4)
+				{
+				    $newemail = $name?$name:$email;
+				}
 				if ($format == 2)
 				{
 					$newemail=$email;
@@ -1259,10 +1274,17 @@ class CMailFile
 				{
 					if (! empty($conf->global->MAIN_MAIL_NO_FULL_EMAIL)) $newemail='<'.$email.'>';
 					elseif (! $name) $newemail='<'.$email.'>';
-					else $newemail=($format==3?'"':'').($encode?$this->encodetorfc2822($name):$name).($format==3?'"':'').' <'.$email.'>';
+					else $newemail=($format==3?'"':'').($encode?self::encodetorfc2822($name):$name).($format==3?'"':'').' <'.$email.'>';
 				}
 
 				$ret=($ret ? $ret.',' : '').$newemail;
+				
+				// Stop if we have too much records
+				if ($maxnumberofemail && $i >= $maxnumberofemail)
+				{
+				    if (count($arrayaddress) > $maxnumberofemail) $ret.='...';
+				    break;
+				}
 			}
 		}
 

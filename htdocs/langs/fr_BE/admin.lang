@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Fondation
-VersionLastInstall=Version initiale d'installation
-VersionLastUpgrade=Version de la dernière mise à jour
 VersionExperimental=Expérimentale
 VersionRecommanded=Recommandée
 SessionId=ID de session

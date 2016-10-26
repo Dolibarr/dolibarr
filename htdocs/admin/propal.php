@@ -606,6 +606,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
+/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 if ($conf->banque->enabled)
 {
     $var=!$var;
@@ -634,6 +635,7 @@ else
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
+*/
 
 print '</table>';
 

@@ -3,7 +3,7 @@
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans). 
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
  
-![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
+![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
 
 
 
@@ -23,9 +23,9 @@ Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
 OpenSuse, Mandriva ou Mageia).
 
 Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
-http://www.dolibarr.org/
+https://www.dolibarr.org/
 
-Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
+Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (MariaDb/MySql/PostgreSql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
 - Copier le répertoire "dolibarr" et son contenu dans la racine de votre serveur
@@ -117,8 +117,8 @@ Voir fichier ChangeLog.
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
-- Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
-- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
 - Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 
 
@@ -139,13 +139,13 @@ Suivez le projet Dolibarr project sur les réseaux francophones
 
 - Facebook: <https://www.facebook.com/dolibarr.fr>
 - Google+: <https://plus.google.com/+DolibarrFrance>
-- Twitter: <http://www.twitter.com/dolibarr_france>
+- Twitter: <https://www.twitter.com/dolibarr_france>
 
 ou sur les réseaux anglophones
 
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Google+](https://plus.google.com/+DolibarrOrg)
-- [Twitter](http://www.twitter.com/dolibarr)
+- [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

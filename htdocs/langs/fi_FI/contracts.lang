@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Ei lakkaa
 ServiceStatusLate=Juoksu, lakkaa
 ServiceStatusLateShort=Lakkaa
 ServiceStatusClosed=Suljettu
+ShowContractOfService=Show contract of service
 Contracts=Sopimukset
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

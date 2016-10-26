@@ -77,7 +77,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
+				'subclass'=>'linkobject boxfilter',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
@@ -132,7 +132,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (! $mesg)
 				{
-					$px1->SetData($data1);
+				    $langs->load("bills");
+				    
+				    $px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
 					$i=$startyear;$legend=array();
@@ -171,7 +173,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				if (! $mesg)
 				{
 				    $langs->load("bills");
-				    
+
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);
@@ -263,11 +265,12 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

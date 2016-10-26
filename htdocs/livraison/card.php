@@ -670,7 +670,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			print $formfile->showdocuments('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)
@@ -680,12 +680,9 @@ else
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-				// Linked object block
-				$somethingshown = $form->showLinkedObjectBlock($shipment);
-
-				// Show links to link elements
-				//$linktoelem = $form->showLinkToObjectBlock($shipment);
-				//if ($linktoelem) print '<br>'.$linktoelem;
+    			// Show links to link elements
+    			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+    			$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 

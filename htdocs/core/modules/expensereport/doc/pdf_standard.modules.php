@@ -68,7 +68,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		$langs->load("main");
 		$langs->load("trips");
-		$langs->load("project");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->name = "";
@@ -105,12 +105,12 @@ class pdf_standard extends ModeleExpenseReport
 		// Define position of columns
 		$this->posxpiece=$this->marge_gauche+1;
 		$this->posxcomment=$this->marge_gauche+10;
-		$this->posxdate=80;
-		$this->posxtype=97;
-		$this->posxprojet=116;
+		$this->posxdate=88;
+		$this->posxtype=107;
+		$this->posxprojet=120;
 		$this->posxtva=136;
-		$this->posxup=148;
-		$this->posxqty=166;
+		$this->posxup=152;
+		$this->posxqty=168;
 		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
             $this->posxtva-=20;
@@ -158,7 +158,7 @@ class pdf_standard extends ModeleExpenseReport
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("trips");
-		$outputlangs->load("project");
+		$outputlangs->load("projects");
 
 		$nblignes = count($object->lines);
 
@@ -305,10 +305,12 @@ class pdf_standard extends ModeleExpenseReport
 
 					$showpricebeforepagebreak=1;
 
+					$pdf->SetFont('','', $default_font_size - 1);
+					
 					// Accountancy piece
 					$pdf->SetXY($this->posxpiece, $curY);
-					$pdf->MultiCell($this->posxcomment-$this->posxpiece-0.8, 4, $piece_comptable, 0, 'C');
-	
+					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
+					
 					// Comments
 					$pdf->SetXY($this->posxcomment, $curY);
 					$pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
@@ -321,12 +323,12 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// Date
-					$pdf->SetXY($this->posxdate, $curY);
-					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4,dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
+					$pdf->SetXY($this->posxdate -1, $curY);
+					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
 					// Type
-					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
+					$pdf->SetXY($this->posxtype -1, $curY);
+					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled)) 
@@ -350,7 +352,7 @@ class pdf_standard extends ModeleExpenseReport
 
 					// Quantity
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->postotalttc-$this->posxqty-0.8, 4,$object->lines[$i]->qty, 0, 'C');
+					$pdf->MultiCell($this->postotalttc-$this->posxqty-0.8, 4,$object->lines[$i]->qty, 0, 'R');
 
 					// Total with all taxes
 					$pdf->SetXY($this->postotalttc-1, $curY);
@@ -421,6 +423,8 @@ class pdf_standard extends ModeleExpenseReport
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
+				$pdf->SetFont('','', 10);
+				
             	// Show total area box
 				$posy=$bottomlasttab+5;//$nexY+95;
 				$pdf->SetXY(100, $posy);
@@ -431,6 +435,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 				{
+				    // TODO Show vat amout per tax level
 					$posy+=5;
 					$pdf->SetXY(100, $posy);
 					$pdf->SetTextColor(0,0,60);
@@ -477,8 +482,6 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error=$langs->trans("ErrorConstantNotDefined","EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -508,9 +511,9 @@ class pdf_standard extends ModeleExpenseReport
 		*/
 
 	    // Draft watermark
-		if ($object->fk_statut==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
+		if ($object->fk_statut == 0 && ! empty($conf->global->EXPENSEREPORT_DRAFT_WATERMARK))
 		{
- 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_FREE_TEXT);
+ 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -547,7 +550,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->SetFont('','B', $default_font_size + 4);
 		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'L');
+		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('','', $default_font_size -1);
 
@@ -555,24 +558,24 @@ class pdf_standard extends ModeleExpenseReport
    		$posy+=8;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
 
    		// Date start period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outputlangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outputlangs):''), '', 'R');
 
    		// Date end period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outputlangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outputlangs):''), '', 'R');
 
    		// Status Expense Report
    		$posy+=6;
    		$pdf->SetXY($posx,$posy);
-   		$pdf->SetFont('','B',18);
+   		$pdf->SetFont('','B', $default_font_size + 2);
    		$pdf->SetTextColor(111,81,124);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $object->getLibStatut(0), '', 'R');
 		
@@ -812,7 +815,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalttc-$this->posxqty,2, $outputlangs->transnoentities("Qty"),'','R');
+			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1,2, $outputlangs->transnoentities("Qty"),'','R');
 		}
 
 		// Total with all taxes

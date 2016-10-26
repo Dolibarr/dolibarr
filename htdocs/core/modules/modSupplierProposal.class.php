@@ -102,13 +102,13 @@ class modSupplierProposal extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Read supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Create/modify supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
@@ -141,7 +141,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'SupplierProposalShort',
+			'titre'=>'SupplierProposalsShort',
 			'leftmenu'=>'supplier_proposalsubmenu',
 			'url'=>'/supplier_proposal/index.php',
 			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -156,7 +156,7 @@ class modSupplierProposal extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
 			'titre'=>'SupplierProposalNew',
-			'url'=>'/supplier_proposal/card.php?action=create&leftmenu=supplier_proposals',
+			'url'=>'/supplier_proposal/card.php?action=create&amp;leftmenu=supplier_proposals',
 			'langs'=>'supplier_proposal',
 			'enabled'=>'$conf->supplier_proposal->enabled',
 			'perms'=>'$user->rights->supplier_proposal->creer',
@@ -182,7 +182,7 @@ class modSupplierProposal extends DolibarrModules
 		    'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 		    'type'=>'left',
 		    'titre'=>'Statistics',
-		    'url'=>'/comm/propal/stats/index.php?leftmenu=supplier_proposals&mode=supplier',
+		    'url'=>'/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier',
 		    'langs'=>'supplier_proposal',
 		    'enabled'=>'$conf->supplier_proposal->enabled',
 		    'perms'=>'$user->rights->supplier_proposal->lire',
@@ -227,7 +227,7 @@ class modSupplierProposal extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'supplier_proposal' AND entity = ".$conf->entity,
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_proposal',".$conf->entity.")",
 		);
 

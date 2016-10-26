@@ -11,8 +11,10 @@ SharedProject=مشاريع مشتركة
 PrivateProject=Project contacts
 MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
 ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
+TasksOnProjectsPublicDesc=This view presents all tasks on projects you are allowed to read.
 ProjectsPublicTaskDesc=يمثل هذا العرض جميع المشاريع والمهام يسمح لك للقراءة.
 ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
+TasksOnProjectsDesc=This view presents all tasks on all projects (your user permissions grant you permission to view everything).
 MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
 OnlyOpenedProject=المشاريع المفتوحة فقط مرئية (المشاريع في مشروع أو وضع مغلقة غير مرئية).
 ClosedProjectsAreHidden=Closed projects are not visible.
@@ -68,11 +70,11 @@ ListOfTasks=List of tasks
 GoToListOfTimeConsumed=Go to list of time consumed
 GoToListOfTasks=Go to list of tasks
 ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
-ListOrdersAssociatedProject=قائمة الزبائن المرتبطة بالمشروع.
-ListInvoicesAssociatedProject=قائمة العملاء والفواتير المرتبطة بالمشروع
-ListPredefinedInvoicesAssociatedProject=List of customer's template invoices associated with project
-ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر المرتبطة بالمشروع
-ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
+ListOrdersAssociatedProject=List of customer orders associated with the project
+ListInvoicesAssociatedProject=List of customer invoices associated with the project
+ListPredefinedInvoicesAssociatedProject=List of customer template invoices associated with project
+ListSupplierOrdersAssociatedProject=List of supplier orders associated with the project
+ListSupplierInvoicesAssociatedProject=List of supplier invoices associated with the project
 ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
 ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
 ListExpenseReportsAssociatedProject=قائمة تقارير المصاريف المرتبطة بالمشروع
@@ -121,6 +123,7 @@ ProjectReportDate=تغيير موعد المهمة وفقا المشروع تا�
 ErrorShiftTaskDate=من المستحيل تحويل التاريخ المهمة وفقا لتاريخ بدء المشروع الجديد
 ProjectsAndTasksLines=المشاريع والمهام
 ProjectCreatedInDolibarr=مشروع٪ الصورة التي تم إنشاؤها
+ProjectModifiedInDolibarr=Project %s modified
 TaskCreatedInDolibarr=مهمة٪ الصورة التي تم إنشاؤها
 TaskModifiedInDolibarr=مهمة٪ الصورة المعدلة
 TaskDeletedInDolibarr=مهمة٪ الصورة حذف
@@ -130,6 +133,9 @@ OpportunityProbability=Opportunity probability
 OpportunityProbabilityShort=Opp. probab.
 OpportunityAmount=مبلغ فرصة
 OpportunityAmountShort=مقابل. كمية
+OpportunityAmountAverageShort=Average Opp. amount
+OpportunityAmountWeigthedShort=Weighted Opp. amount
+WonLostExcluded=Won/Lost excluded
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
@@ -148,7 +154,7 @@ PlannedWorkload=عبء العمل المخطط لها
 PlannedWorkloadShort=عبء العمل
 ProjectReferers=Related items
 ProjectMustBeValidatedFirst=يجب التحقق من صحة المشروع أولا
-FirstAddRessourceToAllocateTime=ربط الموارد إلى تخصيص وقت
+FirstAddRessourceToAllocateTime=Assign a user resource to task to allocate time
 InputPerDay=إدخال يوميا
 InputPerWeek=مساهمة في الأسبوع
 InputPerAction=مساهمة في عمل
@@ -169,7 +175,7 @@ ProjectOpenedProjectByOppStatus=Open project/lead by opportunity status
 ProjectsStatistics=إحصاءات عن المشاريع / يؤدي
 TaskAssignedToEnterTime=المهمة الموكلة. يجب دخول الوقت على هذه المهمة يكون ممكنا.
 IdTaskTime=الوقت مهمة معرف
-YouCanCompleteRef=إذا كنت ترغب في استكمال المرجع مع بعض المعلومات (لاستخدامه بمثابة مرشحات البحث)، وريكومانديد لإضافة - شخصية لفصلها، وبالتالي فإن الترقيم التلقائي سوف لا تزال تعمل بشكل صحيح للمشاريع المقبلة. على سبيل المثال٪ S-ABC. قد تفضل أيضا لإضافة مفاتيح البحث في التسمية.
+YouCanCompleteRef=If you want to complete the ref with some information (to use it as search filters), it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-ABC. You may also prefer to add search keys into label. But best practice may be to add a dedicated field, also called complementary attributes.
 OpenedProjectsByThirdparties=Open projects by thirdparties
 OnlyOpportunitiesShort=Only opportunities
 OpenedOpportunitiesShort=Open opportunities

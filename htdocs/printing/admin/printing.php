@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
+use OAuth\Common\Storage\DoliStorage;
 
 $langs->load("admin");
 $langs->load("printing");
@@ -44,6 +45,8 @@ $driver = GETPOST('driver', 'alpha');
 if (! empty($driver)) $langs->load($driver);
 
 if (!$mode) $mode='config';
+
+$OAUTH_SERVICENAME_GOOGLE = 'Google';
 
 
 /*
@@ -100,6 +103,7 @@ if ($action == 'setvalue' && $user->admin)
     $action = '';
 }
 
+
 /*
  * View
  */
@@ -138,7 +142,6 @@ if ($mode == 'setup' && $user->admin)
         $classname = 'printing_'.$driver;
         $langs->load($driver);
         $printer = new $classname($db);
-        //var_dump($printer);
         
         $i=0;
         $submit_enabled=0;
@@ -163,9 +166,12 @@ if ($mode == 'setup' && $user->admin)
                     print '<td>';
                     if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
                     {
+                        // Delete remote tokens
                         if (! empty($key['delete'])) print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
+                        // Request remote token
                         print '<a class="button" href="'.$key['renew'].'">'.$langs->trans('RequestAccess').'</a><br><br>';
-                        print $langs->trans("ToCheckDeleteTokenOnProvider", 'Google').': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
+                        // Check remote access
+                        print $langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME_GOOGLE).': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
                     }
                     print '</td>';
                     print '</tr>'."\n";
@@ -175,6 +181,39 @@ if ($mode == 'setup' && $user->admin)
                     break;
             }
             $i++;
+            
+            if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+            {
+                // Token
+                print '<tr '.$bc[$var].'>';
+                print '<td>'.$langs->trans("Token").'</td>';
+                print '<td>';
+                // Dolibarr storage
+                $storage = new DoliStorage($db, $conf);
+                try
+                {
+                    $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
+                }
+                catch(Exception $e)
+                {
+                    // Return an error if token not found
+                }
+                if (is_object($tokenobj))
+                {
+                    //var_dump($tokenobj);
+                    print $tokenobj->getAccessToken().'<br>';
+                    //print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
+                    //print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
+                    //var_dump($tokenobj->getExtraParams());
+                    /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
+                    print ''.join(',',$tokenobj->getExtraParams());
+                    print '</textarea>';*/
+                }
+                print '</td>';
+                print '<td>';
+                print '</td>';
+                print '</tr>'."\n";
+            }
         }
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
+ * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,13 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For backward compatibility
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli' || $dolibarr_main_db_type=='mysql')) $dolibarr_main_db_port='3306'; // For backward compatibility
+
+        //Mysql driver support has been removed in favor of mysqli
+        if ($dolibarr_main_db_type == 'mysql') {
+            $dolibarr_main_db_type = 'mysqli';
+        }
+
+		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli')) $dolibarr_main_db_port='3306'; // For backward compatibility
 
 		// Clean parameters
 		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):DOL_DOCUMENT_ROOT . '/../documents';
@@ -489,3 +496,92 @@ function dolibarr_install_syslog($message, $level=LOG_DEBUG)
     dol_syslog($message,$level);
 }
 
+/**
+ * Automatically detect Dolibarr's main document root
+ *
+ * @return string
+ */
+function detect_dolibarr_main_document_root()
+{
+	// If PHP is in CGI mode, SCRIPT_FILENAME is PHP's path.
+	// Since that's not what we want, we suggest $_SERVER["DOCUMENT_ROOT"]
+	if (preg_match('/php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',
+			$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"])
+	) {
+		$dolibarr_main_document_root = $_SERVER["DOCUMENT_ROOT"];
+
+		if (!preg_match('/[\\/]dolibarr[\\/]htdocs$/i', $dolibarr_main_document_root)) {
+			$dolibarr_main_document_root .= "/dolibarr/htdocs";
+		}
+	} else {
+		// We assume /install to be under /htdocs, so we get the parent directory of the current directory
+		$dolibarr_main_document_root = dirname(dirname($_SERVER["SCRIPT_FILENAME"]));
+	}
+
+	return $dolibarr_main_document_root;
+}
+
+/**
+ * Automatically detect Dolibarr's main data root
+ *
+ * @param string $dolibarr_main_document_root Current main document root
+ * @return string
+ */
+function detect_dolibarr_main_data_root($dolibarr_main_document_root)
+{
+	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
+	$dolibarr_main_data_root .= "/documents";
+	return $dolibarr_main_data_root;
+}
+
+/**
+ * Automatically detect Dolibarr's main URL root
+ *
+ * @return string
+ */
+function detect_dolibarr_main_url_root()
+{
+	// If defined (Ie: Apache with Linux)
+	if (isset($_SERVER["SCRIPT_URI"])) {
+		$dolibarr_main_url_root = $_SERVER["SCRIPT_URI"];
+	} // If defined (Ie: Apache with Caudium)
+	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
+		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
+	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
+	else {
+		$proto = 'http';
+		if (!empty($_SERVER["HTTP_HOST"])) {
+			$serverport = $_SERVER["HTTP_HOST"];
+		} else {
+			$serverport = $_SERVER["SERVER_NAME"];
+		}
+		$dolibarr_main_url_root = $proto . "://" . $serverport . $_SERVER["SCRIPT_NAME"];
+	}
+	// Clean proposed URL
+	// We assume /install to be under /htdocs, so we get the parent path of the current URL
+	$dolibarr_main_url_root = dirname(dirname($dolibarr_main_url_root));
+
+	return $dolibarr_main_url_root;
+}
+
+/**
+ * Replaces automatic database login by actual value
+ *
+ * @param string $force_install_databaserootlogin Login
+ * @return string
+ */
+function parse_database_login($force_install_databaserootlogin)
+{
+	return preg_replace('/__SUPERUSERLOGIN__/', 'root', $force_install_databaserootlogin);
+}
+
+/**
+ * Replaces automatic database password by actual value
+ *
+ * @param string $force_install_databaserootpass Password
+ * @return string
+ */
+function parse_database_pass($force_install_databaserootpass)
+{
+	return preg_replace('/__SUPERUSERPASSWORD__/', '', $force_install_databaserootpass);
+}

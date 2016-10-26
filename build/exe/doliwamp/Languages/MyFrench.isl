@@ -21,10 +21,10 @@ TechnicalParameters=Paramètres techniques
 IfFirstInstall=S'il s'agit de la première installation, merci de spécifier ces quelques paramètres techniques. Si vous ne les comprennez pas, êtes non sûr, ou procédez à une mise à jour, laissez les champs avec les valeurs proposées par défaut.
 
 
-; WARNING !!! STRINGS FOR THIS 4 STRINGS MUST BE LOWER THAN 60 CHARACTERS
-SMTPServer=Serveur SMTP (le votre ou celui de votre FAI, première installation uniquement) :
-ApachePort=Port Apache (première installation uniquement, le choix standard est 80) :
-MySqlPort=Port Mysql (première installation uniquement, le choix standard est 3306) :
+; WARNING !!! STRINGS FOR THIS 4 STRINGS MUST BE LOWER THAN 70 CHARACTERS
+SMTPServer=Serveur SMTP (le votre ou de votre FAI, première installation uniquement):
+ApachePort=Port Apache (première installation uniquement, le choix standard est 80):
+MySqlPort=Port Mysql (première installation uniquement, le choix standard est 3306):
 MySqlPassword=Mot de passe serveur+base MySql de root (première installation uniquement):
 
 FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalé. Cliquez sur OK pour continuer...
@@ -32,6 +32,7 @@ FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lo
 PortAlreadyInUse=Le port %1 semble déjà utilisé. Il est recommandé d'annuler pour revenir en arrière et spécifier une autre valeur pour le port %2. Annuler le choix et choisir une autre valeur ?
 
 FirefoxDetected=Firefox a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
+ChromeDetected=Chrome a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
 ChooseDefaultBrowser=Merci de choisir votre navigateur par défaut. Si vous n'êtes pas sûr, cliquez simplement sur Ouvrir :
 
 LaunchNow=Lancer Dolibarr maintenant

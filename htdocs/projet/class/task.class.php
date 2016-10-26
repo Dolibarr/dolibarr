@@ -33,7 +33,8 @@ class Task extends CommonObject
 {
     public $element='project_task';		//!< Id that identify managed objects
     public $table_element='projet_task';	//!< Name of table without prefix where object is stored
-
+    public $picto = 'task';
+    
     var $fk_task_parent;
     var $label;
     var $description;
@@ -57,6 +58,8 @@ class Task extends CommonObject
     var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
     var $timespent_fk_user;
     var $timespent_note;
+
+    public $oldcopy;
 
 
     /**
@@ -316,6 +319,30 @@ class Task extends CommonObject
         	}
         }
 
+        if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
+        {
+            // We remove directory
+            if ($conf->projet->dir_output)
+            {
+                $project = new Project($this->db);
+                $project->fetch($this->fk_project);
+
+                $olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+                $newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+                if (file_exists($olddir))
+                {
+                    include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+                    $res=dol_move($olddir, $newdir);
+                    if (! $res)
+                    {
+                        $langs->load("errors");
+                        $this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+                        $error++;
+                    }
+                }
+            }
+        }
+
         // Commit or rollback
         if ($error)
         {
@@ -494,12 +521,15 @@ class Task extends CommonObject
      *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ')
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -510,17 +540,30 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
 
-        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowTask");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
-
+        
         $picto='projecttask';
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -573,10 +616,12 @@ class Task extends CommonObject
         // List of tasks (does not care about permissions. Filtering will be done later)
         $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
         $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
-        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang";
+        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+        $sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
         if ($mode == 0)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if ($filteronprojuser > 0)
             {
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -593,7 +638,6 @@ class Task extends CommonObject
         }
         elseif ($mode == 1)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if ($filteronprojuser > 0)
             {
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -679,7 +723,8 @@ class Task extends CommonObject
                     $tasks[$i]->projectstatus	= $obj->projectstatus;
                     $tasks[$i]->label			= $obj->label;
                     $tasks[$i]->description		= $obj->description;
-                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;
+                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
+                    $tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
                     $tasks[$i]->duration		= $obj->duration_effective;
                     $tasks[$i]->planned_workload= $obj->planned_workload;
                     $tasks[$i]->progress		= $obj->progress;
@@ -688,6 +733,9 @@ class Task extends CommonObject
                     $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
+                    
+                    $tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
+                    $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
 
                 $i++;
@@ -913,14 +961,19 @@ class Task extends CommonObject
     /**
      *  Calculate total of time spent for task
      *
-     *  @param	int		$id 		Id of object (here task)
+     *  @param  int     $userid     Filter on user id. 0=No filter
      *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
      */
-    function getSummaryOfTimeSpent($id='')
+    function getSummaryOfTimeSpent($userid=0)
     {
         global $langs;
 
-        if (empty($id)) $id=$this->id;
+        $id=$this->id;
+        if (empty($id)) 
+        {
+            dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
+            return -1; 
+        }
 
         $result=array();
 
@@ -930,7 +983,8 @@ class Task extends CommonObject
         $sql.= " SUM(t.task_duration) as total_duration";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
-
+        if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
+        
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1232,6 +1286,9 @@ class Task extends CommonObject
 
 		// Load source object
 		$clone_task->fetch($fromid);
+		$clone_task->fetch_optionals();
+		//var_dump($clone_task->array_options);exit;
+		
 		$origin_task->fetch($fromid);
 
 		$defaultref='';

@@ -110,7 +110,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Action sending file
+	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 }
@@ -166,7 +166,21 @@ if ($action=='filemerge')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -217,6 +231,7 @@ if ($object->id)
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
+    
     // Merge propal PDF document PDF files
     if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
     {

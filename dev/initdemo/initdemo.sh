@@ -15,7 +15,7 @@
 
 
 export mydir=`echo "$0" | sed -e 's/initdemo.sh//'`;
-if [ "x$mydir" = "x" ]
+if [ "x$mydir" = 'x' -o "x$mydir" = 'x./' ]
 then
     export mydir="."
 fi
@@ -132,24 +132,7 @@ then
 	exit;;
 	esac
 	
-	# ---------------------------- chemin d'acces du repertoire documents
-	#DIALOG=${DIALOG=dialog}
-	#fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-	#trap "rm -f $fichtemp" 0 1 2 5 15
-	#$DIALOG --title "Init Dolibarr with demo values" --clear \
-	#        --inputbox "Full path to documents directory (ex: /var/www/dolibarr/documents)- no / at end :" 16 55 2> $fichtemp
-	
-	#valret=$?
-	
-	#case $valret in
-	#  0)
-	#docs=`cat $fichtemp`;;
-	#  1)
-	#exit;;
-	#  255)
-	#exit;;
-	#esac
-	
+
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
@@ -176,6 +159,25 @@ echo "drop table llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
 echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 export res=$?
+
+
+# ---------------------------- copy demo files
+export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" `
+if [ "x$documentdir" != "x" ]
+then
+	echo cp -pr $mydir/documents_demo/* "$documentdir/"
+	cp -pr $mydir/documents_demo/* "$documentdir/"
+	echo cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
+	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
+	mkdir -p "$documentdir/ecm/Administrative documents"
+	mkdir -p "$documentdir/ecm/Images"
+	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
+	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
+else
+	echo Detection of documents directory failed so demo files were not copied. 
+fi
+
+
 
 if [ "x$res" = "x0" ]
 then

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - interventions
 Intervention=Serviceauftrag
 Interventions=Serviceaufträge
-InterventionCard=Serviceauftragskarte
+InterventionCard=Serviceauftrag - Karte
 NewIntervention=Neuer Serviceauftrag
 AddIntervention=Serviceauftrag erstellen
 ListOfInterventions=Liste der Serviceaufträge
@@ -14,10 +14,12 @@ DeleteIntervention=Serviceauftrag löschen
 ValidateIntervention=Serviceauftrag freigeben
 ModifyIntervention=Ändere Serviceauftrag
 DeleteInterventionLine=Serviceauftragsposition löschen
+CloneIntervention=Serviceauftrag duplizieren
 ConfirmDeleteIntervention=Möchten Sie diesen Serviceauftrag wirklich löschen?
 ConfirmValidateIntervention=Möchten Sie diesen Serviceauftrag mit der Referenz <b>%s</b> wirklich freigeben?
 ConfirmModifyIntervention=Möchten sie diesen Serviceauftrag wirklich verändern?
 ConfirmDeleteInterventionLine=Möchten Sie diese Serviceauftragsposition wirklich löschen?
+ConfirmCloneIntervention=Möchten sie diesen Serviceauftrag wirklich duplizieren?
 NameAndSignatureOfInternalContact=Name und Unterschrift des Mitarbeiter:
 NameAndSignatureOfExternalContact=Name und Unterschrift des Kunden:
 DocumentModelStandard=Standard-Dokumentvorlage für Serviceaufträge
@@ -43,6 +45,7 @@ TypeContact_fichinter_external_CUSTOMER=Kundenkontakt-Nachbetreuung
 # Modele numérotation
 PrintProductsOnFichinter=Auch Produktzeilen (Nicht nur Leistungen) auf der Serviceauftragskarte drucken
 PrintProductsOnFichinterDetails=Serviceaufträge durch Bestellungen generiert
+UseServicesDurationOnFichinter=Standard-Wert der Dauer für diesen Service aus dem Auftrag übernehmen
 InterventionStatistics=Statistik Serviceaufträge
 NbOfinterventions=Anzahl Karten für Serviceaufträge
 NumberOfInterventionsByMonth=Anzahl Karten für Serviceaufträge pro Monat (Freigabedatum)

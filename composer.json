@@ -2,14 +2,22 @@
     "name": "dolibarr/dolibarr",
     "type": "project",
     "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
-    "keywords": ["erp","crm","invoice","sme","proposal","order","stock"],
-    "homepage": "http://www.dolibarr.org",
+    "keywords": [
+	    "erp",
+   		"crm",
+    	"invoice",
+    	"sme",
+    	"proposal",
+    	"order",
+    	"stock",
+    	"agenda"
+    ],
+    "homepage": "https://www.dolibarr.org",
     "license": "GPL-3.0+",
     "support": {
         "issues": "https://github.com/Dolibarr/dolibarr/issues",
-        "forum": "http://www.dolibarr.org/forum",
-        "wiki": "http://wiki.dolibarr.org",
-        "irc": "irc://chat.freenode.net/dolibarr",
+        "forum": "https://www.dolibarr.org/forum",
+        "wiki": "https://wiki.dolibarr.org",
         "source": "https://github.com/Dolibarr/dolibarr"
     },
     "config": {
@@ -30,7 +38,8 @@
         "jakub-onderka/php-parallel-lint": "^0",
         "jakub-onderka/php-console-highlighter": "^0",
         "phpunit/phpunit": "^4",
-        "squizlabs/php_codesniffer": "^2"
+        "squizlabs/php_codesniffer": "^2",
+        "phpunit/phpunit-selenium": "^2"
     },
     "suggest": {
         "ext-mysqlnd": "To use with MySQL or MariaDB",
@@ -46,7 +55,6 @@
         "ext-soap": "Native SOAP",
         "ext-zip": "ODT and Excel support",
         "ext-xml": "Excel support",
-        "firephp/firephp-core": "Logging to Firebug console support",
-        "raven/raven": "Sentry logging server support"
+        "firephp/firephp-core": "Logging to Firebug console support"
     }
 }

@@ -101,6 +101,7 @@ if ($object->id)
 	elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 	elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
+	elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
     else                                        $title=$langs->trans("Category");
 
 	$head = categories_prepare_head($object,$type);
@@ -140,7 +141,7 @@ if ($object->id)
 	print $langs->trans("Color").'</td><td>';
 	print $formother->showColor($object->color);
 	print '</td></tr>';
-	
+
 	print "</table>\n";
 
 	print "</div>\n";

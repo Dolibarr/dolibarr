@@ -35,6 +35,7 @@ class Entrepot extends CommonObject
 {
 	public $element='stock';
 	public $table_element='entrepot';
+	public $picto='stock';
 	
 	/**
 	 * Warehouse closed, inactive
@@ -108,7 +109,9 @@ class Entrepot extends CommonObject
 	function create($user)
 	{
 		global $conf;
-
+		
+		$this->libelle = trim($this->libelle);
+		
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{
@@ -120,8 +123,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label, fk_parent)";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."', ".($this->fk_parent > 0 ? $this->fk_parent : 'NULL').")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -169,6 +172,16 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
+		// Check if new parent is already a child of current warehouse
+		if(!empty($this->fk_parent)) {
+			$TChildWarehouses = array($id);
+			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
+			if(in_array($this->fk_parent, $TChildWarehouses)) {
+				$this->error = 'ErrorCannotAddThisParentWarehouse';
+				return -2;
+			}
+		}
+		
 		$this->libelle=trim($this->libelle);
 		$this->description=trim($this->description);
 
@@ -181,6 +194,7 @@ class Entrepot extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
+		$sql .= ", fk_parent = '" . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL') ."'";
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
@@ -211,24 +225,40 @@ class Entrepot extends CommonObject
 	/**
 	 *	Delete a warehouse
 	 *
-	 *	@param		User	$user		Object user that made deletion
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@param		User	$user		   Object user that made deletion
+	 *  @param      int     $notrigger     1=No trigger
+	 *	@return		int					   <0 if KO, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql1=$this->db->query($sql);
+		if (! $error && empty($notrigger))
+		{
+            // Call trigger
+            $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+		}
+		
+		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
+		foreach($elements as $table)
+		{
+			if (! $error)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql.= " WHERE fk_entrepot = " . $this->id;
+				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+				$result=$this->db->query($sql);
+				if (! $result)
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql2=$this->db->query($sql);
-
-		if ($resql1 && $resql2)
+		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
@@ -275,7 +305,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, fk_parent, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 
 		if ($id)
@@ -298,6 +328,7 @@ class Entrepot extends CommonObject
 				$obj=$this->db->fetch_object($result);
 
 				$this->id             = $obj->rowid;
+				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->rowid;
 				$this->libelle        = $obj->label;
 				$this->description    = $obj->description;
@@ -546,7 +577,7 @@ class Entrepot extends CommonObject
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
-        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
@@ -554,7 +585,7 @@ class Entrepot extends CommonObject
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->libelle.$linkend;
+		$result.=$link.$this->get_full_arbo().$linkend;
 		return $result;
 	}
 
@@ -585,4 +616,69 @@ class Entrepot extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
     }
+	
+	/**
+	 *	Return full path to current warehouse
+	 *
+	 * 	@param		int		$protection		Deep counter to avoid infinite loop
+	 *	@return		string	String full path to current warehouse separated by " >> " 
+	 */
+	function get_full_arbo($protection=1000) {
+		
+		 global $user,$langs,$conf;
+		 
+		 $TArbo = array($this->libelle);
+		 
+		 $id = $this->id;
+		
+		 $i=0;
+
+		 while((empty($protection) || $i < $protection)) {
+			 $sql = 'SELECT fk_parent
+			 		FROM '.MAIN_DB_PREFIX.'entrepot
+			 		WHERE rowid = '.$id;
+
+			 $resql = $this->db->query($sql);
+			 if($resql) {
+			 	$res = $this->db->fetch_object($resql);
+			 	if(empty($res->fk_parent)) break;
+				$id = $res->fk_parent;
+				$o = new Entrepot($this->db);
+				$o->fetch($id);
+				$TArbo[] = $o->libelle;
+			 } else break;
+			 
+			 $i++;
+			 
+		 }
+
+		 return implode(' >> ', array_reverse($TArbo));
+		
+	}
+	
+	/**
+	 * Return array of children warehouses ids from $id warehouse (recursive function)
+	 * 
+	 * @param	int		$id					id parent warehouse
+	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return	array()	$TChildWarehouses	array which will contain all children
+	 */
+	function get_children_warehouses($id, &$TChildWarehouses) {
+		
+		$sql = 'SELECT rowid
+				FROM '.MAIN_DB_PREFIX.'entrepot
+				WHERE fk_parent = '.$id;
+		
+		$resql = $this->db->query($sql);
+		if($resql) {
+			while($res = $this->db->fetch_object($resql)) {
+				$TChildWarehouses[] = $res->rowid;
+				$this->get_children_warehouses($res->rowid, $TChildWarehouses);
+			}
+		}
+		
+		return $TChildWarehouses;
+		
+	}
+
 }

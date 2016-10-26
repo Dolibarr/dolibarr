@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Últimos %s días retribuidos
 HolidaysMonthlyUpdate=Actualización mensual
 ManualUpdate=Actualización manual
 HolidaysCancelation=Anulación días libres
+EmployeeLastname=Apellidos empleado
+EmployeeFirstname=Nombre empleado
 
 ## Configuration du Module ##
 LastUpdateCP=Última actualización automática de días retribuidos

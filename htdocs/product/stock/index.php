@@ -136,11 +136,11 @@ if ($resql)
 	if (! empty($conf->productbatch->enabled))
 	{
 		print '<td>'.$langs->trans("Batch").'</td>';
-		print '<td>'.$langs->trans("l_eatby").'</td>';
-		print '<td>'.$langs->trans("l_sellby").'</td>';
+		print '<td>'.$langs->trans("EatByDate").'</td>';
+		print '<td>'.$langs->trans("SellByDate").'</td>';
 	}
 	print '<td>'.$langs->trans("Warehouse").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
+	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
 	print "</tr>\n";
 
 	$var=True;

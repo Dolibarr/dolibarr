@@ -37,7 +37,8 @@ class ActionComm extends CommonObject
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='action';
+    
     /**
      * Id of the event
      * @var int
@@ -406,7 +407,7 @@ class ActionComm extends CommonObject
 	 */
 	public function add(User $user, $notrigger = 0)
 	{
-		$this->create($user, $notrigger);
+		return $this->create($user, $notrigger);
 	}
 
     /**
@@ -513,7 +514,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-        $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
+        $sql.= " c.id as type_id, c.code as type_code, c.libelle, c.color as type_color,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
@@ -541,6 +542,7 @@ class ActionComm extends CommonObject
                 // Properties of parent table llx_c_actioncomm (will be deprecated in future)
                 $this->type_id   = $obj->type_id;
                 $this->type_code = $obj->type_code;
+                $this->type_color = $obj->type_color;
                 $transcode=$langs->trans("Action".$obj->type_code);
                 $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
                 $this->type      = $type_libelle;
@@ -996,7 +998,7 @@ class ActionComm extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
+                if (! empty($obj->fk_user_mod)) $this->date_modification = $this->db->jdate($obj->datem);
             }
             $this->db->free($result);
         }
@@ -1023,7 +1025,7 @@ class ActionComm extends CommonObject
      *		Return label of action status
      *
      *    	@param	int		$percent        Percent
-     *    	@param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Very short label+Picto
+     *    	@param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
      *      @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
      *    	@return string		    		Label
      */
@@ -1075,11 +1077,19 @@ class ActionComm extends CommonObject
         }
         else if ($mode == 6)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
-        	else if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	else if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
-        	else if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+        	if ($percent==-1 && ! $hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+        	else if ($percent==0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	else if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
+        	else if ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }
+        else if ($mode == 7)
+        {
+            if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+            else if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+            else if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
+            else if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+        }
+        
         return '';
     }
 
@@ -1092,25 +1102,64 @@ class ActionComm extends CommonObject
      *		@param	string	$classname			Force style class on a link
      * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
      * 		@param	int		$overwritepicto		1=Overwrite picto
+     *      @param	int   	$notooltip		    1=Disable tooltip
      *		@return	string						Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0)
+    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
     {
-        global $conf,$langs;
+		global $conf, $langs, $user, $hookmanager;
 
-        $result='';
-        $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
-        if (! empty($this->ref))
-            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->label))
-            $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
-        $label = $this->label;
-        if (empty($label)) $label=$this->libelle;   // For backward compatibility
-        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'">';
-        if ($option=='birthday') $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
-        else $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
-        $linkend='</a>';
-        //print 'rrr'.$this->libelle.'-'.$withpicto;
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		
+		$result='';
+		
+		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+		if (! empty($this->ref))
+			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$label = $this->label;
+		if (empty($label)) $label=$this->libelle;   // For backward compatibility
+		if (! empty($label))
+			$tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $label;
+		if (! empty($this->location))
+			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
+
+		$linkclose='';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color) 
+			$linkclose = ' style="background-color:#'.$this->type_color.'"';
+
+		if (empty($notooltip) && $user->rights->propal->lire)
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowSupplierProposal");
+		        $linkclose.=' alt="'.dol_escape_htmltag($tooltip, 1).'"';
+		    }
+		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
+		    $linkclose.=' class="'.$classname.' classfortooltip"';
+		    
+		    if (! is_object($hookmanager))
+		    {
+		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		        $hookmanager=new HookManager($this->db);
+		    }
+		    $hookmanager->initHooks(array('actiondao'));
+		    $parameters=array('id'=>$this->id);
+		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
+		}
+		else $linkclose.=' class="'.$classname.'"';
+		
+		$url='';
+		if ($option=='birthday') 
+			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
+		else 
+			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+		
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+		
+		//print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1132,10 +1181,10 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$link.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$linkend;
+            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'':'class="classfortooltip"')).$linkend;
         }
         if ($withpicto==1) $result.=' ';
-        $result.=$link.$libelleshort.$linkend;
+        $result.=$linkstart.$libelleshort.$linkend;
         return $result;
     }
 

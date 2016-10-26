@@ -64,7 +64,7 @@ class box_services_contracts extends ModeleBoxes
 		    $contractstatic=new Contrat($db);
 		    $contratlignestatic=new ContratLigne($db);
 		    $thirdpartytmp = new Societe($db);
-		    
+
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " c.rowid, c.ref, c.statut as contract_status,";
 			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut, cd.label, cd.description, cd.product_type as type,";
@@ -103,14 +103,14 @@ class box_services_contracts extends ModeleBoxes
 					$contratlignestatic->type=$objp->type;
 					$contratlignestatic->product_id=$objp->product_id;
 					$contratlignestatic->product_ref=$objp->product_ref;
-					
+
                     $contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
 					$contractstatic->ref=$objp->ref;
-					
+
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
-						
+
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
@@ -128,22 +128,22 @@ class box_services_contracts extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $contratlignestatic->getNomUrl(1),
 					'asis' => 1
                     );
-					
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => $contractstatic->getNomUrl(1),
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => $thirdpartytmp->getNomUrl(1),
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => dol_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
@@ -175,11 +175,12 @@ class box_services_contracts extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

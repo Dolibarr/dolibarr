@@ -135,11 +135,9 @@ $object->fetch($id, $user);
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'perso', $title, 0, 'contact');
-
 if ($action == 'edit')
 {
-	/*
+    /*
 	 * Fiche en mode edition
 	 */
 
@@ -148,15 +146,17 @@ if ($action == 'edit')
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+    dol_fiche_head($head, 'perso', $title, 0, 'contact');
+    
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $object->id;
     print '</td>';
     
     // Photo
-    print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="5">';
+    print '<td align="center" class="hideonsmartphone" valign="middle" rowspan="6">';
     print $form->showphoto('contact',$object)."\n";
     if ($object->photo) print "<br>\n";
     
@@ -170,8 +170,8 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
+    print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td colspan="3">'.$object->lastname.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="3">'.$object->firstname.'</td>';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -213,8 +213,10 @@ if ($action == 'edit')
     }
     print '</tr>';
 
-    print "</table><br>";
+    print "</table>";
 
+    dol_fiche_end();
+    
     print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -226,6 +228,8 @@ if ($action == 'edit')
 else
 {
     // View mode
+    
+    dol_fiche_head($head, 'perso', $title, 0, 'contact');
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     
@@ -285,16 +289,17 @@ else
     }
     else
     {
-        print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
+        print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3"></td>';
     }
     print "</tr>";
 
     print "</table>";
 
     print '</div>';
+
+    dol_fiche_end();
 }
 
-dol_fiche_end();
 
 if ($action != 'edit')
 {

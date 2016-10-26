@@ -14,5 +14,5 @@ BehaviourOnClick=Comportament al fer clic a la URL
 CreateBookmark=Crea marcador
 SetHereATitleForLink=Indica un títol pel marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar una URL http externa o una URL Dolibarr relativa
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Selecciona si les pàgines enllaçades s'han d'obrir en una nova finestra o no
 BookmarksManagement=Gestió de marcadors

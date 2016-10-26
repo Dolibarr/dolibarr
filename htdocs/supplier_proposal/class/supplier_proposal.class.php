@@ -48,7 +48,8 @@ class SupplierProposal extends CommonObject
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='propal';
+    
     /**
      * {@inheritdoc}
      */
@@ -727,7 +728,7 @@ class SupplierProposal extends CommonObject
      * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
      *
      * 	@param		User	$user		User that create
-     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
     function create($user, $notrigger=0)
@@ -926,7 +927,7 @@ class SupplierProposal extends CommonObject
                         if (! $notrigger)
                         {
                             // Call trigger
-                            $result=$this->call_trigger('SUPPLIER_PROPOSAL_CREATE',$user);
+                            $result=$this->call_trigger('PROPAL_SUPPLIER_CREATE',$user);
                             if ($result < 0) { $error++; }
                             // End call triggers
                         }
@@ -1192,8 +1193,8 @@ class SupplierProposal extends CommonObject
                 $sql = "SELECT d.rowid, d.fk_supplier_proposal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
-                $sql.= ' d.ref_fourn as ref_produit_fourn';
-				$sql.= ' ,d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
+                $sql.= ' d.ref_fourn as ref_produit_fourn,';
+				$sql.= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
                 $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_supplier_proposal = ".$this->id;
@@ -1334,7 +1335,7 @@ class SupplierProposal extends CommonObject
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate
-     *  @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return int         		<0 if KO, >=0 if OK
      */
     function valid($user, $notrigger=0)
@@ -1542,7 +1543,7 @@ class SupplierProposal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function reopen($user, $statut, $note='', $notrigger=0)
@@ -1890,7 +1891,7 @@ class SupplierProposal extends CommonObject
      *	Delete askprice
      *
      *	@param	User	$user        	Object user that delete
-     *	@param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
     function delete($user, $notrigger=0)
@@ -2186,7 +2187,8 @@ class SupplierProposal extends CommonObject
     {
         global $user,$langs,$conf;
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0; 
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -2366,31 +2368,60 @@ class SupplierProposal extends CommonObject
      *	@param      int		$withpicto		Add picto into link
      *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
     {
-        global $langs;
+        global $langs, $conf, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
+        $url='';
         $result='';
-        $label=$langs->trans("ShowSupplierProposal").': '.$this->ref;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $label='<u>'.$langs->trans("ShowSupplierProposal").'</u>';
+        if (! empty($this->ref))
+        $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (! empty($this->ref_fourn))
+            $label.= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params .$linkclose;
+            $url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params;
         }
         if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params .$linkclose;
+            $url = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params;
         }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowSupplierProposal");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
         $picto='supplier_proposal';
 
 
         if ($withpicto)
-            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 
@@ -2723,7 +2754,7 @@ class SupplierProposalLine  extends CommonObject
     /**
      *  Insert object line propal in database
      *
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
     function insert($notrigger=0)
@@ -2905,7 +2936,7 @@ class SupplierProposalLine  extends CommonObject
     /**
      *	Update propal line object into DB
      *
-     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	int					<0 if ko, >0 if ok
      */
     function update($notrigger=0)

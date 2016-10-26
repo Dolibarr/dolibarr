@@ -319,7 +319,7 @@ print '<input type="hidden" name="action" value="add_currency">';
 print '<td>'.$form->selectCurrency('', 'code').'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
-print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->trans('rate').'" />&nbsp;';
+print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></form></tr>';
 

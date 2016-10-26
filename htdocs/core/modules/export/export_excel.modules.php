@@ -64,24 +64,27 @@ class ExportExcel extends ModeleExports
         $this->picto='mime/xls';					// Picto
 		$this->version='1.30';             // Driver version
 
-		// If driver use an external library, put its name here
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
-			require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
-			$this->label_lib='PhpWriteExcel';
-            $this->version_lib='unknown';
-		}
-		else
-		{
-            require_once PHPEXCEL_PATH.'PHPExcel.php';
-            require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-			$this->label_lib='PhpExcel';
-            $this->version_lib='1.8.0';		// No way to get info from library
-		}
-
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		
+		if (empty($this->disabled))
+		{
+    		// If driver use an external library, put its name here
+    		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+    		{
+    			require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
+                require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
+                require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
+    			$this->label_lib='PhpWriteExcel';
+                $this->version_lib='unknown';
+    		}
+    		else
+    		{
+                require_once PHPEXCEL_PATH.'PHPExcel.php';
+                require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
+    			$this->label_lib='PhpExcel';
+                $this->version_lib='1.8.0';		// No way to get info from library
+    		}
+		}
 
 		$this->row=0;
 	}

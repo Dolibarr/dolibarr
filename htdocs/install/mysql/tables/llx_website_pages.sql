@@ -25,7 +25,7 @@ CREATE TABLE llx_website_page
 	title         varchar(255),						
 	description   varchar(255),						
 	keywords      varchar(255),
-	content		  text,
+	content		  mediumtext,		-- text is not enough in size
     status        integer,
     date_creation     datetime,
     date_modification datetime,

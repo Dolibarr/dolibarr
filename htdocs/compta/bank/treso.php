@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
+ * Copyright (C) 2016      Frédéric France              <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *	\file       htdocs/compta/bank/treso.php
  *	\ingroup    banque
- *	\brief      Page de detail du budget de tresorerie
+ *	\brief      Page to estimate future balance
  */
 
 require '../../main.inc.php';
@@ -54,7 +55,9 @@ $page=isset($_GET["page"])?$_GET["page"]:0;
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);
@@ -74,42 +77,32 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$viewline = 20;
 	}
 
-	$acct = new Account($db);
+	$object = new Account($db);
 	if ($_GET["account"])
 	{
-		$result=$acct->fetch($_GET["account"]);
+		$result=$object->fetch($_GET["account"]);
 	}
 	if ($_GET["ref"])
 	{
-		$result=$acct->fetch(0,$_GET["ref"]);
-		$_GET["account"]=$acct->id;
+		$result=$object->fetch(0,$_GET["ref"]);
+		$_GET["account"]=$object->id;
 	}
 
 
 	// Onglets
-	$head=bank_prepare_head($acct);
+	$head=bank_prepare_head($object);
 	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
 
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
-	print '</td></tr>';
-
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td>';
-	print '<td colspan="3">'.$acct->label.'</td></tr>';
-
-	print '</table>';
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 	dol_fiche_end();
 	
 
-	$solde = $acct->solde(0);
+	$solde = $object->solde(0);
 
 	/*
 	 * Affiche tableau des echeances a venir
@@ -151,7 +144,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-    $sql.= " AND (f.fk_account IN (0, ".$acct->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+    $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
     $sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
@@ -161,15 +154,17 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
 	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-    $sql2.= " AND (ff.fk_account IN (0, ".$acct->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+    $sql2.= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
     $sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
+    $sql3.= ", cs.fk_account";
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql3.= " WHERE cs.entity = ".$conf->entity;
 	$sql3.= " AND cs.paye = 0";	// Not paid
+    $sql3.= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;
@@ -327,8 +322,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Solde actuel
 	$var=!$var;
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$acct->currency_code.')</td>';
-	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
+	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
+	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";

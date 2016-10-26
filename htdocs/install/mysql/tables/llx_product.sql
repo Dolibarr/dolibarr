@@ -57,7 +57,7 @@ create table llx_product
   tosell					tinyint      DEFAULT 1,	          -- Product you sell
   tobuy						tinyint      DEFAULT 1,            -- Product you buy
   onportal     				tinyint      DEFAULT 0,	          -- If it is a product you sell and you want to sell it on portal (module website must be on)
-  tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch or eat-by management
+  tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch management (eat-by or lot management)
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
@@ -81,8 +81,8 @@ create table llx_product
   volume_units				tinyint      DEFAULT NULL,
   stock						real,							-- Current physical stock (dernormalized field)
   pmp						double(24,8) DEFAULT 0 NOT NULL,		-- To store valuation of stock calculated using average price method, for this product
-  fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
-  lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product
+  fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
+  lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   canvas					varchar(32)  DEFAULT NULL,
   finished					tinyint      DEFAULT NULL,		-- 1=manufactured product, 0=matiere premiere
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.

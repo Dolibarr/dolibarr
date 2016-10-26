@@ -27,6 +27,7 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load traductions files required by page
 $langs->load("resource");
@@ -60,6 +61,11 @@ if ($user->societe_id > 0)
 
 $object = new DolResource($db);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($action == 'confirm_add_resource')
 {
         if (! $cancel)
@@ -83,6 +89,12 @@ if ($action == 'confirm_add_resource')
                         $object->ref=$ref;
                         $object->description=$description;
                         $object->fk_code_type_resource=$fk_code_type_resource;
+
+                        // Fill array 'array_options' with data from add form
+                        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+                        if ($ret < 0) {
+                        	$error ++;
+                        }
 
                         $result=$object->create($user);
                         if ($result > 0)
@@ -135,7 +147,7 @@ if (! $action)
         // Ref / label
         $field = 'ref';
         print '<tr>';
-        print '<td class="fieldrequired">';
+        print '<td class="titlefieldcreate fieldrequired">';
         print $langs->trans('ResourceFormLabel_'.$field);
         print '</td>';
         print '<td>';
@@ -144,7 +156,7 @@ if (! $action)
         print '</tr>';
 
         // Type
-        print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
+        print '<tr><td>'.$langs->trans("ResourceType").'</td>';
         print '<td>';
         $ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 1);
         print '</td></tr>';
@@ -157,20 +169,29 @@ if (! $action)
         print '</td>';
         print '<td>';
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor = new DolEditor($field, $$field, 160, '', '', false);
+        $doleditor = new DolEditor('description', $description, '', '200', 'dolibarr_notes', false);
         $doleditor->Create();
         print '</td>';
         print '</tr>';
+
+        // Other attributes
+        $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	print $object->showOptionals($extrafields,'edit');
+        }
+
 
         print '</table>';
 
         dol_fiche_end('');
 
-        echo '<div align="center">',
-        '<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-        ' &nbsp; ',
-        '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
-        '</div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
         print '</form>';
 }

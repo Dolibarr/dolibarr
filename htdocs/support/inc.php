@@ -71,6 +71,13 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
+		//Mysql driver support has been removed in favor of mysqli
+		if ($dolibarr_main_db_type == 'mysql') {
+			$dolibarr_main_db_type = 'mysqli';
+		}
+
+		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli')) $dolibarr_main_db_port='3306'; // For backward compatibility
+
 		// Clean parameters
 		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
 		$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';

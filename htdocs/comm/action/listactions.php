@@ -55,6 +55,7 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+$search_title=GETPOST('search_title','alpha');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 $datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth'), GETPOST('datestartday'), GETPOST('datestartyear'));
@@ -106,13 +107,6 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 	$filtert=$user->id;
 }
 
-// Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-    $datestart='';
-    $dateend='';
-}
-
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('agendalist'));
 
@@ -133,6 +127,18 @@ if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 	exit;
 }
 
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+    $search_title='';
+    $datestart='';
+    $dateend='';
+}
 
 
 /*
@@ -201,6 +207,7 @@ if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($search_title) $sql.=natural_search("a.label", $search_title);
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {
@@ -309,7 +316,8 @@ if ($resql)
     $i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
@@ -322,6 +330,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
 	{
 	    print '<td class="liste_titre"></td>';
@@ -367,15 +376,22 @@ if ($resql)
 
 		$var=!$var;
 
+		$actionstatic->id=$obj->id;
+		$actionstatic->ref=$obj->id;
+		$actionstatic->type_code=$obj->type_code;
+		$actionstatic->type_label=$obj->type_label;
+		$actionstatic->label=$obj->label;
+		
 		print "<tr ".$bc[$var].">";
 
 		// Action (type)
 		print '<td>';
-		$actionstatic->id=$obj->id;
-		$actionstatic->type_code=$obj->type_code;
-		$actionstatic->type_label=$obj->type_label;
-		$actionstatic->label=$obj->label;
-		print $actionstatic->getNomUrl(1,36);
+		print $actionstatic->getNomUrl(1,-1);
+		print '</td>';
+
+		// Action (type)
+		print '<td>';
+		print $actionstatic->label;
 		print '</td>';
 
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -433,13 +449,13 @@ if ($resql)
 		if ($obj->fk_user_action > 0)
 		{
 			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getLoginUrl(1);
+			print $userstatic->getNomUrl(1);
 		}
 		else print '&nbsp;';
 		print '</td>';
 
 		// Status/Percent
-		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
+		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
 		print '<td></td>';
 		

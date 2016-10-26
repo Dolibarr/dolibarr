@@ -81,8 +81,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("TripCard"));
-
+$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Documents");
+$helpurl="EN:Module_Expense_Reports";
+llxHeader("",$title,$helpurl);
 
 if ($object->id)
 {
@@ -90,7 +91,7 @@ if ($object->id)
 
 	$head=expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
+	dol_fiche_head($head, 'documents',  $langs->trans("ExpenseReport"), 0, 'trip');
 
 
 	// Construit liste des fichiers
@@ -107,7 +108,7 @@ if ($object->id)
     $linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
@@ -122,6 +123,7 @@ if ($object->id)
 
     $modulepart = 'expensereport';
     $permission = $user->rights->expensereport->creer;
+    $permtoedit = $user->rights->expensereport->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 

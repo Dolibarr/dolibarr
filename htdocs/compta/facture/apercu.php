@@ -50,7 +50,9 @@ $result = restrictedArea($user, 'facture', $id);
 
 $now=dol_now();
 
-llxHeader('',$langs->trans("Bill"),'Facture');
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Preview');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -83,7 +85,7 @@ if ($id > 0 || ! empty($ref))
     	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
     
     	// Ref
-    	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
+    	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td colspan="5">';
     	$morehtmlref = '';
     	$discount = new DiscountAbsolute($db);
     	$result = $discount->fetch(0, $object->id);
@@ -238,7 +240,7 @@ if ($id > 0 || ! empty($ref))
         print '</tr>';
 
         // Dates
-        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<tr><td>'.$langs->trans("DateInvoice").'</td>';
         print '<td>'.dol_print_date($object->date,"daytext").'</td>';
 
         // Right part with $rowspan lines

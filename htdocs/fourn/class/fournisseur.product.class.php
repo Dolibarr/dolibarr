@@ -6,8 +6,6 @@
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
- 
- status
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -523,9 +521,10 @@ class ProductFournisseur extends Product
      *
      *  @param	int		$prodid	    Product id
      *  @param	int		$qty		Minimum quantity
+     *  @param	int		$socid		get min price for specific supplier
      *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
-    function find_min_price_product_fournisseur($prodid, $qty=0)
+    function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
     {
         global $conf;
 
@@ -558,6 +557,7 @@ class ProductFournisseur extends Product
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status = 1"; // only enabled society
         if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
+	if ($socid > 0) $sql.= ' AND pfp.fk_soc = '.$socid;
 
         dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
 

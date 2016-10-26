@@ -106,48 +106,49 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
+	
+	// Project card
+	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+	// Title
+	$morehtmlref.=$object->title;
+	// Thirdparty
+	if ($object->thirdparty->id > 0)
+	{
+	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref.='</div>';
+	
+	// Define a complementary filter for search of next/prev ref.
+	if (! $user->rights->projet->all->lire)
+	{
+	    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+	}
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';	
+
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-	// Define a complementary filter for search of next/prev ref.
-    if (! $user->rights->projet->all->lire)
-    {
-        $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    }
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td></tr>';
-
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-	// Company
-	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td></tr>';
-
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
-
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
 	// Files infos
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print "</table>\n";
-	print "</div>\n";
+	
+	print '</div>';
+	
+	dol_fiche_end();
 
 	$modulepart = 'project';
 	$permission = ($userWrite > 0);
+	$permtoedit = ($userWrite > 0);
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }

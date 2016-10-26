@@ -204,328 +204,6 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	}
 }
 
-/**
- *  Scan a directory and return a array of files/directories from a selection.
- *  Content for string is UTF8 and dir separator is "/".
- *
- *  @param	int	$fk_soc        	select socid - for your selection in array
- *  @param	string	$module_get     Starting path from which to search
- *  @param	string	$sortorder	SORT_ASC or SORT_DESC
- *  @param	array		$excludefiles   Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
- *  @return	array		Array of array( filefolder=> array( filelabel=> array( file=> array('name'=>'xxx','date'=>'yyy','size'=>99,'type'=>'dir|file'))))
- */
-function get_soc_file_array($fk_soc, $module_get = false, $sortorder = false, $excludefiles = false) 
-{
-	global $user, $conf, $db;
-
-	$sortfield = "date";
-
-	if(!$sortorder){
-		$sorting = SORT_DESC;
-	}else{
-		$sorting = $sortorder;
-	}
-
-	$ar_modules_get = array();
-	if (is_array($module_get)) $ar_modules_get = $module_get;
-	elseif (strlen($module_get) > 0) $ar_modules_get[$module_get] = $module_get;
-	else
-	{
-		$ar_modules_get['company']	= 'company';
-		$ar_modules_get['dolimail']	= 'dolimail';
-		$ar_modules_get['actions']	= 'actions';
-		$ar_modules_get['invoice'] 	= 'invoice';
-		$ar_modules_get['order']   	= 'order';
-		$ar_modules_get['propal']  	= 'propal';
-		$ar_modules_get['contract']	= 'contract';
-		$ar_modules_get['project'] 	= 'project';
-		$ar_modules_get['invoice_supplier']	= 'invoice_supplier';
-		$ar_modules_get['order_supplier']	= 'order_supplier';
-	}
-
-	
-	// rights
-	if (count($ar_modules_get) > 0)
-	foreach($ar_modules_get as $curmodule)
-	{
-		switch($curmodule)
-		{
-			case 'company':
-			if (! empty($conf->societe->enabled))    // Recht Alle oder nur die Vertriebspartneradressen
-				$ar_modules_secure['company']['outputdir'] = $conf->societe->dir_output;
-			break;
-			case 'dolimail':
-			if (! empty($conf->dolimail->enabled) && ($user->rights->dolimail->read || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->dolimail->dir_output.'/attachments';
-			break;
-			case 'actions':
-			if (! empty($conf->agenda->enabled) || ($user->rights->agenda->allactions->read || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->agenda->dir_output;
-			break;
-			case 'invoice':
-			if (! empty($conf->facture->enabled) && ($user->rights->facture->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->facture->dir_output;
-			break;
-			case 'order':
-			if (!empty($conf->commande->enabled) && ($user->rights->commande->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->commande->dir_output;
-			break;
-			case 'propal':
-			if (!empty($conf->propal->enabled) && ($user->rights->propale->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->propal->dir_output;
-			break;
-			case 'project':
-			if (! empty($conf->projet->enabled) && ($user->rights->projet->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->projet->dir_output;
-			break;
-			case 'invoice_supplier':
-			if (! empty($conf->fournisseur->enabled) && ($user->rights->fournisseur->facture->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->fournisseur->dir_output.'/facture';
-			break;
-			case 'order_supplier':
-			if (! empty($conf->fournisseur->enabled) && ($user->rights->fournisseur->commande->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->fournisseur->dir_output.'/commande';
-			break;
-		}
-	}
-			/* TODO make a outputdir*/
-			//unset($ar_modules_secure['dolimail']);
-			unset($ar_modules_secure['project']); // project (list with project) is "ref"
-			unset($ar_modules_secure['actions']);
-			unset($ar_modules_secure['contract']);
-			/* TODO make a outputdir*/
-			unset($curmodule);
-
-	if($fk_soc > 0)
-	$ar_modules_get = $ar_modules_secure;
-	
-	$xy=0;
-	if (count($ar_modules_get)>0)
-	foreach($ar_modules_get as $curmodule => $myarray)
-	{
-		if($fk_soc > 0 && $curmodule != "company")
-		{
-
-			// SQL to find documents (ref number)
-
-			if($curmodule == "invoice") 					$sql = "SELECT facnumber as refstr FROM ".MAIN_DB_PREFIX."facture";
-			elseif($curmodule == "order") 					$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."commande";
-			elseif($curmodule == "invoice_supplier") 		$sql = "SELECT rowid as refstr FROM ".MAIN_DB_PREFIX."facture_fourn";
-			elseif($curmodule == "order_supplier") 			$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-			elseif($curmodule == "propal") 					$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."propal";
-			elseif($curmodule == "contract") 				$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."contrat";
-			elseif($curmodule == "dolimail")				$sql = "SELECT uid as refstr, subject FROM ".MAIN_DB_PREFIX."mails";
-
-			$sql.= ' WHERE entity IN ('.getEntity('societe', 1).')';
-			$sql.= " AND fk_soc = '".$fk_soc."'";
-			
-
-			$res = $db->query($sql);
-			if ($res && $db->num_rows($res) > 0)
-			{
-				while($obj = $db->fetch_object($res))
-				{
-					$ar_modules_secure[$curmodule]['socref'][] = $obj->refstr; 
-					if($curmodule == "dolimail") $ar_modules_secure['dolimail']['subject'][$obj->refstr] = $obj->subject; 						
-				}
-			}
-			else
-			{
-				unset($ar_modules_secure[$curmodule]);
-				continue;
-				$errors[]="SQL Error: ".$sql;
-				$error++;
-			}
-
-			
-		}else{
-			if($curmodule == "dolimail")				$sql = "SELECT uid as refstr, subject FROM ".MAIN_DB_PREFIX."mails";
-			
-			$res = $db->query($sql);
-			if ($res && $db->num_rows($res) > 0)
-			{
-				while($obj = $db->fetch_object($res))
-				{
-					if($curmodule == "dolimail") $ar_modules_secure['dolimail']['subject'][$obj->refstr] = $obj->subject; 
-				}
-			}
-		}
-
-		// Data in Array
-		// Get Array from ar_module
-
-		$output[$curmodule]=dol_dir_list($myarray['outputdir'],"files",1,'', $excludefiles, $sortfield, $sorting,1);
-		if($fk_soc > 0)
-		{
-			if($curmodule == "company")
-			{
-				foreach($output["company"] as $label => $filedata)
-				{
-					if($filedata['level1name'] != $fk_soc)
-					{
-						unset($output['company'][$label]);
-					}
-				}
-			}
-			
-			elseif($curmodule == "invoice")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // wenn no file exsit
-				foreach($output["invoice"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref']))
-					{
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($fac_supp_N_arr) array
-					}
-
-				}
-			}
-			elseif($curmodule == "invoice_supplier")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]);  } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["invoice_supplier"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($fac_supp_N_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "order")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["order"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_order_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "order_supplier")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["order_supplier"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_order_supp_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "propal")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["propal"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_propal_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "contract")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["contract"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_contract_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "dolimail")
-			{
-
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["dolimail"] as $label => $filedata)
-				{
-					if($filedata['name'] == "winmail.dat" || $filedata['name'] == "smime.p7s") unset($output[$curmodule][$label]);
-					else
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_propal_arr) array
-					}
-				}
-			}
-			// Error if ther isn't any File
-			if(count($output[$curmodule]) == 0)
-			{
-				$error++;
-				$errors[]="Error [404]: No File found for User: ".$fk_soc." in module: ".$curmodule;
-				unset($output[$curmodule]);
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "dolimail" && count($output["dolimail"])>0)
-		{
-			foreach($output["dolimail"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $ar_modules_secure['dolimail']['subject'][$filedata['level1name']];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "invoice" && count($output["invoice"])>0)
-		{
-			foreach($output["invoice"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "invoice_supplier" && count($output["invoice_supplier"])>0)
-		{
-			foreach($output["invoice_supplier"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "contract" && count($output["contract"])>0)
-		{
-			foreach($output["contract"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}		
-
-		$xy++;
-	}
-
-	if(count($output) > 0)
-	{
-		return $output;
-	}
-	else
-	{
-		return -1;
-	}
-}
-
-/**
- *  Calculate Bytes to kb, mb and translate it to current language
- *
- *  @param	int	$byt        	Bytes
- *  @return	string	calculated string
- */
-function calculate_byte($byt)
-{
-	global $langs;
-		
-	if ($byt < 1024) {
-		$unit = '&nbsp;'.$langs->trans("b");
-		$mailsize=$byt;
-	} else if ($byt / 1024 > 1024) {
-		$mailsize = $byt / 1024 / 1024;
-		$unit = '&nbsp;'.$langs->trans("Mb");
-	} else {
-		$mailsize = $byt / 1024;
-		$unit = '&nbsp;'.$langs->trans("Kb");
-	}
-
-	$val = number_format($mailsize, 2).$unit;
-
-	return $val;
-}
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
@@ -559,116 +237,6 @@ function dol_compare_file($a, $b)
 		if ($a->size == $b->size) return 0;
 		return ($a->size < $b->size) ? $retup : $retdown;
 	}
-}
-
-/**
- *	Return mime type of a file
- *
- *	@param	string	$file		Filename we looking for MIME type
- *  @param  string	$default    Default mime type if extension not found in known list
- * 	@param	int		$mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
- *	@return string 		    	Return a mime type family (text/xxx, application/xxx, image/xxx, audio, video, archive)
- *  @see    image_format_supported (images.lib.php)
- */
-function dol_mimetype($file,$default='application/octet-stream',$mode=0)
-{
-	$mime=$default;
-    $imgmime='other.png';
-    $srclang='';
-
-    $tmpfile=preg_replace('/\.noexe$/','',$file);
-
-	// Text files
-	if (preg_match('/\.txt$/i',$tmpfile))         			   { $mime='text/plain'; $imgmime='text.png'; }
-	if (preg_match('/\.rtx$/i',$tmpfile))                      { $mime='text/richtext'; $imgmime='text.png'; }
-	if (preg_match('/\.csv$/i',$tmpfile))					   { $mime='text/csv'; $imgmime='text.png'; }
-	if (preg_match('/\.tsv$/i',$tmpfile))					   { $mime='text/tab-separated-values'; $imgmime='text.png'; }
-	if (preg_match('/\.(cf|conf|log)$/i',$tmpfile))            { $mime='text/plain'; $imgmime='text.png'; }
-    if (preg_match('/\.ini$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='ini'; }
-    if (preg_match('/\.css$/i',$tmpfile))                      { $mime='text/css'; $imgmime='css.png'; $srclang='css'; }
-	// Certificate files
-	if (preg_match('/\.(crt|cer|key|pub)$/i',$tmpfile))        { $mime='text/plain'; $imgmime='text.png'; }
-	// HTML/XML
-	if (preg_match('/\.(html|htm|shtml)$/i',$tmpfile))         { $mime='text/html'; $imgmime='html.png'; $srclang='html'; }
-    if (preg_match('/\.(xml|xhtml)$/i',$tmpfile))              { $mime='text/xml'; $imgmime='other.png'; $srclang='xml'; }
-	// Languages
-	if (preg_match('/\.bas$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='bas'; }
-	if (preg_match('/\.(c)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='c'; }
-    if (preg_match('/\.(cpp)$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp'; }
-    if (preg_match('/\.(h)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h'; }
-    if (preg_match('/\.(java|jsp)$/i',$tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java'; }
-	if (preg_match('/\.php([0-9]{1})?$/i',$tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
-	if (preg_match('/\.phtml$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
-	if (preg_match('/\.(pl|pm)$/i',$tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl'; }
-	if (preg_match('/\.sql$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql'; }
-	if (preg_match('/\.js$/i',$tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js'; }
-	// Open office
-	if (preg_match('/\.odp$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; }
-	if (preg_match('/\.ods$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.spreadsheet'; $imgmime='ooffice.png'; }
-	if (preg_match('/\.odt$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.text'; $imgmime='ooffice.png'; }
-	// MS Office
-	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; }
-	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xls(b|m|x)$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
-	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; }
-	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; }
-	// Other
-	if (preg_match('/\.pdf$/i',$tmpfile))                      { $mime='application/pdf'; $imgmime='pdf.png'; }
-	// Scripts
-	if (preg_match('/\.bat$/i',$tmpfile))                      { $mime='text/x-bat'; $imgmime='script.png'; $srclang='dos'; }
-	if (preg_match('/\.sh$/i',$tmpfile))                       { $mime='text/x-sh'; $imgmime='script.png'; $srclang='bash'; }
-	if (preg_match('/\.ksh$/i',$tmpfile))                      { $mime='text/x-ksh'; $imgmime='script.png'; $srclang='bash'; }
-	if (preg_match('/\.bash$/i',$tmpfile))                     { $mime='text/x-bash'; $imgmime='script.png'; $srclang='bash'; }
-	// Images
-	if (preg_match('/\.ico$/i',$tmpfile))                      { $mime='image/x-icon'; $imgmime='image.png'; }
-	if (preg_match('/\.(jpg|jpeg)$/i',$tmpfile))			   { $mime='image/jpeg'; $imgmime='image.png'; }
-	if (preg_match('/\.png$/i',$tmpfile))					   { $mime='image/png'; $imgmime='image.png'; }
-	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif'; $imgmime='image.png'; }
-	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp'; $imgmime='image.png'; }
-	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff'; $imgmime='image.png'; }
-	// Calendar
-	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; }
-	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; }
-	// Other
-	if (preg_match('/\.torrent$/i',$tmpfile))				   { $mime='application/x-bittorrent'; $imgmime='other.png'; }
-	// Audio
-	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; }
-	// Video
-    if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg'; $imgmime='video.png'; }
-    if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm'; $imgmime='video.png'; }
-    if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; }
-    if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx'; $imgmime='video.png'; }
-    if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid'; $imgmime='video.png'; }
-    if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video'; $imgmime='video.png'; }
-	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; }    // application/xxx where zzz is zip, ...
-	// Exe
-	if (preg_match('/\.(exe|com)$/i',$tmpfile))                { $mime='application/octet-stream'; $imgmime='other.png'; }
-	// Lib
-	if (preg_match('/\.(dll|lib|o|so|a)$/i',$tmpfile))         { $mime='library'; $imgmime='library.png'; }
-    // Err
-	if (preg_match('/\.err$/i',$tmpfile))                      { $mime='error'; $imgmime='error.png'; }
-
-	// Return string
-	if ($mode == 1)
-	{
-		$tmp=explode('/',$mime);
-		return (! empty($tmp[1])?$tmp[1]:$tmp[0]);
-	}
-	if ($mode == 2)
-	{
-	    return $imgmime;
-	}
-    if ($mode == 3)
-    {
-        return $srclang;
-    }
-
-	return $mime;
 }
 
 
@@ -1049,7 +617,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We renamed them.
 		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file))
+		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -1392,12 +960,14 @@ function dol_meta_create($object)
 
 
 /**
- * Init $_SESSION with uploaded files
+ * Scan a directory and init $_SESSION to manage uploaded files with list of all found files.
+ * Note: Only email module seems to use this. Other feature initialize the $_SESSION doing $formmail->clear_attached_files(); $formmail->add_attached_files()
  *
  * @param	string	$pathtoscan				Path to scan
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_init_file_process($pathtoscan='')
+function dol_init_file_process($pathtoscan='', $trackid='')
 {
 	$listofpaths=array();
 	$listofnames=array();
@@ -1413,9 +983,10 @@ function dol_init_file_process($pathtoscan='')
 			$listofmimes[]=dol_mimetype($val['name']);
 		}
 	}
-	$_SESSION["listofpaths"]=join(';',$listofpaths);
-	$_SESSION["listofnames"]=join(';',$listofnames);
-	$_SESSION["listofmimes"]=join(';',$listofmimes);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
 }
 
 
@@ -1430,9 +1001,10 @@ function dol_init_file_process($pathtoscan='')
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
 {
 	global $db,$user,$conf,$langs;
 
@@ -1482,6 +1054,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					{
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
+						$formmail->trackid = $trackid;
 						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
 					}
 					if (image_format_supported($destpath) == 1)
@@ -1550,9 +1123,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param	int		$filenb					File nb to delete
  * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1,$trackid='')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -1562,9 +1136,10 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 	$listofpaths=array();
 	$listofnames=array();
 	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
 
 	if ($keytodelete >= 0)
 	{
@@ -1583,6 +1158,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
+				$formmail->trackid = $trackid;
 				$formmail->remove_attached_files($keytodelete);
 			}
 		}
@@ -1982,16 +1558,31 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
-
-	else if ($modulepart == 'unpaid')
+	else if ($modulepart == 'massfilesarea_proposals')
 	{
-		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->facture->dir_output.'/unpaid/temp/'.$original_file;
+	    if ($fuser->rights->propal->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->propal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-
+	else if ($modulepart == 'massfilesarea_orders')
+	{
+	    if ($fuser->rights->commande->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_invoices')
+	{
+	    if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	
 	// Wrapping pour les fiches intervention
 	else if ($modulepart == 'ficheinter')
 	{
@@ -2102,7 +1693,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->bind->write || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -2188,7 +1779,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->banque->dir_output.'/bordereau/'.$original_file;		// original_file should contains relative path so include the get_exdir result
+		$original_file=$conf->bank->dir_output.'/checkdeposits/'.$original_file;		// original_file should contains relative path so include the get_exdir result
 	}
 
 	// Wrapping for bank

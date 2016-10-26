@@ -804,7 +804,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	$langs->load("members");
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member=new Adherent($db);
 	$result=$member->fetch('',$ref);
@@ -815,7 +815,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	}
 	else
 	{
-		$subscription=new Cotisation($db);
+		$subscription=new Subscription($db);
 	}
 
 	$amount=$subscription->total_ttc;

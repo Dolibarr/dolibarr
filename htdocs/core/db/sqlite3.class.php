@@ -305,8 +305,9 @@ class DoliDBSqlite3 extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-	    // FIXME: sqlite_select_db() does not exist
-        return sqlite_select_db($this->db,$database);
+	    // sqlite_select_db() does not exist
+        //return sqlite_select_db($this->db,$database);
+        return true;
     }
 
 
@@ -831,9 +832,12 @@ class DoliDBSqlite3 extends DoliDB
         $sql="SHOW TABLES FROM ".$database." ".$like.";";
         //print $sql;
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $listtables[] = $row[0];
+            while($row = $this->fetch_row($result))
+            {
+                $listtables[] = $row[0];
+            }
         }
         return $listtables;
     }
@@ -853,9 +857,12 @@ class DoliDBSqlite3 extends DoliDB
 
         dol_syslog($sql,LOG_DEBUG);
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $infotables[] = $row;
+            while($row = $this->fetch_row($result))
+            {
+                $infotables[] = $row;
+            }
         }
         return $infotables;
     }

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +23,10 @@
  *  \file       htdocs/api/indexphp
  *
  *	@todo	User authentication with api_key
- *
- *
  */
+
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
@@ -58,7 +59,10 @@ if (empty($conf->global->MAIN_MODULE_API))
 
 $api = new DolibarrApi($db);
 
-$api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
+// Enable the Restler API Explorer.
+// See https://github.com/Luracast/Restler-API-Explorer for more info.
+$api->r->addAPIClass('Luracast\\Restler\\Explorer');
+
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -70,33 +74,42 @@ foreach ($modulesdir as $dir)
     /*
      * Search available module
      */
-    dol_syslog("Scan directory ".$dir." for API modules");
+    //dol_syslog("Scan directory ".$dir." for API modules");
 
     $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
         while (($file = readdir($handle))!==false)
         {
-            if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+            if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$reg))
             {
-                $modulename=$reg[1];
+                $module = strtolower($reg[1]);
+                $moduledirforclass = $module;
+                $moduleforperm = $module;
+                
+                if ($module == 'propale') {
+                    $moduledirforclass = 'comm/propal';
+                    $moduleforperm='propal';
+                }
+                elseif ($module == 'agenda') {
+                    $moduledirforclass = 'comm/action';
+                }
+                elseif ($module == 'adherent') {
+                    $moduledirforclass = 'adherents';
+                }
+                elseif ($module == 'banque') {
+                    $moduledirforclass = 'compta/bank';
+                }
+                elseif ($module == 'categorie') {
+                    $moduledirforclass = 'categories';
+                }
+                elseif ($module == 'facture') {
+                    $moduledirforclass = 'compta/facture';
+                }
 
                 // Defined if module is enabled
                 $enabled=true;
-                $module=$part=$obj=strtolower(preg_replace('/^mod/i','',$modulename));
-                //if ($part == 'propale') $part='propal';
-                if ($module == 'societe') {
-					$obj = 'thirdparty';
-				}
-                if ($module == 'categorie') {
-                    $part = 'categories';
-					$obj = 'category';
-				}
-                if ($module == 'facture') {
-                    $part = 'compta/facture';
-					$obj = 'facture';
-				}
-                if (empty($conf->$module->enabled)) $enabled=false;
+                if (empty($conf->$moduleforperm->enabled)) $enabled=false;
 
                 if ($enabled)
                 {
@@ -108,24 +121,32 @@ foreach ($modulesdir as $dir)
                      * @todo : take care of externals module!
                      * @todo : use getElementProperties() function ?
                      */
-                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
+                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$moduledirforclass.'/class/';
 
                     $handle_part=@opendir(dol_osencode($dir_part));
                     if (is_resource($handle_part))
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
+                            // Support of the deprecated API.
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
-                                $classname=$reg[1];
-                                $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
-                                $classname = ucfirst($classname);
+                                $classname = ucwords($reg[1]).'Api';
                                 require_once $dir_part.$file_searched;
-                                if (class_exists($classname)) 
+                                if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);    
-                                    $api->r->addAPIClass($classname,'');
-                                    $listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
+                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
+                                    $api->r->addAPIClass($classname, '/');
+                                }
+                            }
+                            elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                            {
+                                $classname = ucwords($reg[1]);
+                                require_once $dir_part.$file_searched;
+                                if (class_exists($classname))
+                                {
+                                    dol_syslog("Found API classname=".$classname." into ".$dir);
+                                    $listofapis[] = $classname;
                                 }
                             }
                         }
@@ -136,6 +157,14 @@ foreach ($modulesdir as $dir)
     }
 }
 
+// Sort the classes before adding them to Restler. The Restler API Explorer
+// shows the classes in the order they are added and it's a mess if they are
+// not sorted.
+sort($listofapis);
+foreach ($listofapis as $classname)
+{
+    $api->r->addAPIClass($classname);
+}
 
 // TODO If not found, redirect to explorer
 

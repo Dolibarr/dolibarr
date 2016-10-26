@@ -8,3 +8,4 @@ TokenDeleted=Token excluído
 RequestAccess=Clique aqui para solicitar/renovar o acesso e receber um novo token para salvar
 DeleteAccess=Clique aqui para apagar o token
 UseTheFollowingUrlAsRedirectURI=Utilize o seguinte URL como o URI de redirecionamento ao criar a sua credencial de seu provedor de OAuth:
+ListOfSupportedOauthProviders=Forneça aqui a credencial fornecida pelo seu provedor OAuth2. Apenas provedores OAuth2 suportados estão visíveis aqui. Esta configuração talvez seja usada por outros módulos que necessitem de autenticação OAuth2.

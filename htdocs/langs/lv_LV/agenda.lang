@@ -65,8 +65,8 @@ AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or as
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> ierobežot izejas darbībām piešķirto lietotāja <b>%s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
-AgendaShowBirthdayEvents=Show birthdays of contacts
-AgendaHideBirthdayEvents=Hide birthdays of contacts
+AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
+AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
 ExportDataset_event1=Notikumu saraksts
 DefaultWorkingDays=Noklusētās darba dienas nedēļā (Piemēram: 1-5, 1-6)

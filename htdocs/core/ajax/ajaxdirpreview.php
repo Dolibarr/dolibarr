@@ -82,6 +82,7 @@ else    // For no ajax call
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
+if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Load traductions files
 $langs->load("ecm");
@@ -138,10 +139,10 @@ if (! dol_is_dir($upload_dir))
 }
 
 print '<!-- TYPE='.$type.' -->'."\n";
-print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$url.' '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-$url=DOL_URL_ROOT.'/ecm/index.php';
+
 
 // Dir scan
 if ($type == 'directory')
@@ -153,7 +154,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -188,6 +189,8 @@ if ($type == 'directory')
     else if ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
     // Auto area for users
     else if ($module == 'user') $upload_dir = $conf->user->dir_output;
+    // Auto area for expense report
+    else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 
     if (in_array($module, $automodules))
     {

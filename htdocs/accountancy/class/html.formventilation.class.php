@@ -41,6 +41,9 @@ class FormVentilation extends Form
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		}
 		$sql .= ' ORDER BY import_key DESC';
 
 		dol_syslog(get_class($this) . "::select_bookkeeping_importkey", LOG_DEBUG);
@@ -58,34 +61,33 @@ class FormVentilation extends Form
 
 		return Form::selectarray($htmlname, $options, $selectedkey);
 	}
-	
+
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string $selectid Preselected chart of accounts
-	 * @param string $htmlname Name of field in html form
-	 * @param int $showempty Add an empty field
-	 * @param array $event Event options
-	 * @param int $select_in $selectid value is a aa.rowid (0 default) or aa.account_number (1)
-	 * @param int $select_out set value returned by select 0=rowid (default), 1=account_number
-	 * @param int $aabase set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
-	 *       
+	 * @param string   $selectid           Preselected chart of accounts
+	 * @param string   $htmlname           Name of field in html form
+	 * @param int      $showempty          Add an empty field
+	 * @param array    $event              Event options
+	 * @param int      $select_in          selectid value is a aa.rowid (0 default) or aa.account_number (1)
+	 * @param int      $select_out         set value returned by select 0=rowid (default), 1=account_number
+	 * @param string   $morecss            More css non HTML object
 	 * @return string String with HTML select
 	 */
-	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
+	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone') {
 		global $conf;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
-		
+
 		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 		$sql .= " ORDER BY aa.account_number";
-		
+
 		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
@@ -123,11 +125,11 @@ class FormVentilation extends Form
 			$options[$select_value_out] = $label;
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		$this->db->free($resql);
 		return $out;
 	}
-	
+
 	/**
 	 * Return list of accounts with label by class of accounts
 	 *
@@ -135,18 +137,18 @@ class FormVentilation extends Form
 	 * @param string $htmlname Name of field in html form
 	 * @param int $showempty Add an empty field
 	 * @param array $event Event options
-	 *       
+	 *
 	 * @return string String with HTML select
 	 */
 	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array()) {
 		global $conf;
-		
+
 		$sql = "SELECT DISTINCT pcg_type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_type";
-		
+
 		dol_syslog(get_class($this) . "::select_pcgtype", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
@@ -168,7 +170,7 @@ class FormVentilation extends Form
 		$this->db->free($resql);
 		return $out;
 	}
-	
+
 	/**
 	 * Return list of accounts with label by sub_class of accounts
 	 *
@@ -176,18 +178,18 @@ class FormVentilation extends Form
 	 * @param string $htmlname Name of field in html form
 	 * @param int $showempty Add an empty field
 	 * @param array $event Event options
-	 *       
+	 *
 	 * @return string String with HTML select
 	 */
 	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array()) {
 		global $conf;
-		
+
 		$sql = "SELECT DISTINCT pcg_subtype ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_subtype";
-		
+
 		dol_syslog(get_class($this) . "::select_pcgsubtype", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
@@ -209,7 +211,7 @@ class FormVentilation extends Form
 		$this->db->free($resql);
 		return $out;
 	}
-	
+
 	/**
 	 * Return list of auxilary thirdparty accounts
 	 *
@@ -217,7 +219,7 @@ class FormVentilation extends Form
 	 * @param string $htmlname Name of field in html form
 	 * @param int $showempty Add an empty field
 	 * @param array $event Event options
-	 *       
+	 *
 	 * @return string String with HTML select
 	 */
 	function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $event = array()) {
@@ -227,6 +229,9 @@ class FormVentilation extends Form
 		// Auxiliary customer account
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
+		}
 		$sql .= " ORDER BY code_compta";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -246,7 +251,10 @@ class FormVentilation extends Form
 		// Auxiliary supplier account
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " ORDER BY code_compta";
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
+		}
+		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -268,7 +276,7 @@ class FormVentilation extends Form
 
 		return $out;
 	}
-	
+
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
@@ -280,11 +288,16 @@ class FormVentilation extends Form
 	 */
 	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
+	    global $conf;
+	    
 		$out_array = array();
 
 		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-		$sql .= " ORDER BY doc_date";
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		}
+		$sql .= " ORDER BY date_format(doc_date,'%Y')";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
@@ -295,6 +308,47 @@ class FormVentilation extends Form
 		}
 		while ($obj = $this->db->fetch_object($resql)) {
 			$out_array[$obj->dtyear] = $obj->dtyear;
+		}
+		$this->db->free($resql);
+
+		if ($output_format == 'html') {
+			return Form::selectarray($htmlname, $out_array, $selected, $useempty, 0, 0, 'placeholder="aa"');
+		} else {
+			return $out_array;
+		}
+	}
+
+	/**
+	 * Return HTML combo list of years existing into book keepping
+	 *
+	 * @param  string          $selected       Preselected value
+	 * @param  string          $htmlname       Name of HTML select object
+	 * @param  int             $useempty       Affiche valeur vide dans liste
+	 * @param  string          $output_format  Html/option (for option html only)/array (to return options arrays
+	 * @return string/array
+	 */
+	function selectjournal_accountancy_bookkepping($selected = '', $htmlname = 'journalid', $useempty = 0, $output_format = 'html')
+	{
+	    global $conf,$langs;
+	    
+		$out_array = array();
+
+		$sql = "SELECT DISTINCT code_journal";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		}
+		$sql .= " ORDER BY code_journal";
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$out_array[$obj->code_journal] = $obj->code_journal?$obj->code_journal:$langs->trans("NotDefined");  // TODO Not defined is accepted ? We should avoid this, shouldn't we ?
 		}
 		$this->db->free($resql);
 

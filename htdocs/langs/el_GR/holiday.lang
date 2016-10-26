@@ -20,7 +20,7 @@ ReviewedByCP=Θα πρέπει να επανεξεταστεί από
 DescCP=Περιγραφή
 SendRequestCP=Δημιουργήστε το αίτημα άδειας
 DelayToRequestCP=Tα αιτήματα πρέπει να γίνονται τουλάχιστον <b>%s ημέρα(ες)</b> πριν από τις.
-MenuConfCP=Ισορροπία αποχωρήσεων
+MenuConfCP=Ισορροπία αδειών
 SoldeCPUser=Η ισορροπία των αδειών είναι <b>%s</b> ημέρες.
 ErrorEndDateCP=Πρέπει να επιλέξετε μια ημερομηνία λήξης μεγαλύτερη από την ημερομηνία έναρξης.
 ErrorSQLCreateCP=Παρουσιάστηκε σφάλμα στην SQL κατά τη διάρκεια της δημιουργίας:
@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Μηνιαία ενημέρωση
 ManualUpdate=Χειροκίνητη ενημέρωση
 HolidaysCancelation=Αφήστε το αίτημα ακύρωσης
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

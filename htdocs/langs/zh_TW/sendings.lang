@@ -6,7 +6,7 @@ AllSendings=All Shipments
 Shipment=出貨
 Shipments=出貨
 ShowSending=Show Shipments
-Receivings=Delivery Receipts
+Receivings=發貨收據
 SendingsArea=出貨
 ListOfSendings=出貨清單列表
 SendingMethod=送貨方式
@@ -31,7 +31,7 @@ StatusSendingProcessed=加工
 StatusSendingDraftShort=草案
 StatusSendingValidatedShort=驗證
 StatusSendingProcessedShort=加工
-SendingSheet=Shipment sheet
+SendingSheet=發貨單
 ConfirmDeleteSending=你確定要刪除這個出貨單？
 ConfirmValidateSending=你確定要驗證這個出貨單？
 ConfirmCancelSending=你確定要取消此出貨單？
@@ -52,7 +52,7 @@ ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
-WeightVolShort=Weight/Vol.
+WeightVolShort=重量/體積
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods

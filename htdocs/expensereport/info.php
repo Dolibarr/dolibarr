@@ -39,8 +39,9 @@ $result = restrictedArea($user, 'expensereport', $id, '');
 /*
  * View
  */
-
-llxHeader();
+$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
+$helpurl="EN:Module_Expense_Reports";
+llxHeader("",$title,$helpurl);
 
 if ($id)
 {
@@ -50,7 +51,7 @@ if ($id)
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

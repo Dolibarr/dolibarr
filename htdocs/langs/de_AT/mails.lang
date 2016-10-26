@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - mails
 ResetMailing=E-Mail-Kampagne erneut senden
+ConfirmResetMailing=Achtung: Die neuerliche Ausführung der E-Mail-Kampagne <b>%s</b> erlaubt Ihnen den Massenversand von E-Mails zu einem anderen Zeitpunkt. Möchten Sie wirklich fortfahren?
 CloneEMailing=E-Mail-Kampagne duplizieren
 ConfirmCloneEMailing=Möchten Sie diese Mailkampagne wirklich duplizieren?
 CloneContent=Nachricht duplizieren
@@ -13,5 +14,4 @@ ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 IdRecord=Eintrags ID
 ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
-ListOfActiveNotifications=Liste aller aktiven E-Mail-Benachrichtigungen
 ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen

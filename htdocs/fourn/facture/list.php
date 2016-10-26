@@ -58,7 +58,6 @@ if ($user->societe_id > 0)
 }
 
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode_search");
 
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
@@ -215,27 +214,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $option='';
 }
 
-if ($mode == 'search')
-{
-	if ($modesearch == 'soc')
-	{
-		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom LIKE '%".$db->escape($socname)."%'";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-	}
-
-    $resql=$db->query($sql);
-	if ($resql)
-	{
-		if ( $db->num_rows($resql) == 1)
-		{
-			$obj = $db->fetch_object($resql);
-			$socid = $obj->rowid;
-		}
-		$db->free($resql);
-	}
-}
-
 if (empty($reshook))
 {
     // Mass actions. Controls on number of lines checked
@@ -270,7 +248,7 @@ llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:Factur
 $sql = "SELECT";
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite,";
-$sql.= " f.total_ht, f.total_ttc, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
+$sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -288,7 +266,6 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typ
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql.= ', '.MAIN_DB_PREFIX.'facture_fourn as f';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn_extrafields as ef on (f.rowid = ef.fk_object)";
-else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as fd ON fd.fk_facture_fourn = f.rowid';
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as pd ON f.rowid=pd.fk_facture_fourn';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
@@ -314,7 +291,7 @@ if ($search_ref)
 	else $sql .= natural_search('f.ref', $search_ref);
 }
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
-if ($search_ref_supplier) $sql .= natural_search('f.ref_supplier', $search_ref_supplier);
+if ($search_refsupplier) $sql .= natural_search('f.ref_supplier', $search_refsupplier);
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
@@ -323,7 +300,7 @@ if ($search_state) $sql.= natural_search("state.nom",$search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
+if ($search_montant_ht != '') $sql.= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
@@ -428,7 +405,7 @@ if ($resql)
 	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
 	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
-	if ($search_refsupplier) 	$param.='&search_refsupplier'.urlencode($search_refsupplier);
+	if ($search_refsupplier) 	$param.='&search_refsupplier='.urlencode($search_refsupplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
@@ -458,7 +435,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
 	
 	if ($search_all)
     {
@@ -514,7 +491,7 @@ if ($resql)
 	if (! empty($arrayfields['f.ref']['checked']))                print_liste_field_titre($arrayfields['f.ref']['label'],$_SERVER['PHP_SELF'],'f.ref,f.rowid','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.ref_supplier']['checked']))       print_liste_field_titre($arrayfields['f.ref_supplier']['label'],$_SERVER["PHP_SELF"],'f.ref_supplier','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.label']['checked']))              print_liste_field_titre($arrayfields['f.label']['label'],$_SERVER['PHP_SELF'],"f.libelle,f.rowid",'',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['f.datef']['checked']))              print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.datef']['checked']))              print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER['PHP_SELF'],'f.datef,f.rowid','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'],$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.ref']['checked']))                print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER['PHP_SELF'],"p.ref",'',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
@@ -547,19 +524,7 @@ if ($resql)
 	if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'],$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-/*	
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref,f.rowid","",$param,"",$sortfield,$sortorder);
-	if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef,f.rowid","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"f.libelle","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-*/	print "</tr>\n";
+	print "</tr>\n";
 
 	// Line for filters
 
@@ -743,19 +708,30 @@ if ($resql)
 			$facturestatic->ref_supplier=$obj->ref_supplier;
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
-				
+	
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
                 print '<td class="nowrap">';
-    
+
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                // Picto + Ref
+                print '<td class="nobordernopadding nowrap">';
                 print $facturestatic->getNomUrl(1);
+                print '</td>';
+                // Warning
+                //print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+                //print '</td>';
+                // Other picto tool
+                print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
                 $filename=dol_sanitizeFileName($obj->ref);
                 $filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
-                print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
+				$subdir = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
+				print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
+				print '</td></tr></table>';
+				
                 print "</td>\n";
-
-                if (! $i) $totalarray['nbfield']++;
+				if (! $i) $totalarray['nbfield']++;
     		}
     		
 			// Customer ref

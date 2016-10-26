@@ -1,6 +1,6 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_SEPARATORCSV=Dấu ngăn cách cột trong file xuất ra
+ACCOUNTING_EXPORT_DATE=Định dạng ngày trong file xuất ra
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Export label
@@ -14,48 +14,69 @@ Journaux=Tạp chí
 JournalFinancial=Tạp chí tài chính
 BackToChartofaccounts=Quay trở lại biểu đồ của tài khoản
 
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=Chọn một biểu đồ của tài khoản
 Addanaccount=Thêm một tài khoản kế toán
 AccountAccounting=Tài khoản kế toán
 AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Breakdown
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
 MenuAccountancy=Accountancy
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=Báo cáo
 NewAccount=Tài khoản kế toán mới
 Create=Tạo
-CreateMvts=Create movement
-UpdateMvts=Sửa đổi của một thay đổi
-WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=Sổ cái tổng hợp
 AccountBalance=Account balance
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Dòng hoá đơn được ventilation
-InvoiceLinesDone=Đường ventilation hóa đơn
-IntoAccount=Ventilate in the accounting account
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=Ventilation
+Ventilate=Bind
 
 Processing=Chế biến
 EndProcessing=Sự kết thúc của chế biến
-AnyLineVentilate=Bất kỳ dòng để ventilation
+AnyLineVentilate=Any lines to bind
 SelectedLines=Đường lựa chọn
 Lineofinvoice=Dòng của hóa đơn
-VentilatedinAccount=Ventilation thành công trong các tài khoản kế toán
-NotVentilatedinAccount=Không ventilation trong tài khoản kế toán
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Chiều dài của các tài khoản tổng hợp
-ACCOUNTING_LENGTH_AACCOUNT=Chiều dài của các tài khoản của bên thứ ba
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=Bán tạp chí
 ACCOUNTING_PURCHASE_JOURNAL=Mua tạp chí
@@ -81,25 +102,31 @@ Sens=Sens
 Codejournal=Tạp chí
 NumPiece=Piece number
 AccountingCategory=Accounting category
-
+NotMatch=Not Set
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 DelBookKeeping=Xóa các bản ghi của sổ kế toán tổng
-
 DescSellsJournal=Bán tạp chí
 DescPurchasesJournal=Mua tạp chí
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Thanh toán hóa đơn của khách hàng
-
 ThirdPartyAccount=Tài khoản của bên thứ ba
-
-NewAccountingMvt=Thay đổi mới
-NumMvts=Số thay đổi
-ListeMvts=Danh sách của thay đổi
+NewAccountingMvt=New transaction
+NumMvts=Numero of transaction
+ListeMvts=List of movements
 ErrorDebitCredit=Thẻ ghi nợ và tín dụng không thể có một giá trị cùng một lúc
 
-ReportThirdParty=Danh sách tài khoản của bên thứ ba
-DescThirdPartyReport=Tham khảo ý kiến ​​ở đây là danh sách các khách hàng của bên thứ ba và các nhà cung cấp và các tài khoản kế toán
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=Danh sách các tài khoản kế toán
 
@@ -107,22 +134,29 @@ Pcgtype=Lớp tài khoản
 Pcgsubtype=Trong lớp học của các tài khoản
 Accountparent=Gốc của tài khoản
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
 TotalMarge=Lợi nhuận tổng doanh thu
-DescVentilDoneCustomer=Tham khảo ý kiến ​​ở đây là danh sách các dòng hoá đơn cho khách hàng và tài khoản kế toán
-DescVentilTodoCustomer=Ventilation cho đường dây của bạn hóa đơn của khách hàng với một tài khoản kế toán
-ChangeAccount=Thay đổi tài khoản kế toán cho dòng lựa chọn tài khoản:
-Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilDoneSupplier=Tham khảo ý kiến ​​ở đây là danh sách các dòng nhà cung cấp hoá đơn, tài khoản kế toán
 
-ValidateHistory=Tự động xác nhận
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+Vide=-
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Bind Automatically
+AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=Breakdown card
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
@@ -140,15 +174,18 @@ Modelcsv_bob50=Export towards Sage BOB 50
 Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanHistory=Reset all bindings for selected year
 
 ## Dictionary
 Range=Range of accounting account
@@ -158,3 +195,10 @@ Formula=Formula
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

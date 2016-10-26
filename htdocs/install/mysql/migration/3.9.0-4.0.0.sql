@@ -42,10 +42,12 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
 
+DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
+
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer,
+  entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
@@ -58,6 +60,10 @@ CREATE TABLE llx_product_lot (
 ) ENGINE=InnoDB;
 
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
+-- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
+ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
+UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
 DROP TABLE llx_stock_serial; 
 
@@ -136,6 +142,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
 ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
+ALTER TABLE llx_website CHANGE COLUMN shortname ref varchar(24) NOT NULL;
 ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
@@ -195,7 +202,7 @@ ALTER TABLE llx_extrafields ADD COLUMN ishidden integer DEFAULT 0;
 
 
 ALTER TABLE llx_paiementfourn ADD COLUMN ref varchar(30) AFTER rowid;
-ALTER TABLE llx_paiementfourn ADD COLUMN entity integer AFTER ref;
+ALTER TABLE llx_paiementfourn ADD COLUMN entity integer DEFAULT 1 AFTER ref;
 
 
 CREATE TABLE llx_multicurrency 
@@ -326,6 +333,9 @@ ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DE
 ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_societe_remise ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
@@ -364,7 +374,6 @@ ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
-DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_accounting_system DROP COLUMN fk_pays;
 ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
@@ -389,8 +398,8 @@ INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
 
 UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
--- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
--- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent TYPE integer USING account_parent::integer;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT '0';
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT '0';
 
 CREATE TABLE llx_accounting_journal
 (
@@ -482,12 +491,13 @@ update llx_product_batch set batch = '000000' where batch = '';
 update llx_product_lot set batch = '000000' where batch = 'Undefined';
 update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
 
--- At end (higher risk of error)
 
--- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
+UPDATE llx_c_lead_status set percent = 100 where code = 'WON';
 
-ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
 CREATE TABLE llx_oauth_token (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -495,7 +505,7 @@ CREATE TABLE llx_oauth_token (
     token text,
     fk_user integer,
     fk_adherent integer,
-    entity integer
+    entity integer DEFAULT 1
 )ENGINE=InnoDB;
 
 CREATE TABLE llx_oauth_state (
@@ -504,7 +514,37 @@ CREATE TABLE llx_oauth_state (
     state varchar(128),
     fk_user integer,
     fk_adherent integer,
-    entity integer
+    entity integer DEFAuLT 1
 )ENGINE=InnoDB;
 
-ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
+-- Panama datas
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1781, 178,  '7','0','ITBMS standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1782, 178,   '0','0','ITBMS Rate 0',1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  178, 17801, '', 0, 'Panama', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-1', 17801, '', 0, '', 'Bocas del Toro', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-2', 17801, '', 0, '', 'Coclé', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-3', 17801, '', 0, '', 'Colón', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-4', 17801, '', 0, '', 'Chiriquí', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-5', 17801, '', 0, '', 'Darién', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-6', 17801, '', 0, '', 'Herrera', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-7', 17801, '', 0, '', 'Los Santos', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-8', 17801, '', 0, '', 'Panamá', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-9', 17801, '', 0, '', 'Veraguas', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-13', 17801, '', 0, '', 'Panamá Oeste', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17801', 'Empresa individual', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17802', 'Asociación General', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17803', 'Sociedad de Responsabilidad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);
+
+
+-- VMYSQL4.1 ALTER TABLE llx_establishment CHANGE COLUMN fk_user_mod fk_user_mod integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_establishment ALTER COLUMN fk_user_mod DROP NOT NULL;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN entity integer DEFAULT 1;

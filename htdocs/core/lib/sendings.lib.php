@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  */
 function shipping_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
 	$langs->load("sendings");
 	$langs->load("deliveries");
@@ -64,7 +64,13 @@ function shipping_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $objectsrc = $object;
+	    if ($object->origin == 'commande' && $object->origin_id > 0)
+	    {
+	        $objectsrc = new Commande($db);
+	        $objectsrc->fetch($object->origin_id);
+	    }
+	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -310,6 +316,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$expedition->id=$objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id,$expedition->element);
 					//var_dump($expedition->linkedObjects);
+
 					$receiving='';
 					if (count($expedition->linkedObjects['delivery']) > 0) $receiving=reset($expedition->linkedObjects['delivery']);   // Take first link
 

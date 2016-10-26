@@ -44,36 +44,24 @@ class modExpenseReport extends DolibarrModules
 		global $conf;
 
 		$this->db = $db;
-
-		// Id for module (must be unique).
-		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 770;
 
-		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		// It is used to group modules in module setup page
 		$this->family = "hr";
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Manage and claim expense reports (transportation, meal, ...)";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 0;
-		// Name of image file used for this module.
-		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='trip';
 
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		$this->triggers = 0;
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
-		$this->dirs = array();
+		$this->dirs = array("/expensereport/temp");
 		$r=0;
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
@@ -88,9 +76,6 @@ class modExpenseReport extends DolibarrModules
 		$this->langfiles = array("companies","trips");
 
 		// Constants
-		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r=0;
 
@@ -103,34 +88,10 @@ class modExpenseReport extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		// where entity can be
-		// 'thirdparty'       to add a tab in third party view
-		// 'intervention'     to add a tab in intervention view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'order'            to add a tab in customer order view
-		// 'product'          to add a tab in product view
-		// 'stock'            to add a tab in stock view
-		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
-		// 'contract'         to add a tab in contract view
-		// 'user'             to add a tab in user view
-		// 'group'            to add a tab in group view
-		// 'contact'          to add a tab in contact view
-
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
 		$r=0;
-
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
-
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
@@ -193,6 +154,10 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'export';
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+
 		// Exports
 		$r=0;
 
@@ -212,113 +177,6 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
 		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
-
-
-
-		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
-
-		// Example to declare a Left Menu entry: fk_mainmenu=home,fk_leftmenu=admintools
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'TripsAndExpenses',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport',
-									'url'=>'/expensereport/index.php',
-									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'New',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detailnew',
-									'url'=>'/expensereport/card.php?action=create',
-									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->creer',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'List',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detaillist',
-									'url'=>'/expensereport/list.php',
-									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport_detaillist',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'ListToApprove',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detaillist_approve',
-									'url'=>'/expensereport/list.php?search_status=2',
-									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->approve',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'Statistics',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detail',
-									'url'=>'/expensereport/stats/index.php',
-									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-
-		// Disabled, not yet stable
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'ExportTripCSV',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detail',
-									'url'=>'/expensereport/export_csv.php',
-									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->global->DEPLACEMENT_TO_CLEAN',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-									'type'=>'left',			// This is a Left menu entry
-									'titre'=>'Synchro_Compta',
-									'mainmenu'=>'hrm',
-									'leftmenu'=>'expensereport_detail',
-									'url'=>'/expensereport/synchro_compta.php',
-									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->global->DEPLACEMENT_TO_CLEAN',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
 	}
 
 	/**
@@ -337,8 +195,8 @@ class modExpenseReport extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','deplacement',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='expensereport' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);

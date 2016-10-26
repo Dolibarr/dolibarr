@@ -67,8 +67,9 @@ MailingStatusRead=قرأ
 YourMailUnsubcribeOK=البريد <b>الإلكتروني٪ s غير</b> unsubcribe بشكل صحيح من القائمة البريدية
 ActivateCheckReadKey=المفتاح المستخدم في تشفير URL المستخدمة ل "اقرأ استلام" و "Unsubcribe" ميزة
 EMailSentToNRecipients=البريد الإلكتروني المرسلة إلى المستلمين٪ الصورة.
+EMailSentForNElements=EMail sent for %s elements.
 XTargetsAdded=وأضاف <b>المتلقين٪ الصورة</b> إلى قائمة المستهدفين
-OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
+OnlyPDFattachmentSupported=If the PDF document was already generated for the object to send, it will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachment in mass sending in this version).
 AllRecipientSelected=جميع thirdparties اختيار وإذا تم تعيين بالبريد.
 ResultOfMailSending=نتيجة لإرسال البريد الإلكتروني الشامل
 NbSelected=ملحوظة مختارة
@@ -102,7 +103,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=يمكنك استخدام <b>الف�
 TagCheckMail=افتتاح البريد المسار
 TagUnsubscribe=رابط إلغاء الاشتراك
 TagSignature=التوقيع إرسال المستعمل
-TagMailtoEmail=البريد الإلكتروني المستلم
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=لا ترسل البريد الإلكتروني. مرسل سيئة أو البريد الإلكتروني المستلم. تحقق ملف تعريف المستخدم.
 # Module Notifications
 Notifications=الإخطارات
@@ -110,7 +112,7 @@ NoNotificationsWillBeSent=إشعارات البريد الإلكتروني لا 
 ANotificationsWillBeSent=1 سيتم إرسال الإشعار عن طريق البريد الإلكتروني
 SomeNotificationsWillBeSent=ق ٪ سوف يتم إرسال الإخطارات عبر البريد الإلكتروني
 AddNewNotification=تفعيل هدفا إشعار البريد الإلكتروني الجديد
-ListOfActiveNotifications=قائمة جميع الأهداف إشعار البريد الإلكتروني النشطة
+ListOfActiveNotifications=List all active targets for email notification
 ListOfNotificationsDone=أرسلت قائمة جميع اشعارات بالبريد الالكتروني
 MailSendSetupIs=وقد تم تكوين إرسال البريد الإلكتروني الإعداد ل'٪ ق'. هذا الوضع لا يمكن أن تستخدم لإرسال إرساله عبر البريد الإلكتروني الشامل.
 MailSendSetupIs2=يجب عليك أولا الذهاب، مع حساب مشرف، في القائمة٪ sHome - إعداد - رسائل البريد الإلكتروني٪ s إلى تغيير المعلمة <strong>'٪ ق'</strong> لاستخدام وضع '٪ ق'. مع هذا الوضع، يمكنك إدخال الإعداد خادم SMTP المقدمة من قبل موفر خدمة الإنترنت واستخدام قداس ميزة البريد الإلكتروني.
@@ -126,7 +128,7 @@ AdvTgtMaxVal=Maximum value
 AdvTgtSearchDtHelp=Use interval to select date value
 AdvTgtStartDt=Start dt.
 AdvTgtEndDt=End dt.
-AdvTgtTypeOfIncudeHelp=Target Email of thirdparty and email of contact of the thridparty, or just thridparty email or just contact email
+AdvTgtTypeOfIncudeHelp=Target Email of third party and email of contact of the third party, or just third party email or just contact email
 AdvTgtTypeOfIncude=Type of targeted email
 AdvTgtContactHelp=Use only if you target contact into "Type of targeted email"
 AddAll=Add all

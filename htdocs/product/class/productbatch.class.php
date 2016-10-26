@@ -494,11 +494,13 @@ class Productbatch extends CommonObject
 		if ($fk_product > 0)
 		{
 		    $sql.= ", pl.eatby as eatby, pl.sellby as sellby";
+		    // TODO May add extrafields to ?
 		}
         $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t";
         if ($fk_product > 0)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+            // TODO May add extrafields to ?
         }
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 		if ($with_qty) $sql.= " AND t.qty <> 0";
@@ -523,7 +525,7 @@ class Productbatch extends CommonObject
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
 
-				array_push($ret,$tmp);
+				$ret[$tmp->batch] = $tmp;       // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
             }
             $db->free($resql);

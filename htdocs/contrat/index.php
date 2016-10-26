@@ -273,7 +273,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoContracts").'</td></tr>';
+			print '<tr '.$bc[$var].' class><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -344,7 +344,7 @@ if ($result)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),'dayhour').'</td>';
 		//print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
 		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,0):'').'</td>';

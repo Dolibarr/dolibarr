@@ -14,48 +14,69 @@ Journaux=วารสาร
 JournalFinancial=วารสารการเงิน
 BackToChartofaccounts=กลับผังบัญชี
 
+AccountancyArea=Accountancy area
+AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
+AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+
 Selectchartofaccounts=เลือกผังบัญชี
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
 AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=การเสีย
+Ventilation=Binding to accounts
+ProductsBinding=Products bindings
 
 MenuAccountancy=Accountancy
-CustomersVentilation=รายละเอียดของลูกค้า
-SuppliersVentilation=ซัพพลายเออร์ที่พังทลาย
+CustomersVentilation=Customer invoice binding
+SuppliersVentilation=Supplier invoice binding
 Reports=รายงาน
 NewAccount=บัญชีการบัญชีใหม่
 Create=สร้าง
-CreateMvts=Create movement
-UpdateMvts=การปรับเปลี่ยนของการเคลื่อนไหว
-WriteBookKeeping=บันทึกในบัญชีแยกประเภททั่วไป
+CreateMvts=Create new transaction
+UpdateMvts=Modification of a transaction
+WriteBookKeeping=Record operations in General Ledger
 Bookkeeping=บัญชีแยกประเภททั่วไป
 AccountBalance=Account balance
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=เส้นของใบแจ้งหนี้ที่จะต้องมีการระบายอากาศ
-InvoiceLinesDone=สายช่องระบายความร้อนของใบแจ้งหนี้
-IntoAccount=Ventilate in the accounting account
+InvoiceLines=Lines of invoices to bind
+InvoiceLinesDone=Bound lines of invoices
+IntoAccount=Bind line with the accounting account
 
-Ventilate=ระบายอากาศ
+Ventilate=Bind
 
 Processing=การประมวลผล
 EndProcessing=ในตอนท้ายของการประมวลผล
-AnyLineVentilate=สายการใด ๆ เพื่อระบายอากาศ
+AnyLineVentilate=Any lines to bind
 SelectedLines=เลือกสาย
 Lineofinvoice=สายของใบแจ้งหนี้
-VentilatedinAccount=อากาศถ่ายเทได้ประสบความสำเร็จในบัญชีของบัญชี
-NotVentilatedinAccount=การระบายอากาศไม่ได้อยู่ในบัญชีการบัญชี
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not bound to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=จำนวนขององค์ประกอบที่จะเป็นรายละเอียดที่แสดงโดยหน้า (สูงสุดที่แนะนำ: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=เริ่มต้นการเรียงลำดับของรายละเอียดหน้า "มีการสลาย" โดยองค์ประกอบล่าสุด
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=เริ่มต้นการเรียงลำดับของรายละเอียดหน้า "ถล่ม" โดยองค์ประกอบล่าสุด
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=ความยาวของบัญชีทั่วไป
-ACCOUNTING_LENGTH_AACCOUNT=ความยาวของบัญชีของบุคคลที่สาม
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=ขายวารสาร
 ACCOUNTING_PURCHASE_JOURNAL=วารสารการสั่งซื้อ
@@ -81,25 +102,31 @@ Sens=ซองส์
 Codejournal=วารสาร
 NumPiece=Piece number
 AccountingCategory=Accounting category
-
+NotMatch=Not Set
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 DelBookKeeping=ลบบันทึกบัญชีแยกประเภททั่วไป
-
 DescSellsJournal=วารสารขาย
 DescPurchasesJournal=ซื้อวารสาร
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-
+DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+VATAccountNotDefined=Account for VAT not defined
+ThirdpartyAccountNotDefined=Account for third party not defined
+ProductAccountNotDefined=Account for product not defined
+BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=การชำระเงินของลูกค้าใบแจ้งหนี้
-
 ThirdPartyAccount=บัญชี Thirdparty
-
-NewAccountingMvt=การเคลื่อนไหวใหม่
-NumMvts=จำนวนของการเคลื่อนไหว
-ListeMvts=รายชื่อของการเคลื่อนไหว
+NewAccountingMvt=New transaction
+NumMvts=Numero of transaction
+ListeMvts=List of movements
 ErrorDebitCredit=เดบิตและเครดิตไม่สามารถมีค่าในเวลาเดียวกัน
 
-ReportThirdParty=ชื่อบัญชี thirdparty
-DescThirdPartyReport=ให้คำปรึกษาที่นี่รายชื่อของลูกค้าและซัพพลายเออร์ thirdparty และบัญชีบัญชีของพวกเขา
+ReportThirdParty=List third party account
+DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 
 ListAccounts=รายการบัญชีที่บัญชี
 
@@ -107,22 +134,29 @@ Pcgtype=ชั้นบัญชี
 Pcgsubtype=ภายใต้ระดับบัญชี
 Accountparent=รากของบัญชี
 
-DescVentilCustomer=ที่นี่ให้คำปรึกษารายละเอียดบัญชีของลูกค้าประจำปีของใบแจ้งหนี้ของคุณ
 TotalVente=Total turnover before tax
 TotalMarge=อัตรากำไรขั้นต้นรวมยอดขาย
-DescVentilDoneCustomer=ให้คำปรึกษาที่นี่รายชื่อของสายของลูกค้าใบแจ้งหนี้และบัญชีบัญชีของพวกเขา
-DescVentilTodoCustomer=ระบายอากาศในสายของคุณใบแจ้งหนี้ลูกค้าที่มีบัญชีการบัญชี
-ChangeAccount=เปลี่ยนบัญชีบัญชีสำหรับสายการคัดเลือกจากบัญชี:
-Vide=-
-DescVentilSupplier=ที่นี่ให้คำปรึกษารายละเอียดบัญชีประจำปีของซัพพลายเออร์ใบแจ้งหนี้ของคุณ
-DescVentilDoneSupplier=ให้คำปรึกษาที่นี่รายชื่อของเส้นของผู้จัดจำหน่ายใบแจ้งหนี้และบัญชีบัญชีของพวกเขา
 
-ValidateHistory=ตรวจสอบโดยอัตโนมัติ
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
+ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+Vide=-
+DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Bind Automatically
+AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=ข้อผิดพลาดที่คุณไม่สามารถลบบัญชีบัญชีนี้เพราะมันถูกนำมาใช้
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=บัตรพังทลาย
+FicheVentilation=Binding card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
+NoNewRecordSaved=No new record saved
+ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
+ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
@@ -140,15 +174,18 @@ Modelcsv_bob50=Export towards Sage BOB 50
 Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanHistory=Reset all bindings for selected year
 
 ## Dictionary
 Range=Range of accounting account
@@ -158,3 +195,10 @@ Formula=Formula
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping
+
+Binded=Lines bound
+ToBind=Lines to bind
+
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+

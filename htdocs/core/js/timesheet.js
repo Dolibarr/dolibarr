@@ -163,8 +163,11 @@ function updateTotal(days,mode)
                 }
             }
         }
-        document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-        //addText(,total.getHours()+':'+total.getMinutes());
+        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
+        {
+        	document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+        	//addText(,total.getHours()+':'+total.getMinutes());
+        }
     }
     else
     {
@@ -204,7 +207,10 @@ function updateTotal(days,mode)
                 }
             }
         }
-        document.getElementById('totalDay['+days+']').innerHTML = total;
+        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
+        {
+        	document.getElementById('totalDay['+days+']').innerHTML = total;
+        }
     }
     
 }

@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Ekki lokið
 ServiceStatusLate=Running, falla úr gildi
 ServiceStatusLateShort=Útrunnið
 ServiceStatusClosed=Loka
+ShowContractOfService=Show contract of service
 Contracts=Samningar
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

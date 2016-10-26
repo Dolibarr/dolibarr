@@ -2,7 +2,8 @@
 OrdersArea=Kundenauftrags-Übersicht
 OrderCard=Bestell-Karte
 CancelOrder=Bestellung verwerfen
-LastModifiedOrders=Die letzen %s bearbeiteten Bestellungen
+NoOrder=Keine Bestellung
 CloseOrder=Bestellung schliessen
 ConfirmCloseOrder=Möchten Sie diese Bestellung wirklich schliessen? Nach ihrer Schliessung kann eine Bestellung nur mehr in Rechnung gestellt werden.
+RefOrderSupplier=Bestellreferenz für Lieferant
 Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt

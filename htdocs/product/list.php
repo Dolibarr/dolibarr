@@ -177,7 +177,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$sall="";
 	$sref="";
@@ -335,23 +335,23 @@ else
 	    }
 
 	    $param='';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	    if ($search_categ > 0) $param.="&amp;search_categ=".$search_categ;
-    	if ($sref) $param="&amp;sref=".$sref;
-    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;
-    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".$sbarcode:"");
-    	if ($snom) $param.="&amp;snom=".$snom;
-    	if ($sall) $param.="&amp;sall=".$sall;
-    	if ($tosell != '') $param.="&amp;tosell=".$tosell;
-    	if ($tobuy != '') $param.="&amp;tobuy=".$tobuy;
-    	if ($fourn_id) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	    if ($search_categ > 0) $param.="&amp;search_categ=".urlencode($search_categ);
+    	if ($sref) $param="&amp;sref=".urlencode($sref);
+    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".urlencode($sbarcode):"");
+    	if ($snom) $param.="&amp;snom=".urlencode($snom);
+    	if ($sall) $param.="&amp;sall=".urlencode($sall);
+    	if ($tosell != '') $param.="&amp;tosell=".urlencode($tosell);
+    	if ($tobuy != '') $param.="&amp;tobuy=".urlencode($tobuy);
+    	if ($fourn_id > 0) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".urlencode($search_categ):"");
     	if ($type != '') $param.='&amp;type='.urlencode($type);
-		if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    	if ($search_tobatch) $param="&amp;search_ref_supplier=".$search_ref_supplier;
-    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".$search_accountancy_code_sell;
-    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".$search_accountancy_code_buy;
+		if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+    	if ($search_tobatch) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
+    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
     	// Add $param from extra fields
 	    foreach ($search_array_options as $key => $val)
 	    {

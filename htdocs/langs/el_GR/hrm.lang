@@ -9,8 +9,8 @@ ConfirmDeleteEstablishment=Είστε σίγουρος ότι θέλετε να 
 OpenEtablishment=Άνοιγμα εγκατάστασης
 CloseEtablishment=Κλείσιμο εγκατάστασης
 # Dictionary
-DictionaryDepartment=HRM - Λίστα διαμερισμάτων
-DictionaryFunction=HRM - Λίστα συναρτλησεων
+DictionaryDepartment=HRM - Λίστα τμημάτων
+DictionaryFunction=HRM - Λίστα συναρτήσεων
 # Module
 Employees=Εργαζόμενοι
 Employee=Υπάλληλος

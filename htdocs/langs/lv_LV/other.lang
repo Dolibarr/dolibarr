@@ -199,7 +199,7 @@ YouMustClickToChange=Jums ir Taču vispirms noklikšķiniet uz šīs saites, lai
 ForgetIfNothing=Ja Jums nav lūgt šīs izmaiņas, vienkārši aizmirst šo e-pastu. Jūsu akreditācijas dati tiek glabāti drošībā.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
-Chart=Chart
+Chart=Diagramma
 
 ##### Calendar common #####
 NewCompanyToDolibarr=Kompānijas %s pievienotas
@@ -231,6 +231,6 @@ NewExport=Jauns eksports
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
+WEBSITE_TITLE=Virsraksts
 WEBSITE_DESCRIPTION=Apraksts
 WEBSITE_KEYWORDS=Keywords

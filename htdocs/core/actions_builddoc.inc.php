@@ -24,10 +24,10 @@
 
 // $action must be defined
 // $id must be defined
-// $object must be defined and must have a method generateDocument.
+// $object must be defined and must have a method generateDocument().
 // $permissioncreate must be defined
 // $upload_dir must be defined (example $conf->projet->dir_output . "/";)
-// $hidedetails, $hidedesc and $hideref may have been set or not.
+// $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
 
 // Build doc
@@ -49,20 +49,24 @@ if ($action == 'builddoc' && $permissioncreate)
         }*/
         
         // Save last template used to generate document
-    	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+    	if (GETPOST('model'))
+    	{
+    	    $object->setDocModel($user, GETPOST('model','alpha'));
+    	}
     
-        // Special case for invoices
-        if (property_exists($object, 'fk_bank'))
-        {
+        // Special case to force bank account
+        //if (property_exists($object, 'fk_bank'))
+        //{
             if (GETPOST('fk_bank')) { // this field may come from an external module
                 $object->fk_bank = GETPOST('fk_bank');
-            } else {
+            } else if (! empty($object->fk_account)) {
                 $object->fk_bank = $object->fk_account;
             }
-        }
+        //}
 
         $outputlangs = $langs;
         $newlang='';
+
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang=$object->thirdparty->default_lang;  // for proposal, order, invoice, ...
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang=$object->default_lang;                  // for thirdparty
@@ -76,12 +80,17 @@ if ($action == 'builddoc' && $permissioncreate)
         if (empty($hidedetails)) $hidedetails=0;
         if (empty($hidedesc)) $hidedesc=0;
         if (empty($hideref)) $hideref=0;
+        if (empty($moreparams)) $moreparams=null;
         
-        $result= $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        $result= $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
         if ($result <= 0)
         {
             setEventMessages($object->error, $object->errors, 'errors');
             $action='';
+        }
+        else
+        {
+            setEventMessages($langs->trans("FileGenerated"), null);
         }
     }
 }

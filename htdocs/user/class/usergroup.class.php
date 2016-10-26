@@ -784,11 +784,8 @@ class UserGroup extends CommonObject
 			{
 				$muser=new User($this->db);
 				$muser->fetch($val->id);
-                if ($conf->global->LDAP_KEY_USERS == 'cn') $ldapuserid=$muser->getFullName($langs);
-                elseif ($conf->global->LDAP_KEY_USERS == 'sn') $ldapuserid=$muser->lastname;
-                elseif ($conf->global->LDAP_KEY_USERS == 'uid') $ldapuserid=$muser->login;
-
-				$valueofldapfield[] = $conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
+				$info2 = $muser->_load_ldap_info();
+                                $valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
 		}

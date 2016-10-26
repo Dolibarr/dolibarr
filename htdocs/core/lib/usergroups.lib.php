@@ -32,7 +32,7 @@
  */
 function user_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
 
 	$langs->load("users");
 
@@ -62,7 +62,7 @@ function user_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("UserRights");
+		$head[$h][1] = $langs->trans("UserRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -85,6 +85,36 @@ function user_prepare_head($object)
         $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
         $head[$h][1] = $langs->trans("ClickToDial");
 	    $head[$h][2] = 'clicktodial';
+        $h++;
+    }
+
+    // Notifications
+    if ($user->societe_id == 0 && ! empty($conf->notification->enabled))
+    {
+        $nbNote = 0;
+        $sql = "SELECT COUNT(n.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+        $sql.= " WHERE fk_user = ".$object->id;
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $nbNote=$obj->nb;
+                $i++;
+            }
+        }
+        else {
+            dol_print_error($db);
+        }
+
+        $head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Notifications");
+        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$h][2] = 'notify';
         $h++;
     }
 
@@ -266,7 +296,7 @@ function entity_prepare_head($object, $aEntities)
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
-    global $conf,$langs,$db;
+    global $conf,$langs,$db,$form;
     global $bc;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
@@ -484,6 +514,52 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 	}
+	
+	// TopMenuBackgroundColor
+	if ($foruserprofile)
+	{
+	    /*$var=!$var;
+	     print '<tr '.$bc[$var].'>';
+	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
+	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+	     print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+	     print '> '.$langs->trans("UsePersonalValue").'</td>';
+	     print '<td>';
+	     if ($edit)
+	     {
+	     print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+	     }
+	     else
+	     {
+	     $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+	     if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	     else print '';
+	     }
+	    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    	print '</td>';*/
+	}
+	else
+	{
+	    $default=$langs->trans('No');
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+	    }
+	    else
+	    {
+	        print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	}
+	
+	
+	
 	
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
