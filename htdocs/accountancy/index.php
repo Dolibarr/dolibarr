@@ -80,6 +80,11 @@ $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("Chartofaccounts").'</strong>');
 print "<br>\n";
 print "<br>\n";
+
+print $langs->trans("AccountancyAreaDescActionOnceBis");
+print "<br>\n";
+print "<br>\n";
+
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescMisc", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>')."<br>\n";
 print "<br>\n";
@@ -104,6 +109,13 @@ if (! empty($conf->tax->enabled))
     print "<br>\n";
     print "<br>\n";
 }*/
+if (! empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+{
+    $step++;
+    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<strong>'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong>');
+    print "<br>\n";
+    print "<br>\n";
+}
 if (! empty($conf->loan->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 {
     $step++;
