@@ -2692,8 +2692,6 @@ table.dataTable td {
 }
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     padding: 5px 2px 5px 3px;
-}
-tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     border-bottom: 1px solid #ddd;
 }
 tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
@@ -2746,11 +2744,6 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-    /* TO MATCH BOOTSTRAP */
-	/*background: #ddd;
-	color: #000 !important;*/
-
-	/* TO MATCH ELDY */
 	<?php if ($usegradienttitle) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
@@ -4309,42 +4302,44 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
-    padding: .9em 15px;
+    padding: 1em 15px;
     display: block;
 }
 .ui-btn-up-c {
 	font-weight: normal;
-}
-.ui-bar-b {
-    border: 1px solid #888;
-    text-shadow: none;
 }
 .ui-focus, .ui-btn:focus {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-.ui-bar-b, .lilevel0 {
-/*	border: 1px solid #888 !important; */
-    background: rgb(<?php echo $colorbacktitle1; ?>);
-    background-repeat: repeat-x;
-
-/*
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);*/
-    font-weight: bold;
-
-    color: rgb(<?php echo $colortexttitle; ?>) !important;
+.ui-bar-b {
+    /*border: 1px solid #888;*/
+    border: none;
+    background: none;
+    text-shadow: none;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
 }
+.ui-bar-b, .lilevel0 {
+    background-repeat: repeat-x;
+    border: none;
+    background: none;
+    text-shadow: none;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
+}
+.alilevel0 {
+	font-weight: normal !important;
+}
+
 .ui-li.ui-last-child, .ui-li.ui-field-contain.ui-last-child {
     border-bottom-width: 0px !important;
 }
 .alilevel0 {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.ulmenu {
+	box-shadow: none !important;
+	border-bottom: 1px solid #444;
 }
 .ui-btn-icon-right {
 	border-right: 1px solid #ccc !important;
@@ -4372,6 +4367,7 @@ ul.ulmenu {
 div.tabsElem a.tab {
 	background: transparent;
 }
+
 /*.ui-controlgroup-horizontal .ui-btn.ui-first-child {
 -webkit-border-top-left-radius: 6px;
 border-top-left-radius: 6px;
@@ -4380,25 +4376,26 @@ border-top-left-radius: 6px;
 -webkit-border-top-right-radius: 6px;
 border-top-right-radius: 6px;
 }*/
+
 .alilevel1 {
-    color: rgb(<?php echo $colortexttitle; ?>) !important;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+    color: rgb(<?php print $colortexttitlenotab; ?>) !important;
 }
 .lilevel1 {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
-	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
+    border-top: 2px solid #444;
+    background: #fff ! important;
+}
+.lilevel1 div div a {
+	font-weight: bold !important;
 }
 .lilevel2
 {
 	padding-left: 22px;
+    background: #fff ! important;
 }
 .lilevel3
 {
 	padding-left: 54px;
+	background: #fff ! important;
 }
 
 

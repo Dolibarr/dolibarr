@@ -512,15 +512,16 @@ class Form
     	if (count($arrayofaction) == 0) return;
 
     	$disabled=0;
-    	$ret='<div class="centpercent center"><select class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+    	$ret='<div class="centpercent center">';
+    	$ret.='<select data-role="none" class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
     	$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
     	foreach($arrayofaction as $code => $label)
     	{
     		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
     	}
     	$ret.='</select>';
-    	// Warning: if you set submit button to disabled, post using Enter will no more work
-    	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	// Warning: if you set submit button to disabled, post using 'Enter' will no more work.
+    	$ret.='<input type="submit" data-role="none" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
 
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->

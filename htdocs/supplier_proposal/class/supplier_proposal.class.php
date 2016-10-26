@@ -2368,31 +2368,60 @@ class SupplierProposal extends CommonObject
      *	@param      int		$withpicto		Add picto into link
      *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
     {
-        global $langs;
+        global $langs, $conf, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
+        $url='';
         $result='';
-        $label=$langs->trans("ShowSupplierProposal").': '.$this->ref;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $label='<u>'.$langs->trans("ShowSupplierProposal").'</u>';
+        if (! empty($this->ref))
+        $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (! empty($this->ref_fourn))
+            $label.= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params .$linkclose;
+            $url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params;
         }
         if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params .$linkclose;
+            $url = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params;
         }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowSupplierProposal");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
         $picto='supplier_proposal';
 
 
         if ($withpicto)
-            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 

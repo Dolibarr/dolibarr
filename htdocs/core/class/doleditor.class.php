@@ -81,7 +81,7 @@ class DolEditor
 
         // Check if extended editor is ok. If not we force textarea
         if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
-        //if ($conf->browser->phone) $this->tool = 'textarea';
+        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with jmobile
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')

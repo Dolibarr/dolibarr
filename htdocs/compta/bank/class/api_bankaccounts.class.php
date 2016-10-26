@@ -56,11 +56,12 @@ class BankAccounts extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
-     * @return array List of account objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+     * @return array                List of account objects
      *
      * @throws RestException
      */
-    function index($sortfield = "rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
@@ -68,13 +69,17 @@ class BankAccounts extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account";
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('banque', 1).')';
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $this->db->query($sql);
-            $nbtotalofrecords = $this->db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
         
         $sql.= $this->db->order($sortfield, $sortorder);
@@ -88,6 +93,7 @@ class BankAccounts extends DolibarrApi
             $sql.= $this->db->plimit($limit + 1, $offset);
         }
         
+        dol_syslog("API Rest request");
         $result = $this->db->query($sql);
 
         if ($result) {
@@ -100,7 +106,7 @@ class BankAccounts extends DolibarrApi
                 }
             }
         } else {
-            throw new RestException(503, 'Error when retrieving list of accounts: ' . $account->error);
+            throw new RestException(503, 'Error when retrieving list of accounts: ' . $this->db->lasterror());
         }
 
         return $list;
@@ -220,7 +226,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Validate fields before creating an object
      *
-     * @param array $data    Data to validate
+     * @param array|null    $data    Data to validate
      * @return array
      *
      * @throws RestException

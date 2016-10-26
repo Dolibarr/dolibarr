@@ -1967,6 +1967,7 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
+	    global $user;
 		$error=0;
 
 		$this->db->begin();

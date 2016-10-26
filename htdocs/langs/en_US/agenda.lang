@@ -54,6 +54,7 @@ ShipmentValidatedInDolibarr=Shipment %s validated
 ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
+OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Order %s validated
 OrderDeliveredInDolibarr=Order %s classified delivered
 OrderCanceledInDolibarr=Order %s canceled

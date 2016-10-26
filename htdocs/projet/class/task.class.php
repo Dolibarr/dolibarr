@@ -59,6 +59,8 @@ class Task extends CommonObject
     var $timespent_fk_user;
     var $timespent_note;
 
+    public $oldcopy;
+
 
     /**
      *  Constructor
@@ -317,6 +319,30 @@ class Task extends CommonObject
         	}
         }
 
+        if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
+        {
+            // We remove directory
+            if ($conf->projet->dir_output)
+            {
+                $project = new Project($this->db);
+                $project->fetch($this->fk_project);
+
+                $olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+                $newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+                if (file_exists($olddir))
+                {
+                    include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+                    $res=dol_move($olddir, $newdir);
+                    if (! $res)
+                    {
+                        $langs->load("errors");
+                        $this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+                        $error++;
+                    }
+                }
+            }
+        }
+
         // Commit or rollback
         if ($error)
         {
@@ -495,12 +521,15 @@ class Task extends CommonObject
      *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ')
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -511,17 +540,30 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
 
-        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowTask");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
-
+        
         $picto='projecttask';
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 

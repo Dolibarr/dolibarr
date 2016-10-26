@@ -94,10 +94,10 @@ class AgendaEvents extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     *
-     * @return  array   Array of Agenda Events objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array               Array of Agenda Events objects
      */
-    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0) {
+    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -108,21 +108,23 @@ class AgendaEvents extends DolibarrApi
         $sql = "SELECT t.id as rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('actioncomm', 1).')';
-        if ($user_ids) $sql.=" AND ar.fk_user_action IN (".$user_ids.")";
-        
+        if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         // Insert sale filter
         if ($search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-        
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
