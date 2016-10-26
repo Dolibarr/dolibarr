@@ -451,13 +451,12 @@ class Skeleton_Class extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int  	$notooltip			1=Disable tooltip
      *  @param	int		$maxlen				Max length of visible user name
      *  @param  string  $morecss            Add more css on link
-     *  @param	int   	$notooltip		    1=Disable tooltip
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='', $notooltip=0)
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
