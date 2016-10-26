@@ -349,21 +349,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             
             print '<table class="border" width="100%">';
 
-            print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
+            print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
             $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
-            print '</td>';
-            print '<td>'.$langs->trans('Comments').'</td></tr>';
+            print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');
             print '</td>';
-            print '<td rowspan="3" valign="top">';
-            print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
-            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
@@ -372,8 +368,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             else
             {
-                print '<tr><td colspan="2">&nbsp;</td></tr>';
+                print '<tr><td>&nbsp;</td></tr>';
             }
+            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
+            print '<tr><td>'.$langs->trans('Comments').'</td>';
+            print '<td valign="top">';
+            print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '</table>';
             dol_fiche_end();
 
