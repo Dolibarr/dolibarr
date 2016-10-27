@@ -178,9 +178,9 @@ if ($action == 'writebookkeeping') {
 
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
-			    $error++;
-			    $errorforline++;
-			    setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+				$error++;
+				$errorforline++;
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 
@@ -420,14 +420,14 @@ if (empty($action) || $action == 'view') {
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
 	</script>';
 
@@ -474,16 +474,16 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>";
-    			$accountoshow = length_accountg($k);
-    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
-    			{
-    			    print '<span class="error">'.$langs->trans("FeeAccountNotDefined").'</span>';
-    			}
-    			else print $accountoshow;
+				$accountoshow = length_accountg($k);
+				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("FeeAccountNotDefined").'</span>';
+				}
+				else print $accountoshow;
 				print "</td>";
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $expensereportstatic->ref . ' - ' . $accountingaccount->label . "</td>";
+				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $accountingaccount->label . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
@@ -498,14 +498,14 @@ if (empty($action) || $action == 'view') {
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 				print "<td>";
-    			$accountoshow = length_accountg($k);
-    			if (empty($accountoshow) || $accountoshow == 'NotDefined')
-    			{
-    			    print '<span class="error">'.$langs->trans("VatAccountNotDefined").'</span>';
-    			}
-    			else print $accountoshow;
+				$accountoshow = length_accountg($k);
+				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("VatAccountNotDefined").'</span>';
+				}
+				else print $accountoshow;
 				print "</td>";
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $expensereportstatic->ref . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key]. "</td>";
+				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key]. "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
@@ -527,8 +527,8 @@ if (empty($action) || $action == 'view') {
 			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 			}
 			else print $accountoshow;
-            print "</td>";
-			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $expensereportstatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
+			print "</td>";
+			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 		}

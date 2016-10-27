@@ -81,7 +81,7 @@ $formventilation = new FormVentilation($db);
  */
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_expensereport = '';
 	$search_label = '';
@@ -122,7 +122,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportVentilation") . ' - ' . $langs->trans("Dispatched"));
+llxHeader('', $langs->trans("ExpenseReportsVentilation") . ' - ' . $langs->trans("Dispatched"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -231,7 +231,7 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("TypeFees"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
