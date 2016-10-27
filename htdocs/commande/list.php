@@ -224,7 +224,7 @@ if($massaction == 'confirm_createbills') {
 		if($cmd->fetch($id_order) <= 0) continue;
 		
 		$object = new Facture($db);
-		if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // To use only one bill for a third
+		if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 		else {
 			
 			$object->socid = $cmd->socid;
@@ -759,7 +759,7 @@ if ($resql)
 		
 		print '<table class="border" width="100%" >';
 		print '<tr>';
-		print '<td>';
+		print '<td class="titlefieldmiddle">';
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
@@ -784,12 +784,12 @@ if ($resql)
 		print '</tr>';
 		print '</table>';
 		
-		print '<br />';
+		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
 		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
 		print '</div>';
-		print '<br />';
+		print '<br>';
 		
 	}
 	
