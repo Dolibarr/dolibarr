@@ -641,7 +641,7 @@ div.myavailability {
     .minwidth500imp { min-width: 300px !important; }
 }
 
-@media only screen and (max-width: 960px)
+@media only screen and (max-width: 1000px)
 {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -822,7 +822,7 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values on one colum for small screen */
-@media only screen and (max-width: 960px)
+@media only screen and (max-width: 1000px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
