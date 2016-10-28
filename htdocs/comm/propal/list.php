@@ -161,6 +161,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
     }
 }
 
+$object = new Propal($db);	// To be passed as parameter of executeHooks that need 
+
 
 /*
  * Actions
