@@ -740,7 +740,7 @@ if ($resql)
     {
 	    // Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+	    print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.datem']['checked'])) 
@@ -758,20 +758,20 @@ if ($resql)
     {
 	    // Product Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.($idproduct?$product->ref:$search_product_ref).'">';
+	    print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['p.label']['checked'])) 
     {
 	    // Product label
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->label:$search_product).'">';
+	    print '<input class="flat" type="text" size="10" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
 	    print '</td>';
     }
     // Batch
     if (! empty($arrayfields['m.batch']['checked'])) 
     {
-    	print '<td align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.($search_batch).'"></td>';
+    	print '<td align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
@@ -795,21 +795,21 @@ if ($resql)
     {
 	    // Author
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
+	    print '<input class="flat" type="text" size="6" name="search_user" value="'.dol_escape_htmltag($search_user).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.inventorycode']['checked'])) 
     {
 	    // Inventory code
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.$search_inventorycode.'">';
+	    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.dol_escape_htmltag($search_inventorycode).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.label']['checked'])) 
     {
 	    // Label of movement
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="8" name="search_movement" value="'.$search_movement.'">';
+	    print '<input class="flat" type="text" size="8" name="search_movement" value="'.dol_escape_htmltag($search_movement).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['origin']['checked'])) 
@@ -823,7 +823,7 @@ if ($resql)
     {
 	    // Qty
 	    print '<td class="liste_titre" align="right">';
-	    print '<input class="flat" type="text" size="4" name="search_qty" value="'.$search_qty.'">';
+	    print '<input class="flat" type="text" size="4" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 	    print '</td>';
     }
 	// Extra fields
