@@ -950,6 +950,8 @@ class CommandeFournisseur extends CommonOrder
             {
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
+				$this->date_commande = $date;
+				$this->methode_commande = $methode;
             }
             else
             {
