@@ -1945,7 +1945,7 @@ class Societe extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 

@@ -501,7 +501,7 @@ class ProductStockEntrepot extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $link . $this->ref . $linkend;

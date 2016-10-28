@@ -2298,12 +2298,14 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
  *										For external modules use imagename@mymodule to search into directory "img" of module.
  *	@param	string	$options			Add more attribute on img tag (ie: class="datecallink")
  *	@param	int		$pictoisfullpath	If 1, image path is a full path
+ *	@param	int		$srconly			Return only content of the src attribute of img.
+ *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return	string						Return img tag
  *	@see	#img_picto, #img_picto_common
  */
-function img_object($titlealt, $picto, $options = '', $pictoisfullpath = false)
+function img_object($titlealt, $picto, $options = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
-	return img_picto($titlealt, 'object_'.$picto, $options, $pictoisfullpath);
+	return img_picto($titlealt, 'object_'.$picto, $options, $pictoisfullpath, $srconly, $notitle);
 }
 
 /**
