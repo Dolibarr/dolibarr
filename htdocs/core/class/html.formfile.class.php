@@ -1029,7 +1029,7 @@ class FormFile
 					{
     					// Delete or view link
     					// ($param must start with &)
-    					print '<td class="valignmiddle right">';
+    					print '<td class="valignmiddle right"><!-- action on files -->';
     					if ($useinecm)     
     					{
     					    print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
@@ -1039,10 +1039,10 @@ class FormFile
         					$newmodulepart=$modulepart;
         					if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
     						
-        					$disablecrop=0; 
-        					if ($modulepart == 'expensereport') $disablecrop=1;    // TODO Remove this in future    
+        					$disablecrop=1; 
+        					if (in_array($modulepart, array('product','produit','service','holiday','project'))) $disablecrop=0;
         					
-    					    if (image_format_supported($file['name']) > 0 && ! $disablecrop)
+    					    if (! $disablecrop && image_format_supported($file['name']) > 0)
     						{
     							if ($permtoeditline)
     							{
