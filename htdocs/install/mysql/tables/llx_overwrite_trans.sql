@@ -19,6 +19,7 @@
 create table llx_overwrite_trans
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,		-- multi company id
   lang            varchar(5),	-- en_US, fr_FR ...
   transkey	      varchar(128),
   transvalue      text
