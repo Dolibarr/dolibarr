@@ -1155,10 +1155,6 @@ if ($resql)
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     
-        print '<br><a name="show_files"></a>';
-        $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-        $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-        
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else

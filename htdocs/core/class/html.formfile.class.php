@@ -305,11 +305,36 @@ class FormFile
         $showempty=0;
         $i=0;
 
-        $titletoshow=$langs->trans("Documents");
-        if (! empty($title)) $titletoshow=$title;
-
         $out.= "\n".'<!-- Start show_document -->'."\n";
         //print 'filedir='.$filedir;
+
+        if (preg_match('/massfilesarea_/', $modulepart))
+        {
+	        $out.='<br><a name="show_files"></a>';
+			$title=$langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
+			$title.='<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery(\'#togglemassfilesarea\').click(function() {
+						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")
+						{
+							jQuery(\'#'.$modulepart.'_table\').hide();
+							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
+							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+						}
+						else
+						{
+							jQuery(\'#'.$modulepart.'_table\').show();
+							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
+							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+						}
+						return false;
+					});		
+				});
+				</script>';
+        }        
+        
+        $titletoshow=$langs->trans("Documents");
+        if (! empty($title)) $titletoshow=$title;
 
         // Show table
         if ($genallowed)
@@ -518,6 +543,7 @@ class FormFile
                 }
             }
 
+            // Set headershown to avoit to have table opened a second time later
             $headershown=1;
 
             $buttonlabeltoshow=$buttonlabel;
@@ -526,7 +552,7 @@ class FormFile
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
+            
             $out.= load_fiche_titre($titletoshow, '', '');
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
@@ -622,7 +648,7 @@ class FormFile
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
-                $out.= '<table class="border" summary="listofdocumentstable" width="100%">'."\n";
+                $out.= '<table class="border" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
             }
 
             // Loop on each file found
