@@ -8,6 +8,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=List of fees
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Company/foundation visited
