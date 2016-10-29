@@ -65,16 +65,29 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+$pageplusone = GETPOST("pageplusone",'int');
+if ($pageplusone) $page = $pageplusone - 1;
 if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$object = new Account($db);
+if ($id > 0 || ! empty($ref))
+{
+    $result=$object->fetch($id, $ref);
+    $account = $object->id;     // Force the search field on id of account
+}
+
+
+// Initialize technical object to manage context to save list fields
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 
 /*
@@ -96,12 +109,12 @@ $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
 
-// Load account
-$object = new Account($db);
-if ($id > 0 || ! empty($ref))
-{
-	$object->fetch($id, $ref);
-}
+// Must be before button action
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($id > 0) $param.='&id='.urlencode($id);
+
 
 if (empty($num))
 {
@@ -138,7 +151,7 @@ if (empty($num))
 		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$object->id.'">'.$langs->trans("Conciliate").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile'.$param.'">'.$langs->trans("Conciliate").'</a>';
 			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
@@ -216,7 +229,7 @@ if (empty($num))
 else
 {
 	/**
-	 *      Affiche liste ecritures d'un releve
+	 *   Show list of bank statements
 	 */
 	$ve=$_GET["ve"];
 

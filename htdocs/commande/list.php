@@ -906,9 +906,9 @@ if ($resql)
     	print '</td>';
 	}
 	// Town
-	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_town" value="'.$search_town.'"></td>';
 	// Zip
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
 	if (! empty($arrayfields['state.nom']['checked']))
 	{
@@ -951,14 +951,14 @@ if ($resql)
 	{
     	// Amount
     	print '<td class="liste_titre" align="right">';
-    	print '<input class="flat" type="text" size="5" name="search_total_ht" value="'.$search_total_ht.'">';
+    	print '<input class="flat" type="text" size="4" name="search_total_ht" value="'.$search_total_ht.'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['c.total_vat']['checked']))
 	{
     	// Amount
     	print '<td class="liste_titre" align="right">';
-    	print '<input class="flat" type="text" size="5" name="search_total_vat" value="'.$search_total_vat.'">';
+    	print '<input class="flat" type="text" size="4" name="search_total_vat" value="'.$search_total_vat.'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['c.total_ttc']['checked']))
