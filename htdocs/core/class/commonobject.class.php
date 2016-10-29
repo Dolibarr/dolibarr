@@ -1148,7 +1148,6 @@ abstract class CommonObject
      */
     function fetch_origin()
     {
-        // TODO uniformise code
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
 

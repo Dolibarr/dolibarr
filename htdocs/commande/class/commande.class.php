@@ -3325,7 +3325,7 @@ class Commande extends CommonOrder
      *	@param      int			$withpicto      Add picto into link
      *	@param      int			$option         Where point the link (0=> main card, 1,2 => shipment)
      *	@param      int			$max          	Max length to show
-     *	@param      int			$short			Use short labels
+     *	@param      int			$short			???
      *  @param	    int   	    $notooltip		1=Disable tooltip
      *	@return     string          			String with URL
      */

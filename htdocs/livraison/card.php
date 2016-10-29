@@ -32,7 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->expedition_bon->enabled))
@@ -368,9 +369,73 @@ else
 			 *   Livraison
 			 */
 			
-			print '<table class="border" width="100%">';
-
+			if ($typeobject == 'commande' && $expedition->$typeobject->id && ! empty($conf->commande->enabled))
+			{
+			    $objectsrc=new Commande($db);
+			    $objectsrc->fetch($expedition->$typeobject->id);
+			}
+			if ($typeobject == 'propal' && $expedition->$typeobject->id && ! empty($conf->propal->enabled))
+			{
+			    $objectsrc=new Propal($db);
+			    $objectsrc->fetch($expedition->$typeobject->id);
+			}
+			
+			// Shipment card
+			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+			
+			$morehtmlref='<div class="refidno">';
+			// Ref customer shipment
+			$morehtmlref.=$form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
+			$morehtmlref.=$form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+			$morehtmlref.='<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
+			// Thirdparty
+			$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $expedition->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled)) {
+			    $langs->load("projects");
+			    $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+			    if (0) {    // Do not change on shipment
+			        if ($action != 'classify') {
+			            $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $expedition->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			        }
+			        if ($action == 'classify') {
+			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
+			            $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $expedition->id . '">';
+			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+			            $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			            $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+			            $morehtmlref .= '</form>';
+			        } else {
+			            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+			        }
+			    } else {
+			        $morehtmlref .= ' : ';
+			        if (! empty($expeditionsrc->fk_project)) {
+			            $proj = new Project($db);
+			            $proj->fetch($expeditionsrc->fk_project);
+			            $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $expeditionsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+			            $morehtmlref .= $proj->ref;
+			            $morehtmlref .= '</a>';
+			        } else {
+			            $morehtmlref .= '';
+			        }
+			    }
+			}
+			$morehtmlref.='</div>';
+			
+			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br>';
+			
+			dol_banner_tab($expedition, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			 
+			 
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
+				
+		    print '<table class="border" width="100%">';
+				
 			// Shipment
+			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
@@ -394,11 +459,12 @@ else
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
 			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
-
+            */
+			
 			// Document origine
 			if ($typeobject == 'commande' && $expedition->origin_id && ! empty($conf->commande->enabled))
 			{
-				print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
@@ -410,21 +476,16 @@ else
 			{
 				$propal=new Propal($db);
 				$propal->fetch($expedition->origin_id);
-				print '<tr><td>'.$langs->trans("RefProposal").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
 				print $propal->getNomUrl(1,'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}
 
-			// Ref client
-			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-			print '</tr>';
-
 			// Date
-			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_creation,'daytext')."</td>\n";
+			print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
+			print '<td colspan="3">'.dol_print_date($object->date_creation,'dayhour')."</td>\n";
 			print '</tr>';
 
 			// Date delivery real / Received
@@ -441,13 +502,13 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';
@@ -475,27 +536,24 @@ else
 		        print '</td></tr>';
 			}
 
+			/* A delivery note should be just more properties of a shipment, so notes are on shipment  
 			// Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_public);
-            /*$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
 
 			// Note Private
             print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_private);
-            /*$doleditor = new DolEditor('note_pprivate', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
-
+            */
 
 			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td>';
+			/*print '<tr><td>'.$langs->trans("Status").'</td>';
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
-			print '</tr>';
+			print '</tr>';*/
 
 			if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 			{
@@ -513,6 +571,8 @@ else
 
 			print "</table><br>\n";
 
+			print '</div>';
+				
 			/*
 			 * Lignes produits
 			 */
@@ -693,12 +753,12 @@ else
 			print '</td></tr></table>';
 
 			// List of existing shipment and delivery receipts
-			if ($expedition->origin_id)
+			/*if ($expedition->origin_id)
 			{
 				print '<br>';
 				//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
 				show_list_sending_receive($expedition->origin,$expedition->origin_id);
-			}
+			}*/
 		}
 		else
 		{

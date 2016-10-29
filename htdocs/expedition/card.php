@@ -1352,6 +1352,8 @@ else if ($id || $ref)
                     $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
                 }
             } else {
+                // We don't have project on shipment, so we will use the project or source object instead
+                // TODO Add project on shipment
                 $morehtmlref .= ' : ';
                 if (! empty($objectsrc->fk_project)) {
                     $proj = new Project($db);
@@ -1398,7 +1400,7 @@ else if ($id || $ref)
 
 		// Date creation
 		print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
-		print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
+		print '<td colspan="3">'.dol_print_date($object->date_creation,"dayhour")."</td>\n";
 		print '</tr>';
 
 		// Delivery date planned
