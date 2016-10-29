@@ -13,7 +13,7 @@ NewTrip=Ny reiseregning
 CompanyVisited=Firma/organiasjon besøkt
 FeesKilometersOrAmout=Beløp eller kilometer
 DeleteTrip=Slett reiseregning
-ConfirmDeleteTrip=Er du sikker på at du vil slette denne reiseregningen?
+ConfirmDeleteTrip=Er du sikker på at du vil slette denne utgiftsrapporten?
 ListTripsAndExpenses=Liste over reiseregninger
 ListToApprove=Venter på godkjenning
 ExpensesArea=Område for reiseregninger
@@ -64,21 +64,21 @@ ValidatedWaitingApproval=Validert (venter på godkjenning)
 
 NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
 
-ConfirmRefuseTrip=Er du sikker på at du vil avvise denne reiseregningen
+ConfirmRefuseTrip=Er du sikker på at du vil avvise denne utgiftsrapporten?
 
 ValideTrip=Godkjenn reiseregning
-ConfirmValideTrip=Er du sikker på at du vil godkjenne denne reiseregningen
+ConfirmValideTrip=Er du sikker på at du vil godkjenne denne utgiftsrapporten?
 
 PaidTrip=Betal en reiseregning
-ConfirmPaidTrip=Er du sikker på at du vil endre status til "betalt" for denne reiseregningen?
+ConfirmPaidTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "betalt"?
 
-ConfirmCancelTrip=Er du sikker på at du vil kansellere denne reiseregningen?
+ConfirmCancelTrip=Er du sikker på at du vil kansellere denne utgiftsrapporten?
 
 BrouillonnerTrip=Endre reiseregning til "kladd"
-ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status til "Kladd" for denne reiseregningen?
+ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "utkast"?
 
 SaveTrip=Godkjenn reiseregning
-ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
+ConfirmSaveTrip=Er du sikker på at du vil validere denne utgiftsrapporten?
 
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport

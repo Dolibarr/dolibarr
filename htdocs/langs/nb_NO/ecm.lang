@@ -35,10 +35,9 @@ ECMDocsByInterventions=Dokumenter relatert til intervensjoner
 ECMNoDirectoryYet=Ingen mapper opprettet
 ShowECMSection=Vis mappe
 DeleteSection=Fjern mappe
-ConfirmDeleteSection=Er du sikker på at du vil slette mappen <b>%s</b> ?
+ConfirmDeleteSection=Kan du bekrefte at du vil slette mappen <b>%s</b>?
 ECMDirectoryForFiles=Relativ mappe for filer
 CannotRemoveDirectoryContainsFiles=Kunne ikke fjerne mappen, da den inneholder filer
 ECMFileManager=Filbehandler
 ECMSelectASection=Velg en mappe fra treet til venstre...
 DirNotSynchronizedSyncFirst=Denne mappen synes å være opprettet eller endret utenfor ECM-modulen. Du må først klikke på "oppfrisk"-knappen for å synkronisere disken mot databasen for å kunne se innholdet i denne mappen.
-

@@ -26,8 +26,6 @@ FieldTitle=Felt tittel
 NowClickToGenerateToBuildExportFile=Trykk på "Opprett" for å lage eksportfilen...
 AvailableFormats=Tilgjengelige formater
 LibraryShort=Bibliotek
-LibraryUsed=Brukt bibliotek
-LibraryVersion=Versjon
 Step=Trinn
 FormatedImport=Importassistent
 FormatedImportDesc1=I dette området kan du uten teknisk kunnskap importere egne data ved hjelp av en assistent.
@@ -87,7 +85,7 @@ TooMuchWarnings=Det er fortsatt <b>%s</b> andre kildelinjer med advarsler, og im
 EmptyLine=Tom linje (vil bli forkastet)
 CorrectErrorBeforeRunningImport=Du må først rette alle feil før du starter import.
 FileWasImported=Filen ble importert med nummer <b>%s.</b>
-YouCanUseImportIdToFindRecord=Du kan finne alle importerte poster i databasen ved å filtrere på feltet <b>import_key = '%s'.</b>
+YouCanUseImportIdToFindRecord=Du kan finne alle importerte poster i databasen ved å filtrere på feltet <b>import_key='%s'</b>.
 NbOfLinesOK=Antall linjer uten feil og ingen advarsler: <b>%s.</b>
 NbOfLinesImported=Antall linjer importert: <b>%s</b>.
 DataComeFromNoWhere=Verdi for å sette inn har ingen kilde.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Kommadelt Verdi</b> filformatet (. CSV). <br> Dette er et tekst
 Excel95FormatDesc=<b>Excel</b> filformat (.xls)<br>Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> filformat (.xlsx)<br>Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tabulator-separert verdi</b> filformat (.tsv)<br>Dette er et tekstfilformat der teksten er separert med tabulator [tab].
-ExportFieldAutomaticallyAdded=Feltet <b>%s</b> ble lagt til automatisk. Det vil forhindre at like linjer blir behandlet som duplikater (med dette feltet vil alle linjer få sin egen ID og dermed være ulike).
+ExportFieldAutomaticallyAdded=Feltet <b>%s</b> ble lagt til automatisk. Det vil hindre at like linjer blir behandlet som duplikatposter (med dette feltet vil alle linjer få sin egen ID og vil dermed være ulike)
 CsvOptions=CSV innstillinger
 Separator=Separator
 Enclosure=Innbygging

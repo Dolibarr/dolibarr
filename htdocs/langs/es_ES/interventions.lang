@@ -18,8 +18,8 @@ CloneIntervention=Cerrar intervención
 ConfirmDeleteIntervention=¿Está seguro de querer eliminar esta intervención?
 ConfirmValidateIntervention=¿Está seguro de querer validar esta intervención bajo la referencia <b>%s</b>?
 ConfirmModifyIntervention=¿Está seguro de querer modificar esta intervención?
-ConfirmDeleteInterventionLine=¿Está seguro de querer eliminar esta linea?
-ConfirmCloneIntervention=¿Está seguro de querer cerrar esta intervención?
+ConfirmDeleteInterventionLine==¿Está seguro de querer eliminar esta linea?
+ConfirmCloneIntervention=¿Está seguro de querer clonar esta intervención?
 NameAndSignatureOfInternalContact=Nombre y firma del participante:
 NameAndSignatureOfExternalContact=Nombre y firma del cliente:
 DocumentModelStandard=Documento modelo estándar para intervenciones
