@@ -1232,7 +1232,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if (empty($hideref))
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+				if ($issupplierline) 
+				{
+				    //$ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+				    if (! empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) $ref_prodserv =$ref_supplier;
+    			    else $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+				}
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
