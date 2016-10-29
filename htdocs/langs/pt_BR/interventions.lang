@@ -1,15 +1,29 @@
 # Dolibarr language file - Source file is en_US - interventions
+Intervention=Intervenção
+Interventions=Intervenções
+InterventionCard=Ficha de Intervenção
+NewIntervention=Nova Intervenção
 AddIntervention=Criar Intervenção
+ListOfInterventions=Lista de Intervenções
 ActionsOnFicheInter=Açoes na intervençao
 LastInterventions=Últimas %s intervenções
+AllInterventions=Todas as Intervenções
+CreateDraftIntervention=Criar Rascunho
 InterventionContact=Contato Intervenção
+DeleteIntervention=Eliminar Intervenção
+ValidateIntervention=Confirmar Intervenção
 ModifyIntervention=Modificar intervençao
+DeleteInterventionLine=Eliminar Linha de Intervenção
 CloneIntervention=Clonar intervenção
-ConfirmDeleteIntervention=Tem certeza que quer eliminar esta intervenção?
-ConfirmValidateIntervention=Tem certeza que quer Confirmar esta intervenção?
-ConfirmModifyIntervention=Tem certeza que quer modificar esta intervenção?
-ConfirmDeleteInterventionLine=Tem certeza que quer eliminar esta linha?
-ConfirmCloneIntervention=Tem certeza que quer clonar esta intervenção?
+ConfirmDeleteIntervention=Você tem certeza que deseja excluir esta intervenção?
+ConfirmValidateIntervention=Você tem certeza que deseja validar esta intervenção sob o nome <b>%s</b>?
+ConfirmModifyIntervention=Você tem certeza que deseja modificar esta intervenção?
+ConfirmDeleteInterventionLine=Você tem certeza que deseja excluir esta linha de intervenção?
+ConfirmCloneIntervention=Você tem certeza que deseja clonar esta intervenção?
+NameAndSignatureOfInternalContact=Nome e Assinatura do Participante:
+NameAndSignatureOfExternalContact=Nome e Assinatura do Cliente:
+DocumentModelStandard=Modelo da Norma Intervenção
+InterventionCardsAndInterventionLines=Fichas e Linhas de Intervenção
 InterventionClassifyBilled=Classificar "Faturado"
 InterventionClassifyUnBilled=Classificar "à faturar"
 StatusInterInvoiced=Faturado
@@ -21,17 +35,21 @@ InterventionValidatedInDolibarr=Intervenção %s validada
 InterventionModifiedInDolibarr=Intervenção %s alterada
 InterventionClassifiedBilledInDolibarr=Intervenção %s classificada como Faturada
 InterventionClassifiedUnbilledInDolibarr=Intervenção %s definida como à faturar
+InterventionSentByEMail=Intervenção %s enviada por e-mail
 InterventionDeletedInDolibarr=Intervenção %s excluída
 InterventionsArea=Área intervenções
 DraftFichinter=Rascunho de intervenções
 LastModifiedInterventions=Últimas %s intervenções modificadas
+##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contato do cliente do seguimento da intervenção
+# Modele numérotation
 PrintProductsOnFichinter=Imprima também linhas do tipo "produto" (e não apenas serviços) na ficha de intervenção
 PrintProductsOnFichinterDetails=intervenções gerados a partir de ordens
 UseServicesDurationOnFichinter=duração de uso de serviços para intervenções geradas a partir de ordens
 InterventionStatistics=Estatística de intervenções
 NbOfinterventions=Nº de fichas de intervenção
 NumberOfInterventionsByMonth=Nº de fichas de intervenção por mês (data de validação)
+##### Exports #####
 InterId=ID de intervenção
 InterRef=Intervenção ref.
 InterDateCreation=Intervenção data de criação
