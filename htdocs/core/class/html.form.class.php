@@ -4214,21 +4214,21 @@ class Form
      *  Output an HTML select vat rate.
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
-     *  @param	string	$htmlname           Name of HTML select field
-     *  @param  float|string    $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-     *  @param  Societe	$societe_vendeuse   Thirdparty seller
-     *  @param  Societe	$societe_acheteuse  Thirdparty buyer
-     *  @param  int		$idprod             Id product
-     *  @param  int		$info_bits          Miscellaneous information on line (1 for NPR)
-     *  @param  int		$type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *                  					Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
-     *                  					Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-     *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
-     *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @param	bool	$options_only		Return HTML options lines only (for ajax treatment)
-     *  @param  int     $addcode            Add code into key in select list
+     *  @param	string	      $htmlname           Name of HTML select field
+     *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+     *  @param  Societe	      $societe_vendeuse   Thirdparty seller
+     *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
+     *  @param  int		      $idprod             Id product
+     *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
+     *  @param  int		      $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *                  		                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *                  					      Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+     *                  					      Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
+	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
+     *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
+     *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
+     *  @param  int          $addcode             Add code into key in select list
      *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
@@ -4242,7 +4242,7 @@ class Form
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
         $defaultcode='';
-        if (preg_match('/\s*\((.*)\)/', $defaulttx, $reg))
+        if (preg_match('/\((.*)\)/', $defaulttx, $reg))
         {
             $defaultcode=$reg[1];
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
@@ -4337,6 +4337,7 @@ class Form
 
         	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
 
+        	$selectedfound=false;
         	foreach ($this->cache_vatrates as $rate)
         	{
         		// Keep only 0 if seller is not subject to VAT
@@ -4346,13 +4347,21 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
+        		if (! $selectedfound)
         		{
-                    if ($defaultcode == $rate['code']) $return.= ' selected';
-        		}
-        		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
-           		{
-           		    $return.= ' selected';
+            		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
+            		{
+                        if ($defaultcode == $rate['code']) 
+                        {
+                            $return.= ' selected';
+                            $selectedfound=true;
+                        }
+            		}
+            		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+               		{
+               		    $return.= ' selected';
+               		    $selectedfound=true;
+            		}
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');

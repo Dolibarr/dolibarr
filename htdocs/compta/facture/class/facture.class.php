@@ -2626,7 +2626,14 @@ class Facture extends CommonInvoice
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+
+			// Clean vat code
+    		$vat_src_code='';
+    		if (preg_match('/\((.*)\)/', $txtva, $reg))
+    		{
+    		    $vat_src_code = $reg[1];
+    		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+    		}
 
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx);
 
@@ -2690,7 +2697,7 @@ class Facture extends CommonInvoice
 			$this->line->desc				= $desc;
 			$this->line->qty				= ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
             
-			$this->line->vat_src_code=$vat_src_code;
+			$this->line->vat_src_code       = $vat_src_code;
 			$this->line->tva_tx				= $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
@@ -4543,43 +4550,43 @@ class FactureLigne extends CommonInvoiceLine
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
         $sql.= " description='".$this->db->escape($this->desc)."'";
-        $sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-        $sql.= ",subprice=".price2num($this->subprice)."";
-        $sql.= ",remise_percent=".price2num($this->remise_percent)."";
-        if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
-        else $sql.= ",fk_remise_except=null";
-		$sql.= ",vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
-        $sql.= ",tva_tx=".price2num($this->tva_tx)."";
-        $sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
-        $sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
-		$sql.= ",localtax1_type='".$this->localtax1_type."'";
-		$sql.= ",localtax2_type='".$this->localtax2_type."'";
-        $sql.= ",qty=".price2num($this->qty)."";
-        $sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
-        $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-        $sql.= ",product_type=".$this->product_type;
-        $sql.= ",info_bits='".$this->info_bits."'";
-        $sql.= ",special_code='".$this->special_code."'";
+        $sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+        $sql.= ", subprice=".price2num($this->subprice)."";
+        $sql.= ", remise_percent=".price2num($this->remise_percent)."";
+        if ($this->fk_remise_except) $sql.= ", fk_remise_except=".$this->fk_remise_except;
+        else $sql.= ", fk_remise_except=null";
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+        $sql.= ", tva_tx=".price2num($this->tva_tx)."";
+        $sql.= ", localtax1_tx=".price2num($this->localtax1_tx)."";
+        $sql.= ", localtax2_tx=".price2num($this->localtax2_tx)."";
+		$sql.= ", localtax1_type='".$this->localtax1_type."'";
+		$sql.= ", localtax2_type='".$this->localtax2_type."'";
+        $sql.= ", qty=".price2num($this->qty)."";
+        $sql.= ", date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= ", date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= ", product_type=".$this->product_type;
+        $sql.= ", info_bits='".$this->info_bits."'";
+        $sql.= ", special_code='".$this->special_code."'";
         if (empty($this->skip_update_total))
         {
-        	$sql.= ",total_ht=".price2num($this->total_ht)."";
-        	$sql.= ",total_tva=".price2num($this->total_tva)."";
-        	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
-        	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
-        	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
+        	$sql.= ", total_ht=".price2num($this->total_ht)."";
+        	$sql.= ", total_tva=".price2num($this->total_tva)."";
+        	$sql.= ", total_ttc=".price2num($this->total_ttc)."";
+        	$sql.= ", total_localtax1=".price2num($this->total_localtax1)."";
+        	$sql.= ", total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
-		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
+		$sql.= ", fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
+		$sql.= ", buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql.= ", fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
-		$sql .= ", situation_percent=" . $this->situation_percent;
-		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql.= ", situation_percent=" . $this->situation_percent;
+		$sql.= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql.= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
 		$sql.= " WHERE rowid = ".$this->rowid;
 
