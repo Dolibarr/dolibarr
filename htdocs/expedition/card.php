@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2015	Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,13 +555,21 @@ if (empty($reshook))
 	elseif ($action == 'classifybilled')
 	{
 	    $object->fetch($id);
-	    $object->set_billed();
+	    $result = $object->set_billed();
+	    if($result >= 0) {
+	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	    	exit();
+	    }
 	}
 
 	elseif ($action == 'classifyclosed')
 	{
 	    $object->fetch($id);
-	    $object->setClosed();
+	    $result = $object->setClosed();
+	    if($result >= 0) {
+	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	    	exit();
+	    }
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
