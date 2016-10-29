@@ -1007,7 +1007,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->statut = 3;
                 $this->methode_commande_id = $methode;
-                $this->date_commande = $this->db->idate($date);
+                $this->date_commande = $date;
 
                 // Call trigger
                 $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT',$user);
@@ -1035,7 +1035,7 @@ class CommandeFournisseur extends CommonOrder
             $error++;
             $this->error = $langs->trans('NotAuthorized');
             $this->errors[] = $langs->trans('NotAuthorized');
-            dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
+            dol_syslog(get_class($this)."::commande User not Authorized", LOG_WARNING);
         }
 
         return ($error ? -1 : 1);
