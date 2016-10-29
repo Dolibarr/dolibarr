@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2249,9 +2249,9 @@ else
     	print '<div class="fichehalfright">';
     	print '<div class="ficheaddleft">';
     	print '<div class="underbanner clearboth"></div>';
-    	
+
     	print '<table class="border centpercent">';
-    		
+
     	// Amount
     	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
     	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
@@ -2265,7 +2265,7 @@ else
     	$s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
     	print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc",$calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('','help'));
     	print '</div></td></tr>';
-    	
+
     	// Amount Local Taxes
     	//TODO: Place into a function to control showing by country or study better option
     	if ($societe->localtax1_assuj=="1") //Localtax1
@@ -2281,7 +2281,7 @@ else
     	    print '</tr>';
     	}
     	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-    	
+
     	if (!empty($conf->multicurrency->enabled))
     	{
     	    // Multicurrency Amount HT
@@ -2298,22 +2298,26 @@ else
     	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
     	    print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
     	    print '</tr>';
-    	}	
-    	
+    	}
+
     	print '</table>';
-    	 
+ 
     	/*
     	 * List of payments
     	 */
-    	$nbrows=9; $nbcols=3;
+		$sign = 1;
+		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign = - 1;
+
+		$nbrows=9; $nbcols=3;
     	if (! empty($conf->projet->enabled)) $nbrows++;
     	if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
     	if (! empty($conf->incoterm->enabled)) $nbrows++;
-    	
+		if (! empty($conf->multicurrency->enabled)) $nbrows += 5;
+
     	// Local taxes
     	if ($societe->localtax1_assuj=="1") $nbrows++;
     	if ($societe->localtax2_assuj=="1") $nbrows++;
-    	
+
     	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     	$sql.= ' c.id as paiement_type,';
     	$sql.= ' pf.amount,';
@@ -2325,7 +2329,7 @@ else
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
     	$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
     	$sql.= ' ORDER BY p.datep, p.tms';
-    	
+
     	$result = $db->query($sql);
     	if ($result)
     	{
@@ -2333,14 +2337,14 @@ else
     	    $i = 0; $totalpaye = 0;
     	    print '<table class="noborder paymenttable" width="100%">';
     	    print '<tr class="liste_titre">';
-    	    print '<td>'.$langs->trans('Payments').'</td>';
+    	    print '<td class="liste_titre">' . ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
     	    print '<td>'.$langs->trans('Date').'</td>';
     	    print '<td>'.$langs->trans('Type').'</td>';
     	    if (! empty($conf->banque->enabled)) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
     	    print '<td align="right">'.$langs->trans('Amount').'</td>';
     	    print '<td width="18">&nbsp;</td>';
     	    print '</tr>';
-    	
+
     	    $var=false;
     	    if ($num > 0)
     	    {
@@ -2369,7 +2373,7 @@ else
     	                if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
     	                print '</td>';
     	            }
-    	            print '<td align="right">'.price($objp->amount).'</td>';
+    	            print '<td align="right">' . price($sign * $objp->amount) . '</td>';
     	            print '<td align="center">';
     	            if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
     	            {
@@ -2405,7 +2409,6 @@ else
     	{
     	    dol_print_error($db);
     	}
-    	
 
         print '</div>';
         print '</div>';
@@ -2435,13 +2438,12 @@ else
 		//$result = $object->getLinesArray();
 
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
-		<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="id" value="'.$object->id.'">
-        <input type="hidden" name="socid" value="'.$societe->id.'">
-		';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">';
+		print '<input type="hidden" name="mode" value="">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 
 		if (! empty($conf->use_javascript_ajax) && $object->statut == FactureFournisseur::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
@@ -2449,7 +2451,7 @@ else
 
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-       	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
+		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
 
 		// Show object lines
