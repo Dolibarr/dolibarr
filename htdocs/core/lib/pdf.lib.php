@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Bahfir Abbes            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1106,7 +1107,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 	}
 	if (empty($reshook))
 	{
-		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
+		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline,empty($conf->global->ORDERSUPPLIER_HIDEREFCUSTOMERINSUPPLIERLINE)?0:1);
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J',true);
 		$result.=$labelproductservice;
@@ -1125,7 +1126,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
  *  @param  int			$issupplierline      Is it a line for a supplier object ?
  *  @return string       				     String with line
  */
-function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0,$hiderefcustomerinsupplierline=0)
 {
 	global $db, $conf, $langs;
 
@@ -1232,7 +1233,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if (empty($hideref))
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+				if ($issupplierline) {
+                    if($hiderefcustomerinsupplierline) $ref_prodserv =$ref_supplier;
+                    else $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+                     
+                }    
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
