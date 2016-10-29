@@ -36,6 +36,7 @@ ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_code_ventil
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_product (fk_product);
 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_expedition ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
 
