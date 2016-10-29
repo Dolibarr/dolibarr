@@ -70,7 +70,7 @@ ErrorLDAPMakeManualTest=En .ldif fil er opprettet i mappen %s. Prøv å lese den
 ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med "status ikke startet" hvis feltet "gjort av" også er utfylt.
 ErrorRefAlreadyExists=Ref bruket til oppretting finnes allerede.
 ErrorPleaseTypeBankTransactionReportName=Vennligst skriv navnet på bankkvitteringen der transaksjonen er rapportert (i formatet ÅÅÅÅMM eller ÅÅÅÅMMDD)
-ErrorRecordHasChildren=Kunne ikke slette poster siden den har noen relasjoner.
+ErrorRecordHasChildren=Kunne ikke slette posten da den har koblinger.
 ErrorRecordIsUsedCantDelete=Kan ikke slette posten. Den er allerede brukt eller inkludert i et annet objekt
 ErrorModuleRequireJavascript=Javascript må være aktivert for å kunne bruke denne funksjonen. For å aktivere/deaktivere Javascript, gå til menyen Hjem-> Oppsett-> Visning.
 ErrorPasswordsMustMatch=Passordene må samsvare med hverandre
@@ -176,6 +176,7 @@ ErrorStockIsNotEnoughToAddProductOnShipment=Ikke nok lagerbeholdning for varen %
 ErrorStockIsNotEnoughToAddProductOnProposal=Ikke nok lagerbeholdning for varen %s til å legges til i et nytt tilbud.
 ErrorFailedToLoadLoginFileForMode=Kunne ikke finne innloggingsfil for modus '%s'.
 ErrorModuleNotFound=Modulfilen ble ikke funnet.
+ErrorFieldAccountNotDefinedForBankLine=Verdi for regnskapskode er ikke definert bankkonto linje %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.
