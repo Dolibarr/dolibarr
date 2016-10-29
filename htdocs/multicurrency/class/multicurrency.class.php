@@ -181,11 +181,13 @@ class MultiCurrency extends CommonObject
 	public function fetch($id, $code = null)
 	{
 		dol_syslog('Currency::fetch', LOG_DEBUG);
+		
+		global $conf;
 
 		$sql = 'SELECT';
 		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' AS c';
-		if (!empty($code)) $sql .= ' WHERE c.code = \''.$this->db->escape($code).'\'';
+		if (!empty($code)) $sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
 		else $sql .= ' WHERE c.rowid = ' . $id;
 
 		dol_syslog(__METHOD__,LOG_DEBUG);
@@ -499,7 +501,9 @@ class MultiCurrency extends CommonObject
 	 */
 	 public static function getIdFromCode(&$db, $code)
 	 {
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\'';
+	 	global $conf;
+		
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
 	 	
 	 	dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);

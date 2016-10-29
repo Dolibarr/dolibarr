@@ -570,6 +570,7 @@ TextUsedInTheMessageBody=Email body
 SendAcknowledgementByMail=Send confirmation email
 EMail=E-mail
 NoEMail=No email
+Email=Email
 NoMobilePhone=No mobile phone
 Owner=Owner
 FollowingConstantsWillBeSubstituted=The following constants will be replaced with the corresponding value.
