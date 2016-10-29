@@ -173,14 +173,15 @@ class FormProduct
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
-	 *  @param	int		$showstock		1=show stock count
-	 *  @param	int		$forcecombo		force combo iso ajax select2
-	 *  @param	array	$events			events to add to select2
-	 *  @param  string  $morecss        Add more css classes
-	 *  @param	array	$exclude		warehouses ids to exclude
+	 *  @param	int		$showstock		1=Show stock count
+	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
+	 *  @param	array	$events			Events to add to select2
+	 *  @param  string  $morecss        Add more css classes to HTML select
+	 *  @param	array	$exclude		Warehouses ids to exclude
+	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='')
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
 	{
 		global $conf,$langs,$user;
 
@@ -206,7 +207,8 @@ class FormProduct
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
-			$out.=$arraytypes['full_label'];
+			if ($showfullpath) $out.=$arraytypes['full_label'];
+			else $out.=$arraytypes['label'];
 			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
 			$out.='</option>';
 		}

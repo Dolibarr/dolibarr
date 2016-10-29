@@ -4629,7 +4629,7 @@ img.demothumb {
 	select {
 		width: 100%;
 		max-width: 100px;
-		min-width: 0 !important;
+		min-width: 50px;
 	}
 	div.divphotoref {
 		padding-right: 5px;	
