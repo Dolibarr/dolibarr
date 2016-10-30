@@ -35,9 +35,11 @@ class CActionComm
 
     var $code;
     var $type;
-    var $libelle;
+    var $libelle;       // deprecated
+    var $label;
     var $active;
     var $color;
+    var $picto;
 
     var $type_actions=array();
 
@@ -60,7 +62,7 @@ class CActionComm
      */
     function fetch($id)
     {
-        $sql = "SELECT id, code, type, libelle, color, active";
+        $sql = "SELECT id, code, type, libelle as label, color, active, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
@@ -76,7 +78,8 @@ class CActionComm
                 $this->id      = $obj->id;
                 $this->code    = $obj->code;
                 $this->type    = $obj->type;
-                $this->libelle = $obj->libelle;
+                $this->libelle = $obj->label;   // deprecated
+                $this->label   = $obj->label;
                 $this->active  = $obj->active;
                 $this->color   = $obj->color;
 
@@ -114,7 +117,7 @@ class CActionComm
         $repid = array();
         $repcode = array();
 
-        $sql = "SELECT id, code, libelle, module, type, color";
+        $sql = "SELECT id, code, libelle as label, module, type, color, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         $sql.= " WHERE 1=1";
         if ($active != '') $sql.=" AND active=".$active;
@@ -155,8 +158,8 @@ class CActionComm
                     	if ($onlyautoornot && $code == 'AC_OTH') $code='AC_MANUAL';
                     	if ($onlyautoornot && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
                     	$transcode=$langs->trans("Action".$code);
-                        $repid[$obj->id] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
-                        $repcode[$obj->code] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
+                        $repid[$obj->id] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->label));
+                        $repcode[$obj->code] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->label));
                         if ($onlyautoornot && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
                     }
                     $i++;

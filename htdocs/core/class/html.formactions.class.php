@@ -62,7 +62,7 @@ class FormActions
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
-            '0' => $langs->trans("ActionRunningNotStarted"),
+            '0' => $langs->trans("ActionsToDoShort"),
             '50' => $langs->trans("ActionRunningShort"),
             '100' => $langs->trans("ActionDoneShort")
         );
@@ -100,7 +100,7 @@ class FormActions
                     }
                     else if (defaultvalue == 0) {
 						percentage.val(0);
-						percentage.prop('disabled', true);
+						percentage.removeAttr('disabled'); /* Not disabled, we want to change it to higher value */
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
