@@ -87,7 +87,7 @@ $hookmanager->initHooks(array('commcard','globalcard'));
  * Actions
  */
 
-$parameters = array('socid' => $id);
+$parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -454,7 +454,7 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);
