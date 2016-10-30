@@ -202,9 +202,9 @@ if (empty($reshook))
 	    $objectsrc->fetch($object->origin_id);
 
 	    $object->socid					= $objectsrc->socid;
-	    $object->ref_customer			= $objectsrc->ref_client;
+	    $object->ref_customer			= '';                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
 	    $object->model_pdf				= GETPOST('model');
-	    $object->date_delivery			= $date_delivery;	// Date delivery planed
+	    $object->date_delivery			= $date_delivery;	    // Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
 	    $object->tracking_number		= GETPOST('tracking_number','alpha');
@@ -413,9 +413,9 @@ if (empty($reshook))
 	)
 	{
 	    $object->fetch_thirdparty();
-
+	    
 	    $result = $object->valid($user);
-
+	    
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
@@ -1332,7 +1332,7 @@ else if ($id || $ref)
 		    $objectsrc=new Propal($db);
 		    $objectsrc->fetch($object->$typeobject->id);
 		}
-		
+
 		// Shipment card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 		$morehtmlref='<div class="refidno">';

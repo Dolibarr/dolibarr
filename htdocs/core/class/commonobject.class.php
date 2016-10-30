@@ -2798,7 +2798,11 @@ abstract class CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
-        		$this->statut = $status;
+        		if (empty($elementId))    // If the element we update was $this (so $elementId is null)
+        		{
+        		    $this->statut = $status;
+        		    $this->status = $status;
+        		}
 				return 1;
 			}
 			else
