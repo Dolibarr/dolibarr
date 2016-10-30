@@ -1141,7 +1141,7 @@ if ($nboftargetok) {
 	
 		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
-			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'none',				# none means it won't be published on SF
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_rpm_generic/$FILENAMERPMSRC"=>'none',						# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
