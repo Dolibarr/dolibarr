@@ -40,7 +40,11 @@ if (! empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+	
 
 $langs->load("sendings");
 $langs->load("bills");
@@ -312,13 +316,8 @@ else
 {
 	if ($object->id > 0)
 	{
-		// Origin of a 'livraison' (delivery) is ALWAYS 'expedition' (shipment).
+		// Origin of a 'livraison' (delivery receipt) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)
-		// TODO REGIS:
-		// Je ne suis pas d'accord, beaucoup entreprises n'utilisent pas les bons d'expéditions car ces derniers sont gérés par le transporteur,
-		// donc les bons de livraisons peuvent avoir une origine différente de 'expedition'
-		// les bons de livraisons et d'expéditions devraient être considérés comme des objets à part entière, voir des modules différents comme une propal ou autres.
-
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($object->origin_id);
 		$typeobject = $expedition->origin;	// example: commande
@@ -369,17 +368,17 @@ else
 			 *   Livraison
 			 */
 			
-			if ($typeobject == 'commande' && $expedition->$typeobject->id && ! empty($conf->commande->enabled))
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && ! empty($conf->commande->enabled))
 			{
 			    $objectsrc=new Commande($db);
-			    $objectsrc->fetch($expedition->$typeobject->id);
+			    $objectsrc->fetch($expedition->origin_id);
 			}
-			if ($typeobject == 'propal' && $expedition->$typeobject->id && ! empty($conf->propal->enabled))
+			if ($typeobject == 'propal' && $expedition->origin_id > 0 && ! empty($conf->propal->enabled))
 			{
 			    $objectsrc=new Propal($db);
-			    $objectsrc->fetch($expedition->$typeobject->id);
+			    $objectsrc->fetch($expedition->origin_id);
 			}
-			
+
 			// Shipment card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 			
@@ -411,10 +410,10 @@ else
 			        }
 			    } else {
 			        $morehtmlref .= ' : ';
-			        if (! empty($expeditionsrc->fk_project)) {
+			        if (! empty($objectsrc->fk_project)) {
 			            $proj = new Project($db);
-			            $proj->fetch($expeditionsrc->fk_project);
-			            $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $expeditionsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+			            $proj->fetch($objectsrc->fk_project);
+			            $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
 			            $morehtmlref .= $proj->ref;
 			            $morehtmlref .= '</a>';
 			        } else {

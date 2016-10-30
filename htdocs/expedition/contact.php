@@ -29,6 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -165,11 +169,10 @@ if ($id > 0 || ! empty($ref))
 	// Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
-    /*
     if (! empty($conf->projet->enabled)) {
         $langs->load("projects");
         $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
-        if ($user->rights->supplier_proposal->creer) {
+        if (0) {    // Do not change on shipment
             if ($action != 'classify') {
                 $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             }
@@ -185,17 +188,20 @@ if ($id > 0 || ! empty($ref))
                 $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
             }
         } else {
-            if (! empty($object->fk_project)) {
+            // We don't have project on shipment, so we will use the project or source object instead
+            // TODO Add project on shipment
+            $morehtmlref .= ' : ';
+            if (! empty($objectsrc->fk_project)) {
                 $proj = new Project($db);
-                $proj->fetch($object->fk_project);
-                $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                $proj->fetch($objectsrc->fk_project);
+                $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
                 $morehtmlref .= $proj->ref;
                 $morehtmlref .= '</a>';
             } else {
                 $morehtmlref .= '';
             }
         }
-    }*/
+    }
 	$morehtmlref.='</div>';
 	
 	
