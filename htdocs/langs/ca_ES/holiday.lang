@@ -130,7 +130,6 @@ nbJours=Número de dies
 TitleAdminCP=Configuració dels dies lliures retribuïts
 NoticePeriod=Notice period
 #Messages
-Hello=Hola
 HolidaysToValidate=Dies lliures retribuïts a validar
 HolidaysToValidateBody=A continuació trobara una sol·licitud de dies lliures retribuïts per validar
 HolidaysToValidateDelay=Aquesta sol·licitud de dies lliures retribuïts tindrà lloc en un termini de menys de %s dies.

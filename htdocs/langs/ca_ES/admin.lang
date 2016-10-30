@@ -231,8 +231,8 @@ Security=Seguretat
 Passwords=Contrasenyes
 DoNotStoreClearPassword=No emmagatzemar la contrasenya sense xifrar a la base
 MainDbPasswordFileConfEncrypted=Encriptar la contrasenya de la base en l'arxiu conf.php
-InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
-InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
+InstrucToEncodePass=Per tenir la contrasenya encriptada al fitxer <b>conf.php</b> reemplaça la línia<br><b>$dolibarr_main_db_pass="...";</b><br>per<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=Per tenir la contrasenya descodificada en el fitxer de configuració <b> conf.php </b>, reemplaça en aquest fitxer la línia <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> per <br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles=Protecció i encriptació dels pdf generats
 ProtectAndEncryptPdfFilesDesc=La protecció d'un document pdf deixa el document lliure a la lectura ia la impressió a qualsevol lector de PDF. Per contra, la modificació i la còpia resulten impossibles.
 Feature=Funció
@@ -554,8 +554,8 @@ Module50400Name=Comptabilitat (avançat)
 Module50400Desc=Gestió experta de la comptabilitat (doble partida)
 Module54000Name=PrintIPP
 Module54000Desc=L'impressió directa (sense obrir els documents) utilitza l'interfície Cups IPP (L'impressora té que ser visible pel servidor i CUPS té que estar instal·lat en el servidor)
-Module55000Name=Obrir enquesta
-Module55000Desc=Mòdul per fer enquestes en línia (com Doodle, Studs, Rdvz, ...)
+Module55000Name=Poll, Survey or Vote
+Module55000Desc=Module to make online polls, surveys or votes (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Marges
 Module59000Desc=Mòdul per gestionar els marges de benefici
 Module60000Name=Comissions
@@ -1023,7 +1023,7 @@ NoEventOrNoAuditSetup=No s'han registrat esdeveniments de seguretat. Això pot s
 NoEventFoundWithCriteria=No s'han trobat esdeveniments de seguretat per a aquests criteris de cerca.
 SeeLocalSendMailSetup=Veure la configuració local d'sendmail
 BackupDesc=Per realitzar una còpia de seguretat completa de Dolibarr, vostè ha de:
-BackupDesc2=Guardar el contingut del directori de documents (<b>%s</b>) que contingui tots els arxius pujats a generats (comprimint el directori, per exemple).
+BackupDesc2=Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (So it includes all dump files generated at step 1).
 BackupDesc3=Guardar el contingut de la seva base de dades (<b>%s</b>) a un archiu de bolcat. Per aixo pot utilitzar l'asistent a continuació
 BackupDescX=La carpeta arxivada haurà de guardar-se en un lloc segur
 BackupDescY=L'arxiu de bolcat generat haurà de guardar-se en un lloc segur.
@@ -1397,7 +1397,7 @@ UseSearchToSelectProduct=Utilitzeu un formulari de cerca per triar un producte (
 UseEcoTaxeAbility=Assumir ecotaxa (DEEE)
 SetDefaultBarcodeTypeProducts=Tipus de codi de barres utilitzat per defecte per als productes
 SetDefaultBarcodeTypeThirdParties=Tipus de codi de barres utilitzat per defecte per als tercers
-UseUnits=Support units
+UseUnits=Define a unit of measure for Quantity during order, proposal or invoice lines edition
 ProductCodeChecker= Mòdul per a la generació i comprovació del codi d'un producte o servei
 ProductOtherConf= Configuració de productes/serveis
 ##### Syslog #####
@@ -1454,7 +1454,7 @@ FixedEmailTarget=Destinatari fixe
 SendingsSetup=Configuració del mòdul Expedicions
 SendingsReceiptModel=Model de notes de lliurament
 SendingsNumberingModules=Mòduls de numeració de notes de lliurament
-SendingsAbility=Ús de notes de lliurament per als enviaments a clients
+SendingsAbility=Support shipping sheets for customer deliveries
 NoNeedForDeliveryReceipts=En la majoria dels casos, les notes de lliurament (llista de productes enviats) també actuen com a notes de recepció i són signades pel client. La gestió de les notes de recepció és per tant redundant i poques vegades s'activarà.
 FreeLegalTextOnShippings=Text lliure en els enviaments
 ##### Deliveries #####
@@ -1658,11 +1658,15 @@ UnicodeCurrency=Enter here between braces, list of byte number that represent th
 PositionIntoComboList=Position of line into combo lists
 SellTaxRate=Sale tax rate
 RecuperableOnly=Yes for VAT "Non Perçue Récupérable" dedicated for some state in France. Keep value to "No" in all other cases.
-UrlTrackingDesc=If the provider or transport service offer a page or web site to check status of your shipment, you can enter it here. You can use the key {TRACKID} into URL parameters so the system will replace it with value of tracking number user entered into shipment card.
+UrlTrackingDesc=If the provider or transport service offer a page or web site to check status of your shipping, you can enter it here. You can use the key {TRACKID} into URL parameters so the system will replace it with value of tracking number user entered into shipment card.
 OpportunityPercent=When you create an opportunity, you will defined an estimated amount of project/lead. According to status of opportunity, this amount may be multiplicated by this rate to evaluate global amount all your opportunities may generate. Value is percent (between 0 and 100).
 TemplateForElement=This template record is dedicated to which element
 TypeOfTemplate=Type of template
 TemplateIsVisibleByOwnerOnly=Template is visible by owner only
+FixTZ=Fixar zona horaria
+FillFixTZOnlyIfRequired=Example: +2 (fill only if problem experienced)
+ExpectedChecksum=Expected Checksum
+CurrentChecksum=Current Checksum
 MailToSendProposal=To send customer proposal
 MailToSendOrder=To send customer order
 MailToSendInvoice=To send customer invoice

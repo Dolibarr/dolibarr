@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Xin vui lòng điền giá trị so với danh sách
 ErrorNoValueForRadioType=Xin vui lòng điền giá trị so với danh sách phát thanh
 ErrorBadFormatValueList=Giá trị danh sách không thể có nhiều hơn một <u>đến:% s,</u> nhưng cần ít nhất một: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Dòng% s</b> không được chứa các ký tự đặc biệt.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>Dòng% s</b> không được chứa các ký tự đặc biệt, cũng không phải ký tự trường hợp trên.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Không có mô-đun kế toán kích hoạt
 ErrorExportDuplicateProfil=Tên hồ sơ này đã tồn tại cho bộ xuất khẩu này.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP phù hợp là không đầy đủ.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript không được vô hiệu hóa để l�
 ErrorPasswordsMustMatch=Cả hai mật khẩu gõ phải phù hợp với nhau
 ErrorContactEMail=Một lỗi kỹ thuật xảy ra. Xin vui lòng liên hệ với quản trị viên để sau <b>email% s</b> en cung cấp các mã <b>lỗi% s</b> trong thông điệp của bạn, hoặc thậm chí tốt hơn bằng cách thêm một bản sao màn hình của trang này.
 ErrorWrongValueForField=Giá trị sai số cho lĩnh <b>vực% s</b> (giá trị <b>'% s'</b> không phù hợp với quy tắc <b>regex% s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Giá trị sai số cho lĩnh <b>vực% s</b> (giá trị <b>'% s'</b> không phải là ref <b>hiện% s)</b>
 ErrorsOnXLines=Lỗi được ghi nhận <b>nguồn% s</b> (s)
 ErrorFileIsInfectedWithAVirus=Các chương trình chống virus đã không thể xác nhận các tập tin (tập tin có thể bị nhiễm bởi một loại virus)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Thiết lập các thông số bắt buộc chưa được xác định

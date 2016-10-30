@@ -130,7 +130,6 @@ nbJours=Antall dager
 TitleAdminCP=Oppsett av ferier
 NoticePeriod=Oppsigelsestid
 #Messages
-Hello=Hallo
 HolidaysToValidate=Valider feriesøknader
 HolidaysToValidateBody=Under er en feriesøknad for validering
 HolidaysToValidateDelay=Denne ferien avvikles innen %s dager

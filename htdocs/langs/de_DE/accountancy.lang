@@ -14,7 +14,7 @@ Chartofaccounts=Kontenplan
 Fiscalyear=Fiskalische Jahre
 Menuaccount=Buchhaltung Konten
 Menuthirdpartyaccount=Partnerkonten
-MenuTools=Werkzeuge
+MenuTools=Hilfsprogramme
 
 ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul 
 Journaux=Journale
@@ -48,6 +48,7 @@ NewAccount=Neues Buchhaltungskonto
 Update=Aktualisieren
 List=Liste
 Create=Erstelle
+CreateMvts=Erstelle Lagerbewegung
 UpdateAccount=Änderung eines Bilanz-Kontos
 UpdateMvts=Änderung einer Bewegung
 WriteBookKeeping=Konten ins Hauptbuch übernehmen
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen Sie die Sortierung der Abbau Seit
 
 AccountLength=Länge der in Dolibarr gezeigten Rechnungskonten
 AccountLengthDesc=Funktion ermöglicht, eine Länge von Rechnungslegungs Konto indem Räume, die durch den Nullwert vorzutäuschen. Diese Funktion berührt nur die Anzeige, ist es nicht die in Dolibarr registriert Rechnungswesen Konten ändern. Für den Export ist diese Funktion erforderlich, bei bestimmten Software-kompatibel zu sein.
+ACCOUNTING_LENGTH_DESCRIPTION=Listenlänge für die Anzeige von Produkt- und Dienstleistungsbeschreibung (Empfehlung = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Beschreibung von Produkte und Leistungen in den Listen (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
 ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
 
@@ -105,7 +108,7 @@ Docdate=Datum
 Docref=Referenz
 Numerocompte=Konto
 Code_tiers=Partner
-Labelcompte=Label-Account
+Labelcompte=Konto-Beschriftung
 Debit=Soll
 Credit=Haben
 Amount=Betrag

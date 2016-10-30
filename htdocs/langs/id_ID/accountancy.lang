@@ -25,7 +25,7 @@ Modelcsv=Model Ekspor
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Pilih satu model Ekspor
 Modelcsv_normal=Ekspor Klasik
-Modelcsv_CEGID=Export towards CEGID Expert
+Modelcsv_CEGID=Ekspor terhadap CEGID Ahli
 BackToChartofaccounts=Akun pembalik
 Back=Kembali
 
@@ -48,8 +48,9 @@ NewAccount=Akun akuntansi baru
 Update=Membarui
 List=Daftar
 Create=Buat
+CreateMvts=Create movement
 UpdateAccount=Modifikasi akun akuntansi
-UpdateMvts=Modification of a movement
+UpdateMvts=Modifikasi gerakan
 WriteBookKeeping=Mencatat akun di buku besar
 Bookkeeping=Buku besar
 AccountBalanceByMonth=Saldo per bulan
@@ -59,9 +60,9 @@ AccountingVentilationSupplier=Perincian Akunting Pemasok
 AccountingVentilationCustomer=Perincian Akunting Pelanggan
 Line=Baris
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
+CAHTF=Jumlah HT pemasok pembelian
+InvoiceLines=\nBaris faktur untuk ventilasi
+InvoiceLinesDone=Baris berventilasi faktur
 IntoAccount=In the accounting account
 
 Ventilate=Ventilate
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Panjang akun umum
 ACCOUNTING_LENGTH_AACCOUNT=Panjang akun pihak ketiga
 
@@ -161,6 +164,6 @@ DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier a
 
 ValidateHistory=Validasi Otomatis
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Kesalahan, Anda tidak dapat menghapus akun akuntansi ini karena digunakan
 
 FicheVentilation=Breakdown card

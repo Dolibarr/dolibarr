@@ -17,37 +17,37 @@ ConfirmDeleteLoan=Confirmer la suppression de cet emprunt ?
 LoanDeleted=Emprunt supprimé avec succès
 ConfirmPayLoan=Classer cet emprunt comme payé
 LoanPaid=Emprunt payé
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
+ErrorLoanCapital=Le montant du prêt doit être numérique et positif.
+ErrorLoanLength=La durée du prêt doit être numérique et positive.
+ErrorLoanInterest=Le taux d'intérêt annuel doit être numérique et positif.
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
-PercentageDown=Percentage Down
-LengthOfMortgage=Length of Mortgage
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
-DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
-InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
+LoanCalc=Calculateur d'Emprunt Bancaire
+PurchaseFinanceInfo=Information de Financement et d'Achat
+SalePriceOfAsset=Prix de vente du Bien
+PercentageDown=Réduction Pourcentage
+LengthOfMortgage=Durée de l'Hypothèque
+AnnualInterestRate=Taux d'Intérêts Annuel
+ExplainCalculations=Expliquer les Calculs
+ShowMeCalculationsAndAmortization=Montrer les calculs et l'ammortissement
+MortgagePaymentInformation=Information de Paiement de l'Hypothèque
+DownPayment=Acompte
+DownPaymentDesc=L'<b>acompte</b> = Le prix de la maison multiplié par le pourcentage divisé par 100 (5% devient 5/100 ou 0,05)
+InterestRateDesc=Le  <b>taux d'intérêt</b> = Le pourcentage annuel d'intérêt divisé par 100.
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
-MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
+MonthlyInterestRateDesc=Le  <b>taux d'intérêt mensuel</b> = Le taux annuel d'intérêt divisé par 12 (pour les 12 mois de l'année)
 MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=The montly payment is figured out using the following formula
+MonthlyPaymentDesc=Le paiement mensuel est déterminé en utilisant la formule suivante
 AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Amount Financed
-AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
-Totalsforyear=Totals for year
+AmountFinanced=Montant financé
+AmortizationMonthlyPaymentOverYears=Amortissement pour paiement mensuel : <b>%s</b> sur %s ans
+Totalsforyear=Total pour l'année
 MonthlyPayment=Paiement mensuel
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s will go towards INTEREST
-GoToPrincipal=%s will go towards PRINCIPAL
-YouWillSpend=You will spend %s on your house in year %s
+GoToInterest=%s remboursera les intérêts
+GoToPrincipal=%s remboursera le principal (capital)
+YouWillSpend=Vous allez dépenser %s pour votre maison l'année %s
 # Admin
 ConfigLoan=Configuration du module Emprunt
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Code comptable par défaut pour le capital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Code comptable par défaut pour les intérêts
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Code comptable par défaut pour l'assurance

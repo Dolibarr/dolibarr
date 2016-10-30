@@ -79,7 +79,7 @@ $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':
 
 print '<div class="corps">'."\n";
 
-print_fiche_titre($langs->trans("OpenSurveyArea"));
+print load_fiche_titre($langs->trans("OpenSurveyArea"));
 
 // List of surveys into database
 

@@ -43,9 +43,6 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $rowid;
 
-    //! Database handler
-    public $db;
-
 	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string

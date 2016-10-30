@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Полеви <b>%s,</b> не трябва да съдържа специални знаци.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Не е активиран модула Счетоводство
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP съвпадение не е пълна.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript не трябва да бъдат хор
 ErrorPasswordsMustMatch=Двете машинописни пароли трябва да съвпадат помежду си
 ErrorContactEMail=Техническа грешка. Моля, свържете се с администратора след имейл <b>%s</b> EN предоставят на <b>%s</b> код на грешка в съобщението си, или още по-добре чрез добавяне на екран копие на тази страница.
 ErrorWrongValueForField=Грешна стойност за номер на полето <b>%s (&quot;%s&quot;</b> стойността не съответства на регулярни изрази върховенството <b>%s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Грешна стойност за номер на полето <b>%s (&quot;%s</b> стойност не е <b>%s</b> съществуващия код)
 ErrorsOnXLines=Грешки на <b>%s</b> изходни линии
 ErrorFileIsInfectedWithAVirus=Антивирусна програма не е в състояние да валидира файла (файл може да бъде заразен с вирус)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени

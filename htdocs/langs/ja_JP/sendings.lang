@@ -5,7 +5,7 @@ Sendings=出荷
 AllSendings=All Shipments
 Shipment=出荷
 Shipments=出荷
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=出荷エリア
 ListOfSendings=出荷のリスト
@@ -26,8 +26,8 @@ QtyToShip=出荷する数量
 QtyReceived=個数は、受信した
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=このため、他の出荷
-DateSending=オーダーを送信した日付
-DateSendingShort=オーダーを送信した日付
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=この注文の出荷
 SendingsAndReceivingForSameOrder=この注文の出荷とreceivings
 SendingsToValidate=検証するために出荷
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=顧客がキャッチ

@@ -71,7 +71,7 @@ $sql.= " ORDER BY u.lastname,cp.date_debut";
 $result  = $db->query($sql);
 $num = $db->num_rows($result);
 
-print_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm.png');
+print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm.png');
 
 // Get month of last update
 $lastUpdate = $cp->getConfCP('lastUpdate', 0);

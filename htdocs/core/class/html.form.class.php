@@ -364,7 +364,8 @@ class Form
     }
 
     /**
-     *	Show a text and picto with tooltip on text or picto
+     *	Show a text and picto with tooltip on text or picto.
+     *  Can be called by an instancied $form->textwithtooltip or by a static call Form::textwithtooltip
      *
      *	@param	string		$text				Text to show
      *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
@@ -2072,10 +2073,12 @@ class Form
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $opt.=$objp->ref;
-                if (! empty($objp->idprodfournprice)) $opt.=' ('.$objp->ref_fourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$opt.=' ('.$objp->ref_fourn.')';
                 $opt.=' - ';
                 $outval.=$objRef;
-                if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
                 $opt.=dol_trunc($label, 72).' - ';
                 $outval.=dol_trunc($label, 72).' - ';
@@ -3013,6 +3016,8 @@ class Form
         global $langs;
         $langs->load("categories");
 
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+        
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
@@ -3232,7 +3237,7 @@ class Form
             $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+            $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3303,11 +3308,11 @@ class Form
             });
             });
             </script>';
-            $formconfirm.= "<!-- end ajax form_confirm -->\n";
+            $formconfirm.= "<!-- end ajax formconfirm -->\n";
         }
         else
         {
-        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
+        	$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
@@ -3340,7 +3345,7 @@ class Form
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
 
-            $formconfirm.= "<!-- end form_confirm -->\n";
+            $formconfirm.= "<!-- end formconfirm -->\n";
         }
 
         return $formconfirm;
@@ -3576,7 +3581,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_users($selected,$htmlname,1,$exclude,0,$include);
+            print $this->select_dolusers($selected,$htmlname,1,$exclude,0,$include);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4404,7 +4409,7 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array with key+value
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
+     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;'), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag
@@ -4453,7 +4458,7 @@ class Form
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="-1"'.($id==-1?' selected':'').'>'.$textforempty.'</option>'."\n";
+            $out.='<option value="'.($show_empty < 0 ? $show_empty : -1).'"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
         }
 
         if (is_array($array))
@@ -4497,70 +4502,71 @@ class Form
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
      *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
      *
-     *	@param	string	$htmlname       Name of html select area
-     *	@param	string	$url			Url
-     *	@param	string	$id             Preselected key
-     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
-     *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
-     *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$moreparam      Add more parameters onto the select tag
-     *	@param  int		$translate		Translate and encode value
-     * 	@param	int		$maxlen			Length maximum for labels
-     * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
-     *  @param	string	$morecss		Add more class to css styles
-     *  @param	int		$addjscombo		Add js combo
-     * 	@return	string					HTML select string.
+     *	@param	string	$htmlname       		Name of html select area
+     *	@param	string	$url					Url
+     *	@param	string	$id             		Preselected key
+     *	@param  string	$moreparam      		Add more parameters onto the select tag
+     *	@param  string	$moreparamtourl 		Add more parameters onto the Ajax called URL
+     * 	@param	int		$disabled				Html select box is disabled
+     *  @param	int		$minimumInputLength		Minimum Input Length
+     *  @param	string	$morecss				Add more class to css styles
+     * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='')
     {
     	$out = '';
 
-        // Add code for jquery to use select2
-        if ($addjscombo && empty($conf->dol_use_jmobile))
-        {
-        	$tmpplugin='select2';
-        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-    		   <script type="text/javascript">
-				$(document).ready(function () {
-			    	$(".'.$htmlname.'").select2({
-					  ajax: {
-					    dir: "ltr",
-					    url: "'.$url.'",
-					    dataType: \'json\',
-					    delay: 250,
-					    data: function (params) {
-					      return {
-					        q: params.term, // search term
-					        page: params.page
-					      };
-					    },
-					    processResults: function (data, page) {
-					      // parse the results into the format expected by Select2.
-					      // since we are using custom formatting functions we do not need to
-					      // alter the remote JSON data
-					      return {
-					        results: data.items
-					      };
-					    },
-					    cache: true
-					  },
-					  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-					  minimumInputLength: 0,
-					  //templateResult: formatRepo, // omitted for brevity, see the source of this page
-					  //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-					});
-				});
-			</script>';
-        }
-		else
-		{
-        	// TODO get all values from $url into $array
+    	$tmpplugin='select2';
+    	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+	    	<script type="text/javascript">
+	    	$(document).ready(function () {
+		    	$(".'.$htmlname.'").select2({
+			    	ajax: {
+				    	dir: "ltr",
+				    	url: "'.$url.'",
+				    	dataType: \'json\',
+				    	delay: 250,
+				    	data: function (searchTerm, pageNumber, context) {
+				    		return {
+						    	q: searchTerm, // search term
+				    			page: pageNumber
+				    		};
+			    		},
+			    		results: function (remoteData, pageNumber, query) {
+			    			console.log(remoteData);
+			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			//return {results:[remoteData], more:false}
+    					},
+			    		/*processResults: function (data, page) {
+			    			// parse the results into the format expected by Select2.
+			    			// since we are using custom formatting functions we do not need to
+			    			// alter the remote JSON data
+			    			console.log(data);
+			    			return {
+			    				results: data.items
+			    			};
+			    		},*/
+			    		cache: true
+			    	},
+			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+			    	minimumInputLength: '.$minimumInputLength.',
+			    	//templateResult: formatRepo, // omitted for brevity, see the source of this page
+			    	//templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+			    });
+			    
+			    $(".'.$htmlname.'").change(function() { 
+			    	alert(\'eee\');
+			    	$(".'.$htmlname.'").select2.clearSearch(); 
+    			} );
 
-		}
+    			
+    			
+    	});
+	    </script>';
 
-   		$out.=self::selectarray('.'.$htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, '', $translate, $maxlen, $disabled, $sort, '', 0);
 
+		$out.='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+		
 		return $out;
     }
 
@@ -4664,12 +4670,14 @@ class Form
 	 *
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
- 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect
+ 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
 	 * 	@return		mixed					Array of category objects or < 0 if KO
 	 */
 	function showCategories($id, $type, $rendermode=0)
 	{
 		global $db;
+
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$cat = new Categorie($db);
 		$categories = $cat->containing($id, $type);
@@ -4679,10 +4687,10 @@ class Form
 			$toprint = array();
 			foreach($categories as $c)
 			{
-				$ways = $c->print_all_ways();
+				$ways = $c->print_all_ways();       // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				foreach($ways as $way)
 				{
-					$toprint[] = '<li class="select2-search-choice-dolibarr">'.img_object('','category').' '.$way.'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr"'.($c->color?' style="background: #'.$c->color.'"':'').'>'.img_object('','category').' '.$way.'</li>';
 				}
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -4900,20 +4908,20 @@ class Form
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $this->db->fetch_object($resqlorderlist);
-					if ($objp->socid == $societe->id) {
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
-						print '<td aling="left">';
-						print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-						print '<td align="center">' . $objp->ref . '</td>';
-						print '<td>' . $objp->ref_supplier . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
-						print '<td>' . $objp->name . '</td>';
-						print '</td>';
-						print '</tr>';
-					}
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->ref_supplier . '</td>';
+					print '<td>' . price($objp->total_ht) . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
 
 					$i ++;
 				}
@@ -5055,10 +5063,7 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        //if ($previous_ref || $next_ref || $morehtml) {
-            //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
-        //}
+        $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)

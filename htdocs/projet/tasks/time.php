@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$object->project = dol_clone($projectstatic);
+		$object->project = clone $projectstatic;
 
 		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -430,7 +430,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 *  List of time spent
 		 */
-		$sql = "SELECT t.rowid, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note";
+		$sql = "SELECT t.rowid, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
@@ -470,10 +470,15 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td align="left">'.$langs->trans("Note").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+		if ($conf->salaries->enabled)
+		{
+			print '<td align="right">'.$langs->trans("Value").'</td>';
+		}
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
 		$total = 0;
+		$totalvalue = 0;
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
@@ -543,6 +548,14 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td>';
 
+			// Value spent
+			if ($conf->salaries->enabled)
+			{
+				print '<td align="right">';
+				print price(price2num($task_time->thm * $task_time->task_duration / 3600), 1, $langs, 1, -1, -1, $conf->currency);
+				print '</td>';
+			}
+
 			// Edit and delete icon
 			print '<td align="center" valign="middle" width="80">';
 			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
@@ -568,9 +581,15 @@ if ($id > 0 || ! empty($ref))
 
 			print "</tr>\n";
 			$total += $task_time->task_duration;
+			$totalvalue += price2num($task_time->thm * $task_time->task_duration / 3600);
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td><td>&nbsp;</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td>';
+		if ($conf->salaries->enabled)
+		{
+			print '<td align="right">'.price($totalvalue, 1, $langs, 1, -1, -1, $conf->currency).'</td>';
+		}
+		print '<td>&nbsp;</td>';
 		print '</tr>';
 
 		print "</table>";

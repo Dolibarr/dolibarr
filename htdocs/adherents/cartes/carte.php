@@ -219,7 +219,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("MembersCards"));
 
-print_fiche_titre($langs->trans("LinkToGeneratedPages"));
+print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
 print '<br>';
 
 print $langs->trans("LinkToGeneratedPagesDesc").'<br>';

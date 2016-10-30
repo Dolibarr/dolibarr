@@ -673,7 +673,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewMailing"));
+	print load_fiche_titre($langs->trans("NewMailing"));
 
 	dol_fiche_head();
 
@@ -958,7 +958,7 @@ else
 			// Affichage formulaire de TEST
 			if ($action == 'test')
 			{
-				print_titre($langs->trans("TestMailing"));
+				print load_fiche_titre($langs->trans("TestMailing"));
 
 				// Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -991,7 +991,7 @@ else
 			}
 
 			// Print mail content
-			print_fiche_titre($langs->trans("EMail"),'','');
+			print load_fiche_titre($langs->trans("EMail"),'','');
 
 			dol_fiche_head('');
 
@@ -1102,7 +1102,7 @@ else
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 			// Print mail content
-			print_fiche_titre($langs->trans("EMail"),'','');
+			print load_fiche_titre($langs->trans("EMail"),'','');
 			print '<table class="border" width="100%">';
 
 			// Subject

@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. Envio
 AllSendings=Todos os embarques
-ShowSending=Mostrar Envio
+ShowSending=Mostrar envios
 SendingsArea=Área Envios
 LastSendings=Os %s últimos Envios
 SendingCard=Cartão de embarque
 QtyReceived=Quant. Recibida
 KeepToShip=Permaneça para enviar
+DateSendingShort=Data de envio
 StatusSendingValidated=Validado (produtos a enviar o enviados)
 SendingSheet=Folha de embarque
 Carriers=Transportadoras
@@ -35,6 +36,7 @@ ProductQtyInCustomersOrdersRunning=Quantidade do produto em aberto ordens client
 ProductQtyInSuppliersOrdersRunning=Quantidade do produto em ordens abertas fornecedores
 ProductQtyInShipmentAlreadySent=Quantidade do produto da ordem do cliente abriu já foi enviado
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantidade do produto a partir da ordem fornecedor abriu já recebeu
+NoProductToShipFoundIntoStock=Nenhum produto para enviar encontrado em armazém <b>%s</b>. Estoque correto ou voltar para escolher outro armazém.
 SendingMethodCATCH=Remoção pelo cliente
 SendingMethodTRANS=Transportadora
 SendingMethodCOLSUI=Acompanhamento

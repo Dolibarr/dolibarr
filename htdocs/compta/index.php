@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
-print_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accountancy.png');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accountancy.png');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -358,11 +359,15 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_ht=$obj->total_ht;
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
+				$facturestatic->statut = $obj->fk_statut;
+				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($obj->fk_statut == 1 && ! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -606,7 +611,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->lib=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
+					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech),'day').'</td>';
 					print '<td align="right">'.price($obj->amount).'</td>';
 					print '<td align="right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
@@ -800,10 +805,14 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->type=$obj->type;
+				$facturestatic->statut = $obj->fk_statut;
+				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -966,7 +975,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
+		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
 		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
 		$i++;
 	}

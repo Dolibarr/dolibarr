@@ -182,7 +182,8 @@ if ($result)
 		$formquestion=array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 	}
-
+	
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
@@ -195,7 +196,6 @@ if ($result)
 
 
 	// Lignes des champs de filtres
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" width="15%">'.$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).$form->select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
@@ -222,7 +222,6 @@ if ($result)
 	print '</td>';
 
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 
@@ -283,7 +282,7 @@ if ($result)
 		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
 		else print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	}
-	print "</table>";
+	print "</table></form>";
 	$db->free($result);
 
 	if ($num)

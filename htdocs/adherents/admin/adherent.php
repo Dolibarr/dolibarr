@@ -111,14 +111,14 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
 $head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Members"), 0, 'user');
 
-print_fiche_titre($langs->trans("MemberMainOptions"),'','');
+print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -245,7 +245,7 @@ $constantes=array(
 		'ADHERENT_CARD_FOOTER_TEXT'
 		);
 
-print_fiche_titre($langs->trans("MembersCards"),'','');
+print load_fiche_titre($langs->trans("MembersCards"),'','');
 
 form_constantes($constantes);
 
@@ -263,7 +263,7 @@ print '<br>';
  */
 $constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
 
-print_fiche_titre($langs->trans("MembersTickets"),'','');
+print load_fiche_titre($langs->trans("MembersTickets"),'','');
 
 form_constantes($constantes);
 
@@ -293,7 +293,7 @@ $constantes=array(
 		'ADHERENT_MAIL_FROM',
 		);
 
-print_fiche_titre($langs->trans("Other"),'','');
+print load_fiche_titre($langs->trans("Other"),'','');
 
 form_constantes($constantes);
 

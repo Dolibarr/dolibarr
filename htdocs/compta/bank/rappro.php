@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -42,6 +42,7 @@ if (! $user->rights->banque->consolidate) accessforbidden();
 
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('account', 'int');
+
 
 /*
  * Actions
@@ -181,7 +182,7 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
+    print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
     print '<br>';
 
     // Show last bank receipts
@@ -220,7 +221,7 @@ if ($resql)
 	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
 	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
 
-    print $langs->trans("InputReceiptNumber").': ';
+    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
     print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
     print '<br>';
     if ($options)

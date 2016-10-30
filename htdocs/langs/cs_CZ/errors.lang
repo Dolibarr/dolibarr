@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vyplňte, prosím, hodnotu checkbox seznamu
 ErrorNoValueForRadioType=Prosím vyplňte hodnotu pro rozhlasové seznamu
 ErrorBadFormatValueList=Seznam Hodnota nemůže mít více než jeden přijde: <u>%s,</u> ale potřebujete alespoň jeden: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Terénní <b>%s</b> nesmí obsahuje speciální znaky.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ne účetnictví modul aktivován
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP shoda není úplná.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript musí být vypnuta, že tato funkce prac
 ErrorPasswordsMustMatch=Oba napsaný hesla se musí shodovat se navzájem
 ErrorContactEMail=Technické chybě. Prosím, obraťte se na správce, aby e-mailovou <b>%s</b> en poskytovat <b>%s</b> kód chyby ve zprávě, nebo ještě lépe přidáním obrazovky kopii této stránky.
 ErrorWrongValueForField=Chybná hodnota <b>%s</b> číslo pole (hodnota <b>&quot;%s</b> 'neodpovídá regex pravidel <b>%s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Chybná hodnota <b>%s</b> číslo pole (hodnota <b>&quot;%s&quot;</b> není <b>%s</b> stávající ref)
 ErrorsOnXLines=Chyby na <b>%s</b> zdrojovém záznamu (s)
 ErrorFileIsInfectedWithAVirus=Antivirový program nebyl schopen ověřit soubor (soubor může být napaden virem)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametry jsou dosud stanoveny

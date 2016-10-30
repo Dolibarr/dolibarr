@@ -12,7 +12,6 @@ Creditor=Кредитор
 PaymentCode=Плащане код
 PayBoxDoPayment=Отидете на плащане
 YouWillBeRedirectedOnPayBox=Вие ще бъдете пренасочени на защитена Paybox страница за въвеждане на информация за кредитни карти
-PleaseBePatient=Моля, бъдете търпеливи
 Continue=До
 ToOfferALinkForOnlinePayment=URL за %s плащане
 ToOfferALinkForOnlinePaymentOnOrder=URL адрес, за да предложи на потребителя %s онлайн интерфейс плащане за поръчка на клиента

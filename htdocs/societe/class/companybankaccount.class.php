@@ -32,21 +32,8 @@ require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
  */
 class CompanyBankAccount extends Account
 {
-    var $rowid;
     var $socid;
 
-    var $label;
-    var $bank;
-    var $courant;
-    var $clos;
-    var $code_banque;
-    var $code_guichet;
-    var $number;
-    var $cle_rib;
-    var $bic;
-    var $iban;
-    var $proprio;
-    var $owner_address;
     var $default_rib;
     var $frstrecur;
 

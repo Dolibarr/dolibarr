@@ -254,8 +254,22 @@ if ($resql)
     }
     */
 
-    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, 0, '', 0, $nav);
-    //print '<br>';
+    $s=$newtitle;
+
+	// Calendars from hooks
+    $parameters=array(); $object=null;
+	$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
+    if (empty($reshook))
+    {
+		$s.= $hookmanager->resPrint;
+    }
+    elseif ($reshook > 1)
+	{
+    	$s = $hookmanager->resPrint;
+    }
+
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, 0, '', 0, $nav);
+
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
 

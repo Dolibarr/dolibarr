@@ -110,7 +110,7 @@ llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
 
 
 $head = mailmanspip_admin_prepare_head();
@@ -137,7 +137,7 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
     	'ADHERENT_SPIP_PASS'
 	);
 
-    print_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+    print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
     form_constantes($constantes);
     print '<br>';
@@ -148,7 +148,7 @@ else
     //$link.=$langs->trans("Activate");
     $link.=img_picto($langs->trans("Disabled"),'switch_off');
     $link.='</a>';
-    print_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+    print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 }
 
 

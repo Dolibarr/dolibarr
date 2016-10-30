@@ -650,9 +650,11 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetXY($blDestX,$Yoff);
 		$pdf->MultiCell($blW,3, $carac_client_name, 0, 'L');
 
+		$posy = $pdf->getY();
+
 		// Show recipient information
-		$pdf->SetFont('','', $default_font_size - 3);
-		$pdf->SetXY($blDestX,$Yoff+(dol_nboflines_bis($carac_client_name,50)*4));
-		$pdf->MultiCell($blW,2, $carac_client, 0, 'L');
+		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetXY($posx+2,$posy);
+		$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 	}
 }

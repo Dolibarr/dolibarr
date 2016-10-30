@@ -34,16 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("resource");
 $langs->load("other");
 
-// Get parameters
-$id					= GETPOST('id','int');
-$action				= GETPOST('action','alpha');
-$mode				= GETPOST('mode','alpha');
-$lineid				= GETPOST('lineid','int');
-$element 			= GETPOST('element','alpha');
-$element_id			= GETPOST('element_id','int');
-$resource_id		= GETPOST('resource_id','int');
-$resource_type		= GETPOST('resource_type','alpha');
-
 /*
 $sortorder			= GETPOST('sortorder','alpha');
 $sortfield			= GETPOST('sortfield','alpha');
@@ -63,25 +53,29 @@ $id			= GETPOST('id','int');
 $action			= GETPOST('action','alpha');
 $mode			= GETPOST('mode','alpha');
 $lineid			= GETPOST('lineid','int');
-$element 		= GETPOST('element','alpha');
+$element 		= GETPOST('element','alpha');			// element_type
 $element_id		= GETPOST('element_id','int');
 $resource_id 	= GETPOST('fk_resource','int');
 $resource_type	= GETPOST('resource_type','alpha');
 $busy 			= GETPOST('busy','int');
 $mandatory 		= GETPOST('mandatory','int');
 $cancel			= GETPOST('cancel','alpha');
-$confirm                = GETPOST('confirm','alpha');
+$confirm        = GETPOST('confirm','alpha');
 
 
 /*
  * Actions
  */
 
-if($action == 'add_element_resource' && ! $cancel)
+if ($action == 'add_element_resource' && ! $cancel)
 {
-	$objstat = fetchObjectByElement($element_id,$element);
-	$res = $objstat->add_element_resource($resource_id,$resource_type,$busy,$mandatory);
-	if($res > 0)
+	$objstat = fetchObjectByElement($element_id, $element);
+	$res = 0;
+	if ($resource_id > 0)
+	{
+		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+	}
+	if ($res > 0)
 	{
 		setEventMessage($langs->trans('ResourceLinkedWithSuccess'),'mesgs');
 		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
@@ -89,7 +83,7 @@ if($action == 'add_element_resource' && ! $cancel)
 	}
 	else
 	{
-		setEventMessage($langs->trans('ErrorWhenLinkingResource'),'errors');
+		setEventMessage($langs->trans('ErrorWhenLinkingResource') . " " . $objstat->error, 'errors');
 		header("Location: ".$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_type.'&element='.$element.'&element_id='.$element_id);
 		exit;
 	}
@@ -142,7 +136,7 @@ if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->dele
 	}
 }
 
-$parameters=array('resource_id'=>resource_id);
+$parameters=array('resource_id'=>$resource_id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -250,19 +244,16 @@ else
 
 
 
-	//print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
+	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
 
-	foreach ($object->available_resources as $modresources => $resources)
+		foreach ($object->available_resources as $modresources => $resources)
 	{
 		$resources=(array) $resources;	// To be sure $resources is an array
 		foreach($resources as $resource_obj)
 		{
 			$element_prop = getElementProperties($resource_obj);
-
-
-
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
 
@@ -286,7 +277,7 @@ else
 
 			if ($mode != 'add' || $resource_obj != $resource_type)
 			{
-				//print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
+				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))

@@ -5,7 +5,7 @@ Sendings=Pošiljke
 AllSendings=All Shipments
 Shipment=Odprema
 Shipments=Odpreme
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=Področje pošiljk
 ListOfSendings=Seznam pošiljk
@@ -26,8 +26,8 @@ QtyToShip=Količina za pošiljanje
 QtyReceived=Prejeta količina
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Ostale pošiljke za to naročilo
-DateSending=Datum pošiljanja naročila
-DateSendingShort=Datum pošiljanja
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Pošiljke za to naročilo
 SendingsAndReceivingForSameOrder=Pošiljke in prejemi za to naročilo
 SendingsToValidate=Pošiljke za potrditev
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Lasten prevzem kupca

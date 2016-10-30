@@ -41,11 +41,7 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
-    var $ref_ext;
 	var $civility_id;  // In fact we store civility_code
-    var $lastname;
-	var $firstname;
 	var $address;
 	var $zip;
 	var $town;
@@ -69,10 +65,6 @@ class Contact extends CommonObject
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
 
-	var $country_id;			// Id of country
-	var $country_code;			// Code of country
-	var $country;				// Label of country
-
     var $poste;                 // Position
 
 	var $socid;					// fk_soc
@@ -91,13 +83,6 @@ class Contact extends CommonObject
 
 	var $birthday;
 	var $default_lang;
-    var $note_public;           // Public note
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-	var $note;
-	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
@@ -107,7 +92,6 @@ class Contact extends CommonObject
 
 	var $user_id;
 	var $user_login;
-	var $import_key;
 
 	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
@@ -168,9 +152,9 @@ class Contact extends CommonObject
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
-        $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
+        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
         $sql.= " ".$conf->entity.",";
-	$sql.= "'".$this->db->escape($this->ref_ext)."',";
+        $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
@@ -516,8 +500,15 @@ class Contact extends CommonObject
 	 */
 	function fetch($id, $user=0, $ref_ext='')
 	{
-		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
+
+		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+
+		if (empty($id) && empty($ref_ext))
+		{
+			$this->error='BadParameter';
+			return -1;
+		}
 
 		$langs->load("companies");
 
@@ -541,7 +532,6 @@ class Contact extends CommonObject
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
 		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

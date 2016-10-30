@@ -230,7 +230,7 @@ if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute'
 }
 elseif ($action=='create')
 {
-	print_fiche_titre($langs->trans("CronTask"),'','title_setup');
+	print load_fiche_titre($langs->trans("CronTask"),'','title_setup');
 }
 
 if ($conf->use_javascript_ajax)

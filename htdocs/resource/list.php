@@ -89,7 +89,7 @@ llxHeader('',$pagetitle,'');
 
 $form=new Form($db);
 
-print_fiche_titre($pagetitle,'','title_generic');
+print load_fiche_titre($pagetitle,'','title_generic');
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource')

@@ -378,7 +378,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Title of task
 				print "<td>";
 				if ($showlineingray) print '<i>';
-				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
+				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
 					print "&nbsp; &nbsp; &nbsp;";
@@ -401,7 +401,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$plannedworkloadoutputformat='allhourmin';
 				$timespentoutputformat='allhourmin';
 				if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
-				if (! empty($conf->global->PROJECT_TIMES_PENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+				if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
 
 				// Planned Workload (in working hours)
 				print '<td align="right">';
@@ -1023,14 +1023,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{
 		//Add the year filter input
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
-		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<td style="text-align:right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
-		print '</form>';
 		print "</tr>\n";
-		print '</table>';
+		print '</table></form>';
 	}
 }
 

@@ -48,6 +48,7 @@ NewAccount=Nauja apskaitos sąskaita
 Update=Atnaujinimas
 List=Sąrašas
 Create=Sukurti
+CreateMvts=Create movement
 UpdateAccount=Apskaitos sąskaitos modifikavimas
 UpdateMvts=Judėjimo modifikavimas
 WriteBookKeeping=Įrašyti sąskaitas Didžiąją knygą
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Apskaitos sąskaitų, parodytų Dolibarr, ilgis
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Bendrųjų sąskaitų ilgis
 ACCOUNTING_LENGTH_AACCOUNT=Trečiųjų šalių sąskaitų ilgis
 

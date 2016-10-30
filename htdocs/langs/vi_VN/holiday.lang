@@ -130,7 +130,6 @@ nbJours=Số ngày
 TitleAdminCP=Cấu hình của Nghỉ phép
 NoticePeriod=Notice period
 #Messages
-Hello=Xin chào
 HolidaysToValidate=Xác nhận yêu cầu nghỉ phép
 HolidaysToValidateBody=Dưới đây là một yêu cầu nghỉ việc để xác nhận
 HolidaysToValidateDelay=Yêu cầu nghỉ phép này sẽ diễn ra trong một thời gian ít hơn% s ngày.

@@ -154,6 +154,11 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
+                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines 
+                {
+                    $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
+                }
+                
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
 
@@ -230,11 +235,11 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $planned_workload, 0, 'R');
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
+
 					$pdf->SetXY($this->posxdatestart, $curY);
 					$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $datestart, 0, 'C');
 					$pdf->SetXY($this->posxdateend, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
-
 
 					$pageposafter=$pdf->getPage();
 

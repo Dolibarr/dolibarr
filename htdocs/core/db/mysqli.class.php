@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
+	/** @var mysqli Database object */
+	public $db;
     //! Database type
     public $type='mysqli';
     //! Database label
@@ -81,29 +83,26 @@ class DoliDBMysqli extends DoliDB
             $this->connected = false;
             $this->ok = false;
             $this->error=$langs->trans("ErrorWrongHostParameter");
-            dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Connect, wrong host parameters",LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBMysqli : Connect error, wrong host parameters",LOG_ERR);
             return $this->ok;
         }
 
-        // Essai connexion serveur
-        // We do not try to connect to database, only to server. Connect to database is done later in constrcutor
-        $this->db = $this->connect($host, $user, $pass, '', $port);
+		// Try server connection
+		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
+		$this->db = $this->connect($host, $user, $pass, '', $port);
 
-        if ($this->db)
-        {
-            $this->connected = true;
-            $this->ok = true;
-        }
-        else
-        {
-            // host, login ou password incorrect
-            $this->connected = false;
-            $this->ok = false;
-            $this->error=mysqli_connect_error();
-            dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
-        }
+		if ($this->db->connect_errno) {
+			$this->connected = false;
+			$this->ok = false;
+			$this->error = $this->db->connect_error;
+			dol_syslog(get_class($this) . "::DoliDBMysqli Connect error: " . $this->error, LOG_ERR);
+			return $this->ok;
+		} else {
+			$this->connected = true;
+			$this->ok = true;
+		}
 
-        // Si connexion serveur ok et si connexion base demandee, on essaie connexion base
+		// If server connection is ok, we try to connect to the database
         if ($this->connected && $name)
         {
             if ($this->select_db($name))
@@ -116,7 +115,7 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_character_set_name($this->db) != $clientmustbe)
+                if ($this->db->character_set_name() != $clientmustbe)
                 {
                     $this->query("SET NAMES '".$clientmustbe."'", $this->db);
                     //$this->query("SET CHARACTER SET ". $this->forcecharset);
@@ -128,7 +127,7 @@ class DoliDBMysqli extends DoliDB
                 $this->database_name = '';
                 $this->ok = false;
                 $this->error=$this->error();
-                dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Select_db ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::DoliDBMysqli : Select_db error ".$this->error,LOG_ERR);
             }
         }
         else
@@ -142,7 +141,7 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_character_set_name($this->db) != $clientmustbe)
+                if ($this->db->character_set_name() != $clientmustbe)
                 {
                     $this->query("SET NAMES '".$clientmustbe."'", $this->db);
                     //$this->query("SET CHARACTER SET ". $this->forcecharset);
@@ -175,36 +174,27 @@ class DoliDBMysqli extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-        return mysqli_select_db($this->db,$database);
+	    return $this->db->select_db($database);
     }
 
 
-    /**
-	 *	Connexion to server
+	/**
+	 * Connect to server
 	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		integer	$port		Port of database server
-	 *	@return		mysqli				Database access handler
-	 *	@see		close
-     */
-    function connect($host, $login, $passwd, $name, $port=0)
-    {
-        dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
+	 * @param   string $host database server host
+	 * @param   string $login login
+	 * @param   string $passwd password
+	 * @param   string $name name of database (not used for mysql, used for pgsql)
+	 * @param   integer $port Port of database server
+	 * @return  mysqli  Database access object
+	 * @see close
+	 */
+	function connect($host, $login, $passwd, $name, $port = 0)
+	{
+		dol_syslog(get_class($this) . "::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
-        $newhost=$host;
-        $newport=$port;
-
-        // With mysqli, port must be in connect parameters
-        if (! $newport) $newport=3306;
-
-        $this->db  = @mysqli_connect($newhost, $login, $passwd, $name, $newport);
-
-        //print "Resultat fonction connect: ".$this->db;
-        return $this->db;
-    }
+		return new mysqli($host, $login, $passwd, $name, $port);
+	}
 
     /**
 	 *	Return version of database server
@@ -213,7 +203,7 @@ class DoliDBMysqli extends DoliDB
      */
     function getVersion()
     {
-        return mysqli_get_server_info($this->db);
+        return $this->db->get_server_info();
     }
 
     /**
@@ -221,10 +211,10 @@ class DoliDBMysqli extends DoliDB
      *
      *	@return	        string      Version string
      */
-    function getDriverInfo()
-    {
-    	return mysqli_get_client_info($this->db);
-    }
+	function getDriverInfo()
+	{
+		return $this->db->get_client_info();
+	}
 
 
     /**
@@ -239,7 +229,7 @@ class DoliDBMysqli extends DoliDB
         {
 	        if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
             $this->connected=false;
-            return mysqli_close($this->db);
+            return $this->db->close();
         }
         return false;
     }
@@ -255,6 +245,8 @@ class DoliDBMysqli extends DoliDB
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
+    	global $conf;
+
         $query = trim($query);
 
 	    if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
@@ -262,11 +254,11 @@ class DoliDBMysqli extends DoliDB
         if (! $this->database_name)
         {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
-            $ret = mysqli_query($this->db,$query);
+            $ret = $this->db->query($query);
         }
         else
         {
-            $ret = mysqli_query($this->db,$query);
+            $ret = $this->db->query($query);
         }
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -278,6 +270,7 @@ class DoliDBMysqli extends DoliDB
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
 
+				if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);	// Log of request was not yet done previously
                 dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
             }
             $this->lastquery=$query;
@@ -297,7 +290,7 @@ class DoliDBMysqli extends DoliDB
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return mysqli_fetch_object($resultset);
+		return $resultset->fetch_object();
     }
 
 
@@ -311,7 +304,7 @@ class DoliDBMysqli extends DoliDB
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return mysqli_fetch_array($resultset);
+        return $resultset->fetch_array();
     }
 
     /**
@@ -326,7 +319,7 @@ class DoliDBMysqli extends DoliDB
         if (! is_bool($resultset))
         {
             if (! is_object($resultset)) { $resultset=$this->_results; }
-            return mysqli_fetch_row($resultset);
+            return $resultset->fetch_row();
         }
         else
         {
@@ -346,7 +339,7 @@ class DoliDBMysqli extends DoliDB
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return mysqli_num_rows($resultset);
+        return $resultset->num_rows;
     }
 
     /**
@@ -362,7 +355,7 @@ class DoliDBMysqli extends DoliDB
         if (! is_object($resultset)) { $resultset=$this->_results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
-        return mysqli_affected_rows($this->db);
+        return $this->db->affected_rows;
     }
 
 
@@ -377,7 +370,7 @@ class DoliDBMysqli extends DoliDB
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
         // Si resultset en est un, on libere la memoire
-        if (is_object($resultset)) mysqli_free_result($resultset);
+        if (is_object($resultset)) $resultset->free_result();
     }
 
     /**
@@ -433,10 +426,10 @@ class DoliDBMysqli extends DoliDB
             1451 => 'DB_ERROR_CHILD_EXISTS'
             );
 
-            if (isset($errorcode_map[mysqli_errno($this->db)])) {
-                return $errorcode_map[mysqli_errno($this->db)];
+            if (isset($errorcode_map[$this->db->errno])) {
+                return $errorcode_map[$this->db->errno];
             }
-            $errno=mysqli_errno($this->db);
+            $errno=$this->db->errno;
             return ($errno?'DB_ERROR_'.$errno:'0');
         }
     }
@@ -453,7 +446,7 @@ class DoliDBMysqli extends DoliDB
             return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
         }
         else {
-            return mysqli_error($this->db);
+            return $this->db->error;
         }
     }
 
@@ -466,7 +459,7 @@ class DoliDBMysqli extends DoliDB
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return mysqli_insert_id($this->db);
+        return $this->db->insert_id;
     }
 
     /**

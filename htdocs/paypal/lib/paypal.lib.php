@@ -173,7 +173,7 @@ function paypaladmin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/paypal/admin/paypal.php";
-	$head[$h][1] = $langs->trans("Account");
+	$head[$h][1] = $langs->trans("PayPal");
 	$head[$h][2] = 'paypalaccount';
 	$h++;
 

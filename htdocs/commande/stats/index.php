@@ -77,7 +77,7 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title,'','title_commercial.png');
+print load_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 
@@ -279,8 +279,11 @@ print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
+print '<td align="center">%</td>';
 print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">%</td>';
 print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="center">%</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -289,21 +292,27 @@ foreach ($data as $val)
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
-	$oldyear--;
-	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		$oldyear--;
+		print '<tr height="24">';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '</tr>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '</tr>';
 	}
 
 	print '<tr height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

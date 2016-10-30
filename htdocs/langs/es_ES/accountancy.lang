@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
+ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
+ACCOUNTING_EXPORT_PIECE=¿Exportar cantidades?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=¿Exportar con la cuenta global?
+ACCOUNTING_EXPORT_LABEL=¿Exportar la etiqueta?
+ACCOUNTING_EXPORT_AMOUNT=¿Exportar el importe?
+ACCOUNTING_EXPORT_DEVISE=¿Exportar la divisa?
 
 Accounting=Contabilidad
 Globalparameters=Configuración global
@@ -41,6 +48,7 @@ NewAccount=Nueva cuenta contable
 Update=Actualizar
 List=Listado
 Create=Crear
+CreateMvts=Create movement
 UpdateAccount=Modificar una cuenta contable
 UpdateMvts=Modificar un movimiento
 WriteBookKeeping=Registrar los asientos en el libro mayor
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "
 
 AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
 AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
-ACCOUNTING_BANK_JOURNAL=Diario bancario
-ACCOUNTING_CASH_JOURNAL=Diario de caja
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario social
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja

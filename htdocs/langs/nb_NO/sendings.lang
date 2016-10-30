@@ -5,7 +5,7 @@ Sendings=Leveringer
 AllSendings=Alle forsendelser
 Shipment=Levering
 Shipments=Leveringer
-ShowSending=Vis forsendelse
+ShowSending=Vis forsendelser
 Receivings=Kvitteringer
 SendingsArea=Leveringsområde
 ListOfSendings=Oversikt over leveringer
@@ -26,8 +26,8 @@ QtyToShip=Ant. å levere
 QtyReceived=Ant. mottatt
 KeepToShip=Gjenstår å sende
 OtherSendingsForSameOrder=Andre leveringer på denne ordren
-DateSending=Leveringsdato
-DateSendingShort=Leveringsdato
+DateSending=Forsendelsesdato
+DateSendingShort=Forsendelsesdato
 SendingsForSameOrder=Leveringer på denne ordre
 SendingsAndReceivingForSameOrder=Leveringer og mottak på denne ordren
 SendingsToValidate=Leveringer til validering
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Varekvantum i åpnede kundeordre
 ProductQtyInSuppliersOrdersRunning=Varekvantum i åpnede leverandørordre
 ProductQtyInShipmentAlreadySent=Varekvantum i åpnede kundeordre som er sendt
 ProductQtyInSuppliersShipmentAlreadyRecevied=Varekvantum i åpnede leverandørordre som er mottatt
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Hentet av kunde

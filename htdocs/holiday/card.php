@@ -51,11 +51,12 @@ $now=dol_now();
  * Actions
  */
 
+// If create a request
 if ($action == 'create')
 {
 	$cp = new Holiday($db);
 
-    // Si pas le droit de créer une demande
+    // If no right to create a request
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
@@ -83,21 +84,21 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
-	    // Si pas de date de début
+	    // If no start date
 	    if (empty($date_debut))
 	    {
 	        header('Location: card.php?action=request&error=nodatedebut');
 	        exit;
 	    }
 
-	    // Si pas de date de fin
+	    // If no end date
 	    if (empty($date_fin))
 	    {
 	        header('Location: card.php?action=request&error=nodatefin');
 	        exit;
 	    }
 
-	    // Si date de début après la date de fin
+	    // If start date after end date
 	    if ($date_debut > $date_fin)
 	    {
 	        header('Location: card.php?action=request&error=datefin');
@@ -112,7 +113,7 @@ if ($action == 'create')
 	        exit;
 	    }
 
-	    // Si aucun jours ouvrés dans la demande
+	    // If there is no Business Days within request 
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 	    if($nbopenedday < 0.5)
 	    {
@@ -120,7 +121,7 @@ if ($action == 'create')
 	        exit;
 	    }
 
-	    // Si pas de validateur choisi
+	    // If no validator designated
 	    if ($valideur < 1)
 	    {
 	        header('Location: card.php?action=request&error=Valideur');
@@ -137,7 +138,7 @@ if ($action == 'create')
 
 		$verif = $cp->create($user);
 
-	    // Si pas d'erreur SQL on redirige vers la fiche de la demande
+	    // If no SQL error we redirect to the request card
 	    if ($verif > 0)
 	    {
 			$db->commit();
@@ -149,7 +150,7 @@ if ($action == 'create')
 		{
 	    	$db->rollback();
 
-	        // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
+	        // Otherwise we display the request form with the SQL error message
 	        header('Location: card.php?action=request&error=SQL_Create&msg='.$cp->error);
 	        exit;
 	    }
@@ -169,7 +170,7 @@ if ($action == 'update')
 	else if ($starthalfday == 'afternoon') $halfday=-1;
 	else if ($endhalfday == 'morning') $halfday=1;
 
-    // Si pas le droit de modifier une demande
+    // If no right to modify a request 
     if (! $user->rights->holiday->write)
     {
         header('Location: card.php?action=request&error=CantUpdate');
@@ -181,40 +182,40 @@ if ($action == 'update')
 
 	$canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
 
-	// Si en attente de validation
+	// If under validation
     if ($cp->statut == 1)
     {
-        // Si c'est le créateur ou qu'il a le droit de tout lire / modifier
+        // If this is the requestor or has read/write rights
         if ($canedit)
         {
             $valideur = $_POST['valideur'];
             $description = trim($_POST['description']);
 
-            // Si pas de date de début
+            // If no start date
             if (empty($_POST['date_debut_'])) {
                 header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=nodatedebut');
                 exit;
             }
 
-            // Si pas de date de fin
+            // If no end date
             if (empty($_POST['date_fin_'])) {
                 header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=nodatefin');
                 exit;
             }
 
-            // Si date de début après la date de fin
+            // If start date after end date
             if ($date_debut > $date_fin) {
                 header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=datefin');
                 exit;
             }
 
-            // Si pas de valideur choisi
+            // If no validator designated
             if ($valideur < 1) {
                 header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=Valideur');
                 exit;
             }
 
-            // Si pas de jours ouvrés dans la demande
+            // If there is no Business Days within request
             $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
             if ($nbopenedday < 0.5)
             {
@@ -237,7 +238,7 @@ if ($action == 'update')
             }
             else
            {
-                // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
+                // Otherwise we display the request form with the SQL error message
                 header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=SQL_Create&msg='.$cp->error);
                 exit;
             }
@@ -248,7 +249,7 @@ if ($action == 'update')
     }
 }
 
-// Si suppression de la demande
+// If delete of request
 if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights->holiday->delete)
 {
 	$error=0;
@@ -260,7 +261,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
 
-	// Si c'est bien un brouillon
+    // If this is a rough draft
 	if ($cp->statut == 1 || $cp->statut == 3)
 	{
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
@@ -677,7 +678,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
     else
     {
         // Formulaire de demande de congés payés
-        print_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
+        print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
         // Si il y a une erreur
         if (GETPOST('error')) {
@@ -781,10 +782,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_users($userid,'useridbis',0,'',1);
+        	print $form->select_dolusers($userid,'useridbis',0,'',1);
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
-        else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
         print '</td>';
         print '</tr>';
 
@@ -895,7 +896,7 @@ else
             $userRequest = new User($db);
             $userRequest->fetch($cp->fk_user);
 
-            //print_fiche_titre($langs->trans('TitreRequestCP'));
+            //print load_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
             if (GETPOST('error'))

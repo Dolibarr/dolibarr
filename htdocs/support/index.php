@@ -66,7 +66,7 @@ print '<div style="width: 100%"><div class="inline-block">';
 print "\n";
 
 // Forum/wiki support
-print '<table class="login" width="100%">';
+print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="top">';
 
@@ -179,7 +179,7 @@ print '</div><div class="inline-block">';
 */
 
 // EMail support
-print '<table class="login" width="100%">';
+print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="top">';
 
@@ -213,7 +213,7 @@ print '</div><div class="inline-block">';
 
 
 // Other support
-print '<table class="login" width="100%">';
+print '<table class="login tablesupport" width="100%">';
 print '<tr class="title">';
 print '<td width="100%" align="left" valign="top">';
 

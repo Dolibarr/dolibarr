@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,6 @@ class PaymentSalary extends CommonObject
 	//public $element='payment_salary';			//!< Id that identify managed objects
 	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
 
-	var $id;
-	var $ref;
-
 	var $tms;
 	var $fk_user;
 	var $datep;
@@ -47,9 +44,8 @@ class PaymentSalary extends CommonObject
 	var $label;
 	var $datesp;
 	var $dateep;
-	var $note;
 	var $fk_bank;
-	var $fk_user_creat;
+	var $fk_user_author;
 	var $fk_user_modif;
 
 
@@ -85,7 +81,7 @@ class PaymentSalary extends CommonObject
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
 		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
+		$this->fk_user_author=trim($this->fk_user_author);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
@@ -112,7 +108,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " dateep=".$this->db->idate($this->dateep).",";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
-		$sql.= " fk_user_creat='".$this->fk_user_creat."',";
+		$sql.= " fk_user_author='".$this->fk_user_author."',";
 		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
 
 		$sql.= " WHERE rowid=".$this->id;
@@ -171,7 +167,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " s.dateep,";
 		$sql.= " s.note,";
 		$sql.= " s.fk_bank,";
-		$sql.= " s.fk_user_creat,";
+		$sql.= " s.fk_user_author,";
 		$sql.= " s.fk_user_modif,";
 		$sql.= " b.fk_account,";
 		$sql.= " b.fk_type,";
@@ -203,7 +199,7 @@ class PaymentSalary extends CommonObject
 				$this->dateep = $this->db->jdate($obj->dateep);
 				$this->note  = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->fk_type = $obj->fk_type;
@@ -275,7 +271,7 @@ class PaymentSalary extends CommonObject
 		$this->dateep='';
 		$this->note='';
 		$this->fk_bank='';
-		$this->fk_user_creat='';
+		$this->fk_user_author='';
 		$this->fk_user_modif='';
 	}
 
@@ -290,13 +286,14 @@ class PaymentSalary extends CommonObject
 		global $conf,$langs;
 
 		$error=0;
+		$now=dol_now();
 
 		// Clean parameters
 		$this->amount=price2num(trim($this->amount));
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
 		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
+		$this->fk_user_author=trim($this->fk_user_author);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
@@ -340,7 +337,8 @@ class PaymentSalary extends CommonObject
 		$sql.= ", label";
 		$sql.= ", datesp";
 		$sql.= ", dateep";
-		$sql.= ", fk_user_creat";
+		$sql.= ", fk_user_author";
+		$sql.= ", datec";
 		$sql.= ", fk_bank";
 		$sql.= ", entity";
 		$sql.= ") ";
@@ -357,6 +355,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", '".$this->db->idate($this->datesp)."'";
 		$sql.= ", '".$this->db->idate($this->dateep)."'";
 		$sql.= ", '".$user->id."'";
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
@@ -509,6 +508,43 @@ class PaymentSalary extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
+	}
+
+	/**
+	 * Information on record
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT ps.rowid, ps.datec, ps.fk_user_author';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps';
+		$sql.= ' WHERE ps.rowid = '.$id;
+
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
 	}
 
 }

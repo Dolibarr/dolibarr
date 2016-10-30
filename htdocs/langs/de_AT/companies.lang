@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - companies
 NewCompany=Neuer Partner (Leads, Kunden, Lieferanten)
 IdCompany=Firma ID
-AliasNames=Alias names (commercial, trademark, ...)
 Companies=Partner
 UserTitle=Titel
 PhoneMobile=Handy

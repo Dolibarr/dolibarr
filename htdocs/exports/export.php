@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+ * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,8 @@ $entitytoicon = array(
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
     'expensereport'=> 'trip',
-    'expensereport_line'=> 'trip'
+    'expensereport_line'=> 'trip',
+    'contract_line' => 'contract'
 );
 
 // Translation code
@@ -101,7 +103,9 @@ $entitytolang = array(
     'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
 	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine'
+	'expensereport_line'=> 'ExpenseReportLine',
+    'contract'     => 'Contract',
+    'contract_line'=> 'ContractLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -118,7 +122,7 @@ $field=GETPOST("field");
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
-$objmodelexport=new ModeleExports();
+$objmodelexport=new ModeleExports($db);
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -240,6 +244,7 @@ if ($action == 'builddoc')
 	if ($result < 0)
 	{
 		setEventMessage($objexport->error, 'errors');
+		$sqlusedforexport=$objexport->sqlusedforexport;
 	}
 	else
 	{
@@ -293,7 +298,7 @@ if ($action == 'add_export_model')
 				$hexafiltervalue.=$key.'='.$val;
 			}
 		}
-		
+
 	    $objexport->model_name = $export_name;
 	    $objexport->datatoexport = $datatoexport;
 	    $objexport->hexa = $hexa;
@@ -359,7 +364,6 @@ if ($step == 4 && $action == 'submitFormField')
 	if (is_array($objexport->array_export_TypeFields[0]))
 	{
 		$_SESSION["export_filtered_fields"]=array();
-		//var_dump($_POST);
 		foreach($objexport->array_export_TypeFields[0] as $code => $type)	// $code: s.fieldname $value: Text|Boolean|List:ccc
 		{
 			$newcode=(string) preg_replace('/\./','_',$code);
@@ -427,10 +431,10 @@ if ($step == 1 || ! $datatoexport)
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-			$icon=$objexport->array_export_icon[$key];
+			$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[$key]);
 			$label=$objexport->array_export_label[$key];
             //print $value.'-'.$icon.'-'.$label."<br>";
-			print img_object($objexport->array_export_module[$key]->getName(),$icon).' ';
+			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
             print $label;
             print '</td><td align="right">';
             if ($objexport->array_export_perms[$key])
@@ -488,10 +492,10 @@ if ($step == 2 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    $icon=$objexport->array_export_icon[0];
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     $label=$objexport->array_export_label[0];
     //print $value.'-'.$icon.'-'.$label."<br>";
-    print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $label;
     print '</td></tr>';
 
@@ -565,6 +569,10 @@ if ($step == 2 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
         if (isset($array_selected[$code]) && $array_selected[$code])
         {
             // Selected fields
@@ -658,10 +666,10 @@ if ($step == 3 && $datatoexport)
 	// Lot de donnees a exporter
 	print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
-	$icon=$objexport->array_export_icon[0];
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
 	$label=$objexport->array_export_label[0];
 	//print $value.'-'.$icon.'-'.$label."<br>";
-	print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
 	print $label;
 	print '</td></tr>';
 
@@ -734,6 +742,10 @@ if ($step == 3 && $datatoexport)
 		$tablename=getablenamefromfield($code,$sqlmaxforexport);
 		$htmltext ='<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		$htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
 		print '<td>';
 		print $form->textwithpicto($text,$htmltext);
 		print '</td>';
@@ -820,7 +832,8 @@ if ($step == 4 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 
@@ -899,6 +912,10 @@ if ($step == 4 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+    	if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
         print $form->textwithpicto($text,$htmltext);
 		//print ' ('.$code.')';
         print '</td>';
@@ -1053,7 +1070,8 @@ if ($step == 5 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - compta
 Accountancy=Rechnungswesen
 AccountancyCard=Rechnungswesenkarte
-Treasury=Vermögensverwaltung
+Treasury=Fiskus - Schatzkammer
 MenuFinancial=Rechnungswesen
 TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Einstellungen für die Berechnungen vornehmen
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
@@ -63,9 +63,9 @@ MenuSpecialExpenses=Sonstige Ausgaben
 MenuTaxAndDividends=Steuern und Dividenden
 MenuSalaries=Löhne
 MenuSocialContributions=Sozialabgaben/Steuern
-MenuNewSocialContribution=Neue Steuerzahlung
+MenuNewSocialContribution=Neue Abgabe/Steuer
 NewSocialContribution=Neue Sozialabgabe / Steuersatz
-ContributionsToPay=Sozialbeiträge / Steuern zu zahlen
+ContributionsToPay=Sozialabgaben/Unternehmenssteuern zu bezahlen
 AccountancyTreasuryArea=Rechnungswesen/Vermögensverwaltung
 AccountancySetup=Buchhaltung Einstellungen
 NewPayment=Neue Zahlung
@@ -194,7 +194,7 @@ ReCalculate=Neuberechnung
 Mode1=Methode 1
 Mode2=Methode 2
 CalculationRuleDesc=Zur Berechnung der Gesamt-MwSt. gibt es zwei Methoden: <br>Methode 1 rundet die Steuer in jeder Zeile und addiert zum Schluss. <br>Methode 2 summiert alle Steuer-Zeilen und rundet am Ende. <br>Das endgültige Ergebnis kann sich in wenigen Cent unterscheiden. Standardmodus ist <b>Modus %s.</b>
-CalculationRuleDescSupplier=Wählen Sie die geeignete Methode, um zum gleichen Ergebnis wie Ihr Lieferant zu kommen.
+CalculationRuleDescSupplier=Gemäß Ihrem Lieferanten, wählen Sie die  geeignete Methode, um die gleiche Berechnungsregel anzuwenden um das selbe Ergebnis wie Ihr Lieferant zu bekommen.
 TurnoverPerProductInCommitmentAccountingNotRelevant=Umsatz Bericht pro Produkt, bei der Verwendung einer <b>Kassabuch Buchhaltung</b>  ist der Modus nicht relevant. Dieser Bericht ist nur bei Verwendung <b>Buchführungsmodus Periodenrechnung</b> (siehe Setup das Modul  Buchhaltung).
 CalculationMode=Berechnungsmodus
 AccountancyJournal=Buchhaltungscode-Journal

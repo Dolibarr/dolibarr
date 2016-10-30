@@ -43,4 +43,4 @@ ListOfSupplierOrders=Seznam naročil dobaviitelja
 MenuOrdersSupplierToBill=Zaračunavanje naročil dobavitelja
 NbDaysToDelivery=Zakasnitev dobave v dnevih
 DescNbDaysToDelivery=Največja zamuda pri dobavi proizvodov iz tega naročila
-UseDoubleApproval=Uporabi dvojno potrjevanje (drugo potrditev lahko izvrši katerikoli uporabnik z dodeljenim dovoljenjem)
+UseDoubleApproval=Uporabite dvojno odobritev, če je znesek (brez DDV) višji kot (Drugo odobritev lahko naredi katerikoli uporabnik z dovoljenjem. Vnesite 0, če ne želite dvojne odobritve)

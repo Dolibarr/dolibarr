@@ -5,7 +5,7 @@ Sendings=Sevkiyatlar
 AllSendings=Tüm sevkiyatlar
 Shipment=Sevkiyat
 Shipments=Sevkiyatlar
-ShowSending=Gönderimi göster
+ShowSending=Sevkiyatları göster
 Receivings=Kabuller
 SendingsArea=Sevkiyat alanı
 ListOfSendings=Sevkiyat listesi
@@ -26,8 +26,8 @@ QtyToShip=Sevk edilecek mikt.
 QtyReceived=Alınan mikt.
 KeepToShip=Gönderilmek için kalır
 OtherSendingsForSameOrder=Bu sipariş için diğer sevkiyatlar
-DateSending=Sipariş gönderme tarihi
-DateSendingShort=Sipariş gönderme tarihi
+DateSending=Sevk tarihi
+DateSendingShort=Sevk tarihi
 SendingsForSameOrder=Bu sipariş için sevkiyatlar
 SendingsAndReceivingForSameOrder=Bu sipariş için sevkiyatlar ve alımlar
 SendingsToValidate=Doğrulanacak sevkiyatlar
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün mik
 ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
 ProductQtyInShipmentAlreadySent=Gönderilmiş olan ve açık durumdaki müşteri siparişindeki miktar
 ProductQtyInSuppliersShipmentAlreadyRecevied=Açık tedarikçi siparişlerindeki halihazırda teslim alınmış ürün miktarı
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Müşteri tarafından

@@ -125,7 +125,7 @@ class FileUpload
 			if (!empty($parent->socid)) {
 				$parent->fetch_thirdparty();
 			}
-			$object->$parentObject = dol_clone($parent);
+			$object->$parentObject = clone $parent;
 		} else {
 			$object->fetch_thirdparty();
 		}

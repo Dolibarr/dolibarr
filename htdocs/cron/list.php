@@ -131,7 +131,7 @@ $pagetitle=$langs->trans("CronList");
 
 llxHeader('',$pagetitle);
 
-print_fiche_titre($pagetitle,'','title_setup');
+print load_fiche_titre($pagetitle,'','title_setup');
 
 print $langs->trans('CronInfo');
 
@@ -208,7 +208,7 @@ print '</tr>';
 if (count($object->lines) > 0)
 {
 	// Loop on each active job
-	$style='impair';
+	$style='pair';
 	foreach($object->lines as $line)
 	{
 		// title profil

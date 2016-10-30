@@ -48,6 +48,7 @@ NewAccount=บัญชีการบัญชีใหม่
 Update=ปรับปรุง
 List=รายการ
 Create=สร้าง
+CreateMvts=Create movement
 UpdateAccount=การเปลี่ยนแปลงของบัญชีบัญชี
 UpdateMvts=การปรับเปลี่ยนของการเคลื่อนไหว
 WriteBookKeeping=บันทึกในบัญชีแยกประเภททั่วไป
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=เริ่มต้นการเรี
 
 AccountLength=ความยาวของบัญชีที่แสดงในบัญชี Dolibarr
 AccountLengthDesc=ฟังก์ชั่นที่ช่วยให้การแสร้งความยาวของบัญชีบัญชีโดยการเปลี่ยนพื้นที่โดยตัวเลขที่ศูนย์ ฟังก์ชั่นนี้เพียงสัมผัสหน้าจอก็ไม่ได้ปรับเปลี่ยนบัญชีบัญชีจดทะเบียนใน Dolibarr เพื่อการส่งออก, ฟังก์ชั่นนี้มีความจำเป็นต้องใช้งานร่วมกับซอฟต์แวร์
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=ความยาวของบัญชีทั่วไป
 ACCOUNTING_LENGTH_AACCOUNT=ความยาวของบัญชีของบุคคลที่สาม
 

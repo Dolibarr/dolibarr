@@ -29,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
@@ -46,6 +47,7 @@ $urlfrom	= GETPOST('urlfrom','alpha');
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
 $description=GETPOST('description');
+$color=GETPOST('color');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
@@ -124,6 +126,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 
 	$object->label			= $label;
+	$object->color			= $color;
 	$object->description	= dol_htmlcleanlastbr($description);
 	$object->socid			= ($socid ? $socid : 'null');
 	$object->visible		= $visible;
@@ -210,6 +213,7 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
@@ -232,7 +236,7 @@ if ($user->rights->categorie->creer)
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
-		print_fiche_titre($langs->trans("CreateCat"));
+		print load_fiche_titre($langs->trans("CreateCat"));
 
 		dol_fiche_head('');
 
@@ -250,6 +254,11 @@ if ($user->rights->categorie->creer)
 		$doleditor->Create();
 		print '</td></tr>';
 
+		// Color
+		print '<tr><td>'.$langs->trans("Color").'</td><td>';
+		print $formother->selectColor($color,'color');
+		print '</td></tr>';
+		
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);

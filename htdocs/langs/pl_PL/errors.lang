@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Proszę wypełnić pole wyboru wartości dla listy
 ErrorNoValueForRadioType=Proszę wypełnić wartość liście radiowej
 ErrorBadFormatValueList=Wartość lista nie może mieć więcej niż jeden <u>pochodzić:% s,</u> ale potrzeba co najmniej jeden: llave, valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Pole %s</b> nie zawiera znaki specjalne.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>Pole% s</b> nie musi zawiera znaki specjalne, ani dużych liter.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nr rachunkowych moduł aktywowany
 ErrorExportDuplicateProfil=Ta nazwa profil już istnieje dla tego zestawu eksportu.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=JavaScript nie musi być wyłączona do tej pracy f
 ErrorPasswordsMustMatch=Zarówno wpisane hasło musi się zgadzać się
 ErrorContactEMail=Techniczny błąd. Proszę skontaktować się z administratorem, aby po <b>%s</b> email pl zapewnić <b>%s</b> kod błędu w wiadomości, a nawet lepsze, dodając kopię ekranu strony.
 ErrorWrongValueForField=Nieprawidłowa wartość dla <b>%s</b> numer pola (wartość <b>&quot;%s&quot;</b> nie pasuje regex <b>%s</b> zasady)
-ErrorFieldValueNotIn=Błędna wartość w polu <b>Numer% s</b> (wartości <b>'% s'</b> nie jest dostępna w polu <b>wartości% s Tabela% s =% s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba pól (wartość <b>'%s</b> &quot;nie jest <b>%s</b> istniejących ref)
 ErrorsOnXLines=Błędów na linii źródło <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzić (plik może być zainfekowany przez wirusa)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Globalna zmienna wybrana
 ErrorFieldMustBeANumeric=Pole <b>%s</b> musi mieć wartość numeryczną
 ErrorFieldMustBeAnInteger=Pole <b>%s</b> musi być liczbą całkowitą
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametry konfiguracyjne obowiązkowe nie są jeszcze określone

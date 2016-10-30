@@ -42,34 +42,19 @@ class FactureRec extends Facture
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 
-	var $id;
-
-	//! Id customer
-	var $socid;
-	//! Customer object (charging by fetch_client)
-	var $client;
-
 	var $number;
-	var $author;
 	var $date;
-	var $ref;
 	var $amount;
 	var $remise;
 	var $tva;
 	var $total;
-	var $note_private;
-	var $note_public;
 	var $db_table;
 	var $propalid;
-	var $fk_project;
 
 	var $rang;
 	var $special_code;
 
 	var $usenewprice=0;
-
-	var $lines=array();
-
 
 	/**
 	 *	Constructor

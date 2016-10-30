@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +264,7 @@ if ($action == 'add' && $canadduser)
             $langs->load("errors");
             $db->rollback();
             if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
-            else setEventMessage($object->error);
+            else setEventMessage($object->error, 'errors');
             $action="create";       // Go back to create page
         }
 
@@ -277,7 +278,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
     {
         $editgroup = new UserGroup($db);
         $editgroup->fetch($group);
-        $editgroup->oldcopy=dol_clone($editgroup);
+		$editgroup->oldcopy=clone $editgroup;
 
         $object->fetch($id);
         if ($action == 'addgroup')    $object->SetInGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
@@ -328,7 +329,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 				$result=$tmpuser->fetch(0, GETPOST("login"));
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans("ErrorLoginAlreadyExists"), 'errors');
+					setEventMessage($langs->trans("ErrorLoginAlreadyExists", GETPOST('login')), 'errors');
 					$action="edit";       // Go back to create page
 					$error++;
 				}
@@ -339,14 +340,14 @@ if ($action == 'update' && ! $_POST["cancel"])
        {
             $db->begin();
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
             $object->login		= GETPOST("login",'alpha');
             $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
-            $object->api_key    = GETPOST("api_key");
+            $object->api_key    = (GETPOST("api_key", 'alpha'))?GETPOST("api_key", 'alpha'):$object->api_key;
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
             $object->office_fax	= GETPOST("office_fax",'alpha');
@@ -481,7 +482,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     {
                     	$error++;
                     	$langs->load("errors");
-                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }
@@ -507,7 +508,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+		$object->oldcopy = clone $object;
 
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -626,7 +627,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*                                                                            */
     /* ************************************************************************** */
 
-    print_fiche_titre($langs->trans("NewUser"));
+    print load_fiche_titre($langs->trans("NewUser"));
 
     print $langs->trans("CreateInternalUserDesc")."<br>\n";
     print "<br>";
@@ -724,7 +725,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -825,7 +826,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    if(! empty($conf->api->enabled)) {
+    if(! empty($conf->api->enabled))
+    {
         // API key
         $generated_api_key = '';
         require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -836,50 +838,57 @@ if (($action == 'create') || ($action == 'adduserldap'))
         if (! empty($conf->use_javascript_ajax))
             print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
         print '</td></tr>';
+    }
+    else
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+        // PARTIAL WORKAROUND
+        $generated_fake_api_key=getRandomPassword(false);
+        print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
+    }
 
-        // Administrator
-        if (! empty($user->admin))
+    // Administrator
+    if (! empty($user->admin))
+    {
+        print '<tr><td>'.$langs->trans("Administrator").'</td>';
+        print '<td>';
+        print $form->selectyesno('admin',GETPOST('admin'),1);
+
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
-            print '<tr><td>'.$langs->trans("Administrator").'</td>';
-            print '<td>';
-            print $form->selectyesno('admin',GETPOST('admin'),1);
-
-            if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
+            if (! empty($conf->use_javascript_ajax))
             {
-                if (! empty($conf->use_javascript_ajax))
-                {
-                    print '<script type="text/javascript">
-                                $(function() {
-                                    $("select[name=admin]").change(function() {
-                                         if ( $(this).val() == 0 ) {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", true)
-                                                .prop("checked", false);
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                         } else {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", false);
-                                         }
-                                    });
-                                    $("input[name=superadmin]").change(function() {
-                                        if ( $(this).is(":checked") ) {
-                                            $("select[name=entity]")
-                                                .prop("disabled", true);
-                                        } else {
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                        }
-                                    });
+                print '<script type="text/javascript">
+                            $(function() {
+                                $("select[name=admin]").change(function() {
+                                     if ( $(this).val() == 0 ) {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", true)
+                                            .prop("checked", false);
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                     } else {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", false);
+                                     }
                                 });
-                        </script>';
-                }
-                $checked=($_POST["superadmin"]?' checked':'');
-                $disabled=($_POST["superadmin"]?'':' disabled');
-                print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+                                $("input[name=superadmin]").change(function() {
+                                    if ( $(this).is(":checked") ) {
+                                        $("select[name=entity]")
+                                            .prop("disabled", true);
+                                    } else {
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                    }
+                                });
+                            });
+                    </script>';
             }
-            print "</td></tr>\n";
+            $checked=($_POST["superadmin"]?' checked':'');
+            $disabled=($_POST["superadmin"]?'':' disabled');
+            print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
         }
+        print "</td></tr>\n";
     }
 
     // Type
@@ -1038,7 +1047,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1605,7 +1614,7 @@ else
 
             if ($canreadgroup)
             {
-                print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+                print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
                 // On selectionne les groupes auquel fait parti le user
                 $exclude = array();
@@ -2085,14 +2094,20 @@ else
             	$langs->load("salaries");
 
             	// THM
-			    print '<tr><td>'.$langs->trans("THM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("THM");
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // TJM
-			    print '<tr><td>'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("TJM");
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
 			    print '</td>';
@@ -2137,7 +2152,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 

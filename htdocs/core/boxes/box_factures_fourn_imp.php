@@ -86,10 +86,11 @@ class box_factures_fourn_imp extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$now=dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+
+                $facturestatic = new FactureFournisseur($db);
 
 				while ($line < $num)
 				{
@@ -99,9 +100,13 @@ class box_factures_fourn_imp extends ModeleBoxes
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
+                    $facturestatic->date_echeance = $datelimite;
+                    $facturestatic->statut = $objp->fk_statut;
 
 					$late='';
-					if ($datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+					if ($facturestatic->hasDelay()) {
+                        $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+                    }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
                     $this->info_box_contents[$line][] = array(

@@ -196,6 +196,11 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				"ER"
 		);
+		$this->const[23] = array(
+				"ACCOUNTING_EXPORT_FORMAT",
+				"chaine",
+				"csv"
+		);
 
 		// Tabs
 		$this->tabs = array();

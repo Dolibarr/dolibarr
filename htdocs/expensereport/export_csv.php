@@ -69,7 +69,7 @@ if($num < 1) {
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ExportTripCSV"));
+print load_fiche_titre($langs->trans("ExportTripCSV"));
 
 print '<div class="tabBar">';
 

@@ -48,6 +48,7 @@ NoImportableData=Keine importfähigen Daten (kein Modul mit Erlaubnis für Daten
 FileSuccessfullyBuilt=Exportdatei erfolgreich erzeugt
 SQLUsedForExport=SQL-Abfrage für Erstellung der Exportdatei genutzt
 LineId=ID der Zeile
+LineLabel=Zeilenbeschriftung
 LineDescription=Beschreibung der Zeile
 LineUnitPrice=Stückpreis der Zeile
 LineVATRate=Steuersatz der Zeile
@@ -55,7 +56,7 @@ LineQty=Menge der Zeile
 LineTotalHT=Nettobetrag der Zeile
 LineTotalTTC=Bruttobetrag der Zeile
 LineTotalVAT=Steuerbetrag der Zeile
-TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Service)
+TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Leistung)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import
 FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen

@@ -314,7 +314,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 $head=project_admin_prepare_head();
 
@@ -373,7 +373,7 @@ print '<br>';
  * Projects Numbering model
  */
 
-print_titre($langs->trans("ProjectsNumberingModules"));
+print load_fiche_titre($langs->trans("ProjectsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -477,7 +477,7 @@ print '</table><br>';
 if (empty($conf->global->PROJECT_HIDE_TASKS))
 {
 	// Task numbering module
-	print_titre($langs->trans("TasksNumberingModules"));
+	print load_fiche_titre($langs->trans("TasksNumberingModules"));
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -583,7 +583,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
  * Document templates generators
  */
 
-print_titre($langs->trans("ProjectsModelModule"));
+print load_fiche_titre($langs->trans("ProjectsModelModule"));
 
 // Defini tableau def de modele
 $type='project';
@@ -742,7 +742,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	 * Modeles documents for Task
 	 */
 
-	print_titre($langs->trans("TaskModelModule"));
+	print load_fiche_titre($langs->trans("TaskModelModule"));
 
 	// Defini tableau def de modele
 	$type='project_task';
@@ -894,7 +894,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 }
 
 
-print_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"));
 
 // Other options
 $form=new Form($db);

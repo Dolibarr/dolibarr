@@ -48,6 +48,7 @@ NoImportableData=Žiadne dovážať dáta (žiadny modul s definíciami povoliť
 FileSuccessfullyBuilt=Export súboru ktorý bol vygenerovaný
 SQLUsedForExport=Otázka SQL použiť na vytvorenie exportovaného súboru
 LineId=Id riadku
+LineLabel=Label of line
 LineDescription=Popis linky
 LineUnitPrice=Jednotková cena linky
 LineVATRate=Sadzba DPH linky

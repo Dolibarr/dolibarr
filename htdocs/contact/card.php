@@ -289,7 +289,7 @@ if (empty($reshook))
 
             $object->fetch($contactid);
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone$object;
 
             $object->old_lastname	= GETPOST("old_lastname");
             $object->old_firstname	= GETPOST("old_firstname");
@@ -443,7 +443,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print_fiche_titre($title,$linkback,'title_companies.png');
+            print load_fiche_titre($title,$linkback,'title_companies.png');
 
             // Affiche les erreurs
             dol_htmloutput_errors(is_numeric($error)?'':$error,$errors);
@@ -626,7 +626,7 @@ else
 
 
             // Add personnal information
-            print_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
+            print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
 
             print '<table class="border" width="100%">';
 
@@ -646,7 +646,7 @@ else
             print '<td colspan="2"><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
             if ($object->birthday_alert)
             {
-                print '<input type="checkbox" name="birthday_alert" id="birthday_aler" checked></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked></td>';
             }
             else
             {
@@ -1151,7 +1151,7 @@ else
 
         print '<tr><td>';
         print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
+		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
 		print img_picto($langs->trans("VCard"),'vcard.png').' ';
 		print $langs->trans("VCard");
 		print '</a>';

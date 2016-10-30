@@ -12,7 +12,6 @@ Creditor=Alacaklı
 PaymentCode=Ödeme kodu
 PayBoxDoPayment=Ödemeye git
 YouWillBeRedirectedOnPayBox=Kredi kartı bilgilerinizi girmek için güvenli Paybox sayfasına yönlendirileceksiniz
-PleaseBePatient=Lütfen sabırlı olun
 Continue=Sonraki
 ToOfferALinkForOnlinePayment=%s Ödemesi için URL
 ToOfferALinkForOnlinePaymentOnOrder=Bir müşteri siparişi için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL

@@ -48,6 +48,7 @@ NewAccount=Cont contabil nou
 Update=Modifică
 List=List
 Create=Crează
+CreateMvts=Create movement
 UpdateAccount=Modificare cont contabil
 UpdateMvts=Modificare mişcare
 WriteBookKeeping=Înregistrare contabilă in Cartea Mare
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Începe sortarea paginilor ventilate "Vent
 
 AccountLength=Lungimea conturilor contabile  afişate în Dolibarr
 AccountLengthDesc=Funcția pentru a simula lungirea unui cont contabil prin înlocuirea spatiile  libere cu cifra zero. Această funcție afectează numai  afişarea , aceasta nu va schimba conturile contabile înregistrate în Dolibarr. Pentru export, această funcţie este necesară să fie compatibil cu unele software-ul
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Lungimea conturilor generale
 ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor de terţi
 

@@ -163,7 +163,7 @@ $dirins_ok=(dol_is_dir($dirins));
 $wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
 llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 
-print_fiche_titre($langs->trans("Upgrade"),'','title_setup');
+print load_fiche_titre($langs->trans("Upgrade"),'','title_setup');
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 

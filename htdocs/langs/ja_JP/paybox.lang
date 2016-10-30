@@ -12,7 +12,6 @@ Creditor=債権者
 PaymentCode=支払いコード
 PayBoxDoPayment=支払いに行く
 YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされます。
-PleaseBePatient=、もうしばらくお待ちください
 Continue=次の
 ToOfferALinkForOnlinePayment=%s支払いのURL
 ToOfferALinkForOnlinePaymentOnOrder=顧客の注文のための%sオンライン決済のユーザインタフェースを提供するためのURL

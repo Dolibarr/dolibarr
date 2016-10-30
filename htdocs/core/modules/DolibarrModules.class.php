@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-abstract class DolibarrModules
+class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
      * @var DoliDb Database handler
@@ -194,16 +194,21 @@ abstract class DolibarrModules
      */
     public $core_enabled;
 
+	
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
-	//public function __construct($db);
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
-
+    function __construct($db)
+    {
+        $this->db=$db;
+    }
+	
+    
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -623,8 +628,14 @@ abstract class DolibarrModules
                 {
                     $dirfound++;
 
-                    // Run llx_mytable.sql files
+                    // Run llx_mytable.sql files, then llx_mytable_*.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -635,8 +646,14 @@ abstract class DolibarrModules
 
                     rewinddir($handle);
 
-                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -648,7 +665,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -660,7 +683,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run update_xxx.sql files
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -1334,7 +1363,6 @@ print $sql;
 
         $this->db->begin();
 
-        //var_dump($this->menu); exit;
         foreach ($this->menu as $key => $value)
         {
             $menu = new Menubase($this->db);
@@ -1343,11 +1371,9 @@ print $sql;
             if (! $this->menu[$key]['fk_menu'])
             {
                 $menu->fk_menu=0;
-                //print 'aaa'.$this->menu[$key]['fk_menu'];
             }
             else
             {
-                //print 'xxx'.$this->menu[$key]['fk_menu'];exit;
                 $foundparent=0;
                 $fk_parent=$this->menu[$key]['fk_menu'];
                 if (preg_match('/^r=/',$fk_parent))	// old deprecated method
@@ -1689,11 +1715,13 @@ print $sql;
 
 	/**
 	 * Function called when module is enabled.
-	 * The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 * The init function adds tabs, constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 * It also creates data directories
 	 *
-	 * @param string $options    Options when enabling module ('', 'noboxes')
-	 * @return int             	1 if OK, 0 if KO
+	 * @param string $options   Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *                          'noboxes' = Do not insert boxes
+     *                          'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 * @return int				1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -1702,11 +1730,11 @@ print $sql;
 
 	/**
 	 * Function called when module is disabled.
-	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
 	 * @param      string	$options    Options when enabling module ('', 'noboxes')
-	 * @return     int             	1 if OK, 0 if KO
+	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{

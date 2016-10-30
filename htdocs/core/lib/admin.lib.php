@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *  \brief			Library of admin functions
  */
 
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
 /**
  *  Renvoi une version en chaine depuis une version en tableau
@@ -40,7 +42,8 @@ function versiontostring($versionarray)
 }
 
 /**
- *	Compare 2 versions (stored into 2 arrays)
+ *	Compare 2 versions (stored into 2 arrays).
+ *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -675,29 +678,7 @@ function activateModule($value,$withdeps=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-
-    // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+	$modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -794,29 +775,7 @@ function unActivateModule($value, $requiredby=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-
-    // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+	$modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -837,13 +796,13 @@ function unActivateModule($value, $requiredby=1)
     }
     else
     {
-        // TODO Replace this afte DolibarrModules is moved as abstract class with a try catch to show module is bugged
+        // TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module is bugged
         $genericMod = new DolibarrModules($db);
         $genericMod->name=preg_replace('/^mod/i','',$modName);
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        $genericMod->_remove();
+        $genericMod->_remove('');
     }
 
     // Desactivation des modules qui dependent de lui
@@ -852,6 +811,7 @@ function unActivateModule($value, $requiredby=1)
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
         {
+            //var_dump($objMod->requiredby[$i]);
             unActivateModule($objMod->requiredby[$i]);
         }
     }
@@ -882,35 +842,9 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
     global $db, $modules, $conf, $langs;
 
     // Search modules
-    $filename = array();
-    $modules = array();
-    $orders = array();
-    $categ = array();
-    $dirmod = array();
-    $modulesdir = array();
+	$modulesdir = dolGetModulesDirs();
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
-
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-        $handle=@opendir($dirroot);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                    {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
 
     foreach ($modulesdir as $dir)
     {
@@ -960,14 +894,6 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                		$langs->load($langfile);
                                	}
                            	}
-
-                            $modules[$i] = $objMod;
-                            $filename[$i]= $modName;
-                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-                            //print "x".$modName." ".$orders[$i]."\n<br>";
-                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
-                            else $categ[$objMod->special]=1;
-                            $dirmod[$i] = $dirroot;
 
                             // Complete arrays
                             //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond

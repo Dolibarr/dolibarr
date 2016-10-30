@@ -5,7 +5,7 @@ Sendings=Αποστολές
 AllSendings=Όλες οι αποστολές
 Shipment=Αποστολή
 Shipments=Αποστολές
-ShowSending=Προβολή αποστολής
+ShowSending=Show Shipments
 Receivings=Αποδείξεις
 SendingsArea=Περιοχή αποστολών 
 ListOfSendings=Κατάλογος των αποστολών
@@ -26,8 +26,8 @@ QtyToShip=Ποσότητα προς αποστολή
 QtyReceived=Ποσότητα παραλαβής
 KeepToShip=Αναμένει για αποστολή
 OtherSendingsForSameOrder=Άλλες αποστολές για αυτό το σκοπό
-DateSending=Ημερομηνία αποστολή της παραγγελίας
-DateSendingShort=Ημερομηνία αποστολή της παραγγελίας
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Αποστολές για αυτό το σκοπό
 SendingsAndReceivingForSameOrder=Αποστολές και παραλαβές για αυτό το σκοπό
 SendingsToValidate=Αποστολές για επικύρωση
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Ποσότητα προϊόντων σε αν
 ProductQtyInSuppliersOrdersRunning=Ποσότητα προϊόντων σε ανοιχτές παραγγελίες προμηθευτών
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Ποσότητα προϊόντων από ανοιγμένες παραγγελίες του προμηθευτή που έχουν ήδη ληφθεί
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Πιάσε τον πελάτη

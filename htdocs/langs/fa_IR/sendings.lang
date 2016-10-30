@@ -5,7 +5,7 @@ Sendings=حمل و نقل
 AllSendings=All Shipments
 Shipment=حمل
 Shipments=حمل و نقل
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=منطقه حمل و نقل
 ListOfSendings=فهرست محموله
@@ -26,8 +26,8 @@ QtyToShip=تعداد به کشتی
 QtyReceived=تعداد دریافت
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=دیگر محموله برای این منظور
-DateSending=عضویت جهت ارسال
-DateSendingShort=عضویت جهت ارسال
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=حمل و نقل برای این منظور
 SendingsAndReceivingForSameOrder=حمل و نقل و receivings برای این منظور
 SendingsToValidate=حمل و نقل به اعتبار
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=گرفتن توسط مشتری

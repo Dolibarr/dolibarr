@@ -88,10 +88,6 @@ if ($action == 'setdate' && $user->rights->banque->cheque)
     }
 }
 
-/*
- * Actions
- */
-
 if ($action == 'setrefext' && $user->rights->banque->cheque)
 {
     $result = $object->fetch(GETPOST('id','int'));
@@ -231,16 +227,18 @@ if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->ban
 	$rejected_check = GETPOST('bankid');
 
 	$object->fetch($id);
-	$paiement_id = $object->reject_check($rejected_check, $reject_date);
+	$paiement_id = $object->rejectCheck($rejected_check, $reject_date);
 	if ($paiement_id > 0)
 	{
 		setEventMessage($langs->trans("CheckRejectedAndInvoicesReopened"));
-		header("Location: ".DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id);
-		exit;
+		//header("Location: ".DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id);
+		//exit;
+		$action='';
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action='';
 	}
 }
 
@@ -282,7 +280,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 
 		$langs->load("other");
 
-		$file=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . GETPOST('file');
+		$file=$dir.get_exdir($object->number,0,1,0,$object,'cheque') . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
 		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
@@ -314,7 +312,7 @@ if ($action == 'new')
 	$hselected = $h;
 	$h++;
 
-	print_fiche_titre($langs->trans("Cheques"));
+	print load_fiche_titre($langs->trans("Cheques"));
 }
 else
 {
@@ -371,6 +369,9 @@ $accounts = array();
 
 if ($action == 'new')
 {
+	$paymentstatic=new Paiement($db);
+	$accountlinestatic=new AccountLine($db);
+    
 	$lines = array();
 
 	$now=dol_now();
@@ -406,9 +407,11 @@ if ($action == 'new')
     print '</form>';
 	print '<br>';
 
-	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as chqid, ";
-	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
+	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as transactionid, ";
+	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque,";
+	$sql.= " p.rowid as paymentid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
 	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
@@ -430,7 +433,8 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
-			$lines[$obj->bid][$i]["id"] = $obj->chqid;
+			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
+			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$i++;
 		}
 
@@ -473,6 +477,8 @@ if ($action == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
+		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
+		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
@@ -495,7 +501,34 @@ if ($action == 'new')
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
-			print '<td align="right">'.price($value["amount"]).'</td>';
+			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+			
+			// Link to payment
+			print '<td align="center">';
+			$paymentstatic->id=$value["paymentid"];
+			$paymentstatic->ref=$value["paymentid"];
+			if ($paymentstatic->id)
+			{
+				print $paymentstatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			// Link to bank transaction
+			print '<td align="center">';
+			$accountlinestatic->rowid=$value["id"];
+			if ($accountlinestatic->rowid)
+			{
+				print $accountlinestatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			
 			print '<td align="center">';
 			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 			print '</td>' ;
@@ -581,6 +614,7 @@ else
 	print '</tr>';
 
 	// External ref
+	/* Ext ref are not visible field on standard usage
 	print '<tr><td>';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -605,7 +639,8 @@ else
 
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
@@ -626,7 +661,7 @@ else
 	print '</table><br>';
 
 
-	// Liste des cheques
+	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql.= " p.rowid as pid, ba.rowid as bid, p.statut";
@@ -636,7 +671,7 @@ else
 	$sql.= " WHERE ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
-	$sql.= " ORDER BY $sortfield $sortorder";
+	$sql.= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -646,6 +681,7 @@ else
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
+		
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Cheques"),'','','','','width="30"');
 		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
@@ -653,9 +689,9 @@ else
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Payment"),$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre('');
 		print "</tr>\n";
 		$i=1;
 		$var=false;
@@ -673,17 +709,7 @@ else
 			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
 			print '<td>'.dol_trunc($objp->banque,24).'</td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
-			print '<td align="center">';
-			$accountlinestatic->rowid=$objp->rowid;
-			if ($accountlinestatic->rowid)
-			{
-				print $accountlinestatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
+			// Link to payment
 			print '<td align="center">';
 			$paymentstatic->id=$objp->pid;
 			$paymentstatic->ref=$objp->pid;
@@ -696,14 +722,33 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
+			// Link to bank transaction
+			print '<td align="center">';
+			$accountlinestatic->rowid=$objp->rowid;
+			if ($accountlinestatic->rowid)
+			{
+				print $accountlinestatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			// Action button
+			print '<td align="right">';
 			if ($object->statut == 0)
 			{
-				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a></td>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
 			}
-			else if($objp->statut == 2) {
-				print '<td align="right">'.img_picto($langs->trans('CheckRejected'),'statut8').'</a></td>';
+   			if ($object->statut == 1 && $objp->statut != 2)
+   			{
+   				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
+   			}
+			if ($objp->statut == 2) 
+			{
+				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
 			}
+		    print '</td>';
 			print '</tr>';
 			$var=!$var;
 			$i++;
@@ -751,7 +796,7 @@ if ($action != 'new')
 	if ($object->statut == 1)
 	{
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
+		$filedir=$dir.get_exdir($object->number,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);

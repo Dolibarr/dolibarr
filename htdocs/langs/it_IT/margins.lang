@@ -30,10 +30,13 @@ UseDiscountAsProduct=Come prodotto
 UseDiscountAsService=Come servizio
 UseDiscountOnTotal=Sul subtotale
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definisce se, ai fini del calcolo del margine, uno sconto globale debba essere trattato come un prodotto, un servizio o usato solo sul subtotale.
-MARGIN_TYPE=Tipo di margine
+MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeBrute=Margine lordo
 MargeNette=Margine netto
+MargeType1=Margin on Best supplier price
+MargeType2=Margin on Weighted Average Price (WAP)
 MARGIN_TYPE_DETAILS=Margine lordo = Prezzo di vendita - Prezzo di acquisto<br/>Margine netto = Prezzo di vendita - Prezzo di costo
+MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
 CostPrice=Prezzo di costo
 BuyingCost=Prezzo di costo
 UnitCharges=Carico unitario

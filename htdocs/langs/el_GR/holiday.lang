@@ -130,7 +130,6 @@ nbJours=Αριθμός ημερών
 TitleAdminCP=Διαμόρφωση των αδειών
 NoticePeriod=Notice period
 #Messages
-Hello=Γεια σας
 HolidaysToValidate=Επικύρωση των αιτήσεων για τις άδειες
 HolidaysToValidateBody=Παρακάτω είναι ένα αίτημα άδειας για την επικύρωση
 HolidaysToValidateDelay=Αυτή η αίτηση αδείας θα πραγματοποιηθεί εντός προθεσμίας μικρότερης των %s ημερών.
@@ -147,5 +146,5 @@ Permission20003=Διαγραφή των αιτήσεων άδειας
 Permission20004=Read leave requests for everybody
 Permission20005=Create/modify leave requests for everybody
 Permission20006=Admin leave requests (setup and update balance)
-NewByMonth=Added per month
+NewByMonth=Μηνιαία προσθήκη
 GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leaves</strong> to setup the different types of leaves.

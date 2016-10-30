@@ -445,6 +445,7 @@ if ($id == 11)
 	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
+            'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
@@ -615,7 +616,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
-            if ($value == 'price' || preg_match('/^amount/i',$value)) {
+            if ($value == 'price' || preg_match('/^amount/i',$value) || preg_match('/^localtax/i',$value) || $value == 'taux') {
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($value == 'entity') {
@@ -663,7 +664,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
-            if ($field == 'price' || preg_match('/^amount/i',$field)) {
+            if ($field == 'price' || preg_match('/^amount/i',$field) || preg_match('/^localtax/i',$field) || $field == 'taux') {
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($field == 'entity') {
@@ -812,7 +813,7 @@ if ($id)
     $titre.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
-print_fiche_titre($titre,$linkback,'title_setup');
+print load_fiche_titre($titre,$linkback,'title_setup');
 
 if (empty($id))
 {
@@ -899,7 +900,11 @@ if ($id)
 				else $valuetoshow=$langs->trans("Type");
             }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+            {
+            	$valuetoshow=$langs->trans("Label");
+            	if ($id != 25) $valuetoshow.="*";
+            }
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
             if ($fieldlist[$field]=='country')         {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
@@ -1055,7 +1060,11 @@ if ($id)
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
                 if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
                 if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+                {
+                	$valuetoshow=$langs->trans("Label");
+                   	if ($id != 25) $valuetoshow.="*";
+                }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
                 if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
@@ -1274,17 +1283,20 @@ if ($id)
 							  $align="center";
 							}
 							else if ($fieldlist[$field]=='localtax1') {
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 							  if ($obj->localtax1 == 0)
 							    $valuetoshow = '';
 							  $align="right";
 							}
 							else if ($fieldlist[$field]=='localtax2') {
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 							  if ($obj->localtax2 == 0)
 							    $valuetoshow = '';
 							  $align="right";
 							}
 							else if (in_array($fieldlist[$field],array('taux','localtax1','localtax2')))
 							{
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 								$align="right";
 							}
 							else if (in_array($fieldlist[$field],array('recuperableonly')))

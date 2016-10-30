@@ -1,21 +1,21 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
 ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
+Trip=Informe de despeses
+Trips=Informes de despeses
+TripsAndExpenses=Informes de despeses
+TripsAndExpensesStatistics=Estadístiques de l'informe de despeses
 TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense reports
+AddTrip=Crear informe de despeses
+ListOfTrips=Llistat de informes de despeses
 ListOfFees=Llistat notes de honoraris
-ShowTrip=Show expense report
-NewTrip=New expense report
+ShowTrip=Mostra l'informe de despeses
+NewTrip=Nou informe de despeses
 CompanyVisited=Empresa/institució visitada
 Kilometers=Quilòmetres
 FeesKilometersOrAmout=Import o quilòmetres
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
+DeleteTrip=Eliminar informe de despeses
+ConfirmDeleteTrip=Esteu segur de voler eliminar aquest informe de despeses?
 ListTripsAndExpenses=List of expense reports
 ListToApprove=Waiting for approval
 ExpensesArea=Expense reports area
@@ -54,17 +54,17 @@ Date_DEBUT=Period date start
 Date_FIN=Period date end
 ModePaiement=Payment mode
 Note=Note
-Project=Project
+Project=Projecte
 
 VALIDATOR=User responsible for approval
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paid by
-REFUSEUR=Denied by
-CANCEL_USER=Deleted by
+VALIDOR=Aprovat per
+AUTHOR=Desat per
+AUTHORPAIEMENT=Pagat per
+REFUSEUR=Denegat per
+CANCEL_USER=Eliminat per
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Raó
+MOTIF_CANCEL=Raó
 
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
@@ -72,8 +72,8 @@ DATE_VALIDE=Validation date
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 
-TO_PAID=Pay
-BROUILLONNER=Reopen
+TO_PAID=Pagar
+BROUILLONNER=Reobrir
 SendToValid=Sent on approval
 ModifyInfoGen=Edita
 ValidateAndSubmit=Validate and submit for approval
@@ -101,3 +101,6 @@ SaveTrip=Validate expense report
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
 NoTripsToExportCSV=No expense report to export for this period.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

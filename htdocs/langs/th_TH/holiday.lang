@@ -130,7 +130,6 @@ nbJours=จำนวนวัน
 TitleAdminCP=การกำหนดค่าของใบ
 NoticePeriod=ระยะเวลาการแจ้งให้ทราบล่วงหน้า
 #Messages
-Hello=สวัสดี
 HolidaysToValidate=ตรวจสอบการร้องขอลา
 HolidaysToValidateBody=ด้านล่างคำขอลาในการตรวจสอบคือ
 HolidaysToValidateDelay=คำขอลานี้จะเกิดขึ้นภายในระยะเวลาน้อยกว่า% s วัน

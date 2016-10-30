@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Raamatupidamine
 Globalparameters=Globaalsed parameetrid
@@ -7,17 +14,17 @@ Chartofaccounts=Kontoplaan
 Fiscalyear=Majandusaastad
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+MenuTools=Tööriistad
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
-Exports=Exports
-Export=Export
-Modelcsv=Model of export
+Exports=Eksportimised
+Export=Eksport
+Modelcsv=Eksportimise mudel
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
+Selectmodelcsv=Vali eksportimise mudel
+Modelcsv_normal=Tavaline eksportimine
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
 Back=Return
@@ -38,9 +45,10 @@ Reports=Reports
 ByCustomerInvoice=By invoices customers
 ByMonth=By Month
 NewAccount=New accounting account
-Update=Update
-List=List
-Create=Create
+Update=Uuenda
+List=Loend
+Create=Loo
+CreateMvts=Loo liikumine
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
@@ -50,7 +58,7 @@ AccountBalanceByMonth=Account balance by month
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
+Line=Rida
 
 CAHTF=Total purchase supplier HT
 InvoiceLines=Lines of invoice to be ventilated
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
@@ -94,15 +103,15 @@ ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold produ
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
 
-Doctype=Type of document
-Docdate=Date
-Docref=Reference
-Numerocompte=Account
+Doctype=Dokumendi tüüp
+Docdate=Kuupäev
+Docref=Viide
+Numerocompte=Konto
 Code_tiers=Thirdparty
 Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
+Debit=Deebet
+Credit=Kreedit
+Amount=Summa
 Sens=Sens
 Codejournal=Journal
 

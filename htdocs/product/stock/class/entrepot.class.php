@@ -35,7 +35,6 @@ class Entrepot extends CommonObject
 	public $element='stock';
 	public $table_element='entrepot';
 
-	var $id;
 	var $libelle;
 	var $description;
 	//! Statut 1 pour ouvert, 0 pour ferme
@@ -45,10 +44,6 @@ class Entrepot extends CommonObject
 	//! Code Postal
 	var $zip;
 	var $town;
-
-	var $country;
-	var $country_id;
-	var $country_code;
 
 
 	/**
@@ -355,7 +350,7 @@ class Entrepot extends CommonObject
 
 		$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql.= " WHERE entity IN (".getEntity('warehouse', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND statut = ".$status;
 
 		$result = $this->db->query($sql);

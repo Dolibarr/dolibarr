@@ -98,7 +98,7 @@ if ($id > 0 || ! empty($ref))
 			$projectstatic->fetch_thirdparty();
 		}
 
-		$object->project = dol_clone($projectstatic);
+		$object->project = clone $projectstatic;
 
 		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 	}

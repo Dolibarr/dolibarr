@@ -125,6 +125,7 @@ CloneOrder=منظور کلون
 ConfirmCloneOrder=آیا مطمئن هستید که می خواهید به کلون کردن این منظور <b>از٪ s؟</b>
 DispatchSupplierOrder=دریافت کننده کالا منظور از٪ s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=نماینده سفارش مشتری زیر به بالا
 TypeContact_commande_internal_SHIPPING=نماینده زیر را به بالا حمل و نقل

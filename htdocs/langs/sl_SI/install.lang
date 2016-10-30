@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Če baza podatkov že obstaja, se vrnite na
 WarningBrowserTooOld=Verzija brskalnika je prestara. Priporočamo nadgraditev vašega brskalnika na zadnjo verzijo Firefox, Chrome ali Opera.
 PHPVersion=PHP Verzija
 YouCanContinue=Lahko nadaljujete...
-PleaseBePatient=Prosim, bodite potrpežljivi...
 License=Uporablja licenco
 ConfigurationFile=Konfiguracijska datoteka
 WebPagesDirectory=Mapa, v kateri so shranjene web strani

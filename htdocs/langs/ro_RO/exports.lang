@@ -48,6 +48,7 @@ NoImportableData=Nu importable de date (nu cu modul de definiţii, pentru a perm
 FileSuccessfullyBuilt=Export fişier generat
 SQLUsedForExport=Cerere SQL folosite pentru a construi export fişier
 LineId=Id-ul de linie
+LineLabel=Label of line
 LineDescription=Descriere de linie
 LineUnitPrice=Preţul unitar de linie
 LineVATRate=TVA de linie

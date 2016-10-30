@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ $langs->load("bills");
 $chid=GETPOST("id");
 $action=GETPOST('action');
 $amounts = array();
+$accountid=GETPOST('accountid','int');
 
 // Security check
 $socid=0;
@@ -67,7 +69,7 @@ if ($action == 'add_payment')
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
 		$error++;
 	}
-    if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
+    if (! empty($conf->banque->enabled) && ! $accountid > 0)
     {
         $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
         $error++;
@@ -76,6 +78,7 @@ if ($action == 'add_payment')
 	if (! $error)
 	{
 		$paymentid = 0;
+		$total = 0;
 
 		// Read possible payments
 		foreach ($_POST as $key => $value)
@@ -84,6 +87,7 @@ if ($action == 'add_payment')
 			{
 				$other_chid = substr($key,7);
 				$amounts[$other_chid] = price2num($_POST[$key]);
+				$total += price2num($_POST[$key]);
 			}
 		}
 
@@ -102,6 +106,7 @@ if ($action == 'add_payment')
     		$payment->chid           = $chid;
     		$payment->datepaid       = $datepaid;
     		$payment->amounts        = $amounts;   // Tableau de montant
+    		$payment->total          = $total;
     		$payment->fk_typepayment = $_POST["fk_typepayment"];
     		$payment->num_payment    = $_POST["num_payment"];
     		$payment->note           = $_POST["note"];
@@ -118,7 +123,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$_POST['accountid'],'','');
+                $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$accountid,'','');
                 if (! $result > 0)
                 {
                     $errmsg=$payment->error;
@@ -162,7 +167,7 @@ if (GETPOST("action") == 'create')
 
 	$total = $expensereport->total_ttc;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if ($mesg)
 	{

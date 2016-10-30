@@ -38,7 +38,7 @@ $langs->load("members");
 llxHeader();
 
 
-print_fiche_titre("Dolibarr",'','title_setup');
+print load_fiche_titre("Dolibarr",'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
@@ -63,11 +63,35 @@ print '<ul>';
 print '<li>';
 print '<a target="_blank" href="http://www.dolibarr.org/" rel="external">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
-// If the French language, it displays French website
+// Show local site
 if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="http://www.dolibarr.fr/" rel="external">'.$langs->trans("OfficialWebSiteFr").'</a>';
+	print '<a target="_blank" href="http://www.dolibarr.fr/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("France")).'</a>';
+	print '</li>';
+}
+if (preg_match('/^el_/i',$langs->getDefaultLang()))
+{
+	print '<li>';
+	print '<a target="_blank" href="http://www.dolibarr.gr/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Greece")).'</a>';
+	print '</li>';
+}
+if (preg_match('/^es_/i',$langs->getDefaultLang()))
+{
+	print '<li>';
+	print '<a target="_blank" href="http://www.dolibarr.es/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Spain")).'</a>';
+	print '</li>';
+}
+if (preg_match('/^it_/i',$langs->getDefaultLang()))
+{
+	print '<li>';
+	print '<a target="_blank" href="http://www.dolibarr.it/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Italy")).'</a>';
+	print '</li>';
+}
+if (preg_match('/^de_/i',$langs->getDefaultLang()))
+{
+	print '<li>';
+	print '<a target="_blank" href="http://www.dolibarr.de/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
 	print '</li>';
 }
 print '<li>';

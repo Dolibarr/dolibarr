@@ -101,3 +101,6 @@ SaveTrip=Validar relatório de despesas
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
 NoTripsToExportCSV=nenhum relatório de despesas para exportar para este período.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

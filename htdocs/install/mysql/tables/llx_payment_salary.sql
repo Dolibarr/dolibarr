@@ -20,6 +20,7 @@ create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
+  datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur (this field should not be here, only into bank tables)
@@ -33,6 +34,6 @@ create table llx_payment_salary
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,                    -- utilisateur qui a cree l'info
+  fk_user_author  integer,                    -- utilisateur qui a cree l'info
   fk_user_modif   integer                     -- utilisateur qui a modifié l'info
 )ENGINE=innodb;

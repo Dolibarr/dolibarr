@@ -48,6 +48,7 @@ NoImportableData=没有导入数据（没有定义模块，让数据导入）
 FileSuccessfullyBuilt=导出生成文件
 SQLUsedForExport=SQL Request used to build export file
 LineId=Id of line
+LineLabel=Label of line
 LineDescription=说明线
 LineUnitPrice=优惠价线
 LineVATRate=增值税率线

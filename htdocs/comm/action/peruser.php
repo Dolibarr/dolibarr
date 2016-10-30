@@ -317,14 +317,27 @@ if ($conf->use_javascript_ajax)
 				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
+
+		//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+		// Calendars from hooks
+	    $parameters=array(); $object=null;
+		$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
+	    if (empty($reshook))
+	    {
+			$s.= $hookmanager->resPrint;
+	    }
+	    elseif ($reshook > 1)
+		{
+	    	$s = $hookmanager->resPrint;
+	    }
 	}
-	//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 }
 
 
 
 $link='';
-print_fiche_titre($s,$link.' &nbsp; &nbsp; '.$nav, '');
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Get event in an array
@@ -681,7 +694,7 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
@@ -788,7 +801,7 @@ $db->close();
 
 
 /**
- * Show event of a particular day for a user
+ * Show event line of a particular day for a user
  *
  * @param	string	$username		Login
  * @param   int		$day            Day
@@ -840,6 +853,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event)
 			{
+				//var_dump($event);
+
 				$keysofuserassigned=array_keys($event->userassigned);
 				if (! in_array($username->id,$keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
 				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
@@ -1008,30 +1023,37 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 		}
 
-
-		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
-		else echo '<td class="'.$style.' cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
-		if (count($cases1[$h]) == 1)	// 1 seul evenement
-		{
-			$ids=array_keys($cases1[$h]);
-			$output = array_slice($cases1[$h], 0, 1);
-			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
-			if ($output[0]['color']) $color1 = $output[0]['color'];
-		}
-		else if (count($cases1[$h]) > 1) $color1='222222';
-
-		if (count($cases2[$h]) == 1)	// 1 seul evenement
-		{
-			$ids=array_keys($cases2[$h]);
-			$output = array_slice($cases2[$h], 0, 1);
-			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
-			if ($output[0]['color']) $color2 = $output[0]['color'];
-		}
-		else if (count($cases2[$h]) > 1) $color2='222222';
 		$ids1='';$ids2='';
 		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',',array_keys($cases1[$h]));
 		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',',array_keys($cases2[$h]));
-		//var_dump($cases1[$h]);
+
+		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
+		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
+		if (count($cases1[$h]) == 1)	// only 1 event
+		{
+			$output = array_slice($cases1[$h], 0, 1);
+			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
+			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
+			if ($output[0]['color']) $color1 = $output[0]['color'];
+		}
+		else if (count($cases1[$h]) > 1)
+		{
+			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
+			$color1='222222';
+		}
+
+		if (count($cases2[$h]) == 1)	// only 1 event
+		{
+			$output = array_slice($cases2[$h], 0, 1);
+			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
+			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
+			if ($output[0]['color']) $color2 = $output[0]['color'];
+		}
+		else if (count($cases2[$h]) > 1)
+		{
+			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
+			$color2='222222';
+		}
 		print '<table class="nobordernopadding" width="100%">';
 		print '<tr><td '.($color1?'style="background: #'.$color1.';"':'').'class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
 		print $string1;

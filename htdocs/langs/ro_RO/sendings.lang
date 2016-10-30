@@ -5,7 +5,7 @@ Sendings=Livrari
 AllSendings=All Shipments
 Shipment=Livrare
 Shipments=Livrari
-ShowSending=Arata expedieri
+ShowSending=Show Shipments
 Receivings=Receptii
 SendingsArea=Livrari
 ListOfSendings=Lista Livrari
@@ -26,8 +26,8 @@ QtyToShip=Cant.  de livrat
 QtyReceived=Cant.  primită
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Alte livrări pentru această comandă
-DateSending=Data dispoziţiei de livrare
-DateSendingShort=Data disp.  de livrare
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Livrări pentru această comandă
 SendingsAndReceivingForSameOrder=Livrările şi recepţiile pentru această comandă
 SendingsToValidate=Livrări de validat
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Cantitate produs in comenzile clientilor desc
 ProductQtyInSuppliersOrdersRunning=Cantitate produs in comenzile furnizorilor deschise
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantitate produs din comenzile furnizorilor deschise deja primite
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Colectată de client

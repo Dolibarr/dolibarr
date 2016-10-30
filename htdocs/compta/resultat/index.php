@@ -477,9 +477,16 @@ $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$acti
 /*
  * Salaries
  */
+
+if ($modecompta == 'CREANCES-DETTES') {
+	$column = 'p.datev';
+} else {
+	$column = 'p.datep';
+}
+
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-$sql = "SELECT p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
+$sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " GROUP BY p.label, dm";

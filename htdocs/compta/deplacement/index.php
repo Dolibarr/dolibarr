@@ -91,7 +91,7 @@ if ($result)
 }
 
 
-print_fiche_titre($langs->trans("ExpensesArea"));
+print load_fiche_titre($langs->trans("ExpensesArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

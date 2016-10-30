@@ -22,6 +22,7 @@ NoImportableData=Não existe tipo de dados importavel (não existe nenhum módul
 FileSuccessfullyBuilt=Arquivo de exportação gerado
 SQLUsedForExport=Pedido de SQL usado para construir exportação de arquivo
 LineId=Id da Linha
+LineLabel=Rótulo de linha
 LineDescription=Descrição da Linha
 LineUnitPrice=Preço Unitário da Linha
 LineVATRate=Taxa ICMS por Linha

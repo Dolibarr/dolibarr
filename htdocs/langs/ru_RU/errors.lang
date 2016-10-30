@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Пожалуйста, заполните значе�
 ErrorNoValueForRadioType=Пожалуйста, заполните  значени для списка переключателей
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Поле %s</b> не содержит специальных символов.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Нет бухгалтерского модуля активируется
 ErrorExportDuplicateProfil=Имя этого профиля уже сущесвует для этого набора для экспорта.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP соответствия не является полной.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript не должна быть отключ�
 ErrorPasswordsMustMatch=Оба введенных пароля должны совпадать друг с другом
 ErrorContactEMail=Техническая ошибка. Пожалуйста, обратитесь к администратору следующую электронную почту <b>%s</b> ан обеспечить <b>%s</b> код ошибки в ваше сообщение, или даже лучше, добавив экран копию этой страницы.
 ErrorWrongValueForField=Неверное значение для области количество <b>%s</b> (значение <b>%s</b> &quot;не соответствует регулярное <b>%s</b> правило)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Неверное значение для <b>%s</b> номер поля <b>(«%s&quot;</b> значение не является <b>%s</b> существующих ссылка)
 ErrorsOnXLines=Ошибки на источник <b>%s</b> линий
 ErrorFileIsInfectedWithAVirus=Антивирусная программа не смогла проверить файл (файл может быть заражен вирусом)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Не выбрана глобальная перем�
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Обязательные параметры не определены

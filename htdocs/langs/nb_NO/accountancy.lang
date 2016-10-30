@@ -48,6 +48,7 @@ NewAccount=Ny regnskapskonto
 Update=Oppdater
 List=Liste
 Create=Opprett
+CreateMvts=Opprett bevegelse
 UpdateAccount=Endring av regnskapskonto
 UpdateMvts=Endring av bevegelse
 WriteBookKeeping=Legg til kontoer i hovedbok
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begynn sortering av fordelingssidene "Ford
 
 AccountLength=Lengde på regnskapskontoer vist i Dolibarr
 AccountLengthDesc=Funksjon for å redusere lengden på regnskapskontoene ved å erstatte mellomrom med null. Denne funksjonen berører bare visning, det endrer ikke regnskapskontoene registrert i Dolibarr. For eksport, er denne funksjonen nødvendig for å være kompatibel med enkelte programvarer.
+ACCOUNTING_LENGTH_DESCRIPTION=Antall tegn for beskrivelse av varer og tjenester i lister (anbefalt = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Antall tegn for beskrivelse av kontoskjemaer til varer og tjenester i lister (anbefalt = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Lengde på generelle kontoer
 ACCOUNTING_LENGTH_AACCOUNT=Lengde på tredjepartskontoer
 

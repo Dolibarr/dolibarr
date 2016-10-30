@@ -43,4 +43,4 @@ ListOfSupplierOrders=Szállítói rendelések listája
 MenuOrdersSupplierToBill=Szállítói rendelések számlázáshoz
 NbDaysToDelivery=Szállítási késedelem napokban
 DescNbDaysToDelivery=A megrendelésben lévő termékek legnagyobb késedelme.
-UseDoubleApproval=Kettős jóváhagyás (a második jóváhagyást bármelyik felhasználó megteheti, akinek jogosultsága van.)
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

@@ -86,7 +86,7 @@ if ($socid > 0)
     if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
     {
         // Invoices list
-        print_fiche_titre($langs->trans("SupplierPreview"));
+        print load_fiche_titre($langs->trans("SupplierPreview"));
 
         print '<table class="noborder" width="100%">';
 

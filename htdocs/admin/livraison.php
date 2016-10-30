@@ -68,7 +68,7 @@ if ($action == 'updateMask')
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free=GETPOST('DELIVERY_FREE_TEXT','alpha');
+    $free=GETPOST('DELIVERY_FREE_TEXT');	// No alpha here, we want exact string
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
@@ -208,7 +208,7 @@ llxHeader("","");
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 
 
@@ -237,7 +237,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  * Livraison numbering model
  */
 
-print_titre($langs->trans("DeliveryOrderNumberingModules"));
+print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -340,7 +340,7 @@ print '</table>';
  *  Documents Models for delivery
  */
 print '<br>';
-print_titre($langs->trans("DeliveryOrderModel"));
+print load_fiche_titre($langs->trans("DeliveryOrderModel"));
 
 // Defini tableau def de modele
 $type="delivery";
@@ -487,7 +487,7 @@ print '</table>';
  *  Autres Options
  */
 print "<br>";
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -504,6 +504,16 @@ print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnDeliveryReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="DELIVERY_FREE_TEXT" class="flat" cols="120">'.$conf->global->DELIVERY_FREE_TEXT.'</textarea>';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

@@ -243,7 +243,7 @@ if ($action == 'create')
 {
 	$account=new Account($db);
 
-	print_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
 
     if ($conf->use_javascript_ajax)
     {
@@ -579,7 +579,7 @@ else
 
 		// State
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
-		if ($account->fk_departement > 0) print getState($account->fk_departement);
+		if ($account->state_id > 0) print getState($account->state_id);
 		print '</td></tr>';
 
 		// Conciliate
@@ -777,7 +777,7 @@ else
         $account = new Account($db);
         $account->fetch(GETPOST('id','int'));
 
-        print_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
+        print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
 
         if ($conf->use_javascript_ajax)
         {

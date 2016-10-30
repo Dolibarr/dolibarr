@@ -204,7 +204,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td>';
 		print '</tr>';
 
 		// Nature
@@ -260,7 +260,7 @@ if ($id > 0 || ! empty($ref))
 
 		//if (count($prodsfather) > 0)
 		//{
-			print_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ParentProduct').'</td>';
@@ -308,7 +308,7 @@ if ($id > 0 || ! empty($ref))
 		//if (count($prods_arbo) > 0)
 		//{
 			$atleastonenotdefined=0;
-			print_fiche_titre($langs->trans("ProductAssociationList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductAssociationList"),'','').'<br>';
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
@@ -458,7 +458,7 @@ if ($id > 0 || ! empty($ref))
 			$rowspan=1;
 			if (! empty($conf->categorie->enabled)) $rowspan++;
 
-	        print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
+	        print load_fiche_titre($langs->trans("ProductToAddSearch"),'','');
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST">';
 			print '<table class="border" width="100%"><tr><td>';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

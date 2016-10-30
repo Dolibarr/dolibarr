@@ -5,7 +5,7 @@ Sendings=Sūtījumi
 AllSendings=All Shipments
 Shipment=Sūtījums
 Shipments=Sūtījumi
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=Sūtījumu sadaļa
 ListOfSendings=Sūtījumu saraksts
@@ -26,8 +26,8 @@ QtyToShip=Daudzums, kas jānosūta
 QtyReceived=Saņemtais daudzums
 KeepToShip=Vēl jāpiegādā
 OtherSendingsForSameOrder=Citas sūtījumiem uz šo rīkojumu
-DateSending=Datums nosūtot kārtība
-DateSendingShort=Datums nosūtot kārtība
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Sūtījumiem uz šo rīkojumu
 SendingsAndReceivingForSameOrder=Sūtījumiem un Receivings par šo rīkojumu
 SendingsToValidate=Sūtījumi apstiprināšanai,
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Nozvejas klienta

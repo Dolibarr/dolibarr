@@ -88,6 +88,7 @@ function getServerTimeZoneInt($refgmtdate='now')
         if ($refgmtdate == 'now') $newrefgmtdate=$yearref.'-'.$monthref.'-'.$dayref;
         elseif ($refgmtdate == 'summer') $newrefgmtdate=$yearref.'-08-01';
         else $newrefgmtdate=$yearref.'-01-01';
+        $newrefgmtdate.='T00:00:00+00:00';
         $localtz = new DateTimeZone(getServerTimeZoneString());
         $localdt = new DateTime($newrefgmtdate, $localtz);
         $tmp=-1*$localtz->getOffset($localdt);
@@ -97,30 +98,6 @@ function getServerTimeZoneInt($refgmtdate='now')
     {
     	$tmp=0;
     	dol_print_error('','PHP version must be 5.3+');
-    	/*
-        // Method 2 (does not include daylight, not supported by adodb)
-        if ($refgmtdate == 'now')
-        {
-            if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
-            $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
-            if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
-            else $daylight=0;
-            $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            return 'unknown';    // For true result
-        }
-        elseif ($refgmtdate == 'summer')
-        {
-            if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
-            $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
-            if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
-            else $daylight=0;
-            $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            return 'unknown';    // For true result
-        }
-        else $tmp=dol_mktime(0,0,0,1,1,1970);
-        */
     }
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
@@ -167,7 +144,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30"", 'allhourmin': total delay hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
+ *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30", 'allwithouthour': total delay days without hour part like "2 days", 'allhourmin': total delay with format hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -180,7 +157,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-	if ($format == 'all' || $format == 'allhour' || $format == 'allhourmin')
+	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
 	{
 		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
@@ -272,6 +249,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 /**
  *	Convert a string date into a GM Timestamps date
+ *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
  *	@param	string	$string		Date in a string
  *				     	        YYYYMMDD
@@ -306,8 +284,8 @@ function dol_stringtotime($string, $gm=1)
         $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
     }
     else if (
-    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format RFC3339
-		|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
+    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+    	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
    		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ
     )
     {

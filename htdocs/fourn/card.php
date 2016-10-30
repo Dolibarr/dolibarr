@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,6 +263,15 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
+	// Categories
+	if (! empty($conf->categorie->enabled))
+	{
+    	print '<tr><td>' . $langs->trans("Categories") . '</td>';
+    	print '<td colspan="3">';
+    	print $form->showCategories($object->id, 'supplier', 1);
+    	print "</td></tr>";
+	}
+
 	// Other attributes
 	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -421,6 +431,7 @@ if ($object->id > 0)
     			print '</td></tr>';
 			}
 
+			$var = True;
 			while ($i < $num && $i <= $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
@@ -494,6 +505,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
+			$var=True;
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);

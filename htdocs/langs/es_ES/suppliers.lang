@@ -42,5 +42,5 @@ SentToSuppliers=Enviado a proveedores
 ListOfSupplierOrders=Listado de pedidos a proveedor
 MenuOrdersSupplierToBill=Pedidos a proveedor a facturar
 NbDaysToDelivery=Tiempo de entrega en días
-DescNbDaysToDelivery=El plazo mayor se visualiza el el listado de pedidos de productos
-UseDoubleApproval=Usar aprobación doble (la segunda aprobación puede ser realizada por un usuario con el permiso dedicado)
+DescNbDaysToDelivery=El mayor retraso en las entregas de productos de este pedido
+UseDoubleApproval=Usar doble aprobación si la base imponible (sin IVA) es mayor que (La segunda aprobación puede ser realizada por cualquier usuario con permisos. Dejar a 0 para que no haya doble aprobación)

@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Jei duomenų bazė jau yra, eikite atgal ir
 WarningBrowserTooOld=Per sena naršyklės versiją. Rekomenduojama atnaujinti savo naršyklę į naujausią versiją Firefox, Chrome ar Opera.
 PHPVersion=PHP versija
 YouCanContinue=Galite tęsti toliau ...
-PleaseBePatient=Prašau, būkite kantrūs ...
 License=Naudojant licenciją
 ConfigurationFile=Konfigūracijos failas
 WebPagesDirectory=Katalogas, kur saugomi web tinklalapiai

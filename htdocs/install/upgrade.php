@@ -63,6 +63,7 @@ $ignoredbversion=(GETPOST('ignoredbversion','',3)=='ignoredbversion')?GETPOST('i
 
 $langs->load("admin");
 $langs->load("install");
+$langs->load("other");
 $langs->load("errors");
 
 if ($dolibarr_main_db_type == "mysql") $choix=1;

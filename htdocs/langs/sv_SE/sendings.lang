@@ -5,7 +5,7 @@ Sendings=Transporter
 AllSendings=All Shipments
 Shipment=Sändning
 Shipments=Transporter
-ShowSending=Visa skickade
+ShowSending=Show Shipments
 Receivings=Kvitto
 SendingsArea=Transporter område
 ListOfSendings=Lista över transporter
@@ -26,8 +26,8 @@ QtyToShip=Antal till-fartyg
 QtyReceived=Antal mottagna
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Andra sändningar för denna beställning
-DateSending=Datum skicka ordning
-DateSendingShort=Datum skicka ordning
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Transporter för denna beställning
 SendingsAndReceivingForSameOrder=Transporter och receivings för denna order
 SendingsToValidate=Transporter för att validera
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Produktkvantitet till öppnade kundorder
 ProductQtyInSuppliersOrdersRunning=Produktkvantitet till öppnade leverantörsorder
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Produktkvantitet från öppnade leverantörsorder är redan skickade
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Fångst av kunden

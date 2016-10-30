@@ -107,7 +107,7 @@ $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+r
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='243,243,243';
 $colortext='40,40,40';
-$fontsize='12';
+$fontsize='13';
 $fontsizesmaller='11';
 $usegradient=1;
 
@@ -418,6 +418,7 @@ textarea.centpercent {
 }
 .center {
     text-align: center;
+    margin: 0px auto;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -486,6 +487,11 @@ div.confirmmessage {
 	z-index: 999999;
 }
 */
+.googlerefreshcal {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -534,12 +540,15 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	margin-top: 12px;
-	margin-bottom: 8px;
+	/* margin-top: 12px;
+	margin-bottom: 8px; */
 	display: table;
 	table-layout: fixed;
 }
 #id-right, #id-left {
+	padding-top: 12px;
+	padding-bottom: 8px;
+
 	display: table-cell;
 	float: none;
 	vertical-align: top;
@@ -547,6 +556,12 @@ td.showDragHandle {
 #id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
+#id-left {
+/*	background-color: #fff;
+	border-right: 1px #888 solid;
+	height: calc(100% - 50px);*/
+}
+
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
@@ -602,7 +617,10 @@ div.ficheaddleft {
 	padding-top: 1px;
 	padding-bottom: 1px;
 }
-
+div.attacharea {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -759,6 +777,9 @@ div.tmenucenter
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
+}
+div.menu_titre {
+	padding-top: 5px;
 }
 .mainmenuaspan
 {
@@ -931,8 +952,7 @@ form#login {
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	margin-left: 10px;
-	margin-right: 10px;
+	margin: 0px auto;  /* Center */
 	padding-left:6px;
 	padding-right:6px;
 	padding-top:16px;
@@ -948,18 +968,13 @@ form#login {
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
-	border-radius: 8px;
+	border-radius: 5px;
 	border:solid 1px rgba(80,80,80,.4);
 
 	border-top:solid 1px f8f8f8;
-	/*
-	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	*/
+}
+.login_main_message {
+	text-align: center;
 }
 div#login_left, div#login_right {
 	display: inline-block;
@@ -1035,9 +1050,10 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	height: 16px;
 }
 .alogin, .alogin:hover {
-	color: #888 !important;
+	color: #<?php echo $colortextbackvmenu; ?> !important;
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
+	padding-top: 2px;
 }
 .alogin:hover {
 	text-decoration:underline !important;
@@ -1051,6 +1067,8 @@ img.login, img.printer, img.entity {
 }
 img.loginphoto {
 	border-radius: 2px;
+	width: 16px;
+    height: 16px;
 }
 .span-icon-user {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
@@ -1100,8 +1118,31 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
-
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
+.vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenubookmarks
+{
+    border-top: 1px solid #BBB;
+}
+.vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
+{
+	border-bottom: 1px solid #BBB;
+}
+.vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
+{
+	margin: 0 0 8px 2px;
+}
+.vmenu div.blockvmenuend, div.blockvmenusearch
+{
+	padding-bottom: 5px;
+}
+.vmenu div.blockvmenulogo
+{
+	padding-bottom: 10px;
+}
+div.blockvmenubookmarks
+{
+	padding-bottom: 6px !important;
+}
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
 {
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
@@ -1111,19 +1152,21 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    margin: 1px 0px 8px 2px;
+    /* margin: 1px 0 8px 2px; */
+    margin: 0 0 0 2px;
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
     border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
+/*    border-bottom: 1px solid #BBB;
     border-top: 1px solid #BBB;
     border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+  */  
 }
 
 div.blockvmenusearch
@@ -1140,14 +1183,14 @@ div.blockvmenusearch
 	background: rgb(<?php echo $colorbackvmenu2; ?>);
 
     border-left: 1px solid #AAA;
-    border-right: 1px solid #CCC;
-    border-bottom: 1px solid #CCC;
-    border-top: 1px solid #CCC;
-    border-radius: 4px;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
+    /*border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    box-shadow: 3px 3px 4px #DDD;*/
 }
 
 div.blockvmenusearch > form > div {
@@ -1518,27 +1561,16 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
-    /*-moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
-
-	background: rgb(<?php echo $colorbackvmenu2; ?>);
-
-	border-right: 1px solid #BBB;
-	border-left: 1px solid #BBB;
-	border-top: 1px solid #CCC;
-	*/
-
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
+	border-bottom: 0px !important;
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
 
 	background-image: none !important;
 }
-
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
@@ -2074,13 +2106,11 @@ div.pagination li.pagination a,
 div.pagination li.pagination span {
 <?php if (empty($conf->dol_use_jmobile)) { ?>
   padding: 6px 12px;
-<?php } ?>
+  border-color: #ccc;
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
-
-  border-color: #ccc;
 
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -2089,6 +2119,7 @@ div.pagination li.pagination span {
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
+<?php } ?>
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -2258,6 +2289,9 @@ td.nobottom, td.nobottom {
 }
 div.liste_titre .tagtd {
 	vertical-align: middle;
+}
+div.liste_titre {
+	box-shadow: 2px 2px 4px #CCC;
 }
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
@@ -2688,8 +2722,12 @@ table.valid {
 	border-radius: 4px;
 }
 #tiptip_content {
-	background-color: rgb(255,255,255);
-	background-color: rgba(255,255,255,0.95);
+-moz-border-radius:0px;
+-webkit-border-radius: 0px;
+border-radius: 0px;
+background-color: rgb(255,255,255);
+/*	background-color: rgb(255,255,255);
+	background-color: rgba(255,255,255,0.95);*/
 	line-height: 1.4em;
 	min-width: 200px;
 }
@@ -2819,6 +2857,8 @@ table.cal_month    { border-spacing: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 3px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding: 0px; }
+.cal_impair        { background: #F8F8F8; }
+.cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px;
@@ -3614,7 +3654,9 @@ ul.ulmenu {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
-
+.ui-btn-icon-right {
+	border-right: 1px solid #ccc !important;
+}
 .ui-body-c {
 	border: 1px solid #ccc;
 	text-shadow: none;
@@ -3638,14 +3680,14 @@ ul.ulmenu {
 div.tabsElem a.tab {
 	background: transparent;
 }
-.ui-controlgroup-horizontal .ui-btn.ui-first-child {
+/*.ui-controlgroup-horizontal .ui-btn.ui-first-child {
 -webkit-border-top-left-radius: 6px;
 border-top-left-radius: 6px;
 }
 .ui-controlgroup-horizontal .ui-btn.ui-last-child {
 -webkit-border-top-right-radius: 6px;
 border-top-right-radius: 6px;
-}
+}*/
 .alilevel1 {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
@@ -3676,7 +3718,6 @@ border-top-right-radius: 6px;
 .public_border {
 	border: 1px solid #888;
 }
-.public_liste_titre {
 
 
 
@@ -3688,6 +3729,15 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 767px)
 {
+	.mainmenuaspan {
+    	display: none;
+    }
+    li.tmenu, li.tmenusel {
+    	min-width: 32px;
+    }
+    div.mainmenu {
+    	min-width: auto;
+    }
 	.imgopensurveywizard { width:95%; height: auto; }
 }
 

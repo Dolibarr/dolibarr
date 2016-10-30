@@ -125,6 +125,7 @@ CloneOrder=Cloner commande
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
 DispatchSupplierOrder=Réception de la commande fournisseur %s
 FirstApprovalAlreadyDone=Premier niveau d'approbation déjà réalisé
+SecondApprovalAlreadyDone=Deuxième niveau d'approbation déjà réalisé
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Responsable envoi commande client

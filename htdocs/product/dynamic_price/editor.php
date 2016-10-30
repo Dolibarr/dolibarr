@@ -163,7 +163,7 @@ if ($action == 'delete')
 
 //Header
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-print_fiche_titre($langs->trans("PriceExpressionEditor"));
+print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 $form = new Form($db);
 
 //Form/Table

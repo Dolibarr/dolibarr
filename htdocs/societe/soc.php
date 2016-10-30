@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load("companies");
@@ -48,7 +49,8 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
+if (! empty($conf->categories->enabled)) $langs->load("categories");
+if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
@@ -230,7 +232,7 @@ if (empty($reshook))
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
-        	$object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
         }
 		else $object->canvas=$canvas;
 
@@ -411,13 +413,23 @@ if (empty($reshook))
                         }
                     }
 
-					// Categories association
+					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
 					if (!empty( $custcats )) {
 						$cat = new Categorie( $db );
 						foreach ($custcats as $id_category) {
 							$cat->fetch( $id_category );
 							$cat->add_type( $object, 'customer' );
+						}
+					}
+
+					// Supplier categories association
+					$suppcats = GETPOST('suppcats', 'array');
+					if (!empty($suppcats)) {
+						$cat = new Categorie($db);
+						foreach ($suppcats as $id_category) {
+							$cat->fetch($id_category);
+							$cat->add_type($object, 'supplier');
 						}
 					}
 
@@ -525,7 +537,7 @@ if (empty($reshook))
                     $error = $object->error; $errors = $object->errors;
                 }
 
-				// Categories association
+				// Customer categories association
 				// First we delete all categories association
 				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
 				$sql .= ' WHERE fk_soc = ' . $object->id;
@@ -538,6 +550,22 @@ if (empty($reshook))
 					foreach ($categories as $id_category) {
 						$cat->fetch( $id_category );
 						$cat->add_type( $object, 'customer' );
+					}
+				}
+
+				// Supplier categories association
+				// First we delete all categories association
+				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_fournisseur';
+				$sql .= ' WHERE fk_soc = ' . $object->id;
+				$db->query($sql);
+
+				// Then we add the associated categories
+				$categories = GETPOST('suppcats', 'array');
+				if (!empty($categories)) {
+					$cat = new Categorie($db);
+					foreach ($categories as $id_category) {
+						$cat->fetch($id_category);
+						$cat->add_type($object, 'supplier');
 					}
 				}
 
@@ -675,56 +703,11 @@ if (empty($reshook))
     $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-
-    /*
-     * Generate document
-     */
-    if ($action == 'builddoc')  // En get ou en post
-    {
-        if (is_numeric(GETPOST('model')))
-        {
-            $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
-        }
-        else
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
-            $object->fetch($socid);
-
-            // Define output language
-            $outputlangs = $langs;
-            $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-            $result=thirdparty_doc_create($db, $object, '', GETPOST('model','alpha'), $outputlangs);
-            if ($result <= 0)
-            {
-                dol_print_error($db,$result);
-                exit;
-            }
-        }
-    }
-
-    // Remove file in doc form
-    else if ($action == 'remove_file')
-    {
-    	if ($object->fetch($socid))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    		$langs->load("other");
-    		$upload_dir = $conf->societe->dir_output;
-    		$file = $upload_dir . '/' . GETPOST('file');
-    		$ret=dol_delete_file($file,0,0,0,$object);
-    		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	}
-    }
+    // Actions to build doc
+    $id = $socid;
+    $upload_dir = $conf->societe->dir_output;
+    $permissioncreate=$user->rights->societe->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -740,7 +723,7 @@ $formcompany = new FormCompany($db);
 
 if ($socid > 0 && empty($object->id))
 {
-    $res=$object->fetch($socid);
+    $result=$object->fetch($socid);
 	if ($result <= 0) dol_print_error('',$object->error);
 }
 
@@ -896,7 +879,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -1230,7 +1213,7 @@ else
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
+            $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
 
@@ -1245,13 +1228,28 @@ else
 		}
 
 		// Categories
-	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-	    {
-			print '<tr><td class="toptd">'.fieldLabel('Categories','custcats').'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
-			print "</td></tr>";
-	    }
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			$langs->load('categories');
+
+			// Customer
+			if ($object->prospect || $object->client) {
+				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
+					null, "90%");
+				print "</td></tr>";
+			}
+
+			// Supplier
+			if ($object->fournisseur) {
+				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
+					null, "90%");
+				print "</td></tr>";
+			}
+		}
 
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
@@ -1286,7 +1284,7 @@ else
          * Edition
          */
 
-        //print_fiche_titre($langs->trans("EditCompany"));
+        //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
@@ -1331,7 +1329,7 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
             if (GETPOST('name'))
             {
@@ -1761,19 +1759,36 @@ else
             }
 
 			// Categories
-		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-		    {
-	            print '<tr><td>'.fieldLabel('Categories', 'custcats').'</td>';
-		        print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
-				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, Categorie::TYPE_CUSTOMER );
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
+			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+			{
+				// Customer
+				if ($object->prospect || $object->client) {
+					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
+					print '<td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print "</td></tr>";
 				}
-				print $form->multiselectarray( 'custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-				print "</td></tr>";
-		    }
+
+				// Supplier
+				if ($object->fournisseur) {
+					print '<tr><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
+					print '<td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print "</td></tr>";
+				}
+			}
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
@@ -1859,11 +1874,11 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id)
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1, 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
 	    }
 
         dol_htmloutput_errors($error,$errors);
@@ -2207,13 +2222,24 @@ else
         }
 
 		// Tags / categories
-	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-	    {
-	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
-			print '<td colspan="3">';
-			print $form->showCategories( $object->id, 'customer', 1 );
-			print "</td></tr>";
-	    }
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			// Customer
+			if ($object->prospect || $object->client) {
+				print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
+				print '<td colspan="3">';
+				print $form->showCategories($object->id, 'customer', 1);
+				print "</td></tr>";
+			}
+
+			// Supplier
+			if ($object->fournisseur) {
+				print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
+				print '<td colspan="3">';
+				print $form->showCategories($object->id, 'supplier', 1);
+				print "</td></tr>";
+			}
+		}
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
@@ -2383,7 +2409,7 @@ else
 			$modelmail='thirdparty';
 
 			print '<br>';
-			print_titre($langs->trans($titreform));
+			print load_fiche_titre($langs->trans($titreform));
 
 			// Define output language
 			$outputlangs = $langs;
@@ -2488,7 +2514,7 @@ else
 
 	            $var=true;
 
-	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

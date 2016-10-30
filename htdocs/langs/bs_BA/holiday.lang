@@ -130,7 +130,6 @@ nbJours=Broj dana
 TitleAdminCP=Configuration of Leaves
 NoticePeriod=Notice period
 #Messages
-Hello=Zdravo
 HolidaysToValidate=Validate leave requests
 HolidaysToValidateBody=Below is a leave request to validate
 HolidaysToValidateDelay=This leave request will take place within a period of less than %s days.

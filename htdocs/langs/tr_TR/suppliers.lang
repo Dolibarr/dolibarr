@@ -43,4 +43,4 @@ ListOfSupplierOrders=Tedarikçi siparişleri listesi
 MenuOrdersSupplierToBill=Faturalanacak tedarikçi siparişleri
 NbDaysToDelivery=Gün olarak teslim süresi
 DescNbDaysToDelivery=Bu siparişteki en büyük teslimat gecikmesi olan ürünler
-UseDoubleApproval=İkili onay kullanın (ikinci onay özel izinli herhangi bir kullanıcı tarafından yapılabilir)
+UseDoubleApproval=Tutar (vergisiz) daha yüksekse çifte onaylama kullan (İkinci onay izin atanmış herhangi bir kullanıcı tarafından yapılabilir. Çifte onaylama olmaması için 0 a ayarlayın)

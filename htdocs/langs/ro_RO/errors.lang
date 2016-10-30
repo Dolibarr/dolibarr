@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Completaţi valorile pentru lista checkbox
 ErrorNoValueForRadioType=Completaţi valorile pentru lista radio
 ErrorBadFormatValueList=Valorile din lista nu pot aveae mai mult de o virgulă: <b>% s </ b>, dar trebuie să aibă cel puțin una: cheie, valoare
 ErrorFieldCanNotContainSpecialCharacters=<b>Câmp %s</b> trebuie să nu conţine caractere speciale.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Câmpul <b>%s</b> nu trebuie să conțină caractere speciale, nici litere mari.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Modul de contabilitate neactivat 
 ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a 
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
 ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
 ErrorWrongValueForField=Valoarea greşit pentru <b>%s</b> numărul de câmp (valoarea <b>"%s"</b> nu se potriveste cu regula <b>%s</b> regex)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoarea nu este o ref <b>%s</b> existente)
 ErrorsOnXLines=Erori pe liniile sursă <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Programul antivirus nu a validet fisierul (fisierul ar putea fi infectat cu un virus)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

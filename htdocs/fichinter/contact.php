@@ -106,7 +106,7 @@ $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
-llxHeader();
+llxHeader('',$langs->trans("Intervention"));
 
 // Mode vue et edition
 

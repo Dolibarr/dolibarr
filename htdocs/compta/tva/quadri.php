@@ -190,12 +190,12 @@ llxHeader();
 $textprevyear="<a href=\"quadri.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"quadri.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print load_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 
 echo '<table width="100%">';
 echo '<tr><td>';
-print_fiche_titre($langs->trans("VATSummary"));
+print load_fiche_titre($langs->trans("VATSummary"));
 echo '</td></tr>';
 
 echo '<tr>';

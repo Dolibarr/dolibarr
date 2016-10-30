@@ -105,7 +105,7 @@ class html_cerfafr extends ModeleDon
 			else
 			{
 				$donref = dol_sanitizeFileName($don->ref);
-				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2,0,1,$don,'donation') . "/" . dol_sanitizeFileName($don->ref);
+				$dir = $conf->don->dir_output . "/" . $donref;
 				$file = $dir . "/" . $donref . ".html";
 			}
 

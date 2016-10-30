@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Wanneer de database al bestaat, ga dan teru
 WarningBrowserTooOld=Browser-versie te oud. Upgrade je browser naar een recente versie; Firefox, Chrome of Opera worden warm aanbevolen.
 PHPVersion=PHP versie
 YouCanContinue=U kunt doorgaan
-PleaseBePatient=Even geduld a.u.b.
 License=Gebruikerslicentie
 ConfigurationFile=Configuratiebestand
 WebPagesDirectory=De map waar webpagina's worden opgeslagen

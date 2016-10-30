@@ -511,7 +511,7 @@ class Menubase
         $sql.= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-//$tmp1=dol_microtime_float();
+//$tmp1=microtime(true);
 //print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -575,7 +575,7 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-//$tmp4=dol_microtime_float();
+//$tmp4=microtime(true);
 //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu

@@ -5,7 +5,7 @@ Sendings=การจัดส่ง
 AllSendings=ทั้งหมดจัดส่ง
 Shipment=การส่งสินค้า
 Shipments=การจัดส่ง
-ShowSending=แสดงการส่ง
+ShowSending=Show Shipments
 Receivings=รายรับ
 SendingsArea=พื้นที่การจัดส่ง
 ListOfSendings=รายชื่อของการจัดส่ง
@@ -26,8 +26,8 @@ QtyToShip=จำนวนที่จะจัดส่ง
 QtyReceived=จำนวนที่ได้รับ
 KeepToShip=ยังคงอยู่ในการจัดส่ง
 OtherSendingsForSameOrder=การจัดส่งอื่น ๆ สำหรับการสั่งซื้อนี้
-DateSending=วันที่ส่งคำสั่งซื้อ
-DateSendingShort=วันที่ส่งคำสั่งซื้อ
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=การจัดส่งสำหรับการสั่งซื้อนี้
 SendingsAndReceivingForSameOrder=การจัดส่งและ Receivings สำหรับการสั่งซื้อนี้
 SendingsToValidate=ในการตรวจสอบการจัดส่ง
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=ปริมาณสินค้าเข้
 ProductQtyInSuppliersOrdersRunning=ปริมาณสินค้าลงในคำสั่งเปิดซัพพลายเออร์
 ProductQtyInShipmentAlreadySent=ปริมาณสินค้าจากการสั่งซื้อของลูกค้าที่เปิดส่งแล้ว
 ProductQtyInSuppliersShipmentAlreadyRecevied=ปริมาณการสั่งซื้อสินค้าจากซัพพลายเออร์ที่เปิดรับอยู่แล้ว
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=จับลูกค้า

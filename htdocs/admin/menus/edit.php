@@ -270,7 +270,7 @@ if ($action == 'create')
     });
     </script>';
 
-    print_fiche_titre($langs->trans("NewMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("NewMenu"),'','title_setup');
 
     print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -379,7 +379,7 @@ if ($action == 'create')
 }
 elseif ($action == 'edit')
 {
-    print_fiche_titre($langs->trans("ModifMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("ModifMenu"),'','title_setup');
     print '<br>';
 
     print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';

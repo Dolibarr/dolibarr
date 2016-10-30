@@ -6,27 +6,40 @@
     "homepage": "http://www.dolibarr.org",
     "license": "GPL-3.0+",
     "support": {
-        "issues": "https://doliforge.org/projects/dolibarr",
+        "issues": "https://github.com/Dolibarr/dolibarr/issues",
         "forum": "http://www.dolibarr.org/forum",
-        "wiki": "http://wiki.dolibarr.org"
+        "wiki": "http://wiki.dolibarr.org",
+        "irc": "irc://chat.freenode.net/dolibarr",
+        "source": "https://github.com/Dolibarr/dolibarr"
     },
     "require": {
         "php": ">=5.3.0",
-        "ext-gd": "*",
         "ext-curl": "*",
-        "restler/framework": "3.0.*"
+        "ccampbell/chromephp": "^4.1",
+        "ckeditor/ckeditor": "4.3.3",
+        "mobiledetect/mobiledetectlib": "2.8.3",
+        "phpoffice/phpexcel": "1.8.0",
+        "restler/framework": "^3.0",
+        "tecnick.com/tcpdf": "6.2.6",
+        "raven/raven": "^0.12.0",
+        "firephp/firephp-core": "^0.4.0"
     },
     "suggest": {
-        "ext-mysqli": "*",
-        "ext-pgsql": "*",
-        "ext-mssql": "*",
-        "ext-pdo_sqlite": "*",
-        "ext-imagick": "*",
-        "ext-mcrypt": "*",
-        "ext-openssl": "*",
-        "ext-mbstring": "*",
-        "ext-soap": "*",
-        "ext-zip": "*",
-        "ext-xml": "*"
+        "ext-mysqlnd": "To use with MySQL or MariaDB",
+        "ext-mysqli": "To use with MySQL or MariaDB",
+        "ext-pgsql": "To use with PostgreSQL",
+        "ext-mssql": "To use with MSSQL (experimental)",
+        "ext-pdo_sqlite": "To use with SQLite (experimental)",
+        "ext-gd": "Image manipulation (Required but maybe built-in PHP)",
+        "ext-imagick": "Image manipulation (TCPDF)",
+        "ext-mcrypt": "(Required but maybe built-in PHP)",
+        "ext-openssl": "Secure connections (Emails, SOAP…)",
+        "ext-mbstring": "Handle non UTF-8 databases",
+        "ext-soap": "Native SOAP",
+        "ext-zip": "ODT and Excel support",
+        "ext-xml": "Excel support"
+    },
+    "config": {
+        "vendor-dir": "htdocs/includes"
     }
 }

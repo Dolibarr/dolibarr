@@ -63,6 +63,7 @@ CloneOrder=Copiar o Pedido
 ConfirmCloneOrder=Tem certeza de que deseja clonar este<b>%s</b> ?
 DispatchSupplierOrder=Receber pedido de fornecedor %s
 FirstApprovalAlreadyDone=A primeira aprovação já feito
+SecondApprovalAlreadyDone=Segundo aprovação já feito
 TypeContact_commande_internal_SALESREPFOLL=Responsável do seguimento do pedido do cliente
 TypeContact_commande_internal_SHIPPING=Representante seguindo o envio
 TypeContact_commande_external_BILLING=Contato fatura cliente

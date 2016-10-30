@@ -33,9 +33,6 @@ class PaymentLoan extends CommonObject
 	public $element='payment_loan';			//!< Id that identify managed objects
 	public $table_element='payment_loan';	//!< Name of table without prefix where object is stored
 
-	var $id;
-	var $ref;
-
 	var $fk_loan;
 	var $datec='';
 	var $tms='';
@@ -46,8 +43,6 @@ class PaymentLoan extends CommonObject
 	var $amount_interest;
 	var $fk_typepayment;
 	var $num_payment;
-	var $note_private;
-	var $note_public;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

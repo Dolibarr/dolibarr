@@ -44,7 +44,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-print_fiche_titre($langs->trans("ExportsArea"));
+print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
 print $langs->trans("FormatedExportDesc2").' ';

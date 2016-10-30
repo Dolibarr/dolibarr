@@ -419,7 +419,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print $form->showrefnav($member,'id');
+		print $form->showrefnav($member,'id','','1','rowid','ref','','&type=3');
 		print '</td></tr>';
 
         // Login
@@ -641,7 +641,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	}
 
 	print '<br>';
-	print_fiche_titre($title,$linktocreate,'');
+	print load_fiche_titre($title,$linktocreate,'');
 
 	// Form to add record into a category
 	if ($showclassifyform)

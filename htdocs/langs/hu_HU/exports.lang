@@ -48,6 +48,7 @@ NoImportableData=No importálható adat (nincs modul meghatározások lehetővé
 FileSuccessfullyBuilt=Export generált fájl
 SQLUsedForExport=SQL kérés építésére használták exportfájlba
 LineId=Id sor
+LineLabel=Label of line
 LineDescription=Leírása vonal
 LineUnitPrice=Egységára vonal
 LineVATRate=Az áfa-kulcs online

@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - banks
+RejectCheck=Check rejection
+RejectCheckDate=Check rejection date
+CheckRejected=Check rejected
+CheckRejectedAndInvoicesReopened=Check rejected and invoices reopened

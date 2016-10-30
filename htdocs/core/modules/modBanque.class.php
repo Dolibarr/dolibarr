@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Banque
+ *	Class to describe and enable module Banque
  */
 class modBanque extends DolibarrModules
 {
@@ -76,7 +76,7 @@ class modBanque extends DolibarrModules
 		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_comptes.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
@@ -144,7 +144,7 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r]='Ecritures bancaires et releves';
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'ChequeOrTransferNumber','b.fk_bordereau'=>'ChequeBordereau','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
-		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.dateo'=>'Date','b.label'=>'Text','b.num_chq'=>'Text','b.fk_bordereau'=>'Text','-b.amount'=>'Number','b.amount'=>'Number','b.num_releve'=>'Text','b.datec'=>"Date","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","s.code_compta_fournisseur"=>"Text");
+		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.dateo'=>'Date','b.label'=>'Text','b.num_chq'=>'Text','b.fk_bordereau'=>'Text','-b.amount'=>'Numeric','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","s.code_compta_fournisseur"=>"Text");
 		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','b.num_chq'=>'account','b.fk_bordereau'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
 		$this->export_special_array[$r]=array('-b.amount'=>'NULLIFNEG','b.amount'=>'NULLIFNEG');
 	    if (empty($conf->fournisseur->enabled))
@@ -164,11 +164,11 @@ class modBanque extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
 		$this->export_permission[$r]=array(array("banque","export"));
-		$this->export_fields_array[$r]=array("bch.rowid"=>"bordereauid","bch.number"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
+		$this->export_fields_array[$r]=array("bch.rowid"=>"DepositId","bch.number"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
 			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","f.facnumber"=>"InvoiceRef"
 			);
-		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Number','b.num_releve'=>'Text','b.datec'=>"Date",
-			"bch.date_bordereau"=>"Date","bch.rowid"=>"Number","bch.number"=>"Number","bch.ref_ext"=>"Text","bch.amount"=>"Number","bch.nbcheque"=>"NumBer","bu.url_id"=>"Text","s.nom"=>"Text","f.facnumber"=>"Text"
+		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date",
+			"bch.date_bordereau"=>"Date","bch.rowid"=>"Numeric","bch.number"=>"Numeric","bch.ref_ext"=>"Text","bch.amount"=>"Numeric","bch.nbcheque"=>"Numeric","bu.url_id"=>"Text","s.nom"=>"Text","f.facnumber"=>"Text"
 			);
 		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
 			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.facnumber"=>"invoice");

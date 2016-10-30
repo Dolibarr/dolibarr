@@ -243,6 +243,8 @@ if ($action == 'add')
 		$object->percentage = $percentage;
 		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
+		$transparency=(GETPOST("transparency")=='on'?1:0);
+
 		$listofuserid=array();
 		if (! empty($_SESSION['assignedtouser'])) $listofuserid=json_decode($_SESSION['assignedtouser'], true);
 		$i=0;
@@ -251,10 +253,10 @@ if ($action == 'add')
 			if ($i == 0)	// First entry
 			{
 				if ($value['id'] > 0) $object->userownerid=$value['id'];
-				$object->transparency = (GETPOST("transparency")=='on'?1:0);
+				$object->transparency = $transparency;
 			}
 
-			$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+			$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>$transparency);
 
 			$i++;
 		}
@@ -405,7 +407,7 @@ if ($action == 'update')
 		if (! $datef && $percentage == 100)
 		{
 			$error++; $donotclearsession=1;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 
@@ -435,6 +437,8 @@ if ($action == 'update')
 			$object->userassigned[$val['id']]=array('id'=>$val['id'], 'mandatory'=>0, 'transparency'=>($user->id == $val['id'] ? $transparency : ''));
 			$i++;
 		}
+
+		$object->transparency = $transparency;		// We set transparency on event (even if we can also store it on each user, standard says this property is for event)
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
@@ -632,8 +636,8 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
-	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
-	else print_fiche_titre($langs->trans("AddAnAction"));
+	if (GETPOST("actioncode") == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"));
+	else print load_fiche_titre($langs->trans("AddAnAction"));
 
 	dol_fiche_head();
 
@@ -780,6 +784,8 @@ if ($action == 'create')
 		print '<td colspan="3">'.dolGetElementUrl($originid,$origin,1).'</td></tr>';
 		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
 		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="originid" size="10" value="'.GETPOST('originid').'">';
+		print '<input type="hidden" name="origin" size="10" value="'.GETPOST('origin').'">';
 	}
 
 	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',GETPOST("datep"),$reg))
@@ -967,7 +973,7 @@ if ($id > 0)
 						else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
 						{
 							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").show();	
+							jQuery(".repeateventBYDAY").show();
 						}
 						else
 						{
@@ -980,7 +986,7 @@ if ($id > 0)
 						init_repeat();
 					});
 				});
-				</script>';	
+				</script>';
 			print '</td></tr>';
 		}
 
@@ -1021,7 +1027,7 @@ if ($id > 0)
 			}
 		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
-		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'">'.$langs->trans("Busy");
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
 		print '</td></tr>';
 
 		// Realised by

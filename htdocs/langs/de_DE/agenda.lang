@@ -32,7 +32,6 @@ ActionsForUsersGroup=Ereignisse für Benutzer der Gruppe
 ActionAssignedTo=Ereignis zugewiesen an
 AllMyActions= Alle meine Ereignisse
 AllActions= Alle Ereignisse
-ViewList=Listenansicht
 ViewCal=Kalenderansicht
 ViewDay=Tagesansicht
 ViewWeek=Wochenansicht
@@ -75,8 +74,8 @@ AgendaUrlOptions2=<b>login=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> zugewiesene Ereignissen.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die Ausgabe auf die dem Projekte <b>PROJECT_ID</b> zugewiesene Ereignissen.
-AgendaShowBirthdayEvents=Zeige Geburtstage
-AgendaHideBirthdayEvents=Geburtstage ausblenden
+AgendaShowBirthdayEvents=Zeige Geburtstage von Kontakten
+AgendaHideBirthdayEvents=Geburtstage von Kontakten ausblenden
 Busy=Besetzt
 ExportDataset_event1=Liste Ereignisse des Kalender
 DefaultWorkingDays=Standard-Werktage der Woche (z.B. 1-5, 1-6)
@@ -91,13 +90,15 @@ ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
 ExtSiteNoLabel=Keine Beschreibung
 WorkingTimeRange=Arbeitszeit-Bereich
 WorkingDaysRange=Arbeitstag-Bereich
+VisibleTimeRange=Sichtbare Stunden Bereich
+VisibleDaysRange=Sichtbare Tage Bereich 
 AddEvent=Ereignis erstellen
 MyAvailability=Meine Verfügbarkeit
 ActionType=Ereignistyp
 DateActionBegin=Beginnzeit des Ereignis
-CloneAction=Aktion duplizieren
+CloneAction=Dupliziere Ereignis
 ConfirmCloneEvent=Möchten Sie dieses Ereignis <b>%s</b> wirklich duplizieren?
-RepeatEvent=wiederhole Aktion 
+RepeatEvent=Wiederhole Ereignis
 EveryWeek=Jede Woche
 EveryMonth=Jeden Monat
 DayOfMonth=Tag des Monat

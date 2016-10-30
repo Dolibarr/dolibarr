@@ -153,15 +153,16 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head($accounting);
 
-dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
+
+dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
 
 print '<table class="noborder" width="100%">';
 
@@ -291,7 +292,11 @@ print '</tr>';
 
 print "</table>\n";
 
-print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+
 print '</form>';
+
 llxFooter();
 $db->close();

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Per favore immetti un valore per la lista di control
 ErrorNoValueForRadioType=Per favore immetti un valore per la lista radio
 ErrorBadFormatValueList=La lista non può avere più di un'entrata : <u>%s</u>, ma ne serve almeno una: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Il campo <b>%s</b> non può contenere caratteri speciali.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Il campo <b>%s</b> non deve contenere caratteri speciali o maiuscole.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Modulo contabilità disattivato
 ErrorExportDuplicateProfil=Questo nome profilo già esiste per questo set di esportazione
 ErrorLDAPSetupNotComplete=La configurazione per l'uso di LDAP è incompleta
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Per questa funzionalità Javascript deve essere att
 ErrorPasswordsMustMatch=Le due password digitate devono essere identiche
 ErrorContactEMail=Si è verificato un errore tecnico. Si prega di contattare l'amministratore all'indirizzo <b>%s</b> <b>%s</b> indicando il codice di errore nel messaggio, o, meglio ancora, allegando uno screenshot della schermata attuale.
 ErrorWrongValueForField=Valore errato nel campo numero <b>%s</b> (il valore <b>'%s'</b>non corrisponde alla regex <b>%s</b>)
-ErrorFieldValueNotIn=Valore errato per il campo numerico <b>%s</b> (valore '<b>%s'</b>' non è un valore consentito nel campo <b>%s</b> della tabella<b>%s =%s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Valore errato nel campo numero <b>%s</b> (il valore <b>%s</b>non è un riferimento <b>%s</b> esistente)
 ErrorsOnXLines=Errori in <b>%s</b> righe del sorgente
 ErrorFileIsInfectedWithAVirus=Il programma antivirus non è stato in grado di convalidare il file (il file potrebbe essere infetto)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Il campo <b>%s</b> deve essere un valore numerico
 ErrorFieldMustBeAnInteger=Il campo <b>%s</b> deve essere un numero intero
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=I parametri di configurazione obbligatori non sono ancora stati definiti

@@ -48,6 +48,7 @@ NoImportableData=Nav importēt datus (ne modulis ar definīcijām, kas ļauj dat
 FileSuccessfullyBuilt=Eksporta fails izveidots
 SQLUsedForExport=SQL Pieprasījums izmanto, lai veidotu eksporta failu
 LineId=Līnijas id
+LineLabel=Label of line
 LineDescription=Līnijas apraksts
 LineUnitPrice=Vienības cenas līnija
 LineVATRate=PVN likme līnijas

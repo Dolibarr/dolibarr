@@ -131,7 +131,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_MODE=1;            	// Mode formulaire
     $IBS_PORTEUR=$EMAIL;
 	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
-    //$IBS_TXT="<div class="center"><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></div>";
     $IBS_TXT=' ';	// Use a space
     $IBS_BOUTPI=$langs->trans("Wait");
     //$IBS_BOUTPI='';

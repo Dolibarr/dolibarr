@@ -120,7 +120,7 @@ if ($prev_id)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print_fiche_titre($langs->trans("StatisticsByLineStatus"),'','');
+		print load_fiche_titre($langs->trans("StatisticsByLineStatus"),'','');
 		
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';

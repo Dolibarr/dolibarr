@@ -48,6 +48,7 @@ NoImportableData=Ingen importerbare data (ingen modul tillater dataimport)
 FileSuccessfullyBuilt=Eksportfil er opprettet
 SQLUsedForExport=SQL forespørsel brukt til å bygge eksportfilen
 LineId=Linje-ID
+LineLabel=Label of line
 LineDescription=Beskrivelse av linje
 LineUnitPrice=Enhetspris på linje
 LineVATRate=MVA-sats på linje

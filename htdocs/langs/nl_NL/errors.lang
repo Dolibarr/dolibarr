@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vul waarde in voor checkbox lijst
 ErrorNoValueForRadioType=Vul waarde in voor knoppen lijst
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Veld <b>%s</b> mag geen speciale tekens bevat.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Veld <b>%s</b> mag geen speciale tekens bevatten, noch hoofdletters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Geen boekhoudingsmodule geactiveerd
 ErrorExportDuplicateProfil=Deze profile naam bestaat al voor deze export set.
 ErrorLDAPSetupNotComplete=De Dolibarr-LDAP installatie is niet compleet.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript dient niet uitgeschakeld te zijn voor de
 ErrorPasswordsMustMatch=De twee ingevoerde wachtwoorden komen niet overeen.
 ErrorContactEMail=Er is een technische fout opgetreden. Neemt u alstublieft contact op met de beheerder via het e-mailadres <b>%s</b> en vermeld de volgende foutcode <b>%s</b> in uw bericht, of nog beter voeg een schermafbeelding van de pagina toe.
 ErrorWrongValueForField=Foutiefe waarde voor het veld nummer <b>%s</b> (waarde <b>%s</b> voldoet niet aan de reguliere expressieregel <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Verkeerde waarde voor veldnummer <b>%s</b> (waarde <b>'%s'</b> is geen <b>%s</b> bestaande ref)
 ErrorsOnXLines=Fouten op bronregels <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Het antivirusprogramma kon dit bestand niet valideren (het zou met een virus geïnfecteerd kunnen zijn)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Verplichte setup parameters zijn nog niet gedefinieerd

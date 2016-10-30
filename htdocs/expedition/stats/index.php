@@ -58,7 +58,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
 
 
 dol_mkdir($dir);
@@ -243,7 +243,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_users($userid,'userid',1);
+	print $form->select_dolusers($userid,'userid',1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';

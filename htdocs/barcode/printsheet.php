@@ -141,7 +141,7 @@ if ($action == 'builddoc')
 			$result=@include_once $newdir.$generator.'.modules.php';
 			if ($result) break;
 		}
-		
+
 		// Load barcode class for generating barcode image
 		$classname = "mod".ucfirst($generator);
 		$module = new $classname($db);
@@ -196,7 +196,7 @@ if ($action == 'builddoc')
 		// For labels
 		if ($mode == 'label')
 		{
-			
+
 			$txtforsticker="%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
 			$textleft=make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT)?$txtforsticker:$conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
 			$textheader=make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT)?'':$conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
@@ -261,7 +261,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("BarCodePrintsheet"));
 
-print_fiche_titre($langs->trans("BarCodePrintsheet"));
+print load_fiche_titre($langs->trans("BarCodePrintsheet"));
 print '<br>';
 
 print $langs->trans("PageToGenerateBarCodeSheets",$langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
@@ -379,7 +379,7 @@ print '</div>';
 print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
 print '<br>';
 print '<div class="showforthirdpartyselector">';
-print $form->select_company(GETPOST('socid'), 'socid', '', 1);
+print $form->select_company(GETPOST('socid'), 'socid', '', 1, 0, 0, array(), 0, 'minwidth300');
 print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 

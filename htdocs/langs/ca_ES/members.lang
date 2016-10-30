@@ -199,8 +199,8 @@ Entreprises=Empreses
 DOLIBARRFOUNDATION_PAYMENT_FORM=Per realitzar el pagament de la seva cotització per transferència bancària, visiteu la pàgina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribirse#Para_una_adhesi.C3.B3n_por_transferencia">http://wiki.dolibarr.org/index.php/Subscribirse</a>.<br>Per pagar amb targeta de crèdit o PayPal, feu clic al botó a la part inferior d'aquesta pàgina.<br><br>
 ByProperties=Per característiques
 MembersStatisticsByProperties=Estadístiques dels membres per característiques
-MembersByNature=This screen show you statistics on members by nature.
-MembersByRegion=This screen show you statistics on members by region.
+MembersByNature=Aquesta pantalla mostra les estadístiques de membres per naturalesa.
+MembersByRegion=Aquesta pantalla mostra les teves estadístiques de membres per regió.
 VATToUseForSubscriptions=Taxa d'IVA per les afiliacions
 NoVatOnSubscription=Sense IVA per a les afiliacions
 MEMBER_PAYONLINE_SENDEMAIL=E-Mail per advertir en cas de recepció de confirmació d'un pagament validat d'una afiliació

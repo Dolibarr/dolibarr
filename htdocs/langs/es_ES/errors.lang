@@ -63,9 +63,9 @@ ErrorSizeTooLongForVarcharType=Longitud del campo demasiado largo para el tipo c
 ErrorNoValueForSelectType=Los valores de la lista deben ser indicados
 ErrorNoValueForCheckBoxType=Los valores de la lista deben ser indicados
 ErrorNoValueForRadioType=Los valores de la lista deben ser indicados
-ErrorBadFormatValueList=Los valores de la lista no peudo contener mas de una coma : <u>%s</u>, pero necessita una: llave,valores
+ErrorBadFormatValueList=Los valores de la lista no pueden contener máss de una coma : <u>%s</u>, pero necesitan una llave y un valor
 ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales
-ErrorFieldCanNotContainSpecialNorUpperCharacters=El campo <b>%s</b> no debe contener mayúsculas ni caracteres especiales.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=El campo <b>%s</b> no debe contener carácteres especiales, ni caracteres en mayúsculas y no puede contener sólo números
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
 ErrorExportDuplicateProfil=El nombre de este perfil ya existe para este conjunto de exportación
 ErrorLDAPSetupNotComplete=La configuración Dolibarr-LDAP es incompleta.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript no debe estar desactivado para que esta 
 ErrorPasswordsMustMatch=Las 2 contraseñas indicadas deben corresponderse
 ErrorContactEMail=Se ha producido un error técnico. Contacte con el administrador al e-mail <b>%s</b>, indicando el código de error <b>%s</b> en su mensaje, o puede también adjuntar una copia de pantalla de esta página.
 ErrorWrongValueForField=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no cumple con la regla <b>%s</b>)
-ErrorFieldValueNotIn=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no es un valor en el campo <b>%s</b> de la tabla <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Valor incorrecto del campo número <b>%s</b> (el valor '<b>%s</b>' no es un valor disponible en el campo <b>%s</b> de la tabla <b>%s</b> )
 ErrorFieldRefNotIn=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no es una referencia existente en <b>%s</b>)
 ErrorsOnXLines=Errores en <b>%s</b> líneas fuente
 ErrorFileIsInfectedWithAVirus=¡El antivirus no ha podido validar este archivo (es probable que esté infectado por un virus)!
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Sin variable global seleccionada
 ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorFieldMustBeAnInteger=El campo <b>%s</b> debe de ser un entero
 ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
+ErrorOppStatusRequiredIfAmount=Ha indicado un importe estimado para esta oportunidad/lead. Debe indicar también su estado
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

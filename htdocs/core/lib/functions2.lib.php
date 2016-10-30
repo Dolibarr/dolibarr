@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2008-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2015       Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,9 @@ function dolGetModulesDirs($subdir='')
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         // Default core/modules dir
-        $modulesdir[$dirroot . '/core/modules'.$subdir.'/'] = $dirroot . '/core/modules'.$subdir.'/';
+        if ($type === 'main') {
+            $modulesdir[$dirroot . '/core/modules' . $subdir . '/'] = $dirroot . '/core/modules' . $subdir . '/';
+        }
 
         // Scan dir from external modules
         $handle=@opendir($dirroot);
@@ -1351,8 +1354,7 @@ function dol_print_reduction($reduction,$langs)
 
 /**
  * 	Return OS version.
- *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not
- *  necessarly OS PHP runs on.
+ *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
  *
  * 	@return		string			OS version
  */
@@ -1366,6 +1368,7 @@ function version_os()
  * 	Return PHP version
  *
  * 	@return		string			PHP version
+ *  @see		versionphparray
  */
 function version_php()
 {
@@ -1376,6 +1379,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
+ *  @see		versiondolibarrarray
  */
 function version_dolibarr()
 {
@@ -1790,10 +1794,10 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 /**
  *	Get an array with properties of an element
-*
-* @param string $element_type Element type. ex : project_task or object@modulext or object_under@module
-* @return array (module, classpath, element, subelement, classfile, classname)
-*/
+ *
+ * @param 	string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
+ * @return 	array					(module, classpath, element, subelement, classfile, classname)
+ */
 function getElementProperties($element_type)
 {
     // Parse element/subelement (ex: project_task)
@@ -1886,15 +1890,15 @@ function getElementProperties($element_type)
 }
 
 /**
- * Fetch an object with element_type and its id
+ * Fetch an object from its id and element_type
  * Inclusion classes is automatic
  *
- * @param	int     $element_id Element id
- * @param	string  $element_type Element type
- * @return 	object || 0 || -1 if error
+ * @param	int     	$element_id 	Element id
+ * @param	string  	$element_type 	Element type
+ * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id,$element_type) {
-
+function fetchObjectByElement($element_id, $element_type)
+{
     global $conf;
 	global $db,$conf;
 

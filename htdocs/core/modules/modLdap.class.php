@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Ldap
+ *	Class to describe and enable module Ldap
  */
 class modLdap extends DolibarrModules
 {
@@ -83,7 +83,7 @@ class modLdap extends DolibarrModules
 		13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
 		);
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

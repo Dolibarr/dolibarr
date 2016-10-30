@@ -45,24 +45,15 @@ class Expedition extends CommonObject
 	public $table_element="expedition";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
 	var $socid;
 	var $ref_customer;
-	var $ref_ext;
 	var $ref_int;
 	var $brouillon;
 	var $entrepot_id;
-	var $modelpdf;
-	var $origin;
-	var $origin_id;
 	var $lines=array();
-	var $shipping_method_id;
 	var $tracking_number;
 	var $tracking_url;
-	var $statut;
 	var $billed;
-	var $note_public;
-	var $note_private;
 	var $model_pdf;
 
 	var $trueWeight;
@@ -95,19 +86,7 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
-	// For Invoicing
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
 	var $listmeths;			// List of carriers
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 *	Constructor
@@ -391,7 +370,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * Create a expedition line with eat-by date
+	 * Create the detail (eat-by date) of the expedition line
 	 *
 	 * @param 	object		$line_ext		full line informations
 	 * @return	int							<0 if KO, >0 if OK
@@ -626,9 +605,12 @@ class Expedition extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			// TODO possibilite d'expedier a partir d'une propale ou autre origine
-			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid";
+			$sql = "SELECT cd.fk_product, cd.subprice,";
+			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
+			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -636,31 +618,51 @@ class Expedition extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-			    $cpt = $this->db->num_rows($resql);
-                for ($i = 0; $i < $cpt; $i++)
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++)
 				{
 					$obj = $this->db->fetch_object($resql);
-					if($obj->qty <= 0) continue;
-					dol_syslog(get_class($this)."::valid movement index ".$i);
+					if (empty($obj->edbrowid))
+					{
+						$qty = $obj->qty;
+					}
+					else
+					{
+						$qty = $obj->edbqty;
+					}
+					if ($qty <= 0) continue;
+					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = &$this;
-					// We decrement stock of product (and sub-products)
-					// We use warehouse selected for each line
-					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
-					if ($result < 0) { $error++; break; }
-
-					if (! empty($conf->productbatch->enabled))
+					
+					if (empty($obj->edbrowid))
 					{
-						$details=ExpeditionLineBatch::fetchAll($this->db,$obj->rowid);
-						if (! empty($details))
+						// line without batch detail
+						
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
+						if ($result < 0) {
+							$error++; break;
+						}
+					}
+					else
+					{
+						// line with batch detail
+						
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch);
+						if ($result < 0) {
+							$error++; break;
+						}
+						
+						// We update content of table llx_product_batch (will be rename into llx_product_stock_batch inantoher version)
+						// We can set livraison_batch to deprecated and adapt livraison to handle batch too (mouvS->_create also calls mouvS->_create_batch)
+						if (! empty($conf->productbatch->enabled))
 						{
-							foreach ($details as $dbatch)
-							{
-								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
-								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
-							}
+							$result=$mouvS->livraison_batch($obj->fk_origin_stock, $qty);		// ->fk_origin_stock = id into table llx_product_batch (will be rename into llx_product_stock_batch in another version)
+							if ($result < 0) { $error++; $this->errors[]=$mouvS->error; break; }
 						}
 					}
 				}
@@ -672,7 +674,7 @@ class Expedition extends CommonObject
 				return -2;
 			}
 		}
-
+		
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
@@ -843,7 +845,11 @@ class Expedition extends CommonObject
 			{
 				if ($value['q']>0)
 				{
-					$linebatch = new ExpeditionLineBatch($this->db);
+					// $value['q']=qty to move
+					// $value['id_batch']=id into llx_product_batch of record to move
+					//var_dump($value);
+
+				    $linebatch = new ExpeditionLineBatch($this->db);
 					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
 					if ($ret<0)
 					{
@@ -857,13 +863,16 @@ class Expedition extends CommonObject
 					{
 						// TODO
 					}
-
+					
+					//var_dump($linebatch);
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
 			$line->origin_line_id = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch=$tab;
+
+			//var_dump($line);
 			$this->lines[$num] = $line;
 		}
 	}
@@ -1146,9 +1155,9 @@ class Expedition extends CommonObject
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent";
-		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
+		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
-		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, ed.rowid as line_id";
+		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
@@ -1192,6 +1201,8 @@ class Expedition extends CommonObject
 				$line->details_entrepot[]     = $detail_entrepot;
 
                 $line->line_id          = $obj->line_id;
+                $line->rowid            = $obj->line_id;    // TODO deprecated
+                $line->id               = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
 				$line->fk_product     	= $obj->fk_product;
@@ -1200,6 +1211,7 @@ class Expedition extends CommonObject
                 $line->product_ref		= $obj->product_ref;
                 $line->product_label	= $obj->product_label;
 				$line->libelle        	= $obj->product_label;		// TODO deprecated
+				$line->product_tobatch  = $obj->product_tobatch;
 				$line->label			= $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;

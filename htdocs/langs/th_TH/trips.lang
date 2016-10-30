@@ -9,7 +9,7 @@ TripCard=บัตรรายงานค่าใช้จ่าย
 AddTrip=สร้างรายงานค่าใช้จ่าย
 ListOfTrips=รายชื่อของรายงานค่าใช้จ่าย
 ListOfFees=รายการค่าใช้จ่าย
-ShowTrip=Show expense report
+ShowTrip=แสดงรายงานค่าใช้จ่าย
 NewTrip=รายงานค่าใช้จ่ายใหม่
 CompanyVisited=บริษัท / มูลนิธิเข้าเยี่ยมชม
 Kilometers=กิโลเมตร
@@ -101,3 +101,6 @@ SaveTrip=ตรวจสอบรายงานค่าใช้จ่าย
 ConfirmSaveTrip=คุณแน่ใจหรือว่าต้องการตรวจสอบรายงานค่าใช้จ่ายนี้หรือไม่?
 
 NoTripsToExportCSV=ไม่มีรายงานค่าใช้จ่ายในการส่งออกในช่วงเวลานี้
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

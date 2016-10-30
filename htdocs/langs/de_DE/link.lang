@@ -1,8 +1,8 @@
-LinkANewFile=Verknüpfen Sie eine neue Datei / Dokument
+LinkANewFile=Verknüpfe eine neue Datei /Dokument
 LinkedFiles=Verknüpfte Dateien und Dokumente
-NoLinkFound=Keine eingetragenen Verknüpfungen
-LinkComplete=Die Datei wurde erfolgreich verknüpft
-ErrorFileNotLinked=Die Datei konnte nicht Verknüpft werden
-LinkRemoved=Die Verknüpfung %s wurde entfernt
-ErrorFailedToDeleteLink= Fehler beim Löschen des Links  '<b>%s</b>'
-ErrorFailedToUpdateLink= Fehler beim Aktualisieren der Verknüpfung  '<b>%s</b>'
+NoLinkFound=Keine  verknüpften Links
+LinkComplete=Die Datei wurde erfolgreich verlinkt
+ErrorFileNotLinked=Die Datei konnte nicht verlinkt werden
+LinkRemoved=Der Link %s wurde entfernt
+ErrorFailedToDeleteLink= Fehler beim entfernen des Links  '<b>%s</b>'
+ErrorFailedToUpdateLink= Fehler beim aktualisieren des Link  '<b>%s</b>'

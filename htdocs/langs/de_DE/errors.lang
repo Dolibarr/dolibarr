@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
 ErrorNoValueForRadioType=Bitte Wert für Radiobutton-Liste eingeben
 ErrorBadFormatValueList=Die Liste darf nicht mehr als ein <u>%s</u> enthalten, muss aber mindestens eines aus "llave,valores" beinhalten
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf weder Sonderzeichen noch Großbuchstaben enthalten.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen, Großbuchstaben und Zahlen enthalten.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
 ErrorExportDuplicateProfil=Dieser Profilname existiert bereits für dieses Exportprofil.
 ErrorLDAPSetupNotComplete=Der LDAP-Abgleich für dieses System ist nicht vollständig eingerichtet.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Diese Funktion erfordert aktiviertes JavaScript. Ak
 ErrorPasswordsMustMatch=Die eingegebenen Passwörter müssen identisch sein.
 ErrorContactEMail=Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie Ihren Administrator unter der folgenden E-Mail-Adresse <b>%s</b> und fügen Sie den Fehlercode <b>%s</b> in Ihrer Nachricht ein, oder (noch besser) fügen Sie einen Screenshot dieser Seite als Anhang bei.
 ErrorWrongValueForField=Falscher Wert für Feld Nr. <b>%s</b> (Wert '<b>%s</b>' passt nicht zur Regex-Regel <b>%s</b>)
-ErrorFieldValueNotIn=Nicht korrekter Wert für das Feld-Nummer <b>%s</b> (Wert: '<b>%s</b>' ist kein verfügbarer Wert im Feld <b>%s</b> der Tabelle <b>%s</b>
+ErrorFieldValueNotIn=Nicht korrekter Wert für das Feld Nummer <b>%s</b> (Wert '<b>%s</b>' ist kein verfügbarer Wert im Feld <b>%s</b> der Tabelle <b>%s</b>)
 ErrorFieldRefNotIn=Falscher Wert für Feldnummer <b>%s</b> (für den Wert <b>'%s'</b> besteht keine <b>%s</b> Referenz)
 ErrorsOnXLines=Fehler in <b>%s</b> Quellzeilen
 ErrorFileIsInfectedWithAVirus=Der Virenschutz konnte diese Datei nicht freigeben (eventuell ist diese mit einem Virus infiziert)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Keine globale Variable ausgewählt
 ErrorFieldMustBeANumeric=Feld <b>%s</b> muss ein numerischer Wert sein
 ErrorFieldMustBeAnInteger=Feld <b>%s</b> muss eine ganze Zahl sein
 ErrorMandatoryParametersNotProvided=Erforderliche(r) Parameter wird nicht angeboten
+ErrorOppStatusRequiredIfAmount=Sie legen einen geschätzten Betrag für diese Verkaufschance/Lead erfasst. Deshalb müssen Sie auch den Status eingeben
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

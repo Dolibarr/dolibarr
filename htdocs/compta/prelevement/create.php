@@ -106,7 +106,7 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 */
 
-print_fiche_titre($langs->trans("NewStandingOrder"));
+print load_fiche_titre($langs->trans("NewStandingOrder"));
 
 dol_fiche_head();
 
@@ -183,7 +183,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+    print load_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -248,7 +248,7 @@ else
  */
 $limit=5;
 
-print_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
+print load_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", p.datec";

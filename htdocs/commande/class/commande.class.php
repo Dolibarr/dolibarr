@@ -51,26 +51,15 @@ class Commande extends CommonOrder
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-
 	/**
 	 * Client ID
 	 * @var int
 	 */
     var $socid;
 
-	/**
-	 * Client (loaded by fetch_client)
-	 * @var Societe
-	 */
-    var $client;
-
-    var $ref;
     var $ref_client;
-    var $ref_ext;
     var $ref_int;
     var $contactid;
-    var $fk_project;
 
 	/**
 	 * Status of the order. Check the following constants:
@@ -86,16 +75,12 @@ class Commande extends CommonOrder
     var $billed;		// billed or not
 
     var $brouillon;
-    var $cond_reglement_id;
     var $cond_reglement_code;
-    var $fk_account;
-    var $mode_reglement_id;
     var $mode_reglement_code;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
     var $demand_reason_code;
-    var $fk_delivery_address;
     var $address;
     var $date;				// Date commande
 	/**
@@ -104,31 +89,15 @@ class Commande extends CommonOrder
 	 */
     var $date_commande;
     var $date_livraison;	// Date livraison souhaitee
-    var $shipping_method_id;
     var $fk_remise_except;
     var $remise_percent;
-    var $total_ht;			// Total net of tax
-    var $total_ttc;			// Total with tax
-    var $total_tva;			// Total VAT
-    var $total_localtax1;   // Total Local tax 1
-    var $total_localtax2;   // Total Local tax 2
     var $remise_absolue;
-    var $modelpdf;
     var $info_bits;
     var $rang;
     var $special_code;
     var $source;			// Origin of order
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-    var $note;
-    var $note_private;
-    var $note_public;
     var $extraparams=array();
 
-    var $origin;
-    var $origin_id;
     var $linked_objects=array();
 
     var $user_author_id;
@@ -137,11 +106,6 @@ class Commande extends CommonOrder
 	 * @var OrderLine[]
 	 */
 	var $lines = array();
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
     // Pour board
     var $nbtodo;
@@ -745,13 +709,13 @@ class Commande extends CommonOrder
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
         $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
         $sql.= ", '".$this->db->idate($date)."'";
-        $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
+        $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->db->escape($this->source):'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
         $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
-        $sql.= ", '".$this->modelpdf."'";
+        $sql.= ", '".$this->db->escape($this->modelpdf)."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
@@ -760,8 +724,8 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
-        $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
-        $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
+        $sql.= ", ".($this->remise_absolue>0?$this->db->escape($this->remise_absolue):'NULL');
+        $sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
         $sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
@@ -958,7 +922,7 @@ class Commande extends CommonOrder
 			$line->fetch_optionals($line->rowid);
 
         // Load source object
-        $objFrom = dol_clone($this);
+        $objFrom = clone $this;
 
         // Change socid if needed
         if (! empty($socid) && $socid != $this->socid)
@@ -1112,10 +1076,10 @@ class Commande extends CommonOrder
 
             // get extrafields from original line
 			$object->fetch_optionals($object->id);
-			
+
 			$e = new ExtraFields($db);
 			$element_extrafields = $e->fetch_name_optionals_label($this->element);
-			
+
 			foreach($object->array_options as $options_key => $value) {
 				if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){
 					$this->array_options[$options_key] = $value;
@@ -2503,15 +2467,15 @@ class Commande extends CommonOrder
                 $price = ($pu - $remise);
             }
 
-            // Update line
-            $this->line=new OrderLine($this->db);
+            //Fetch current line from the database and then clone the object and set it in $oldline property
+            $line = new OrderLine($this->db);
+            $line->fetch($rowid);
 
+            $staticline = clone $line;
+
+            $line->oldline = $staticline;
+            $this->line = $line;
             $this->line->context = $this->context;
-
-            // Stock previous line records
-            $staticline=new OrderLine($this->db);
-            $staticline->fetch($rowid);
-            $this->line->oldline = $staticline;
 
             // Reorder if fk_parent_line change
             if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -2846,7 +2810,7 @@ class Commande extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_livraison as delivery_date, c.fk_statut";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2862,21 +2826,22 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now=dol_now();
-
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
+            $generic_commande = new Commande($this->db);
+
             while ($obj=$this->db->fetch_object($resql))
             {
-	            $response->nbtodo++;
+                $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
+                $generic_commande->statut = $obj->fk_statut;
+                $generic_commande->date_livraison = $obj->delivery_date;
 
-	            if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) {
+                if ($generic_commande->hasDelay()) {
 		            $response->nbtodolate++;
 	            }
             }
@@ -3341,6 +3306,24 @@ class Commande extends CommonOrder
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the customer order delayed?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        if (!($this->statut > Commande::STATUS_DRAFT) && ($this->statut < Commande::STATUS_CLOSED)) {
+            return false;
+        }
+
+        $now = dol_now();
+
+        return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+    }
 }
 
 
@@ -3471,10 +3454,12 @@ class OrderLine extends CommonOrderLine
             $this->date_end         = $this->db->jdate($objp->date_end);
 
             $this->db->free($result);
+
+            return 1;
         }
         else
         {
-            dol_print_error($this->db);
+            return -1;
         }
     }
 

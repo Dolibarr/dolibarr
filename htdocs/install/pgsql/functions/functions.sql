@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION dol_util_triggerall(DoEnable boolean) RETURNS integer
 
 -- Add triggers for timestamp fields
 CREATE OR REPLACE FUNCTION update_modified_column_tms()	RETURNS TRIGGER AS $$ BEGIN NEW.tms = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accountingaccount FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accounting_account FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accountingtransaction FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_actioncomm FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

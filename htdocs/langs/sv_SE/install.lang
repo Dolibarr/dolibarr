@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Om databasen redan finns, gå tillbaka och 
 WarningBrowserTooOld=För gammal version av webbläsare. Uppgradering av din webbläsare till en sen utgåva av Firefox, Chrome eller Opera är högeligen rekommenderad.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsätta ...
-PleaseBePatient=Ha tålamod ...
 License=Använda licens
 ConfigurationFile=Konfigurationsfil
 WebPagesDirectory=Katalog där webbsidor lagras
@@ -64,7 +63,7 @@ DatabaseSuperUserAccess=Databasserver - superanvändare tillgång
 CheckToCreateDatabase=Kryssrutan om databasen inte existerar och måste skapas. <br> I så fall måste du fylla i login / lösenord för superanvändare konto längst ner på denna sida.
 CheckToCreateUser=Kryssrutan om databas ägaren inte existerar och måste skapas. <br> I så fall måste du välja sin inloggning och lösenord och fylla i användarnamn / lösenord för superanvändaren konto längst ner på denna sida. Om denna ruta är markerad, ägare databas och lösenord måste finns.
 Experimental=(Experimentell)
-Deprecated=(deprecated)
+Deprecated=(föråldrad)
 DatabaseRootLoginDescription=Logga in på användaren möjlighet att skapa nya databaser eller nya användare, värdelösa om din databas och databasen inloggning redan finns (som när du är värd ett webbhotell leverantör).
 KeepEmptyIfNoPassword=Lämna tomt om användaren har inget lösenord (undvik detta)
 SaveConfigurationFile=Spara värden
@@ -157,7 +156,7 @@ LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord s
 ActivateModule=Aktivera modul %s
 ShowEditTechnicalParameters=Klicka här för att visa / redigera avancerade parametrar (expertläge)
 WarningUpgrade=Varning:\nHar du säkerhetskopierat databasen?\nDet är starkt rekommenderat att säkerhetskopiera databasen. På grund av fel i databassystemen (t.ex. mysql version 5.5.40) kan tabeller gå förlorade. Det är därför rekommenderat att ta en full dump av databasen innan migreringen påbörjas.\n\nKlicka OK för att starta migreringen...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=Din databas är av version %s. Den har en kritisk bugg vilket gör dataförluster om du gör strukturförändringar på din databas, som det krävs av migrationsprocessen. För detta skäl, kommer migrationen inte tillåtas förrän du uppgraderat din databas till en nyare fast version (lista över kända buggade versioner:%s)
 
 #########
 # upgrade

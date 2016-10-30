@@ -48,6 +48,7 @@ NoImportableData=بدون اطلاعات واردات (بدون ماژول با 
 FileSuccessfullyBuilt=فایل صادرات تولید
 SQLUsedForExport=درخواست SQL مورد استفاده برای ایجاد فایل صادرات
 LineId=کد خط
+LineLabel=Label of line
 LineDescription=شرح خط
 LineUnitPrice=قیمت واحد خط
 LineVATRate=نرخ مالیات بر ارزش افزوده از خط

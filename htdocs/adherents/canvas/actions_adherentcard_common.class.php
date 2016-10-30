@@ -211,7 +211,7 @@ abstract class ActionsAdherentCardCommon
             {
                 $this->object->fetch($_POST["adherentid"]);
 
-                $this->object->oldcopy=dol_clone($this->object);
+				$this->object->oldcopy = clone $this->object;
 
                 $this->assign_post();
 
@@ -434,4 +434,3 @@ abstract class ActionsAdherentCardCommon
     }
 
 }
-

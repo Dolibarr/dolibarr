@@ -76,11 +76,14 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 
 $object = new Expedition($db);
 
-// Load object
+// Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
+
+$permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
+
 
 
 /*
@@ -114,6 +117,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add')
 	{
 	    $error=0;
@@ -155,6 +160,7 @@ if (empty($reshook))
 
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
+
 	    for ($i = 0; $i < $num; $i++)
 	    {
 			$idl="idl".$i;
@@ -173,11 +179,12 @@ if (empty($reshook))
 				while (isset($_POST[$batch]))
 				{
 					// save line of detail into sub_qty
-					$sub_qty[$j]['q']=GETPOST($qty,'int');
-					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
-
+					$sub_qty[$j]['q']=GETPOST($qty,'int');				// the qty we want to move for this stock record
+					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');		// the id into llx_product_batch of stock record to move
 					$subtotalqty+=$sub_qty[$j]['q'];
-
+				
+					//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+					
 					$j++;
 					$batch="batchl".$i."_".$j;
 					$qty = "qtyl".$i.'_'.$j;
@@ -195,6 +202,8 @@ if (empty($reshook))
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
 	    }
+		
+	    //var_dump($batch_line[2]);
 
 	    if ($totalqty > 0)		// There is at least one thing to ship
 	    {
@@ -203,7 +212,8 @@ if (empty($reshook))
 	        {
 	            $qty = "qtyl".$i;
 				if (! isset($batch_line[$i]))
-				{	// not batch mode
+				{	
+					// not batch mode
 					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 					{
 						$ent = "entl".$i;
@@ -220,7 +230,8 @@ if (empty($reshook))
 					}
 				}
 				else
-				{	// batch mode
+				{	
+					// batch mode
 					if ($batch_line[$i]['qty']>0)
 					{
 						$ret=$object->addline_batch($batch_line[$i]);
@@ -458,7 +469,7 @@ $product_static = new Product($db);
 
 if ($action == 'create2')
 {
-    print_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print load_fiche_titre($langs->trans("CreateASending")).'<br>';
     print $langs->trans("ShipmentCreationIsDoneFromOrder");
     $action=''; $id=''; $ref='';
 }
@@ -468,7 +479,7 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print_fiche_titre($langs->trans("CreateASending"));
+    print load_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
         setEventMessage($langs->trans("ErrorBadParameters"),'errors');
@@ -664,9 +675,10 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
-				if (empty($conf->productbatch->enabled)) {
-                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				if (empty($conf->productbatch->enabled)) 
+				{
+	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+	                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
                 print '</td>';
                 if (! empty($conf->stock->enabled))
@@ -843,31 +855,45 @@ if ($action == 'create')
 				else
 				{
 					print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+
+					$staticwarehouse=new Entrepot($db);
+					$staticwarehouse->fetch($warehouse_id);
+					
 					$subj=0;
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+					if (count($product->stock_warehouse[$warehouse_id]->detail_batch))
 					{
-						//var_dump($dbatch);
-						$substock=$dbatch->qty +0 ;
-						print '<tr><td colspan="3" ></td><td align="center">';
-						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
-						print '</td>';
-
-						print '<td align="left">';
-
-						$staticwarehouse=new Entrepot($db);
-						$staticwarehouse->fetch($warehouse_id);
-						print $staticwarehouse->getNomUrl(0).' / ';
-
-						print '<!-- Show details of lot -->';
-						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-						print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
-						if ($defaultqty<=0) {
-							$defaultqty=0;
-						} else {
-							$defaultqty -=min($defaultqty,$substock);
+						foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+						{
+							//var_dump($dbatch);
+							$substock=$dbatch->qty +0 ;		// To get a numeric
+							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.($substock > 0 ? min($defaultqty,$substock) : '0').'">';
+							print '</td>';
+	
+							print '<td align="left">';
+	
+							print $staticwarehouse->getNomUrl(0).' / ';
+	
+							print '<!-- Show details of lot -->';
+							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+							print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+							if ($defaultqty<=0) {
+								$defaultqty=0;
+							} else {
+								$defaultqty -= min($defaultqty,$substock);
+							}
+							$subj++;
 						}
-						$subj++;
+					}
+					else
+					{
+						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
+						print '</td>';
+						
+						print '<td align="left">';
+						print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 					}
 				}
 
@@ -1237,8 +1263,8 @@ else if ($id || $ref)
 		print "</table>\n";
 
 		/*
-		 * Lignes produits
-		*/
+		 * Lines of products
+		 */
 		print '<br><table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -1397,12 +1423,19 @@ else if ($id || $ref)
 				if (isset($lines[$i]->detail_batch))
 				{
 					print '<td>';
-					$detail = '';
-					foreach ($lines[$i]->detail_batch as $dbatch)
+					if ($lines[$i]->product_tobatch)
 					{
-						$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+						$detail = '';
+						foreach ($lines[$i]->detail_batch as $dbatch)
+						{
+							$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+						}
+						print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
 					}
-					print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+					else 
+					{
+						print $langs->trans("NA");
+					}
 					print '</td>';
 				} else {
 					print '<td></td>';
@@ -1564,7 +1597,7 @@ else if ($id || $ref)
 			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
-				dol_print_error($db,$result);
+				dol_print_error($db,$object->error,$object->errors);
 				exit;
 			}
 			$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref, '/').'[^\-]+');
@@ -1573,7 +1606,7 @@ else if ($id || $ref)
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendShippingByEMail'));
+		print load_fiche_titre($langs->trans('SendShippingByEMail'));
 
 		dol_fiche_head('');
 

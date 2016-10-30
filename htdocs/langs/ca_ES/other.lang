@@ -204,7 +204,7 @@ ClickHereToGoTo=Faci clic aquí per anar a %s
 YouMustClickToChange=però, primer ha de fer clic en el següent enllaç per validar aquest canvi de contrasenya
 ForgetIfNothing=Si vostè no ha sol·licitat aquest canvi, simplement ignori aquest e-mail. Les seves credencials són guardades de forma segura
 IfAmountHigherThan=si l'import es major que <strong>%s</strong>
-SourcesRepository=Repository for sources
+SourcesRepository=Repositori de fonts
 
 ##### Calendar common #####
 AddCalendarEntry=Afegir entrada al calendari

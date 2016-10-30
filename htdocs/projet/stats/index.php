@@ -60,7 +60,7 @@ llxHeader('', $langs->trans('Projects'));
 $title=$langs->trans("ProjectsStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print_fiche_titre($title,'','title_project.png');
+print load_fiche_titre($title,'','title_project.png');
 
 dol_mkdir($dir);
 
@@ -122,7 +122,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->SetType(array (
 					'pie'
 			));
-			$px->SetTitle($langs->trans('ProjectOpenedProjectByOppStatus'));
+			$px->SetTitle($langs->trans('OpportunitiesStatusForOpenedProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
 			if ($result<0) {
 				setEventMessages($px->error, null, 'errors');

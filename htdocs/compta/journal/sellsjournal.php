@@ -114,8 +114,13 @@ $sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.fk_statut > 0";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
-else $sql.= " AND f.type IN (0,1,2,3,5)";
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
+}
+else {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_STANDARD.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
+}
+
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
@@ -163,10 +168,15 @@ if ($result)
 		$line = new FactureLigne($db);
 		$line->fetch($obj->id);
 		$prev_progress = $line->get_prev_progress();
-		if ($obj->situation_percent == 0) { // Avoid divide by 0
-			$situation_ratio = 0;
+		if ($obj->type==Facture::TYPE_SITUATION) {
+			// Avoid divide by 0
+			if ($obj->situation_percent == 0) { 
+				$situation_ratio = 0;
+			} else {
+				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+			}
 		} else {
-			$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+			$situation_ratio = 1;
 		}
 
     	//la ligne facture
@@ -205,7 +215,7 @@ print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
-$var=true;
+$var=false;
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);

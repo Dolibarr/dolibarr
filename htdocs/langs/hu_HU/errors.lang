@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> mező nem tartalmaz speciális karaktereket.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nem számviteli modul aktiválódik
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-egyezés nem teljes.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nem szabad tiltani, hogy ez a funkció m
 ErrorPasswordsMustMatch=Mindkét típusú jelszavakat kell egyeznie egymással
 ErrorContactEMail=Egy technikai hiba történt. Kérjük, lépjen kapcsolatba a következő e-mail rendszergazda <b>%s</b> en biztosítja a hibakódot <b>%s</b> be az üzenetet, vagy még jobb hozzáadásával képernyő ezen oldal másolatát.
 ErrorWrongValueForField=Rossz érték mezőszám <b>%s</b> (érték <b>&quot;%s&quot;</b> nem egyezik regex szabály <b>%s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Rossz érték mezőszám <b>%s</b> (érték <b>&quot;%s&quot;</b> nem létező <b>%s</b> ref)
 ErrorsOnXLines=<b>%s</b> hibák forrása vonalak
 ErrorFileIsInfectedWithAVirus=A víruskereső program nem tudta érvényesíteni a fájl (file lehet megfertőzte egy vírus)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

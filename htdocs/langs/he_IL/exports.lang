@@ -48,6 +48,7 @@ NoImportableData=No importable data (no module with definitions to allow data im
 FileSuccessfullyBuilt=Export file generated
 SQLUsedForExport=SQL Request used to build export file
 LineId=Id of line
+LineLabel=Label of line
 LineDescription=Description of line
 LineUnitPrice=Unit price of line
 LineVATRate=VAT Rate of line

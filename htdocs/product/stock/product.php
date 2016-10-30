@@ -617,7 +617,7 @@ if ($id > 0 || $ref)
 	/*
 	if ($_GET["action"] == "definir")
 	{
-		print_titre($langs->trans("SetStock"));
+		print load_fiche_titre($langs->trans("SetStock"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create_stock">';
@@ -655,7 +655,7 @@ if (empty($action) && $product->id)
     }
 
     //if (($user->rights->stock->mouvement->creer) && ! $product->hasbatch())
-    if (($user->rights->stock->mouvement->creer))
+    if ($user->rights->stock->mouvement->creer)
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}

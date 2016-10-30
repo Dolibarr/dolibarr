@@ -32,5 +32,5 @@ create table llx_societe_remise_except
   fk_facture_line		integer,
   fk_facture			integer,
   fk_facture_source		integer,
-  description			varchar(255) NOT NULL
+  description			text NOT NULL
 )ENGINE=innodb;

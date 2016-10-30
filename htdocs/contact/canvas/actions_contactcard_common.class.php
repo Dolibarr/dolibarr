@@ -207,7 +207,7 @@ abstract class ActionsContactCardCommon
             {
                 $this->object->fetch($_POST["contactid"]);
 
-                $this->object->oldcopy=dol_clone($this->object);
+				$this->object->oldcopy = clone $this->object;
 
                 $this->assign_post();
 

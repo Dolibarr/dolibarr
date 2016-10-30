@@ -678,10 +678,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Add entry in event table
 		$now=dol_now();
 
-		if(isset($_SESSION['listofnames']))
+		if (isset($_SESSION['listofnames']))
 		{
 			$attachs=$_SESSION['listofnames'];
-			if($attachs && strpos($action,'SENTBYMAIL'))
+			if ($attachs && strpos($action,'SENTBYMAIL'))
 			{
 				 $object->actionmsg.="\n".$langs->transnoentities("AttachedFiles").': '.$attachs;
 			}
@@ -719,6 +719,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->elementtype = $object->element;
 
 		$ret=$actioncomm->add($user);       // User qui saisit l'action
+		
+		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse vallue of first action.
+		
 		if ($ret > 0)
 		{
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;

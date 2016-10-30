@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.1"
+         version="2.0"
+         xmlns="http://pear.php.net/dtd/package-2.0"
+         xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+
+    <name>FirePHPCore</name>
+    <channel>pear.firephp.org</channel>
+    <summary>Log variables from PHP to the browser (Firebug Console)</summary>
+    <description>Handles all communication between the PHP code on the server and the client. Also implements all core FirePHP features.</description>
+
+    <lead>
+        <name>Christoph Dorn</name>
+        <user>cadorn</user>
+        <email>christoph@christophdorn.com</email>
+        <active>yes</active>
+    </lead>
+    
+    <date>%%DATE%%</date>
+    <version>
+        <release>%%VERSION%%</release>
+        <api>0.3</api>
+    </version>
+    
+    <stability>
+        <release>%%STABILITY%%</release>
+        <api>stable</api>
+    </stability>
+    
+    <license>MIT</license>
+    
+    <notes>No Notes</notes>
+    
+    <contents>
+        <dir name="/" baseinstalldir="FirePHPCore">
+        
+            <file name="fb.php" role="php"/>
+            <file name="fb.php4" role="php"/>
+            
+            <file name="FirePHP.class.php" role="php"/>
+            <file name="FirePHP.class.php4" role="php"/>
+        
+        </dir>
+    </contents>
+
+    <dependencies>
+        <required>
+            <php>
+                <min>4.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.4.5</min>
+            </pearinstaller>
+        </required>
+    </dependencies>
+    
+    <phprelease />
+
+</package>

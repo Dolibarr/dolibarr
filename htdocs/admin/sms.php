@@ -147,7 +147,7 @@ if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
@@ -289,7 +289,7 @@ else
 	if ($_GET["action"] == 'testconnect')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestServerAvailability"));
+		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
@@ -311,7 +311,7 @@ else
 	if ($action == 'test')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestSend"));
+		print load_fiche_titre($langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';

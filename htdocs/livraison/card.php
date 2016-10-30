@@ -238,7 +238,7 @@ $formfile = new FormFile($db);
 if ($action == 'create')
 {
 
-	print_fiche_titre($langs->trans("CreateADeliveryOrder"));
+	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
 
 	if ($mesg)
 	{
@@ -744,9 +744,13 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				if ($object->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+				if ($object->statut == 0 && $num_prod > 0) 
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					}
 				}
 
 				if ($user->rights->expedition->livraison->supprimer)

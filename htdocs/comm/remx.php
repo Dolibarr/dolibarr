@@ -221,14 +221,14 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"),0,'company');
-
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
+	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"),0,'company');
+    
 	print '<table class="border" width="100%">';
 
 	// Name
@@ -264,7 +264,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 	print '<table class="border" width="100%">';
 	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
@@ -278,6 +278,8 @@ if ($socid > 0)
 
 	print "</table>";
 
+	dol_fiche_end();
+	
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
     if (! empty($backtopage))
@@ -289,7 +291,6 @@ if ($socid > 0)
 
 	print '</form>';
 
-	dol_fiche_end();
 
 	print '<br>';
 
@@ -316,7 +317,7 @@ if ($socid > 0)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print_titre($langs->trans("DiscountStillRemaining"));
+		print load_fiche_titre($langs->trans("DiscountStillRemaining"));
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -329,8 +330,10 @@ if ($socid > 0)
 		print '<td width="50">&nbsp;</td>';
 		print '</tr>';
 
+		$showconfirminfo=array();
+
 		$var = true;
-		$i = 0 ;
+		$i = 0;
 		$num = $db->num_rows($resql);
 		while ($i < $num)
 		{
@@ -382,24 +385,26 @@ if ($socid > 0)
 
 			if ($_GET["action"]=='split' && $_GET['remid'] == $obj->rowid)
 			{
-				print "<tr ".$bc[$var].">";
-				print '<td colspan="8">';
-				$amount1=price2num($obj->amount_ttc/2,'MT');
-				$amount2=($obj->amount_ttc-$amount1);
-				$formquestion=array(
-				'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-				array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
-				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
-				);
-				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
-				print '</td>';
-				print '</tr>';
+				$showconfirminfo['rowid']=$obj->rowid;
+				$showconfirminfo['amount_ttc']=$obj->amount_ttc;
 			}
 			$i++;
 		}
 		$db->free($resql);
 		print "</table>";
+
+		if (count($showconfirminfo))
+		{
+			$amount1=price2num($showconfirminfo['amount_ttc']/2,'MT');
+			$amount2=($showconfirminfo['amount_ttc']-$amount1);
+			$formquestion=array(
+				'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+				array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+			);
+			$langs->load("dict");
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+		}
 	}
 	else
 	{
@@ -452,7 +457,7 @@ if ($socid > 0)
 	if ($resql) $resql2=$db->query($sql2);
 	if ($resql2)
 	{
-		print_titre($langs->trans("DiscountAlreadyCounted"));
+		print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM

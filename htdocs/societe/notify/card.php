@@ -194,7 +194,7 @@ if ($result > 0)
     print "\n";
 
     // Add notification form
-    print_fiche_titre($langs->trans("AddNewNotification"),'','');
+    print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -252,7 +252,7 @@ if ($result > 0)
     print '<br>';
 
     // List of active notifications
-    print_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');
     $var=true;
 
     // Line with titles
@@ -383,7 +383,7 @@ if ($result > 0)
 
 
     // List of notifications done
-    print_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
+    print load_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
     $var=true;
 
     // Line with titles

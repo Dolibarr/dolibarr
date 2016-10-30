@@ -107,7 +107,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
 
 $head=printingadmin_prepare_head($mode);
 
@@ -229,7 +229,12 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        print $printer->listAvailablePrinters();
+        if (count($printer->getlist_available_printers)) {
+            print $printer->listAvailablePrinters();
+        }
+        else {
+            print $langs->trans('PleaseConfigureDriverfromList');
+        }
 
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');

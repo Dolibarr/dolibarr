@@ -204,7 +204,7 @@ ClickHereToGoTo=Κάντε κλικ εδώ για να μεταβείτε στο
 YouMustClickToChange=Θα πρέπει πρώτα να κάνετε κλικ στον παρακάτω σύνδεσμο για να επικυρώσει την αλλαγή του κωδικού πρόσβασης
 ForgetIfNothing=Αν δεν ζητήσατε αυτή την αλλαγή, απλά ξεχάστε αυτό το email. Τα διαπιστευτήριά σας παραμένουν ασφαλή.
 IfAmountHigherThan=Εάν το ποσό υπερβαίνει <strong>%s</strong>
-SourcesRepository=Repository for sources
+SourcesRepository=Αποθετήριο για τις πηγές
 
 ##### Calendar common #####
 AddCalendarEntry=Προσθήκη εγγραφής στο ημερολόγιο %s

@@ -43,9 +43,12 @@ if (! function_exists('json_encode'))
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
  * @deprecated PHP >= 5.3 supports native json_encode
+ * @see json_encode()
  */
 function dol_json_encode($elements)
 {
+	dol_syslog('dol_json_encode() is deprecated. Please update your code to use native json_encode().', LOG_WARNING);
+
 	$num=count($elements);
 	if (is_object($elements))	// Count number of properties for an object
 	{
@@ -221,9 +224,12 @@ if (! function_exists('json_decode'))
  * @param	bool	$assoc		False return an object, true return an array. Try to always use it with true !
  * @return 	mixed				Object or Array or false on error
  * @deprecated PHP >= 5.3 supports native json_decode
+ * @see json_decode()
  */
 function dol_json_decode($json, $assoc=false)
 {
+	dol_syslog('dol_json_decode() is deprecated. Please update your code to use native json_decode().', LOG_WARNING);
+
 	$comment = false;
 
     $out='';
@@ -253,7 +259,9 @@ function dol_json_decode($json, $assoc=false)
 		if (! empty($array))
 		{
 			$object = false;
-
+			if (count($array)>0) {
+				$object = (object) array();
+			}
 			foreach ($array as $key => $value)
 			{
 				if ($key) $object->{$key} = $value;

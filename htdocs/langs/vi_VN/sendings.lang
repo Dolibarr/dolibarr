@@ -5,7 +5,7 @@ Sendings=Lô hàng
 AllSendings=All Shipments
 Shipment=Lô hàng
 Shipments=Lô hàng
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=Diện tích lô hàng
 ListOfSendings=Danh sách các lô hàng
@@ -26,8 +26,8 @@ QtyToShip=Số lượng xuất xưởng
 QtyReceived=Số lượng nhận được
 KeepToShip=Giữ tàu
 OtherSendingsForSameOrder=Lô hàng khác về đơn hàng này
-DateSending=Ngày gửi đơn đặt hàng
-DateSendingShort=Ngày gửi đơn đặt hàng
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Các lô hàng về đơn hàng này
 SendingsAndReceivingForSameOrder=Lô hàng và Receivings về đơn hàng này
 SendingsToValidate=Lô hàng để xác nhận
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Catch của khách hàng

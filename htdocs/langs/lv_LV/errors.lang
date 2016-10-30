@@ -46,7 +46,7 @@ ErrorUserCannotBeDelete=Lietotājs nevar izdzēst. Var būt tas ir saistīts ar 
 ErrorFieldsRequired=Daži nepieciešamie lauki netika aizpildīti.
 ErrorFailedToCreateDir=Neizdevās izveidot direktoriju. Pārbaudiet, vai Web servera lietotājam ir tiesības rakstīt uz Dolibarr dokumentus direktorijā. Ja parametrs <b>safe_mode</b> ir iespējots uz šo PHP, pārbaudiet, Dolibarr php faili pieder web servera lietotājam (vai grupa).
 ErrorNoMailDefinedForThisUser=Nav definēts e-pasts šim lietotājam
-ErrorFeatureNeedJavascript=Šī funkcija ir jābūt aktivizētam jāaktivizē strādāt. Mainīt to uzstādīšana - displeju.
+ErrorFeatureNeedJavascript=Šai funkcijai ir nepieciešams aktivizēt javascript. Mainīt to var iestatījumi - attēlojums.
 ErrorTopMenuMustHaveAParentWithId0=Tipa &quot;Top&quot; izvēlnē nevar būt mātes ēdienkarti. Put ar 0 mātes izvēlnes vai izvēlēties izvēlni tips &quot;pa kreisi&quot;.
 ErrorLeftMenuMustHaveAParentId=Tipa 'Kreiso' izvēlne jābūt vecākiem id.
 ErrorFileNotFound=Failu <b>%s</b> nav atrasts (Bad ceļš, aplamas tiesības vai piekļuve liegta ar PHP openbasedir vai safe_mode parametru)
@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lūdzu, aizpildiet vērtību rūtiņu sarakstā
 ErrorNoValueForRadioType=Lūdzu, aizpildiet vērtību radio pogu sarakstā
 ErrorBadFormatValueList=Saraksts vērtība nevar būt vairāk kā viens nāk: <u>%s,</u> bet ir nepieciešams vismaz viens: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Lauks <b>%s</b> nedrīkst saturēt speciālos simbolus.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nav grāmatvedības modulis aktivizēts
 ErrorExportDuplicateProfil=Šāds profila nosaukums jau eksistē šim eksportam.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP saskaņošana nav pilnīga.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nedrīkst tikt izslēgti, ka šī funkci
 ErrorPasswordsMustMatch=Abām ievadītām parolēm jāsakrīt
 ErrorContactEMail=Tehniska kļūda. Lūdzu, sazinieties ar administratoru pa sekojošu e-pastu <b>%s</b>, lai iesniegtu kļūdas kodu <b>%s</b> jūsu ziņojumā, vai labāk, pievienojot šīs lapas ekrāna.
 ErrorWrongValueForField=Nepareiza vērtība lauka numuru <b>%s</b> (vērtība '<b>%s</b>' nesakrīt regex noteikums <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Nepareiza vērtība lauka numuru <b>%s</b> (vērtība <b>&quot;%s&quot;</b> nav <b>%s</b> esošo ref)
 ErrorsOnXLines=Kļūdas <b>%s</b> avota ierakstu (-s)
 ErrorFileIsInfectedWithAVirus=Antivīrusu programma nevarēja apstiprināt failu (fails varētu būt inficēti ar vīrusu)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

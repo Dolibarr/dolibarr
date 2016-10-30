@@ -263,7 +263,7 @@ llxHeader("",$langs->trans("OrdersSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
 
 $head = order_admin_prepare_head();
 
@@ -273,7 +273,7 @@ dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
  * Orders Numbering model
  */
 
-print_titre($langs->trans("OrdersNumberingModules"));
+print load_fiche_titre($langs->trans("OrdersNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -377,7 +377,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print_titre($langs->trans("OrdersModelModule"));
+print load_fiche_titre($langs->trans("OrdersModelModule"));
 
 // Load array def with activated templates
 $def = array();
@@ -540,7 +540,7 @@ print "<br>";
  *
  */
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -555,7 +555,17 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="120">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
+$variablename='COMMANDE_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -628,7 +638,7 @@ print '<br>';
  * Notifications
  */
 
-print_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

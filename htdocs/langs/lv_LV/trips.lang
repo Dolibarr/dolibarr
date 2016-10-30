@@ -41,7 +41,7 @@ TF_BUS=Autobuss
 TF_CAR=Automašīna
 TF_PEAGE=Toll
 TF_ESSENCE=Degviela
-TF_HOTEL=Hotel
+TF_HOTEL=Viesnīca
 TF_TAXI=Taksis
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
@@ -59,9 +59,9 @@ Project=Projekts
 VALIDATOR=User responsible for approval
 VALIDOR=Apstiprinājis
 AUTHOR=Recorded by
-AUTHORPAIEMENT=Paid by
+AUTHORPAIEMENT=Apmaksājis
 REFUSEUR=Denied by
-CANCEL_USER=Deleted by
+CANCEL_USER=Dzēsis
 
 MOTIF_REFUS=Iemesls
 MOTIF_CANCEL=Iemesls
@@ -101,3 +101,6 @@ SaveTrip=Validate expense report
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
 NoTripsToExportCSV=No expense report to export for this period.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

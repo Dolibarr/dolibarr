@@ -48,6 +48,7 @@ NewAccount=Nouveau compte comptable
 Update=Modifier
 List=Liste
 Create=Créer
+CreateMvts=Créer mouvement
 UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
 WriteBookKeeping=Enregistrer les écritures dans le grand livre
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation 
 
 AccountLength=Longueur des comptes comptables affichés dans Dolibarr 
 AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
+ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour afficher la description des produits & services dans les listes (Idéalement = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour afficher la description du compte des produits & services dans les listes (Idéaliement = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
 

@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το αρχείο που θα εξαχθεί
+ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
 ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
 ACCOUNTING_EXPORT_LABEL=Export the label ?
@@ -48,6 +48,7 @@ NewAccount=Νέος λογιστικός λογαριασμός
 Update=Ενημέρωση
 List=Λίστα
 Create=Δημιουργία
+CreateMvts=Create movement
 UpdateAccount=Τροποποίηση του λογιστικού λογαριασμού
 UpdateMvts=Τροποποίηση μιας κίνησης
 WriteBookKeeping=Εγγραφή λογαριασμών στο γενικό καθολικό
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ξεκινήστε τη διαλογή τ�
 
 AccountLength=Μήκος των λογιστικών λογαριασμών που φαίνονται στο Dolibarr
 AccountLengthDesc=Λειτουργία που επιτρέπει να υποκρίνεαι μήκος του λογιστικού λογαριασμού αντικαθιστώντας χώρους από τον αριθμό μηδέν. Η λειτουργία αυτή αγγίζει μόνο την οθόνη, δεν τροποποιούν τους λογιστικούς λογαριασμούς στο Dolibarr. Για την εξαγωγή, αυτή η λειτουργία είναι απαραίτητη για να είναι συμβατή με το συγκεκριμένο λογισμικό.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Μήκος γενικών λογαριασμών
 ACCOUNTING_LENGTH_AACCOUNT=Μήκος λογαριασμών τρίτων
 

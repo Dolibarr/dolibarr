@@ -156,10 +156,17 @@ class Ldap
 		if (count($this->server) == 0 || empty($this->server[0]))
 		{
 			$this->error='LDAP setup (file conf.php) is not complete';
-			$return=-1;
 			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+			return -1;
 		}
 
+		if (! function_exists('ldap_connect'))
+		{
+			$this->error='Your PHP need extension ldap';
+			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+		    return -1;
+		}
+		
 		// Loop on each ldap server
 		foreach ($this->server as $key => $host)
 		{

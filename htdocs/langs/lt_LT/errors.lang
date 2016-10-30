@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Prašome užpildyti reikšmę žymės laukelių sąr
 ErrorNoValueForRadioType=Prašome užpildyti reikšmę žymių (radio) sąrašui
 ErrorBadFormatValueList=Sąrašo reikšmė negali būti daugiau nei viena <u>%s</u>, bet reikia bent vienos: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Laukelyje <b>%s</b> neturi būti specialiųjų simbolių
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Laukelyje <b>%s</b> negali būti nei specialių simbolių, nei didžiųjų raidžių.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nėra aktyvaus apskaitos modulio
 ErrorExportDuplicateProfil=Profilio vardas jau egzistuoja šiam eksporto rinkiniui
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP derinimas nėra pilnas
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=JavaScript turi būti neišjungtas, kad ši funkcij
 ErrorPasswordsMustMatch=Abu įvesti slaptažodžiai turi sutapti tarpusavyje
 ErrorContactEMail=Įvyko techninė klaida. Kreipkitės į administratorių e-paštu <b>%s</b> ir pateikite klaidos kodą <b>%s</b> savo laiške, arba dar geriau, pridėkite šio puslapio ekrano kopiją.
 ErrorWrongValueForField=Neteisinga laukelio numerio reikšmė <b>%s</b> (reikšmė '<b>%s</b>' neatitinka reguliarios išraiškos (regex) taisyklės <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Neteisinga reikšmė laukelio numeriui <b>%s</b> (reikšmė '<b>%s</b>' yra ne <b>%s</b> egzistuojanti nuoroda)
 ErrorsOnXLines=Klaidos <b>%s</b> šaltinio įraše (-uose)
 ErrorFileIsInfectedWithAVirus=Antivirusinė programa negali patvirtinti failo (failas gali būti užkrėstas virusu)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Privalomi nustatymų parametrai dar nėra apibrėžti

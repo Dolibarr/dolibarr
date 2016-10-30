@@ -56,7 +56,7 @@ if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print_fiche_titre($title, '', 'title_project');
+print load_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -393,7 +393,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		//print_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
+		//print load_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';

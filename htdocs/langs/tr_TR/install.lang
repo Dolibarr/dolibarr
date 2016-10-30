@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Eğer veritabanı zaten mevcutsa, geri gidi
 WarningBrowserTooOld=Çok eski bir web tarayıcısı. Web tarayıcınızı Firefox, Chrome yada Opera 'nın enson sürümüne yükseltmeniz son derece önerilir.
 PHPVersion=PHP Sürümü
 YouCanContinue=Devam edebilirsiniz...
-PleaseBePatient=Lütfen sabırlı olun...
 License=Lisans kullanımı
 ConfigurationFile=Yapılandırma dosyası
 WebPagesDirectory=Web sayfalarının saklandığı dizin

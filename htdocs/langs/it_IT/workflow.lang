@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Impostazioni flusso di lavoro
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
+WorkflowDesc=Questo modulo è progettato per modificare il comportamento di azioni automatiche nell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (si possono fare cose nell'ordine che volete). È possibile attivare le azioni automatiche che vi interessano.
+ThereIsNoWorkflowToModify=Non ci sono modifiche del flusso di lavoro disponibili con i moduli attivati.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automaticamente un ordine del cliente, dopo una proposta commerciale firmata
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo una proposta commerciale firmata
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo un contratto convalidato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo un ordine del cliente chiuso
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica la proposta commerciale collegata come fatturare quando l'ordine cliente è impostato come pagato
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura viene impostata come pagata
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura è validata

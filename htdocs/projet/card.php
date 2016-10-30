@@ -218,7 +218,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        $object->oldcopy = dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$old_start_date = $object->date_start;
 
@@ -250,7 +250,7 @@ if (empty($reshook))
 	    	if ($result < 0)
 	    	{
 	    		$error++;
-	    		setEventMessage($object->errors,'errors');
+		        setEventMessages($object->error, $object->errors,'errors');
 	    	}
 	    }
 
@@ -310,10 +310,11 @@ if (empty($reshook))
 	    {
 	        $langs->load("other");
 	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
+	        $urlfile=GETPOST('urlfile','alpha');
+	        $file =	$upload_dir	. '/' .	$filetodelete;
 	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
+	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
 	    }
 	}
 
@@ -373,7 +374,7 @@ if (empty($reshook))
 	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	    else
 	    {
@@ -410,7 +411,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-    print_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+    print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

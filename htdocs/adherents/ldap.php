@@ -173,7 +173,7 @@ if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACT
 
 
 // Affichage attributs LDAP
-print_titre($langs->trans("LDAPInformationsForThisMember"));
+print load_fiche_titre($langs->trans("LDAPInformationsForThisMember"));
 
 print '<table width="100%" class="noborder">';
 

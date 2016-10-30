@@ -125,6 +125,7 @@ CloneOrder=Sao chép đơn hàng
 ConfirmCloneOrder=Bạn có chắc muốn sao chép đơn hàng này <b>%s</b> ?
 DispatchSupplierOrder=Đang nhận đơn hàng nhà cung cấp %s
 FirstApprovalAlreadyDone=Duyệt mức đầu tiên đã xong
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Đại diện theo dõi đơn hàng khách hàng
 TypeContact_commande_internal_SHIPPING=Đại diện theo dõi vận chuyển

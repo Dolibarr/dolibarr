@@ -37,8 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 class BonPrelevement extends CommonObject
 {
-    var $db;
-
     var $date_echeance;
     var $raison_sociale;
     var $reference_remise;

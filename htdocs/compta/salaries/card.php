@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
@@ -83,7 +83,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->note=GETPOST("note");
 	$object->type_payment=GETPOST("paymenttype");
 	$object->num_payment=GETPOST("num_payment");
-	$object->fk_user_creat=$user->id;
+	$object->fk_user_author=$user->id;
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -225,52 +225,52 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
 	
 	print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	print '<td class="fieldrequired"><label for="datep">'.$langs->trans("DatePayment").'</label></td><td>';
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	print '<tr><td><label for="datev">'.$langs->trans("DateValue").'</label></td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
 	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("Employee").'</td><td>';
+	print '<td class="fieldrequired"><label for="fk_user">'.$langs->trans("Employee").'</label></td><td>';
 	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
+	print '<tr><td class="fieldrequired"><label for="label">'.$langs->trans("Label").'</label></td><td><input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
 
 	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
+	print '<td class="fieldrequired"><label for="datesp">'.$langs->trans("DateStartPeriod").'</label></td><td>';
 	print $form->select_date($datesp,"datesp",'','','','add');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("DateEndPeriod").'</td><td>';
+	print '<tr><td class="fieldrequired"><label for="dateep">'.$langs->trans("DateEndPeriod").'</label></td><td>';
 	print $form->select_date($dateep,"dateep",'','','','add');
 	print '</td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td class="fieldrequired"><label for="amount">'.$langs->trans("Amount").'</label></td><td><input name="amount" id="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired"><label for="selectaccountid">'.$langs->trans("Account").'</label></td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	print '<tr><td class="fieldrequired"><label for="selectpaymenttype">'.$langs->trans("PaymentMode").'</label></td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
 	print "</td>\n";
 	print "</tr>";
@@ -278,9 +278,10 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		// Number
-		print '<tr><td>'.$langs->trans('Numero');
+		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '</label></td>';
+		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
 	// Other attributes
@@ -313,7 +314,6 @@ if ($id)
 	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
-
 
 	print '<table class="border" width="100%">';
 

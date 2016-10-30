@@ -356,7 +356,9 @@ if ($object->id > 0)
 		else
 		{
 			print dol_print_date($object->date_lim_reglement,'daytext');
-			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == Facture::STATUS_VALIDATED && ! isset($object->am)) print img_warning($langs->trans('Late'));
+			if ($object->hasDelay()) {
+				print img_warning($langs->trans('Late'));
+			}
 		}
 	}
 	else

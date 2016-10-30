@@ -125,6 +125,7 @@ CloneOrder=Clone, aby
 ConfirmCloneOrder=Ste si istí, že chcete kopírovať túto objednávku <b>%s?</b>
 DispatchSupplierOrder=Príjem %s dodávateľských objednávok
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Zástupca nasledujúce-up, aby zákazník
 TypeContact_commande_internal_SHIPPING=Zástupca nasledujúce-up doprava

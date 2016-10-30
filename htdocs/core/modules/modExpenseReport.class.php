@@ -75,9 +75,6 @@ class modExpenseReport extends DolibarrModules
 		$this->dirs = array();
 		$r=0;
 
-		// Relative path to module style sheet if exists. Example: '/mymodule/css/mycss.css'.
-		//$this->style_sheet = '/mymodule/mymodule.css.php';
-
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array('expensereport.php');
 
@@ -139,7 +136,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights_class = 'expensereport';
 
 		$this->rights[1][0] = 771;
-		$this->rights[1][1] = 'Read expense reports (own and his subordinates)';
+		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'lire';

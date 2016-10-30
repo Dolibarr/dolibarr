@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Les valeurs de la liste de case à cochées doivent 
 ErrorNoValueForRadioType=Les valeurs de la liste d'options doivent être renseignées
 ErrorBadFormatValueList=Les valeurs de la liste ne peuvent pas contenir plus d'une virgule : <b>%s</b>, mais doivent en avoir au moins une: clef,valeur
 ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Le champ <b>%s</b> ne doit pas contenir de caractères spéciaux, ni de caractères en majuscule.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Le champ <b>%s</b> ne doit pas contenir de caractères spéciaux, ni majuscules et ne peut contenir que des chiffres.
 ErrorNoAccountancyModuleLoaded=Aucun module de comptabilité activé
 ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce lot d'export.
 ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Le javascript ne doit pas être désactivé pour qu
 ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
 ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'administrateur à l'email suivant <b>%s</b> en lui indiquant le code erreur <b>%s</b> dans votre message ou mieux en fournissant une copie d'écran de cette page.
 ErrorWrongValueForField=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' ne respecte pas la règle <b>%s</b>)
-ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeur présente dans le champ <b>%s</b> de la table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeur disponible dans le champ <b>%s</b> de la table <b>%s</b>)
 ErrorFieldRefNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une référence existante comme <b>%s</b>)
 ErrorsOnXLines=Erreurs sur <b>%s</b> enregistrement(s) source
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Pas de variable globale
 ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
 ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
+ErrorOppStatusRequiredIfAmount=Vous avez fixé un montant estimé pour cette opportunité/affaire. Aussi, vous devez également entrer son statut
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées
@@ -191,4 +192,4 @@ WarningNotRelevant=Opération non pertinente pour cet ensemble de données
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
 WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturation (%s) de la facture %s.
 WarningTooManyDataPleaseUseMoreFilters=Trop de données. Utilisez des filtres plus précis.
-WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningSomeLinesWithNullHourlyRate=Des temps ont été enregistrés par des utilisateurs lorsque leur taux horaire n'était défini. Une valeur de 0 a été utilisé, mais cela peut entraîner une mauvaise évaluation du temps passé.

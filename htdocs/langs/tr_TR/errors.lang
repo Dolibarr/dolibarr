@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lütfen onay kutusu listesi için değer girin
 ErrorNoValueForRadioType=Lütfen onay düğmesi için değer girin
 ErrorBadFormatValueList=Listedeki değeri birden fazla virgül içeremez: <u>%s</u>, ama en az bir tane olması gerekir: anahtar, değer
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=b>%s</b> alanı ne özel karakterler ne de büyük harfler içermemelidir.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>%s</b> Alanı özel karakter ve büyük harf içermemeli yalnızca sayı içermelidir.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
 ErrorExportDuplicateProfil=Bu profil adı bu dışaaktarma seti için zaten var.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP eşleşmesi tamamlanmamış.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Bu özelliğin çalışması için Javascript engel
 ErrorPasswordsMustMatch=Her iki yazdığınız şifrenin birbiriyle eşleşmesi gerekir
 ErrorContactEMail=Teknik bir hata oluştu. Lütfen, aşağıdaki <b>%s</b> Eposta ile yöneticiye danışın, mesajınızda <b>%s</b> hata kodunu belirtin ve hatta bir ekran görünümünü de eklerseniz daha iyi olur.
 ErrorWrongValueForField=<b>%s</b> alan numarası için yanlış değer ('<b>%s</b>' değeri '<b>%s</b>' regex kuralı ile uyuşmuyor)
-ErrorFieldValueNotIn=<b>%s</b> alan sayısı için hatalı değer ('<b>%s</b>' değeri <b>%s</b> = <b>%s</b> tablosundaki <b>%s</b> alanı içinde mevcut değil)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Alan numarası <b>%s</b> için yanlış değer (değer <b>'%s'</b> bir <b>%s</b> ref mevcut değildir)
 ErrorsOnXLines=<b>%</b> kaynak satırlarındaki hatalar
 ErrorFileIsInfectedWithAVirus=Virüs koruma programı dosyayı doğrulayamıyor (dosyaya bir virüs bulaşmış olabilir)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Seçilmiş genel değişken yok
 ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
 ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
 ErrorMandatoryParametersNotProvided=Zorunlu parametre(ler) girilmemiş
+ErrorOppStatusRequiredIfAmount=Bu fırsat/aday için tahmini bir tutar ayarladınız. Durumunu da girmelisiniz
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

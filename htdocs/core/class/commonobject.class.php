@@ -53,6 +53,11 @@ abstract class CommonObject
      */
     public $error;
 
+	/**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
@@ -81,11 +86,6 @@ abstract class CommonObject
 
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
-
-	/**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
 
     /**
      * @var string[]	Can be used to pass information when only object is provided to method
@@ -131,6 +131,7 @@ abstract class CommonObject
 	public $thirdparty;
 	/**
 	 * @deprecated
+	 * @var Societe A related customer
 	 * @see thirdparty
 	 */
 	public $client;
@@ -283,27 +284,27 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float
+	 * @var float Total amount before taxes
 	 * @see update_price()
 	 */
 	public $total_ht;
 	/**
-	 * @var float
+	 * @var float Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
 	/**
-	 * @var float
+	 * @var float Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 	/**
-	 * @var float
+	 * @var float Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 	/**
-	 * @var float
+	 * @var float Total amount with taxes
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -389,7 +390,7 @@ abstract class CommonObject
      *
      *	@param	Translate	$langs			Language object for translation of civility
      *	@param	int			$option			0=No option, 1=Add civility
-     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
      * 	@param	int			$maxlen			Maximum length
      * 	@return	string						String with full name
      */
@@ -452,13 +453,15 @@ abstract class CommonObject
         // Check parameters
         if ($fk_socpeople <= 0)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","1");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","1");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -1;
         }
         if (! $type_contact)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","2");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","2");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -2;
         }
@@ -486,7 +489,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-
+        
         $this->db->begin();
 
         // Insertion dans la base
@@ -504,7 +507,11 @@ abstract class CommonObject
             if (! $notrigger)
             {
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
+	            if ($result < 0) 
+	            { 
+	                $this->db->rollback(); 
+	                return -1;
+	            }
             }
 
             $this->db->commit();
@@ -2159,14 +2166,14 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
-        if (empty($sourceid) && empty($targetid))
+        /*if (empty($sourceid) && empty($targetid))
         {
         	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
         	return -1;
-        }
+        }*/
 
         // Links between objects are stored in table element_element
-        $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
+        $sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
         $sql.= " WHERE ";
         if ($justsource || $justtarget)
@@ -2201,11 +2208,11 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
                 if ($obj->fk_source == $sourceid)
                 {
-                    $this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
+                    $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
                 }
                 if ($obj->fk_target == $targetid)
                 {
-                    $this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
+                    $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
                 }
                 $i++;
             }
@@ -2260,16 +2267,15 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
+                    // Here $module, $classfile and $classname are set
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-                        $num=count($objectids);
-
-                        for ($i=0;$i<$num;$i++)
+                        foreach($objectids as $i => $objectid);	// $i is rowid into llx_element_element
                         {
                             $object = new $classname($this->db);
-                            $ret = $object->fetch($objectids[$i]);
+                            $ret = $object->fetch($objectid);
                             if ($ret >= 0)
                             {
                                 $this->linkedObjects[$objecttype][$i] = $object;
@@ -2338,10 +2344,11 @@ abstract class CommonObject
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
-	 *	@return     int	>0 if OK, <0 if KO
+     *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
+	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
-	function deleteObjectLinked($sourceid=null, $sourcetype='', $targetid=null, $targettype='')
+	function deleteObjectLinked($sourceid=null, $sourcetype='', $targetid=null, $targettype='', $rowid='')
 	{
 		$deletesource=false;
 		$deletetarget=false;
@@ -2356,21 +2363,28 @@ abstract class CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE";
-		if ($deletesource)
+		if ($rowid > 0)
 		{
-			$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-			$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
-		}
-		else if ($deletetarget)
-		{
-			$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
-			$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+			$sql.=" rowid = ".$rowid;
 		}
 		else
 		{
-			$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
-			$sql.= " OR";
-			$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+			if ($deletesource)
+			{
+				$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
+				$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
+			}
+			else if ($deletetarget)
+			{
+				$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
+				$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+			}
+			else
+			{
+				$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
+				$sql.= " OR";
+				$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+			}
 		}
 
 		dol_syslog(get_class($this)."::deleteObjectLinked", LOG_DEBUG);
@@ -2381,6 +2395,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->error;
 			return -1;
 		}
 	}
@@ -2792,10 +2807,11 @@ abstract class CommonObject
     // --------------------
 
     /**
-     *  Show linked object block.
+     * Show linked object block.
      *
-     *  @return		int		<0 if KO, >0 if OK
-     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
+     * @return int <0 if KO, >0 if OK
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
+     * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {
@@ -3269,12 +3285,12 @@ abstract class CommonObject
 	 *	Need $this->element & $this->id
 	 *
 	 *	@param		int		$resource_id		Resource id
-	 *	@param		string	$resource_element	Resource element
+	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
 	 *	@return		int							<=0 if KO, >0 if OK
 	 */
-	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
+	function add_element_resource($resource_id, $resource_type, $busy=0, $mandatory=0)
 	{
 		$this->db->begin();
 
@@ -3287,7 +3303,7 @@ abstract class CommonObject
 		$sql.= ", mandatory";
 		$sql.= ") VALUES (";
 		$sql.= $resource_id;
-		$sql.= ", '".$resource_element."'";
+		$sql.= ", '".$resource_type."'";
 		$sql.= ", '".$this->id."'";
 		$sql.= ", '".$this->element."'";
 		$sql.= ", '".$busy."'";
@@ -3424,7 +3440,6 @@ abstract class CommonObject
 			require_once $file;
 
 			$obj = new $classname($this->db);
-			//$obj->message = $message;
 
 			// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 			if ($obj->type == 'odt' && empty($srctemplatepath))
@@ -3462,11 +3477,20 @@ abstract class CommonObject
 
 				if (empty($srctemplatepath))
 				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 					return -1;
 				}
 			}
 
+            if ($obj->type == 'odt' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
+    
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3527,7 +3551,47 @@ abstract class CommonObject
 
 	/* Functions common to commonobject and commonobjectline */
 
+    /* For default values */
 
+    /**
+     * Return the default value to use for a field when showing the create form of object. 
+     * Return values in this order:
+     * 1) If parameter is available into POST, we return it first.
+     * 2) If not but an alternate value was provided as parameter of function, we return it.
+     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
+     * 4) Return value found into database (TODO No yet implemented)
+     * 
+     * @param   string      $fieldname          Name of field
+     * @param   string      $alternatevalue     Alternate value to use
+     * @return  string                          Default value
+     **/
+	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
+    {
+        global $conf, $_POST;
+
+        // If param is has been posted with use this value first.
+        if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
+        
+        if (isset($alternatevalue)) return $alternatevalue;
+        
+        $newelement=$this->element;
+        if ($newelement == 'facture') $newelement='invoice';
+        if ($newelement == 'commande') $newelement='order';
+        if (empty($newelement)) 
+        {
+            dol_syslog("Ask a default value using common method getDefaultCreateValueForField on an object with no property ->element defined. Return empty string.", LOG_WARNING);
+            return '';
+        }
+        
+        $keyforfieldname=strtoupper($newelement.'_DEFAULT_'.$fieldname);
+        //var_dump($keyforfieldname);
+        if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
+        
+        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname 
+        
+    }
+	
+    
 	/* For triggers */
 
 
@@ -3579,6 +3643,11 @@ abstract class CommonObject
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
+
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
 
         if (! is_array($optionsArray))
         {
@@ -3786,7 +3855,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
-		global $_POST, $conf;
+		global $_POST, $conf, $langs;
 
 		$out = '';
 
@@ -3844,7 +3913,7 @@ abstract class CommonObject
 					if($extrafields->attribute_required[$key])
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
-					$out .= '<td>'.$label.'</td>';
+					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {

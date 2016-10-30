@@ -62,3 +62,4 @@ BrouillonnerTrip=Voltar relatório de despesas para o status de "Rascunho"
 ConfirmBrouillonnerTrip=Tem certeza de que deseja mover este relatório de despesas para o status de "Rascunho"?
 ConfirmSaveTrip=Tem certeza de que deseja validar esse relatório de despesas?
 NoTripsToExportCSV=Nenhum relatório de despesas para exportar para este período.
+ExpenseReportPayment=Despesa de pagamento de relatório

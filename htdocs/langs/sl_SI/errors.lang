@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Polje <b>%s</b> ne sme vsebovati posebnih znakov.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ni aktiviran računovodski modul
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP združevanje ni popolno.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript ne sme biti izklopljen, če želite da t
 ErrorPasswordsMustMatch=Obe vneseni gesli se morata ujemati
 ErrorContactEMail=Prišlo je do tehnične napake. Prosimo, obrnite se na administratorja na naslednji Email <b>%s</b> in mu sporočite kodo napake <b>%s</b>, Še bolje pa je, če priložite kopijo strani z napako.
 ErrorWrongValueForField=Napačna vrednost v polju številka <b>%s</b> (vrednost '<b>%s</b>' ne ustreza pravilu <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Napačna vrednost za <b>%s</b> številka polja (Vrednost <b>'%s</b> &quot;ni <b>%s</b> obstoječe ref)
 ErrorsOnXLines=Napake v <b>%s</b> vrsticah izvorne kode
 ErrorFileIsInfectedWithAVirus=Antivirusni program ni mogel potrditi datoteke (datoteka je morda okužena)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

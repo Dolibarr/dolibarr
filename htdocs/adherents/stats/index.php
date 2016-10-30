@@ -58,7 +58,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
 
 $dir=$conf->adherent->dir_temp;
 

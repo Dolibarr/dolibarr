@@ -50,4 +50,4 @@ ArcticNumRefModelError=Misslyckades med att aktivera
 PacificNumRefModelDesc1=Återgå numero med format %syymm-nnnn där YY är år, mm månaden och nnnn är en sekvens utan avbrott och ingen återgång till 0
 PacificNumRefModelError=En intervention kort börjar med $ syymm finns redan och är inte förenligt med denna modell för sekvens. Ta bort den eller byta namn på den för att aktivera denna modul.
 PrintProductsOnFichinter=Trycksaker på interventionskort
-PrintProductsOnFichinterDetails=interventions generated from orders
+PrintProductsOnFichinterDetails=Insatser skapade utifrån order

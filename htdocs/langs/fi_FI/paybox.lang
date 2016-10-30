@@ -12,7 +12,6 @@ Creditor=Velkoja
 PaymentCode=Maksu-koodi
 PayBoxDoPayment=Mene maksu
 YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
-PleaseBePatient=Please, kärsivällinen
 Continue=Seuraava
 ToOfferALinkForOnlinePayment=URL %s maksua
 ToOfferALinkForOnlinePaymentOnOrder=URL tarjota %s online maksu käyttöliittymän tilauksen

@@ -42,7 +42,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoDolibarr"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoDolibarr"),'','title_setup');
 
 // Version
 $var=true;

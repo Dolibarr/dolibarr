@@ -43,8 +43,6 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-    var $ref;
     var $description;
 	/**
 	 * @var string
@@ -60,8 +58,6 @@ class Project extends CommonObject
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
-    var $note_private;
-    var $note_public;
     var $budget_amount;
 
     var $statuts_short;
@@ -617,7 +613,7 @@ class Project extends CommonObject
 	        $resql = $this->db->query($sql);
 	        if (!$resql)
 	        {
-	        	$this->errors[] = $this->db->lasterror();
+	        	$this->errors[] = $langs->trans("CantRemoveProject");
 	        	$error++;
 	        }
         }
@@ -1470,8 +1466,8 @@ class Project extends CommonObject
 	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
 	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param	string		$modele			Force template to use ('' by default)
+	 *  @param	Translate	$outputlangs	Objet lang to use for translation
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref

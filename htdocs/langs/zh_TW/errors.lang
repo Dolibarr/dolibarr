@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲爾德<b>%s</b>必須不包含特殊字符。
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=沒有一個會計模塊激活
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=不能禁用JavaScript必須有此功能的工作�
 ErrorPasswordsMustMatch=這兩種類型的密碼必須相互匹配
 ErrorContactEMail=一個技術性錯誤發生。請聯系管理員，以下連接提供錯誤代碼<b>%s</b>在您的郵件，甚至更好，加入了這個頁面的屏幕拷貝的電子郵件<b>%s。</b>
 ErrorWrongValueForField=<b>s'</b>的領域的一些錯誤值<b>的%s（</b>價值<b>'%</b>不匹配正則表達式規則<b>%s）</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=錯場數<b>%s</b>值（值<b>'%s'</b>是不是一個的<b>%s</b>現有文獻）
 ErrorsOnXLines=<b>%</b>誤差<b>的</b>源上線
 ErrorFileIsInfectedWithAVirus=防病毒程序無法驗證文件（文件可能被病毒感染）
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

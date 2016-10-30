@@ -124,7 +124,7 @@ if ($result) {
 	print '<input type="hidden" name="action" value="import">';
 	
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>' . $langs->trans("accountingaccount") . '</td>';
+	print '<tr class="liste_titre"><td>' . $langs->trans("AccountAccouting") . '</td>';
 	print '<td>' . $langs->trans("label") . '</td>';
 	print '<td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>' . $langs->trans("Pcgtype") . '</td>';

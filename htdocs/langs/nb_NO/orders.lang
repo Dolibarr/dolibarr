@@ -125,6 +125,7 @@ CloneOrder=Klon bestilling
 ConfirmCloneOrder=Er du sikker på at du vil klone denne bestillingen <b>%s</b>?
 DispatchSupplierOrder=Motta leverandørordre %s
 FirstApprovalAlreadyDone=Første godkjenning allerede utført
+SecondApprovalAlreadyDone=Andre gangs godkjenning allerede utført
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representant for oppfølging av kundeordre
 TypeContact_commande_internal_SHIPPING=Representant for oppfølging av levering

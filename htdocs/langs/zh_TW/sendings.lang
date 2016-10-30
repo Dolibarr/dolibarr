@@ -5,7 +5,7 @@ Sendings=出貨
 AllSendings=All Shipments
 Shipment=出貨
 Shipments=出貨
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=出貨
 ListOfSendings=出貨清單列表
@@ -26,8 +26,8 @@ QtyToShip=出貨數量
 QtyReceived=收到的數量
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=此訂單的其他出貨清單
-DateSending=出貨日期
-DateSendingShort=出貨日期
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=此訂單的出貨清單
 SendingsAndReceivingForSameOrder=此訂單的出貨清單及收貨清單
 SendingsToValidate=發送驗證
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=按客戶捕捉

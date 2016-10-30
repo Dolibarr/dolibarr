@@ -36,6 +36,7 @@ $langs->load("other");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
+$langs->load("projects");
 
 if (! $user->admin) accessforbidden();
 
@@ -113,7 +114,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
+print load_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
@@ -131,7 +132,7 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print_fiche_titre($langs->trans("Language"),'','');
+    print load_fiche_titre($langs->trans("Language"),'','');
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -342,7 +343,7 @@ else	// Show
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
 	print '<td width="20">';
-    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation",$conf->global->MAIN_LANG_DEFAULT),1);
+    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
 

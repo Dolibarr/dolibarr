@@ -69,7 +69,7 @@ class modSalaries extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('salaries.php');
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
@@ -138,7 +138,7 @@ class modSalaries extends DolibarrModules
 		$this->export_label[$r]='Salaries and payments';
 		$this->export_permission[$r]=array(array("salaries","export"));
 		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
-		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Number",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Number','p.num_payment'=>'Number','p.label'=>'Text');
+		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Numeric",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Numeric','p.num_payment'=>'Numeric','p.label'=>'Text');
 		$this->export_entities_array[$r]=array('u.firstname'=>'user','u.lastname'=>'user','u.login'=>'user','u.salary'=>'user','p.datep'=>'payment','p.datesp'=>'payment','p.dateep'=>'payment','p.amount'=>'payment','p.label'=>'payment','p.note'=>'payment','p.num_payment'=>'payment');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

@@ -88,7 +88,7 @@ $formother=new FormOther($db);
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
-print_fiche_titre($titre,'','title_accountancy.png');
+print load_fiche_titre($titre,'','title_accountancy.png');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';

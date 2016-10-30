@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> πεδίου δεν πρέπει να περιέχει ειδικούς χαρακτήρες.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Το πεδίο <b>%s</b> δεν πρέπει να περιέχει ειδικούς χαρακτήρες, ούτε κεφαλαία γράμματα.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Δεν λογιστική μονάδα ενεργοποιηθεί
 ErrorExportDuplicateProfil=Αυτό το όνομα προφίλ υπάρχει ήδη για αυτό το σύνολο των εξαγωγών.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP αντιστοίχιση δεν είναι πλήρης.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Η Javascript πρέπει να είναι άτομ
 ErrorPasswordsMustMatch=Και οι δύο πληκτρολογήσει τους κωδικούς πρόσβασης πρέπει να ταιριάζουν μεταξύ τους
 ErrorContactEMail=Ένα τεχνικό σφάλμα. Παρακαλούμε, επικοινωνήστε με τον διαχειριστή για μετά <b>%s</b> email en παρέχουν την <b>%s</b> κωδικό σφάλματος στο μήνυμά σας, ή ακόμα καλύτερα με την προσθήκη ενός αντιγράφου της οθόνης αυτής της σελίδας.
 ErrorWrongValueForField=Λάθος τιμή για <b>%s</b> αριθμό τομέα <b>(«%s»</b> τιμή δεν ταιριάζει regex <b>%s</b> κανόνα)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Λάθος τιμή για τον αριθμό <b>%s</b> τομέα <b>(«%s»</b> τιμή δεν είναι <b>%s</b> υφιστάμενων ref)
 ErrorsOnXLines=Λάθη σε <b>%s</b> γραμμές πηγή
 ErrorFileIsInfectedWithAVirus=Το πρόγραμμα προστασίας από ιούς δεν ήταν σε θέση να επικυρώσει το αρχείο (αρχείο μπορεί να μολυνθεί από έναν ιό)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

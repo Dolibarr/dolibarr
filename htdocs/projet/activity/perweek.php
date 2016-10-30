@@ -108,12 +108,12 @@ if ($action == 'assign')
     }
     else
     {
-    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
     	$error++;
     }
     if (! GETPOST('type'))
     {
-    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
     	$error++;
     }
     if (! $error)
@@ -138,7 +138,7 @@ if ($action == 'assign')
 
 	if (! $error)
 	{
-		setEventMessages($langs->trans("TaskAssignedToEnterTime"), null);
+		setEventMessages("TaskAssignedToEnterTime", null);
 	}
 
 	$action='';
@@ -236,6 +236,7 @@ llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
+$param=($mode?'&amp;mode='.$mode:'');
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";

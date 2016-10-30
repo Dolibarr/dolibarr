@@ -8,35 +8,35 @@ ACCOUNTING_EXPORT_LABEL=Export the label ?
 ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
 ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
+Accounting=Boekhouding
+Globalparameters=Globale instellingen
+Chartofaccounts=Rekeningschema
+Fiscalyear=Boekjaren
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+MenuTools=Gereedschap
 
 ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
+Journaux=Verkoopdagboek
+JournalFinancial=Financiëel dagboek
+Exports=Export
 Export=Export
-Modelcsv=Model of export
+Modelcsv=Export model
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
+Selectmodelcsv=Selecteer een export model
+Modelcsv_normal=Klassieke export
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
-Back=Return
+Back=Terug
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
+Validate=Valideer
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
+ToDispatch=Te verzenden
+Dispatched=Verzonden
 
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
@@ -48,6 +48,7 @@ NewAccount=New accounting account
 Update=Update
 List=List
 Create=Create
+CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 

@@ -129,6 +129,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_montant_ht='';
     $search_montant_ttc='';
     $search_status='';
+    $day='';
     $year='';
     $month='';
 }
@@ -190,7 +191,7 @@ if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcusto
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if ($search_status != '') $sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
+if ($search_status >= 0 ) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -350,7 +351,7 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
-	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"), '3'=>$langs->trans("Cancel"));
+	$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -378,6 +379,8 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $facturestatic->statut = $objp->fk_statut;
+            $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
             $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
@@ -417,7 +420,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
+            if ($facturestatic->hasDelay())
             {
                 print img_warning($langs->trans('Late'));
             }

@@ -357,9 +357,11 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td class="nowrap">';
-
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
+	    $generic_commande->statut = $objp->fk_statut;
+	    $generic_commande->date_commande = $db->jdate($objp->date_commande);
+	    $generic_commande->date_livraison = $db->jdate($objp->date_delivery);
         $generic_commande->ref_client = $objp->ref_client;
         $generic_commande->total_ht = $objp->total_ht;
         $generic_commande->total_tva = $objp->total_tva;
@@ -444,8 +446,9 @@ if ($resql)
 
         // warning late icon
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_delivery)) < ($now - $conf->commande->client->warning_delay))
-			print img_picto($langs->trans("Late"),"warning");
+		if ($generic_commande->hasDelay()) {
+			print img_picto($langs->trans("Late"), "warning");
+		}
 		if(!empty($objp->note_private))
 		{
 			print ' <span class="note">';

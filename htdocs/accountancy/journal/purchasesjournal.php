@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2013-2014  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry	    <florian.henry@open-concept.pro>
  *
@@ -52,6 +52,8 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 
+$now = dol_now();
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -91,7 +93,7 @@ $sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_cod
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 ";
@@ -157,6 +159,7 @@ if ($result) {
 // Bookkeeping Write
 if ($action == 'writebookkeeping') {
 	$now = dol_now();
+	$error = 0;
 
 	foreach ( $tabfac as $key => $val ) {
 		foreach ( $tabttc[$key] as $k => $mt ) {
@@ -177,8 +180,13 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt > 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
-			$bookkeeping->create();
+			$result = $bookkeeping->create();
+			if ($result < 0) {
+				$error ++;
+				setEventMessage($object->errors, 'errors');
+			}
 		}
 
 		// Product / Service
@@ -202,8 +210,13 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+					$bookkeeping->fk_user_author = $user->id;
 
-					$bookkeeping->create();
+					$result = $bookkeeping->create();
+					if ($result < 0) {
+						$error ++;
+						setEventMessage($object->errors, 'errors');
+					}
 				}
 			}
 		}
@@ -228,10 +241,19 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
 				$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+				$bookkeeping->fk_user_author = $user->id;
 
-				$bookkeeping->create();
+				$result = $bookkeeping->create();
+				if ($result < 0) {
+					$error ++;
+					setEventMessage($object->errors, 'errors');
+				}
 			}
 		}
+	}
+
+	if (empty($error)) {
+		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
 	}
 }
 
@@ -246,15 +268,10 @@ $companystatic = new Fournisseur($db);
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
-
-	header('Content-Type: text/csv');
-	if ($conf->global->EXPORT_PREFIX_SPEC)
-		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_achats.csv";
-	else
-		$filename="journal_achats.csv";
-	header('Content-Disposition: attachment;filename='.$filename);
-
+	$journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+	
+	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+	
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
 		$sep = ";";

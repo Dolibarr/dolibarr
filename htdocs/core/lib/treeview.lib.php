@@ -94,7 +94,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 
 
 
-// ------------------------------- Used by menu editor -----------------
+// ------------------------------- Used by menu editor, category view, ... -----------------
 
 /**
  *  Recursive function to output menu tree. <ul id="iddivjstree"><li>...</li></ul>

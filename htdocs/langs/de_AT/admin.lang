@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionRecommanded=Empfohlen
 UseSearchToSelectCompany=Suchfeld statt Listenansicht für Partnerauswahl verwenden
 NextValue=Nächste Wert
 ImportMySqlDesc=Zum Wiederherstellen einer Sicherungsdatei müssen Sie folgenden Befehl über die Kommandozeile ausführen:
@@ -103,7 +102,4 @@ InterventionsSetup=Eingriffsmoduleinstellungen
 FreeLegalTextOnInterventions=Freier Rechtstext für Eingriffe
 WatermarkOnDraftInterventionCards=Wasserzeichen auf Intervention Karte Dokumente (alle, wenn leer)
 UseSearchToSelectProduct=Suchfeld statt Listenansicht für die Produktauswahl verwenden
-UseUnits=Support units
-SendingsAbility=Support shipment sheets for customer deliveries
 PathToGeoIPMaxmindCountryDataFile=Pfad zur Datei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
-UrlTrackingDesc=If the provider or transport service offer a page or web site to check status of your shipment, you can enter it here. You can use the key {TRACKID} into URL parameters so the system will replace it with value of tracking number user entered into shipment card.

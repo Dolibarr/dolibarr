@@ -8,6 +8,7 @@
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,7 +683,7 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
  */
 if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	print_fiche_titre($langs->trans("NewPrice"), '');
+	print load_fiche_titre($langs->trans("NewPrice"), '');
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -690,6 +691,9 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+		dol_fiche_head('');
+		
 		print '<table class="border" width="100%">';
 
 		// VAT
@@ -706,7 +710,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '</td>';
 		print '</tr>';
 
- 		//Only show price mode and expression selector if module is enabled
+ 		// Only show price mode and expression selector if module is enabled
 		if (! empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
@@ -771,7 +775,9 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -787,6 +793,9 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
+			
+			dol_fiche_head('');
+		
 			print '<table class="border" width="100%">';
 
 			// VAT
@@ -826,9 +835,14 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			}
 			print '</td></tr>';
 
-			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
+			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+			print '&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></td></tr>';
+			
 			print '</table>';
+
+			dol_fiche_end();
+
 			print '</form>';
 		}
 	}
@@ -866,7 +880,7 @@ if ($result)
 
 	if ($num > 0)
 	{
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_fiche_titre($langs->trans("DefaultPrice"),'','');
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print load_fiche_titre($langs->trans("DefaultPrice"),'','');
 
 		print '<table class="noborder" width="100%">';
 
@@ -999,7 +1013,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Create mode
 		$maxpricesupplier = $object->min_recommended_price();
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1078,7 +1092,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Edit mode
 		$maxpricesupplier = $object->min_recommended_price();
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
 		if ($result < 0) {

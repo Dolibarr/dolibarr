@@ -84,7 +84,7 @@ llxHeader('',$langs->trans("ListOfUsers"));
 
 $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
-print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
+print load_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.gender,";
 $sql.= " u.datec,";

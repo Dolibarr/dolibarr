@@ -92,7 +92,7 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-	print_fiche_titre($langs->trans("Loans"));
+	print load_fiche_titre($langs->trans("Loans"));
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="noborder" width="100%">';

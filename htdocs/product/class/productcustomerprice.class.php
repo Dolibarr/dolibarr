@@ -28,12 +28,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Productcustomerprice extends CommonObject
 {
-	var $db; // !< To store db handler
-	var $error; // !< To return error code (or message)
-	var $errors = array (); // !< To return several error codes (or messages)
 	var $element = 'product_customer_price'; // !< Id that identify managed objects
 	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
-	var $id;
 	var $entity;
 	var $datec = '';
 	var $tms = '';
@@ -49,7 +45,6 @@ class Productcustomerprice extends CommonObject
 	var $localtax1_tx;
 	var $localtax2_tx;
 	var $fk_user;
-	var $import_key;
 	var $lines = array ();
 
 	/**

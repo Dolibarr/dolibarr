@@ -5,7 +5,7 @@ Sendings=Sendingar
 AllSendings=All Shipments
 Shipment=Sendingunni
 Shipments=Sendingar
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=Sendingar area
 ListOfSendings=Listi yfir sendings
@@ -26,8 +26,8 @@ QtyToShip=Magn til skip
 QtyReceived=Magn móttekin
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Aðrar sendingar fyrir þessari röð
-DateSending=Date senda til
-DateSendingShort=Date senda til
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Sendingum fyrir í þessari röð
 SendingsAndReceivingForSameOrder=Sendingar og receivings fyrir þessari röð
 SendingsToValidate=Sendi til að sannreyna
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Afli eftir viðskiptavina

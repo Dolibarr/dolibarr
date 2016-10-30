@@ -16,7 +16,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General Public License fr more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,7 +25,7 @@
 /**
  *	\file		htdocs/accountancy/journal/bankjournal.php
  *	\ingroup	Accounting Expert
- *	\brief		Page with sells journal
+ *	\brief		Page with bank journal
  */
 
 require '../../main.inc.php';
@@ -65,6 +65,8 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 $action = GETPOST('action');
+
+$now = dol_now();
 
 // Security check
 if ($user->societe_id > 0)
@@ -300,6 +302,7 @@ if ($action == 'writeBookKeeping')
 			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'payment') {
 
@@ -350,6 +353,7 @@ if ($action == 'writeBookKeeping')
 			$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'sc') {
 				$bookkeeping->code_tiers = '';
@@ -414,17 +418,16 @@ if ($action == 'writeBookKeeping')
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans('Success'), 'mesgs');
+		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
 	}
 }
 // Export
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$bank_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+	$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 
-	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename=journal_banque.csv');
+	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);
 
@@ -571,7 +574,7 @@ else
 
 	// Title
 	print '<tr>';
-	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="110">'.$langs->trans("ReportName").'</td>';
 	print '<td colspan="3">'.$namereport.'</td>';
 	print '</td>';
 	print '</tr>';
@@ -588,7 +591,7 @@ else
 
 	// Description
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
 

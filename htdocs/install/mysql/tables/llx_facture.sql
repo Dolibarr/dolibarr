@@ -78,11 +78,11 @@ create table llx_facture
 
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms
-  import_key			varchar(14),
-  extraparams			varchar(255),							-- for stock other parameters with json format
 
   situation_cycle_ref smallint,  -- situation cycle reference
   situation_counter   smallint,  -- situation counter
-  situation_final     smallint   -- is the situation final ?
+  situation_final     smallint,  -- is the situation final ?
 
+  import_key			varchar(14),
+  extraparams			varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

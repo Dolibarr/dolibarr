@@ -5,7 +5,7 @@ Sendings=משלוחים
 AllSendings=All Shipments
 Shipment=Shipment
 Shipments=משלוחים
-ShowSending=Show Sending
+ShowSending=Show Shipments
 Receivings=Receipts
 SendingsArea=Shipments area
 ListOfSendings=List of shipments
@@ -26,8 +26,8 @@ QtyToShip=Qty to ship
 QtyReceived=Qty received
 KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Other shipments for this order
-DateSending=Date sending order
-DateSendingShort=Date sending order
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Shipments for this order
 SendingsAndReceivingForSameOrder=Shipments and receivings for this order
 SendingsToValidate=Shipments to validate
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

@@ -101,3 +101,6 @@ SaveTrip=Проверить отчёт о завтратах
 ConfirmSaveTrip=Вы точно хотите проверить данный отчёт о затратах?
 
 NoTripsToExportCSV=Нет отчёта о затратах за этот период.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

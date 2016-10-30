@@ -31,7 +31,6 @@ class ExpeditionLineBatch extends CommonObject
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
-	var $id;
 	var $sellby;
 	var $eatby;
 	var $batch;

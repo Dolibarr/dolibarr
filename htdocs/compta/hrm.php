@@ -67,7 +67,7 @@ $childids[]=$user->id;
 
 llxHeader(array(),$langs->trans('HRMArea'));
 
-print_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
+print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

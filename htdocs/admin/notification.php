@@ -115,7 +115,7 @@ $notify = new Notify($db);
 llxHeader('',$langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br><br>';
 
@@ -143,7 +143,7 @@ print '<br>';
 
 if ($conf->societe->enabled)
 {
-	print_fiche_titre($langs->trans("ListOfNotificationsPerContact"),'','');
+	print load_fiche_titre($langs->trans("ListOfNotificationsPerContact"),'','');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -186,7 +186,7 @@ if ($conf->societe->enabled)
 }
 
 
-print_fiche_titre($langs->trans("ListOfFixedNotifications"),'','');
+print load_fiche_titre($langs->trans("ListOfFixedNotifications"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/pdf/modules_chequereceipts.
  */
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
-    var $error='';
-
 	var $emetteur;	// Objet societe qui emet
 
 	/**
@@ -76,14 +74,15 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 	/**
-	 *	Fonction generant le rapport sur le disque
+	 *	Fonction to generate document on disk
 	 *
-	 *	@param	string		$_dir			Directory
-	 *	@param	string		$number			Number
-	 *	@param	Translate	$outputlangs	Lang output object
-     *	@return	int     					1=ok, 0=ko
+	 *	@param	RemiseCheque	$object			Object RemiseCheque			
+	 *	@param	string			$_dir			Directory
+	 *	@param	string			$number			Number
+	 *	@param	Translate		$outputlangs	Lang output object
+     *	@return	int     						1=ok, 0=ko
 	 */
-	function write_file($_dir, $number, $outputlangs)
+	function write_file($object, $_dir, $number, $outputlangs)
 	{
 		global $user,$conf,$langs,$hookmanager;
 
@@ -98,7 +97,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$outputlangs->load("products");
         $outputlangs->load("compta");
 
-		$dir = $_dir . "/".get_exdir($number,2,1,0,null,'cheque').$number;
+		$dir = $_dir . "/".get_exdir($number,0,1,0,$object,'cheque').$number;
 
 		if (! is_dir($dir))
 		{

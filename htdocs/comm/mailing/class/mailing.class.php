@@ -34,8 +34,6 @@ class Mailing extends CommonObject
 	public $element='mailing';
 	public $table_element='mailing';
 
-	var $id;
-	var $statut;
 	var $titre;
 	var $sujet;
 	var $body;

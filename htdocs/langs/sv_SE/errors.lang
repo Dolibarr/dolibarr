@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vänligen fyll i värde för krysslista
 ErrorNoValueForRadioType=Vänligen fyll i värde för radiolista
 ErrorBadFormatValueList=Listans värd kan inte ha mer än ett komma: <u>%s</u>,  men behöver åtminstone en: Llave, valores
 ErrorFieldCanNotContainSpecialCharacters=Fält <b>%s</b> inte innehåller specialtecken.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Fältet <b>%s</b> får inte innehåller specialtecken eller versaler.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ingen bokföring modul aktiverad
 ErrorExportDuplicateProfil=Detta profilnamn finns redan för denna export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchning inte är fullständig.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna fun
 ErrorPasswordsMustMatch=Båda skrivit lösenord måste matcha varandra
 ErrorContactEMail=Ett tekniskt fel uppstod. Vänligen kontakta administratören att följa <b>e-%s</b> en ge <b>%s</b> felkod i ditt meddelande, eller ännu bättre genom att lägga till en skärm kopia av denna sida.
 ErrorWrongValueForField=Felaktigt värde för antalet <b>%s</b> området (värde <b>&quot;%s&quot;</b> inte matchar regex regel <b>%s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Fel värde för <b>%s</b> fältnummer (värde <b>&quot;%s&quot;</b> är inte ett <b>%s</b> befintlig ref)
 ErrorsOnXLines=Fel på <b>%s</b> källrader
 ErrorFileIsInfectedWithAVirus=Antivirusprogrammet inte har kunnat validera (fil kan vara smittade av ett virus)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriska inställningsparametrarna har ännu inte definierat

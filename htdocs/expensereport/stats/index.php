@@ -65,7 +65,7 @@ llxHeader();
 $title=$langs->trans("TripsAndExpensesStatistics");
 $dir=$conf->expensereport->dir_temp;
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 

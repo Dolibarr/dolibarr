@@ -1,12 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_SEPARATORCSV=Ločilo za stolpce za izvozno datoteko
+ACCOUNTING_EXPORT_DATE=Format datuma za izvozno datoteko
+ACCOUNTING_EXPORT_PIECE=Izvozi število kosov ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Izvozi z globalnim računom ?
+ACCOUNTING_EXPORT_LABEL=Izvozi naziv ?
+ACCOUNTING_EXPORT_AMOUNT=Izvozi znesek ?
+ACCOUNTING_EXPORT_DEVISE=Izvozi valuto ?
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
@@ -48,6 +48,7 @@ NewAccount=Novi računovodski račun
 Update=Update
 List=Seznam
 Create=Ustvari
+CreateMvts=Ustvari spremembo
 UpdateAccount=Sprememba obračunskega računa
 UpdateMvts=Sprememba pretoka
 WriteBookKeeping=Evidenčnih računov v glavno knjigo
@@ -83,13 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začni sortiranje strani za pregled "Pregl
 
 AccountLength=Dolžina računovodstva računov prikazan v Dolibarrju
 AccountLengthDesc=Funkcija omogoča, da Predstavljati dolžino obračunskega računa z zamenjavo prostorov z ničelno sliki. Ta funkcija se dotakne le zaslon, ne spreminja računovodskih račune registrirane v Dolibarrju. Za izvoz, to funkcijo je potrebno, da so združljivi z določeno programsko opremo.
+ACCOUNTING_LENGTH_DESCRIPTION=Dolžina za prikaz opisa proizvodov in storitev v seznamih (najbolje = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Dolžina za prikaz oblike opisa računa proizvodov in storitev v seznamih (najbolje = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dolžina glavne knjige
 ACCOUNTING_LENGTH_AACCOUNT=Dolžina računih tretjih oseb
 
 ACCOUNTING_SELL_JOURNAL=Prodam revija
 ACCOUNTING_PURCHASE_JOURNAL=Nakup revij
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Razno revija
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Pregled stroškovnih poročil
 ACCOUNTING_SOCIAL_JOURNAL=Socialna revija
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Račun za prenos

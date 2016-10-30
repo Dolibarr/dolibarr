@@ -58,27 +58,15 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'facnumber';
 
-	var $id;
-	//! Id client
 	var $socid;
-	//! Objet societe client (to load with fetch_client method)
 
-	/**
-	 * Customer
-	 * @var Societe
-	 */
-	var $client;
 	var $author;
 	var $fk_user_author;
 	var $fk_user_valid;
-	//! Invoice date
-	var $date;				// Invoice date
 	var $date_creation;		// Creation date
 	var $date_validation;	// Validation date
 	var $datem;
-	var $ref;
 	var $ref_client;
-	var $ref_ext;
 	var $ref_int;
 	//Check constants for types
 	var $type = self::TYPE_STANDARD;
@@ -90,20 +78,7 @@ class Facture extends CommonInvoice
 	var $total_tva=0;
 	var $total_ttc=0;
 	var $revenuestamp;
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-	var $note;
-	var $note_private;
-	var $note_public;
 
-	/**
-	 * Invoice status
-	 * @var int
-	 * @see Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_PAID, Facture::STATUS_ABANDONED
-	 */
-	var $statut;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
 	var $close_code;
@@ -113,18 +88,11 @@ class Facture extends CommonInvoice
 	var $paye;
 	//! id of source invoice if replacement invoice or credit note
 	var $fk_facture_source;
-	var $origin;
-	var $origin_id;
 	var $linked_objects=array();
-	var $fk_project;
 	var $date_lim_reglement;
-	var $cond_reglement_id;			// Id in llx_c_paiement
 	var $cond_reglement_code;		// Code in llx_c_paiement
-	var $mode_reglement_id;			// Id in llx_c_paiement
 	var $mode_reglement_code;		// Code in llx_c_paiement
-    var $fk_account;                // Id of bank account
 	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
-	var $modelpdf;
 	/**
 	 * @deprecated
 	 */
@@ -138,11 +106,6 @@ class Facture extends CommonInvoice
 	var $specimen;
 
 	var $fac_rec;
-
-	//Incoterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * @var int Situation cycle reference number
@@ -158,64 +121,6 @@ class Facture extends CommonInvoice
 	 * @var bool Final situation flag
 	 */
 	public $situation_final;
-
-    /**
-     * Standard invoice
-     */
-    const TYPE_STANDARD = 0;
-
-    /**
-     * Replacement invoice
-     */
-    const TYPE_REPLACEMENT = 1;
-
-    /**
-     * Credit note invoice
-     */
-    const TYPE_CREDIT_NOTE = 2;
-
-    /**
-     * Deposit invoice
-     */
-    const TYPE_DEPOSIT = 3;
-
-    /**
-     * Proforma invoice
-     */
-    const TYPE_PROFORMA = 4;
-
-	/**
-	 * Situation invoice
-	 */
-	const TYPE_SITUATION = 5;
-
-	/**
-	 * Draft
-	 */
-	const STATUS_DRAFT = 0;
-
-	/**
-	 * Validated (need to be paid)
-	 */
-	const STATUS_VALIDATED = 1;
-
-	/**
-	 * Classified paid.
-	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
-	 */
-	const STATUS_CLOSED = 2;
-
-	/**
-	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
-	 */
-	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
 	const CLOSECODE_BADDEBT = 'badcustomer';
@@ -332,7 +237,7 @@ class Facture extends CommonInvoice
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
-		$sql.= ", '".$this->type."'";
+		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", '".$socid."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
@@ -348,7 +253,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
-		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."'";
+		$sql.= ", '".$this->db->idate($datelim)."', '".$this->db->escape($this->modelpdf)."'";
 		$sql.= ", ".($this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null");
 		$sql.= ", ".($this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null");
 		$sql.= ", ".($this->situation_final?$this->situation_final:0);
@@ -701,7 +606,7 @@ class Facture extends CommonInvoice
 			$line->fetch_optionals($line->rowid);
 
 		// Load source object
-		$objFrom = dol_clone($this);
+		$objFrom = clone $this;
 
 
 
@@ -2345,15 +2250,25 @@ class Facture extends CommonInvoice
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
-			// Update line into database
-			$this->line=new FactureLigne($this->db);
+			// Old properties: $price, $remise (deprecated)
+			$price = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
 
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new FactureLigne($this->db);
+			$line->fetch($rowid);
+
+			$staticline = clone $line;
+
+			$line->oldline = $staticline;
+			$this->line = $line;
             $this->line->context = $this->context;
-
-            // Stock previous line records
-			$staticline=new FactureLigne($this->db);
-			$staticline->fetch($rowid);
-			$this->line->oldline = $staticline;
 
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -2755,15 +2670,16 @@ class Facture extends CommonInvoice
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this,$mode);
 
-			if ($numref != "")
-			{
-				return $numref;
-			}
-			else
-			{
+			/**
+			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
+			 * set up mask.
+			 */
+			if ($mode != 'last' && !$numref) {
 				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
+
+			return $numref;
 		}
 		else
 		{
@@ -3236,11 +3152,15 @@ class Facture extends CommonInvoice
 			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
+			$generic_facture = new Facture($this->db);
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
+				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
+
 				$response->nbtodo++;
 
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) {
+				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
 				}
 			}
@@ -3697,6 +3617,25 @@ class Facture extends CommonInvoice
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+	/**
+	 * Is the customer invoice delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		$now = dol_now();
+
+		//Paid invoices have status STATUS_CLOSED
+		if (!$this->statut != Facture::STATUS_VALIDATED) {
+			return false;
+		}
+
+		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+	}
 }
 
 /**
@@ -3843,10 +3782,12 @@ class FactureLigne extends CommonInvoiceLine
 			$this->fk_prev_id           = $objp->fk_prev_id;
 
 			$this->db->free($result);
+
+			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 

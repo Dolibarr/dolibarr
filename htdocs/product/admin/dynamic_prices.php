@@ -144,7 +144,7 @@ if (!empty($action) && empty($cancel)) {
 
 //Header
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-print_fiche_titre($langs->trans("DynamicPriceConfiguration"));
+print load_fiche_titre($langs->trans("DynamicPriceConfiguration"));
 $form = new Form($db);
 
 //Global variables table

@@ -114,7 +114,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
 
 dol_fiche_head();
 
@@ -143,7 +143,7 @@ else
     print "</table>\n";
 
     print '<br>';
-    print_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+    print load_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
     //print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
     print '<table class="noborder" width="100%">';

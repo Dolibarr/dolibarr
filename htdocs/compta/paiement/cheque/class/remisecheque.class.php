@@ -2,7 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,14 +36,18 @@ class RemiseCheque extends CommonObject
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
 
-	var $id;
 	var $num;
 	var $intitule;
-	var $ref_ext;
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
-	public $statut;
+	public $amount;
+	public $date_bordereau;
+	public $account_id;
+	public $account_label;
+	public $author_id;
+	public $nbcheque;
+	public $number;
 
 	/**
 	 *	Constructor
@@ -548,7 +552,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charseSupprimert_output=$outputlangs->charset_output;
-			$result=$docmodel->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
+			$result=$docmodel->write_file($this, $conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
 				//$outputlangs->charset_output=$sav_charset_output;
@@ -661,23 +665,38 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Check rejection management
-	 *	Reopen linked invoices and saves a new negative payment
+	 *	Check return management
+	 *	Reopen linked invoices and create a new negative payment.
 	 *
-	 *	@param	int		$bank_id 		Id of bank line concerned
-	 *	@param	date	$rejection_date	Date to use on the negative payment
-	 * 	@return	int
+	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
+	 *	@param	date	$rejection_date    Date to use on the negative payment
+	 * 	@return	int                        Id of negative payment line created 
 	 */
-	function reject_check($bank_id, $rejection_date)
+	function rejectCheck($bank_id, $rejection_date)
 	{
 		global $db, $user;
 
 		$payment = new Paiement($db);
 		$payment->fetch(0,0,$bank_id);
 
+		$bankline = new AccountLine($db);
+		$bankline->fetch($bank_id);
+		
+		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
+		if ($bankline->rappro)
+		{
+            $this->error='ActionRefusedLineAlreadyConciliated';
+		    return -1;
+		}*/
+		
+		$this->db->begin();
+		
+		// Not conciliated, we can delete it
+		//$bankline->delete($user);    // We delete 
+			    
 		$bankaccount = $payment->fk_account;
 
-		// Get invoice list to reopen them
+		// Get invoices list to reopen them
 		$sql = 'SELECT pf.fk_facture, pf.amount';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 		$sql.= ' WHERE pf.fk_paiement = '.$payment->id;
@@ -700,27 +719,45 @@ class RemiseCheque extends CommonObject
 				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
 			}
 
-			if ($rejectedPayment->create($user) > 0)
+			$result = $rejectedPayment->create($user);
+			if ($result > 0)
 			{
-				$result=$rejectedPayment->addPaymentToBank($user,'payment','(CheckRejected)',$bankaccount,'','');
+                // We created a negative payment, we also add the line as bank transaction
+			    $result=$rejectedPayment->addPaymentToBank($user,'payment','(CheckRejected)',$bankaccount,'','');
 				if ($result > 0)
 				{
-					$payment->reject();
-					return $rejectedPayment->id;
+				    $result = $payment->reject();
+					if ($result > 0)
+					{
+    					$this->db->commit();
+    					return $rejectedPayment->id;
+					}
+					else
+					{
+                        $this->db->rollback();
+					    return -1;
+					}
 				}
 				else
 				{
+				    $this->error = $rejectedPayment->error;
+				    $this->errors = $rejectedPayment->errors;
+				    $this->db->rollback();
 					return -1;
 				}
 			}
 			else
 			{
+				$this->error = $rejectedPayment->error;
+				$this->errors = $rejectedPayment->errors;
+			    $this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -819,7 +856,6 @@ class RemiseCheque extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$this->date_bordereau = $date;
 				return 1;
 			}
 			else

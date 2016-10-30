@@ -120,7 +120,7 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$params,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$params,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$params,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"bc.amount","",$params,'align="right"',$sortfield,$sortorder);
@@ -164,7 +164,7 @@ if ($resql)
 		print '</td>';
 
 		// Date
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';  // TODO Use date hour
 
 		// Bank
 		print '<td>';

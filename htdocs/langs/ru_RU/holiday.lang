@@ -130,7 +130,6 @@ nbJours=Количество дней
 TitleAdminCP=Настройка модуля "Отпуска"
 NoticePeriod=Notice period
 #Messages
-Hello=Здравствуйте
 HolidaysToValidate=Подтверждение заявления на отпуск
 HolidaysToValidateBody=Ниже список заявлений на отпуск, которые требуют подтверждения
 HolidaysToValidateDelay=Это заявление на отпуск будет рассмотрено в период менее, чем %s дней.

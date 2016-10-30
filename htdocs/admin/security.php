@@ -185,7 +185,7 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Passwords"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";

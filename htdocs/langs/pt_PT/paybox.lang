@@ -12,7 +12,6 @@ Creditor=Beneficiario
 PaymentCode=Código de pagamento
 PayBoxDoPayment=Continuar pagamento com cartão
 YouWillBeRedirectedOnPayBox=Você será redirecionado para a página Paybox não se esqueça de indicar o seu cartão de crédito
-PleaseBePatient=Espere uns segundos
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL para o pagamento %s
 ToOfferALinkForOnlinePaymentOnOrder=URL que fornece pagamento on-line interface% s com base no valor de um pedido de venda

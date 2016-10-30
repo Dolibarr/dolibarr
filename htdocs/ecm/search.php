@@ -116,7 +116,7 @@ if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('le
 //***********************
 // List
 //***********************
-print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
+print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 
 //print $langs->trans("ECMAreaDesc")."<br>";
 //print $langs->trans("ECMAreaDesc2")."<br>";
@@ -133,7 +133,7 @@ print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 // Left area
 
 
-//print_fiche_titre($langs->trans("ECMSectionsManual"));
+//print load_fiche_titre($langs->trans("ECMSectionsManual"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -147,7 +147,7 @@ print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" cl
 print "</table></form>";
 //print $langs->trans("ECMSectionManualDesc");
 
-//print_fiche_titre($langs->trans("ECMSectionAuto"));
+//print load_fiche_titre($langs->trans("ECMSectionAuto"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

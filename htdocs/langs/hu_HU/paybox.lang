@@ -12,7 +12,6 @@ Creditor=Hitelező
 PaymentCode=Fizetési kód
 PayBoxDoPayment=Tovább a fizetéshez
 YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
-PleaseBePatient=Kérjük legyen türelemmel
 Continue=Következő
 ToOfferALinkForOnlinePayment=URL %s fizetés
 ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for an order

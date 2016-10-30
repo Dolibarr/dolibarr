@@ -51,7 +51,7 @@ llxHeader('',$langs->trans('AccountsArea'),$help_url);
 $link='';
 if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
 if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
-print_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
+print load_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
 
 
 // On charge tableau des comptes financiers (ouverts par defaut)

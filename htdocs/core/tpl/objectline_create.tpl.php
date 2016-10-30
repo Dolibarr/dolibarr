@@ -249,7 +249,7 @@ else {
 		<td class="nobottom" align="right" class="margininfos">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
@@ -493,7 +493,7 @@ jQuery(document).ready(function() {
 		jQuery('#trlinefordates').show();
 	});
 
-	/* Sur changemenr de produit, on recharge la liste des prix fournisseur */
+	/* When changing predefined product, we reload list of supplier prices */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		setforpredef();
@@ -521,6 +521,11 @@ jQuery(document).ready(function() {
 	      			if (this.id != 'pmpprice')
 		      		{
 		        		i++;
+
+			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';
+		      			if (i == 1 && this.price > 0 && 'bestsupplierprice' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+
 		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
 		        		if (this.price > 0 && i == 1) { defaultkey = this.id; defaultprice = this.price; }
 		        		options += '>'+this.label+'</option>';
@@ -528,23 +533,26 @@ jQuery(document).ready(function() {
 	      			if (this.id == 'pmpprice')
 	      			{
 	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-		      			var defaultbuyprice = <?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?1:0); ?>;
-		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?'pmp':''); ?>';
+		      			if (this.price > 0 && 'pmp' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+
 	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}
 	      		});
 	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
 
-				/* alert(defaultkey+' '+defaultprice); */
 	      		$("#fournprice_predef").html(options).show();
-	      		$("#fournprice_predef").val(defaultkey);
+	      		if (defaultkey != '')
+				{
+		      		$("#fournprice_predef").val(defaultkey);
+		      	}
 
 	      		/* At loading, no product are yet selected, so we hide field of buying_price */
 	      		$("#buying_price").hide();
 
 	      		/* Define default price at loading */
 	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-	      		$("#buying_price").val(defaultprice);
+	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
 
 	      		$("#fournprice_predef").change(function() {
 	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */

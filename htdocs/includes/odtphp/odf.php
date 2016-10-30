@@ -6,14 +6,13 @@ class OdfException extends Exception
  * Templating class for odt file
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
- * Encoding : ISO-8859-1
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
- * @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
+ * @copyright  GPL License 2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
+ * @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
- * @version 1.4.6 (last update 2013-04-07)
+ * @version 1.5.0
  */
 class Odf
 {
@@ -25,6 +24,7 @@ class Odf
 	);
 	protected $file;
 	protected $contentXml;			// To store content of content.xml file
+	protected $metaXml;			    // To store content of meta.xml file
 	protected $stylesXml;			// To store content of styles.xml file
 	protected $manifestXml;			// To store content of META-INF/manifest.xml file
 	protected $tmpfile;
@@ -32,6 +32,12 @@ class Odf
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
+	
+	public $creator;
+	public $title;
+	public $subject;
+	public $userdefined=array();
+	
 	const PIXEL_TO_CM = 0.026458333;
 	/**
 	 * Class constructor
@@ -85,6 +91,9 @@ class Odf
 		}
 		if (($this->manifestXml = $this->file->getFromName('META-INF/manifest.xml')) === false) {
 			throw new OdfException("Something is wrong with META-INF/manifest.xml in source file '$filename'");
+		}
+		if (($this->metaXml = $this->file->getFromName('meta.xml')) === false) {
+			throw new OdfException("Nothing to parse - Check that the meta.xml file is correctly formed in source file '$filename'");
 		}
 		if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
 			throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
@@ -187,6 +196,7 @@ class Odf
 	/**
 	 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
 	 *
+	 * @return int             0
 	 */
 	public function phpEval()
 	{
@@ -268,13 +278,13 @@ IMG;
 	 * Merge template variables
 	 * Called automatically for a save
 	 *
-	 * @param  string	$type		'content' or 'styles'
+	 * @param  string	$type		'content', 'styles' or 'meta'
 	 * @return void
 	 */
 	private function _parse($type='content')
 	{
 		// Conditionals substitution
-		// Note: must be done before content substitution, else the variable will be replaced by its value and the conditional won't work anymore
+		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
 		foreach($this->vars as $key => $value)
 		{
 			// If value is true (not 0 nor false nor null nor empty string)
@@ -300,11 +310,11 @@ IMG;
 			}
 		}
 
-		// Content (variable) substitution
+		// Static substitution
 		if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
-		// Styles substitution
 		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
-
+		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
+		
 	}
 
 	/**
@@ -408,13 +418,21 @@ IMG;
 		$res=$this->file->open($this->tmpfile);    // tmpfile is odt template
 		$this->_parse('content');
 		$this->_parse('styles');
+		$this->_parse('meta');
 
+		$this->setMetaData();
+		//print $this->metaXml;exit;
+		
 		if (! $this->file->addFromString('content.xml', $this->contentXml)) {
-			throw new OdfException('Error during file export addFromString');
+			throw new OdfException('Error during file export addFromString content');
+		}
+		if (! $this->file->addFromString('meta.xml', $this->metaXml)) {
+			throw new OdfException('Error during file export addFromString meta');
 		}
 		if (! $this->file->addFromString('styles.xml', $this->stylesXml)) {
-			throw new OdfException('Error during file export addFromString');
+			throw new OdfException('Error during file export addFromString styles');
 		}
+		
 		foreach ($this->images as $imageKey => $imageValue) {
 			// Add the image inside the ODT document
 			$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
@@ -428,9 +446,36 @@ IMG;
 	}
 
 	/**
+	 * Update Meta information
+	 * <dc:date>2013-03-16T14:06:25</dc:date>
+	 *
+	 * @return void
+	 */
+	public function setMetaData()
+	{
+	    if (empty($this->creator)) $this->creator='';
+	    
+		$this->metaXml = preg_replace('/<dc:date>.*<\/dc:date>/', '<dc:date>'.gmdate("Y-m-d\TH:i:s").'</dc:date>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:creator>.*<\/dc:creator>/', '<dc:creator>'.htmlspecialchars($this->creator).'</dc:creator>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:title>.*<\/dc:title>/', '<dc:title>'.htmlspecialchars($this->title).'</dc:title>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:subject>.*<\/dc:subject>/', '<dc:subject>'.htmlspecialchars($this->subject).'</dc:subject>', $this->metaXml);
+		
+		if (count($this->userdefined))
+		{
+		    foreach($this->userdefined as $key => $val)
+		    {
+		      $this->metaXml = preg_replace('<meta:user-defined meta:name="'.$key.'"/>', '', $this->metaXml);
+		      $this->metaXml = preg_replace('/<meta:user-defined meta:name="'.$key.'">.*<\/meta:user-defined>/', '', $this->metaXml);
+		      $this->metaXml = str_replace('</office:meta>', '<meta:user-defined meta:name="'.$key.'">'.htmlspecialchars($val).'</meta:user-defined></office:meta>', $this->metaXml);
+		    }
+		}
+	}
+	
+	/**
 	 * Update Manifest file according to added image files
 	 *
 	 * @param string	$file		Image file to add into manifest content
+	 * @return void
 	 */
 	public function addImageToManifest($file)
 	{

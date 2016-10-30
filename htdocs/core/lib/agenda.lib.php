@@ -103,7 +103,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid');
+		print $form->select_company($socid, 'socid', '', 1);
 		print '</td></tr>';
 	}
 
@@ -124,7 +124,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Filter on hours
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("WorkingTimeRange").'</td>';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("VisibleTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
@@ -134,7 +134,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 		// Filter on days
 		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("WorkingDaysRange").'</td>';
+		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';

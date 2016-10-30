@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Sett inn verdi for å velge avkrysningsboks-liste
 ErrorNoValueForRadioType=Sett i verdi for radioknapp-liste
 ErrorBadFormatValueList=Listeverdien kan ikke føres opp mer enn en gang: <u>%s</u>, men kreves minst en gang
 ErrorFieldCanNotContainSpecialCharacters=Feltet <b>%s</b> kan ikke inneholde spesialtegn.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Feltet <b>%s</b> må ikke inneholde spesialtegn eller store bokstaver
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Feltet <b>%s</b> må ikke inneholde spesialkarakterer, ikke store bokstaver og ikke bare tall
 ErrorNoAccountancyModuleLoaded=Ingen regnskapsmodul aktivert
 ErrorExportDuplicateProfil=Profilnavnet til dette eksport-oppsettet finnes allerede
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP oppsett er ikke komplett.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript må være aktivert for å kunne bruke de
 ErrorPasswordsMustMatch=Passordene må samsvare med hverandre
 ErrorContactEMail=En teknisk feil oppsto. Vennligst kontakt administrator på e-post <b>%s</b> og oppgi feilkoden <b>%s</b> i meldingen, eller enda bedre, ved å legge til en skjermdump av denne siden.
 ErrorWrongValueForField=Feil verdi for feltnummeret <b>%s</b> (verdien <b>«%s"</b> samsvarer ikke med regex regel <b>%s)</b>
-ErrorFieldValueNotIn=Feil verdi for feltnummer <b>%s</b> (verdien '<b>%s</b>' er ikke tilgjengelig for feltet <b>%s</b> i tabell <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Feil verdi for feltnummer <b>%s</b> (verdien '<b>%s</b>' er ikke en <b>%s</b> eksisterende ref)
 ErrorsOnXLines=Feil på <b>%s</b> kildelinje(r)
 ErrorFileIsInfectedWithAVirus=Antivirus-programmet var ikke i stand til å validere filen (filen kan være infisert av et virus)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Ingen global variabel valgt
 ErrorFieldMustBeANumeric=Feltet <b>%s</b> må være en numerisk verdi
 ErrorFieldMustBeAnInteger=Feltet <b>%s</b> må være et heltall
 ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
+ErrorOppStatusRequiredIfAmount=Sett inn et estimert beløp for denne muligheten. Status må også settes
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriske parametre er enda ikke satt opp

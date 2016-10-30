@@ -47,12 +47,12 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
 
-	$head[$h][0] = dol_buildpath('/accountancy/admin/journaux.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journal.php';
 	$head[$h][1] = $langs->trans("Journaux");
 	$head[$h][2] = 'journal';
 	$h ++;
 
-	$head[$h][0] = dol_buildpath('/accountancy/admin/export.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/export.php';
 	$head[$h][1] = $langs->trans("Export");
 	$head[$h][2] = 'export';
 	$h ++;
@@ -75,7 +75,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	$h = 0;
 	$head = array ();
 
-	$head[$h][0] = dol_buildpath('/accountancy/admin/card.php', 1) . '?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h ++;

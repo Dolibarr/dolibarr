@@ -189,7 +189,7 @@ else if ($action == 'setmod')
 
 else if ($action == 'set_EXPENSEREPORT_FREE_TEXT')
 {
-	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT','alpha');
+	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -235,7 +235,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');
 
 
 $head=expensereport_admin_prepare_head();
@@ -244,7 +244,7 @@ dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip
 
 // Interventions numbering model
 /*
-print_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -346,7 +346,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print_titre($langs->trans("TemplatePDFExpenseReports"));
+print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"));
 
 // Defini tableau def des modeles
 $type='expensereport';

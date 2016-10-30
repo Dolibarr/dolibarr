@@ -77,7 +77,7 @@ llxHeader('',$langs->trans('SalariesSetup'));
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

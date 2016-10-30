@@ -89,7 +89,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
         	    if (empty($object->oldcopy) || ! is_object($object->oldcopy))
                 {
                 	dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-                	$object->oldcopy=dol_clone($object);
+					$object->oldcopy = clone $object;
                 }
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
@@ -126,7 +126,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
                 if (empty($object->oldcopy) || ! is_object($object->oldcopy))
                 {
                 	dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-                	$object->oldcopy=dol_clone($object);
+					$object->oldcopy = clone $object;
                 }
 
                 $oldinfo=$object->oldcopy->_load_ldap_info();
@@ -287,7 +287,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
         	    if (empty($object->oldcopy) || ! is_object($object->oldcopy))
                 {
                 	dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-                	$object->oldcopy=dol_clone($object);
+					$object->oldcopy = clone $object;
                 }
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
@@ -364,7 +364,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
         	    if (empty($object->oldcopy) || ! is_object($object->oldcopy))
                 {
                 	dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-                	$object->oldcopy=dol_clone($object);
+					$object->oldcopy = clone $object;
                 }
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
@@ -493,7 +493,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
         	    if (empty($object->oldcopy) || ! is_object($object->oldcopy))
                 {
                 	dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-                	$object->oldcopy=dol_clone($object);
+					$object->oldcopy = clone $object;
                 }
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();

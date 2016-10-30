@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Palun sisesta märkenuppude väärtused
 ErrorNoValueForRadioType=Palun sisesta raadionuppude väärtused
 ErrorBadFormatValueList=Nimekirja väärtus ei saa olla rohkem,  kui ühe komaga: <u>%s</u>, ent on vaja vähemalt üht: võti,väärtused
 ErrorFieldCanNotContainSpecialCharacters=Väli <b>%s</b> ei tohi sisaldada erisümboleid.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ühtki raamatupidamise moodulit pole aktiveeritud
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP sobitamine ei ole täielik.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Selle võimaluse töötamiseks peab JavaScript olem
 ErrorPasswordsMustMatch=Sisestatud paroolid peavad klappima
 ErrorContactEMail=Tekkis tehniline viga. Palun võta ühendust oma administraatoriga e-posti aadressil <b>%s</b> ning lisa sõnumisse vea kood <b>%s</b> või veel parem oleks lisada sõnumisse antud lehe kuvatõmmis.
 ErrorWrongValueForField=Väli number <b>%s</b> sisaldab vale väärtust (väärtus'<b>%s</b>' ei sobi regulaaravaldisega <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Väli number <b>%s</b> sisaldab vale väärtust (väärtus '<b>%s</b>' ei ole üksuse <b>%s</b> olemasolev viide)
 ErrorsOnXLines=<b>%s</b> lähtekirje(t) on vigane/vigased
 ErrorFileIsInfectedWithAVirus=Antiviiruse programm ei suutnud faili valideerida (fail võib olla viiruse poolt nakatatud)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata

@@ -162,7 +162,7 @@ if ($_GET["action"] == 'create')
 
 	$total = $charge->amount;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
 
 	if ($mesg)

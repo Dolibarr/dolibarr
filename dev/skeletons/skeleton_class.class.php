@@ -35,24 +35,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  * Class Skeleton_Class
  *
  * Put here description of your class
+ * @see CommonObject
  */
 class Skeleton_Class extends CommonObject
 {
-	/**
-	 * @var DoliDb Database handler
-	 */
-	protected $db;
-
-	/**
-	 * @var string Error code (or message)
-	 * @deprecated
-	 * @see Skeleton_Class::errors
-	 */
-	public $error;
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -67,10 +53,6 @@ class Skeleton_Class extends CommonObject
 	 */
 	public $lines = array();
 
-	/**
-	 * @var int ID
-	 */
-	public $id;
 	/**
 	 * @var mixed Sample property 1
 	 */
@@ -222,10 +204,11 @@ class Skeleton_Class extends CommonObject
 	 * @param int    $limit     offset limit
 	 * @param int    $offset    offset limit
 	 * @param array  $filter    filter array
+	 * @param string $filtermode filter mode (AND or OR)
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, array $filter = array())
+	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -234,20 +217,25 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' t.field1,';
 		$sql .= ' t.field2';
 		//...
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mytable as t';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = ' AND ' . $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' AND ', $sqlwhere);
+			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder . ' ' . $this->db->plimit($limit + 1, $offset);
-
+		
+		if (!empty($sortfield)) {
+			$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder;
+		}
+		if (!empty($limit)) {
+		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		}
 		$this->lines = array();
 
 		$resql = $this->db->query($sql);

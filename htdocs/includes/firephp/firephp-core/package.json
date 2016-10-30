@@ -1,0 +1,43 @@
+{
+    "uid": "https://github.com/firephp/firephp-core/",
+    "name": "firephp-core",
+    "version": "0.4.0",
+    "label": "FirePHP Server Library",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git://github.com/firephp/firephp-core.git"
+        }
+    ],
+    "maintainers": [
+        {
+            "name": "Christoph Dorn",
+            "email": "christoph@christophdorn.com",
+            "web": "http://www.christophdorn.com/",
+            "alias": {
+                "github": "cadorn"
+            }
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Christoph Dorn",
+            "email": "christoph@christophdorn.com",
+            "web": "http://www.christophdorn.com/",
+            "alias": {
+                "github": "cadorn"
+            }
+        },
+        {
+            "name": "Michael Day",
+            "email": "manveru.alma@gmail.com"
+        },
+        {
+            "name": "Sokolov Innokenty",
+            "email": "sokolov.innokenty@gmail.com",
+            "alias": {
+                "github": "qbbr"
+            }
+        }
+    ]
+}

@@ -4,7 +4,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,12 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTING_EXPORT_*
-$list = array (
+// Parameters ACCOUNTING_EXPORT_*
+$main_option = array (
+		'ACCOUNTING_EXPORT_PREFIX_SPEC'
+);
+
+$model_option = array (
 		'ACCOUNTING_EXPORT_SEPARATORCSV',
 		'ACCOUNTING_EXPORT_DATE',
 		'ACCOUNTING_EXPORT_PIECE',
@@ -60,10 +64,18 @@ $list = array (
 if ($action == 'update') {
 	$error = 0;
 
+	$format = GETPOST('format', 'alpha');
 	$modelcsv = GETPOST('modelcsv', 'int');
+	
+	if (! empty($format)) {
+		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', $format, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	} else {
+		$error ++;
+	}
 
 	if (! empty($modelcsv)) {
-
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
@@ -71,7 +83,15 @@ if ($action == 'update') {
 		$error ++;
 	}
 
-	foreach ( $list as $constname ) {
+	foreach ($main_option as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	}
+
+	foreach ($model_option as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -95,18 +115,77 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head();
 
-dol_fiche_head($head, 'export', $langs->trans("Configuration"), 0, 'cron');
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder" width="100%">';
+dol_fiche_head($head, 'export', $langs->trans("Configuration"), 0, 'cron');
+
 $var = true;
+
+/*
+ * Main Options
+ */
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">' . $langs->trans('MainOptions') . '</td>';
+print "</tr>\n";
+
+$var = ! $var;
+
+print '<tr ' . $bc[$var] . '>';
+print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
+if (! $conf->use_javascript_ajax)
+{
+	print '<td class="nowrap">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+}
+else
+{
+	print '<td>';
+	$listformat=array(
+		'csv'=>$langs->trans("csv"),
+		'txt'=>$langs->trans("txt")
+	);
+	print $form->selectarray("format",$listformat,$conf->global->ACCOUNTING_EXPORT_FORMAT,0);
+
+	print '</td>';
+}
+print "</td></tr>";
+
+$num = count($main_option);
+if ($num)
+{
+	foreach ($main_option as $key) {
+		$var = ! $var;
+
+		print '<tr ' . $bc[$var] . ' class="value">';
+
+		// Param
+		$label = $langs->trans($key);
+		print '<td width="50%">' . $label . '</td>';
+
+		// Value
+		print '<td>';
+		print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
+		print '</td></tr>';
+	}
+}
+
+print "</table>\n";
+
+print "<br>\n";
+
+/*
+ * Export model
+ */
+print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans("Modelcsv") . '</td>';
@@ -142,8 +221,8 @@ print "<br>\n";
  *  Parameters
  */
 
-$num = count($list);
-if ($num)
+$num2 = count($model_option);
+if ($num2)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -151,7 +230,7 @@ if ($num)
 	print "</tr>\n";
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1) print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
 
-	foreach ( $list as $key ) {
+	foreach ($model_option as $key) {
 		$var = ! $var;
 
 		print '<tr ' . $bc[$var] . ' class="value">';
@@ -169,7 +248,9 @@ if ($num)
 	print "</table>\n";
 }
 
-print '<br><div style="text-align:center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
 
 print '</form>';
 

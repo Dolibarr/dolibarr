@@ -28,7 +28,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Classe de description et activation du module User
+ *	Class to describe and enable module User
  */
 class modUser extends DolibarrModules
 {

@@ -5,7 +5,7 @@ Sendings=Поставки
 AllSendings=Все поставки
 Shipment=Поставка
 Shipments=Поставки
-ShowSending=Показать Отправку
+ShowSending=Show Shipments
 Receivings=Получатели
 SendingsArea=Раздел поставок
 ListOfSendings=Список поставок
@@ -26,8 +26,8 @@ QtyToShip=Количество для отправки
 QtyReceived=Количество получено
 KeepToShip=Осталось отправить
 OtherSendingsForSameOrder=Другие поставки для этого заказа
-DateSending=Дата отправки заказа
-DateSendingShort=Дата отправки заказа
+DateSending=Shipping date
+DateSendingShort=Shipping date
 SendingsForSameOrder=Поставок для этого заказа
 SendingsAndReceivingForSameOrder=Поставки и получения для этого заказа
 SendingsToValidate=Поставки для проверки
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Количество товара в откр
 ProductQtyInSuppliersOrdersRunning=Количество товара в открытых заказах поставщика
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товара из открытого заказа поставщика уже получено. 
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Получено заказчиком

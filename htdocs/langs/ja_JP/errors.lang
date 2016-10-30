@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=フィールド<b>%sは、</b>特殊文字が含まれてはいけません。
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=全く会計モジュールが活性化しない
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAPのマッチングは完全ではありません。
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascriptがこの機能が動作しているた�
 ErrorPasswordsMustMatch=両方入力したパスワードは、互いに一致している必要があります
 ErrorContactEMail=技術的なエラーが発生しました。 、次の電子メール<b>%s</b>に管理者に連絡してenはエラーコードメッセージで<b>%s、</b>またはこのページの画面コピーを追加することにより、さらに優れたを提供してください。
 ErrorWrongValueForField=フィールド番号<b>%s</b>の間違った値（値<b>'%s'は</b>正規表現のルール<b>%s</b>一致<b>し</b>ません）
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=フィールド番号<b>%s</b>のために間違った値（値<b>&quot;%s&quot;は%s</b>既存のREFではありません）
 ErrorsOnXLines=<b>%s</b>ソース行のエラー
 ErrorFileIsInfectedWithAVirus=ウイルス対策プログラムがファイルを検証することができませんでした（ファイルがウイルスに感染されるかもしれません）
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

@@ -293,7 +293,7 @@ $form=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 
 $head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("Invoices"), 0, 'invoice');
@@ -302,7 +302,7 @@ dol_fiche_head($head, 'general', $langs->trans("Invoices"), 0, 'invoice');
  *  Numbering module
  */
 
-print_titre($langs->trans("BillsNumberingModule"));
+print load_fiche_titre($langs->trans("BillsNumberingModule"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -471,7 +471,7 @@ print '</table>';
  *  Document templates generators
  */
 print '<br>';
-print_titre($langs->trans("BillsPDFModules"));
+print load_fiche_titre($langs->trans("BillsPDFModules"));
 
 // Load array def with activated templates
 $type='invoice';
@@ -631,7 +631,7 @@ print '</table>';
  *  Modes de reglement
  */
 print '<br>';
-print_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
+print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -726,7 +726,7 @@ print "</form>";
 
 
 print "<br>";
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -756,7 +756,17 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT" />';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="FACTURE_FREE_TEXT" class="flat" cols="120">'.$conf->global->FACTURE_FREE_TEXT.'</textarea>';
+$variablename='FACTURE_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
@@ -795,7 +805,7 @@ print '</table>';
  *  Repertoire
  */
 print '<br>';
-print_titre($langs->trans("PathToDocuments"));
+print load_fiche_titre($langs->trans("PathToDocuments"));
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -813,7 +823,7 @@ print "</table>\n";
  * Notifications
  */
 print '<br>';
-print_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

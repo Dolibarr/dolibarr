@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Akur %s </b> verður ekki innihalda sértákn.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nei bókhalds mát virkja
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP samsvörun er ekki lokið.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript þarf ekki að vera óvirkur til að haf
 ErrorPasswordsMustMatch=Bæði tegund lykilorð verður að samsvara hvor öðrum
 ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
 ErrorWrongValueForField=Wrong gildi fyrir reitinn <b>númer %s </b> (gildi <b>' %s '</b> er ekki það sama ríkisstjóratíð <b>reglu %s )</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
 ErrorsOnXLines=Villur <b>á %s </b> uppspretta línur
 ErrorFileIsInfectedWithAVirus=The antivirus program was not 'fær til setja í gildi the skrá (skrá gæti verið sýkt af veiru)
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

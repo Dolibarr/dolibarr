@@ -68,7 +68,7 @@ if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
+print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

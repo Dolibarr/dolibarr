@@ -117,7 +117,7 @@ http://bugs.debian.org/package
 severity 123 xxx
 
 
-##### Update but tracker system
+##### Update bug tracker system
 
 To set status of a bug to "pending"
 > bts --smtp-host=yoursmtpserver tag 999999 +pending
@@ -195,7 +195,7 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 * Some files are removed from archive by the get-orig-source.sh 
 
 * Staying into git root directory, run
-> git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz
+> git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz --debian-branch=[master|jessie] --upstream-branch=[upstream|upstream-3.5.x]
 
 Note: If there was errors solved manually, you may need to make a git commit
 
@@ -208,11 +208,15 @@ Warning: Date must have format reported by "date -R"
 Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
 
 * We try to build package
-> rm -fr ../build-area; git-buildpackage -us -uc
+> rm -fr ../build-area; 
+> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
 
+Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
+Note: To compare 2 packages: debdiff package1.dsc package2.dsc
+
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
@@ -220,7 +224,7 @@ Note: If there was errors managed manually, you may need to make a git commit bu
 
 * If ok, you can tag.
 > Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
-> git-buildpackage --git-tag-only --git-retag
+> git-buildpackage --git-tag-only --git-retag --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
 > git push --tags
 
 * Compilation is then done by a debian developer and sent
@@ -249,7 +253,7 @@ from git clone dir and make link to git.
 * If local branch upstream and pristine-tar does not exists, create it
 from origin/upstream and origin/pristine.
 
-* If new upstream is available onto sourceforge, launch:
+* When new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
 If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
 
@@ -263,7 +267,7 @@ dolibarr-x.y.z+dfsgw.tgz
 (x.y.z = version, w start from 1 and is increased for each new git-import-orig already done)
 
 * Staying into git root directory, run
-> git-import-orig -vv ../dolibarr-x.y.z+dfsgw.tgz
+> git-import-orig -vv ../dolibarr-x.y.z+dfsgw.tgz --debian-branch=[master|jessie] --upstream-branch=[upstream|upstream-3.5.x]
 and enter version when requested with format
 x.y.z+dfsgw
 (x.y.z = version, w start from 1 and is increased for each new import)
@@ -273,8 +277,8 @@ Note: If there was errors solved manually after get-orig-sources.sh, you may nee
 * Fix debian/* files used to build package.
 Add an entry into debian/changelog
 > dch -v x.y.z+dfsgw-v "My comment" will add entry.
-For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
-Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
+For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increased for each new import)
+Then check/modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
 - Date must have format reported by "date -R"
 - Name and email must match value into debian/control file (Entry added here is used by next step).
@@ -289,21 +293,24 @@ To update dolibarr debian package when only files into debian has changed
 Once files has been prepared, it's time to test:
 
 * Try to build package
-> rm -fr ../build-area; git-buildpackage -us -uc
+> rm -fr ../build-area;
+> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
 
+Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
+Note: To compare 2 packages: debdiff package1.dsc package2.dsc
 
 * Test package (see dedicated chapter to test it with debian unstable env)
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git push --all ou git push origin --all
+> git push --all
 
 * If ok, you can tag.
 > Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
-> git-buildpackage --git-tag-only --git-retag
+> git-buildpackage --git-tag-only --git-retag --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
 > git push --tags
 
 
@@ -321,15 +328,42 @@ http://packages.qa.debian.org
 
 
 ##### Send an unblock request 
+
 Use this to move from unstable to testing.
-reportbug -B debian
+
+reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
 Then "unblock"
 Then name of package "dolibarr"
 Fill message, for example:
 "Please unblock package dolibarr
-A security error CVE-2014-7137 was reported and is fixed into package 3.5.5.
-Note that package 3.5.5 was prepared before the CVE was reported and include other fixes, but they are all related to stability or security (other se$
+A security error CVE-2015-3935 was reported and is fixed into package 3.5.7.
+Note that package 3.5.7 contains not only fixed for bugs reported to debian. It includes other fixes, but they are all related to stability or security,
+so it is a better solution to validate this maintenance release than applying a patch of the only CVE-2015-3935. 
 After discussion with ..., it appears that security holes are enough to request this unblock request."
 
+
+Use this to request an update of a stable package
+
+reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
+Choose package "release.debian.org"
+Then "unblock"
+Then name of package "dolibarr"
+Fill message, for example:
+"
+A security error CVE-2015-3935 was reported for Dolibarr ERP CRM package. This bug is fixed into official package 3.5.7 of Dolibarr.
+Package 3.5.7 is a maintenance release compared to 3.5.5 and contains only fixes. But not only bugs reported to debian, it includes also other fixes (but they are all related to stability or security).
+I think it is a better solution to validate this maintenance release based on the new upstream version of Dolibarr than applying a patch of the only CVE-2015-3935.
+Pro are:
+- It fixes all debian reported bugs (including security one)
+- It fixes also stability bugs
+- Patches were already tested because deployed and used by several thousands of users.
+- It is easier for package maintener to include this official set of fixes than applying one patch after one patch for each debian report or backported each patch into a dedicated version.
+- Debian maintenance version matches with official project maintenance version (better when all fixes are not related to the way the software is packaged)
+Cons are: 
+- The patch include more than the only one security reported fxes
+
+So I just need to know if it's ok to push such a version 3.5.7 (fixes for 3.5.* branch) instead of only one fix for only the few (the only) reported debian bugs,
+since it provides more stability and is or me a more secured process.
+"
 

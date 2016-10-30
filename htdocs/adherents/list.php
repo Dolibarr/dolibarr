@@ -271,6 +271,8 @@ if ($resql)
 		$memberstatic->ref=$objp->rowid;
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
+		$memberstatic->statut=$objp->statut;
+		$memberstatic->datefin= $datefin;
 
 		if (! empty($objp->fk_soc)) {
 			$memberstatic->socid = $objp->fk_soc;
@@ -325,7 +327,9 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
-			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+			if ($memberstatic->hasDelay()) {
+				print " ".img_warning($langs->trans("SubscriptionLate"));
+			}
 			print '</td>';
 		}
 		else

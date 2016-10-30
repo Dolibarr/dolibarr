@@ -48,6 +48,7 @@ NoImportableData=لا ارداتها البيانات (أي وحدة مع الس
 FileSuccessfullyBuilt=ملف التصدير ولدت
 SQLUsedForExport=SQL طلب استخدامه لبناء ملف التصدير
 LineId=معرف السطر
+LineLabel=Label of line
 LineDescription=وصف خط
 LineUnitPrice=سعر الوحدة من خط
 LineVATRate=ضريبة القيمة المضافة من سعر الخط

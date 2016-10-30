@@ -12,7 +12,6 @@ Creditor=Upnik
 PaymentCode=Koda plačila
 PayBoxDoPayment=Plačila v postopku
 YouWillBeRedirectedOnPayBox=Preusmerjeni boste na varno Paybox stran za vnos podatkov o vaši kreditni kartici
-PleaseBePatient=Prosim, bodite potrpežljivi
 Continue=Naslednji
 ToOfferALinkForOnlinePayment=URL za %s plačila
 ToOfferALinkForOnlinePaymentOnOrder=URL naslov s ponudbo %s vmesnika za online plačila naročil

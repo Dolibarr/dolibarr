@@ -101,3 +101,6 @@ SaveTrip=Weryfikacja raportu wydatków
 ConfirmSaveTrip=Czy na pewno chcesz, aby potwierdzić ten raport wydatków?
 
 NoTripsToExportCSV=Nie raport z wydatków na eksport za ten okres.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay
