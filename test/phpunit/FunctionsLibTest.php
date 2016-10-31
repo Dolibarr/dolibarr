@@ -119,6 +119,32 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     }
 
 
+
+	/**
+	 * testDolBuildPath
+	 *
+	 * @return boolean
+	 */
+	public function testDolBuildPath()
+	{
+	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 0);
+	    var_dump($tmp);
+	    */
+	     
+	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 1);
+	    var_dump($tmp);
+	    */
+	     
+	    $result=dol_buildpath('/google/oauth2callback.php', 2);
+	    print __METHOD__." result=".$result."\n";
+	    $this->assertStringStartsWith('http', $result);
+	     
+	    $result=dol_buildpath('/google/oauth2callback.php', 3);
+        print __METHOD__." result=".$result."\n";
+        $this->assertStringStartsWith('http', $result);
+	}
+    
+    
     /**
     * testGetBrowserInfo
     *
@@ -973,5 +999,5 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-
+	
 }
