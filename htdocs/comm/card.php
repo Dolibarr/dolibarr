@@ -9,7 +9,6 @@
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -89,7 +88,7 @@ $hookmanager->initHooks(array('commcard','globalcard'));
  * Actions
  */
 
-$parameters = array('socid' => $id);
+$parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -440,7 +439,8 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
+
+        print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td>';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);

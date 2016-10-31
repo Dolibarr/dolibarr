@@ -390,7 +390,21 @@ function dol_buildpath($path, $type=0)
 		
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if ($key == 'main') continue;
+			if ($key == 'main') 
+			{
+			    if ($type == 3)
+			    {
+			        global $dolibarr_main_url_root;
+			        	
+			        // Define $urlwithroot
+			        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+			        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+			        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+			        $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).'/'.$path;     // Test on start with http is for old conf syntax
+			    }
+			    continue;
+			}
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
 			if (! empty($regs[1]))
 			{
@@ -414,7 +428,7 @@ function dol_buildpath($path, $type=0)
 					    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 					    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 					    					
-					    $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;
+					    $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;     // Test on start with http is for old conf syntax
 					}
 					break;
 				}

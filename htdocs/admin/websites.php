@@ -535,7 +535,8 @@ if ($id)
                         {
                             $showfield=1;
                         	$align="left";
-                            $valuetoshow=$obj->$fieldlist[$field];
+                        	$fieldname=$fieldlist[$field];
+                            $valuetoshow=$obj->$fieldname;
 
 							// Show value for field
 							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
@@ -613,14 +614,15 @@ function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
 
 	foreach ($fieldlist as $field => $value)
 	{
+	    $fieldname = $fieldlist[$field];
 		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldlist[$field])) {
-			print '<td><input type="text" class="flat" value="'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
+		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
+			print '<td><input type="text" class="flat" value="'.(! empty($obj->$fieldname)?$obj->$fieldname:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		}
 		else
 		{
@@ -631,7 +633,7 @@ function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='libelle') $size='size="32" ';
 			if ($fieldlist[$field]=='tracking') $size='size="92" ';
 			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
-			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldname)?$obj->$fieldname:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

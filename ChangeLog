@@ -41,6 +41,31 @@ Dolibarr better:
 - Method commande->deleteline($lindeid) has been replaced with commande->deleteline($user, $lineid).
 
 
+
+***** ChangeLog for 4.0.2 compared to 4.0.1 *****
+FIX: #5340
+FIX: #5779
+FIX: #5849
+FIX: #5866
+FIX: #5907
+FIX: Addline if $txlocaltax1 is empty
+FIX: Avoid error 500 if phpexcel is disabled
+FIX: Avoid errors on debian
+FIX: Can edit the customer ref even if order is not draft.
+FIX: Documents not moved in new directory if we change reference of the task.
+FIX: Error when CATEGORIE_RECURSIV_ADD is enabled and new category is child of an already linked to object
+FIX: Extra fields of task not copied on project cloning
+FIX: Hidden option PRODUCT_MAX_VISIBLE_PHOTO
+FIX: Link on supplier invoice in widget was not clickable
+FIX: margin tab on customer card must filter on current entity invoices
+FIX: missing column into SQL on thirdparty list
+FIX: Nber of attached files were not reported in event report of email sent
+FIX: only show projects of related third if external user
+FIX: Search provider by price
+FIX: Solve backup when using mysqldump that return warning
+FIX: Sql error in widget of product for stock alerts
+FIX: updateligne if $txlocaltax1 is null
+
 ***** ChangeLog for 4.0.1 compared to 4.0.0 *****
 FIX: #2853
 FIX: #2991
