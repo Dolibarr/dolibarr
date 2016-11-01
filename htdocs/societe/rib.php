@@ -49,10 +49,18 @@ $id=GETPOST("id","int");
 $ribid=GETPOST("ribid","int");
 $action=GETPOST("action");
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartybancard'));
+
+
 
 /*
  *	Actions
  */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'update' && ! $_POST["cancel"])
 {
