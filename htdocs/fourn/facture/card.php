@@ -486,10 +486,10 @@ if (empty($reshook))
 						{
 							// Reset fk_parent_line for no child products and special product
 							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
-							$fk_parent_line = 0;
+								$fk_parent_line = 0;
 							}
 
-							$line->fk_facture = $object->id;
+							$line->fk_facture_fourn = $object->id;
 							$line->fk_parent_line = $fk_parent_line;
 
 							$line->subprice =-$line->subprice; // invert price for object
@@ -2391,7 +2391,8 @@ else
     	    {
     	        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
     	    }
-    	
+
+			/*
     	    if ($object->paye == 0)
     	    {
     	        print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right">'.price($totalpaye).'</td><td></td></tr>';
@@ -2402,13 +2403,139 @@ else
     	        print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('RemainderToPay').' :</td>';
     	        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':'').'>'.price($resteapayer).'</td><td></td></tr>';
     	    }
-    	    print '</table>';
+			*/
+
     	    $db->free($result);
     	}
     	else
     	{
     	    dol_print_error($db);
     	}
+
+		if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
+			// Total already paid
+			print '<tr><td colspan="' . $nbcols . '" align="right">';
+			if ($object->type != FactureFournisseur::TYPE_DEPOSIT)
+				print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
+			else
+				print $langs->trans('AlreadyPaid');
+			print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
+
+			$resteapayeraffiche = $resteapayer;
+			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+
+			// Loop on each credit note or deposit amount applied
+			$creditnoteamount = 0;
+			$depositamount = 0;
+			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+			$sql .= " re.description, re.fk_facture_source";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+			$sql .= " WHERE fk_facture = " . $object->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				$invoice = new FactureFournisseur($db);
+				while ($i < $num) {
+					$obj = $db->fetch_object($resql);
+					$invoice->fetch($obj->fk_facture_source);
+					print '<tr><td colspan="' . $nbcols . '" align="right">';
+					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+						print $langs->trans("CreditNote") . ' ';
+					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+						print $langs->trans("Deposit") . ' ';
+					print $invoice->getNomUrl(0);
+					print ' :</td>';
+					print '<td align="right">' . price($obj->amount_ttc) . '</td>';
+					print '<td align="right">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
+					print '</td></tr>';
+					$i ++;
+					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+						$creditnoteamount += $obj->amount_ttc;
+					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+						$depositamount += $obj->amount_ttc;
+				}
+			} else {
+				dol_print_error($db);
+			}
+
+			// Paye partiellement 'escompte'
+			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
+				print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
+				print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
+				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+				$resteapayeraffiche = 0;
+				$cssforamountpaymentcomplete = '';
+			}
+			// Paye partiellement ou Abandon 'badsupplier'
+			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
+				print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
+				print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
+				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+				// $resteapayeraffiche=0;
+				$cssforamountpaymentcomplete = '';
+			}
+			// Paye partiellement ou Abandon 'product_returned'
+			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
+				print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
+				print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
+				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+				$resteapayeraffiche = 0;
+				$cssforamountpaymentcomplete = '';
+			}
+			// Paye partiellement ou Abandon 'abandon'
+			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'abandon') {
+				print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
+				$text = $langs->trans("HelpAbandonOther");
+				if ($object->close_note)
+					$text .= '<br><br><b>' . $langs->trans("Reason") . '</b>:' . $object->close_note;
+				print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
+				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+				$resteapayeraffiche = 0;
+				$cssforamountpaymentcomplete = '';
+			}
+
+			// Billed
+			print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+
+			// Remainder to pay
+			print '<tr><td colspan="' . $nbcols . '" align="right">';
+			if ($resteapayeraffiche >= 0)
+				print $langs->trans('RemainderToPay');
+			else
+				print $langs->trans('ExcessReceived');
+			print ' :</td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':$cssforamountpaymentcomplete).'>' . price($resteapayeraffiche) . '</td>';
+			print '<td class="nowrap">&nbsp;</td></tr>';
+		} 
+		else // Credit note
+		{
+			// Total already paid back
+			print '<tr><td colspan="' . $nbcols . '" align="right">';
+			print $langs->trans('AlreadyPaidBack');
+			print ' :</td><td align="right">' . price($sign * $totalpaye) . '</td><td>&nbsp;</td></tr>';
+
+			// Billed
+			print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($sign * $object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+
+			// Remainder to pay back
+			print '<tr><td colspan="' . $nbcols . '" align="right">';
+			if ($resteapayeraffiche <= 0)
+				print $langs->trans('RemainderToPayBack');
+			else
+				print $langs->trans('ExcessPaydBack');
+			print ' :</td>';
+			print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+			print '<td class="nowrap">&nbsp;</td></tr>';
+
+			// Sold credit note
+			// print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
+			// print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign *
+			// $object->total_ttc).'</b></td><td>&nbsp;</td></tr>';
+		}
+
+		print '</table>';
 
         print '</div>';
         print '</div>';
@@ -2435,9 +2562,6 @@ else
         /*
          * Lines
          */
-		//$result = $object->getLinesArray();
-
-
 		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">';
@@ -2525,7 +2649,6 @@ else
 	                }
 	                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 	            }
-
 
 	            // Make payments
 	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
