@@ -1618,9 +1618,11 @@ class Form
      *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
      *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
      * 	@param		int			$forcecombo				Force to use combo box
+     *  @param      string      $morecss                Add more css on select
+     *  @param      int         $hidepriceinlabel       1=Hide prices in label
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0)
     {
         global $langs,$conf;
 
@@ -1660,28 +1662,30 @@ class Form
         }
         else
 		{
-            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo);
+            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel);
         }
     }
 
     /**
      *	Return list of products for a customer
      *
-     *	@param      int		$selected       Preselected product
-     *	@param      string	$htmlname       Name of select html
-     *  @param		string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param      int		$limit          Limit on number of returned lines
-     *	@param      int		$price_level    Level of price to show
-     * 	@param      string	$filterkey      Filter on product
-     *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param      int		$finished       Filter on finished field: 2=No filter
-     *  @param      int		$outputmode     0=HTML select string, 1=Array
-     *  @param      int		$socid     		Thirdparty Id (to get also price dedicated to this customer)
-     *  @param		string	$showempty		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-     * 	@param		int		$forcecombo		Force to use combo box
-     *  @return     array    				Array of keys for json
+     *	@param      int		$selected           Preselected product
+     *	@param      string	$htmlname           Name of select html
+     *  @param		string	$filtertype         Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param      int		$limit              Limit on number of returned lines
+     *	@param      int		$price_level        Level of price to show
+     * 	@param      string	$filterkey          Filter on product
+     *	@param		int		$status             -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param      int		$finished           Filter on finished field: 2=No filter
+     *  @param      int		$outputmode         0=HTML select string, 1=Array
+     *  @param      int		$socid     		    Thirdparty Id (to get also price dedicated to this customer)
+     *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+     * 	@param		int		$forcecombo		    Force to use combo box
+     *  @param      string  $morecss            Add more css on select
+     *  @param      int     $hidepriceinlabel   1=Hide prices in label
+     *  @return     array    				    Array of keys for json
      */
-    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0)
+    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0,$morecss='',$hidepriceinlabel=0)
     {
         global $langs,$conf,$user,$db;
 
@@ -1782,7 +1786,7 @@ class Form
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
             
-            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'"'.$nodatarole.'>';
+            $out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'"'.$nodatarole.'>';
             
             $textifempty='';
             // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
@@ -1824,7 +1828,7 @@ class Form
 							$objp->remise = $objp2->remise;
 							$objp->price_by_qty_rowid = $objp2->rowid;
 
-							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected);
+							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel);
 
 							$j++;
 
@@ -1851,7 +1855,7 @@ class Form
                             $objp->price_ttc = price2num($objp->price_ttc,'MU');
                         }
                     }
-					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected);
+					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -1931,13 +1935,13 @@ class Form
         $opt.= '>';
         $opt.= $objp->ref;
         if ($outbarcode) $opt.=' ('.$outbarcode.')';
-        $opt.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        $opt.=' - '.dol_trunc($label,$maxlengtharticle);
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
         $outval.=$objRef;
         if ($outbarcode) $outval.=' ('.$outbarcode.')';
-        $outval.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        $outval.=' - '.dol_trunc($label,$maxlengtharticle);
 
         $found=0;
 
@@ -1962,13 +1966,13 @@ class Form
                     $found=1;
                     if ($objp2->price_base_type == 'HT')
                     {
-                        $opt.= price($objp2->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
-                        $outval.= price($objp2->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
+                        $opt.= ' - '.price($objp2->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+                        $outval.= ' - '.price($objp2->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
                     }
                     else
                     {
-                        $opt.= price($objp2->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
-                        $outval.= price($objp2->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
+                        $opt.= ' - '.price($objp2->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+                        $outval.= ' - '.price($objp2->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
                     }
                     $outprice_ht=price($objp2->price);
                     $outprice_ttc=price($objp2->price_ttc);
@@ -1990,15 +1994,15 @@ class Form
 			$outdiscount=$objp->remise_percent;
 			if ($objp->quantity == 1)
 			{
-				$opt.= price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/";
-				$outval.= price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/";
+				$opt.= ' - '.price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/";
+				$outval.= ' - '.price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/";
 				$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Unit");
 			}
 			else
 			{
-				$opt.= price($objp->price,1,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
-				$outval.= price($objp->price,0,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
+				$opt.= ' - '.price($objp->price,1,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
+				$outval.= ' - '.price($objp->price,0,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
 				$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Units");
 			}
@@ -2028,13 +2032,13 @@ class Form
 
 				if ($objp->custprice_base_type == 'HT')
 				{
-					$opt.= price($objp->custprice,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
-					$outval.= price($objp->custprice,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
+					$opt.= ' - '.price($objp->custprice,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+					$outval.= ' - '.price($objp->custprice,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
 				}
 				else
 				{
-					$opt.= price($objp->custprice_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
-					$outval.= price($objp->custprice_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
+					$opt.= ' - '.price($objp->custprice_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+					$outval.= ' - '.price($objp->custprice_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
 				}
 
 				$outprice_ht=price($objp->custprice);
@@ -2049,13 +2053,13 @@ class Form
         {
             if ($objp->price_base_type == 'HT')
             {
-                $opt.= price($objp->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
-                $outval.= price($objp->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
+                $opt.= ' - '.price($objp->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+                $outval.= ' - '.price($objp->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
             }
             else
             {
-                $opt.= price($objp->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
-                $outval.= price($objp->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
+                $opt.= ' - '.price($objp->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+                $outval.= ' - '.price($objp->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
             }
             $outprice_ht=price($objp->price);
             $outprice_ttc=price($objp->price_ttc);
@@ -4210,21 +4214,21 @@ class Form
      *  Output an HTML select vat rate.
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
-     *  @param	string	$htmlname           Name of HTML select field
-     *  @param  float|string    $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-     *  @param  Societe	$societe_vendeuse   Thirdparty seller
-     *  @param  Societe	$societe_acheteuse  Thirdparty buyer
-     *  @param  int		$idprod             Id product
-     *  @param  int		$info_bits          Miscellaneous information on line (1 for NPR)
-     *  @param  int		$type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *                  					Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
-     *                  					Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-     *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
-     *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @param	bool	$options_only		Return HTML options lines only (for ajax treatment)
-     *  @param  int     $addcode            Add code into key in select list
+     *  @param	string	      $htmlname           Name of HTML select field
+     *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+     *  @param  Societe	      $societe_vendeuse   Thirdparty seller
+     *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
+     *  @param  int		      $idprod             Id product
+     *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
+     *  @param  int		      $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *                  		                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *                  					      Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+     *                  					      Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
+	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
+     *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
+     *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
+     *  @param  int          $addcode             Add code into key in select list
      *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
@@ -4238,7 +4242,7 @@ class Form
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
         $defaultcode='';
-        if (preg_match('/\s*\((.*)\)/', $defaulttx, $reg))
+        if (preg_match('/\((.*)\)/', $defaulttx, $reg))
         {
             $defaultcode=$reg[1];
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
@@ -4333,6 +4337,7 @@ class Form
 
         	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
 
+        	$selectedfound=false;
         	foreach ($this->cache_vatrates as $rate)
         	{
         		// Keep only 0 if seller is not subject to VAT
@@ -4342,13 +4347,21 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
+        		if (! $selectedfound)
         		{
-                    if ($defaultcode == $rate['code']) $return.= ' selected';
-        		}
-        		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
-           		{
-           		    $return.= ' selected';
+            		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
+            		{
+                        if ($defaultcode == $rate['code']) 
+                        {
+                            $return.= ' selected';
+                            $selectedfound=true;
+                        }
+            		}
+            		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+               		{
+               		    $return.= ' selected';
+               		    $selectedfound=true;
+            		}
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');

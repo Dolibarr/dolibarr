@@ -514,7 +514,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-        $sql.= " c.id as type_id, c.code as type_code, c.libelle, c.color as type_color,";
+        $sql.= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
@@ -535,17 +535,18 @@ class ActionComm extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id        = $obj->id;
-                $this->ref       = $obj->ref;
-                $this->ref_ext   = $obj->ref_ext;
+                $this->id         = $obj->id;
+                $this->ref        = $obj->ref;
+                $this->ref_ext    = $obj->ref_ext;
 
-                // Properties of parent table llx_c_actioncomm (will be deprecated in future)
-                $this->type_id   = $obj->type_id;
-                $this->type_code = $obj->type_code;
+                // Properties of parent table llx_c_actioncomm
+                $this->type_id    = $obj->type_id;
+                $this->type_code  = $obj->type_code;
                 $this->type_color = $obj->type_color;
+                $this->type_picto = $obj->type_picto;
                 $transcode=$langs->trans("Action".$obj->type_code);
-                $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
-                $this->type      = $type_libelle;
+                $type_label=($transcode!="Action".$obj->type_code?$transcode:$obj->type_label);
+                $this->type       = $type_label;
 
 				$this->code					= $obj->code;
                 $this->label				= $obj->label;
@@ -1018,7 +1019,7 @@ class ActionComm extends CommonObject
      */
     function getLibStatut($mode,$hidenastatus=0)
     {
-        return $this->LibStatut($this->percentage,$mode,$hidenastatus);
+        return $this->LibStatut($this->percentage,$mode,$hidenastatus,$this->datep);
     }
 
     /**
@@ -1027,9 +1028,10 @@ class ActionComm extends CommonObject
      *    	@param	int		$percent        Percent
      *    	@param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
      *      @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
+     *      @param  int     $datestart      Date start of event
      *    	@return string		    		Label
      */
-    function LibStatut($percent,$mode,$hidenastatus=0)
+    function LibStatut($percent,$mode,$hidenastatus=0,$datestart='')
     {
         global $langs;
 

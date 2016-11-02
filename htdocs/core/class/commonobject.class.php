@@ -1148,7 +1148,6 @@ abstract class CommonObject
      */
     function fetch_origin()
     {
-        // TODO uniformise code
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
 
@@ -2799,7 +2798,11 @@ abstract class CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
-        		$this->statut = $status;
+        		if (empty($elementId))    // If the element we update was $this (so $elementId is null)
+        		{
+        		    $this->statut = $status;
+        		    $this->status = $status;
+        		}
 				return 1;
 			}
 			else

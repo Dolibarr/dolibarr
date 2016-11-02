@@ -333,7 +333,7 @@ To update dolibarr debian package when only files into debian has changed:
 To update dolibarr debian package when only files not into debian has changed:
 
 * Manually, add patches into debian/patches and update file debian/series, or do the 2 steps with "quilt import filepatch.patch"
-* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revien a l'état du upstream sans les patch.
+* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revient a l'état du upstream sans les patch.
 
 Once files has been prepared, it's time to test:
 
@@ -350,7 +350,7 @@ Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc
 
 * Test package (see dedicated chapter to test it with debian unstable env)
-> cp ../build-area/* /srv/chroot/unstable/tmp
+> sudo rm /srv/chroot/unstable/tmp/* >/dev/null 2>&1; cp ../build-area/* /srv/chroot/unstable/tmp
 See rest of process into dedicated chapter "To test a package" to test it with debian unstable env
 
 * If package .deb is ok:

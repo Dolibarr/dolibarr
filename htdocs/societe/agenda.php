@@ -50,6 +50,17 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='a.datep, a.id';
+if (! $sortorder) $sortorder='DESC';
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('agendathirdparty'));
 
@@ -106,37 +117,7 @@ if ($socid)
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
-
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
-
-	if ($object->fournisseur)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
-
-	print '</table>';
-
-	//print '<br>';
- 
-    //print '<div class="underbanner clearboth"></div>';
-
+    
     $object->info($socid);
 	print dol_print_object_info($object, 1);
 	
@@ -182,6 +163,11 @@ if ($socid)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
+        $param='&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
+        
 		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 		
         // List of todo actions
@@ -193,7 +179,9 @@ if ($socid)
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
-		show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+
+        // TODO Replace this with smae code then into listactions.php
+        show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

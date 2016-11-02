@@ -9,74 +9,81 @@ ACCOUNTING_EXPORT_DEVISE=Exportar divisa
 Selectformat=Seleccione el formato del archivo
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre de archivo
 
+AccountancySetupDoneFromAccountancyMenu=La mayor parte de la configuración de la contabilidad se realiza desde el menú %s
 ConfigAccountingExpert=Configuración del módulo contable
+Journalization=Procesar diarios
 Journaux=Diarios
 JournalFinancial=Diarios financieros
 BackToChartofaccounts=Volver al plan contable
+Chartofaccounts=Plan contable
 
-AccountancyArea=Accountancy area
-AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
-AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
-AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
-AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
-AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
-AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
-AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
-AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
-AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
-AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+AccountancyArea=Área contabilidad
+AccountancyAreaDescIntro=El uso del módulo de contabilidad se realiza en varios pasos:
+AccountancyAreaDescActionOnce=Las siguientes acciones se ejecutan normalmente una sola vez, o una vez al año...
+AccountancyAreaDescActionFreq=Las siguientes acciones se ejecutan normalmente cada mes, semana o día en empresas muy grandes...
+AccountancyAreaDescChartModel=PASO %s: Crear un modelo de plan general contable desde el menú %s
+AccountancyAreaDescChart=PASO %s: Crear o comprobar el contenido de su plan general contable desde el menú %s
+AccountancyAreaDescBank=PASO %s: Verificar la unión entre cuentas bancarias y  sus cuentas contables. Completar las consolidaciones que faltan. Esto le ahorrará tiempo en el futuro en los próximos pasos en los que sugiere la cuenta contable predeterminada correcta en sus líneas de pago.<br>Para ello, vaya a la ficha de cada cuenta financiera. Puede empezar en la página %s.
+AccountancyAreaDescVat=PASO %s: Verificar la unión entre los IVAs y sus cuentas contables. Completar las consolidaciones que faltan. Esto le ahorrará tiempo en el futuro en los próximos pasos en los que sugiere la cuenta contable predeterminada correcta en los registros relacionados con el pago del IVA.<br>Puede configurar las cuentas contables a usar en cada IVA en la página %s.
+AccountancyAreaDescSal=PASO %s: Verificar la unión entre los salarios y sus cuentas contables. Completar las consolidaciones que faltan. Esto le ahorrará tiempo en el futuro en los próximos pasos en los que sugiere la cuenta contable predeterminada correcta en los registros relacionados con el pago de salarios.<br>Para ello se puede utilizar el menú %s.
+AccountancyAreaDescContrib=PASO %s: Verificar la unión entre los gastos especiales (impuestos varios) y sus cuentas contables. Completar las consolidaciones que faltan. Esto le ahorrará tiempo en el futuro en los próximos pasos por los que sugiere la cuenta contable predeterminada correcta en los registros relacionados con los pagos de impuestos. <br> Para ello puede utilizar el menú %s.
+AccountancyAreaDescDonation=PASO %s: Verificar la unión entre donaciones y sus cuentas contables. Completar las consolidaciones que faltan. Esto le ahorrará tiempo en el futuro en los próximos pasos en los que sugiere la cuenta contable predeterminada correcta en los registros relacionados con los pagos de donaciones.<br>Puede configurar las cuentas desde el menú %s.
+AccountancyAreaDescMisc=PASO %s: Compruebe la unión entre las líneas de las diversas transacciones y sus cuentas contables. Completar las consolidaciones que faltan.<br>Para ello puede utilizar el menú %s.
+AccountancyAreaDescProd=PASO %s: Verificar la unión entre los productos/servicios y  sus cuentas contables. Completar las consolidaciones que falten. Esto le ahorrará tiempo en el futuro en los próximos pasos en los que sugiere la cuenta contable predeterminada correcta en sus líneas de factura.<br>Para ello puede utilizar el menú %s.
 
-AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
-AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+AccountancyAreaDescCustomer=PASO %s: Verificar la unión entre líneas de facturas a clientes y sus cuentas contables. Completar las consolidaciones que faltan. Una vez que la unión es completada, la aplicación será capaz de generar las transacciones del diario en el Libro Mayor en un solo clic. <br> Para ello puede utilizar el menú %s.
+AccountancyAreaDescSupplier=PASO %s: Verificar la unión entre líneas de facturas de proveedores y sus cuentas contables. Completar las consolidaciones que faltan. Una vez que la unión es completada, la aplicación será capaz de generar las transacciones del diario en el Libro Mayor en un solo clic. <br> Para ello puede utilizar el menú %s.
+AccountancyAreaDescWriteRecords=PASO %s: Escribir las transacciones en el Libro Mayor. Para ello, entre en cada diario, y haga clic en el botón de "Generar transacciones en el Libro Mayor".
+AccountancyAreaDescAnalyze=PASO %s: Añadir o editar transacciones existentes, generar informes y exportaciones.
 
-Selectchartofaccounts=Seleccione un plan contable
+AccountancyAreaDescClosePeriod=PASO %s: Cerrar periodo, por lo que no podrá hacer modificaciones en un futuro.
+
+MenuAccountancy=Contabilidad
+Selectchartofaccounts=Seleccione un plan contable activo
+ChangeAndLoad=Cambiar y cargar
 Addanaccount=Añadir una cuenta contable
 AccountAccounting=Cuenta contable
 AccountAccountingShort=Cuenta
 AccountAccountingSuggest=Accounting account suggest
-Ventilation=Binding to accounts
-ProductsBinding=Products bindings
-
-MenuAccountancy=Contabilidad
-CustomersVentilation=Customer invoice binding
-SuppliersVentilation=Supplier invoice binding
-Reports=Informes
-NewAccount=Nueva cuenta contable
-Create=Crear
-CreateMvts=Create new transaction
-UpdateMvts=Modification of a transaction
-WriteBookKeeping=Record operations in General Ledger
+MenuDefaultAccounts=Cuentas contables por defecto
+MenuProductsAccounts=Cuentas contables de productos
+ProductsBinding=Cuentas de productos
+Ventilation=Contabilizar
+CustomersVentilation=Contabilizar facturas a clientes
+SuppliersVentilation=Contabilizar facturas de proveedores
+CreateMvts=Crear nuevo movimiento
+UpdateMvts=Modificar transacción
+WriteBookKeeping=Registrar movimientos en el Libro Mayor
 Bookkeeping=Libro Mayor
 AccountBalance=Saldo de la cuenta
 
 CAHTF=Total purchase supplier before tax
-InvoiceLines=Lines of invoices to bind
-InvoiceLinesDone=Bound lines of invoices
-IntoAccount=Bind line with the accounting account
+InvoiceLines=Líneas de facturas a contabilizar
+InvoiceLinesDone=Líneas de facturas contabilizadas
+IntoAccount=Contabilizar línea con la cuenta contable
 
-Ventilate=Bind
-
+Ventilate=Contabilizar
+LineId=Id línea
 Processing=Tratamiento
-EndProcessing=Final del tratamiento
-AnyLineVentilate=Any lines to bind
+EndProcessing=Proceso terminado.
 SelectedLines=Líneas seleccionadas
 Lineofinvoice=Línea de la factura
-VentilatedinAccount=Binded successfully to the accounting account
-NotVentilatedinAccount=Not bound to the accounting account
-XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
-XLineFailedToBeBinded=%s products/services were not bound to any accounting account
+NoAccountSelected=No se ha seleccionado cuenta contable
+VentilatedinAccount=Contabilizada con éxito en la cuenta contable
+NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
+XLineSuccessfullyBinded=%s productos/servicios unidos a una cuenta contable.
+XLineFailedToBeBinded=%s productos/servicios sin cuenta contable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
 
-ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de productos y servicios en los listados (Ideal = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de la cuenta de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
-ACCOUNTING_MANAGE_ZERO=Administrar el cero al final de una cuenta contable. Necesaria por algunos países. Desactivada por defecto. Tener cuidado con la función "longitud de las cuentas".
-BANK_DISABLE_DIRECT_INPUT=Desactivar entrada libre de transacciones bancarias (Activadas por defecto con este módulo)
+ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesario en algunos países. Desactivada por defecto. Si está activada, también debe establecer los siguientes dos parámetros (o será ignorada)
+BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -101,62 +108,60 @@ Labelcompte=Descripción
 Sens=Sentido
 Codejournal=Diario
 NumPiece=Apunte
+TransactionNumShort=Núm. transacción
 AccountingCategory=Categoría contable
+GroupByAccountAccounting=Agrupar por cuenta contable
 NotMatch=No establecido
 DeleteMvt=Eliminar líneas del Libro Mayor
 DelYear=Año a eliminar
 DelJournal=Diario a eliminar
-ConfirmDeleteMvt=Esto borrará todas las líneas del libro de mayor del año y/o de los diarios específicos
+ConfirmDeleteMvt=Esto eliminará todas las lineas del Libro Mayor del año y/o de un diario específico. Se requiere al menos un criterio.
 ConfirmDeleteMvtPartial=Esto borrará todas las líneas seleccionadas del libro de mayor
 DelBookKeeping=Eliminar los registros del Diario Mayor
-DescSellsJournal=Diario de ventas
-DescPurchasesJournal=Diario de compras
 FinanceJournal=Diario financiero
 DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
-DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
-VATAccountNotDefined=Account for VAT not defined
-ThirdpartyAccountNotDefined=Account for third party not defined
-ProductAccountNotDefined=Account for product not defined
-BankAccountNotDefined=Account for bank not defined
+DescJournalOnlyBindedVisible=Esta es una vista de registros que están vinculados a una cuenta contable de productos/servicios y pueden ser registrados en el Libro Mayor.
+VATAccountNotDefined=Cuenta contable para IVA no definida
+ThirdpartyAccountNotDefined=Cuenta contable de tercero no definida
+ProductAccountNotDefined=Cuenta contable de producto no definida
+BankAccountNotDefined=Cuenta contable bancaria no definida
 CustomerInvoicePayment=Cobro de factura a cliente
 ThirdPartyAccount=Cuenta de tercero
-NewAccountingMvt=New transaction
-NumMvts=Numero of transaction
-ListeMvts=List of movements
+NewAccountingMvt=Nuevo movimiento
+NumMvts=Número de movimiento
+ListeMvts=Listado de movimientos
 ErrorDebitCredit=Debe y Haber no pueden contener un valor al mismo tiempo
 
-ReportThirdParty=List third party account
-DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
-
+ReportThirdParty=Listado de cuentas de terceros
+DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus códigos contables
 ListAccounts=Listado de cuentas contables
 
 Pcgtype=Tipo del plan
 Pcgsubtype=Subcuenta
-Accountparent=Padre de la cuenta
 
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
 
-DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
-DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
-ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+DescVentilCustomer=Consulte aquí la lista de líneas de facturas a clientes enlazadas (o no) a una cuenta contable de producto
+DescVentilMore=En la mayoría de los casos, si utiliza productos o servicios predefinidos y establece la cuenta contable en la ficha del producto/servicio, la aplicación será capaz de hacer toda la contabilización entre las líneas de la factura y la cuenta contable de su plan general contable, con un clic en el botón <strong>"%s"</strong>, Si no se ha establecido la cuenta contable en la ficha del producto/servicio o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
+DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y las cuentas contables de sus productos
+DescVentilTodoCustomer=Contabilizar líneas de factura aún no contabilizadas con una cuenta contable de producto
+ChangeAccount=Cambie la cuenta del producto/servicio para las líneas seleccionadas a la cuenta:
 Vide=-
-DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consulte aquí la lista de líneas de facturas de proveedores enlazadas (o no) a una cuenta contable de producto
+DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
 
 ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculación automática finalizada
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 MvtNotCorrectlyBalanced=Movimiento descuadrado. Debe = %s. Haber = %s
-FicheVentilation=Binding card
-GeneralLedgerIsWritten=Operations are written in the general ledger
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
-NoNewRecordSaved=No new record saved
-ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
-ChangeBinding=Change the binding
+FicheVentilation=Ficha contable
+GeneralLedgerIsWritten=Transacciones escritas en el libro mayor
+GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones que no podrán registrarse.
+NoNewRecordSaved=No se guardaron nuevos registros
+ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contables
+ChangeBinding=Cambiar la unión
 
 ## Admin
 ApplyMassCategories=Aplicar categorías en masa
@@ -178,7 +183,8 @@ Modelcsv_cogilog=Eportar a Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
+InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
+DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeterminada que se utilizará para enlazar registros de salarios, donaciones, impuestos e IVA cuando no tengan establecida una cuenta contable.
 Options=Opciones
 OptionModeProductSell=Modo ventas
 OptionModeProductBuy=Modo compras
@@ -193,12 +199,11 @@ Calculated=Calculado
 Formula=Fórmula
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=Sin categorías contables para este país
+ErrorNoAccountingCategoryForThisCountry=Sin categorías contables para %s (Vea Inicio - Configuración - Diccionarios)
 ExportNotSupported=El formato de exportación configurado no es soportado en esta página
 BookeppingLineAlreayExists=Lineas ya existentes en la contabilidad
 
-Binded=Lines bound
-ToBind=Lines to bind
+Binded=Líneas contabilizadas
+ToBind=Líneas a contabilizar
 
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
-
+WarningReportNotReliable=Advertencia, este informe no se basa en el libro mayor, por lo que no es fiable aún. Se sustituirá por un informe correcto en una próxima versión.

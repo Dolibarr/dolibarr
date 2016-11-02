@@ -1,17 +1,41 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. Envio
+Sending=Envio
+Sendings=Envios
 AllSendings=Todos os embarques
+Shipment=Envio
+Shipments=Envios
 ShowSending=Mostrar envios
+Receivings=Recibos de entrega
 SendingsArea=Área Envios
-LastSendings=Os %s últimos Envios
+ListOfSendings=Lista de Envios
+SendingMethod=Método de Envio
+LastSendings=Últimas %s remessas
+StatisticsOfSendings=Estatísticas de Envios
+NbOfSendings=Número de Envios
+NumberOfShipmentsByMonth=Número de envios por mês
 SendingCard=Cartão de embarque
+NewSending=Novo Envio
+CreateASending=Criar um Envio
+QtyShipped=Quant. Enviada
+QtyToShip=Quant. a Enviar
 QtyReceived=Quant. Recibida
 KeepToShip=Permaneça para enviar
+OtherSendingsForSameOrder=Outros Envios deste Pedido
+SendingsAndReceivingForSameOrder=Envios e Recepções deste pedido
+SendingsToValidate=Envios a Confirmar
+StatusSendingCanceled=Cancelado
+StatusSendingDraft=Rascunho
 StatusSendingValidated=Validado (produtos a enviar o enviados)
+StatusSendingProcessed=Processado
+StatusSendingDraftShort=Rascunho
+StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Processado
 SendingSheet=Folha de embarque
-ConfirmDeleteSending=Tem certeza que quer eliminar esta expedição?
-ConfirmValidateSending=Tem certeza que quer Confirmar esta expedição?
-ConfirmCancelSending=Tem certeza que quer anular esta expedição?
+ConfirmDeleteSending=Tem certeza que quer remover este envio?
+ConfirmValidateSending=Tem certeza que quer validar o envio com referencia <b>%s</b>?
+ConfirmCancelSending=Tem certeza que quer cancelar este envio?
+DocumentModelSimple=Modelo Simples
 DocumentModelMerou=Modelo A5 Merou
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
 StatsOnShipmentsOnlyValidated=Estatisticas referentes os envios , mas somente validados. Data usada e data da validacao do envio ( a data planejada da entrega nao e sempre conhecida).
@@ -28,9 +52,16 @@ ProductQtyInSuppliersOrdersRunning=Quantidade do produto em ordens abertas forne
 ProductQtyInShipmentAlreadySent=Quantidade do produto da ordem do cliente abriu já foi enviado
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantidade do produto a partir da ordem fornecedor abriu já recebeu
 NoProductToShipFoundIntoStock=Nenhum produto para enviar encontrado em armazém <b>%s</b>. Estoque correto ou voltar para escolher outro armazém.
+WeightVolShort=Peso/Vol.
+ValidateOrderFirstBeforeShipment=Você deve primeiro, antes de fazer as remessas, confirmar o pedido.
+
+# Sending methods
+# ModelDocument
 DocumentModelTyphon=Modelo de Documento Typhon
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER nao definida
 SumOfProductVolumes=Soma do volume dos pedidos
 SumOfProductWeights=Soma do peso dos produtos
-DetailWarehouseNumber=Detalhes do estoque
-DetailWarehouseFormat=W:%s (Qtd : %d)
+
+# warehouse details
+DetailWarehouseNumber= Detalhes do estoque
+DetailWarehouseFormat= W:%s (Qtd : %d)

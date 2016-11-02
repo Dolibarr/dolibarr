@@ -742,7 +742,8 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-		if (! $ret)
+
+        if (! $ret)
 		{
 		    $error++;
 		}

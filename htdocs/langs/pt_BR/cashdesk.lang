@@ -1,16 +1,33 @@
-# Dolibarr language file - Source file is en_US - cashdesk
+# Language file - Source file is en_US - cashdesk
+CashDeskMenu=Ponto de venda
+CashDesk=Ponto de venda
+CashDeskBankCash=Conta bancária (dinheiro)
+CashDeskBankCB=Conta bancária (cartão)
+CashDeskBankCheque=Conta bancária (cheque)
+CashDeskWarehouse=Armazém
 CashdeskShowServices=Serviços de venda
+CashDeskProducts=Produtos
 CashDeskStock=Estoque
 CashDeskOn=ligar
+CashDeskThirdParty=Terceiro
+ShoppingCart=Carrinho de compras
 NewSell=Nova venda
 AddThisArticle=Adicionar esse artigo
 RestartSelling=Voltar na venda
+SellFinished=Venda completada
 PrintTicket=Imprimir tíquete
+NoProductFound=Nenhum artigo encontrado
+ProductFound=produto encontrado
+NoArticle=Nenhum artigo
+Identification=Identificação
+Article=Artigo
+Difference=Diferença
 TotalTicket=Total do tíquite
 NoVAT=Nenhum ICMS para essa venda
 Change=Excesso recebido
 BankToPay=Cobrar conta
 ShowCompany=Mostar empresa
+ShowStock=Mostrar armazém
 DeleteArticle=Clique para remover esse artigo
 FilterRefOrLabelOrBC=Procurar (Ref/Rótulo)
 UserNeedPermissionToEditStockToUsePos=Você tentou retirar do estoque com a emissão da fatura, mas o usuário precisa ter permissão para editar estoque.

@@ -429,7 +429,7 @@ if ($id > 0 || ! empty($ref))
         if ($object->canBeConciliated() > 0) {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile&id='.$object->id.$param.'">'.$langs->trans("Conciliate").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile'.$param.'">'.$langs->trans("Conciliate").'</a>';
             } else {
                 print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
@@ -511,11 +511,18 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofpages = ceil($nbtotalofrecords/$limit);
 }
 
-if (($id > 0 || ! empty($ref)) && GETPOST("page",'int') === '')
+if (($id > 0 || ! empty($ref)) && ((string) $page == ''))
 {
     // We open a list of transaction of a dedicated account and no page was set by defaut
     // We force on last page.
     $page = ($nbtotalofpages - 1);
+    $offset = $limit * $page;
+    if ($page < 0) $page = 0;
+}
+if ($page >= $nbtotalofpages) 
+{
+    // If we made a search and result has low page than the page number we were on
+    $page = ($nbtotalofpages -1); 
     $offset = $limit * $page;
     if ($page < 0) $page = 0;
 }

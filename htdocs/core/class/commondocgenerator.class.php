@@ -59,6 +59,8 @@ abstract class CommonDocGenerator
     {
         global $conf;
 
+        $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
+
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
@@ -75,7 +77,7 @@ abstract class CommonDocGenerator
         	'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
-        	'myuser_logo'=>$user->photo,
+        	'myuser_logo'=>$logotouse,
         	'myuser_job'=>$user->job,
             'myuser_web'=>''	// url not exist in $user object
         );

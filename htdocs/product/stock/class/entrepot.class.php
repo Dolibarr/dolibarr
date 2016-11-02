@@ -71,6 +71,7 @@ class Entrepot extends CommonObject
 	//! Code Postal
 	var $zip;
 	var $town;
+	var $fk_parent;
 	
 	// List of short language codes for status
 	var $statuts = array();
@@ -307,12 +308,10 @@ class Entrepot extends CommonObject
 
 		$sql  = "SELECT rowid, fk_parent, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-
 		if ($id)
 		{
 			$sql.= " WHERE rowid = '".$id."'";
 		}
-
 		else
 		{
 			$sql.= " WHERE entity = " .$conf->entity;
@@ -330,7 +329,8 @@ class Entrepot extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->rowid;
-				$this->libelle        = $obj->label;
+				$this->label          = $obj->label;
+				$this->libelle        = $obj->label;            // deprecated
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
@@ -567,25 +567,46 @@ class Entrepot extends CommonObject
 	 *	Return clickable name (possibility with the pictogram)
 	 *
 	 *	@param		int		$withpicto		with pictogram
-	 *	@param		string	$option			What point the link
+	 *	@param		string	$option			Where the link point to
+	 *  @param      int     $showfullpath   0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
+     *  @param	    int   	$notooltip		1=Disable tooltip
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='',$showfullpath=0, $notooltip=0)
 	{
 		global $langs;
 		$langs->load("stocks");
 
-		$result='';
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		
+        $result='';
+        $label = '';
+        
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
-        $link='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $linkend='</a>';
+        $url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
 
-        if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->get_full_arbo().$linkend;
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowWarehouse");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+            
+        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'stock', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
+		$result.=$linkstart.($showfullpath ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label)).$linkend;
 		return $result;
 	}
 
@@ -620,40 +641,41 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return full path to current warehouse
 	 *
-	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		string	String full path to current warehouse separated by " >> " 
 	 */
-	function get_full_arbo($protection=1000) {
-		
-		 global $user,$langs,$conf;
-		 
-		 $TArbo = array($this->libelle);
-		 
-		 $id = $this->id;
-		
-		 $i=0;
-
-		 while((empty($protection) || $i < $protection)) {
-			 $sql = 'SELECT fk_parent
-			 		FROM '.MAIN_DB_PREFIX.'entrepot
-			 		WHERE rowid = '.$id;
-
-			 $resql = $this->db->query($sql);
-			 if($resql) {
-			 	$res = $this->db->fetch_object($resql);
-			 	if(empty($res->fk_parent)) break;
-				$id = $res->fk_parent;
-				$o = new Entrepot($this->db);
-				$o->fetch($id);
-				$TArbo[] = $o->libelle;
-			 } else break;
-			 
-			 $i++;
-			 
-		 }
-
-		 return implode(' >> ', array_reverse($TArbo));
-		
+	function get_full_arbo() 
+	{
+        global $user,$langs,$conf;
+        
+        $TArbo = array(empty($this->label)?$this->libelle:$this->label);
+        
+        $protection=100; // We limit depth of warehouses to 100
+        
+        $warehousetmp = new Entrepot($this->db);
+        
+        $parentid = $this->fk_parent;       // If parent_id not defined on current object, we do not start consecutive searches of parents 
+        $i=0;
+        while ($parentid > 0 && $i < $protection) 
+        {
+            $sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.$parentid;
+            $resql = $this->db->query($sql);
+            if ($resql) 
+            {
+                $objarbo = $this->db->fetch_object($resql);
+                if ($objarbo)
+                {
+                	$warehousetmp->fetch($parentid);
+                	$TArbo[] = $warehousetmp->label;
+                 	$parentid = $objarbo->fk_parent; 
+                }
+                else break;
+            }
+            else dol_print_error($this->db);
+            
+            $i++;
+        }
+        
+        return implode(' >> ', array_reverse($TArbo));
 	}
 	
 	/**
