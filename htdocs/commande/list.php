@@ -161,41 +161,43 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-// Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_product_category='';
-    $search_ref='';
-    $search_ref_customer='';
-    $search_company='';
-    $search_town='';
-	$search_zip="";
-    $search_state="";
-	$search_type='';
-	$search_country='';
-	$search_type_thirdparty='';
-    $search_total_ht='';
-    $search_total_vat='';
-    $search_total_ttc='';
-    $orderyear='';
-    $ordermonth='';
-	$orderday='';
-	$deliveryday='';
-	$deliverymonth='';
-    $deliveryyear='';
-    $viewstatut='';
-    $billed='';
-    $toselect='';
-    $search_array_options=array();
-}
-
 if (empty($reshook))
 {
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+    
+    // Purge search criteria
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+        $search_categ='';
+        $search_user='';
+        $search_sale='';
+        $search_product_category='';
+        $search_ref='';
+        $search_ref_customer='';
+        $search_company='';
+        $search_town='';
+    	$search_zip="";
+        $search_state="";
+    	$search_type='';
+    	$search_country='';
+    	$search_type_thirdparty='';
+        $search_total_ht='';
+        $search_total_vat='';
+        $search_total_ttc='';
+        $orderyear='';
+        $ordermonth='';
+    	$orderday='';
+    	$deliveryday='';
+    	$deliverymonth='';
+        $deliveryyear='';
+        $viewstatut='';
+        $billed='';
+        $toselect='';
+        $search_array_options=array();
+    }
+
+    // Mass actions
     $objectclass='Commande';
     $objectlabel='Orders';
     $permtoread = $user->rights->commande->lire;
@@ -205,7 +207,7 @@ if (empty($reshook))
 }
 
 
-if($massaction == 'confirm_createbills') {
+if ($massaction == 'confirm_createbills') {
 	
 	$orders = GETPOST('toselect');
 	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
