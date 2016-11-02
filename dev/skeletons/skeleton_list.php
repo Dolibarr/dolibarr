@@ -58,6 +58,7 @@ $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
+$search_all=trim(GETPOST("sall"));
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
 $search_myfield=GETPOST('search_myfield');
@@ -247,7 +248,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit+1, $offset);
 
-
 dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if (! $resql)
@@ -259,7 +259,7 @@ if (! $resql)
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
