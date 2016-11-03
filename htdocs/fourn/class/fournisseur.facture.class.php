@@ -694,7 +694,6 @@ class FactureFournisseur extends CommonInvoice
         if (isset($this->tva)) $this->tva=trim($this->tva);
         if (isset($this->localtax1)) $this->localtax1=trim($this->localtax1);
         if (isset($this->localtax2)) $this->localtax2=trim($this->localtax2);
-        if (empty($this->total)) $this->total=0;
         if (empty($this->total_ht)) $this->total_ht=0;
         if (empty($this->total_tva)) $this->total_tva=0;
         //	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
@@ -734,7 +733,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " tva=".(isset($this->tva)?$this->tva:"null").",";
         $sql.= " localtax1=".(isset($this->localtax1)?$this->localtax1:"null").",";
         $sql.= " localtax2=".(isset($this->localtax2)?$this->localtax2:"null").",";
-        $sql.= " total=".(isset($this->total)?$this->total:"null").",";
+        //$sql.= " total=".(isset($this->total)?$this->total:"null").",";
         $sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
         $sql.= " total_tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
         $sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";

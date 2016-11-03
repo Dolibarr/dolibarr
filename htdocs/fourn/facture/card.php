@@ -309,7 +309,7 @@ if (empty($reshook))
 	elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
-	    $object->label=$_POST['label'];
+	    $object->label=GETPOST('label');
 	    $result=$object->update($user);
 	    if ($result < 0) dol_print_error($db);
 	}
