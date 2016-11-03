@@ -34,7 +34,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsupplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -997,7 +996,6 @@ llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_d
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formsupplier_proposal = new FormSupplierProposal($db);
 $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }

@@ -108,13 +108,12 @@ if (! $sortfield) $sortfield='b.datev';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && ($id > 0 || ! empty($ref)))
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))
 {
     $sortfield = 'b.datev, b.dateo, b.rowid';
-    $mode_balance_ok = true;
+    if ($id > 0 || ! empty($ref) || $account > 0) $mode_balance_ok = true;
 }
 if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
-
 
 $object = new Account($db);
 if ($id > 0 || ! empty($ref))

@@ -34,8 +34,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsupplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -191,7 +191,7 @@ llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_p
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formsupplier_proposal = new FormSupplierProposal($db);
+$formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
@@ -388,7 +388,7 @@ if ($result)
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$formsupplier_proposal->selectSupplierProposalStatus($viewstatut,1);
+	$formpropal->selectProposalStatus($viewstatut,1,0,1,'supplier');
 	print '</td>';
 	// Check boxes
 	print '<td class="liste_titre" align="right">';

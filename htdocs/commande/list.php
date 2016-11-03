@@ -1014,11 +1014,11 @@ if ($resql)
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
     	$liststatus=array(
-    	    '0'=>$langs->trans("StatusOrderDraftShort"), 
-    	    '1'=>$langs->trans("StatusOrderValidated"), 
-    	    '2'=>$langs->trans("StatusOrderSentShort"), 
-    	    '3'=>$langs->trans("StatusOrderDelivered"), 
-    	    '-1'=>$langs->trans("StatusOrderCanceledShort")
+    	    Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"), 
+    	    Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"), 
+    	    Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSentShort"), 
+    	    Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"), 
+    	    Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
     	);
     	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	    print '</td>';
