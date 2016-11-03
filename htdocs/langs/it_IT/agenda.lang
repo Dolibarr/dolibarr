@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID evento
-Actions=Azioni
+Actions=Eventi
 Agenda=Agenda
 Agendas=Agende
 Calendar=Calendario
@@ -11,7 +11,7 @@ AffectedTo=Azione assegnata a
 Event=Evento
 Events=Eventi
 EventsNb=Numero di eventi
-ListOfActions=Lista delle azioni
+ListOfActions=Lista degli eventi
 Location=Luogo
 ToUserOfGroup=A qualsiasi utente nel gruppo
 EventOnFullDay=Dura tutto il giorno

@@ -41,3 +41,4 @@ rateMustBeNumeric=El margen  debe ser un valor numérico
 markRateShouldBeLesserThan100=El margen tiene que ser menor que 100
 ShowMarginInfos=Mostrar info de márgenes
 CheckMargins=Detalles de márgenes
+MarginPerSaleRepresentativeWarning=El informe de margen por usuario usa el enlace entre terceros y comerciales para calcular el margen de cada usuario. Debido a que algunos terceros pueden no estar vinculados a un comercial y algunos terceros pueden estar relacionados con varios usuarios, algunos márgenes pueden no aparecer en este informe o podrá aparecer en varias líneas diferentes.

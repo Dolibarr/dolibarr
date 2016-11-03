@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,8 +73,10 @@ print '<table class="noborder" width="100%">'."\n";
 clearstatcache();
 
 $workflowcodes=array(
-	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
+    // Automatic creation
+    'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('family'=>'create', 'position'=>20, 'enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
+    // Automatic classification
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
 	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
@@ -108,7 +110,11 @@ foreach($workflowcodes as $key => $params)
    	if ($oldfamily != $family)
    	{
 	   	print '<tr class="liste_titre">'."\n";
-		print '  <td>'.$langs->trans("Description").'</td>';
+		print '  <td>';
+		if ($family == 'create') print $langs->trans("AutomaticCreation");
+		elseif ($family == 'classify') print $langs->trans("AutomaticClassification");
+		else print $langs->trans("Description");
+		print '</td>';
 		print '  <td align="center">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 		$oldfamily = $family;

@@ -326,6 +326,7 @@ if ($action == 'confirm_send')
 
             if (!$emailTo)
             {
+                dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
@@ -438,6 +439,7 @@ if ($action == 'confirm_valid')
 
             if (!$emailTo)
             {
+                dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }

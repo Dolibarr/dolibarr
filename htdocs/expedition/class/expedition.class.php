@@ -48,7 +48,8 @@ class Expedition extends CommonObject
 	public $table_element="expedition";
 	public $table_element_line="expeditiondet";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'sending';
+    
 	var $socid;
 	var $ref_customer;
 	var $ref_int;
@@ -179,7 +180,7 @@ class Expedition extends CommonObject
 	 *  Create expedition en base
 	 *
 	 *  @param	User	$user       Objet du user qui cree
-   * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+   * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				<0 si erreur, id expedition creee si ok
 	 */
 	function create($user, $notrigger=0)
@@ -596,7 +597,7 @@ class Expedition extends CommonObject
 	 *  Validate object and update stock if option enabled
 	 *
 	 *  @param      User		$user       Object user that validate
-     *  @param		int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if OK, >0 if KO
 	 */
 	function valid($user, $notrigger=0)
@@ -721,7 +722,7 @@ class Expedition extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 					    // Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
@@ -741,7 +742,8 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-		if (! $ret)
+
+        if (! $ret)
 		{
 		    $error++;
 		}
@@ -1459,27 +1461,40 @@ class Expedition extends CommonObject
      *	@param      int			$option         Where point the link
      *	@param      int			$max          	Max length to show
      *	@param      int			$short			Use short labels
+     *  @param      int         $notooltip      1=No tooltip
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowSending") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
-
+        $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+            
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowSending");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+		
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
 
-		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
@@ -1916,7 +1931,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr",$numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1966,6 +1981,7 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
+	    global $user;
 		$error=0;
 
 		$this->db->begin();
@@ -2081,7 +2097,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr",$numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;

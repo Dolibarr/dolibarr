@@ -175,6 +175,7 @@ NoExample=Ningún ejemplo
 FindBug=Reportar un bug
 NbOfLines=Número de líneas
 DateFrom=Desde %s
+Check=Cheque
 Uncheck=Desmarcar
 Internals=Interno
 Externals=Externo

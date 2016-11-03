@@ -80,7 +80,6 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-$object = new Product($db);
 if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
@@ -139,7 +138,8 @@ if (empty($reshook))
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
-	/*
+
+    /*
 	 * Build doc
 	 */
 	else if ($action == 'builddoc' && $user->rights->produit->creer)
@@ -197,22 +197,6 @@ if (empty($reshook))
 			setEventMessages($errors, null, 'errors');
 		}
     }
-
-	/*
-    if ($action == 'setaccountancy_code_buy') {
-
-	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
-        $action="";
-    }
-
-    if ($action == 'setaccountancy_code_sell')
-    {
-	    $result = $object->setAccountancyCode('sell', GETPOST('accountancy_code_sell'));
-	    if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
-	    $action="";
-    }
-	*/
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -1134,27 +1118,27 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
             // Accountancy_code_sell
-            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
-            print '<td>';
+            print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td class="maxwidthonsmartphone">';
 		    print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 0, 1);
             print '</td></tr>';
 
             // Accountancy_code_buy
-            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-            print '<td>';
+            print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td class="maxwidthonsmartphone">';
 			print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 0, 1);
             print '</td></tr>';
 		}			
 		else // For external software 
 		{
             // Accountancy_code_sell
-            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
-            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td class="maxwidthonsmartphone"><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
             print '</td></tr>';
 
             // Accountancy_code_buy
-            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td class="maxwidthonsmartphone"><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
             print '</td></tr>';
         }
 		print '</table>';

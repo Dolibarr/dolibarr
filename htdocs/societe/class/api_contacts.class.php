@@ -84,16 +84,17 @@ class Contacts extends DolibarrApi
 	 * 
 	 * Get a list of contacts
 	 * 
-	 * @param int		$socid		ID of thirdparty to filter list
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @return array Array of contact objects
+	 * @param int		$socid		ID of thirdparty to filter list
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return array                Array of contact objects
      * 
 	 * @throws RestException
 	 */
-	function index($socid = 0, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid = 0, $sqlfilters = '') {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -107,37 +108,36 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid)
 			$search_sale = DolibarrApiAccess::$user->id;
 
-		$sql = "SELECT c.rowid";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as c";
+		$sql = "SELECT t.rowid";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
-		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
-		$sql.= ' WHERE  c.entity IN (' . getEntity('contact', 1) . ')';
-		if ($socid)
-			$sql.= " AND c.fk_soc = " . $socid;
+		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON t.fk_soc = s.rowid";
+		$sql.= ' WHERE t.entity IN (' . getEntity('contact', 1) . ')';
+		if ($socid) $sql.= " AND t.fk_soc = " . $socid;
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0)
-			$sql.= " AND c.fk_soc = sc.fk_soc";
+			$sql.= " AND t.fk_soc = sc.fk_soc";
 		if ($search_sale > 0)
 			$sql.= " AND s.rowid = sc.fk_soc";  // Join for the needed table to filter by sale
-
-
-			
 		// Insert sale filter
 		if ($search_sale > 0)
 		{
 			$sql .= " AND sc.fk_user = " . $search_sale;
 		}
-
-		$nbtotalofrecords = 0;
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
-			$result = $db->query($sql);
-			$nbtotalofrecords = $db->num_rows($result);
-		}
-
+	    // Add sql filters
+        if ($sqlfilters) 
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+		
 		$sql.= $db->order($sortfield, $sortorder);
 
 		if ($limit)
@@ -154,7 +154,7 @@ class Contacts extends DolibarrApi
 		if ($result)
 		{
 			$num = $db->num_rows($result);
-			while ($i < $num)
+			while ($i < min($num, ($limit <= 0 ? $num : $limit)))
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);
@@ -321,7 +321,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
      * 
-	 * @param   array $data Data to validate
+	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
 	 */

@@ -129,8 +129,10 @@ if (empty($usemargins)) $usemargins=0;
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
 		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } ?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<?php } 
+	// VAT Rate
+	?>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''),'%',$line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 	

@@ -47,6 +47,7 @@ DefaultModelSupplierProposalCreate=Model de creació per defecte
 DefaultModelSupplierProposalToBill=Model per defecte en tancar una petició de preu (acceptada)
 DefaultModelSupplierProposalClosed=Model per defecte en tancar una petició de preu (rebutjada)
 ListOfSupplierProposal=Llistat de peticions de preu a proveïdor
+ListSupplierProposalsAssociatedProject=Llista de pressupostos de proveïdor associats al projecte
 SupplierProposalsToClose=Pressupostos de proveïdor a tancar
 SupplierProposalsToProcess=Pressupostos de proveïdor a processar
 LastSupplierProposals=Última petició de preu

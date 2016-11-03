@@ -76,7 +76,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/search.php?bid=$objp->rowid\">$objp->label</a></td>";
+		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td align="right">'.$objp->nombre.'</td>';
 		print '<td align="right">'.price(abs($objp->somme))."</td>";
 		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";

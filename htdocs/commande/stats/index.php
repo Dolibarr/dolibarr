@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -36,6 +37,8 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
+
+$object_status=GETPOST('object_status');
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -63,6 +66,7 @@ $langs->load('suppliers');
  */
 
 $form=new Form($db);
+$formorder=new FormOrder($db);
 
 if ($mode == 'customer')
 {
@@ -82,9 +86,19 @@ print load_fiche_titre($title,'','title_commercial.png');
 dol_mkdir($dir);
 
 $stats = new CommandeStats($db, $socid, $mode, ($userid>0?$userid:0));
+if ($mode == 'customer')
+{
+    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+}
+if ($mode == 'supplier')
+{
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+}
+
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -261,6 +275,24 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	// Status
+	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	if ($mode == 'customer')
+	{
+	    $liststatus=array(
+	        Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
+	        Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
+	        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
+	        Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+	        Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+	    );
+	    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+	}
+	if ($mode == 'supplier')
+	{
+	    $formorder->selectSupplierOrderStatus((strstr($object_status, ',')?-1:$object_status), 0, 'object_status');
+	}
+	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;

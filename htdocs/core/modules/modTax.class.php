@@ -88,7 +88,7 @@ class modTax extends DolibarrModules
 		$this->rights[$r][0] = 91;
 		$this->rights[$r][1] = 'Lire les charges';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'lire';
 
@@ -117,6 +117,12 @@ class modTax extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 
 
+		// Menus
+		//-------
+		
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

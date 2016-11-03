@@ -655,8 +655,8 @@ if (empty($reshook))
 	        $objectline->qty=GETPOST('elqty');
 	        $objectline->remise_percent=GETPOST('elremise_percent');
 	        $objectline->tva_tx=GETPOST('eltva_tx')?GETPOST('eltva_tx'):0;	// Field may be disabled, so we use vat rate 0
-	        $objectline->localtax1_tx=$localtax1_tx;
-	        $objectline->localtax2_tx=$localtax2_tx;
+	        $objectline->localtax1_tx=is_numeric($localtax1_tx)?$localtax1_tx:0;
+	        $objectline->localtax2_tx=is_numeric($localtax2_tx)?$localtax2_tx:0;
 	        $objectline->date_ouverture_prevue=$date_start_update;
 	        $objectline->date_ouverture=$date_start_real_update;
 	        $objectline->date_fin_validite=$date_end_update;
@@ -967,6 +967,28 @@ if (empty($reshook))
 			}
 		}
 	}
+
+	// Action clone object
+	if ($action == 'confirm_clone' && $confirm == 'yes')
+	{
+		if (! GETPOST('socid', 3))
+		{
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		}
+		else
+		{
+			if ($object->id > 0) {
+				$result = $object->createFromClone($socid);
+				if ($result > 0) {
+					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+					exit();
+				} else {
+					if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
+					$action = '';
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -1265,6 +1287,12 @@ else
             print '<input type="hidden" name="action" value="setremise">';
         }
 
+        // Clone confirmation
+        if ($action == 'clone') {
+        	$formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+        	print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+        }
+
         print '<table class="border" width="100%">';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1427,7 +1455,7 @@ else
             {
                 $total = 0;
 
-                print '<tr class="liste_titre">';
+                print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
                 print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
@@ -1964,6 +1992,11 @@ else
             	if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
             	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
             }
+            
+            // Clone
+            if ($user->rights->contrat->creer) {
+            	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
+            }
 
             if ($object->nbofservicesclosed < $nbofservices)
             {
@@ -2005,7 +2038,7 @@ else
 
         $var = true;
 
-        $somethingshown = $formfile->show_documents('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+        print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
         
 		// Show links to link elements

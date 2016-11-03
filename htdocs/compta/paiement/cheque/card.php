@@ -3,8 +3,8 @@
  * Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013 		Philippe Grand      	<philippe.grand@atoo-net.com>
- * Copyright (C) 2015	    Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement/cheque/card.php
- *	\ingroup    bank, invoice
- *	\brief      Page for cheque deposits
+ *	\file		htdocs/compta/paiement/cheque/card.php
+ *	\ingroup	bank, invoice
+ *	\brief		Page for cheque deposits
  */
 
 require '../../../main.inc.php';
@@ -57,7 +57,7 @@ if ($page < 0) { $page = 0 ; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
-$dir=$conf->banque->dir_output.'/bordereau/';
+$dir=$conf->bank->dir_output.'/checkdeposits/';
 $filterdate=dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
 $filteraccountid=GETPOST('accountid');
 
@@ -298,7 +298,9 @@ if (GETPOST('removefilter'))
     $filteraccountid=0;
 }
 
-llxHeader();
+$title=$langs->trans("Cheques") . " - " . $langs->trans("Card");
+$helpurl="";
+llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -386,7 +388,7 @@ if ($action == 'new')
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
-	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
 	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
@@ -502,7 +504,7 @@ if ($action == 'new')
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
 			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
-			
+
 			// Link to payment
 			print '<td align="center">';
 			$paymentstatic->id=$value["paymentid"];
@@ -528,7 +530,7 @@ if ($action == 'new')
 				print '&nbsp;';
 			}
 			print '</td>';
-			
+
 			print '<td align="center">';
 			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 			print '</td>' ;
@@ -563,7 +565,7 @@ else
 	$accountstatic->label=$object->account_label;
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width=20%>';
+	print '<tr><td class="titlefield">';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Ref');
@@ -760,7 +762,7 @@ else
 		dol_print_error($db);
 	}
 
-    dol_fiche_end();
+	dol_fiche_end();
 }
 
 
@@ -799,7 +801,7 @@ if ($action != 'new')
 		$filedir=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
 
 		print '<br>';
 	}

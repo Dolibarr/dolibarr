@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
+ExpenseReport=Relatório de despesas
 ExpenseReports=Os relatórios de despesas
 Trips=Os relatórios de despesas
 TripsAndExpenses=Relatórios de despesas
@@ -6,46 +7,81 @@ TripsAndExpensesStatistics=Estatísticas de relatórios de despesas
 TripCard=Despesa de cartão de relatório
 AddTrip=Criar relatório de despesas
 ListOfTrips=Lista de relatórios de despesas
+ListOfFees=Lista de Taxas
 ShowTrip=Mostrar relatório de despesas
-FeesKilometersOrAmout=Quantidade de Kilometros
+NewTrip=Novo relatório de despesas
+CompanyVisited=Empresa/Instituição Visitada
+FeesKilometersOrAmout=Quantidade de quilômetros
 DeleteTrip=Excluir relatório de despesas
-ConfirmDeleteTrip=Tem certeza de que deseja excluir este relatório de despesas?
+ConfirmDeleteTrip=Você tem certeza que deseja excluir este relatório de despesas?
+ListTripsAndExpenses=Lista de relatórios de despesas
 ListToApprove=Esperando aprovação
 ExpensesArea=Área de relatórios de despesas
 ClassifyRefunded=Classificar 'Rembolsado'
 ExpenseReportWaitingForApproval=Um novo relatório de despesas foi apresentada para aprovação
 ExpenseReportWaitingForApprovalMessage=Um novo relatório de despesas foi apresentado e está aguardando aprovação.\n - Usuário: %s \n - Período: %s \n Clique aqui para autenticar: %s
 TripId=Id relatório de despesas
+AnyOtherInThisListCanValidate=Pessoa para informar para validação.
 TripSociete=Informações da empresa
 TripNDF=Informações relatório de despesas
 PDFStandardExpenseReports=Template padrão para gerar um documento PDF para relatório de despesa
 ExpenseReportLine=Linha de relatório de despesas
+TF_OTHER=Outro
+TF_TRIP=Transporte
+TF_LUNCH=Alimentação
+TF_METRO=Metro
 TF_TRAIN=Trem
-TF_BUS=Onibus
+TF_BUS=Ônibus
+TF_CAR=Carro
 TF_PEAGE=Pedágio
-TF_ESSENCE=Combustivel
+TF_ESSENCE=Combustível
+TF_HOTEL=Hotel
+TF_TAXI=Taxi
+
 ErrorDoubleDeclaration=Você declarou outro relatório de despesas em um intervalo de datas semelhante.
 AucuneLigne=Não há relatório de despesas declaradas ainda
+
+ModePaiement=Forma de pagamento
+
 VALIDATOR=Usuário responsável pela aprovação
-AUTHOR=Gravada por
+VALIDOR=Aprovado por
+AUTHOR=Registrado por
 AUTHORPAIEMENT=Pago por
 REFUSEUR=Negado pelo
 CANCEL_USER=Excluída por
+
 MOTIF_REFUS=Razão
 MOTIF_CANCEL=Razão
+
 DATE_REFUS=Negar data
-DATE_SAVE=Validado em
+DATE_SAVE=Data de validação
 DATE_CANCEL=Data de cancelamento
+DATE_PAIEMENT=Data de pagamento
+
+BROUILLONNER=Reabrir
 ValidateAndSubmit=Validar e submeter à aprovação
 ValidatedWaitingApproval=Validado (aguardando aprovação)
+
 NOT_AUTHOR=Você não é o autor deste relatório de despesas. Operação cancelada.
-ConfirmRefuseTrip=Tem certeza de que deseja negar este relatório de despesas?
-ConfirmValideTrip=Tem certeza de que deseja aprovar este relatório de despesas?
-ConfirmPaidTrip=Tem certeza de que deseja alterar o status do relatório de despesas para "Pago"?
-ConfirmCancelTrip=Tem certeza de que deseja cancelar este relatório de despesas?
+
+ConfirmRefuseTrip=Você tem certeza que deseja recusar este relatório de despesas?
+
+ValideTrip=Aprovar relatório de despesas
+ConfirmValideTrip=Você tem certeza que deseja aprovar este relatório de despesas?
+
+PaidTrip=Pagar um relatório de despesas
+ConfirmPaidTrip=Você tem certeza que deseja mudar a situação deste relatório de despesas para "Pago"?
+
+ConfirmCancelTrip=Você tem certeza que deseja cancelar este relatório de despesas?
+
 BrouillonnerTrip=Voltar relatório de despesas para o status de "Rascunho"
-ConfirmBrouillonnerTrip=Tem certeza de que deseja mover este relatório de despesas para o status de "Rascunho"?
-ConfirmSaveTrip=Tem certeza de que deseja validar esse relatório de despesas?
+ConfirmBrouillonnerTrip=Você tem certeza que deseja alterar a situação deste relatório de despesas para "Rascunho"?
+
+SaveTrip=Validar relatório de despesas
+ConfirmSaveTrip=Você tem certeza que deseja validar este relatório de despesas?
+
 NoTripsToExportCSV=Nenhum relatório de despesas para exportar para este período.
 ExpenseReportPayment=Despesa de pagamento de relatório
+
+ExpenseReportsToApprove=Relatórios de despesas a confirmar
 ExpenseReportsToPay=Relatórios de despesas a pagar

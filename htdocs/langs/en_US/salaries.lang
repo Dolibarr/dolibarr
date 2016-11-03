@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account by default for salaries payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for personnel expenses
 Salary=Salary
 Salaries=Salaries
 NewSalaryPayment=New salary payment

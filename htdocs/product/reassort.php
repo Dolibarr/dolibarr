@@ -73,18 +73,6 @@ if (! empty($canvas))
 	$objcanvas->getCanvas('product','list',$canvas);
 }
 
-if (! empty($_POST["button_removefilter_x"]))
-{
-    $sref="";
-    $snom="";
-    $sall="";
-    $search_sale="";
-    $search_categ="";
-    $type="";
-    $catid='';
-    $toolowstock='';
-}
-
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
@@ -98,7 +86,17 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
  * Actions
  */
 
-// None
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $sref="";
+    $snom="";
+    $sall="";
+    $search_sale="";
+    $search_categ="";
+    $type="";
+    $catid='';
+    $toolowstock='';
+}
 
 
 
@@ -180,7 +178,7 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall or $snom or $sref))
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall || $snom || $sref))
 	{
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");

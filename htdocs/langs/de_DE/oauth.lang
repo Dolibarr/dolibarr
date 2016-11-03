@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Oauth Konfiguration
+OAuthServices=OAuth services
+ManualTokenGeneration=Manual token generation
 NoAccessToken=Kein Zugriffstoken in der lokalen Datenbank gespeichert
 HasAccessToken=Ein Token wurde erstellt und in der lokalen Datenbank gespeichert
 NewTokenStored=Empfangene und gespeicherte Token
@@ -9,7 +11,16 @@ RequestAccess=Hier klcien, um Zugriff anzufordern/zu verlängern und einen neuen
 DeleteAccess=Hier klicken, um das Token zu löschen
 UseTheFollowingUrlAsRedirectURI=Benutzen Sie diese URL zur Weiterleitung, wenn Sie die Anmeldedaten Ihres OAuth Anbieters erstellen.
 ListOfSupportedOauthProviders=Hier Anmeldedaten Ihres OAuth2 Anbieters eintragen. Nur OAuth2 Anbieter werden hier angezeigt. Diese Einstellungen können von anderen Module genutzt werden, die OAuth2 Authentifizierung benötigen.
-OAUTH_GOOGLE_NAME=Google API
-OAUTH_GOOGLE_ID=Google APi ID
-OAUTH_GOOGLE_SECRET=API Google Secret
-OAUTH_GOOGLE_DESC=Gehen Sie auf  <a href="https://console.developers.google.com/" target="_blank">diese Seite</a> dort auf Credentials um Oauth-Anmeldedaten anzulegen
+TOKEN_ACCESS=
+TOKEN_REFRESH=Token Refresh Present
+TOKEN_EXPIRED=Token expired
+TOKEN_EXPIRE_AT=Token expire at
+TOKEN_DELETE=Delete saved token
+OAUTH_GOOGLE_NAME=Oauth Google service
+OAUTH_GOOGLE_ID=Oauth Google Id
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
+OAUTH_GITHUB_NAME=Oauth GitHub service
+OAUTH_GITHUB_ID=Oauth GitHub Id
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials

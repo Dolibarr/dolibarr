@@ -213,7 +213,7 @@ class ThirdpartyApi extends DolibarrApi
         {
 			$i = 0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);

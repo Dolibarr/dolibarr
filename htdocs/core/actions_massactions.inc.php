@@ -49,7 +49,10 @@ if (! $error && count($toselect) > $maxformassaction)
     $error++;
 }
 
-
+if (! $error && $massaction == 'confirm_presend' && GETPOST('modelselected'))  // If we change the template, we must not send email, but keep on send email form
+{
+    $massaction='presend';
+}
 if (! $error && $massaction == 'confirm_presend')
 {
     $resaction = '';

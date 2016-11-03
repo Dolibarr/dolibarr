@@ -81,7 +81,7 @@ class modExport extends DolibarrModules
 		$this->rights[$r][0] = 1201;
 		$this->rights[$r][1] = 'Lire les exports';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -90,5 +90,11 @@ class modExport extends DolibarrModules
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

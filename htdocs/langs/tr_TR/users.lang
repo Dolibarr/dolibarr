@@ -100,3 +100,6 @@ WeeklyHours=Haftalık saatler
 ColorUser=Kullanıcı rengi
 DisabledInMonoUserMode=Bakım modunda devre dışıdır
 UserAccountancyCode=Kullanıcı muhasebe kodu
+UserLogoff=Kullanıcı çıktı
+UserLogged=Kullanıcı bağlandı
+DateEmployment=İşe Giriş Tarihi

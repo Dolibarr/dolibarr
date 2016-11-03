@@ -21,6 +21,7 @@
 /**
  *	\file       htdocs/expedition/shipment.php
  *	\ingroup    expedition
+ *  \brief      Tab shipments/delivery receipts on the order
  */
 
 require '../main.inc.php';
@@ -457,8 +458,8 @@ if ($id > 0 || ! empty($ref))
 
 
 		/**
-		 *  Lignes de commandes avec quantite livrees et reste a livrer
-		 *  Les quantites livrees sont stockees dans $commande->expeditions[fk_product]
+		 *  Lines or orders with quantity shipped and remain to ship
+		 *  Note: Qty shipped are already available into $commande->expeditions[fk_product]
 		 */
 		print '<table class="noborder noshadow" width="100%">';
 

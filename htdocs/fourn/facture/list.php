@@ -291,7 +291,7 @@ if ($search_ref)
 	else $sql .= natural_search('f.ref', $search_ref);
 }
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
-if ($search_ref_supplier) $sql .= natural_search('f.ref_supplier', $search_ref_supplier);
+if ($search_refsupplier) $sql .= natural_search('f.ref_supplier', $search_refsupplier);
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
@@ -300,7 +300,7 @@ if ($search_state) $sql.= natural_search("state.nom",$search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
+if ($search_montant_ht != '') $sql.= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
@@ -405,7 +405,7 @@ if ($resql)
 	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
 	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
-	if ($search_refsupplier) 	$param.='&search_refsupplier'.urlencode($search_refsupplier);
+	if ($search_refsupplier) 	$param.='&search_refsupplier='.urlencode($search_refsupplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
@@ -435,7 +435,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
 	
 	if ($search_all)
     {

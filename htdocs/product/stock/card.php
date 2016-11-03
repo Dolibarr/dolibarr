@@ -31,10 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
 $langs->load("companies");
+$langs->load("categories");
 
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -64,6 +66,7 @@ $object = new Entrepot($db);
 if ($action == 'add' && $user->rights->stock->creer)
 {
 	$object->ref         = GETPOST("ref");
+	$object->fk_parent   = GETPOST("fk_parent");
 	$object->libelle     = GETPOST("libelle");
 	$object->description = GETPOST("desc");
 	$object->statut      = GETPOST("statut");
@@ -111,6 +114,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
+	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
 		exit;
 	}
@@ -127,6 +131,7 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 	if ($object->fetch($id))
 	{
 		$object->libelle     = GETPOST("libelle");
+		$object->fk_parent   = GETPOST("fk_parent");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -165,6 +170,7 @@ if ($cancel == $langs->trans("Cancel"))
 
 $productstatic=new Product($db);
 $form=new Form($db);
+$formproduct=new FormProduct($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -175,7 +181,7 @@ if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewWarehouse"));
 
-	print "<form action=\"card.php\" method=\"post\">\n";
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -185,36 +191,42 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
+		
+	// Parent entrepot
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
+	print '</td></tr>';
 
 	// Description
-	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 	$doleditor->Create();
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
 	print $formcompany->select_ziptown((!empty($object->zip)?$object->zip:''),'zipcode',array('town','selectcountry_id','state_id'),6);
-	print '</td><td>'.$langs->trans('Town').'</td><td>';
+	print '</td></tr>';
+	print '<tr><td>'.$langs->trans('Town').'</td><td>';
 	print $formcompany->select_ziptown((!empty($object->town)?$object->town:''),'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select name="statut" class="flat">';
 	foreach ($object->statuts as $key => $value)
 	{
@@ -263,66 +275,80 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
+			$formconfirm = '';
+			
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			print '<table class="border" width="100%">';
-
+			if (! $formconfirm) {
+			    $parameters = array();
+			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+			}
+			
+			// Print form confirm
+			print $formconfirm;
+				
+			// Warehouse card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			
+			$morehtmlref='<div class="refidno">';
+			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
+        	$morehtmlref.='</div>';
+        	
+        	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+        	 
+        	
+        	print '<div class="fichecenter">';
+        	print '<div class="fichehalfleft">';
+        	print '<div class="underbanner clearboth"></div>';
+        	
+        	print '<table class="border" width="100%">';
 
-			// Ref
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
-			print '</td>';
-
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
+			// Parent entrepot
+			$e = new Entrepot($db);
+			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
+				
+				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
+				print $e->getNomUrl(3);
+				print '</td></tr>';
+				
+			}
 
 			// Description
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description).'</td></tr>';
+			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
 
-			// Address
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-			print $object->address;
-			print '</td></tr>';
-
-			// Town
-			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->zip.'</td>';
-			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->town.'</td></tr>';
-
-			// Country
-			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-			if (! empty($object->country_code))
-			{
-				$img=picto_from_langcode($object->country_code);
-				print ($img?$img.' ':'');
-			}
-			print $object->country;
-			print '</td></tr>';
-
-			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
-
-        	$calcproductsunique=$object->nb_different_products();
+			$calcproductsunique=$object->nb_different_products();
 			$calcproducts=$object->nb_products();
-
-	        // Total nb of different products
-	        print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
-	        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
-	        print "</td></tr>";
-
+				
+			// Total nb of different products
+			print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
+			print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+			print "</td></tr>";
+				
 			// Nb of products
-			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
 			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
 			print "</td></tr>";
-
+				
+			print '</table>';
+			
+			print '</div>';
+			print '<div class="fichehalfright">';
+			print '<div class="ficheaddleft">';
+			print '<div class="underbanner clearboth"></div>';
+			
+			print '<table class="border centpercent">';
+				
 			// Value
-			print '<tr><td>'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
 			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
-
+			
 			// Last movement
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -330,14 +356,14 @@ else
 			$resqlbis = $db->query($sql);
 			if ($resqlbis)
 			{
-				$obj = $db->fetch_object($resqlbis);
-				$lastmovementdate=$db->jdate($obj->datem);
+			    $obj = $db->fetch_object($resqlbis);
+			    $lastmovementdate=$db->jdate($obj->datem);
 			}
 			else
 			{
-				dol_print_error($db);
+			    dol_print_error($db);
 			}
-			print '<tr><td>'.$langs->trans("LastMovement").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -345,13 +371,19 @@ else
 			}
 			else
 			{
-			     print $langs->trans("None");
+			    print $langs->trans("None");
 			}
 			print "</td></tr>";
-
+			
 			print "</table>";
 
 			print '</div>';
+			print '</div>';
+			print '</div>';
+			
+			print '<div class="clearboth"></div>';
+			
+			dol_fiche_end();
 
 
 			/* ************************************************************************** */
@@ -541,6 +573,11 @@ else
 			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+		
+			// Parent entrepot
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1);
+			print '</td></tr>';
 
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';

@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Грешка, вашето PHP трябва да им инс�
 ErrorOpenIDSetupNotComplete=Задали сте в конфирурационния файл на Dolibarr да се позволява OpenID удостоверяване, но URL на OpenID услугата не е зададено в константата %s
 ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Неправилен формат!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Грешка, има някои доставки свързани към тази пратка. Изтриването е отказано.
 ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
 ErrorCantDeletePaymentSharedWithPayedInvoice=Не може да се изтрие плащане споделено от поне една фактура със статус Платена
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to 
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.

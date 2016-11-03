@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
 ErrorWarehouseMustDiffers=Quell- und Ziel-Lager müssen unterschiedlich sein
 ErrorBadFormat=Falsches Format!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fehler: Dieses Mitglied ist noch nicht mit einem Partner verbunden. Verknüpfen Sie das Mitglied zuerst mit einem vorhandenen Partner oder legen Sie einen neuen an, bevor Sie ein Abonnement mit Rechnung erstellen.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Fehler: Es sind noch Auslieferungen zu diesen Versand vorhanden. Löschen deshalb nicht möglich.
 ErrorCantDeletePaymentReconciliated=Eine Zahlung, deren Bank-Transaktion schon abgeglichen wurde, kann nicht gelöscht werden
 ErrorCantDeletePaymentSharedWithPayedInvoice=Eine Zahlung, die zu mindestens einer als bezahlt markierten Rechnung gehört, kann nicht entfernt werden
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Lagerbestand für Produkt / Leistung %s
 ErrorStockIsNotEnoughToAddProductOnInvoice=Lagerbestand für Produkt / Leistung %s ist zu klein um es zur neuen Rechnung hinzu zu fügen.
 ErrorStockIsNotEnoughToAddProductOnShipment=Lagerbestand für Produkt / Leistung %s ist zu klein um es zur neuen Lieferung hinzu zu fügen.
 ErrorStockIsNotEnoughToAddProductOnProposal=Lagerbestand für Produkt / Leistung %s ist zu klein um es zum neuen Angebot hinzu zu fügen.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.

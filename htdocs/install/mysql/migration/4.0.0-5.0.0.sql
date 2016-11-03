@@ -15,7 +15,10 @@
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): -- VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
@@ -26,11 +29,25 @@
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
+ALTER TABLE llx_c_actioncomm ADD COLUMN picto varchar(48);
+
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_code_ventilation (fk_code_ventilation);
+ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_code_ventilation (fk_code_ventilation);
+
+ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_product (fk_product);
+
+ALTER TABLE llx_facture_rec ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_expedition ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
+
+ALTER TABLE llx_don ADD COLUMN date_valid datetime;
 
 DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
+ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
@@ -85,7 +102,12 @@ create table llx_expensereport_extrafields
 
 ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
 
-create table llx_product_lot_extrafields
+ALTER TABLE llx_cotisation RENAME TO llx_subscription;
+ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
+ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
+ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
+ 
+CREATE TABLE llx_product_lot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -95,7 +117,63 @@ create table llx_product_lot_extrafields
 
 ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (fk_object);
 
+ALTER TABLE llx_website_page MODIFY content MEDIUMTEXT;
+
+CREATE TABLE llx_product_warehouse_properties
+(
+  rowid           		integer AUTO_INCREMENT PRIMARY KEY,
+  tms             		timestamp,
+  fk_product      		integer NOT NULL,
+  fk_entrepot     		integer NOT NULL,
+  seuil_stock_alerte    integer DEFAULT 0,
+  desiredstock    		integer DEFAULT 0,
+  import_key      		varchar(14)               -- Import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user_modif     integer;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_creation		datetime;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN numero_compte varchar(32) NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN numero_compte SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN code_journal SET NOT NULL;
+
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_code_ventilation integer DEFAULT 0;
+
+ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 
+ALTER TABLE llx_facturedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
+ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT 0;
+
+
+create table llx_resource_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
+
+INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
+ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
+ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
+
+ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 

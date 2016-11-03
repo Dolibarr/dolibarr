@@ -71,6 +71,7 @@ $userid=GETPOST('userid','int');
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
+$search_type=GETPOST('search_type','int');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_vat=GETPOST('search_montant_vat','alpha');
@@ -143,6 +144,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'f.facnumber'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'f.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
+    'f.type'=>array('label'=>$langs->trans("Type"), 'checked'=>0),
     'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
     'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
@@ -192,6 +194,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $search_product_category='';
     $search_ref='';
     $search_refcustomer='';
+    $search_type='';
     $search_project='';
     $search_societe='';
     $search_montant_ht='';
@@ -276,7 +279,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE f.fk_soc = s.rowid';
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -296,6 +299,15 @@ if ($filtre)
 }
 if ($search_ref) $sql .= natural_search('f.facnumber', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
+if ($search_type != '' && $search_type >= 0)
+{
+    if ($search_type == '0') $sql.=" AND f.type = 0";  // standard
+    if ($search_type == '1') $sql.=" AND f.type = 1";  // replacement
+    if ($search_type == '2') $sql.=" AND f.type = 2";  // credit note
+    if ($search_type == '3') $sql.=" AND f.type = 3";  // deposit
+    if ($search_type == '4') $sql.=" AND f.type = 4";  // proforma
+    if ($search_type == '5') $sql.=" AND f.type = 5";  // situation
+}
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
@@ -311,7 +323,7 @@ if ($search_status != '' && $search_status >= 0)
 {
     if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
     if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
-    if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some correupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+    if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
     if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
@@ -368,12 +380,17 @@ $sql.=$hookmanager->resPrint;
 
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, fk_mode_reglement, f.total, f.tva, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total, f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code';
-    $sql.= ' ,state.code_departement, state.nom';
+    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
+    $sql.= ' state.code_departement, state.nom';
+
+    foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
+    {
+        $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+    }
 }
 else
 {
@@ -401,7 +418,7 @@ if ($resql)
     $num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-    
+
     if ($socid)
     {
         $soc = new Societe($db);
@@ -420,6 +437,7 @@ if ($resql)
     if ($year_lim)           $param.='&year_lim=' .urlencode($year_lim);
     if ($search_ref)         $param.='&search_ref=' .urlencode($search_ref);
     if ($search_refcustomer) $param.='&search_refcustomer=' .urlencode($search_refcustomer);
+    if ($search_type != '')  $param.='&search_type='.urlencode($search_type);
     if ($search_societe)     $param.='&search_societe=' .urlencode($search_societe);
     if ($search_sale > 0)    $param.='&search_sale=' .urlencode($search_sale);
     if ($search_user > 0)    $param.='&search_user=' .urlencode($search_user);
@@ -439,7 +457,7 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	$arrayofmassactions=array(
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge")
@@ -458,7 +476,7 @@ if ($resql)
 	}
 	if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-    
+
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -468,7 +486,7 @@ if ($resql)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-    
+
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
 	if ($massaction == 'presend')
@@ -498,7 +516,7 @@ if ($resql)
         if($masscreatepdf) print '<input type="hidden" name="masscreatepdf" value="1">';
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);		
+		$formmail = new FormMail($db);
 		
 		dol_fiche_head(null, '', '');
 
@@ -509,10 +527,12 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->withform=-1;
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
 		{
 			$formmail->trackid='inv'.$object->id;
@@ -617,12 +637,13 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    		
+
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['f.facnumber']['checked']))          print_liste_field_titre($arrayfields['f.facnumber']['label'],$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.ref_client']['checked']))         print_liste_field_titre($arrayfields['f.ref_client']['label'],$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.type']['checked']))               print_liste_field_titre($arrayfields['f.type']['label'],$_SERVER["PHP_SELF"],'f.type','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'],$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
@@ -675,6 +696,20 @@ if ($resql)
     	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
     	print '</td>';
 	}
+	// Type
+	if (! empty($arrayfields['f.type']['checked']))
+	{
+		print '<td class="liste_titre maxwidthonsmartphone">';
+		$listtype=array(
+		    Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+		    Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+		    Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+		    Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+        );
+		//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
+		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+		print '</td>';
+	}
 	// Date invoice
 	if (! empty($arrayfields['f.date']['checked'])) 
 	{
@@ -721,7 +756,7 @@ if ($resql)
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-	    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+	    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth100');
 	    print '</td>';
 	}
 	// Payment mode
@@ -832,6 +867,7 @@ if ($resql)
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
+            $facturestatic->type=$obj->type;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
@@ -867,7 +903,7 @@ if ($resql)
                 print "</td>\n";
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
 			// Customer ref
     		if (! empty($arrayfields['f.ref_client']['checked']))
     		{
@@ -876,7 +912,16 @@ if ($resql)
     			print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
+            // Type
+            if (! empty($arrayfields['f.type']['checked']))
+            {
+                print '<td class="nowrap">';
+                print $facturestatic->getLibType();
+                print "</td>";
+                if (! $i) $totalarray['nbfield']++;
+            }
+
 			// Date
     		if (! empty($arrayfields['f.date']['checked']))
     		{
@@ -885,7 +930,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Date limit
     		if (! empty($arrayfields['f.date_lim_reglement']['checked']))
     		{
@@ -897,7 +942,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
     		// Third party
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
@@ -951,7 +996,7 @@ if ($resql)
     		    print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Payment mode
     		if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
     		{
@@ -960,7 +1005,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Amount HT
             if (! empty($arrayfields['f.total_ht']['checked']))
             {
@@ -1001,7 +1046,7 @@ if ($resql)
     		    if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
     		    $totalarray['totalrtp'] += $remaintopay;
             }
-            
+
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
             {
@@ -1112,10 +1157,6 @@ if ($resql)
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     
-        print '<br><a name="show_files"></a>';
-        $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-        $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-        
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else

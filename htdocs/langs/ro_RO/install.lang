@@ -11,12 +11,14 @@ PHPSupportSessions=Acest PHP susţine sesiuni.
 PHPSupportPOSTGETOk=Acest PHP suportă variabile POST si GET.
 PHPSupportPOSTGETKo=Este posibil de configurare PHP nu suporta variabile POST şi / sau GET. Verificaţi <b>variables_order</b> de parametru în php.ini.
 PHPSupportGD=Acest PHP suportă  functii grafice GD.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Acest PHP suportă  funcţii  UTF8.
 PHPMemoryOK=PHP max memorie sesiune este setată la <b>%s.</b> Acest lucru ar trebui să fie suficient.
 PHPMemoryTooLow=PHP max memorie sesiune este setată la octeţi <b>%s.</b> Acest lucru ar trebui să fie prea mic. Modificarea <b>php.ini</b> pentru a seta parametrul <b>memory_limit</b> de bytes <b>%s</b> cel puţin.
 Recheck=Click aici pentru un test mult mai semnificativ
 ErrorPHPDoesNotSupportSessions=Instalarea dvs. PHP nu are suport pentru sesiuni. Această caracteristică este necesar pentru a face Dolibarr de lucru. Verificaţi configurarea PHP.
 ErrorPHPDoesNotSupportGD=Instalarea dvs. PHP nu are suport pentru funcţia de grafică HG nr. Graficul nu va fi disponibil.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Instalarea dvs. PHP nu are suport pentru funcţii utf8. Dolibarr nu poate funcţiona corect. Rezolva acest lucru înainte de a instala Dolibarr.
 ErrorDirDoesNotExists=Directorul  %s  nu există.
 ErrorGoBackAndCorrectParameters=Du-te înapoi şi de a corecta parametrii greşite.
@@ -133,6 +135,10 @@ ActivateModule=Activaţi modul %s
 ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansaţi (mod expert)
 WarningUpgrade=Avertisment: \nAti facut o copie de rezervă a bazei de date mai întâi? \nAcest lucru este foarte recomandat: de exemplu, din cauza unor bug-uri în sistemele de baze de date (de exemplu, mysql versiune 5.5.40/41/42/43), unele date sau tabele pot fi pierdute în timpul acestui proces, de aceea este foarte recomandat să aveți o copie completa a bazei de date înaintea pornirii migrariii. \n\nFaceți clic pe OK pentru a începe procesul de migrare ...
 ErrorDatabaseVersionForbiddenForMigration=Versiunea dvs. de baze de date este %s. Un bug va poate face sa pierdeti  date critice dacă faceti o schimbare a structurii pe baza de date,asa cum este impusă de procesul de migrare. De  aceea, migrare nu va fi permisa până când faceți upgrade la  baza de date la o versiune mai mare  (lista bug-urilor  cunoscute versiunea : %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Actualizare date pe acţiuni
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
 MigrationEvents=Migrația evenimentelor pentru a adăuga proprietarului evenimentul în tabelul de atribuire
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reîncarcă modul %s
 ShowNotAvailableOptions=Afişează opţiunile nedisponibile
 HideNotAvailableOptions=Acunde opţiunile nedisponibile

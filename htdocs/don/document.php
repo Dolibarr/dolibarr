@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -34,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (! empty($conf->projet->enabled))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $langs->load("other");
 $langs->load("donations");
@@ -64,7 +69,7 @@ if (! $sortfield) $sortfield="name";
 $object = new Don($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,2,0,1,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,0,0,0,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
 $modulepart='don';
 
 
@@ -80,6 +85,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
  */
 
 $form = new Form($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 llxHeader("",$langs->trans("Donation"));
 
@@ -102,26 +108,75 @@ if ($object->id)
 	}
 
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.=$langs->trans('Project') . ' ';
+	    if ($user->rights->don->creer)
+	    {
+	        if ($action != 'classify')
+	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	$morehtmlref.='</div>';
+	
+	
+	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/don/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
+	/*
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
-
+    */
+    
 	// Societe
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
 
     print '</div>';
+    
+    print '<div class="clearboth"></div>';
+    
+    dol_fiche_end();
 
     $modulepart = 'don';
     $permission = $user->rights->don->lire;
+    $permtoedit = $user->rights->don->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 

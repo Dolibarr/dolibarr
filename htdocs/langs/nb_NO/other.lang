@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Sikkerhetskode
-Calendar=Kalender
 NumberingShort=Nr
 Tools=Verktøy
 ToolsDesc=Alle andre verktøy som ikke inngår i andre menyoppføringer er samlet her. <br/><br/> Alle verktøyene kan nås i menyen til venstre.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Leveranse sendt i posten
 Notify_MEMBER_VALIDATE=Medlem validert
 Notify_MEMBER_MODIFY=Medlem endret
 Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
-Notify_MEMBER_RESILIATE=Medlem avsluttet abonnement
+Notify_MEMBER_RESILIATE=Medlem terminert
 Notify_MEMBER_DELETE=Medlem slettet
 Notify_PROJECT_CREATE=Opprettelse av prosjekt
 Notify_TASK_CREATE=Oppgave opprettet
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Total størrelse på vedlagte filer/dokumenter
 MaxSize=Maksimal størrelse
 AttachANewFile=Legg ved ny fil/dokument
 LinkedObject=Lenkede objekter
-Miscellaneous=Diverse
 NbOfActiveNotifications=Antall notifikasjoner (antall e-postmottakere)
 PredefinedMailTest=Dette er en test e-post.\nDe to linjene er adskilt med et linjeskift.\n\n__SIGNATURE__
 PredefinedMailTestHtml=Dette er en <b>test</b> e-post (ordet test må være i fet skrift). <br> De to linjene er skilt med en vognretur.<br><br>__SIGNATURE__
@@ -201,33 +199,13 @@ IfAmountHigherThan=Hvis beløpet er høyere enn<strong>%s</strong>
 SourcesRepository=Oppbevaring av kilder
 Chart=Diagram
 
-##### Calendar common #####
-NewCompanyToDolibarr=Tredjepart %s lagt til
-ContractValidatedInDolibarr=Kontrakt %s validert
-PropalClosedSignedInDolibarr=Tilbud %s signert
-PropalClosedRefusedInDolibarr=Tilbud %s avvist
-PropalValidatedInDolibarr=Tilbud %s validert
-PropalClassifiedBilledInDolibarr=Tilbud %s klassifisert betalt
-InvoiceValidatedInDolibarr=Faktura %s validert
-InvoicePaidInDolibarr=Faktura %s endret til betalt
-InvoiceCanceledInDolibarr=Faktura %s kansellert
-MemberValidatedInDolibarr=Medlem %s validert
-MemberResiliatedInDolibarr=Medlem %s avsluttet abonnementet
-MemberDeletedInDolibarr=Medlem %s slettet
-MemberSubscriptionAddedInDolibarr=Abonnement for medlem %s lagt til
-ShipmentValidatedInDolibarr=Leveranse %s validert
-ShipmentClassifyClosedInDolibarr=Levering %s klassifisert som fakturert
-ShipmentUnClassifyCloseddInDolibarr=Levering %s klassifisert som gjenåpnet
-ShipmentDeletedInDolibarr=Leveranse %s slettet
 ##### Export #####
-Export=Eksport
 ExportsArea=Eksportområde
 AvailableFormats=Tilgjengelige formater
-LibraryUsed=Bibliotek brukt
-LibraryVersion=Versjon
+LibraryUsed=Brukt bibliotek
+LibraryVersion=Bibliotekversjon
 ExportableDatas=Eksporterbare data
 NoExportableData=Ingen eksporterbare data (ingen moduler med eksporterbare data i bruk, eller manglende brukerrettigheter)
-NewExport=Ny eksport
 ##### External sites #####
 WebsiteSetup=Oppsett av website-modulen
 WEBSITE_PAGEURL=Side-URL

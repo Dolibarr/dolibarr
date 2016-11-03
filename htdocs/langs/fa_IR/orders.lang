@@ -157,3 +157,4 @@ OrderCreated=سفارشات شما ساخته شده است
 OrderFail=خطا در هنگام ایجاد سفارشات شما اتفاق افتاده است
 CreateOrders=ایجاد سفارشات
 ToBillSeveralOrderSelectCustomer=برای ایجاد یک فاکتور برای چند دستور، برای اولین بار بر روی مشتری را کلیک کنید، و سپس "٪ s" را انتخاب کنید.
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

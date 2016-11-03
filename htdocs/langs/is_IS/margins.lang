@@ -41,3 +41,4 @@ rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos
 CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

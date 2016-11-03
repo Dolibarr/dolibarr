@@ -324,10 +324,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	$res = $object->fetch_optionals($object->id, $extralabels);
 	
-    print load_fiche_titre($langs->trans("Batch"));
+    //print load_fiche_titre($langs->trans("Batch"));
     
     $head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Batch"), 0, 'stock');
+	dol_fiche_head($head, 'card', $langs->trans("Batch"), 0, 'barcode');
 	
 	    
 	if ($action == 'delete') {
@@ -398,6 +398,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 */
 	}
 	print '</div>'."\n";
+	
+	
+	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
+	print '<br>';
+	print '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
 
 }
 

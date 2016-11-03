@@ -100,3 +100,6 @@ WeeklyHours=Uren per week
 ColorUser=Kleur van de gebruiker
 DisabledInMonoUserMode=Disabled in maintenance mode
 UserAccountancyCode=User accountancy code
+UserLogoff=User logout
+UserLogged=User logged
+DateEmployment=Date of Employment

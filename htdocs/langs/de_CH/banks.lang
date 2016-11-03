@@ -1,6 +1,11 @@
 # Dolibarr language file - Source file is en_US - banks
+AllTime=Vom start
+AccountType=Kontoart
+AccountCard=Konto-Karte
 Conciliable=Ausgleichsfähig
 SupplierInvoicePayment=Lieferantenzahlung
+WithdrawalPayment=Entnahme Zahlung
+BankTransfers=Kontentransfer
 ConfirmValidateCheckReceipt=Scheck wirklich annehmen? Eine Änderung ist anschliessend nicht mehr möglich.
 BankChecksToReceipt=Checks die auf Einlösung warten
 PaymentDateUpdateSucceeded=Zahlungsdatum erfolgreich aktualisiert

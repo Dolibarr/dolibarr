@@ -13,5 +13,5 @@ DictionaryDepartment=HR - Lisa departamentów
 DictionaryFunction=HR - lista funkcji
 # Module
 Employees=Zatrudnionych
-Employee=Zatrudnieni
-NewEmployee=Nowe zatrudnienie
+Employee=Pracownik
+NewEmployee=Nowy pracownik

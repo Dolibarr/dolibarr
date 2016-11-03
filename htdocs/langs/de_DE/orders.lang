@@ -157,3 +157,4 @@ OrderCreated=Ihre Bestellungen wurden erstellt
 OrderFail=Ein Fehler trat beim erstellen der Bestellungen auf
 CreateOrders=Erzeuge Bestellungen
 ToBillSeveralOrderSelectCustomer=Um eine Rechnung für verschiedene Bestellungen zu erstellen, klicken Sie erst auf Kunde und wählen Sie dann "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

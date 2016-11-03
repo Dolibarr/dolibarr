@@ -75,10 +75,28 @@ if ($search_version) $param.='&search_version='.urlencode($search_version);
  * Actions
  */
 
+
+if (GETPOST('buttonreset'))
+{
+    $search_keyword='';
+    $search_status='';
+    $search_nature='';
+    $search_version='';
+}
+
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($value);
-    if ($result) setEventMessages($result, null, 'errors');
+    $resarray = activateModule($value);
+    if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
+	else
+	{
+	    //var_dump($resarray);exit;
+	    if ($resarray['nbperms'] > 0)
+	    {
+    		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+    		setEventMessages($msg, null, 'warnings');
+	    }
+	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
@@ -89,14 +107,6 @@ if ($action == 'reset' && $user->admin)
     if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
-}
-
-if (GETPOST('buttonreset'))
-{
-    $search_keyword='';
-    $search_status='';
-    $search_nature='';
-    $search_version='';
 }
 
 
@@ -353,7 +363,7 @@ if ($mode != 'marketplace')
         //print '</div>';
     }    
     
-    print '<br><br><br>';
+    print '<br><br><br><br>';
     
     
     // Show list of modules
@@ -494,8 +504,8 @@ if ($mode != 'marketplace')
         // Help
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
-        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
-        else $text.=$objMod->getDesc().'<br>';
+        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
+        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
         
         $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
@@ -510,6 +520,11 @@ if ($mode != 'marketplace')
         {
             $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
         }
+        $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
+        if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+        else $text.=$langs->trans("Disabled");
+        $text.='<br>';
+        
         $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
         if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
         {
@@ -605,7 +620,7 @@ if ($mode != 'marketplace')
         else $text.=$langs->trans("No");
         
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
+        if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
         {
             $text.=$langs->trans("Yes");
         }
@@ -640,22 +655,23 @@ if ($mode != 'marketplace')
         
         print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
-        // Picto warning 
-        $version=$objMod->getVersion(0);
-        $versiontrans=$objMod->getVersion(1);
-        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
-        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
-        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
-        
-        // Picto external
-        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
-        
-        
         print '</td>';
         
         // Version
         print '<td align="center" valign="top" class="nowrap">';
+        
+        // Picto warning
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: left"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: left"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: left"');
+        
+        // Picto external
+        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: left"');
+        
         print $versiontrans;
+        
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)

@@ -174,7 +174,7 @@ $formcompany=new FormCompany($db);
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut,";
+$sql = "SELECT e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -310,6 +310,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	if (! empty($arrayfields['e.ref']['checked']))            print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['e.ref_customer']['checked']))   print_liste_field_titre($arrayfields['e.ref_customer']['label'], $_SERVER["PHP_SELF"],"e.ref_customer","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
@@ -348,14 +349,21 @@ if ($resql)
 	if (! empty($arrayfields['e.ref']['checked']))            
 	{
 	    print '<td class="liste_titre">';
-    	print '<input class="flat" size="10" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
+    	print '<input class="flat" size="6" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
+        print '</td>';
+	}
+	// Ref customer
+	if (! empty($arrayfields['e.ref_customer']['checked']))            
+	{
+	    print '<td class="liste_titre">';
+    	print '<input class="flat" size="6" type="text" name="search_ref_customer" value="'.$search_ref_customer.'">';
         print '</td>';
 	}
 	// Thirdparty
 	if (! empty($arrayfields['s.nom']['checked']))            
 	{
     	print '<td class="liste_titre" align="left">';
-    	print '<input class="flat" type="text" size="10" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+    	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
     	print '</td>';
 	}
 	// Town
@@ -460,13 +468,17 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
-
     	$shipment->id=$obj->rowid;
     	$shipment->ref=$obj->ref;
     	
+    	$companystatic->id=$obj->socid;
+    	$companystatic->ref=$obj->name;
+    	$companystatic->name=$obj->name;
+		
+		$var=!$var;
+
+    	print "<tr ".$bc[$var].">";
+    	 
 		// Ref
 		if (! empty($arrayfields['e.ref']['checked']))
 		{
@@ -476,9 +488,14 @@ if ($resql)
     		if (! $i) $totalarray['nbfield']++;
 		}
 		
-		$companystatic->id=$obj->socid;
-		$companystatic->ref=$obj->name;
-		$companystatic->name=$obj->name;
+		// Ref customer
+		if (! empty($arrayfields['e.ref_customer']['checked']))
+		{
+		    print "<td>";
+		    print $obj->ref_customer;
+		    print "</td>\n";
+		    if (! $i) $totalarray['nbfield']++;
+		}		
 		
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked']))

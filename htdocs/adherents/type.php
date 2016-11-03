@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/adherents/type.php
  *      \ingroup    member
- *		\brief      Member's type setup
+ *      \brief      Member's type setup
  */
 
 require '../main.inc.php';
@@ -55,7 +55,7 @@ if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
 $label=GETPOST("libelle","alpha");
-$cotisation=GETPOST("cotisation","int");
+$subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
 $comment=GETPOST("comment");
 $mail_valid=GETPOST("mail_valid");
@@ -90,11 +90,11 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	{
 		$object = new AdherentType($db);
 
-		$object->libelle     = trim($label);
-		$object->cotisation  = trim($cotisation);
-		$object->note        = trim($comment);
-		$object->mail_valid  = trim($mail_valid);
-		$object->vote        = trim($vote);
+		$object->libelle        = trim($label);
+		$object->subscription   = trim($subscription);
+		$object->note           = trim($comment);
+		$object->mail_valid     = trim($mail_valid);
+		$object->vote           = trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -127,12 +127,12 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	if (! $cancel)
 	{
 		$object = new AdherentType($db);
-		$object->id          = $rowid;
-		$object->libelle     = trim($label);
-		$object->cotisation  = trim($cotisation);
-		$object->note        = trim($comment);
-		$object->mail_valid  = trim($mail_valid);
-		$object->vote        = trim($vote);
+		$object->id             = $rowid;
+		$object->libelle        = trim($label);
+		$object->subscription   = trim($subscription);
+		$object->note           = trim($comment);
+		$object->mail_valid     = trim($mail_valid);
+		$object->vote           = trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -171,7 +171,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
+	$sql = "SELECT d.rowid, d.libelle, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity().")";
 
@@ -199,7 +199,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print "<tr ".$bc[$var].">";
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
-			print '<td align="center">'.yn($objp->cotisation).'</td>';
+			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -240,7 +240,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $form->selectyesno("cotisation",1,1);
+	print $form->selectyesno("subscription",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -308,7 +308,7 @@ if ($rowid > 0)
 		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.dol_escape_htmltag($object->libelle).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print yn($object->cotisation);
+		print yn($object->subscription);
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -367,7 +367,7 @@ if ($rowid > 0)
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-		$sql.= " t.libelle as type, t.cotisation";
+		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql.= " AND d.entity IN (".getEntity().")";
@@ -546,10 +546,10 @@ if ($rowid > 0)
 
 		        // Statut
 		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+		        print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 		        print "</td>";
 
-		        // Date fin cotisation
+		        // Date end subscription
 		        if ($datefin)
 		        {
 			        print '<td align="center" class="nowrap">';
@@ -566,7 +566,7 @@ if ($rowid > 0)
 		        else
 		        {
 			        print '<td align="left" class="nowrap">';
-			        if ($objp->cotisation == 'yes')
+			        if ($objp->subscription == 'yes')
 			        {
 		                print $langs->trans("SubscriptionNotReceived");
 		                if ($objp->statut > 0) print " ".img_warning();
@@ -638,7 +638,7 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("cotisation",$object->cotisation,1);
+		print $form->selectyesno("subscription",$object->subscription,1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

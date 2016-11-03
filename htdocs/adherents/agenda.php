@@ -120,6 +120,13 @@ if ($object->id > 0)
 
 	print '</table>';
 
+	
+	print '<br>';
+	
+	$object->info($id);
+	print dol_print_object_info($object, 1);
+	
+	
 	print '</div>';
 
 	dol_fiche_end();

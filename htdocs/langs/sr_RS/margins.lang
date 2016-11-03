@@ -41,3 +41,4 @@ rateMustBeNumeric=Stopa mora biti numerička
 markRateShouldBeLesserThan100=Stopa marže mora biti niža od 100
 ShowMarginInfos=Prikaži informacije marže
 CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

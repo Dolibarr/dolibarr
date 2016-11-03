@@ -195,6 +195,8 @@ class Product extends CommonObject
 	var $buyprice;
 	public $fourn_pu;
 
+	public $fourn_price_base_type;
+    
 	/**
 	 * @deprecated
 	 * @see ref_supplier
@@ -926,7 +928,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');
+				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot','product_warehouse_properties');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -1321,7 +1323,7 @@ class Product extends CommonObject
 	 *  This also set some properties on product like ->buyprice, ->fourn_pu, ...
 	 *
 	 *  @param     	int		$prodfournprice     Id du tarif = rowid table product_fournisseur_price
-	 *  @param     	double	$qty                Quantity asked
+	 *  @param     	double	$qty                Quantity asked or -1 to get first entry found
 	 *	@param		int		$product_id			Filter on a particular product id
 	 * 	@param		string	$fourn_ref			Filter on a supplier ref. 'none' to exclude ref in search.
 	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
@@ -1344,7 +1346,7 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			if ($obj && $obj->quantity > 0)		// If found
+			if ($obj && $obj->quantity > 0)		// If we found a supplier prices from the id of supplier price
 			{
                 if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
                 {
@@ -1362,7 +1364,8 @@ class Product extends CommonObject
                     }
                 }
 				$this->buyprice = $obj->price;                      // deprecated
-				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
+				$this->fourn_price_base_type = 'HT';                // Price base type
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
@@ -1404,8 +1407,9 @@ class Product extends CommonObject
 		                    }
 		                }
 						$this->buyprice = $obj->price;                      // deprecated
-						$this->fourn_qty = $obj->quantity;					// min quantity for price
-						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
+						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
+						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
@@ -2010,7 +2014,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('commande_fourniseur', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
@@ -3147,6 +3151,7 @@ class Product extends CommonObject
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
+        
         if ($this->type == Product::TYPE_PRODUCT) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
         if ($this->type == Product::TYPE_SERVICE) $label = '<u>' . $langs->trans("ShowService") . '</u>';
         if (! empty($this->ref))
@@ -3155,47 +3160,61 @@ class Product extends CommonObject
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
 
         $tmptext='';
-		if ($this->weight) $tmptext.="<br>".$langs->trans("Weight").': '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
-		if ($this->length) $tmptext.="<br>".$langs->trans("Length").': '.$this->length.' '.measuring_units_string($this->length_units,'length');
-		if ($this->surface) $tmptext.="<br>".$langs->trans("Surface").': '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
-		if ($this->volume) $tmptext.="<br>".$langs->trans("Volume").': '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+		if ($this->weight)  $tmptext.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+		if ($this->length)  $tmptext.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
+		if ($this->surface) $tmptext.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+		if ($this->volume)  $tmptext.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
         if ($tmptext) $label .= $tmptext;
+        if (! empty($conf->productbatch->enabled))
+        {
+            $tmptext.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+        }
+        $label.=$tmptext;
+        if (! empty($this->entity)) $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
-        if (! empty($this->entity))
-            $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
+        
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowOrder");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
 
-        $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
-
-	if (! is_object($hookmanager))
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		$hookmanager=new HookManager($this->db);
-	}
-	$hookmanager->initHooks(array('productdao'));
-	$parameters=array('id'=>$this->id);
-	$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		    
+		    if (! is_object($hookmanager))
+	        {
+	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	            $hookmanager=new HookManager($this->db);
+	        }
+	        $hookmanager->initHooks(array('productdao'));
+	        $parameters=array('id'=>$this->id);
+	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		}
 
         if ($option == 'supplier' || $option == 'category') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
         } else if ($option == 'stock') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
         } else if ($option == 'composition') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
         } else {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
         }
 
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+        
 		if ($withpicto) {
-			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object('', 'product', '').$linkend.' ');
-			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object('', 'service', '').$linkend.' ');
+			if ($this->type == Product::TYPE_PRODUCT) $result.=($linkstart.img_object(($notooltip?'':$label), 'product', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
+			if ($this->type == Product::TYPE_SERVICE) $result.=($linkstart.img_object(($notooltip?'':$label), 'service',  ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
 		}
-		$result.=$link.$newref.$linkend;
+		$result.=$linkstart.$newref.$linkend;
 		return $result;
 	}
 

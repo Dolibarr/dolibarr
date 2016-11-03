@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Artikel Nr.
-ProductAccountancyBuyCode=Kontierungsschlüssel (Einkauf)
-ProductAccountancySellCode=Kontierungsschlüssel (verkaufen)
 OnSell=Verfügbar
 OnBuy=Gekaufte
 NotOnSell=Aufgelassen

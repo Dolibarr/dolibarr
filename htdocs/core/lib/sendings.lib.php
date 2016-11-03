@@ -21,8 +21,9 @@
  *	\ingroup    expedition
  *	\brief      Library for expedition module
  */
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 
 /**
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  */
 function shipping_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
 	$langs->load("sendings");
 	$langs->load("deliveries");
@@ -64,7 +65,13 @@ function shipping_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $objectsrc = $object;
+	    if ($object->origin == 'commande' && $object->origin_id > 0)
+	    {
+	        $objectsrc = new Commande($db);
+	        $objectsrc->fetch($object->origin_id);
+	    }
+	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -163,9 +170,10 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
-
+	$warehousestatic=new Entrepot($db);
+	
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
-	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line";
+	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id";
 	$sql.= ", e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
 	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
@@ -203,7 +211,11 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-			if ($conf->livraison_bon->enabled)
+			if (! empty($conf->stock->enabled))
+			{
+                print '<td>'.$langs->trans("Warehouse").'</td>';
+			}
+			if (! empty($conf->livraison_bon->enabled))
 			{
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
 				//print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
@@ -303,6 +315,18 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				// Qty shipped
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
+				// Warehouse
+				if (! empty($conf->stock->enabled))
+				{
+				    print '<td>';
+    				if ($objp->warehouse_id > 0)
+    				{
+        				$warehousestatic->fetch($objp->warehouse_id);
+        				print $warehousestatic->getNomUrl(1);
+    				}
+    				print '</td>';
+				}
+				
 				// Informations on receipt
 				if (! empty($conf->livraison_bon->enabled))
 				{
