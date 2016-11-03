@@ -76,6 +76,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
+	$search_status='';
     $typeid="";
 	$year="";
 	$month="";
@@ -104,7 +105,7 @@ $sql.= " AND cs.entity = ".$conf->entity;
 if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
 if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
-if ($search_status != '') $sql.=" AND cs.paye = ".$db->escape($search_status);
+if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
 if ($year > 0)
 {
     $sql .= " AND (";
