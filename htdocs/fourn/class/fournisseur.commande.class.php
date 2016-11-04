@@ -993,6 +993,8 @@ class CommandeFournisseur extends CommonOrder
                 $this->date_commande = $this->db->idate($date);
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
+				$this->date_commande = $date;
+				$this->methode_commande = $methode;
             }
             else
             {
