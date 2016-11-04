@@ -1244,7 +1244,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->label.$linkend;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 
