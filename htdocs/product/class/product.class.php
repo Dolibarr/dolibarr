@@ -3159,17 +3159,21 @@ class Product extends CommonObject
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
 
-        $tmptext='';
-		if ($this->weight)  $tmptext.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
-		if ($this->length)  $tmptext.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
-		if ($this->surface) $tmptext.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
-		if ($this->volume)  $tmptext.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-        if ($tmptext) $label .= $tmptext;
-        if (! empty($conf->productbatch->enabled))
+        if ($this->type == Product::TYPE_PRODUCT)
         {
-            $tmptext.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+            if ($this->weight)  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+    		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
+    		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+    		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+            if (! empty($conf->productbatch->enabled))
+            {
+                $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+            }
         }
-        $label.=$tmptext;
+        if ($this->type == Product::TYPE_SERVICE)
+        {
+            //
+        }
         if (! empty($this->entity)) $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
         

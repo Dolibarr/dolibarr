@@ -16,6 +16,8 @@ Journaux=Journals
 JournalFinancial=Financial journals
 BackToChartofaccounts=Return chart of accounts
 Chartofaccounts=Chart of accounts
+CurrentDedicatedAccountingAccount=Current dedicated account
+AssignDedicatedAccountingAccount=New account to assign
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -207,10 +209,14 @@ DefaultBindingDesc=This page can be used to set a default account to use to link
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+OptionModeProductSellDesc=Show all products with accounting account for sales.
+OptionModeProductBuyDesc=Show all products with accounting account for purchases.
 CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
 CleanHistory=Reset all bindings for selected year
+
+WithoutValidAccount=Without valid dedicated account
+WithValidAccount=With valid dedicated account
+ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
 
 ## Dictionary
 Range=Range of accounting account
