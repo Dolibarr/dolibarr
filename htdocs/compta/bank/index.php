@@ -130,6 +130,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  * View
  */
 
+$form=new Form($db);
+
 $title=$langs->trans('BankAccounts');
 
 // Load array of financial accounts (opened by default)
