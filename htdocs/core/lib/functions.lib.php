@@ -3177,7 +3177,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Left
 	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding" style="width: 35%" valign="middle">';
+	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
@@ -3186,11 +3186,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Center
 	if ($center)
 	{
-		print '<td class="nobordernopadding center" style="width: 30%" valign="middle">'.$center.'</td>';
+		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
 	}
 
 	// Right
-	print '<td class="nobordernopadding" align="right" style="width: 35%" valign="middle">';
+	print '<td class="nobordernopadding valignmiddle" align="right">';
 	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar

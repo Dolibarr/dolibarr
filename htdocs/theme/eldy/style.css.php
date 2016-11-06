@@ -548,6 +548,7 @@ div.myavailability {
 .strikefordisabled {
 	text-decoration: line-through;
 }
+/* using a tdoverflowxxx make the min-with not working */
 .tdoverflow {
     max-width: 0;
     overflow: hidden;
