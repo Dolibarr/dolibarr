@@ -90,6 +90,7 @@ DateOperation=Fecha de operación
 DateOperationShort=Fecha Op.
 DateBuild=Fecha de generación del informe
 DatePayment=Fecha de pago
+UserCreation=Creación de usuario
 HourShort=Hr
 Rate=Tasa
 UseLocalTax=Incluir impuesto
