@@ -27,13 +27,9 @@ AllTime=من البداية
 Reconciliation=المصالحة
 RIB=رقم الحساب المصرفي
 IBAN=عدد إيبان
-IbanValid=IBAN غير صالح
-IbanNotValid=IBAN غير صالح
 BIC=بيك / سويفت عدد
-SwiftValid=BIC / SWIFT غير صالح
-SwiftNotValid=BIC / SWIFT غير صالح
-StandingOrders=أوامر دائمة
-StandingOrder=من أجل الوقوف
+StandingOrders=Direct Debit orders
+StandingOrder=Direct debit order
 AccountStatement=كشف حساب
 AccountStatementShort=بيان
 AccountStatements=بيانات الحساب
@@ -78,6 +74,7 @@ AccountToCredit=الحساب على الائتمان
 AccountToDebit=لحساب الخصم
 DisableConciliation=تعطيل ميزة التوفيق لهذا الحساب
 ConciliationDisabled=توفيق سمة المعوقين
+LinkedToAConciliatedTransaction=Linked to a conciliated transaction
 StatusAccountOpened=فتح
 StatusAccountClosed=مغلقة
 AccountIdShort=عدد
@@ -87,6 +84,8 @@ AddBankRecordLong=إضافة المعاملات يدويا
 ConciliatedBy=طريق التصالح
 DateConciliating=التوفيق التاريخ
 BankLineConciliated=صفقة التصالح
+Reconciled=Reconciled
+NotReconciled=Not reconciled
 CustomerInvoicePayment=عملاء الدفع
 SupplierInvoicePayment=Supplier payment
 SubscriptionPayment=Subscription payment
@@ -94,7 +93,8 @@ WithdrawalPayment=انسحاب الدفع
 SocialContributionPayment=اجتماعي / دفع الضرائب المالية
 BankTransfer=حوالة مصرفية
 BankTransfers=التحويلات المصرفية
-TransferDesc=التحويل من حساب إلى آخر واحد ، وسوف يكتب Dolibarr اثنين من السجلات (أ مصدر في حساب الخصم والائتمان في الاعتبار الهدف من نفس المبلغ. العلامة نفسها وحتى الآن وسيتم استخدام هذه الصفقة)
+MenuBankInternalTransfer=Internal transfer
+TransferDesc=Transfer from one account to another one, Dolibarr will write two records (a debit in source account and a credit in target account. The same amount (except sign), label and date will be used for this transaction)
 TransferFrom=من
 TransferTo=إلى
 TransferFromToDone=ونقل من هناك إلى ٪ <b>%s ق %s</b> ٪ وقد سجلت ق.
@@ -129,7 +129,7 @@ FutureTransaction=الصفقة في أجل المستقبل. أي وسيلة ل�
 SelectChequeTransactionAndGenerate=حدد / تصفية الشيكات لتشمل في الاختيار استلام الودائع وانقر على &quot;إنشاء&quot;.
 InputReceiptNumber=اختيار كشف حساب مصرفي ذات الصلة مع التوفيق. استخدام قيمة رقمية للفرز: YYYYMM أو YYYYMMDD
 EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
-ToConciliate=التوفيق؟
+ToConciliate=To reconcile ?
 ThenCheckLinesAndConciliate=ثم، والتحقق من خطوط الحالية في بيان البنك وانقر
 DefaultRIB=BAN الافتراضي
 AllRIB=جميع BAN
@@ -142,3 +142,6 @@ ConfirmRejectCheck=هل أنت متأكد أنك تريد وضع علامة هذ
 RejectCheckDate=تاريخ أعيد الاختيار
 CheckRejected=تحقق عاد
 CheckRejectedAndInvoicesReopened=تحقق عاد والفواتير فتح
+BankAccountModelModule=Document templates for bank accounts
+DocumentModelSepaMandate=Template of SEPA mandate. Usefull for european countries in EEC only.
+DocumentModelBan=Template to print a page with BAN information.

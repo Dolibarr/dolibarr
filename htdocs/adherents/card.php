@@ -34,11 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -47,10 +48,11 @@ $langs->load("users");
 $langs->load('other');
 
 $action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST('rowid','int');
+$id=GETPOST('id')?GETPOST('id','int'):$rowid;
 $typeid=GETPOST('typeid','int');
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -71,7 +73,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($rowid);
+$object->getCanvas($id);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 $objcanvas=null;
 if (! empty($canvas))
@@ -82,12 +84,12 @@ if (! empty($canvas))
 }
 
 // Security check
-$result=restrictedArea($user, 'adherent', $rowid, '', '', 'fk_soc', 'rowid', $objcanvas);
+$result=restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid', $objcanvas);
 
-if ($rowid > 0)
+if ($id > 0)
 {
 	// Load member
-	$result = $object->fetch($rowid);
+	$result = $object->fetch($id);
 
 	// Define variables to know what current user can do on users
 	$canadduser=($user->admin || $user->rights->user->user->creer);
@@ -105,7 +107,7 @@ if ($rowid > 0)
 // Define variables to determine what the current user can do on the members
 $canaddmember=$user->rights->adherent->creer;
 // Define variables to determine what the current user can do on the properties of a member
-if ($rowid)
+if ($id)
 {
 	$caneditfieldmember=$user->rights->adherent->creer;
 }
@@ -114,12 +116,14 @@ if ($rowid)
 $hookmanager->initHooks(array('membercard','globalcard'));
 
 
+
 /*
  * 	Actions
  */
+
 if ($cancel) $action='';
 
-$parameters=array('rowid'=>$rowid, 'objcanvas'=>$objcanvas);
+$parameters=array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -253,6 +257,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
+		$societe=$_POST["societe"];
 		$morphy=$_POST["morphy"];
 		$login=$_POST["login"];
 		if ($morphy != 'mor' && empty($lastname)) {
@@ -343,15 +348,15 @@ if (empty($reshook))
 				$object->setCategories($categories);
 
 				// Logo/Photo save
-				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'member').'/photos';
+				$dir= $conf->adherent->dir_output . '/' . get_exdir(0,0,0,1,$object,'member').'/photos';
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 				if ($file_OK)
 				{
 					if (GETPOST('deletephoto'))
 					{
 						require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-						$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/'.$object->photo;
-						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/thumbs';
+						$fileimg=$conf->adherent->dir_output.'/'.get_exdir(0,0,0,1,$object,'member').'/photos/'.$object->photo;
+						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir(0,0,0,1,$object,'member').'/photos/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}
@@ -394,6 +399,7 @@ if (empty($reshook))
 				}
 
 	            $rowid=$object->id;
+	            $id=$object->id;
 				$action='';
 
 				if (! empty($backtopage))
@@ -424,10 +430,10 @@ if (empty($reshook))
 		{
 			$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 		}
-		$datecotisation='';
+		$datesubscription='';
 		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
 		{
-			$datecotisation=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+			$datesubscription=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		}
 
 		$typeid=$_POST["typeid"];
@@ -451,7 +457,7 @@ if (empty($reshook))
 		$photo=$_POST["photo"];
 		//$comment=$_POST["comment"];
 		$morphy=$_POST["morphy"];
-		$cotisation=$_POST["cotisation"];
+		$subscription=$_POST["subscription"];
 		$public=$_POST["public"];
 
 		$userid=$_POST["userid"];
@@ -556,6 +562,7 @@ if (empty($reshook))
 
 				$db->commit();
 				$rowid=$object->id;
+				$id=$object->id;
 				$action='';
 			}
 			else
@@ -578,7 +585,7 @@ if (empty($reshook))
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
 	{
-		$result=$object->delete($rowid);
+		$result=$object->delete($id);
 		if ($result > 0)
 		{
 			if (! empty($backtopage))
@@ -707,6 +714,11 @@ if (empty($reshook))
 			}
 		}
 	}
+
+	// Actions to build doc
+	$upload_dir = $conf->adherent->dir_output;
+	$permissioncreate=$user->rights->adherent->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -715,10 +727,12 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
 
+$title=$langs->trans("Member") . " - " . $langs->trans("Card");
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('',$langs->trans("Member"),$help_url);
+llxHeader('',$title,$help_url);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -727,10 +741,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	if (empty($object->error) && $rowid)
+	if (empty($object->error) && $id)
 	{
 		$object = new Adherent($db);
-		$result=$object->fetch($rowid);
+		$result=$object->fetch($id);
 		if ($result <= 0) dol_print_error('',$object->error);
 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
@@ -970,7 +984,7 @@ else
 		*
 		********************************************/
 
-		$res=$object->fetch($rowid);
+		$res=$object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
@@ -1035,14 +1049,10 @@ else
 			print '</script>'."\n";
 		}
 
-		$rowspan=15;
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
-		if (! empty($conf->societe->enabled)) $rowspan++;
-
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 		print '<input type="hidden" name="action" value="update" />';
-		print '<input type="hidden" name="rowid" value="'.$rowid.'" />';
+		print '<input type="hidden" name="rowid" value="'.$id.'" />';
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
@@ -1051,7 +1061,7 @@ else
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1064,21 +1074,7 @@ else
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
 		print Form::selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
-		print "</td>";
-
-		// Photo
-		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-		print $form->showphoto('memberphoto',$object)."\n";
-		if ($caneditfieldmember)
-		{
-			if ($object->photo) print "<br>\n";
-			print '<table class="nobordernopadding">';
-			if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-			print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-			print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
-			print '</table>';
-		}
-		print '</td>';
+		print "</td></tr>";
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -1109,6 +1105,21 @@ else
 		// Firstname
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
 		print '</tr>';
+
+		// Photo
+		print '<tr><td>'.$langs->trans("Photo").'</td>';
+		print '<td class="hideonsmartphone" valign="middle">';
+		print $form->showphoto('memberphoto',$object)."\n";
+		if ($caneditfieldmember)
+		{
+			if ($object->photo) print "<br>\n";
+			print '<table class="nobordernopadding">';
+			if ($object->photo) print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+			print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+			print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+			print '</table>';
+		}
+		print '</td></tr>';
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
@@ -1234,7 +1245,7 @@ else
 
 	}
 
-	if ($rowid && $action != 'edit')
+	if ($id > 0 && $action != 'edit')
 	{
 		/* ************************************************************************** */
 		/*                                                                            */
@@ -1242,7 +1253,7 @@ else
 		/*                                                                            */
 		/* ************************************************************************** */
 
-		$res=$object->fetch($rowid);
+		$res=$object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
@@ -1342,13 +1353,13 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
+			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
 		}
 
 		// Confirm send card by mail
 		if ($action == 'sendinfo')
 		{
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
+			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
 		}
 
 		// Confirm terminate
@@ -1379,7 +1390,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
+			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
 		}
 
 		// Confirm remove member
@@ -1387,18 +1398,18 @@ else
 		{
 			$formquestion=array();
 			if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
+			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
 		}
 
 		// Confirm add in spip
 		if ($action == 'add_spip')
 		{
-			print $form->formconfirm("card.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
 		// Confirm removed from spip
 		if ($action == 'del_spip')
 		{
-			print $form->formconfirm("card.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
+			print $form->formconfirm("card.php?rowid=$id", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
 		$rowspan=17;
@@ -1496,7 +1507,7 @@ else
         }
         else
         {
-	        if (! $adht->cotisation)
+	        if (! $adht->subscription)
 	        {
 	        	print $langs->trans("SubscriptionNotRecorded");
 		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
@@ -1600,7 +1611,7 @@ else
 				// Modify
 				if ($user->rights->adherent->creer)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$rowid.'&action=edit">'.$langs->trans("Modify")."</a></div>";
+					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify")."</a></div>";
 				}
 				else
 				{
@@ -1612,7 +1623,7 @@ else
 				{
 					if ($user->rights->adherent->creer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
 					}
 					else
 					{
@@ -1625,7 +1636,7 @@ else
 				{
 					if ($user->rights->adherent->creer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 					}
 					else
 					{
@@ -1656,7 +1667,7 @@ else
 				{
 					if ($user->rights->adherent->supprimer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$rowid.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
 					}
 					else
 					{
@@ -1725,7 +1736,48 @@ else
 		{
 			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
 		}
-		print "<br>\n";
+
+
+
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		// Documents generes
+		$filename = dol_sanitizeFileName($object->ref);
+		//$filename =  'tmp_cards.php';
+		//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->adherent->dir_output . '/' . get_exdir(0, 0, 0, 0, $object, 'member');
+		$urlsource = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+		$genallowed = $user->rights->adherent->creer;
+		$delallowed = $user->rights->adherent->supprimer;
+
+		print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
+		$somethingshown = $formfile->numoffiles;
+
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+		//$somethingshown = $form->showLinkedObjectBlock($object, '');
+
+		// Show links to link elements
+		/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
+		 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+
+		 // Link for paypal payment
+		 /*
+		 if (! empty($conf->paypal->enabled) && $object->statut != 0) {
+		 include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
+		 print showPaypalPaymentUrl('invoice', $object->ref);
+		 }
+		 */
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+		// List of actions on element
+        /* Already in tab Agenda/Events
+        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'member', $socid);
+		*/
+		print '</div></div></div>';
 
 	}
 }

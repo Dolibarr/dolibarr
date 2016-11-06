@@ -257,7 +257,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/codesniffer/ruleset.xml --encoding=utf-8 .
+  phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
   set +e
   echo
 

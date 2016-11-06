@@ -44,6 +44,21 @@ class Notify
 
 	// Les codes actions sont definis dans la table llx_notify_def
 
+    // codes actions supported are
+    public $arrayofnotifsupported = array(
+        'BILL_VALIDATE',
+        'BILL_PAYED',
+        'ORDER_VALIDATE',
+        'PROPAL_VALIDATE',
+        'FICHINTER_VALIDATE',
+        'FICHINTER_ADD_CONTACT',
+        'ORDER_SUPPLIER_VALIDATE',
+        'ORDER_SUPPLIER_APPROVE',
+        'ORDER_SUPPLIER_REFUSE',
+        'SHIPPING_VALIDATE'
+    );
+
+    
     /**
 	 *	Constructor
 	 *
@@ -265,9 +280,11 @@ class Notify
     {
         global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
 
-	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (! in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
-		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		
+	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
 
@@ -285,26 +302,6 @@ class Notify
 		$object_type = '';
         $link = '';
 		$num = 0;
-
-		if (! in_array(
-			$notifcode,
-			array(
-				'BILL_VALIDATE',
-			    'BILL_PAYED',
-				'ORDER_VALIDATE',
-				'PROPAL_VALIDATE',
-				'FICHINTER_VALIDATE',
-                'FICHINTER_ADD_CONTACT',
-				'ORDER_SUPPLIER_VALIDATE',
-				'ORDER_SUPPLIER_APPROVE',
-				'ORDER_SUPPLIER_REFUSE',
-				'SHIPPING_VALIDATE'
-				)
-			)
-		)
-		{
-			return 0;
-		}
 
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);

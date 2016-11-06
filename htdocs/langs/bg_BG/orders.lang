@@ -157,3 +157,4 @@ OrderCreated=Поръчките ви бяха създадени
 OrderFail=Възникна грешка при създаването на поръчките ви
 CreateOrders=Създай поръчки
 ToBillSeveralOrderSelectCustomer=За да създадете фактура по няколко поръчки, кликнете първо на клиент, след това изберете "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

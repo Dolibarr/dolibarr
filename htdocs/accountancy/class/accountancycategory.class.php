@@ -47,8 +47,6 @@ class AccountancyCategory
 	 */
 	public function __construct($db) {
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**
@@ -232,7 +230,7 @@ class AccountancyCategory
 	/**
 	 * Function to know all category from accounting account
 	 *
-	 * @return array Result in table
+	 * @return array       Result in table
 	 */
 	public function getCatsCpts() {
 		global $mysoc;
@@ -285,7 +283,7 @@ class AccountancyCategory
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -382,7 +380,7 @@ class AccountancyCategory
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__ . " " . implode(',' . $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . " " . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}

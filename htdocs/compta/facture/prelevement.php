@@ -106,7 +106,9 @@ if ($action == "delete")
 
 $now=dol_now();
 
-llxHeader('', $langs->trans("InvoiceCustomer"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('StandingOrders');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -290,7 +292,7 @@ if ($object->id > 0)
 	// Date invoice
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
+	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 	print '</tr></table>';

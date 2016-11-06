@@ -45,6 +45,7 @@ TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
 # Modele numérotation
 PrintProductsOnFichinter=Imprimeix també les línies de tipus "producte" (no només serveis) en les fitxes d'intervencions.
 PrintProductsOnFichinterDetails=Intervencions generades des de comandes
+UseServicesDurationOnFichinter=Utilitza la durada dels serveis en les intervencions generades des de comandes
 InterventionStatistics=Estadístiques de intervencions
 NbOfinterventions=Nº de fitxes de intervenció
 NumberOfInterventionsByMonth=Nº de fitxes de intervenció per mes (data de validació)

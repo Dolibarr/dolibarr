@@ -62,7 +62,7 @@ class FormActions
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
-            '0' => $langs->trans("ActionRunningNotStarted"),
+            '0' => $langs->trans("ActionsToDoShort"),
             '50' => $langs->trans("ActionRunningShort"),
             '100' => $langs->trans("ActionDoneShort")
         );
@@ -100,7 +100,7 @@ class FormActions
                     }
                     else if (defaultvalue == 0) {
 						percentage.val(0);
-						percentage.prop('disabled', true);
+						percentage.removeAttr('disabled'); /* Not disabled, we want to change it to higher value */
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
@@ -182,14 +182,17 @@ class FormActions
 
         	print load_fiche_titre($title,'','');
 
+        	$page=0; $param=''; $sortfield='a.datep';
+
         	$total = 0;	$var=true;
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
-        	print '<th class="liste_titre" align="right">'.$langs->trans('Status').'</th>';
+        	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Action'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('By'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
         	print '</tr>';
         	print "\n";
 
@@ -204,6 +207,7 @@ class FormActions
         		print '<tr '.$bc[$var].'>';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
+        		print '<td>'.$action->type.'</td>';
         		print '<td>'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
@@ -243,15 +247,16 @@ class FormActions
     /**
      *  Output html select list of type of event
      *
-     *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
-     *  @param  string		$htmlname       Name of select field
-     *  @param	string		$excludetype	A type to exclude ('systemauto', 'system', '')
-     *  @param	integer		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
-     *  @param	int		    $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
-     *  @param  int		    $multiselect    1=Allow multiselect of action type
-     * 	@return	void
+     *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+     *  @param  string		    $htmlname       Name of select field
+     *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
+     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
+     *  @param  int		        $multiselect    1=Allow multiselect of action type
+     *  @param  int             $nooutput       1=No output
+     * 	@return	string
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
+    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
         global $langs,$user,$form,$conf;
 
@@ -271,20 +276,26 @@ class FormActions
 
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-		if (! empty($multiselect)) 
+       	$out='';
+
+		if (! empty($multiselect))
 		{
-	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
+			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
 		else 
 		{
-			print Form::selectarray($htmlname, $arraylist, $selected);
+			$out.= Form::selectarray($htmlname, $arraylist, $selected);
 		}
 		
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
         {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
+            $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
         }
+
+        if ($nooutput) return $out;
+        else print $out;
+        return '';
     }
 
 }

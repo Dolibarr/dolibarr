@@ -96,8 +96,13 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 }
 else {
-	print '<div class="tagtr '.($var==true?"pair":"impair").'"><div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div></div>';
-
+	print '<div class="tagtr '.($var==true?"pair":"impair").'">';
+	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '</div>';
 }
 
 print '</div>';

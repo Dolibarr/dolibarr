@@ -99,15 +99,15 @@ class Loan extends CommonObject
 				$this->account_capital		= $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
 				$this->account_interest		= $obj->accountancy_account_interest;
-				
 
-                return 1;
+                $this->db->free($resql);
+				return 1;
             }
             else
             {
+                $this->db->free($resql);
                 return 0;
             }
-            $this->db->free($resql);
         }
         else
         {
@@ -482,13 +482,14 @@ class Loan extends CommonObject
 				if (empty($obj->fk_user_modif)) $obj->tms = "";
 				$this->date_modification = $this->db->jdate($obj->tms);
 
+			    $this->db->free($result);
 				return 1;
 			}
 			else
 			{
-				return 0;
+			    $this->db->free($result);
+			    return 0;
 			}
-			$this->db->free($result);
 		}
 		else
 		{

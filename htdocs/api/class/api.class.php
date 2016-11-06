@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +92,12 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
         
+        unset($object->lignes); // should be lines
+        
+        unset($object->statuts);
+        unset($object->statuts_short);
+        unset($object->statuts_logo);
+        
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"
@@ -155,4 +162,60 @@ class DolibarrApi
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
+	
+	/**
+	 * Return if a $sqlfilters parameter is valid
+	 * 
+	 * @param  string   $sqlfilters     sqlfilter string
+	 * @return boolean                  True if valid, False if not valid 
+	 */
+	function _checkFilters($sqlfilters)
+	{
+	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	    $tmp=$sqlfilters;
+	    $ok=0;
+	    $i=0; $nb=count($tmp);
+	    $counter=0;
+	    while ($i < $nb)
+	    {
+	        if ($tmp[$i]=='(') $counter++;
+	        if ($tmp[$i]==')') $counter--;
+            if ($counter < 0)
+            {
+	           $error="Bad sqlfilters=".$sqlfilters;
+	           dol_syslog($error, LOG_WARNING);
+	           return false;
+            }
+            $i++;
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Function to forge a SQL criteria
+	 * 
+	 * @param  array    $matches       Array of found string by regex search
+	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+	 */
+	static function _forge_criteria_callback($matches)
+	{
+	    global $db;
+	    
+	    //dol_syslog("Convert matches ".$matches[1]);
+	    if (empty($matches[1])) return '';
+	    $tmp=explode(':',$matches[1]);
+        if (count($tmp) < 3) return '';
+        
+	    $tmpescaped=$tmp[2];
+	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
+	    {
+	        $tmpescaped = "'".$db->escape($regbis[1])."'";
+	    }
+	    else
+	    {
+	        $tmpescaped = $db->escape($tmpescaped);
+	    }
+	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+	}	
 }

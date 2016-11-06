@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
+$langs->load("other");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("projects");
@@ -1169,6 +1170,7 @@ if ($step == 5 && $datatoexport)
 
     print '</div>';
 
+    
     print '<table width="100%">';
 
     if ($sqlusedforexport && $user->admin)
@@ -1179,17 +1181,18 @@ if ($step == 5 && $datatoexport)
     }
 	print '</table>';
 
-    print '<table width="100%"><tr><td width="50%">';
+	
+	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     if (! is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    $formfile->show_documents('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
+    print $formfile->showdocuments('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
 
-    print '</td><td width="50%">&nbsp;</td></tr>';
-    print '</table>';
-
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    print '</div></div></div>';
 }
 
 print '<br>';

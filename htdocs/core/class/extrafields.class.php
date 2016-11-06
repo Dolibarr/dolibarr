@@ -58,11 +58,12 @@ class ExtraFields
 	var $attribute_perms;
 	// Array to store permission to check
 	var $attribute_list;
-
+	// Array to store if extra field is hidden
+	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
+	
 	var $error;
 	var $errno;
 
-	var $attribute_hidden;
 
 	public static $type2label=array(
 	'varchar'=>'String',
@@ -121,7 +122,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -252,7 +253,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Into list view by default
-	 *  @param	int				$ishidden		Is hidden extrafield
+	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -400,7 +401,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0)
@@ -498,7 +499,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0)
@@ -656,7 +657,7 @@ class ExtraFields
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  int     $showsize       Value for size attributed
+	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
 	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
@@ -679,23 +680,37 @@ class ExtraFields
 		{
     		if ($type == 'date')
     		{
-    			$showsize=10;
+    			//$showsize=10;
+    		    $showsize = 'minwidth100imp';
     		}
     		elseif ($type == 'datetime')
     		{
-    			$showsize=19;
+    			//$showsize=19;
+    			$showsize = 'minwidth200imp';
     		}
     		elseif (in_array($type,array('int','double')))
     		{
-    			$showsize=10;
+    			//$showsize=10;
+    			$showsize = 'minwidth100imp';
     		}
     		else
     		{
-    			$showsize=round($size);
-    			if ($showsize > 48) $showsize=48;
+    			if (round($size) < 12)
+    			{
+    			    $showsize = 'minwidth100imp';
+    			}
+    			else if (round($size) <= 48)
+    			{
+    			    $showsize = 'minwidth200imp';
+    			}
+    			else 
+    			{
+    			    //$showsize=48;
+    			    $showsize = 'minwidth400imp';
+    			}
     		}
 		}
-
+        
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -717,11 +732,11 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" " maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
@@ -737,26 +752,26 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'mail')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="32" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="6" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="6" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
 		}
 		elseif ($type == 'select')
 		{
@@ -767,7 +782,7 @@ class ExtraFields
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
-			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
@@ -789,7 +804,7 @@ class ExtraFields
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
-			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
@@ -970,7 +985,7 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt=>$val )
 			{
-				$out.='<input class="flat" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
+				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
 				$out.='/>'.$val.'<br>';
@@ -1145,7 +1160,7 @@ class ExtraFields
                 if (!empty($value)) $object->fetch($value);
                 $valuetoshow=$object->ref;
                 if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
-                $out.='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$valuetoshow.'" >';
+                $out.='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$valuetoshow.'" >';
 			}
 			else
 			{
@@ -1155,7 +1170,7 @@ class ExtraFields
 		}
 		elseif ($type == 'password')
 		{
-			$out='<input type="password" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="'.$showsize.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="password" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="'.$keysuffix.'options_'.$key.$keyprefix.'"/>';
@@ -1188,7 +1203,7 @@ class ExtraFields
 		$params=$this->attribute_param[$key];
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=$this->attribute_hidden[$key];
+		$hidden=$this->attribute_hidden[$key];	// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
 		$showsize=0;
 		if ($type == 'date')
@@ -1261,7 +1276,14 @@ class ExtraFields
 			{
 				$sql.= ' as main';
 			}
-			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			if ($selectkey=='rowid' && empty($value)) {
+				$sql.= " WHERE ".$selectkey."=0";
+			} elseif ($selectkey=='rowid') {
+				$sql.= " WHERE ".$selectkey."=".$this->db->escape($value);
+			}else {
+				$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			}
+
 			//$sql.= ' AND entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);

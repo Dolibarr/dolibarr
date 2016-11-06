@@ -157,3 +157,4 @@ OrderCreated=Οι παραγγελίες σας έχουν δημιουργηθ�
 OrderFail=Ένα σφάλμα συνέβη κατά τη διάρκεια την δημιουργία τις παραγγελίες
 CreateOrders=Δημιουργία παραγγελιών
 ToBillSeveralOrderSelectCustomer=Για να δημιουργήσετε ένα τιμολόγιο για αρκετές παραγγελίες, κάντε κλικ πρώτα στον πελάτη, στη συνέχεια, επιλέξτε "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

@@ -16,7 +16,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
     php5-mysql | php5-mysqli, php5-curl, php5-gd, php5-ldap,
 # Required PHP libraries
     php-pear, php-mail-mime, 
-#    php-tcpdf, libfpdi-php,
+#    php-tcpdf,
 #    libfpdf-tpl-php, php-fpdf,
 #    libphp-adodb,
 #    libnusoap-php,
@@ -26,11 +26,11 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
 # Misc dependencies
 #    fonts-dejavu-core | ttf-dejavu-core,
     xdg-utils,
-    mysql-server,
-    mysql-client,
+    virtual-mysql-client,
     ${misc:Depends},
     ${perl:Depends}
-Recommends: apache2 | lighttpd | httpd
+Recommends: apache2 | lighttpd | httpd,
+    virtual-mysql-server
 Suggests: www-browser, php5-geoip
 Description: Web based software to manage a company or foundation
  Dolibarr ERP & CRM is an easy to use open source/free software package for 

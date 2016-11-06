@@ -39,17 +39,17 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink','Anchor'],
-	    ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
+	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
-	    ['Maximize', 'ShowBlocks','-','About']
+	    ['Maximize', 'ShowBlocks']
 	];
 
 	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
 	 	['Source','Maximize','Preview'],
-	 	['Cut','Copy','Paste','-','SpellChecker'],
+	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
@@ -62,7 +62,7 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar_dolibarr_notes =
 	[
 	 	['Source','Maximize'],
-	 	['Cut','Copy','Paste','-','SpellChecker'],
+	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
@@ -75,7 +75,7 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar_dolibarr_details =
 	[
 	 	['Source','Maximize'],
-	 	['Cut','Copy','Paste','-','SpellChecker'],
+	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
 	    ['Format','Font','FontSize'],
 	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],

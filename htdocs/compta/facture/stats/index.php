@@ -36,6 +36,8 @@ $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) accessforbidden();
 
+$object_status=GETPOST('object_status');
+
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 // Security check
@@ -80,7 +82,14 @@ print load_fiche_titre($title, $mesg, 'title_accountancy.png');
 dol_mkdir($dir);
 
 $stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
-
+if ($mode == 'customer')
+{
+    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+}
+if ($mode == 'supplier')
+{
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+}
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -245,6 +254,19 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print '</td></tr>';
+	// Status
+	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	if ($mode == 'customer')
+	{
+	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	}
+	if ($mode == 'supplier')
+	{
+	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"),'1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	}
 	print '</td></tr>';
 	// Year
 	print '<tr><td>'.$langs->trans("Year").'</td><td>';

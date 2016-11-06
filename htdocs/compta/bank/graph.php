@@ -53,7 +53,9 @@ $error=0;
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
@@ -65,18 +67,18 @@ if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
 if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
 
 
-$acct = new Account($db);
+$object = new Account($db);
 if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
 {
-	$result=$acct->fetch($_GET["account"]);
+	$result=$object->fetch($_GET["account"]);
 }
 if ($_GET["ref"])
 {
-	$result=$acct->fetch(0,$_GET["ref"]);
-	$account=$acct->id;
+	$result=$object->fetch(0,$_GET["ref"]);
+	$account=$object->id;
 }
 
-$result=dol_mkdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -105,6 +107,8 @@ else
 	{
 		dol_print_error($db);
 	}
+	if (empty($min)) $min = dol_now - 3600 * 24;
+	
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
@@ -200,8 +204,8 @@ else
 			{
 				$datas[$i] = $solde + $subtotal;
 			}
-			$datamin[$i] = $acct->min_desired;
-			$dataall[$i] = $acct->min_allowed;
+			$datamin[$i] = $object->min_desired;
+			$dataall[$i] = $object->min_allowed;
 			//$labels[$i] = strftime("%d",$day);
 			$labels[$i] = $xday;
 
@@ -221,22 +225,22 @@ else
 		//exit;
 
 		// Fabrication tableau 1
-		$file= $conf->banque->dir_temp."/balance".$account."-".$year.$month.".png";
+		$file= $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($acct->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($acct->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
 
 		$px1 = new DolGraph();
 		$px1->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($acct->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($acct->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
 		$px1->SetLegend($arraylegends);
 		$px1->SetLegendWidthMin(180);
 		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
@@ -344,8 +348,8 @@ else
 			{
 				$datas[$i] = $solde + $subtotal;
 			}
-			$datamin[$i] = $acct->min_desired;
-			$dataall[$i] = $acct->min_allowed;
+			$datamin[$i] = $object->min_desired;
+			$dataall[$i] = $object->min_allowed;
 			if ($xday == '15')
 			{
 				$labels[$i] = dol_print_date($day,"%b");
@@ -358,21 +362,21 @@ else
 		}
 
 		// Fabrication tableau 2
-		$file= $conf->banque->dir_temp."/balance".$account."-".$year.".png";
+		$file= $conf->bank->dir_temp."/balance".$account."-".$year.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($acct->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($acct->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
 		$px2 = new DolGraph();
 		$px2->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($acct->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($acct->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
 		$px2->SetLegend($arraylegends);
 		$px2->SetLegendWidthMin(180);
 		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
@@ -460,8 +464,8 @@ else
 			{
 				$datas[$i] = '' + $solde + $subtotal;
 			}
-			$datamin[$i] = $acct->min_desired;
-			$dataall[$i] = $acct->min_allowed;
+			$datamin[$i] = $object->min_desired;
+			$dataall[$i] = $object->min_allowed;
 			if (substr($textdate,6,2) == '01' || $i == 0)
 			{
 				$labels[$i] = substr($textdate,4,2);
@@ -473,22 +477,22 @@ else
 		}
 
 		// Fabrication tableau 3
-		$file= $conf->banque->dir_temp."/balance".$account.".png";
+		$file= $conf->bank->dir_temp."/balance".$account.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
 		$title=$langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
 		$graph_datas=array();
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($acct->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($acct->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
 
 		$px3 = new DolGraph();
 		$px3->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($acct->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($acct->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
 		$px3->SetLegend($arraylegends);
 		$px3->SetLegendWidthMin(180);
 		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
@@ -603,11 +607,11 @@ else
 			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 			$labels[$i] = sprintf("%02d",$i+1);
-			$datamin[$i] = $acct->min_desired;
+			$datamin[$i] = $object->min_desired;
 		}
 
 		// Fabrication tableau 4a
-		$file= $conf->banque->dir_temp."/movement".$account."-".$year.$month.".png";
+		$file= $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
@@ -712,11 +716,11 @@ else
 			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 			$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
-			$datamin[$i] = $acct->min_desired;
+			$datamin[$i] = $object->min_desired;
 		}
 
 		// Fabrication tableau 4b
-		$file= $conf->banque->dir_temp."/movement".$account."-".$year.".png";
+		$file= $conf->bank->dir_temp."/movement".$account."-".$year.".png";
 		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
@@ -752,36 +756,33 @@ else
 
 
 // Onglets
-$head=bank_prepare_head($acct);
+$head=bank_prepare_head($object);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
-print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="3">';
 if ($account)
 {
 	if (! preg_match('/,/',$account))
 	{
 		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
+
 		if ($_GET["option"]!='all')
 		{
 			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
-			print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam);
+    		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
 		}
 		else
 		{
 			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
-			print $langs->trans("All");
+			print $langs->trans("AllAccounts");
 			//print $morehtml;
 		}
 	}
 	else
 	{
-		$bankaccount=new Account($db);
+	    $bankaccount=new Account($db);
 		$listid=explode(',',$account);
 		foreach($listid as $key => $id)
 		{
@@ -794,24 +795,8 @@ if ($account)
 }
 else
 {
-	print $langs->trans("All");
-}
-print '</td></tr>';
-
-// Label
-print '<tr><td>'.$langs->trans("Label").'</td>';
-print '<td colspan="3">';
-if ($account && $_GET["option"]!='all')
-{
-	print $acct->label;
-}
-else
-{
 	print $langs->trans("AllAccounts");
 }
-print '</td></tr>';
-
-print '</table>';
 
 dol_fiche_end();
 

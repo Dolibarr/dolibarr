@@ -60,7 +60,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('', $langs->trans("InvoiceCustomer"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Notes');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 

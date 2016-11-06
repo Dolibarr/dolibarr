@@ -82,7 +82,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader('', $langs->trans("InvoiceCustomer"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Documents');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -147,6 +149,7 @@ if ($id > 0 || ! empty($ref))
 
 		$modulepart = 'facture';
 		$permission = $user->rights->facture->creer;
+		$permtoedit = $user->rights->facture->creer;
 		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 

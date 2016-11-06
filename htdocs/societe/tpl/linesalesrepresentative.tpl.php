@@ -27,10 +27,12 @@
             foreach($listsalesrepresentatives as $val)
             {
                 $userstatic->id=$val['id'];
+                $userstatic->login=$val['login'];
                 $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
                 $userstatic->statut=$val['statut'];
-                print $userstatic->getNomUrl(1);
+                $userstatic->photo=$val['photo'];
+                print $userstatic->getNomUrl(-1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';
             }

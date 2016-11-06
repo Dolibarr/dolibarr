@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
-$id=GETPOST('account');
+$id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
 
 // Security check
@@ -53,22 +53,23 @@ else
 	$year_end=$year_start+2;
 }
 
-
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
 // Get account informations
-$acct = new Account($db);
+$object = new Account($db);
 if ($id > 0 && ! preg_match('/,/', $id))	// if for a particular account and not a list
 {
-	$result=$acct->fetch($id);
-	$id=$acct->id;
+	$result=$object->fetch($id);
+	$id=$object->id;
 }
 if (! empty($ref))
 {
-	$result=$acct->fetch(0, $ref);
-	$id=$acct->id;
+	$result=$object->fetch(0, $ref);
+	$id=$object->id;
 }
 
 
@@ -133,58 +134,38 @@ else
 
 
 // Onglets
-$head=bank_prepare_head($acct);
+$head=bank_prepare_head($object);
 dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
 
-$title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
-
-print '<table class="border" width="100%">';
+$title=$langs->trans("FinancialAccount")." : ".$object->label;
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="3">';
+
 if (!empty($id))
 {
-	if (! preg_match('/,/', $id))
-	{
-		print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
-	}
-	else
-	{
-		$bankaccount=new Account($db);
-		$listid=explode(',', $id);
-		foreach($listid as $key => $aId)
-		{
-			$bankaccount->fetch($aId);
-			$bankaccount->label=$bankaccount->ref;
-			print $bankaccount->getNomUrl(1);
-			if ($key < (count($listid)-1)) print ', ';
-		}
-	}
-}
-else
-{
-	print $langs->trans("ALL");
-}
-print '</td></tr>';
-
-// Label
-print '<tr><td>'.$langs->trans("Label").'</td>';
-print '<td colspan="3">';
-if (! empty($id))
-{
-	print $acct->label;
+    if (! preg_match('/,/', $id))
+    {
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+    }
+    else
+    {
+        $bankaccount=new Account($db);
+        $listid=explode(',', $id);
+        foreach($listid as $key => $aId)
+        {
+            $bankaccount->fetch($aId);
+            $bankaccount->label=$bankaccount->ref;
+            print $bankaccount->getNomUrl(1);
+            if ($key < (count($listid)-1)) print ', ';
+        }
+    }
 }
 else
 {
 	print $langs->trans("AllAccounts");
 }
-print '</td></tr>';
-
-print '</table>';
 
 dol_fiche_end();
 
@@ -286,7 +267,7 @@ print "</table>";
 
 $year = $year_end;
 
-$result=dol_mkdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -377,7 +358,7 @@ else
 	}
 
 	// Fabrication tableau 4b
-	$file= $conf->banque->dir_temp."/credmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/credmovement".$id."-".$year.".png";
 	$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/credmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();
@@ -464,7 +445,7 @@ else
 		$datamin[$i] = 0;
 	}
 
-	$file= $conf->banque->dir_temp."/debmovement".$id."-".$year.".png";
+	$file= $conf->bank->dir_temp."/debmovement".$id."-".$year.".png";
 	$fileurl= DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/debmovement".$id."-".$year.".png";
 	$title=$langs->transnoentities("Debit").' - '.$langs->transnoentities("Year").': '.($year-2).' - '.($year-1)." - ".$year;
 	$graph_datas=array();

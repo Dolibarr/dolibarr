@@ -299,7 +299,7 @@ print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$
 print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -318,14 +318,14 @@ print '</td>';
 // UTILISATEUR
 if ($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
     print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
     print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
@@ -333,7 +333,7 @@ else
 // APPROVER
 if($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
     $validator = new UserGroup($db);
     $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
@@ -377,7 +377,7 @@ $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
 // STATUT
-print '<td class="liste_titre" width="70px;" align="center">';
+print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
 $holiday->selectStatutCP($search_statut);
 print '</td>';
 
@@ -404,12 +404,18 @@ if (! empty($holiday->holiday))
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
 		$userstatic->firstname=$infos_CP['user_firstname'];
-
+		$userstatic->login=$infos_CP['user_login'];
+		$userstatic->statut=$infos_CP['user_statut'];
+		$userstatic->photo=$infos_CP['user_photo'];
+		
 		// Valideur
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
 		$approbatorstatic->firstname=$infos_CP['validator_firstname'];
-
+		$approbatorstatic->login=$infos_CP['validator_login'];
+		$approbatorstatic->statut=$infos_CP['validator_statut'];
+		$approbatorstatic->photo=$infos_CP['validator_photo'];
+		
 		$date = $infos_CP['date_create'];
 
 		print '<tr '.$bc[$var].'>';
@@ -419,8 +425,8 @@ if (! empty($holiday->holiday))
 		print $holidaystatic->getNomUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
-		print '<td>'.$userstatic->getNomUrl('1', 'leave').'</td>';
-		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
+		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+		print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
 		print '<td>';
 		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
 		print $label?$label:$infos_CP['fk_type'];

@@ -11,12 +11,14 @@ PHPSupportSessions=Tato PHP instalace podporuje relace.
 PHPSupportPOSTGETOk=Tato PHP instalace podporuje proměnné POST a GET.
 PHPSupportPOSTGETKo=Je možné, že vaše instalace PHP nepodporuje proměnné POST a/nebo GET. Zkontrolujte parametr <b>variables_order</b> ve Vašem php.ini.
 PHPSupportGD=Tato PHP instalace podporuje GD grafické funkce.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Tato PHP instalace podporuje UTF8 funkce.
 PHPMemoryOK=Maximální velikost relace je nastavena na <b>%s.</b> To by mělo stačit.
 PHPMemoryTooLow=Maximální velikost relace je nastavena na <b>%s</b> bajtů. To bohužel nestačí. Zvyšte svůj parametr <b>memory_limit</b> ve Vašem <b>php.ini</b> na minimální velikost <b>%s</b> bajtů.
 Recheck=Klikněte zde pro více vypovídající test
 ErrorPHPDoesNotSupportSessions=Vaše PHP instalace nepodporuje relace. Tato funkce je nutná, pro správnou funkčnost Dolibarr. Zkontrolujte Vaše PHP nastavení.
 ErrorPHPDoesNotSupportGD=Tato PHP instalace nepodporuje GD grafické funkce. Žádný graf nebude k dispozici.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Tato PHP instalace nepodporuje UTF8 funkce. Tato funkce je nutná, pro správnou funkčnost Dolibarr. Zkontrolujte Vaše PHP nastavení.
 ErrorDirDoesNotExists=Adresář %s neexistuje.
 ErrorGoBackAndCorrectParameters=Jděte zpět a opravte špatné parametry.
@@ -133,6 +135,10 @@ ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
 WarningUpgrade=Varování:\nProvedli jste zálohu databáze jako první? \nPokud ji neprovede, můžete kvůli některým chybám v databázových systémech (například mysql verze 5.5.40/41/42/43) přijít o data, proto vám doporučujeme mít zálohu před spuštěním migrace.\n\nStiskněte OK pro spuštění migrace...
 ErrorDatabaseVersionForbiddenForMigration=Vaše verze databáze  je %s. Ta bohužel obsahuje kritickou chybu mající zásadní vliv na ztrátu dat, pokud provedete změnu struktury ve vaší databázi, stejně jako je to vyžadováno v procesu migrace. Z tohoto důvodu nebude migrace povolena, dokud neprovedete upgrade databáze na vyšší fixní verzi (seznam známých chybných verzí: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
 MigrationEvents=Migrace událostí přidá vlastníka události do přiřazené tabulky
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Načíst modul %s
 ShowNotAvailableOptions=Ukázat nedostupné možnosti
 HideNotAvailableOptions=Skrýt nedostupné možnosti

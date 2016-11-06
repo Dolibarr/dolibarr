@@ -56,15 +56,18 @@ class FormProduct
 	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
 	 * @param	int		$status		      	additional filter on status other then 1
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
+	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true)
+	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true, $exclude='')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
-
-		$sql = "SELECT e.rowid, e.label, e.description";
+		
+		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+		
+		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
 		if (!empty($fk_product)) 
 		{
 			if (!empty($batch)) 
@@ -100,7 +103,9 @@ class FormProduct
 			$sql.= " AND e.statut = 1";
 		}
 		
-		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description";
+		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.implode(',', $exclude).')';
+		
+		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
 		$sql.= " ORDER BY e.label";
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
@@ -115,10 +120,17 @@ class FormProduct
 				if ($sumStock) $obj->stock = price2num($obj->stock,5);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
+				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
 				$this->cache_warehouses[$obj->rowid]['description'] = $obj->description;
 				$this->cache_warehouses[$obj->rowid]['stock'] = $obj->stock;
 				$i++;
 			}
+			
+			// Full label init
+			foreach($this->cache_warehouses as $obj_rowid=>$tab) {
+				$this->cache_warehouses[$obj_rowid]['full_label'] = $this->get_parent_path($tab);
+			}
+
 			return $num;
 		}
 		else
@@ -126,6 +138,29 @@ class FormProduct
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+	
+	/**
+	 * Return full path to current warehouse in $tab (recursive function)
+	 * 
+	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
+	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
+	 * @return	String					full label with all parents, separated by ' >> '
+	 */
+	private function get_parent_path($tab, $final_label='') {
+		
+		if(empty($final_label)) $final_label = $tab['label'];
+		
+		if(empty($tab['parent_id'])) return $final_label;
+		else {
+			if(!empty($this->cache_warehouses[$tab['parent_id']])) {
+				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
+				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
+			}
+		}
+		
+		return $final_label;
+		
 	}
 
 	/**
@@ -138,13 +173,15 @@ class FormProduct
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
-	 *  @param	int		$showstock		1=show stock count
-	 *  @param	int		$forcecombo		force combo iso ajax select2
-	 *  @param	array	$events			events to add to select2
-	 *  @param  string  $morecss        Add more css classes
+	 *  @param	int		$showstock		1=Show stock count
+	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
+	 *  @param	array	$events			Events to add to select2
+	 *  @param  string  $morecss        Add more css classes to HTML select
+	 *  @param	array	$exclude		Warehouses ids to exclude
+	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='')
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
 	{
 		global $conf,$langs,$user;
 
@@ -152,7 +189,7 @@ class FormProduct
 		
 		$out='';
 		
-		$this->loadWarehouses($fk_product, '', + $filtertype); // filter on numeric status
+		$this->loadWarehouses($fk_product, '', + $filtertype, true, $exclude); // filter on numeric status
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)
@@ -170,7 +207,8 @@ class FormProduct
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
-			$out.=$arraytypes['label'];
+			if ($showfullpath) $out.=$arraytypes['full_label'];
+			else $out.=$arraytypes['label'];
 			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
 			$out.='</option>';
 		}

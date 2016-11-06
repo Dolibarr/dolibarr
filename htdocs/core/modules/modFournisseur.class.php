@@ -129,14 +129,14 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][0] = 1181;
 		$this->rights[$r][1] = 'Consulter les fournisseurs';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 1182;
 		$this->rights[$r][1] = 'Consulter les commandes fournisseur';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'lire';
 
@@ -209,7 +209,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][0] = 1231;
 		$this->rights[$r][1] = 'Consulter les factures fournisseur';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
 		$this->rights[$r][5] = 'lire';
 
@@ -272,7 +272,12 @@ class modFournisseur extends DolibarrModules
 			$this->rights[$r][5] = 'approve2';
 	    }
 
-
+	    
+	    // Menus
+	    //-------
+	    $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+	    
+	    
 		// Exports
 		//--------
 		$r=0;
@@ -567,7 +572,7 @@ class modFournisseur extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'order_supplier' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
 		);
 

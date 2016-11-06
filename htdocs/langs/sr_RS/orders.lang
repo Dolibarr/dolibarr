@@ -157,3 +157,4 @@ OrderCreated=Vaše narudžbine su kreirane
 OrderFail=Došlo je do greške prilikom kreiranja Vaših narudžbina
 CreateOrders=Kreiraj narudžbine
 ToBillSeveralOrderSelectCustomer=Da biste kreirali fakturu za nekoliko narudžbina, prvo kliknite na klijenta, pa izaberite "%s"
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

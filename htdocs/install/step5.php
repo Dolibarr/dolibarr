@@ -249,7 +249,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                         $res=dol_include_once("/core/modules/".$file);
 
                         $res=activateModule($modtoactivatenew,1);
-                        if (! $result) print 'ERROR in activating module file='.$file;
+                        if (! empty($res['errors'])) print 'ERROR in activating module file='.$file;
                     }
                 }
 

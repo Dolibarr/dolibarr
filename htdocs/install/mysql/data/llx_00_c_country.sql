@@ -44,7 +44,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (13
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (14,'CA','CAN','Canada',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (15,'TG','TGO','Togo',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (16,'GA','GAB','Gabon',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (17,'NL','NLD','Nerderland',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (17,'NL','NLD','Nederland',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (18,'HU','HUN','Hongrie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (19,'RU','RUS','Russia',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (20,'SE','SWE','Sweden',1,0);
@@ -67,7 +67,6 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (36
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (37,'AQ','ATA','Antarctique',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (38,'AG','ATG','Antigua-et-Barbuda',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (39,'AM','ARM','Arménie',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (40,'AW','ABW','Aruba',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (41,'AT','AUT','Autriche',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (42,'AZ','AZE','Azerbaïdjan',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (43,'BS','BHS','Bahamas',1,0);
@@ -188,7 +187,12 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (16
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (161,'NA','NAM','Namibie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (162,'NR','NRU','Nauru',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (163,'NP','NPL','Népal',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (164,'AN',NULL,'Antilles néerlandaises',1,0);
+--INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (164,'AN','AWP','Antilles néerlandaises',1,0);
+--The Antilles nederland does not exist anymore as a seperate country since 2010. Aruba, Curaçao and Sint Maarten became seperate countries then:
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (40,'AW','ABW','Aruba',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (300,'CW','CUW','Curaçao',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (301,'SX','SXM','Sint Maarten',1,0);
+--End of antilles nederland
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (165,'NC','NCL','Nouvelle-Calédonie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (166,'NZ','NZL','Nouvelle-Zélande',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (167,'NI','NIC','Nicaragua',1,0);

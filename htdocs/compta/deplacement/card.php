@@ -213,13 +213,13 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
-    $result=$object->setValueFrom('dated',$dated,'','','date');
+    $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km','int'));
+    $result=$object->setValueFrom('km', GETPOST('km','int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 

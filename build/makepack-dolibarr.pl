@@ -159,6 +159,7 @@ $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
 if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
 $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
 $FILENAMERPM=$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm";
+$FILENAMERPMSRC=$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm";
 # For Deb
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/1/gi;                # dev
@@ -317,8 +318,13 @@ print "\n";
 if ($CHOOSEDTARGET{'-CHKSUM'})
 {
    	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
-  	$ret=`php $SOURCE/build/generate_filecheck_xml.php release=$MAJOR.$MINOR.$BUILD`;
+  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
   	print $ret."\n";
+  	# Copy to final dir
+  	$NEWDESTI=$DESTI;
+	print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
+    use File::Copy qw(copy);
+    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
 }
 
 
@@ -363,20 +369,23 @@ if ($nboftargetok) {
 		if (! $ret)
 		{
 			print "Error: The ChangeLogFile was not updated. Run the following command before building package for $MAJOR.$MINOR.$BUILD:\n";
-			if (! $BUILD || $BUILD eq '0-rc')	# For a major version
-			{
-				print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			}
-			else			# For a maintenance release
-			{
-				print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			}
-			print "\n";
-			exit;
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with commande:'\n";
+		}
+		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
+		{
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+		}
+		else			# For a maintenance release
+		{
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+		}
+		print "\n";
+		if (! $ret)
+		{
+			exit;
 		}
 			
 		print 'Run git tag -a -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
@@ -603,7 +612,7 @@ if ($nboftargetok) {
 		if ($target eq 'TGZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
@@ -635,7 +644,7 @@ if ($nboftargetok) {
 		if ($target eq 'XZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -672,7 +681,7 @@ if ($nboftargetok) {
 		if ($target eq 'ZIP') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -713,7 +722,7 @@ if ($nboftargetok) {
 			if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
 			if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
 			if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/'.$subdir);
 				if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; }
@@ -725,8 +734,8 @@ if ($nboftargetok) {
 
 			print "Remove target ".$FILENAMERPM."...\n";
 			unlink("$NEWDESTI/".$FILENAMERPM);
-			print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm...\n";
-			unlink("$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm");
+			print "Remove target ".$FILENAMERPMSRC."...\n";
+			unlink("$NEWDESTI/".$FILENAMERPMSRC);
 
 			print "Create directory $BUILDROOT/$FILENAMETGZ2\n";
 			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2`;
@@ -799,7 +808,7 @@ if ($nboftargetok) {
 		if ($target eq 'DEB') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_debian-ubuntu');
 				if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; }
@@ -1002,7 +1011,7 @@ if ($nboftargetok) {
 		if ($target eq 'APS') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_aps');
 				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
@@ -1088,7 +1097,7 @@ if ($nboftargetok) {
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_windows');
 				if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; }
@@ -1132,15 +1141,19 @@ if ($nboftargetok) {
 	
 		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'none',				# none means it won't be published on SF
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+			"$DESTI/package_rpm_generic/$FILENAMERPMSRC"=>'none',						# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
 		);
 		%filestoscanstableasso=(
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
+			"$DESTI/package_rpm_generic/$FILENAMERPMSRC"=>'package_rpm_generic',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
@@ -1202,9 +1215,10 @@ if ($nboftargetok) {
 				my $filesize = -s $file;
 				if (! $filesize) { next; }
 
-				print "\n";
-	    		
-	    		if ($target eq 'SF' && $filestoscan{$file} ne 'none') { 
+	    		if ($target eq 'SF') {
+	    			if ($filestoscan{$file} eq 'none') {
+	    				next;
+	    			} 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
 	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
@@ -1221,6 +1235,8 @@ if ($nboftargetok) {
 	    			$filenameonly =~ s/.*\/[^\/]+\/([^\/])+$/$1/;  
 	    			$destFolder="$NEWPUBLISH/$dirnameonly";
 	    		}
+
+				print "\n";
 	    		print "Publish file ".$file." to ".$destFolder."\n";
 
 				# mkdir	   

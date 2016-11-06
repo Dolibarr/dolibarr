@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
@@ -40,6 +40,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 $search_ref = GETPOST('search_ref','int');
 $search_label = GETPOST('search_label','alpha');
 $search_amount = GETPOST('search_amount','alpha');
+$search_status = GETPOST('search_status','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -52,8 +53,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
-$year=$_GET["year"];
-$filtre=$_GET["filtre"];
+$year=GETPOST("year",'int');
+$filtre=GETPOST("filtre",'int');
 
 if (empty($_REQUEST['typeid']))
 {
@@ -75,6 +76,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
+	$search_status='';
     $typeid="";
 	$year="";
 	$month="";
@@ -88,7 +90,7 @@ $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static=new ChargeSociales($db);
 
-llxHeader();
+llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
 $sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
@@ -99,11 +101,11 @@ $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql.= " WHERE cs.fk_type = c.id";
 $sql.= " AND cs.entity = ".$conf->entity;
-
 // Search criteria
-if ($search_ref)	$sql.=" AND cs.rowid=".$search_ref;
+if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
 if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
+if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -118,7 +120,7 @@ if ($filtre) {
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {
-    $sql .= " AND cs.fk_type=".$typeid;
+    $sql .= " AND cs.fk_type=".$db->escape($typeid);
 }
 $sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 $sql.= $db->order($sortfield,$sortorder);
@@ -204,7 +206,10 @@ if ($resql)
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		$liststatus=array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+		print $form->selectarray('search_status', $liststatus, $search_status, 1);
+		print '</td>';
 
         print '<td class="liste_titre" align="right">';
         $searchpitco=$form->showFilterAndCheckAddButtons(0);
@@ -233,7 +238,7 @@ if ($resql)
 			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
 
 			// Type
-			print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
+			print '<td>'.$obj->type_lib.'</td>';
 
 			// Date end period
 			print '<td align="center">';

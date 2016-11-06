@@ -313,6 +313,7 @@ if ($action == 'update')
     					$params['options'][$key] = $value;
     				}
     			}
+
     			$result=$extrafields->update(
     				GETPOST('attrname'),
     				GETPOST('label'),

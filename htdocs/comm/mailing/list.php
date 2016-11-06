@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,19 @@ if (! $sortfield) $sortfield="m.date_creat";
 $sall=GETPOST("sall","alpha");
 $sref=GETPOST("sref","alpha");
 $filteremail=GETPOST('filteremail','alpha');
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('mailinglist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('mailing');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'm.titre'=>'Ref',
+);
 
 
 
@@ -107,28 +120,32 @@ if ($result)
 	if (! $filteremail) print_liste_field_titre($langs->trans("DateLastSend"),$_SERVER["PHP_SELF"],"m.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
 	else print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sref" value="'.dol_escape_htmltag($sref).'" size="6">';
+	print '<input type="text" class="flat maxwidth50" name="sref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	// Title
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sall" value="'.dol_escape_htmltag($sall).'" size="40">';
+	print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="sall" value="'.dol_escape_htmltag($sall).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print "</td>";
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
+	print '</td>';
 	print "</tr>\n";
 
 	$var=True;
 
 	$email=new Mailing($db);
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
 
@@ -172,6 +189,7 @@ if ($result)
 			print $email->LibStatut($obj->statut,5);
 		}
 		print '</td>';
+		print '<td></td>';
 		print "</tr>\n";
 		$i++;
 	}

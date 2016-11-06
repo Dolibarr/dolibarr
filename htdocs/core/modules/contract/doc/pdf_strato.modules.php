@@ -406,8 +406,6 @@ class pdf_strato extends ModelePDFContract
 			$this->error=$langs->trans("ErrorConstantNotDefined","CONTRACT_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -554,7 +552,7 @@ class pdf_strato extends ModelePDFContract
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_creation,"day",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_contrat,"day",false,$outputlangs,true), '', 'R');
 
 		if ($object->thirdparty->code_client)
 		{

@@ -229,7 +229,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
                 $ldap->ldapErrorText = ldap_error($ldap->connection);
                 dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 		    }
-			sleep(1);
+			sleep(2);      // Anti brut force protection
 			$langs->load('main');
 			$langs->load('other');
 			$langs->load('errors');

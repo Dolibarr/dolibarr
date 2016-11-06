@@ -260,7 +260,6 @@ abstract class ActionsCardCommon
                                 return;
                             }
                         }
-                        exit;
                     }
                     else
                     {

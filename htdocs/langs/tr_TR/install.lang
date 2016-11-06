@@ -11,12 +11,14 @@ PHPSupportSessions=Bu PHP oturumları destekliyor.
 PHPSupportPOSTGETOk=Bu PHP GÖNDER ve AL değişkenlerini destekliyor.
 PHPSupportPOSTGETKo=Bu PHP kurulumunun GÖNDER ve AL  değişkenlerini desteklememesi mümkündür. Php.ini içindeki <b>variables_order</b> parametresini kontrol edin.
 PHPSupportGD=Bu PHP GD grafik işlevlerini destekliyor.
+PHPSupportCurl=Bu PHP Curl. destekliyor.
 PHPSupportUTF8=Bu PHP UTF8 işlevlerini destekliyor.
 PHPMemoryOK=PHP nizin ençok oturum belleği <b>%s</b> olarak ayarlanmış. Bu yeterli olacaktır.
 PHPMemoryTooLow=PHP nizin ençok oturum belleği <b>%s</b> bayt olarak ayarlanmış. Bu çok düşük olabilir. <b>php.ini</b> dosyanızdaki <b>memory_limit</b> parametresi ayarını enaz <b>%s</b> bayt olacak şekilde değiştirin.
 Recheck=Daha belirleyici bir test için burayı tıklayın
 ErrorPHPDoesNotSupportSessions=PHP kurulumunuz oturumları desteklemiyor. Bu özellik Dolibarr 'ın çalışması için gereklidir. PHP kurulumunuzu kontrol edin.
 ErrorPHPDoesNotSupportGD=PHP kurulumunuz GD grafik işlevini desteklemiyor. Hiçbir grafik görüntülenemeyecektir.
+ErrorPHPDoesNotSupportCurl=PHP kurulumunuz Curl. desteklemiyor
 ErrorPHPDoesNotSupportUTF8=PHP kurulumunuz UTF8 işlevlerini desteklemiyor. Dolibarr düzgün çalışamaz. Dolibarr'ı yüklemeden önce bunu çözün.
 ErrorDirDoesNotExists=%s Dizini yoktur.
 ErrorGoBackAndCorrectParameters=Geri gidin ve yanlış parametreleri düzeltin.
@@ -133,6 +135,10 @@ ActivateModule=%s modülünü etkinleştir
 ShowEditTechnicalParameters=Gelişmiş parametreleri (uzman modu) göstermek/düzenlemek için burayı tıklayın
 WarningUpgrade=Uyarı: Önce bir veritabanı yedeklemesi yaptınız mı?\nBu şiddetle önerilir: örneğin; veritabanı sistemindeki bazı hatalar nedeniyle (örneğin mysql sürüm 5.5.40/41/42/43) bu işlem sırasında bazı veriler ve tablolar kaybolabilir, bu yüzden taşımaya başlamadan önce veritabanının tam bir dökümünün alınması şiddetle önerilir.\n\nTaşıma işlemini başlatmak için Tamam'a tıklayın...
 ErrorDatabaseVersionForbiddenForMigration=Veritabanınızın sürümü %s. Veritabanınızın yapısını değiştirirseniz veri kaybı yapacak bir kritik hata vardır, taşıma işlemi tarafından istenmesi gibi. Bu nedenle, veritabanınızı daha yüksek kararlı bir sürüme yükseltinceye kadar taşımaya izin verilmeyecektir (bilinen hatalar listesi sürümü: %s)
+KeepDefaultValuesWamp=DoliWamp üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
+KeepDefaultValuesDeb=Bir Linux paketi (Ubuntu, Debian, Fedora ...) üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca veritabanı sahibinin parolasının tamamlanması gerekir. Yalnızca ne yapacağınızı biliyorsanız parametreleri değiştirin.
+KeepDefaultValuesMamp=DoliMamp üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
+KeepDefaultValuesProxmox=Proxmox sanal aygıt  üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
 MigrationCategorieAssociation=Kategorilerin taşınması
 MigrationEvents=Atama tablosuna etkinlik sahibi eklemek için gerekli taşıma eylemleri
+MigrationRemiseEntity=value of llx_societe_remise varlık alanını güncelle
+MigrationRemiseExceptEntity=llx_societe_remise_except varlık alanını güncelle
 MigrationReloadModule=Modülü yeniden yükle %s
 ShowNotAvailableOptions=Kullanılamayacak seçenekler görüntülensin
 HideNotAvailableOptions=Kullanılamayacak seçenekler gizlensin

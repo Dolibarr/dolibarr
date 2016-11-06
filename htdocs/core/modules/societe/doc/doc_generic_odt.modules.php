@@ -332,6 +332,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 $var=true;
                 if ($num)
                 {
+                    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+                    
                 	$i=0;
                 	$contactstatic = new Contact($this->db);
 

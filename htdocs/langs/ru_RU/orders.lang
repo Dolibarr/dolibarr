@@ -157,3 +157,4 @@ OrderCreated=Ваши заказы созданы
 OrderFail=Возникла ошибка при создании заказов
 CreateOrders=Создать заказы
 ToBillSeveralOrderSelectCustomer=Для создания счёта на несколько заказов, сначала нажмите на клиента, затем выберете  "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

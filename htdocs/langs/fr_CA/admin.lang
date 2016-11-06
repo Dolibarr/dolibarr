@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 FilesUpdated=Mettre à jour les fichiers
-Fiscalyear=Année fiscale
 PurgeDeleteTemporaryFilesShort=Supprimer les fichiers temporaires
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
@@ -29,6 +28,7 @@ Module75Name=Notes de frais et déplacements
 Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
 Module770Name=Note de frais
+Module1120Name=Propositions commerciales founisseurs
 Module2600Name=services API / Web ( serveur SOAP )
 Module2600Desc=Active le serveur de Web Services de Dolibarr
 Module2610Name=services API / Web ( serveur REST )
@@ -116,8 +116,6 @@ ApiDesc=En activant ce module , Dolibarr devenir un serveur REST pour fournir de
 ApiProductionMode=Activer le mode de production (active l'utilisation d'un cache pour la gestion des services )
 OnlyActiveElementsAreExposed=Seuls les éléments de modules activés sont exposés
 ApiKey=Clé API
-FiscalYears=Années fiscales
-FiscalYearCard=Fiche année fiscale
 NewFiscalYear=Nouvelle année fiscale
 OpenFiscalYear=Ouvrir année fiscale
 CloseFiscalYear=Fermer année fiscale
@@ -129,7 +127,6 @@ HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de table lorsque d�
 HighlightLinesColor=Mettez en surbrillance la couleur de la ligne lorsque la souris passe au-dessus (gardez vide pour ne pas mettre en évidence)
 TextTitleColor=Couleur de la page titre
 PressF5AfterChangingThis=Appuyez sur F5 pour rafraichir la valeur modifiée
-NotSupportedByAllThemes=Nous travaillons avec le thème eldy mais il n'est pas pris en charge par tous les thèmes
 TopMenuBackgroundColor=Couleur de fond du menu haut
 LeftMenuBackgroundColor=Couleur de fond gauche
 BackgroundTableTitleColor=Couleur de fond pour le tableau ligne de titre
@@ -158,7 +155,6 @@ MailToSendIntervention=Envoyer l'intervention
 MailToSendSupplierRequestForQuotation=Pour envoyer demande de devis au fournisseur
 MailToSendSupplierOrder=Envoyer la commande fournisseur
 MailToSendSupplierInvoice=Envoyer la facture fournisseur
-MailToThirdparty=Envoyer un courriel de la page Tiers
 ByDefaultInList=Afficher par défaut sur la liste vue
 TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version majeure ( se sentir libre de l'utiliser sur vos sites web )
 TitleExampleForMaintenanceRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version de maintenance ( se sentir libre de l'utiliser sur vos sites web )

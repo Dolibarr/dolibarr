@@ -251,12 +251,15 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= $s;
                 }
                 $out.= ' ';
-                if (! empty($head['sublink'])) $out.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                if (! empty($head['subpicto'])) $out.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                if (! empty($head['sublink'])) '</a>';
+
+                $sublink='';
+                if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                if (! empty($head['sublink']))  $sublink.= '</a>';
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $out.= '</td><td class="nocellnopadd boxclose nowrap">';
+                    $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
                     $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
                     $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');

@@ -91,7 +91,9 @@ if ($socid > 0)
 
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
     print '<div class="fichecenter">';
     
@@ -155,7 +157,7 @@ if ($socid > 0)
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut > 0";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";

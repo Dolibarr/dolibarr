@@ -68,7 +68,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		$langs->load("main");
 		$langs->load("trips");
-		$langs->load("project");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->name = "";
@@ -107,11 +107,11 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxcomment=$this->marge_gauche+10;
 		$this->posxdate=88;
 		$this->posxtype=107;
-		$this->posxprojet=126;
-		$this->posxtva=146;
-		$this->posxup=158;
-		$this->posxqty=176;
-		$this->postotalttc=188;
+		$this->posxprojet=120;
+		$this->posxtva=136;
+		$this->posxup=152;
+		$this->posxqty=168;
+		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
             $this->posxtva-=20;
             $this->posxup-=20;
@@ -158,7 +158,7 @@ class pdf_standard extends ModeleExpenseReport
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("trips");
-		$outputlangs->load("project");
+		$outputlangs->load("projects");
 
 		$nblignes = count($object->lines);
 
@@ -323,12 +323,12 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// Date
-					$pdf->SetXY($this->posxdate, $curY);
+					$pdf->SetXY($this->posxdate -1, $curY);
 					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
 					// Type
-					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
+					$pdf->SetXY($this->posxtype -1, $curY);
+					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled)) 
@@ -435,6 +435,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 				{
+				    // TODO Show vat amout per tax level
 					$posy+=5;
 					$pdf->SetXY(100, $posy);
 					$pdf->SetTextColor(0,0,60);
@@ -481,8 +482,6 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error=$langs->trans("ErrorConstantNotDefined","EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -512,9 +511,9 @@ class pdf_standard extends ModeleExpenseReport
 		*/
 
 	    // Draft watermark
-		if ($object->fk_statut==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
+		if ($object->fk_statut == 0 && ! empty($conf->global->EXPENSEREPORT_DRAFT_WATERMARK))
 		{
- 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_FREE_TEXT);
+ 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0,0,60);

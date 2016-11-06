@@ -77,6 +77,8 @@ if ($id > 0 || ! empty($ref)) {
 		setEventMessages($commande->error, $commande->errors, 'errors');
 	}
 }
+
+
 /*
  * Actions
  */
@@ -147,9 +149,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	$db->begin();
 
 	$pos = 0;
-	foreach ( $_POST as $key => $value ) {
+	foreach ($_POST as $key => $value) 
+	{
 		// without batch module enabled
-		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) 
+		{
 			$pos ++;
 
 			// $numline=$reg[2] + 1; // line of product
@@ -179,7 +183,8 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			}
 		}
 		// with batch module enabled
-		if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+		if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) 
+		{
 			$pos ++;
 
 			// eat-by date dispatch
@@ -224,7 +229,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	}
 
 	if (! $error) {
-		$result = $commande->calcAndSetStatusDispatch($user);
+		$result = $commande->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0);
 		if ($result < 0) {
 			setEventMessages($commande->error, $commande->errors, 'errors');
 			$error ++;
@@ -543,15 +548,21 @@ if ($id > 0 || ! empty($ref)) {
 		print "</table>\n";
 		print "<br/>\n";
 
-		if ($nbproduct) {
-			print $langs->trans("Comment") . ' : ';
+		if ($nbproduct) 
+		{
+            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($commande->statuts[5]));
+            
+			print '<br><div class="center">';
+            print $langs->trans("Comment") . ' : ';
 			print '<input type="text" size="60" maxlength="128" name="comment" value="';
 			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $commande->ref);
 			// print ' / '.$commande->ref_supplier; // Not yet available
-			print '" class="flat"> &nbsp; ';
+			print '" class="flat"><br>';
 
+			print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+			
 			// print '<div class="center">';
-			print '<input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
+			print '<br><input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
 			if (count($listwarehouses) <= 0)
 				print ' disabled';
 			print '>';

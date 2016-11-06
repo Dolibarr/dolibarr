@@ -40,25 +40,34 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 	
-	/*
+	
+	
+/*
  * Actions
  */
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
+
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 	if (! GETPOST('cancel', 'alpha')) {
+	    if ($codeventil < 0) $codeventil = 0;
+	    
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
 		
-		dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	} else {
 		header("Location: ./lines.php");
 		exit();
 	}
 }
+
 
 /*
  * View
@@ -86,9 +95,7 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-	}
+	$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")"; // We don't share object for accountancy
 	
 	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);

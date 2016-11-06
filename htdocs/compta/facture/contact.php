@@ -114,7 +114,9 @@ else if ($action == 'deletecontact' && $user->rights->facture->creer)
  * View
  */
 
-llxHeader('', $langs->trans("InvoiceCustomer"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('ContactsAddresses');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -163,7 +165,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Ref customer
-		print '<tr><td>';
+		print '<tr><td >';
         print $langs->trans('RefCustomer');
         print '</td>';
         print '<td colspan="3">';

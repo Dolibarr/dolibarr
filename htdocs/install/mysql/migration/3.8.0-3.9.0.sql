@@ -61,7 +61,7 @@ update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
 INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_DELAY_EXPENSEREPORTS_TO_PAY')__,__ENCRYPT('31')__,'chaine','Tolérance de retard avant alerte (en jours) sur les notes de frais impayées',0);
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLISTE_LIMIT','4','chaine','Longueur maximum des listes courtes (fiche client)',0);
+INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);

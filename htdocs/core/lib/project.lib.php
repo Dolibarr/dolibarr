@@ -111,8 +111,13 @@ function project_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
+    $head[$h][1].= $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$h][1].= '/';
+        $head[$h][1].= $langs->trans("Agenda");
+    }
+	$head[$h][2] = 'agenda';
 	$h++;
 	
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project','remove');
@@ -401,14 +406,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Title of task
 				print "<td>";
 				if ($showlineingray) print '<i>';
-				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
+				//else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
 					print "&nbsp; &nbsp; &nbsp;";
 				}
 				print $lines[$i]->label;
 				if ($showlineingray) print '</i>';
-				else print '</a>';
+				//else print '</a>';
 				print "</td>\n";
 
 				// Date start
@@ -545,8 +550,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  */
 function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $preselectedday='', $var=false)
 {
-	global $db, $user, $bc, $langs;
-	global $form, $formother, $projectstatic, $taskstatic;
+	global $conf, $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$lastprojectid=0;
 	$workloadforid=array();
@@ -564,7 +569,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 	}	
 
     //dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
-	
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -604,11 +608,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				print "<tr ".$bc[$var].">\n";
 
-				// Project
-				print "<td>";
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
-
 				// Ref
 				print '<td>';
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
@@ -628,6 +627,21 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
+				// Project
+				print "<td>";
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				print "</td>";
+
+				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
+				{
+				    // Thirdparty
+				    print '<td class="nowrap">';
+				    $thirdpartystatic->id=$lines[$i]->socid;
+				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print '</td>';
+				}
+				
 				// Planned Workload
 				print '<td align="right">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
@@ -791,26 +805,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			    
 				print "<tr ".$bc[$var].">\n";
 
-				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
-				{
-				    // Thirdparty
-				    print '<td class="nowrap">';
-				    $thirdpartystatic->id=$lines[$i]->socid;
-				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
-				    print '</td>';
-				}
-				
-				// Project
-				print '<td class="nowrap">'.$var;
-				$projectstatic->id=$lines[$i]->fk_project;
-				$projectstatic->ref=$lines[$i]->projectref;
-				$projectstatic->title=$lines[$i]->projectlabel;
-				$projectstatic->public=$lines[$i]->public;
-				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
-
 				// Ref
 				print '<td class="nowrap">';
 				$taskstatic->id=$lines[$i]->id;
@@ -832,6 +826,26 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
+				// Project
+				print '<td class="nowrap">'.$var;
+				$projectstatic->id=$lines[$i]->fk_project;
+				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->title=$lines[$i]->projectlabel;
+				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				print "</td>";
+
+				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
+				{
+				    // Thirdparty
+				    print '<td class="nowrap">';
+				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
+				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print '</td>';
+				}
+				
 				// Planned Workload
 				print '<td align="right">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');

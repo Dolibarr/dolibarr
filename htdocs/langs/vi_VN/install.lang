@@ -11,12 +11,14 @@ PHPSupportSessions=PHP này hỗ trợ phiên.
 PHPSupportPOSTGETOk=PHP này hỗ trợ các biến POST và GET.
 PHPSupportPOSTGETKo=Có thể thiết lập PHP của bạn không hỗ trợ các biến POST và / hoặc GET. Kiểm tra <b>variables_order</b> tham số của bạn trong php.ini.
 PHPSupportGD=Điều này hỗ trợ PHP GD chức năng đồ họa.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=PHP hỗ trợ chức năng này UTF8.
 PHPMemoryOK=PHP bộ nhớ phiên tối đa của bạn được thiết lập <b>%s</b>. Điều này là đủ.
 PHPMemoryTooLow=PHP bộ nhớ phiên tối đa của bạn được thiết lập <b>%s</b> byte. Điều này cần được quá thấp. Thay đổi <b>php.ini</b> của bạn để thiết lập thông số <b>memory_limit</b> ít nhất <b>%s</b> byte.
 Recheck=Nhấn vào đây để kiểm tra significative hơn
 ErrorPHPDoesNotSupportSessions=Cài đặt PHP của bạn không hỗ trợ phiên. Tính năng này là cần thiết để làm cho Dolibarr làm việc. Kiểm tra thiết lập PHP của bạn.
 ErrorPHPDoesNotSupportGD=Cài đặt PHP của bạn không hỗ trợ chức năng đồ họa GD. Không có đồ thị sẽ có sẵn.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Cài đặt PHP của bạn không hỗ trợ chức năng UTF8. Dolibarr không thể làm việc một cách chính xác. Giải quyết này trước khi cài đặt Dolibarr.
 ErrorDirDoesNotExists=Thư mục %s không tồn tại.
 ErrorGoBackAndCorrectParameters=Tới lạc hậu và chính xác các thông số sai.
@@ -133,6 +135,10 @@ ActivateModule=Kích hoạt module %s
 ShowEditTechnicalParameters=Click vào đây để hiển thị các thông số tiên tiến / chỉnh sửa (chế độ chuyên môn)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Cập nhật dữ liệu về các hoạt động
 MigrationPaymentMode=Di chuyển dữ liệu cho phương thức thanh toán
 MigrationCategorieAssociation=Di chuyển các loại
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Hiển thị tùy chọn không có sẵn
 HideNotAvailableOptions=Ẩn các tùy chọn không có sẵn

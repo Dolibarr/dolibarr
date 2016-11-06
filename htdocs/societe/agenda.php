@@ -34,10 +34,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("companies");
 
+if (GETPOST('actioncode','array'))
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
+
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='a.datep, a.id';
+if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('agendathirdparty'));
@@ -50,6 +72,13 @@ $hookmanager->initHooks(array('agendathirdparty'));
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+    $search_agenda_label='';
+}
 
 
 
@@ -81,42 +110,15 @@ if ($socid)
 
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
-
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
-
-	if ($object->fournisseur)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
-
-	print '</table>';
-
-
-	print '<br>';
- 
-	$object->info($socid);
+    
+    $object->info($socid);
 	print dol_print_object_info($object, 1);
 	
 	print '</div>';
@@ -125,10 +127,8 @@ if ($socid)
 
 
 	
-	/*
-     * Barre d'action
-     */
-
+	// Actions buttons
+	
     $objthirdparty=$object;
     $objcon=new stdClass();
 	
@@ -144,6 +144,7 @@ if ($socid)
     	//$out.="</a>";
 	}
 
+	
 	print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
@@ -162,15 +163,25 @@ if ($socid)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        print '<br>';
-    
-        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-    
+        $param='&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
+        
+		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+		
         // List of todo actions
-        show_actions_todo($conf,$langs,$db,$object,null,0,1);
-    
+        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+
         // List of done actions
-        show_actions_done($conf,$langs,$db,$object);
+        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+     
+        // List of all actions
+		$filters=array();
+        $filters['search_agenda_label']=$search_agenda_label;
+
+        // TODO Replace this with smae code then into listactions.php
+        show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

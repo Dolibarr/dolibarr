@@ -11,12 +11,14 @@ PHPSupportSessions=Denne PHP understøtter sessioner.
 PHPSupportPOSTGETOk=Denne PHP understøtter variabler POST og GET.
 PHPSupportPOSTGETKo=Det er muligt din PHP setup ikke understøtter variabler POST og / eller GET. Tjek din parameter <b>variables_order</b> i php.ini.
 PHPSupportGD=Denne PHP støtte GD grafiske funktioner.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Denne PHP støtte UTF8 funktioner.
 PHPMemoryOK=Din PHP max session hukommelse er sat <b>til %s.</b> Dette skulle være nok.
 PHPMemoryTooLow=Din PHP max session hukommelse er sat <b>til %s</b> bytes. Dette skulle være for lav. Skift din <b>php.ini</b> at indstille <b>memory_limit</b> parameter til <b>mindst %s</b> bytes.
 Recheck=Klik her for en mere significative test
 ErrorPHPDoesNotSupportSessions=Din PHP installation ikke støtte sessioner. Denne funktion er forpligtet til at gøre Dolibarr fungerer. Tjek din PHP setup.
 ErrorPHPDoesNotSupportGD=Din PHP installation ikke understøtter grafiske funktion GD. Nr. grafen vil være til rådighed.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Din PHP installation ikke støtte UTF8 funktioner. Dolibarr kan ikke fungere korrekt. Løse dette, før du installerer Dolibarr.
 ErrorDirDoesNotExists=Directory %s ikke eksisterer.
 ErrorGoBackAndCorrectParameters=Gå tilbage og rette forkerte parametre.
@@ -133,6 +135,10 @@ ActivateModule=Aktiver modul %s
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Opdatere data om tiltag
 MigrationPaymentMode=Data migration for betaling mode
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

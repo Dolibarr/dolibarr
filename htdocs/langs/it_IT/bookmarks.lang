@@ -14,5 +14,5 @@ BehaviourOnClick=Comportamento quando si clicca su un indirizzo
 CreateBookmark=Crea segnalibro
 SetHereATitleForLink=Dai un titolo al segnalibro
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Usa un indirizzo http esterno o uno relativo a Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata deve essera aperta in nua nuova finestra oppure no
 BookmarksManagement=Gestione segnalibri

@@ -65,7 +65,7 @@ $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_accountancy_code_start = '';
 	$search_accountancy_code_end = '';
@@ -153,7 +153,7 @@ else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result);
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, 0, 'title_accountancy');
 
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
@@ -181,12 +181,12 @@ else {
 
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -241,7 +241,7 @@ else {
         print '</tr>';
       }
 
-      // Affiche le compte comptable en début de ligne
+      // Affiche le compte comptable en dï¿½but de ligne
       print "<tr>";
     	print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">'. $root_account_description .'</td>';
     	print '</tr>';

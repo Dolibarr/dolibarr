@@ -77,7 +77,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
+				'subclass'=>'linkobject boxfilter',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 

@@ -20,7 +20,7 @@ ReviewedByCP=Zostanie rozpatrzony przez
 DescCP=Opis
 SendRequestCP=Tworzenie wniosku urlopowego
 DelayToRequestCP=Zostawić wnioski muszą być wykonane co <b>​​najmniej% s dzień (dni)</b> przed nimi.
-MenuConfCP=Balance of leaves
+MenuConfCP=Bilans urlopów
 SoldeCPUser=Liście saldo <b>jest% s</b> dni.
 ErrorEndDateCP=Musisz wybrać datę zakończenia większą niż data rozpoczęcia.
 ErrorSQLCreateCP=Wystąpił błąd SQL podczas tworzenia:
@@ -72,12 +72,12 @@ NewSoldeCP=New Balance
 alreadyCPexist=Wniosek urlopowy na ten okres czasu został już zrobiony.
 FirstDayOfHoliday=Pierwszy dzień wakacji
 LastDayOfHoliday=Ostatni dzień wakacji
-BoxTitleLastLeaveRequests=Latest %s modified leave requests
+BoxTitleLastLeaveRequests=Ostatnie %s modyfikowanych wniosków urlopowych
 HolidaysMonthlyUpdate=Miesięczna aktualizacja
 ManualUpdate=Ręczna aktualizacja
 HolidaysCancelation=Anulowanie wniosku urlopowego
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Nazwisko pracownika
+EmployeeFirstname=Imię pracownika
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

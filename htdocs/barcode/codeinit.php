@@ -143,7 +143,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue);
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'date', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;

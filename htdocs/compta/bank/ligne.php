@@ -271,7 +271,7 @@ if ($result)
 
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/search.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
@@ -320,7 +320,7 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowSocialContribution'),'bill').' ';
                     print $langs->trans("SocialContribution").($links[$key]['label']?' - '.$links[$key]['label']:'');
                     print '</a>';

@@ -81,7 +81,7 @@ class DolEditor
 
         // Check if extended editor is ok. If not we force textarea
         if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
-        //if ($conf->browser->phone) $this->tool = 'textarea';
+        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with jmobile
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
@@ -140,21 +140,25 @@ class DolEditor
      *	Output edit area inside the HTML stream.
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
      *
-     *  @param	int		$noprint    1=Return HTML string instead of printing it to output
-     *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @param	int		$noprint             1=Return HTML string instead of printing it to output
+     *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements.
      *  @return	void|string
      */
-    function Create($noprint=0,$morejs='')
+    function Create($noprint=0,$morejs='',$disallowAnyContent=true)
     {
     	global $conf,$langs;
 
     	$fullpage=False;
-    	$disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed
-    	
+    	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
+    	{
+    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed
+    	}
+
     	$found=0;
 		$out='';
 
-        if ($this->tool == 'fckeditor')
+        if ($this->tool == 'fckeditor') // not used anymore
         {
             $found=1;
             $this->editor->Create();
@@ -179,6 +183,7 @@ class DolEditor
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
+            	$out.= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
@@ -190,6 +195,7 @@ class DolEditor
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent?'false':'true').',
+            						extraAllowedContent : \'\',
             						fullPage : '.($fullpage?'true':'false').', 
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',

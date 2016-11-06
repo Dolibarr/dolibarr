@@ -93,16 +93,17 @@ class Categories extends DolibarrApi
      * 
      * Get a list of categories
      *
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     * @return array Array of category objects
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of category objects
      *
 	 * @throws RestException
      */
-    function index($type = '', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -111,21 +112,24 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
         
-        $sql = "SELECT s.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql = "SELECT t.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('categorie', 1).')';
         if (!empty($type))
         {
-            $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+            $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
         }
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -142,7 +146,7 @@ class Categories extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
@@ -167,17 +171,17 @@ class Categories extends DolibarrApi
      * Note: This method is not directly exposed in the API, it is used
      * in the GET /xxx/{id}/categories requests.
      *
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param int		$item		Id of the item to get categories for
      * @return array Array of category objects
      *
      * @access private
      */
-    function getListForItem($type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $item = 0) {
+    function getListForItem($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type='customer', $item = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -228,7 +232,7 @@ class Categories extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
@@ -258,6 +262,7 @@ class Categories extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
 			throw new RestException(401);
 		}
+
         // Check mandatory fields
         $result = $this->_validate($request_data);
         
@@ -337,7 +342,7 @@ class Categories extends DolibarrApi
     /**
      * Validate fields before create or update object
      * 
-     * @param array $data   Data to validate
+     * @param array|null    $data    Data to validate
      * @return array
      * 
      * @throws RestException

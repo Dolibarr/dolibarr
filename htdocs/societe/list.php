@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +160,8 @@ $arrayfields=array(
     's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
     's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
     's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
-	's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
+    'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
+    's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
     's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -168,7 +170,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -179,54 +181,58 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
 if (empty($reshook))
 {
-	if ($action == 'setstcomm')
-	{
-		$object = new Client($db);
-		$result=$object->fetch(GETPOST('stcommsocid'));
-		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->update($object->id, $user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$action='';
-	}
-}
+    // Do we click on purge search criteria ?
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+        $search_nom='';
+        $search_categ=0;
+        $search_sale='';
+    	$search_barcode="";
+        $search_customer_code='';
+        $search_supplier_code='';
+        $search_account_customer_code='';
+        $search_account_supplier_code='';
+    	$search_town="";
+    	$search_zip="";
+    	$search_state="";
+    	$search_country='';
+    	$search_idprof1='';
+    	$search_idprof2='';
+    	$search_idprof3='';
+    	$search_idprof4='';
+    	$search_idprof5='';
+    	$search_idprof6='';
+    	$search_type='';
+    	$search_type_thirdparty='';
+    	$search_status='';
+    	$search_stcomm='';
+     	$search_level_from='';
+     	$search_level_to='';
+    	$search_array_options=array();
+    }
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-    $search_nom='';
-    $search_categ=0;
-    $search_sale='';
-	$search_barcode="";
-    $search_customer_code='';
-    $search_supplier_code='';
-    $search_account_customer_code='';
-    $search_account_supplier_code='';
-	$search_town="";
-	$search_zip="";
-	$search_state="";
-	$search_country='';
-	$search_idprof1='';
-	$search_idprof2='';
-	$search_idprof3='';
-	$search_idprof4='';
-	$search_idprof5='';
-	$search_idprof6='';
-	$search_type='';
-	$search_type_thirdparty='';
-	$search_status='';
-	$search_stcomm='';
- 	$search_level_from='';
- 	$search_level_to='';
-	$search_array_options=array();
+    if ($action == 'setstcomm')
+    {
+        $object = new Client($db);
+        $result=$object->fetch(GETPOST('stcommsocid'));
+        $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+        $result=$object->update($object->id, $user);
+        if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    
+        $action='';
+    }
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
@@ -339,8 +345,9 @@ else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4, s.fk_pays,";
+$sql.= " s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
+$sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -406,7 +413,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -436,9 +443,8 @@ if (! $resql)
 }
 
 $num = $db->num_rows($resql);
-$i = 0;
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
@@ -452,6 +458,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_all != '') $param = "&amp;sall=".urlencode($search_all);
 if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
 if ($search_categ > 0) $param.='&amp;search_categ='.urlencode($search_categ);
 if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
@@ -534,6 +541,17 @@ if ($type == 'c' || $type == 'p')
 	 	$moreforfilter.='</div>';
 	}
 }
+if ($type == 'f')
+{
+    if (! empty($conf->categorie->enabled))
+    {
+        require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
+        $moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
+        $moreforfilter.='</div>';
+    }
+}
 
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid)
@@ -542,17 +560,6 @@ if ($user->rights->societe->client->voir || $socid)
  	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
 	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	$moreforfilter.='</div>';
-}
-if ($type == 'f')
-{
-	if (! empty($conf->categorie->enabled))
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
-		$moreforfilter.='</div>';
-	}
 }
 if (! empty($moreforfilter))
 {
@@ -566,6 +573,8 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
@@ -587,7 +596,7 @@ if (! empty($arrayfields['s.ape']['checked']))            print_liste_field_titr
 if (! empty($arrayfields['s.idprof4']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof5","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof6","",$param,'class="nowrap"',$sortfield,$sortorder);
-print_liste_field_titre('');   // type of customer
+if (! empty($arrayfields['customerorsupplier']['checked'])) print_liste_field_titre('');   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked'])) print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'],$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))      print_liste_field_titre($arrayfields['s.fk_stcomm']['label'],$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
@@ -735,17 +744,19 @@ if (! empty($arrayfields['s.idprof6']['checked']))
 }
 
 // Type (customer/prospect/supplier)
-print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
-if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-print '<select class="flat" name="search_type">';
-print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
-if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
-if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-//if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
-print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
-print '</select></td>';
-
+if (! empty($arrayfields['customerorsupplier']['checked']))
+{
+    print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
+    if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<select class="flat" name="search_type">';
+    print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
+    if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+    //if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+    print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
+    print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
+    print '</select></td>';
+}
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 {
     // Prospect level
@@ -841,7 +852,7 @@ print '</td>';
 print "</tr>\n";
 
 $var=True;
-
+$i = 0;
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -946,30 +957,34 @@ while ($i < min($num, $limit))
         print "<td>".$obj->idprof6."</td>\n";
     }
     // Type
-    print '<td align="center">';
-	$s='';
-	if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-	{
-  		$companystatic->name=$langs->trans("Customer");
-  		$companystatic->name_alias='';
-	    $s.=$companystatic->getNomUrl(0,'customer');
-	}
-	if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-	{
-        if ($s) $s.=" / ";
-	    $companystatic->name=$langs->trans("Prospect");
-  		$companystatic->name_alias='';
-	    $s.=$companystatic->getNomUrl(0,'prospect');
-	}
-	if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
-	{
-		if ($s) $s.=" / ";
-        $companystatic->name=$langs->trans("Supplier");
-  		$companystatic->name_alias='';
-        $s.=$companystatic->getNomUrl(0,'supplier');
-	}
-	print $s;
-	print '</td>';
+    if (! empty($arrayfields['customerorsupplier']['checked']))
+    {
+        print '<td align="center">';
+    	$s='';
+    	if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+    	{
+      		$companystatic->name=$langs->trans("Customer");
+      		$companystatic->name_alias='';
+    	    $s.=$companystatic->getNomUrl(0,'customer');
+    	}
+    	if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+    	{
+            if ($s) $s.=" / ";
+    	    $companystatic->name=$langs->trans("Prospect");
+      		$companystatic->name_alias='';
+    	    $s.=$companystatic->getNomUrl(0,'prospect');
+    	}
+    	if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
+    	{
+    		if ($s) $s.=" / ";
+            $companystatic->name=$langs->trans("Supplier");
+      		$companystatic->name_alias='';
+            $s.=$companystatic->getNomUrl(0,'supplier');
+    	}
+    	print $s;
+    	print '</td>';
+    }
+
     if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
     {
 		// Prospect level
@@ -977,6 +992,7 @@ while ($i < min($num, $limit))
 		print $companystatic->getLibProspLevel();
 		print "</td>";
     }
+
     if (! empty($arrayfields['s.fk_stcomm']['checked']))
     {
         // Prospect status
@@ -994,9 +1010,9 @@ while ($i < min($num, $limit))
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);
