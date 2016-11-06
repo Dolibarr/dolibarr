@@ -322,7 +322,8 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 {
 	global $langs;
 
-	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
+	$newtitle=dol_textishtml($title)?dol_string_nohtmltag($title,1):$title;
+	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg.= $message;
 	$msg.= '</div>'."\n";
     $msg.= '<script type="text/javascript">
