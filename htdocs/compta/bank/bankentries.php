@@ -526,6 +526,9 @@ if ($page >= $nbtotalofpages)
     if ($page < 0) $page = 0;
 }
 
+// If not account defined $mode_balance_ok=false
+if (empty($account)) $mode_balance_ok=false;
+// If a search is done $mode_balance_ok=false
 if (! empty($search_ref)) $mode_balance_ok=false;
 if (! empty($req_nb)) $mode_balance_ok=false;
 if (! empty($type)) $mode_balance_ok=false;
@@ -878,6 +881,12 @@ if ($resql)
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
         {
+            if (! $account) 
+            {
+                dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+                exit;
+            }
+            
             //Loop on each record
             $sign = 1;
             $i = 0;
