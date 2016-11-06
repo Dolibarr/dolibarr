@@ -122,15 +122,16 @@ class Contact extends CommonObject
 	
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (sp.fk_soc = s.rowid)";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
+		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= ' '.$clause.' s.entity IN ('.getEntity($this->element, 1).')';
-	
+		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+        if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
+        
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
