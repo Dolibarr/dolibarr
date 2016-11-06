@@ -948,7 +948,7 @@ class Project extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
         
-        if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"')) . $linkend);
+        if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1) . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;

@@ -318,7 +318,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
@@ -331,11 +332,11 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
-	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
-	{
+	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
+	//{
 	    print '<td class="liste_titre"></td>';
 	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
-	}
+	//}
 	print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
@@ -380,6 +381,7 @@ if ($resql)
 		$actionstatic->ref=$obj->id;
 		$actionstatic->type_code=$obj->type_code;
 		$actionstatic->type_label=$obj->type_label;
+		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
 		
 		print "<tr ".$bc[$var].">";
@@ -394,12 +396,22 @@ if ($resql)
 		print $actionstatic->label;
 		print '</td>';
 
+		// Type
+		print '<td>';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-		    $labeltype=$obj->type_code;
-		    if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
-		    print '<td>'.dol_trunc($labeltype,28).'</td>';   
+    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
+    		else {
+    		    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+    		    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+    		    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+    		}
 		}
+		$labeltype=$obj->type_code;
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
+		if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+		print dol_trunc($labeltype,28);
+		print '</td>';
 		
 		// Start date
 		print '<td align="center" class="nowrap">';
@@ -455,7 +467,8 @@ if ($resql)
 		print '</td>';
 
 		// Status/Percent
-		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+		$datep=$db->jdate($obj->datep);
+		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3,1,$datep).'</td>';
 
 		print '<td></td>';
 		

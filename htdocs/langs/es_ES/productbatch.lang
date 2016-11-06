@@ -20,5 +20,5 @@ AddDispatchBatchLine=Añada una línea para despacho por caducidad
 WhenProductBatchModuleOnOptionAreForced=Si el módulo de Lotes/Series está activado, el incremento/decremento de stock es forzado a lo último escogido y no puede editarse. Otras opciones pueden definirse si se necesita
 ProductDoesNotUseBatchSerial=Este producto no usa lotes/series
 ProductLotSetup=Configuración del módulo lotes/series
-ShowCurrentStockOfLot=Show current stock for couple product/lot
-ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+ShowCurrentStockOfLot=Mostrar el stock actual de este producto/lote
+ShowLogOfMovementIfLot=Ver los movimientos de stock de este producto/lote

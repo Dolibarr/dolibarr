@@ -9,7 +9,6 @@
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -89,7 +88,7 @@ $hookmanager->initHooks(array('commcard','globalcard'));
  * Actions
  */
 
-$parameters = array('socid' => $id);
+$parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -440,7 +439,8 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
+
+        print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td>';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);
@@ -459,13 +459,13 @@ if ($id > 0)
 
 	print "</table>";
 
-	print '<br>';
-
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
-	
 	if ($object->client == 2 || $object->client == 3)
 	{
+    	print '<br>';
+    
+    	print '<div class="underbanner clearboth"></div>';
+    	print '<table class="border" width="100%">';
+	
 	    // Level of prospect
 	    print '<tr><td class="titlefield nowrap">';
 	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -484,7 +484,8 @@ if ($id > 0)
 	            // Status
 	            $object->loadCacheOfProspStatus();
 	            print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
-	            print ' &nbsp; &nbsp; <div class="floatright">';
+	            print ' &nbsp; &nbsp; ';
+	            print '<div class="floatright">';
 	            foreach($object->cacheprospectstatus as $key => $val)
 	            {
 	                $titlealt='default';
@@ -492,8 +493,8 @@ if ($id > 0)
 	                if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
 	            }
 	            print '</div></td></tr>';
+	   print "</table>";
 	}
-	print "</table>";
 	
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

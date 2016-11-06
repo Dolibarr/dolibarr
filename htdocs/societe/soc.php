@@ -765,7 +765,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
@@ -994,10 +994,11 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
-	        print '<td colspan="3"><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '</tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3">';
-            print $formcompany->select_civility($object->civility_id).'</td>';
+            // Title
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
             print '</tr>';
         }
 
@@ -1070,9 +1071,9 @@ else
 
         // Zip / Town
         print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
-        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td><td>'.fieldLabel('Town','town').'</td><td>';
-        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td></tr>';
 
         // Country
@@ -1092,15 +1093,15 @@ else
 
         // Email web
         print '<tr><td>'.fieldLabel('EMail','email').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td>';
-	    print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
+	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
-	    print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
-
+	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
+	    
         // Skype
         if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        print '<td colspan="3"><input type="text" name="skype" id="skype" size="32" value="'.$object->skype.'"></td></tr>';
+	        print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
         }
 
         // Phone / Fax
@@ -1135,7 +1136,7 @@ else
         // Vat is used
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value',(isset($conf->global->THIRDPARTY_DEFAULT_USEVAT)?$conf->global->THIRDPARTY_DEFAULT_USEVAT:1),1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
@@ -1166,6 +1167,30 @@ else
         print '</td>';
         print '</tr>';
 
+        // Local Taxes
+        //TODO: Place into a function to control showing by country or study better option
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax1assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1:0),1);
+            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
+            print '</td></tr>';
+        
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax1assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1:0),1);
+            print '</td></tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
+            print '</td></tr>';
+        }
+        
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
@@ -1194,30 +1219,6 @@ else
         print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	    print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> ';
         print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-
-        // Local Taxes
-        //TODO: Place into a function to control showing by country or study better option
-        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
-            print $form->selectyesno('localtax1assuj_value',0,1);
-            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
-            print $form->selectyesno('localtax2assuj_value',0,1);
-            print '</td></tr>';
-
-        }
-        elseif($mysoc->localtax1_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print $form->selectyesno('localtax1assuj_value',0,1);
-            print '</td><tr>';
-        }
-        elseif($mysoc->localtax2_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print $form->selectyesno('localtax2assuj_value',0,1);
-            print '</td><tr>';
-        }
 
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -2544,7 +2545,6 @@ else
 	        }
 		}
     }
-
 }
 
 

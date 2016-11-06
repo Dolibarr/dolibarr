@@ -133,7 +133,7 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -600,10 +600,6 @@ if ($resql)
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->facture->lire;
 	    $delallowed=$user->rights->facture->lire;
-	
-	    print '<br><a name="show_files"></a>';
-	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
 	
 	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

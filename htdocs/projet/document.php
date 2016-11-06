@@ -143,6 +143,7 @@ if ($object->id > 0)
 	print "</table>\n";
 	
 	print '</div>';
+
 	
 	dol_fiche_end();
 

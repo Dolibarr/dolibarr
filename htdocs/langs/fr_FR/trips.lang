@@ -8,6 +8,7 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+TypeFees=Types de déplacement et notes de frais
 ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée

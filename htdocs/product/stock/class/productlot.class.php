@@ -555,7 +555,7 @@ class Productlot extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $link . $this->batch . $linkend;

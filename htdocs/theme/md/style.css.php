@@ -163,14 +163,20 @@ $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
+
 $tmppart=explode(',',$colorbackvmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
+
 $tmppart=explode(',',$colorbacktitle1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
+if ($colortexttitle == '')
+{
+	$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+	if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+	else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
+}
+
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -251,6 +257,10 @@ a.tab { font-weight: bold !important; }
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 
+input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
+    background-color: #FDFDFD;
+}
+
 <?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
@@ -264,7 +274,6 @@ textarea.cke_source:focus
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
     border: 1px solid #C0C0C0;
     margin: 0px 0px 0px 0px;
 }
@@ -286,7 +295,7 @@ input.removedassigned  {
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
 }
-input.smallpadd {
+input.smallpadd {	/* Used for timesheet input */
 	padding-left: 1px !important;
 	padding-right: 1px !important;
 }
@@ -304,9 +313,6 @@ span.timesheetalreadyrecorded input {
 select.flat, form.flat select {
 	font-weight: normal;
 }
-input:disabled {
-	background:#f4f4f4;
-}
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
@@ -315,6 +321,10 @@ input:disabled {
 }
 .opacitytransp {
 	opacity: 0;
+}
+select:invalid { color: gray; }
+input:disabled {
+	background:#f4f4f4;
 }
 
 input.liste_titre {
@@ -331,6 +341,7 @@ input.removedfile {
 textarea:disabled {
 	background:#f4f4f4;
 }
+input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
@@ -341,8 +352,9 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
-::-moz-placeholder { color:#ccc; } /* firefox 19+ */
-:-ms-input-placeholder { color:#ccc; } /* ie */
+:-moz-placeholder { color:#bbb; } 			/* firefox 18- */
+::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
@@ -599,17 +611,22 @@ div.myavailability {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
-.minwidth100 { min-width: 100px; }
-.minwidth200 { min-width: 200px; }
-.minwidth300 { min-width: 300px; }
-.minwidth400 { min-width: 400px; }
-.minwidth500 { min-width: 500px; }
-.minwidth50imp  { min-width: 50px !important; }
-.minwidth100imp { min-width: 100px !important; }
-.minwidth200imp { min-width: 200px !important; }
-.minwidth300imp { min-width: 300px !important; }
-.minwidth400imp { min-width: 400px !important; }
-.minwidth500imp { min-width: 500px !important; }
+/* rule to reduce top menu - 3rd reduction */
+@media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
+{
+	.minwidth100 { min-width: 100px; }
+	.minwidth200 { min-width: 200px; }
+	.minwidth300 { min-width: 300px; }
+	.minwidth400 { min-width: 400px; }
+	.minwidth500 { min-width: 500px; }
+	.minwidth50imp  { min-width: 50px !important; }
+	.minwidth100imp { min-width: 100px !important; }
+	.minwidth200imp { min-width: 200px !important; }
+	.minwidth300imp { min-width: 300px !important; }
+	.minwidth400imp { min-width: 400px !important; }
+	.minwidth500imp { min-width: 500px !important; }
+}
+.maxwidth50  { max-width: 50px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -622,7 +639,7 @@ div.myavailability {
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
 
-/* Force values for small screen */
+/* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
 	.titlefield { width: 30% !important; }
@@ -635,7 +652,8 @@ div.myavailability {
     .minwidth500imp { min-width: 300px !important; }
 }
 
-@media only screen and (max-width: 960px)
+/* Force values for small screen 1000 */
+@media only screen and (max-width: 1000px)
 {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -646,12 +664,26 @@ div.myavailability {
     .minwidth500imp { min-width: 100px !important; }
 }
 
-/* Force values for small screen */
+/* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	div.titre {
+		line-height: 2em;
+	}
+	
+	input[type=text], select, textarea     { 
+		min-width: 20px; 
+    	min-height: 1.4em;
+    	line-height: 1.4em;
+    	margin: .5em 0;
+    	padding: .4em .1em;
+    	border: 1px solid #BBB;
+     }
+     
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth50onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
@@ -2082,7 +2114,7 @@ span.butAction, span.butActionDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
-	<?php // if (empty($conf->dol_use_jmobile)) { ?>
+	<?php // if (($conf->dol_use_jmobile != 4)) { ?>
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
 	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
@@ -2350,7 +2382,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
+	padding-top: <?php print ($conf->dol_use_jmobile != 4)?'3':'14'; ?>px;
 }
 div.refid  {
 	font-weight: bold;
@@ -2386,7 +2418,7 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-<?php if (empty($conf->dol_use_jmobile)) { ?>
+<?php if (($conf->dol_use_jmobile != 4)) { ?>
   padding-top: 6px;
   padding-bottom: 5px;
 <?php } ?>
@@ -2399,7 +2431,7 @@ div.pagination li {
 
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-<?php if (empty($conf->dol_use_jmobile)) { ?>
+<?php if ($conf->dol_use_jmobile != 4) { ?>
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
@@ -2426,13 +2458,13 @@ border: none;
   padding-left: 4px;
   font-weight: bold;
 }
-<?php if (! empty($conf->dol_use_jmobile)) { ?>
+<?php if ($conf->dol_use_jmobile == 4) { ?>
 div.pagination li.litext {
   padding-top: 13px;
   vertical-align: top;
 }
 <?php } ?>
-<?php if (empty($conf->dol_use_jmobile)) { ?>
+<?php if ($conf->dol_use_jmobile != 4) { ?>
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
@@ -4361,6 +4393,8 @@ border-top-right-radius: 6px;
 img.demothumb {
     box-shadow: 2px 2px 8px #888;
 	margin-bottom: 4px;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4508,8 +4542,8 @@ img.demothumb {
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
 	select {
-		width: 100%;
-		max-width: 100px;
+		width: 98%;
+		<?php if (empty($conf->dol_use_jmobile)) { ?>max-width: 100px;<?php } ?>
 		min-width: 0 !important;
 	}
 	div.divphotoref {

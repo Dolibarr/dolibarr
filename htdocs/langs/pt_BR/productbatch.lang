@@ -17,3 +17,6 @@ printQty=Qtde: %d
 AddDispatchBatchLine=Adicione uma linha para Shelf Life expedição
 WhenProductBatchModuleOnOptionAreForced=Quando o módulo Lote / Serial estiver ligado, aumentar / diminuir modo estoque é forçado a última opção e não pode ser editado. Outras opções podem ser definidas como você quer.
 ProductDoesNotUseBatchSerial=Este produto não utiliza Lote / número de série
+ProductLotSetup=Configuração do módulo lote/nº de série
+ShowCurrentStockOfLot=Exibir o estoque atual para o produto/lote
+ShowLogOfMovementIfLot=Exibir o registro de movimentações para o produto/lote

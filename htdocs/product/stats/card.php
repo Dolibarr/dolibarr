@@ -340,30 +340,30 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 					print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 				}
 	
+				// Date generation
+				if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
+				{
+				    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated=$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour"));
+				    else $dategenerated=$langs->trans("GeneratedOn",dol_print_date(dol_now(),"dayhour"));
+				}
+				else
+				{
+				    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
+				}
+				$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&amp;type='.$type:'').'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')','refresh').'</a>';
+				
 				// Show graph
-	
 				print '<table class="noborder" width="100%">';
 				// Label
-				print '<tr class="liste_titre"><td colspan="2">';
+				print '<tr class="liste_titre"><td>';
 				print $graphfiles[$key]['label'];
-				print '</td></tr>';
+				print '</td>';
+				print '<td align="right">'.$linktoregenerate.'</td>';
+				print '</tr>';
 				// Image
 				print '<tr class="impair"><td colspan="2" class="nohover" align="center">';
 				print $graphfiles[$key]['output'];
 				print '</td></tr>';
-				// Date generation
-				print '<tr>';
-				if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
-				{
-				    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
-				    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now(),"dayhour")).'</td>';
-				}
-				else
-				{
-					print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
-				}
-				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&amp;type='.$type:'').'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
-				print '</tr>';
 				print '</table>';
 	
 				if ($i % 2 == 0)

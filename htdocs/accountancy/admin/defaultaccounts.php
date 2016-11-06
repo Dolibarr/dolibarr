@@ -138,7 +138,7 @@ foreach ( $list_account as $key ) {
 	$label = $langs->trans($key);
 	print '<td>' . $label . '</td>';
 	// Value
-	print '<td align="right">';
+	print '<td>';  // Do not force align=right, or it align also the content of the select box 
 	print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';

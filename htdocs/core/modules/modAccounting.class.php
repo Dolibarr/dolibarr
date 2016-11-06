@@ -143,11 +143,6 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				""
 		);
-		$this->const[12] = array(
-				"ACCOUNTING_LIMIT_LIST_VENTILATION",
-				"chaine",
-				"50"
-		);
 		$this->const[13] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",

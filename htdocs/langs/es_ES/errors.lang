@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Error, su PHP debe tener instalado el módulo <b>%s</b> para 
 ErrorOpenIDSetupNotComplete=Ha configurado Dolibarr para aceptar la autentificación OpenID, pero la URL del servicio OpenID no se encuentra definida en la constante %s
 ErrorWarehouseMustDiffers=El almacén de origen y destino deben de ser diferentes
 ErrorBadFormat=¡El formato es erróneo!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, este miembro aún no está enlazado a un tercero. Enlace el miembro a un tercero existente o cree un tercero nuevo antes de crear la suscripción con la factura.
 ErrorThereIsSomeDeliveries=Error, hay entregas vinculadas a este envío. No se puede eliminar.
 ErrorCantDeletePaymentReconciliated=No se puede eliminar un pago que ha generado una transacción bancaria que se encuentra conciliada
 ErrorCantDeletePaymentSharedWithPayedInvoice=No se puede eliminar un pago de varias factura con alguna factura con estado Pagada
@@ -176,6 +176,7 @@ ErrorStockIsNotEnoughToAddProductOnShipment=No hay stock suficiente del producto
 ErrorStockIsNotEnoughToAddProductOnProposal=No hay stock suficiente del producto %s para añadirlo a un nuevo presupuesto.
 ErrorFailedToLoadLoginFileForMode=No se puede obtener el archivo de login para el modo '%s'.
 ErrorModuleNotFound=No se ha encontrado el archivo del módulo.
+ErrorFieldAccountNotDefinedForBankLine=Valor para la cuenta contable no definida para la línea bancaria origen %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.

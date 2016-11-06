@@ -50,9 +50,10 @@ class FormPropal
      *    @param	int		$excludedraft	0=All status, 1=Exclude draft status
      *    @param	int 	$showempty		1=Add empty line
      *    @param    string  $mode           'customer', 'supplier'
+     *    @param    string  $htmlname       Name of select field
      *    @return	void
      */
-    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1, $mode='customer')
+    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1, $mode='customer',$htmlname='propal_statut')
     {
         global $langs;
 
@@ -63,7 +64,13 @@ class FormPropal
             $prefix='SupplierProposalStatus';
             
             $langs->load("supplier_proposal");
-            $listofstatus=array(0=>array('code'=>'PR_DRAFT'), 1=>array('code'=>'PR_OPEN'), 2=>array('code'=>'PR_SIGNED'), 3=>array('code'=>'PR_NOTSIGNED'), 4=>array('code'=>'PR_CLOSED'));
+            $listofstatus=array(
+                0=>array('id'=>0, 'code'=>'PR_DRAFT'),
+                1=>array('id'=>1, 'code'=>'PR_OPEN'),
+                2=>array('id'=>2, 'code'=>'PR_SIGNED'),
+                3=>array('id'=>3, 'code'=>'PR_NOTSIGNED'),
+                4=>array('id'=>4, 'code'=>'PR_CLOSED')
+            );
         }
         else
         {
@@ -93,7 +100,7 @@ class FormPropal
             }
         }
 
-        print '<select class="flat" name="propal_statut">';
+        print '<select class="flat" name="'.$htmlname.'">';
         if ($showempty) print '<option value="">&nbsp;</option>';
 
         foreach($listofstatus as $key => $obj)
@@ -115,15 +122,16 @@ class FormPropal
                 print '<option value="'.$obj['id'].'">';
             }
             $key=$obj['code'];
-            if ($langs->trans($prefix."PropalStatus".$key.($short?'Short':'')) != $prefix."PropalStatus".$key.($short?'Short':''))
+            if ($langs->trans($prefix.$key.($short?'Short':'')) != $prefix.$key.($short?'Short':''))
             {
-                print $langs->trans($prefix."PropalStatus".$key.($short?'Short':''));
+                print $langs->trans($prefix.$key.($short?'Short':''));
             }
             else
 			{
-                $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
+                $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Validated','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
                 if (! empty($conv_to_new_code[$obj['code']])) $key=$conv_to_new_code[$obj['code']];
-                print ($langs->trans($prefix.$key.($short?'Short':''))!=$prefix.$key.($short?'Short':''))?$langs->trans($prefix.$key.($short?'Short':'')):$obj['label'];
+
+                print ($langs->trans($prefix.$key.($short?'Short':''))!=$prefix.$key.($short?'Short':''))?$langs->trans($prefix.$key.($short?'Short':'')):($obj['label']?$obj['label']:$obj['code']);
             }
             print '</option>';
             $i++;

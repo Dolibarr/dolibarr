@@ -170,26 +170,38 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 
-		    
+
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	$sall="";
-	$sref="";
-	$snom="";
-	$sbarcode="";
-	$search_categ=0;
-	$tosell="";
-	$tobuy="";
-	$search_tobatch='';
-	$search_accountancy_code_sell='';
-	$search_accountancy_code_buy='';
-	$search_array_options=array();
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    // Purge search criteria
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+    	$sall="";
+    	$sref="";
+    	$snom="";
+    	$sbarcode="";
+    	$search_categ=0;
+    	$tosell="";
+    	$tobuy="";
+    	$search_tobatch='';
+    	$search_accountancy_code_sell='';
+    	$search_accountancy_code_buy='';
+    	$search_array_options=array();
+    }
 }
 
 
@@ -305,13 +317,12 @@ else
     {
     	$num = $db->num_rows($resql);
 
-    	$i = 0;
-
-    	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $action != 'list')
+    	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
     	{
-    		$objp = $db->fetch_object($resql);
-    		header("Location: card.php?id=".$objp->rowid);
-    		exit;
+    	    $obj = $db->fetch_object($resql);
+    	    $id = $obj->rowid;
+    	    header("Location: ".DOL_URL_ROOT.'/product/card.php?id='.$id);
+    	    exit;
     	}
 
     	$helpurl='';
@@ -434,7 +445,7 @@ else
     		if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
-    		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
@@ -585,6 +596,7 @@ else
     		$product_fourn =new ProductFournisseur($db);
 
     		$var=true;
+    	    $i = 0;
     		while ($i < min($num,$limit))
     		{
     			$objp = $db->fetch_object($resql);

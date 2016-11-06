@@ -181,54 +181,58 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
 if (empty($reshook))
 {
-	if ($action == 'setstcomm')
-	{
-		$object = new Client($db);
-		$result=$object->fetch(GETPOST('stcommsocid'));
-		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->update($object->id, $user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$action='';
-	}
-}
+    // Do we click on purge search criteria ?
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+        $search_nom='';
+        $search_categ=0;
+        $search_sale='';
+    	$search_barcode="";
+        $search_customer_code='';
+        $search_supplier_code='';
+        $search_account_customer_code='';
+        $search_account_supplier_code='';
+    	$search_town="";
+    	$search_zip="";
+    	$search_state="";
+    	$search_country='';
+    	$search_idprof1='';
+    	$search_idprof2='';
+    	$search_idprof3='';
+    	$search_idprof4='';
+    	$search_idprof5='';
+    	$search_idprof6='';
+    	$search_type='';
+    	$search_type_thirdparty='';
+    	$search_status='';
+    	$search_stcomm='';
+     	$search_level_from='';
+     	$search_level_to='';
+    	$search_array_options=array();
+    }
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-    $search_nom='';
-    $search_categ=0;
-    $search_sale='';
-	$search_barcode="";
-    $search_customer_code='';
-    $search_supplier_code='';
-    $search_account_customer_code='';
-    $search_account_supplier_code='';
-	$search_town="";
-	$search_zip="";
-	$search_state="";
-	$search_country='';
-	$search_idprof1='';
-	$search_idprof2='';
-	$search_idprof3='';
-	$search_idprof4='';
-	$search_idprof5='';
-	$search_idprof6='';
-	$search_type='';
-	$search_type_thirdparty='';
-	$search_status='';
-	$search_stcomm='';
- 	$search_level_from='';
- 	$search_level_to='';
-	$search_array_options=array();
+    if ($action == 'setstcomm')
+    {
+        $object = new Client($db);
+        $result=$object->fetch(GETPOST('stcommsocid'));
+        $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+        $result=$object->update($object->id, $user);
+        if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    
+        $action='';
+    }
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
@@ -439,8 +443,8 @@ if (! $resql)
 }
 
 $num = $db->num_rows($resql);
-$i = 0;
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
@@ -848,7 +852,7 @@ print '</td>';
 print "</tr>\n";
 
 $var=True;
-
+$i = 0;
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);

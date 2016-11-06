@@ -483,5 +483,5 @@ ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually
 ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask you administrator to enable and setup module <strong>%s</strong>. Note that both method (manual and automatic) can be used together with no risk of duplication.
 DeleteRepeatableInvoice=Delete template invoice
 ConfirmDeleteRepeatableInvoice=Are your sure you want to delete the template invoice?
-CreateOneBillByThird=Create one bill by third
+CreateOneBillByThird=Create one invoice per third (otherwise, one invoice per order)
 BillCreated=%s bill(s) created

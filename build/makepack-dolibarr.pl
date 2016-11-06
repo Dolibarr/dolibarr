@@ -159,6 +159,7 @@ $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
 if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
 $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
 $FILENAMERPM=$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm";
+$FILENAMERPMSRC=$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm";
 # For Deb
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/1/gi;                # dev
@@ -733,8 +734,8 @@ if ($nboftargetok) {
 
 			print "Remove target ".$FILENAMERPM."...\n";
 			unlink("$NEWDESTI/".$FILENAMERPM);
-			print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm...\n";
-			unlink("$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm");
+			print "Remove target ".$FILENAMERPMSRC."...\n";
+			unlink("$NEWDESTI/".$FILENAMERPMSRC);
 
 			print "Create directory $BUILDROOT/$FILENAMETGZ2\n";
 			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2`;
@@ -1140,10 +1141,11 @@ if ($nboftargetok) {
 	
 		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
-			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'none',				# none means it won't be published on SF
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+			"$DESTI/package_rpm_generic/$FILENAMERPMSRC"=>'none',						# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
@@ -1151,6 +1153,7 @@ if ($nboftargetok) {
 		%filestoscanstableasso=(
 			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
+			"$DESTI/package_rpm_generic/$FILENAMERPMSRC"=>'package_rpm_generic',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
@@ -1212,9 +1215,10 @@ if ($nboftargetok) {
 				my $filesize = -s $file;
 				if (! $filesize) { next; }
 
-				print "\n";
-	    		
-	    		if ($target eq 'SF' && $filestoscan{$file} ne 'none') { 
+	    		if ($target eq 'SF') {
+	    			if ($filestoscan{$file} eq 'none') {
+	    				next;
+	    			} 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
 	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
@@ -1231,6 +1235,8 @@ if ($nboftargetok) {
 	    			$filenameonly =~ s/.*\/[^\/]+\/([^\/])+$/$1/;  
 	    			$destFolder="$NEWPUBLISH/$dirnameonly";
 	    		}
+
+				print "\n";
 	    		print "Publish file ".$file." to ".$destFolder."\n";
 
 				# mkdir	   

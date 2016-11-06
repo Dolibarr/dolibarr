@@ -742,7 +742,8 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-		if (! $ret)
+
+        if (! $ret)
 		{
 		    $error++;
 		}
@@ -1460,27 +1461,40 @@ class Expedition extends CommonObject
      *	@param      int			$option         Where point the link
      *	@param      int			$max          	Max length to show
      *	@param      int			$short			Use short labels
+     *  @param      int         $notooltip      1=No tooltip
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowSending") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
-
+        $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+            
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowSending");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+		
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
 
-		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;

@@ -29,6 +29,7 @@
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
+ALTER TABLE llx_c_actioncomm ADD COLUMN picto varchar(48);
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_code_ventilation (fk_code_ventilation);
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_code_ventilation (fk_code_ventilation);
@@ -36,6 +37,7 @@ ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_code_ventil
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_product (fk_product);
 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_expedition ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
 
@@ -139,6 +141,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_code_ventilation integer DEFAULT 0;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
@@ -171,4 +174,6 @@ INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHOR
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
 ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
+
+ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 

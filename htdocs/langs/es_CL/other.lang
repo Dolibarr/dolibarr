@@ -6,6 +6,3 @@ PredefinedMailContentSendProposal=Buenos días, __CONTACTCIVNAME__ \n\n Nos pone
 NumberOfProposals=Número de cotizaciones en los últimos 12 meses
 NumberOfUnitsProposals=Número de unidades en las cotizaciones en los últimos 12 meses
 EMailTextProposalValidated=La cotización %s que le concierne ha sido validado.
-PropalClosedSignedInDolibarr=Cotización %s firmada en Dolibarr
-PropalClosedRefusedInDolibarr=Cotización %s rechazada en Dolibarr
-Export=Exportar

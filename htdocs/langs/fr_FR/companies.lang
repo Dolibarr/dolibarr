@@ -77,6 +77,7 @@ VATIsUsed=Assujetti à la TVA
 VATIsNotUsed=Non assujetti à la TVA
 CopyAddressFromSoc=Remplir avec l'adresse du tiers
 ThirdpartyNotCustomerNotSupplierSoNoRef=Ce tiers n'est ni client ni fournisseur. il n'y a pas d'objet référent.
+PaymentBankAccount=Compte bancaire paiements
 ##### Local Taxes #####
 LocalTax1IsUsed=Assujetti à la deuxième taxe
 LocalTax1IsUsedES= Assujetti à RE
@@ -271,7 +272,7 @@ DefaultContact=Contact par défaut
 AddThirdParty=Créer tiers
 DeleteACompany=Supprimer une société
 PersonalInformations=Informations personnelles
-AccountancyCode=Code compta
+AccountancyCode=Compte comptable
 CustomerCode=Code client
 SupplierCode=Code fournisseur
 CustomerCodeShort=Code client
