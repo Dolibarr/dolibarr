@@ -100,8 +100,8 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$ret = $object->fetch($id, $ref);
-	if ($ret < 0) dol_print_error($db,$object->error);
+    $ret = $object->fetch($id, $ref);
+    if ($ret < 0) dol_print_error($db,$object->error);
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
@@ -1059,7 +1059,7 @@ if (empty($reshook))
 									$array_option = $lines[$i]->array_options;
 								}
 
-								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
 								if ($result>=0)
 								{
 								    $tva_tx = $lines[$i]->tva_tx;
@@ -1159,6 +1159,7 @@ if (empty($reshook))
 	$trigger_name='ORDER_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierorder';
+	$trackid='sor'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -1599,6 +1600,7 @@ elseif (! empty($object->id))
 
 	$res=$object->fetch_optionals($object->id,$extralabels);
 
+	
 	$head = ordersupplier_prepare_head($object);
 
 	$title=$langs->trans("SupplierOrder");
@@ -1607,9 +1609,7 @@ elseif (! empty($object->id))
 
 	$formconfirm='';
 
-	/*
-	 * Confirmation de la suppression de la commande
-	 */
+	// Confirmation de la suppression de la commande
 	if ($action	== 'delete')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
@@ -1628,9 +1628,7 @@ elseif (! empty($object->id))
 
 	}
 
-	/*
-	 * Confirmation de la validation
-	 */
+	// Confirmation de la validation
 	if ($action	== 'valid')
 	{
 		$object->date_commande=dol_now();
@@ -1662,9 +1660,7 @@ elseif (! empty($object->id))
 		}
 	}
 
-	/*
-	 * Confirm approval
-	 */
+	// Confirm approval
 	if ($action	== 'approve' || $action	== 'approve2')
 	{
         $qualified_for_stock_change=0;
@@ -1702,27 +1698,21 @@ elseif (! empty($object->id))
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
-	/*
-	 * Confirmation de la desapprobation
-	 */
+	// Confirmation de la desapprobation
 	if ($action	== 'refuse')
 	{
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
 
 	}
 
-	/*
-	 * Confirmation de l'annulation
-	 */
+	// Confirmation de l'annulation
 	if ($action	== 'cancel')
 	{
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
 
 	}
 
-	/*
-	 * Confirmation de l'envoi de la commande
-	 */
+	// Confirmation de l'envoi de la commande
 	if ($action	== 'commande')
 	{
 		$date_com = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
@@ -1801,37 +1791,6 @@ elseif (! empty($object->id))
 	print '<div class="underbanner clearboth"></div>';
 	 	
 	print '<table class="border" width="100%">';
-
-	// Ref
-	/*
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td>';
-	print '</tr>';*/
-
-	// Ref supplier
-	/*
-	print '<tr><td>';
-	print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
-	print '</td><td colspan="2">';
-	print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
-	print '</td></tr>';
-	
-	// Fournisseur
-	print '<tr><td>'.$langs->trans("Supplier")."</td>";
-	print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
-	print '</tr>';
-    */
-	
-	// Statut
-	/*
-	print '<tr>';
-	print '<td>'.$langs->trans("Status").'</td>';
-	print '<td colspan="2">';
-	print $object->getLibStatut(4);
-	print "</td></tr>";
-	*/
 
 	// Date
 	if ($object->methode_commande_id > 0)
@@ -1986,31 +1945,6 @@ elseif (! empty($object->id))
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
 	print '</tr>';
-
-	// Project
-	/*
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load('projects');
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project');
-		print '</td>';
-		if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
-		print '</tr></table>';
-		print '</td><td>';
-		//print "$object->id, $object->socid, $object->fk_project";
-		if ($action == 'classify')
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', 0, 0, 1);
-		}
-		else
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
-		}
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
@@ -2224,10 +2158,12 @@ elseif (! empty($object->id))
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		$formmail->trackid='sor'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
@@ -2706,8 +2642,6 @@ elseif (! empty($object->id))
 			print "</div>";
 		}
 
-		print "<br>";
-
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -2726,7 +2660,7 @@ elseif (! empty($object->id))
 		$somethingshown=$formfile->numoffiles;
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('order_supplier'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order','order_supplier'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -278,7 +278,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE f.fk_soc = s.rowid';
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -379,12 +379,17 @@ $sql.=$hookmanager->resPrint;
 
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, fk_mode_reglement, f.total, f.tva, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total, f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code';
-    $sql.= ' ,state.code_departement, state.nom';
+    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
+    $sql.= ' state.code_departement, state.nom';
+
+    foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
+    {
+        $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+    }
 }
 else
 {
@@ -520,10 +525,12 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->withform=-1;
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
 		{
 			$formmail->trackid='inv'.$object->id;
@@ -1148,10 +1155,6 @@ if ($resql)
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     
-        print '<br><a name="show_files"></a>';
-        $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-        $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-        
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else

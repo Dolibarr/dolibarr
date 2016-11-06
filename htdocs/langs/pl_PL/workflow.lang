@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Konfiguracja modułu przepływu pracy
 WorkflowDesc=Moduł ten jest przeznaczony do zmiany zachowania automatycznych działań na język aplikacji. Domyślnie pracy jest otwarty (można robić rzeczy w określonej kolejności). Możesz włączyć automatyczne czynności, które są zainteresowane.
 ThereIsNoWorkflowToModify=Nie ma zmiany workflow dostępne z aktywnych modułów.
@@ -9,3 +9,5 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatycznie twórz fakturę dla klienta 
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasyfikowania związany propozycję źródłowego zapowiadane gdy zamówienie klienta jest ustawiony na płatne
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasyfikowania związane Źródło (-a), gdy klienta do faktury klienta naliczana jest ustawiony wypłacane
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasyfikowania związany zamówienie klienta źródłowego (s) do grubodzioby, gdy faktura klient jest weryfikowany
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order

@@ -60,7 +60,7 @@ create table llx_facture
   fk_statut				smallint DEFAULT 0 NOT NULL,
 
   fk_user_author		integer,								-- user making creation
-  fk_user_modif         integer,                               -- user making last change
+  fk_user_modif         integer,                                -- user making last change
   fk_user_valid			integer,								-- user validating
 
   fk_facture_source		integer,								-- facture origine si facture avoir

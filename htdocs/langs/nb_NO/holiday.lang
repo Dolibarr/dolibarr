@@ -76,8 +76,8 @@ BoxTitleLastLeaveRequests=Siste %s endrede ferieforespørsler
 HolidaysMonthlyUpdate=Månedlig oppdatering
 ManualUpdate=Manuell oppdatering
 HolidaysCancelation=Kansellering av feriesøknader
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Ansatts etternavn
+EmployeeFirstname=Ansatts fornavn
 
 ## Configuration du Module ##
 LastUpdateCP=Siste automatiske oppdatering av ferietildeling

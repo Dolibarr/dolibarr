@@ -32,8 +32,8 @@ create table llx_user_employment
   status            integer NOT NULL,			-- draft, active, closed
   salary			double(24,8),				-- last and current value stored into llx_user
   salaryextra		double(24,8),				-- last and current value stored into llx_user
-  weeklyhours		double(16,8)				-- last and current value stored into llx_user
+  weeklyhours		double(16,8),				-- last and current value stored into llx_user
   dateemployment    date,						-- last and current value stored into llx_user
-  dateemploymentend date,						-- last and current value stored into llx_user
+  dateemploymentend date						-- last and current value stored into llx_user
 )ENGINE=innodb;
 

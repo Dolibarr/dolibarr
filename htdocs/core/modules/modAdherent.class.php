@@ -76,6 +76,13 @@ class modAdherent extends DolibarrModules
         $this->const = array();
         $r=0;
         
+        $this->const[$r][0] = "ADHERENT_ADDON_PDF";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "standard";
+        $this->const[$r][3] = 'Name of PDF model of member';
+        $this->const[$r][4] = 0;
+        $r++;
+        
         $this->const[$r][0] = "ADHERENT_MAIL_RESIL";
         $this->const[$r][1] = "texte";
         $this->const[$r][2] = "Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt";
@@ -333,4 +340,47 @@ class modAdherent extends DolibarrModules
 		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
         $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m-%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
     }
+    
+    
+    /**
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+        global $conf,$langs;
+    
+        // Permissions
+        $this->remove($options);
+    
+        //ODT template
+        /*
+        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
+        $dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+        $dest=$dirodt.'/template_order.odt';
+    
+        if (file_exists($src) && ! file_exists($dest))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            dol_mkdir($dirodt);
+            $result=dol_copy($src,$dest,0,0);
+            if ($result < 0)
+            {
+                $langs->load("errors");
+                $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+                return 0;
+            }
+        }*/
+    
+        $sql = array(
+            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type='member' AND entity = ".$conf->entity,
+            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','member',".$conf->entity.")"
+        );
+    
+        return $this->_init($sql,$options);
+    }    
 }

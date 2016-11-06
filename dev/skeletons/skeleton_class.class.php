@@ -164,10 +164,14 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' t.field2';
 		//...
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql.= ' WHERE 1 = 1';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		}
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . $id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -236,16 +240,20 @@ class Skeleton_Class extends CommonObject
 				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+		$sql.= ' WHERE 1 = 1';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
 		}
-
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
+		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
 		}
+
 		$this->lines = array();
 
 		$resql = $this->db->query($sql);
@@ -443,36 +451,51 @@ class Skeleton_Class extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int  	$notooltip			1=Disable tooltip
      *  @param	int		$maxlen				Max length of visible user name
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
 	{
-		global $langs, $conf, $db;
+		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result = '';
         $companylink = '';
 
         $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<div width="100%">';
+        $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
+        $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
+        
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowProject");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->ref . $linkend;
+		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
 	}
 
@@ -491,7 +514,7 @@ class Skeleton_Class extends CommonObject
 	 *  Return the status
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
 	static function LibStatut($status,$mode=0)
@@ -525,6 +548,11 @@ class Skeleton_Class extends CommonObject
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
 		if ($mode == 5)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+		}
+		if ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');

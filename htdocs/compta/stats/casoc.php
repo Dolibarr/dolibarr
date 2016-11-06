@@ -188,6 +188,11 @@ if ($modecompta=="CREANCES-DETTES")
 
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 
 // Show Array
 $catotal=0;

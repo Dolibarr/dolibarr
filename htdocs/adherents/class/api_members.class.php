@@ -84,13 +84,12 @@ class Members extends DolibarrApi
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $typeid     ID of the type of member
-     * @param string    $login      To filter the members by login
-     * @param string    $name       To filter the members by name (firstname, lastname or company name matching the filter)
-     * @return array Array of member objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of member objects
      *
      * @throws RestException
      */
-    function index($sortfield = "a.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $typeid = '', $login = '', $name = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $typeid = '', $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -99,27 +98,24 @@ class Members extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "SELECT a.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql.= ' WHERE a.entity IN ('.getEntity('adherent', 1).')';
+        $sql = "SELECT t.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent', 1).')';
         if (!empty($typeid))
         {
-            $sql.= ' AND a.fk_adherent_type='.$typeid;
+            $sql.= ' AND t.fk_adherent_type='.$typeid;
         }
-        if (!empty($login)) {
-            $sql .= " AND a.login LIKE '%".$login."%'";
-        }
-        if (!empty($name)) {
-            $sql .= " AND (a.firstname LIKE '%".$name."%' OR a.lastname LIKE '%".$name."%' OR a.societe LIKE '%".$name."%')";
-        }
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -271,7 +267,7 @@ class Members extends DolibarrApi
     /**
      * Validate fields before creating an object
      *
-     * @param array $data   Data to validate
+     * @param array|null    $data   Data to validate
      * @return array
      *
      * @throws RestException

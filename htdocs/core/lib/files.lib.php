@@ -1693,7 +1693,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->bind->write || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1779,7 +1779,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->banque->dir_output.'/bordereau/'.$original_file;		// original_file should contains relative path so include the get_exdir result
+		$original_file=$conf->bank->dir_output.'/checkdeposits/'.$original_file;		// original_file should contains relative path so include the get_exdir result
 	}
 
 	// Wrapping for bank

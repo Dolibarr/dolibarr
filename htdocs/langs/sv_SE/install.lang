@@ -11,12 +11,14 @@ PHPSupportSessions=Detta stöder PHP sessioner.
 PHPSupportPOSTGETOk=Detta stöder PHP variabler POST och GET.
 PHPSupportPOSTGETKo=Det är möjligt din PHP-installation inte stöder variabler POST eller GET. Kontrollera din parameter <b>variables_order</b> i php.ini.
 PHPSupportGD=Denna PHP stöd GD grafiska funktioner.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Denna PHP stöd UTF8 funktioner.
 PHPMemoryOK=Din PHP max session minne är inställt på <b>%s.</b> Detta bör vara nog.
 PHPMemoryTooLow=Din PHP max session minne är inställt på <b>%s</b> byte. Detta bör vara för låg. Ändra din <b>php.ini</b> för att ställa <b>memory_limit</b> parameter till minst <b>%s</b> byte.
 Recheck=Klicka här för en mer signifikant test
 ErrorPHPDoesNotSupportSessions=Din PHP-installation inte stöd sessioner. Denna funktion är skyldig att Dolibarr fungerar. Kolla din PHP-konfiguration.
 ErrorPHPDoesNotSupportGD=Din PHP installation saknar stöd för grafisk funktion GD. Inga diagram kommer att finnas tillgängliga.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Din PHP-installation inte stöd för UTF8 funktioner. Dolibarr kan inte fungera korrekt. Lösa det här innan du installerar Dolibarr.
 ErrorDirDoesNotExists=Nummer %s finns inte.
 ErrorGoBackAndCorrectParameters=Gå tillbaka och rätta till felaktiga parametrar.
@@ -133,6 +135,10 @@ ActivateModule=Aktivera modul %s
 ShowEditTechnicalParameters=Klicka här för att visa / redigera avancerade parametrar (expertläge)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Din databas är av version %s. Den har en kritisk bugg vilket gör dataförluster om du gör strukturförändringar på din databas, som det krävs av migrationsprocessen. För detta skäl, kommer migrationen inte tillåtas förrän du uppgraderat din databas till en nyare fast version (lista över kända buggade versioner:%s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
 MigrationEvents=Överföring av händelser för att lägga till händelseägaren i uppdragslista
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Visa ej tillgängliga val
 HideNotAvailableOptions=Dölj ej tillgängliga val

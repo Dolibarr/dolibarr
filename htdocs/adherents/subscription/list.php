@@ -23,7 +23,7 @@
  *      \brief      list of subscription
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

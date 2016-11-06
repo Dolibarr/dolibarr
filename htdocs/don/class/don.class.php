@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *      \class      Don
- *		\brief      Class to manage donations
+ *		Class to manage donations
  */
 class Don extends CommonObject
 {
@@ -39,7 +38,8 @@ class Don extends CommonObject
     public $table_element='don';			// Name of table without prefix where object is stored
 	public $fk_element = 'fk_donation';
 	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    var $picto = 'generic';
+    
     var $date;
     var $amount;
     var $societe;
@@ -48,7 +48,7 @@ class Don extends CommonObject
     var $town;
     var $email;
     var $public;
-    var $fk_projet;
+    var $fk_project;
     var $fk_typepayment;
 	var $num_payment;
 	var $date_valid;
@@ -122,7 +122,6 @@ class Don extends CommonObject
         }
         if ($mode == 3)
         {
-            $prefix='Short';
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0');
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1');
@@ -135,13 +134,19 @@ class Don extends CommonObject
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
         }
-        if ($mode == 5)
+            if ($mode == 5)
         {
-            $prefix='Short';
             if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
             if ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
             if ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+        }
+        if ($mode == 6)
+        {
+            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
+            if ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
+            if ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
+            if ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
         }
     }
 
@@ -601,7 +606,7 @@ class Don extends CommonObject
         $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
-        $sql.= " d.phone_mobile, d.fk_projet, d.model_pdf,";
+        $sql.= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
         $sql.= " p.ref as project_ref,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -648,7 +653,8 @@ class Don extends CommonObject
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
                 $this->project        = $obj->project_ref;
-                $this->fk_projet      = $obj->fk_projet;
+                $this->fk_projet      = $obj->fk_project;   // deprecated
+                $this->fk_project     = $obj->fk_project;
                 $this->public         = $obj->public;
                 $this->modepaymentid  = $obj->fk_payment;
                 $this->modepayment    = $obj->libelle;

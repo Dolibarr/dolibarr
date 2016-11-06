@@ -133,7 +133,7 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -343,11 +343,11 @@ if ($resql)
 
     // Fields title
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['t.entity']['checked']))     print_liste_field_titre($arrayfields['t.entity']['label'],$_SERVER['PHP_SELF'],'t.entity','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.batch']['checked']))      print_liste_field_titre($arrayfields['t.batch']['label'],$_SERVER['PHP_SELF'],'t.batch','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.fk_product']['checked'])) print_liste_field_titre($arrayfields['t.fk_product']['label'],$_SERVER['PHP_SELF'],'t.fk_product','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.eatby']['checked']))      print_liste_field_titre($arrayfields['t.eatby']['label'],$_SERVER['PHP_SELF'],'t.eatby','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.sellby']['checked']))      print_liste_field_titre($arrayfields['t.sellby']['label'],$_SERVER['PHP_SELF'],'t.sellby','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.entity']['checked']))        print_liste_field_titre($arrayfields['t.entity']['label'],$_SERVER['PHP_SELF'],'t.entity','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.batch']['checked']))         print_liste_field_titre($arrayfields['t.batch']['label'],$_SERVER['PHP_SELF'],'t.batch','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.fk_product']['checked']))    print_liste_field_titre($arrayfields['t.fk_product']['label'],$_SERVER['PHP_SELF'],'t.fk_product','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.eatby']['checked']))         print_liste_field_titre($arrayfields['t.eatby']['label'],$_SERVER['PHP_SELF'],'t.eatby','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.sellby']['checked']))        print_liste_field_titre($arrayfields['t.sellby']['label'],$_SERVER['PHP_SELF'],'t.sellby','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.fk_user_creat']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_creat']['label'],$_SERVER['PHP_SELF'],'t.fk_user_creat','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.fk_user_modif']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_modif']['label'],$_SERVER['PHP_SELF'],'t.fk_user_modif','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.import_key']['checked']))    print_liste_field_titre($arrayfields['t.import_key']['label'],$_SERVER['PHP_SELF'],'t.import_key','',$param,'',$sortfield,$sortorder);
@@ -460,7 +460,7 @@ if ($resql)
             }
             if (! empty($arrayfields['t.batch']['checked'])) 
             {
-                print '<td>'.$productlot->getNomUrl().'</td>';
+                print '<td>'.$productlot->getNomUrl(1).'</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }
             if (! empty($arrayfields['t.fk_product']['checked'])) 
@@ -600,10 +600,6 @@ if ($resql)
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->facture->lire;
 	    $delallowed=$user->rights->facture->lire;
-	
-	    print '<br><a name="show_files"></a>';
-	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
 	
 	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

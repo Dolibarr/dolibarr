@@ -123,7 +123,7 @@ if (! empty($_GET['code']))     // We are coming from Google oauth page
         //var_dump($apiService);      // OAuth\OAuth2\Service\Google
         $token = $apiService->requestAccessToken($_GET['code'], $state);
         
-        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
+        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
     } catch (Exception $e) {
         print $e->getMessage();
     }

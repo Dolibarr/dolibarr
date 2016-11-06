@@ -157,3 +157,4 @@ OrderCreated=Comenzile dvs au fost generate
 OrderFail=O eroare întâlnită în timpul creării comezilor dvs
 CreateOrders=Crează Comenzi
 ToBillSeveralOrderSelectCustomer=Pentru crearea unei facturi pentru câteva comenzi, click mai întâi pe client apoi alege "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

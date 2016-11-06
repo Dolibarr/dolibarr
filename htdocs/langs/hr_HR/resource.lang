@@ -1,31 +1,31 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Sredstva
+MenuResourceAdd=Novo sredstvo
+DeleteResource=Obriši sredstvo
+ConfirmDeleteResourceElement=Potvrdite brisanje sredstva za ovaj element
+NoResourceInDatabase=Nema sredstava u bazi
+NoResourceLinked=Nema povezanih sredstava
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Popis sredstava
+ResourceSingular=Sredstvo
+ResourceCard=Kartica sredstva
+AddResource=Kreiraj sredstvo
+ResourceFormLabel_ref=Naziv sredstva
+ResourceType=Tip sredstva
+ResourceFormLabel_description=Opis sredstva
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Sredstva povezana s elementom
 
-ShowResource=Show resource
+ShowResource=Prikaži sredstvo
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Sredstva elementa
+ResourceCreatedWithSuccess=Sredstvo uspješno kreirano
+RessourceLineSuccessfullyDeleted=Stavka sredstva uspješno obrisana
+RessourceLineSuccessfullyUpdated=Stavka sredstva uspješno promjenjena
+ResourceLinkedWithSuccess=Sredstvo uspješno povezano
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+ConfirmDeleteResource=Potvrdite brisanje sredstva
+RessourceSuccessfullyDeleted=Sredstvo uspješno obrisano
+DictionaryResourceType=Tipovi sredstava
 
-SelectResource=Select resource
+SelectResource=Odaberite sredstvo

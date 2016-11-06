@@ -47,6 +47,7 @@ DefaultModelSupplierProposalCreate=Default model creation
 DefaultModelSupplierProposalToBill=Default template when closing a price request (accepted)
 DefaultModelSupplierProposalClosed=Default template when closing a price request (refused)
 ListOfSupplierProposal=List of supplier proposal requests
+ListSupplierProposalsAssociatedProject=List of supplier proposals associated with project
 SupplierProposalsToClose=Supplier proposals to close
 SupplierProposalsToProcess=Supplier proposals to process
 LastSupplierProposals=Last price requests

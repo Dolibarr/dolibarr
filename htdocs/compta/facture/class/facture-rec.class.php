@@ -42,7 +42,8 @@ class FactureRec extends CommonInvoice
 	public $table_element='facture_rec';
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
-
+	public $picto='bill';
+	
 	var $entity;
 	var $number;
 	var $date;
@@ -1040,7 +1041,7 @@ class FactureRec extends CommonInvoice
         $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
         if (!empty($unit)) 
         {
-        	$sql.= ', unit_frequency = "'.$this->db->escape($unit).'"';
+        	$sql.= ', unit_frequency = \''.$this->db->escape($unit).'\'';
 		}
         $sql.= ' WHERE rowid = '.$this->id;
         

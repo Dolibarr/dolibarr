@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2015	Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -75,6 +76,7 @@ $result=restrictedArea($user, $origin, $origin_id);
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
+$cancel     = GETPOST('cancel','alpha');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -112,6 +114,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if ($cancel) { $action = ''; }
+    
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
 	// Set incoterm
@@ -125,6 +129,23 @@ if (empty($reshook))
 	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	{
 	    $result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+	
+	if ($action == 'setref_customer')
+	{
+        $result = $object->fetch($id);
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+
+        $result = $object->setValueFrom('ref_customer', GETPOST('ref_customer','alpha'), '', null, 'text', '', $user, 'SHIPMENT_MODIFY');
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+            $action = 'editref_customer';
+        } else {
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+            exit;
+        }
 	}
 	
 	if ($action == 'update_extras')
@@ -181,9 +202,9 @@ if (empty($reshook))
 	    $objectsrc->fetch($object->origin_id);
 
 	    $object->socid					= $objectsrc->socid;
-	    $object->ref_customer			= $objectsrc->ref_client;
+	    $object->ref_customer			= '';                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
 	    $object->model_pdf				= GETPOST('model');
-	    $object->date_delivery			= $date_delivery;	// Date delivery planed
+	    $object->date_delivery			= $date_delivery;	    // Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
 	    $object->tracking_number		= GETPOST('tracking_number','alpha');
@@ -392,9 +413,9 @@ if (empty($reshook))
 	)
 	{
 	    $object->fetch_thirdparty();
-
+	    
 	    $result = $object->valid($user);
-
+	    
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
@@ -534,13 +555,21 @@ if (empty($reshook))
 	elseif ($action == 'classifybilled')
 	{
 	    $object->fetch($id);
-	    $object->set_billed();
+	    $result = $object->set_billed();
+	    if($result >= 0) {
+	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	    	exit();
+	    }
 	}
 
 	elseif ($action == 'classifyclosed')
 	{
 	    $object->fetch($id);
-	    $object->setClosed();
+	    $result = $object->setClosed();
+	    if($result >= 0) {
+	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	    	exit();
+	    }
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -551,6 +580,7 @@ if (empty($reshook))
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';
+	$trackid='shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 }
@@ -565,8 +595,11 @@ llxHeader('',$langs->trans('Shipment'),'Expedition');
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-$product_static = new Product($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+
+$product_static = new Product($db);
+$shipment_static = new Expedition($db);
+$warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
@@ -1214,11 +1247,12 @@ else if ($id || $ref)
 
 	if ($object->id > 0)
 	{
-		if (!empty($object->origin))
+		if (!empty($object->origin) && $object->origin_id > 0)
 		{
 			$typeobject = $object->origin;
 			$origin = $object->origin;
-			$object->fetch_origin();
+			$origin_id = $object->origin_id;
+			$object->fetch_origin();         // Load property $object->commande, $object->propal, ...
 		}
 
 		$soc = new Societe($db);
@@ -1231,17 +1265,13 @@ else if ($id || $ref)
 
 		$formconfirm='';
 		
-		/*
-		 * Confirmation de la suppression
-		*/
+		// Confirm deleteion
 		if ($action == 'delete')
 		{
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
 		}
 
-		/*
-		 * Confirmation de la validation
- 		 */
+		// Confirmation validation
 		if ($action == 'valid')
 		{
 			$objectref = substr($object->ref, 1, 4);
@@ -1267,9 +1297,7 @@ else if ($id || $ref)
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
 
 		}
-		/*
-		 * Confirmation de l'annulation
-		 */
+		// Confirm cancelation
 		if ($action == 'annuler')
 		{
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1294,21 +1322,30 @@ else if ($id || $ref)
 		$totalVolume=$tmparray['volume'];
 		
 		
-		// Warehouse card
+		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+		{
+		    $objectsrc=new Commande($db);
+		    $objectsrc->fetch($object->$typeobject->id);
+		}
+		if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+		{
+		    $objectsrc=new Propal($db);
+		    $objectsrc->fetch($object->$typeobject->id);
+		}
+
+		// Shipment card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
-		
 		$morehtmlref='<div class="refidno">';
 		// Ref customer shipment
-		$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
         $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
         // Project
-        /*
         if (! empty($conf->projet->enabled)) {
             $langs->load("projects");
             $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
-            if ($user->rights->supplier_proposal->creer) {
+            if (0) {    // Do not change on shipment
                 if ($action != 'classify') {
                     $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
                 }
@@ -1324,20 +1361,23 @@ else if ($id || $ref)
                     $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
                 }
             } else {
-                if (! empty($object->fk_project)) {
+                // We don't have project on shipment, so we will use the project or source object instead
+                // TODO Add project on shipment
+                $morehtmlref .= ' : ';
+                if (! empty($objectsrc->fk_project)) {
                     $proj = new Project($db);
-                    $proj->fetch($object->fk_project);
-                    $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                    $proj->fetch($objectsrc->fk_project);
+                    $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
                     $morehtmlref .= $proj->ref;
                     $morehtmlref .= '</a>';
                 } else {
                     $morehtmlref .= '';
                 }
             }
-        }*/
+        }
 		$morehtmlref.='</div>';
 		
-		
+
     	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     	
     	
@@ -1347,24 +1387,10 @@ else if ($id || $ref)
     	
 		print '<table class="border" width="100%">';
 
-		// Ref
-		/*
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td></tr>';
-
-		// Customer
-		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-		print "</tr>";*/
-
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
 		{
 			print '<tr><td>';
-			$objectsrc=new Commande($db);
-			$objectsrc->fetch($object->$typeobject->id);
 			print $langs->trans("RefOrder").'</td>';
 			print '<td colspan="3">';
 			print $objectsrc->getNomUrl(1,'commande');
@@ -1374,8 +1400,6 @@ else if ($id || $ref)
 		if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 		{
 			print '<tr><td>';
-			$objectsrc=new Propal($db);
-			$objectsrc->fetch($object->$typeobject->id);
 			print $langs->trans("RefProposal").'</td>';
 			print '<td colspan="3">';
 			print $objectsrc->getNomUrl(1,'expedition');
@@ -1385,7 +1409,7 @@ else if ($id || $ref)
 
 		// Date creation
 		print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
-		print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
+		print '<td colspan="3">'.dol_print_date($object->date_creation,"dayhour")."</td>\n";
 		print '</tr>';
 
 		// Delivery date planned
@@ -1516,11 +1540,6 @@ else if ($id || $ref)
 		print "</td>\n";
 		print '</tr>';
 
-		// Status
-		/*print '<tr><td>'.$langs->trans("Status").'</td>';
-		print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
-		print '</tr>';*/
-
 		// Other attributes
 		$cols = 2;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -1623,6 +1642,11 @@ else if ($id || $ref)
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 		}
 
+		if ($origin && $origin_id > 0)
+		{
+            print '<td align="center">'.$langs->trans("QtyInOtherShipments").'</td>';
+		}
+		
 		print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
 		print '<td align="center">'.$langs->trans("CalculatedVolume").'</td>';
 		//print '<td align="center">'.$langs->trans("Size").'</td>';
@@ -1655,6 +1679,50 @@ else if ($id || $ref)
 			}
 		}
 
+        // Get list of products already sent for same source object
+		$alreadysent = array();
+		if ($origin && $origin_id > 0)
+		{
+    		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
+    		$sql.= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
+    		$sql.= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition,";
+    		//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
+    		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+    		$sql.= ' p.description as product_desc';
+    		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+    		$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
+    		$sql.= ", ".MAIN_DB_PREFIX.$origin."det as obj";
+    		//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+    		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
+    		$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+    		$sql.= " AND obj.fk_".$origin." = ".$origin_id;
+    		$sql.= " AND obj.rowid = ed.fk_origin_line";
+    		$sql.= " AND ed.fk_expedition = e.rowid";
+    		//if ($filter) $sql.= $filter;
+    		$sql.= " ORDER BY obj.fk_product";
+
+    		dol_syslog("show_list_sending_receive", LOG_DEBUG);
+    		$resql = $db->query($sql);
+    		if ($resql)
+    		{
+    		    $num = $db->num_rows($resql);
+    		    $i = 0;
+    		
+    		    while($i < $num)
+    		    {
+        		    $obj = $db->fetch_object($resql);
+        		    if ($obj)
+        		    {
+        		        // $obj->rowid is rowid in $origin."det" table
+        		        $alreadysent[$obj->rowid][$obj->shipmentline_id]=array('shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+        		    }
+        		    $i++;
+    		    }
+    		}
+    		//var_dump($alreadysent);
+		}
+
+		// Loop on each product to send/sent
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
 			print "<tr ".$bc[$var].">";
@@ -1711,11 +1779,42 @@ else if ($id || $ref)
 				print "</td>\n";
 			}
 
-			// Qte commande
+			// Qty ordered
 			print '<td align="center">'.$lines[$i]->qty_asked.'</td>';
 
-			// Qte a expedier ou expedier
+			// Qty to ship or shipped
 			print '<td align="center">'.$lines[$i]->qty_shipped.'</td>';
+
+			// Qty in other shipments (with shipment and warehouse used)
+    		if ($origin && $origin_id > 0)
+    		{
+    			print '<td align="center" class="nowrap">';
+    			foreach ($alreadysent as $key => $val)
+    			{
+    			    if ($lines[$i]->fk_origin_line == $key)
+    			    {
+    			        $j = 0;
+    			        foreach($val as $shipmentline_id=> $shipmentline_var)
+    			        {
+    			            if ($shipmentline_id == $lines[$i]->rowid) continue; // We want to show only "other shipments"
+
+    			            $j++;
+    			            if ($j > 1) print '<br>';
+    			            $shipment_static->fetch($shipmentline_var['shipment_id']);
+    			            print $shipment_static->getNomUrl(1);
+    			            print ' - '.$shipmentline_var['qty_shipped'];
+    			            $htmltext=$langs->trans("DateValidation").' : '.dol_print_date($shipmentline_var['date_valid'], 'dayhour');
+    			            if (! empty($conf->stock->enabled) && $shipmentline_var['warehouse'] > 0)
+    			            {
+    			                $warehousestatic->fetch($shipmentline_var['warehouse']);
+    			                $htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1);
+    			            }
+    			            print ' '.$form->textwithpicto('', $htmltext, 1);
+    			        }
+    			    }
+    			}
+    		}			
+			print '</td>';
 
 			// Weight
 			print '<td align="center">';
@@ -1732,7 +1831,7 @@ else if ($id || $ref)
 			// Size
 			//print '<td align="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
 
-			// Entrepot source
+			// Warehouse source
 			if (! empty($conf->stock->enabled))
 			{
 				print '<td align="left">';
@@ -1785,7 +1884,7 @@ else if ($id || $ref)
 			}
 			print "</tr>";
 			
-			//Display lines extrafields
+			// Display lines extrafields
 			if (is_array($extralabelslines) && count($extralabelslines)>0) {
 				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
 				$line = new ExpeditionLigne($db);
@@ -1798,6 +1897,10 @@ else if ($id || $ref)
 			$var=!$var;
 		}
 		
+		// TODO Show also lines ordered but not delivered
+
+		
+		
 		print "</table>\n";
 	}
 
@@ -1807,6 +1910,7 @@ else if ($id || $ref)
 
 	$object->fetchObjectLinked($object->id,$object->element);
 
+	
 	/*
 	 *    Boutons actions
 	 */
@@ -1896,6 +2000,7 @@ else if ($id || $ref)
 	/*
 	 * Documents generated
 	 */
+	
 	if ($action != 'presend')
 	{
         print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1908,7 +2013,7 @@ else if ($id || $ref)
 		$genallowed=$user->rights->expedition->lire;
 		$delallowed=$user->rights->expedition->supprimer;
 
-		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+		print $formfile->showdocuments('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		
 		// Show links to link elements
@@ -1926,9 +2031,11 @@ else if ($id || $ref)
 		print '</div></div></div>';
 	}
 
+	
 	/*
 	 * Action presend
 	 */
+	
 	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
@@ -1978,10 +2085,12 @@ else if ($id || $ref)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		$formmail->trackid='shi'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
@@ -2057,13 +2166,6 @@ else if ($id || $ref)
 		print $formmail->get_form();
 
 		dol_fiche_end();
-	}
-
-	if ($action != 'presend' && ! empty($origin) && $object->$origin->id)
-	{
-		print '<br>';
-		//show_list_sending_receive($object->origin,$object->origin_id," AND e.rowid <> ".$object->id);
-		show_list_sending_receive($object->origin,$object->origin_id);
 	}
 }
 

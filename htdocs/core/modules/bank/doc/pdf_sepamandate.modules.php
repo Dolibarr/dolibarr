@@ -54,7 +54,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$this->db = $db;
 		$this->name = "sepamandate";
-		$this->description = $langs->trans("DocumentModelSepaMandate");
+		$this->description = $langs->transnoentitiesnoconv("DocumentModelSepaMandate");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -88,11 +88,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
-	 *	@param	Project		$object   		Object project a generer
-	 *	@param	Translate	$outputlangs	Lang output object
-	 *	@return	int         				1 if OK, <=0 if KO
+	 *	@param	    Project		$object   		    Object project a generer
+	 *	@param	    Translate	$outputlangs	    Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details (not used for this template)
+     *  @param		int			$hidedesc			Do not show desc (not used for this template)
+     *  @param		int			$hideref			Do not show ref (not used for this template)
+     *  @param      null|array  $moreparams         More parameters
+	 *	@return	    int         				    1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
@@ -104,22 +109,26 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("projects");
-
-		if ($conf->bank->dir_output)
+		$outputlangs->load("withdrawals");
+		$outputlangs->load("bills");
+		
+		if (! empty($conf->bank->dir_output))
 		{
 			//$nblignes = count($object->lines);  // This is set later with array of tasks
 
 		    // Definition of $dir and $file
 		    if ($object->specimen)
 		    {
-		        $dir = $conf->bank->dir_output;
+		        if (! empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
+		        else $dir = $conf->bank->dir_output;
 		        $file = $dir . "/SPECIMEN.pdf";
 		    }
 		    else
 		    {
 		        $objectref = dol_sanitizeFileName($object->ref);
-		        $dir = $conf->bank->dir_output . "/" . $objectref;
-		        $file = $dir . "/" . $objectref . ".pdf";
+		        if (! empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
+		        else $dir = $conf->bank->dir_output . "/" . $objectref;
+		        $file = $dir . "/" . $langs->transnoentitiesnoconv("SepaMandateShort").' '.$objectref . "-".dol_sanitizeFileName($object->rum).".pdf";
 		    }
 		    
 			if (! file_exists($dir))
@@ -216,14 +225,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY+=2;
 				
 				$pdf->SetXY($this->marge_gauche, $posY);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->trans("RUM").')'.' : '.$object->rum, 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->transnoentitiesnoconv("RUM").')'.' : '.$object->rum, 0, 'L');
 				
 				$posY=$pdf->GetY();
 				$posY+=2;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$ics='';
 				if (! empty($conf->global->PRELEVEMENT_ICS)) $ics=$conf->global->PRELEVEMENT_ICS;
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->trans("ICS").')'.' : '.$ics, 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").')'.' : '.$ics, 0, 'L');
 				
 				$posY=$pdf->GetY();
 				$posY+=1;
@@ -245,7 +254,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				
 				$posY+=8;
 				$pdf->SetXY($this->marge_gauche, $posY);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 8, $outputlangs->trans("SEPALegalText", $mysoc->name, $mysoc->name), 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 8, $outputlangs->transnoentitiesnoconv("SEPALegalText", $mysoc->name, $mysoc->name), 0, 'L');
 				
 				// Your data form
 				$posY=$pdf->GetY();
@@ -264,7 +273,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0)
 				{
-				    $sepaname = $thirdparty->name.' ('.$object->account_owner.')';
+				    $sepaname = $thirdparty->name.($object->account_owner?' ('.$object->account_owner.')':'');
 				}
 				$posY=$pdf->GetY();
 				$posY+=3;
@@ -319,20 +328,20 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'FRST') $pdf->MultiCell(5, 3, 'X', 0, 'L');
 				$pdf->SetXY(86, $posY);
-				$txt = $langs->trans("ModeRECUR").'  '.$langs->trans("or");
+				$txt = $langs->transnoentitiesnoconv("ModeRECUR").'  '.$langs->transnoentitiesnoconv("or");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$posY+=6;
 				$pdf->Rect(80, $posY, 5, 5);
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'RECUR') $pdf->MultiCell(5, 3, 'X', 0, 'L');
 				$pdf->SetXY(86, $posY);
-				$txt = $langs->trans("ModeFRST");
+				$txt = $langs->transnoentitiesnoconv("ModeFRST");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				if (empty($object->frstrecur))
 				{
     				$posY+=6;
     				$pdf->SetXY(80, $posY);
-				    $txt = '('.$langs->trans("PleaseCheckOne").')';
+				    $txt = '('.$langs->transnoentitiesnoconv("PleaseCheckOne").')';
     				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				}
 				
@@ -354,11 +363,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				var_dump($tab_top);
+				/*var_dump($tab_top);
 				var_dump($heightforinfotot);
 				var_dump($heightforfreetext);
 				var_dump($heightforfooter);
-				var_dump($bottomlasttab);
+				var_dump($bottomlasttab);*/
 				
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
@@ -443,7 +452,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
    
 	    $pdf->SetXY($this->marge_gauche, $posy);
 	    $pdf->SetFont('','', $default_font_size);
-	    $pdf->MultiCell(100, 3, $outputlangs->trans("PleaseReturnMandate").':', 0, 'L', 0);
+	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
 	    $posy=$pdf->GetY()+2;
 	     
 	    $pdf->SetXY($this->marge_gauche, $posy);
@@ -477,7 +486,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    
 	    $pdf->SetFont('','', $default_font_size - 2);
 	    
-	    $pdf->MultiCell(100, 3, $outputlangs->trans("DateOfSignature"), 0, 'L', 0);
+	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
 	    $pdf->MultiCell(100, 3, ' ');
 	    $pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
 	    
@@ -488,7 +497,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    // Total HT
 	    $pdf->SetFillColor(255,255,255);
 	    $pdf->SetXY($posx, $tab_top + 0);
-	    $pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("Signature"), 0, 'L', 1);
+	    $pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
 	
 	    $pdf->SetXY($posx, $tab_top + $tab_hl);
 	    $pdf->MultiCell($largcol, $tab_hl*3, '', 1, 'R');
@@ -555,6 +564,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		{
             $daterum = dol_print_date($object->date_rum,'day',false,$outputlangs,true);
 		}
+		else $daterum = dol_print_date($object->datec,'day',false,$outputlangs,true);   // For old record, the date_rum was not saved.
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . $daterum, '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);

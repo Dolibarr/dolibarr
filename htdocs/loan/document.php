@@ -157,6 +157,7 @@ if ($object->id)
 
     $modulepart = 'loan';
     $permission = $user->rights->loan->write;
+    $permtoedit = $user->rights->loan->write;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

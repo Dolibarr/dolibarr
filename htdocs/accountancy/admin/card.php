@@ -22,9 +22,8 @@
  * \ingroup     Advanced accountancy
  * \brief 		Card of accounting account
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
@@ -38,6 +37,7 @@ $langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action');
+$backtopage = GETPOST('backtopage');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
@@ -47,7 +47,18 @@ $cancel = GETPOST('cancel');
 
 $object = new AccountingAccount($db);
 
-// Action
+
+/*
+ * Action
+ */
+
+if (GETPOST('cancel'))
+{
+	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+	header("Location: ".$urltogo);
+	exit;
+}
+		
 if ($action == 'add' && $user->rights->accounting->chartofaccount)
 {
 	if (! $cancel) {
@@ -85,18 +96,30 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$object->active = 1;
 		
 		$res = $object->create($user);
-		
 		if ($res == - 3) {
 			$error = 1;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		if ($res == - 4) {
+		elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		elseif ($res < 0)
+		{
+		    $error++;
+		    setEventMessages($object->error, $object->errors, 'errors');
+		    $action = "create";
+		}
+		if (! $error)
+		{
+		    setEventMessages("RecordCreatedSuccessfully",null,'mesgs');
+		    $urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+		    header("Location: ".$urltogo);
+		    exit;
 		}
 	}
-	header("Location: account.php");
-	exit;
 } else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (! $cancel) {
 		$result = $object->fetch($id);
@@ -175,7 +198,7 @@ $formaccounting = new FormAccounting($db);
 
 // Create mode
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans('NewAccount'));
+	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 	
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';

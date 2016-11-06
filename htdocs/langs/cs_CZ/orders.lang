@@ -157,3 +157,4 @@ OrderCreated=Vaše objednávky byly vytvořeny
 OrderFail=Došlo k chybě během vytváření objednávky
 CreateOrders=Vytvoření objednávky
 ToBillSeveralOrderSelectCustomer=Chcete-li vytvořit fakturu z několika řádů, klikněte nejprve na zákazníka, pak zvolte "%s".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

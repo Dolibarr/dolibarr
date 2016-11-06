@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
@@ -25,6 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 $langs->load("admin");
 
@@ -77,32 +78,37 @@ $file_list = array('missing' => array(), 'updated' => array());
 $xmlshortfile = '/install/filelist-'.DOL_VERSION.'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
-    
-$enableremotecheck = False;
+
+
+// Test if remote test is ok
+$enableremotecheck = True;
+if (preg_match('/beta|alpha/i', DOL_VERSION)) $enableremotecheck=False;
+
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
 if (dol_is_file($xmlfile))
 {
-    print '<input type="checkbox" name="local" checked> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.'<br>';
+    print '<input type="radio" name="target" value="local"'.((! GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"':'').'"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.'<br>';
 }
 else
 {
-    print '<input type="checkbox" name="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span><br>';
+    print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span><br>';
 }
 if ($enableremotecheck)
 {
-    print '<input type="checkbox" name="remote"> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'<br>';
+    print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'<br>';
 }
 else
 {
-    print '<input type="checkbox" name="remote" disabled> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'  <span class="warning">('.$langs->trans("FeatureNotYetAvailable").')</span><br>';
+    print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'  <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span><br>';
 }
 print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
 print '<br>';
+print '<br>';
 
-if (GETPOST('local'))
+if (GETPOST('target') == 'local')
 {
     if (dol_is_file($xmlfile))
     {
@@ -114,17 +120,20 @@ if (GETPOST('local'))
         $error++;
     }
 }
-if (GETPOST('remote'))
+if (GETPOST('target') == 'remote')
 {
-    // TODO
-    //$xmlfile = ;
-    if (1 == 1)
+    $xmlarray = getURLContent($xmlremote);
+    
+    // Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
+    if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
-        //$xml = simplexml_load_file($xmlfile);
+        $xmlfile = $xmlarray['content'];
+        $xml = simplexml_load_file($xmlfile);
     }
     else
     {
-        print $langs->trans('XmlNotFound') . ': ' . $xmlfile;
+        $errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
+        setEventMessages($errormsg, null, 'errors');
         $error++;
     }
 }       

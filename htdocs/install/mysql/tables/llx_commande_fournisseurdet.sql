@@ -28,6 +28,7 @@ create table llx_commande_fournisseurdet
   ref                        varchar(50),  -- supplier product ref
   label                      varchar(255), -- product label
   description                text,
+  vat_src_code				 varchar(10)  DEFAULT '',	-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx                     double(6,3)  DEFAULT 0,    -- taux tva
   localtax1_tx               double(6,3)  DEFAULT 0,    -- localtax1 rate
   localtax1_type			 varchar(10)	  NULL, 		-- localtax1 type

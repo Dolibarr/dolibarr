@@ -358,9 +358,10 @@ class FormCompany
 	 *
 	 *  @param  string	$selected   	Title preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
+	 *  @param  string  $morecss        Add more css on SELECT element      
 	 *  @return	string					String with HTML select
 	 */
-	function select_civility($selected='',$htmlname='civility_id')
+	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -374,7 +375,7 @@ class FormCompany
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out.= '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -724,9 +725,10 @@ class FormCompany
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
+	 *    @param    string      $morecss                More css
 	 *    @return	string
 	 */
-	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='')
+	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='',$morecss='')
 	{
 		global $conf;
 
@@ -740,7 +742,7 @@ class FormCompany
 			$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
 			$moreattrib.=' autocomplete="off"';
 		}
-		$out.= '<input id="'.$htmlname.'" class="maxwidthonsmartphone" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
+		$out.= '<input id="'.$htmlname.'" class="maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 
 		return $out;
 	}

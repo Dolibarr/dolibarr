@@ -2014,7 +2014,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('commande_fourniseur', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
@@ -3151,6 +3151,7 @@ class Product extends CommonObject
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
+        
         if ($this->type == Product::TYPE_PRODUCT) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
         if ($this->type == Product::TYPE_SERVICE) $label = '<u>' . $langs->trans("ShowService") . '</u>';
         if (! empty($this->ref))
@@ -3158,48 +3159,66 @@ class Product extends CommonObject
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
 
-        $tmptext='';
-		if ($this->weight) $tmptext.="<br>".$langs->trans("Weight").': '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
-		if ($this->length) $tmptext.="<br>".$langs->trans("Length").': '.$this->length.' '.measuring_units_string($this->length_units,'length');
-		if ($this->surface) $tmptext.="<br>".$langs->trans("Surface").': '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
-		if ($this->volume) $tmptext.="<br>".$langs->trans("Volume").': '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-        if ($tmptext) $label .= $tmptext;
+        if ($this->type == Product::TYPE_PRODUCT)
+        {
+            if ($this->weight)  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+    		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
+    		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+    		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+            if (! empty($conf->productbatch->enabled))
+            {
+                $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+            }
+        }
+        if ($this->type == Product::TYPE_SERVICE)
+        {
+            //
+        }
+        if (! empty($this->entity)) $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
-        if (! empty($this->entity))
-            $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
+        
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowOrder");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
 
-        $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
-
-	if (! is_object($hookmanager))
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		$hookmanager=new HookManager($this->db);
-	}
-	$hookmanager->initHooks(array('productdao'));
-	$parameters=array('id'=>$this->id);
-	$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		    
+		    if (! is_object($hookmanager))
+	        {
+	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	            $hookmanager=new HookManager($this->db);
+	        }
+	        $hookmanager->initHooks(array('productdao'));
+	        $parameters=array('id'=>$this->id);
+	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		}
 
         if ($option == 'supplier' || $option == 'category') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
         } else if ($option == 'stock') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
         } else if ($option == 'composition') {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
         } else {
-            $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
         }
 
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+        
 		if ($withpicto) {
-			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object('', 'product', '').$linkend.' ');
-			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object('', 'service', '').$linkend.' ');
+			if ($this->type == Product::TYPE_PRODUCT) $result.=($linkstart.img_object(($notooltip?'':$label), 'product', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
+			if ($this->type == Product::TYPE_SERVICE) $result.=($linkstart.img_object(($notooltip?'':$label), 'service',  ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
 		}
-		$result.=$link.$newref.$linkend;
+		$result.=$linkstart.$newref.$linkend;
 		return $result;
 	}
 

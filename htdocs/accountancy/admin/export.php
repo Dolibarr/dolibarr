@@ -38,8 +38,10 @@ $langs->load("admin");
 $langs->load("accountancy");
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+if (empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount))
+{
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
@@ -135,30 +137,13 @@ $var = true;
 /*
  * Main Options
  */
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('MainOptions') . '</td>';
+print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
 
 $var = ! $var;
-
-print '<tr ' . $bc[$var] . '>';
-print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
-if (! $conf->use_javascript_ajax) {
-	print '<td class="nowrap">';
-	print $langs->trans("NotAvailableWhenAjaxDisabled");
-	print "</td>";
-} else {
-	print '<td>';
-	$listformat = array (
-			'csv' => $langs->trans("csv"),
-			'txt' => $langs->trans("txt") 
-	);
-	print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
-	
-	print '</td>';
-}
-print "</td></tr>";
 
 $num = count($main_option);
 if ($num) {
@@ -221,8 +206,29 @@ if ($num2) {
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
+	
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1)
+	{
 		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
+	}
+	
+	print '<tr ' . $bc[$var] . '>';
+	print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
+	if (! $conf->use_javascript_ajax) {
+	    print '<td class="nowrap">';
+	    print $langs->trans("NotAvailableWhenAjaxDisabled");
+	    print "</td>";
+	} else {
+	    print '<td>';
+	    $listformat = array (
+	        'csv' => $langs->trans("csv"),
+	        'txt' => $langs->trans("txt")
+	    );
+	    print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
+	
+	    print '</td>';
+	}
+	print "</td></tr>";
 	
 	foreach ( $model_option as $key ) {
 		$var = ! $var;

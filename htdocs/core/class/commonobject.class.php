@@ -522,7 +522,7 @@ abstract class CommonObject
 		}
     	if (! empty($this->url))
 		{
-			$out.=dol_print_url($this->url,'',0,1);
+			$out.=dol_print_url($this->url,'_goout',0,1);
 			$outdone++;
 		}
 		if (! empty($conf->skype->enabled))
@@ -1148,7 +1148,6 @@ abstract class CommonObject
      */
     function fetch_origin()
     {
-        // TODO uniformise code
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
 
@@ -2799,7 +2798,11 @@ abstract class CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
-        		$this->statut = $status;
+        		if (empty($elementId))    // If the element we update was $this (so $elementId is null)
+        		{
+        		    $this->statut = $status;
+        		    $this->status = $status;
+        		}
 				return 1;
 			}
 			else
@@ -3753,30 +3756,30 @@ abstract class CommonObject
 	{
 	    global $user;
 
-
 	    $this->db->begin();
 
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid=".$rowid;
 
 	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (! $resql)
+
+	    $resql=$this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error=$this->db->lasterror();
+            $this->db->rollback();
+            return -1;
+        }
+        else
+        {
+            if (! $notrigger)
             {
-                $this->error=$this->db->lasterror();
-                $this->db->rollback();
-                return -1;
+                $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
+                if ($result < 0) { $this->db->rollback(); return -1; }
             }
-            else
-            {
-                if (! $notrigger)
-	        {
-	            $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
-	        }
-                $this->db->commit();
-                return 1;
-            }
+            $this->db->commit();
+            return 1;
+        }
 	}
 
 
@@ -3807,9 +3810,10 @@ abstract class CommonObject
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
+	 * @param   null|array  $moreparams     Array to provide more information
 	 * @return 	int 						>0 if OK, <0 if KO
 	 */
-	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref)
+	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
 		global $conf, $langs;
 
@@ -3837,7 +3841,8 @@ abstract class CommonObject
 		{
 			foreach(array('doc','pdf') as $prefix)
 			{
-				$file = $prefix."_".$modele.".modules.php";
+			    if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php";     // Member module use prefix_module.class.php
+				else $file = $prefix."_".$modele.".modules.php";
 
 				// On verifie l'emplacement du modele
 				$file=dol_buildpath($reldir.$modelspath.$file,0);
@@ -3854,6 +3859,8 @@ abstract class CommonObject
 		// If generator was found
 		if ($filefound)
 		{
+			global $db;  // Required to solve a conception default in commonstickergenerator.class.php making an include of code using $db
+		    
 			require_once $file;
 
 			$obj = new $classname($this->db);
@@ -3911,7 +3918,15 @@ abstract class CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+
+			if (in_array(get_class($this), array('Adherent'))) 
+			{
+			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
+			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
+			}
+			else $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+
+			if ($resultwritefile > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 

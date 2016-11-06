@@ -25,9 +25,8 @@
  * \ingroup Advanced accountancy
  * \brief Home customer ventilation
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -39,12 +38,15 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+    accessforbidden();
+}
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->ventilation->read)
+if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-	// Filter
+// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -56,11 +58,29 @@ if ($year == 0) {
 
 // Validate History
 $action = GETPOST('action');
+
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
 
+	// First clean corrupted data
+	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sqlclean .= " SET fd.fk_code_ventilation = 0";
+	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sqlclean .= '	(SELECT accnt.rowid ';
+	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+	$resql = $db->query($sqlclean);
+
+	// Now make the binding
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
@@ -113,12 +133,13 @@ if ($action == 'validatehistory') {
 } elseif ($action == 'cleanaccountancycode') {
 	$error = 0;
 	$db->begin();
-
+	
+	// Now clean
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
 	$sql1 .= " SET fd.fk_code_ventilation = 0";
 	$sql1 .= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
 	$sql1 .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
-	$sql1 .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
+	$sql1 .= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 
@@ -143,16 +164,16 @@ llxHeader('', $langs->trans("CustomersVentilation"));
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
+print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
 print $langs->trans("DescVentilCustomer") . '<br>';
-print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToDispatch")) . '<br>';
+print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
 print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
-// TODO Remove this. Should be done always.
-print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+// TODO Remove this. Should be done into the repair.php script
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
@@ -191,10 +212,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_factu
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-}
+$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
 
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -238,12 +256,9 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")"; // We don't share object for accountancy
 
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-}
-
-dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
+dol_syslog('htdocs/accountancy/customer/index.php');
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -282,10 +297,7 @@ if (! empty($conf->margin->enabled)) {
 	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-	}
+	$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
 
 	dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 	$resql = $db->query($sql);

@@ -103,11 +103,10 @@ if (GETPOST('removAll'))
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
 	$trackid = GETPOST('trackid','aZ09');
-
+	$subject='';$actionmsg='';$actionmsg2='';
+	
     if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
-
-	$subject='';$actionmsg='';$actionmsg2='';
 
 	if (is_object($object))
 	{
@@ -172,7 +171,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			// Recipient was provided from combo list
 			if ($_POST['receiver'] == 'thirdparty') // Id of third party
 			{
-				$sendto = $thirdparty->email;
+				$sendto = $thirdparty->name.' <'.$thirdparty->email.'>';
 				$sendtoid = 0;
 			}
 			else	// Id du contact
@@ -190,7 +189,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			// Recipient was provided from combo list
 			if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
 			{
-				$sendtocc = $thirdparty->email;
+				$sendtocc = $thirdparty->name.' <'.$thirdparty->email.'>';
 			}
 			else	// Id du contact
 			{
@@ -200,10 +199,30 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 		if (dol_strlen($sendto))
 		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		    
 			$langs->load("commercial");
 
-			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+			$fromtype = GETPOST('fromtype');
+            if ($fromtype === 'user') {
+                $from = $user->getFullName($langs) .' <'.$user->email.'>';
+            }
+            elseif ($fromtype === 'company') {
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+            }
+		    elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
+		        $tmp=explode(',', $user->email_aliases);
+                $from = trim($tmp[($reg[1] - 1)]);
+            }
+		    elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
+                $tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                $from = trim($tmp[($reg[1] - 1)]);
+            }
+            else {
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+            }
+
+            $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
 			$sendtobcc= GETPOST('sendtoccc');
 			if ($mode == 'emailfromproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
@@ -218,11 +237,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($action == 'send' || $action == 'relance')
 			{
 				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
-				$actionmsg2=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+				$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
 				if ($message)
 				{
-					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+					$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
 					$actionmsg = dol_concatdesc($actionmsg, $message);
@@ -283,7 +303,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 
 			// Send mail
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 			if ($mailfile->error)
 			{
@@ -323,6 +342,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$object->actiontypecode	= $actiontypecode;
 					$object->actionmsg		= $actionmsg;  // Long text
 					$object->actionmsg2		= $actionmsg2; // Short text
+					$object->trackid        = $trackid;
 					$object->fk_element		= $object->id;
 					$object->elementtype	= $object->element;
 

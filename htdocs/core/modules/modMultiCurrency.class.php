@@ -265,8 +265,14 @@ class modMultiCurrency extends DolibarrModules
 		$sql = array();
 
 		//$this->_load_tables('/multicurrency/sql/');
-
-		return $this->_init($sql, $options);
+		$res = $this->_init($sql, $options);
+		
+		if ($res)
+		{
+			$this->createFirstCurrency();
+		}
+		
+		return $res;
 	}
 
 	/**
@@ -284,5 +290,27 @@ class modMultiCurrency extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 
+	/**
+	 * Function called when module is enabled
+	 * Create the currency from general setting
+	 * 
+	 * @return 	int		1 if OK, 0 if KO
+	 */
+	private function createFirstCurrency()
+	{
+		global $conf,$user,$langs;
+		
+		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency))
+		{
+			$langs->loadCacheCurrencies('');
+			
+			$multicurrency = new MultiCurrency($this->db);
+			$multicurrency->code = $conf->currency;
+			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
+			$r = $multicurrency->create($user);
+			
+			if ($r > 0)	$multicurrency->addRate(1);
+		}
+	}
 }
 

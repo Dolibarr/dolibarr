@@ -65,7 +65,7 @@ class FormVentilation extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   $selectid           Preselected chart of accounts
+	 * @param string   $selectid           Preselected id or code of accounting accounts (depends on $select_in)
 	 * @param string   $htmlname           Name of field in html form
 	 * @param int      $showempty          Add an empty field
 	 * @param array    $event              Event options
@@ -99,34 +99,37 @@ class FormVentilation extends Form
 
 		$out = ajax_combobox($htmlname, $event);
 
+		// TODO Add $options in cache so next call will not execute the request
+		$selected = 0;
 		$options = array();
-		$selected = null;
-
-		while ($obj = $this->db->fetch_object($resql)) {
+		while ($obj = $this->db->fetch_object($resql)) 
+		{
 			$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
 			$label = dol_trunc($label, $trunclength);
 
 			$select_value_in = $obj->rowid;
 			$select_value_out = $obj->rowid;
 
+			// Try to guess if we have found default value
 			if ($select_in == 1) {
 				$select_value_in = $obj->account_number;
 			}
 			if ($select_out == 1) {
 				$select_value_out = $obj->account_number;
 			}
-
 			// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
 			// Because same account_number can be share between different accounting_system and do have the same meaning
-			if (($selectid != '') && $selectid == $select_value_in) {
+			if ($selectid != '' && $selectid == $select_value_in) {
+			    //var_dump("Found ".$selectid." ".$select_value_in);
 				$selected = $select_value_out;
 			}
 
 			$options[$select_value_out] = $label;
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		$this->db->free($resql);
+		
 		return $out;
 	}
 

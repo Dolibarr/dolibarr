@@ -93,49 +93,44 @@ class Products extends DolibarrApi
      * @param int		$page		Page number
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param int		$category	Use this param to filter list by category
-     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
-     *
-     * @return array Array of product objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+     * @return array                Array of product objects
      */
-    function index($sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $category=0, $to_sell='', $to_buy='') {
+    function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $category=0, $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
         
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
-        $sql = "SELECT rowid, ref, ref_ext";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        $sql = "SELECT t.rowid, t.ref, t.ref_ext";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as t";
         if ($category > 0)
         {
             $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
         }
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-
+        $sql.= ' WHERE t.entity IN ('.getEntity('product', 1).')';
         // Select products of given category
         if ($category > 0)
         {
             $sql.= " AND c.fk_categorie = ".$db->escape($category);
-            $sql.= " AND c.fk_product = p.rowid ";
+            $sql.= " AND c.fk_product = t.rowid ";
         }
-
         // Show products
-        if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
+        if ($mode == 1) $sql.= " AND t.fk_product_type = 0";
         // Show services
-        if ($mode == 2) $sql.= " AND p.fk_product_type = 1";
-        // Show product on sell
-        if ($to_sell !== '') $sql.= " AND p.tosell = ".$db->escape($to_sell);
-        // Show product on buy
-        if ($to_buy !== '') $sql.= " AND p.tobuy = ".$db->escape($to_buy);
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        if ($mode == 2) $sql.= " AND t.fk_product_type = 1";
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)

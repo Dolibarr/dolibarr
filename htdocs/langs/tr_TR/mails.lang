@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - mails
-Mailing=Eposta
-EMailing=Eposta
-EMailings=Epostalar
+Mailing=Epostalama
+EMailing=Epostalama
+EMailings=Epostalamalar
 AllEMailings=Tüm Epostalar
 MailCard=Eposta kartı
 MailRecipients=Alıcılar
@@ -67,8 +67,9 @@ MailingStatusRead=Okundu
 YourMailUnsubcribeOK=<b>%s</b> Epostası postalama listesinden başarıyla çıkarıldı
 ActivateCheckReadKey="Okuma Alındısı" ve "Abonelik İptali" için kullanılan URL şifrelemesi içi Anahtar
 EMailSentToNRecipients=EMail sent to %s recipients.
+EMailSentForNElements=Eposta gönderilen öğeler: %s.
 XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
-OnlyPDFattachmentSupported=Eğer fatura için zaten PDF belgesi oluşturulduysa, epostaya eklenecektir. Eğer oluşturulmadıysa, hçbir eposta gönderilmeyecektir (aynı zamanda, bu sürümün toplu posta gönderiminde ek olarak yalnızca pdf faturaların desteklendiğini unutmayın).
+OnlyPDFattachmentSupported=Eğer gönderilecek belge için zaten PDF belgesi oluşturulduysa, epostaya eklenecektir. Eğer oluşturulmadıysa, hçbir eposta gönderilmeyecektir (aynı zamanda, bu sürümün toplu posta gönderiminde ek olarak yalnızca pdf faturaların desteklendiğini unutmayın).
 AllRecipientSelected=Seçilen tüm üçüncü taraflar, bir eposta kuruluysa.
 ResultOfMailSending=Toplu Eposta gönderimi sonuçu
 NbSelected=Seçilen sayısı

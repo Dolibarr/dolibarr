@@ -45,7 +45,7 @@ $langs->load("compta");
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->mouvements->lire)              // If we can read accounting records, we shoul be able to see fiscal year.
+if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we shoul be able to see fiscal year.
     accessforbidden();
 	
 $error = 0;
@@ -80,7 +80,7 @@ $max = 100;
 
 $form = new Form($db);
 
-$title = $langs->trans('FiscalYears');
+$title = $langs->trans('AccountingPeriods');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
@@ -106,8 +106,8 @@ if ($result) {
 
 	$i = 0;
 
-	$title = $langs->trans('FiscalYears');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit, 1);
+	$title = $langs->trans('AccountingPeriods');
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 1);
 
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';

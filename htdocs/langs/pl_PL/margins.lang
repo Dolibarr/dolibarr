@@ -30,8 +30,8 @@ MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowan
 MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
 MargeType1=Marża na najlepszej cenie dostawcy
 MargeType2=Marża na średniej cenie ważonej
-MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MargeType3=Marża na cenie fabrycznej
+MarginTypeDesc=* Marża na najlepszej cenie zakupu = Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu<br>* Marża na średnio ważonej cenie (WAP) = Cena sprzedaży - Średnio ważona cena (WAP) lub najlepsza cena dostawcy jeżeli WAP nie jest zdefiniowana<br>* Marża na cenie fabrycznej = Cena sprzedaży -  Cena fabryczna zdefiniowana na karcie produktu lub WAP jeżeli cena fabryczna nie jest zdefiniowana, lub najlepsza cena dostawcy jeżeli WAP nie jest jeszcze zdefiniowana
 CostPrice=Cena fabryczna
 UnitCharges=Koszty jednostkowe
 Charges=Opłaty
@@ -40,4 +40,5 @@ AgentContactTypeDetails=Zdefiniować, jaki rodzaj (związane na fakturach) konta
 rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę
-CheckMargins=Margins detail
+CheckMargins=Szczegóły marż
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

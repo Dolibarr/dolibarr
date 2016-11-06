@@ -57,7 +57,7 @@ if ($page < 0) { $page = 0 ; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
-$dir=$conf->banque->dir_output.'/bordereau/';
+$dir=$conf->bank->dir_output.'/checkdeposits/';
 $filterdate=dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
 $filteraccountid=GETPOST('accountid');
 
@@ -801,7 +801,7 @@ if ($action != 'new')
 		$filedir=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
 
 		print '<br>';
 	}

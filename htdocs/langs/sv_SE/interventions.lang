@@ -45,6 +45,7 @@ TypeContact_fichinter_external_CUSTOMER=Uppföljning kundkontakt
 # Modele numérotation
 PrintProductsOnFichinter=Print also lines of type "product" (not only services) on intervention card
 PrintProductsOnFichinterDetails=Insatser skapade utifrån order
+UseServicesDurationOnFichinter=Use services duration for interventions generated from orders
 InterventionStatistics=Statistics of interventions
 NbOfinterventions=Nb of intervention cards
 NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)

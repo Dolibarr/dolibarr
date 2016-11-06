@@ -38,7 +38,8 @@ class Account extends CommonObject
 {
     public $element = 'bank_account';
     public $table_element = 'bank_account';
-
+    public $picto = 'account';
+    
     /**
      * @var	int		Use id instead of rowid
      * @deprecated
@@ -500,9 +501,10 @@ class Account extends CommonObject
      *  Create bank account into database
      *
      *  @param	User	$user		Object user making creation
+     *  @param  int     $notrigger  1=Disable triggers
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create(User $user = null)
+    function create(User $user = null, $notrigger=0)
     {
         global $langs,$conf, $hookmanager;
 
@@ -537,6 +539,8 @@ class Account extends CommonObject
 
         $now=dol_now();
 
+        $this->db->begin();
+        
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (";
         $sql.= "datec";
         $sql.= ", ref";
@@ -593,7 +597,7 @@ class Account extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 
-            $result=$this->update($user);
+            $result=$this->update($user, 1);
             if ($result > 0)
             {
 				$accline = new AccountLine($this->db);
@@ -606,39 +610,50 @@ class Account extends CommonObject
 				$accline->fk_type = 'SOLD';
 
 				if ($accline->insert() < 0) {
-					return -3;
+					$error++;
 				}
 
-                // Actions on extra fields (by external module or standard code)
-                $hookmanager->initHooks(array('bankdao'));
-                $parameters=array('id'=>$this->id);
-                $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if (empty($reshook))
+				if (! $error)
+				{
+				    $result=$this->insertExtraFields();
+				    if ($result < 0) $error++;
+				}
+                
+                if (! $error && ! $notrigger)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-                	{
-                		$result=$this->insertExtraFields();
-                		if ($result < 0)
-                		{
-                			return -4;
-                		}
-                	}
-                }
-                else if ($reshook < 0) return -5;
+                    // Call trigger
+                    $result=$this->call_trigger('BANKACCOUNT_CREATE',$user);
+                    if ($result < 0) $error++;
+                    // End call triggers
+                }        
             }
-            return $this->id;
+            else
+            {
+                $error++;
+            }
         }
         else
         {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 $this->error=$langs->trans("ErrorBankLabelAlreadyExists");
-                return -1;
+                $error++;
             }
             else {
                 $this->error=$this->db->error()." sql=".$sql;
-                return -2;
+                $error++;
             }
+        }
+
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1*$error;
         }
     }
 
@@ -646,12 +661,17 @@ class Account extends CommonObject
      *    	Update bank account card
      *
      *    	@param	User	$user       Object user making action
+     *      @param  int     $notrigger  1=Disable triggers
      *		@return	int					<0 si ko, >0 si ok
      */
-    function update(User $user = null)
+    function update(User $user = null, $notrigger = 0)
     {
         global $langs,$conf, $hookmanager;
 
+        $error=0;
+        
+        $this->db->begin();
+        
         // Clean parameters
         $this->state_id = ($this->state_id?$this->state_id:$this->state_id);
         $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
@@ -710,33 +730,41 @@ class Account extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-
         	// Actions on extra fields (by external module or standard code)
-        	$hookmanager->initHooks(array('bankdao'));
-        	$parameters=array('id'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-        	if (empty($reshook))
-        	{
-        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        		{
-        			$result=$this->insertExtraFields();
-        			if ($result < 0)
-        			{
-        				return -1;
-        			}
-        		}
-        	}
-        	else if ($reshook < 0) return -1;
-
-
-            return 1;
+    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		{
+    		    if (! $error)
+    		    {
+    		        $result=$this->insertExtraFields();
+    		        if ($result < 0) $error++;
+    		    }
+    		}
+    		
+    		if (! $error && ! $notrigger)
+    		{
+    		    // Call trigger
+    		    $result=$this->call_trigger('BANKACCOUNT_UPDATE',$user);
+    		    if ($result < 0) $error++;
+    		    // End call triggers
+    		}
         }
         else
         {
+            $error++;
             $this->error=$this->db->lasterror();
             dol_print_error($this->db);
-            return -1;
         }
+        
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return $this->id;
+		}
+		else
+		{
+		    $this->db->rollback();
+		    return -1*$error;
+		}
     }
 
 
@@ -980,10 +1008,10 @@ class Account extends CommonObject
 
 
     /**
-     *    Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return label of object status
      *
-     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    @return   string        		Libelle
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+     *  @return     string        		    Label
      */
     function getLibStatut($mode=0)
     {
@@ -991,11 +1019,11 @@ class Account extends CommonObject
     }
 
     /**
-     *    Renvoi le libelle d'un statut donne
+     *  Return label of given object status
      *
-     *    @param	int		$statut        	Id statut
-     *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    @return   string        			Libelle du statut
+     *  @param	 int		$statut        	Id statut
+	 *  @param   int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+     *  @return  string        			    Label
      */
 	function LibStatut($statut, $mode = 0)
 	{
@@ -1018,6 +1046,8 @@ class Account extends CommonObject
 			return $picto.' '.$label;
 		} elseif ($mode == 5) {
 			return $label.' '.$picto;
+		} elseif ($mode == 6) {
+		    return $label.' '.$picto;
 		}
 
 		//There is no short mode for this label
@@ -1183,14 +1213,18 @@ class Account extends CommonObject
      */
     function getNomUrl($withpicto=0, $mode='')
     {
-        global $langs;
+        global $conf, $langs;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowAccount") . '</u>';
-        if (! empty($this->label))
-            $label .= '<br><b>' . $langs->trans('Account') . ':</b> ' . $this->label;
-        if (! empty($this->number))
-            $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        $label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
+        $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        if (! empty($conf->accounting->enabled))
+        {
+            $langs->load("accountancy");
+            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . $this->account_number;
+            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
+        }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if (empty($mode))
@@ -1200,7 +1234,7 @@ class Account extends CommonObject
         }
         else if ($mode == 'transactions')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$this->id.$linkclose;
             $linkend='</a>';
         }
         else if ($mode == 'receipts')
@@ -1210,7 +1244,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->label.$linkend;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 
@@ -1364,11 +1398,12 @@ class Account extends CommonObject
 	 * - DeskCode
 	 *
 	 * Some countries show less or more bank account properties to the user
-	 *
+	 * 
+	 * @param  int     $includeibanbic         1=Return also key for IBAN and BIC
 	 * @return array
 	 * @see useDetailedBBAN
 	 */
-	public function getFieldsToShow()
+	public function getFieldsToShow($includeibanbic=0)
 	{
 		//Get the required properties depending on the country
 		$detailedBBAN = $this->useDetailedBBAN();
@@ -1387,8 +1422,11 @@ class Account extends CommonObject
 		}
 
 		//if ($this->needIBAN()) {    // return always IBAN and BIC (this was old behaviour)
+		if ($includeibanbic)
+		{
 			$fieldarray[]='IBAN';
 			$fieldarray[]='BIC';
+		}
 		//}
 
 		//Get the order the properties are shown
@@ -1497,7 +1535,7 @@ class AccountLine extends CommonObject
     var $fk_user_rappro;
     var $fk_type;
     var $rappro;        // Is it conciliated
-    var $num_releve;    // If conciliated, what is bank receipt
+    var $num_releve;    // If conciliated, what is bank statement
     var $num_chq;       // Num of cheque
     var $bank_chq;      // Bank of cheque
     var $fk_bordereau;  // Id of cheque receipt
@@ -1617,7 +1655,7 @@ class AccountLine extends CommonObject
 		$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", '".$this->fk_user_author."'";
+		$sql .= ", ".($this->fk_user_author > 0 ? "'".$this->fk_user_author."'":"null");
 		$sql .= ", ".($this->num_chq ? "'".$this->num_chq."'" : "null");
 		$sql .= ", '".$this->fk_account."'";
 		$sql .= ", '".$this->db->escape($this->fk_type)."'";
@@ -1767,8 +1805,20 @@ class AccountLine extends CommonObject
      */
     function update_conciliation(User $user, $cat)
     {
+        global $conf;
+        
         $this->db->begin();
 
+        // Check statement field
+        if (! empty($conf->global->BANK_STATEMENT_REGEX_RULE))
+        {
+            if (! preg_match('/'.$conf->global->BANK_STATEMENT_REGEX_RULE.'/', $this->num_releve))
+            {
+                $this->errors[]=$langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
+                return -1;
+            }
+        }
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
         $sql.= ", num_releve = '".$this->num_releve."'";

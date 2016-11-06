@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -852,12 +852,13 @@ if ($id > 0)
 {
 	$result1=$object->fetch($id);
 	$result2=$object->fetch_thirdparty();
+	$result2=$object->fetch_projet();
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
 	$result5=$object->fetch_optionals($id,$extralabels);
+	
+	if ($listUserAssignedUpdated || $donotclearsession) {
 
-	if($listUserAssignedUpdated || $donotclearsession) {
-		
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
@@ -1100,8 +1101,10 @@ if ($id > 0)
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
-			$events=array();
+			$events=array();     // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
+			// FIXME If we change company, we may get a project that does not match
 			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0);
 			print '</div>';
 			print '</td></tr>';
@@ -1122,8 +1125,8 @@ if ($id > 0)
 
 			$langs->load("projects");
 
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td colspan="3">';
-			$numprojet=$formproject->select_projects($object->socid, $object->fk_project, 'projectid');
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
+			$numprojet=$formproject->select_projects(($object->socid  > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
 			if ($numprojet==0)
 			{
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").'</a>';
@@ -1132,7 +1135,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -1141,11 +1144,11 @@ if ($id > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
 		}
 
         // Description
-        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
@@ -1153,7 +1156,7 @@ if ($id > 0)
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$object->id);
+        $parameters=array('id'=>$object->id);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -1469,7 +1472,7 @@ if ($id > 0)
 
             $var=true;
 
-            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+            print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

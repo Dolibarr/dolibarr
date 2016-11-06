@@ -26,11 +26,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  * \file 		htdocs/comm/propal/card.php
  * \ingroup 	propale
  * \brief 		Page of commercial proposals card and list
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
@@ -136,6 +138,35 @@ if (empty($reshook))
 		else
 		{
 			if ($object->id > 0) {
+				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
+					//Get difference between old and new delivery date and change lines according to difference
+					$date_delivery = dol_mktime(12, 0, 0,
+						GETPOST('date_deliverymonth', 'int'),
+						GETPOST('date_deliveryday', 'int'),
+						GETPOST('date_deliveryyear', 'int')
+					);
+					if (!empty($object->date_livraison) && !empty($date_delivery))
+					{
+						//Attempt to get the date without possible hour rounding errors
+						$old_date_delivery = dol_mktime(12, 0, 0,
+							dol_print_date($object->date_livraison, '%m'),
+							dol_print_date($object->date_livraison, '%d'),
+							dol_print_date($object->date_livraison, '%Y')
+						);
+						//Calculate the difference and apply if necessary
+						$difference = $date_delivery - $old_date_delivery;
+						if ($difference != 0)
+						{
+							$object->date_livraison = $date_delivery;
+							foreach ($object->lines as $line)
+							{
+								if (isset($line->date_start)) $line->date_start = $line->date_start + $difference;
+								if (isset($line->date_end)) $line->date_end = $line->date_end + $difference;
+							}
+						}
+					}
+				}
+
 				$result = $object->createFromClone($socid);
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
@@ -609,6 +640,7 @@ if (empty($reshook))
 	$trigger_name='PROPAL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromproposal';
+	$trackid='pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -1607,6 +1639,9 @@ if ($action == 'create')
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' =>
 							// 1),
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
+			$formquestion[] = array('type' => 'date','name' => 'date_delivery','label' => $langs->trans("DeliveryDate"),'value' => $object->date_livraison);
+		}
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
@@ -1675,7 +1710,7 @@ if ($action == 'create')
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', null, null, '', 1);
     // Thirdparty
-    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -2080,8 +2115,26 @@ if ($action == 'create')
 	
     print '<table class="border centpercent">';
     
+    if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+    {
+        // Multicurrency Amount HT
+        print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    
+        // Multicurrency Amount VAT
+        print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    
+        // Multicurrency Amount TTC
+        print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+        print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+        print '</tr>';
+    }
+        
 	// Amount HT
-	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
+	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
@@ -2108,24 +2161,6 @@ if ($action == 'create')
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
-	if (!empty($conf->multicurrency->enabled))
-	{
-	    // Multicurrency Amount HT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount VAT
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	
-	    // Multicurrency Amount TTC
-	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-	    print '</tr>';
-	}
 	
 	// Statut
 	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
@@ -2337,8 +2372,6 @@ if ($action == 'create')
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		// print '<table width="100%"><tr><td width="50%" valign="top">';
-		// print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -2351,7 +2384,7 @@ if ($action == 'create')
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
@@ -2359,14 +2392,12 @@ if ($action == 'create')
 		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-		// print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid);
 
-		// print '</td></tr></table>';
 		print '</div></div></div>';
 	}
 
@@ -2418,10 +2449,12 @@ if ($action == 'create')
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		$formmail->trackid='pro'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{

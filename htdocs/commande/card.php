@@ -60,13 +60,13 @@ $langs->load('deliveries');
 $langs->load('sendings');
 $langs->load('products');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
-if (! empty($conf->margin->enabled))
-	$langs->load('margins');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
@@ -1256,6 +1256,7 @@ if (empty($reshook))
 	$trigger_name='ORDER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromorder';
+	$trackid='ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -1764,16 +1765,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		$formconfirm = '';
 
-		/*
-		 * Confirmation de la suppression de la commande
-		*/
+		// Confirmation to delete
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 		}
 
-		/*
-		 * Confirmation de la validation
-		*/
+		// Confirmation of validation
 		if ($action == 'validate')
 		{
 			// on verifie si l'objet est en numerotation provisoire
@@ -1979,52 +1976,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	    print '<div class="underbanner clearboth"></div>';
 
 	    print '<table class="border" width="100%">';
-
-		// Ref
-		/*
-		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Ref commande client
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-		print $langs->trans('RefCustomer') . '</td><td align="left">';
-		print '</td>';
-		if ($action != 'refcustomer' && $object->brouillon)
-			print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refcustomer&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($user->rights->commande->creer && $action == 'refcustomer') {
-			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-			print '<input type="hidden" name="action" value="set_ref_client">';
-			print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-			print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-			print '</form>';
-		} else {
-			print $object->ref_client;
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Third party
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%">';
-        print '<tr><td>' . $langs->trans('Company') . '</td>';
-        print '</td><td colspan="5">';
-        if (! empty($conf->global->COMMANDE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->commande->creer)
-            print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetLinkToThirdParty'), 1) . '</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="5">';
-        if ($action == 'editthirdparty') {
-            $form->form_thirdparty($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, 'socid','client>0');
-        } else {
-            print $soc->getNomUrl(1, 'compta');
-        }
-		print '</tr>';*/
 
 		if ($soc->outstanding_limit)
 		{
@@ -2294,29 +2245,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 
     	// TODO How record was recorded OrderMode (llx_c_input_method)
 
-		// Project
-		/*
-		if (! empty($conf->projet->enabled))
-		{
-			$langs->load('projects');
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('Project');
-			print '</td>';
-			if ($action != 'classify')
-				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetProject')) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			// print "$object->id, $object->socid, $object->fk_project";
-			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
-			} else {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
-			}
-			print '</td></tr>';
-		}
-        */
-
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -2373,8 +2301,26 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '<table class="border centpercent">';
 
+		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+		{
+		    // Multicurrency Amount HT
+		    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+		    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		    print '</tr>';
+		
+		    // Multicurrency Amount VAT
+		    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+		    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		    print '</tr>';
+		
+		    // Multicurrency Amount TTC
+		    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+		    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		    print '</tr>';
+		}
+		
 		// Total HT
-		print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
+		print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
 
 		// Total VAT
@@ -2394,24 +2340,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Total TTC
 		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-
-		if (!empty($conf->multicurrency->enabled))
-		{
-			// Multicurrency Amount HT
-			print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-			print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-			print '</tr>';
-
-			// Multicurrency Amount VAT
-			print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-			print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-			print '</tr>';
-
-			// Multicurrency Amount TTC
-			print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-			print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-			print '</tr>';
-		}
 
 		// Statut
 		//print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
@@ -2635,7 +2563,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 			$genallowed = $user->rights->commande->creer;
 			$delallowed = $user->rights->commande->supprimer;
-			$somethingshown = $formfile->show_documents('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 
 			// Show links to link elements
@@ -2701,10 +2629,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-			$formmail->fromtype = 'user';
-			$formmail->fromid = $user->id;
-			$formmail->fromname = $user->getFullName($langs);
-			$formmail->frommail = $user->email;
+            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+            if($formmail->fromtype === 'user'){
+                $formmail->fromid = $user->id;
+
+            }
 			$formmail->trackid='ord'.$object->id;
 			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 			{

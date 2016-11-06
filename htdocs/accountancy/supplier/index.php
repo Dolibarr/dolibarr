@@ -23,9 +23,8 @@
  * \ingroup		Advanced accountancy
  * \brief		Home supplier ventilation
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -37,9 +36,12 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+    accessforbidden();
+}
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->ventilation->read)
+if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 // Filter
@@ -54,11 +56,28 @@ if ($year == 0) {
 
 // Validate History
 $action = GETPOST('action');
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
 
+	// First clean corrupted data
+	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sqlclean .= " SET fd.fk_code_ventilation = 0";
+	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sqlclean .= '	(SELECT accnt.rowid ';
+	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+	$resql = $db->query($sqlclean);
+	
+	// Now make the binding
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
@@ -138,17 +157,17 @@ llxHeader('', $langs->trans("SuppliersVentilation"));
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print load_fiche_titre($langs->trans("SuppliersVentilation") . "&nbsp;" . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear);
+print load_fiche_titre($langs->trans("SuppliersVentilation") . "&nbsp;" . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear, '', 'title_accountancy');
 
 print $langs->trans("DescVentilSupplier") . '<br>';
-print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToDispatch")) . '<br>';
+print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
 
 print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 // TODO Remove this. Should be done always.
-print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $y = $year_current;
@@ -175,10 +194,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid 
 $sql .= " WHERE ff.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= "  AND ff.fk_statut > 0 ";
-
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 1) . ")";
-}
+$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
 
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -223,10 +239,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd
 $sql .= " WHERE ff.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= "  AND ff.fk_statut > 0 ";
-
-if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 1) . ")";
-}
+$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
 
 dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
 $resql = $db->query($sql);

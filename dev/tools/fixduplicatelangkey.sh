@@ -14,6 +14,7 @@ fi
 
 if [ "x$1" = "xlist" ]
 then
+	echo "Search duplicate keys into en_US lang files (there is no cross file check)"
 	for file in `find htdocs/langs/en_US -name *.lang -type f`
 	do
 	    dupes=$(

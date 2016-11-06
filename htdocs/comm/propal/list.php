@@ -79,9 +79,10 @@ $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
+
 $day=GETPOST("day","int");
-$year=GETPOST("year","int");
 $month=GETPOST("month","int");
+$year=GETPOST("year","int");
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -159,6 +160,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
+
+$object = new Propal($db);	// To be passed as parameter of executeHooks that need 
 
 
 /*
@@ -440,10 +443,12 @@ if ($resql)
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	    $formmail = new FormMail($db);
 	    $formmail->withform=-1;
-	    $formmail->fromtype = 'user';
-	    $formmail->fromid   = $user->id;
-	    $formmail->fromname = $user->getFullName($langs);
-	    $formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
 	    {
 	        $formmail->trackid='ord'.$object->id;
@@ -1013,11 +1018,7 @@ if ($resql)
 	    $genallowed=$user->rights->propal->lire;
 	    $delallowed=$user->rights->propal->lire;
 	
-	    print '<br><a name="show_files"></a>';
-	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-	
-	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}
 	else
 	{

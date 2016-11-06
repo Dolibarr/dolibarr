@@ -222,6 +222,7 @@ if ($object->id)
 
     $modulepart = 'holiday';
     $permission = $user->rights->holiday->write;
+    $permtoedit = $user->rights->holiday->write;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

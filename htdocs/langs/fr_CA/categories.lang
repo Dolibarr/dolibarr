@@ -5,7 +5,6 @@ CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clien
 CompanyIsInSuppliersCategories=Ce tiers appartient aux tags/catégories de fournisseurs suivant(e)s
 MemberIsInCategories=Ce membre appartient aux tags/catégories suivant(e)s
 ContactIsInCategories=Ce contact appartient aux tags/catégories suivant(e)s
-CompanyHasNoCategory=Ce tiers n'appartient à aucun tag/catégorie
 ClassifyInCategory=Classer dans le(a) tag/catégorie
 MembersCategoryShort=Tags/catégories de membres
 ProspectsCategoriesShort=Prospects tags/catégories

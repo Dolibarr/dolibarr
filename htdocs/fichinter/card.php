@@ -766,6 +766,7 @@ if (empty($reshook))
 	$trigger_name='FICHINTER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromintervention';
+	$trackid='int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -945,6 +946,7 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
+		$soc=new Societe($db);
 		$soc->fetch($socid);
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -1772,7 +1774,7 @@ else if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		//print "<br>\n";
-		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+		print $somethingshown=$formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 
 		// Show links to link elements
@@ -1842,10 +1844,12 @@ else if ($id > 0 || ! empty($ref))
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		$formmail->trackid='int'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{

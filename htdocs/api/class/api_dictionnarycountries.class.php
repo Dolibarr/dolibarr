@@ -54,27 +54,31 @@ class DictionnaryCountries extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $filter     To filter the countries by name
      * @param string    $lang       Code of the language the label of the countries must be translated to
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return List of countries
      *            
      * @throws RestException
      */
-    function index($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '')
+    function index($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
     {
         $list = array();
 
         // Note: The filter is not applied in the SQL request because it must
         // be applied to the translated names, not to the names in database.
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country";
-        
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country as t";
+        $sql.=" WHERE 1 = 1";
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $this->db->query($sql);
-            $nbtotalofrecords = $this->db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
         
         $sql.= $this->db->order($sortfield, $sortorder);
-        
 
         if ($limit) {
             if ($page < 0) {

@@ -77,6 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -89,6 +90,7 @@ $actiontypecode='';
 $trigger_name='';
 $paramname='id';
 $mode='emailfortest';
+$trackid=(($action == 'testhtml')?"testhtml":"test");
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 if ($action == 'presend' && GETPOST('trackid') == 'test')       $action='test';
@@ -391,13 +393,27 @@ if ($action == 'edit')
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
-
+	
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
 
+    // Default from type
+    $var=!$var;
+    $liste = array();
+    $liste['user'] = $langs->trans('UserEmail');
+    $liste['company'] = $langs->trans('CompanyEmail');
+
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
+    print '</td></tr>';
+
+    // Separator
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+    
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
@@ -409,13 +425,14 @@ if ($action == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
-	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</table>';
+
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
 
 	print '</form>';
 }
@@ -517,7 +534,22 @@ else
 	if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
-	// Errors To
+	// Default from type
+    $var=!$var;
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+    print '<td>';
+    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
+        print $langs->trans('UserEmail');
+    } else {
+        print $langs->trans('CompanyEmail');
+    }
+    print '</td></tr>';
+
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+
+    // Errors To
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
@@ -539,6 +571,7 @@ else
 	}
 	print '</td></tr>';
 
+    
 	print '</table>';
 
     if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
@@ -558,6 +591,7 @@ else
    	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
     }
 
+    
 	// Boutons actions
 	print '<div class="tabsAction">';
 

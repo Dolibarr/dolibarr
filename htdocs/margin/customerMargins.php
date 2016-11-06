@@ -90,7 +90,7 @@ if ($socid > 0) {
 	if ($soc->client)
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
-		print '<td colspan="4">';
+		print '<td class="maxwidthonsmartphone" colspan="4">';
 		print $form->select_company($socid, 'socid', 'client=1 OR client=3', 1, 0, 0);
 		//$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
 		print '</td></tr>';
@@ -102,7 +102,7 @@ if ($socid > 0) {
 }
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
-	print '<td colspan="4">';
+	print '<td class="maxwidthonsmartphone" colspan="4">';
 	print $form->select_company(null, 'socid', 'client=1 OR client=3', 1, 0, 0);
 	//$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
 	print '</td></tr>';

@@ -9,7 +9,6 @@
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -89,7 +88,7 @@ $hookmanager->initHooks(array('commcard','globalcard'));
  * Actions
  */
 
-$parameters = array('socid' => $id);
+$parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -217,14 +216,14 @@ if ($id > 0)
 	print '<table class="border" width="100%">';
 
 	// Prospect/Customer
-	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
 	print $object->getLibCustProspStatut();
 	print '</td></tr>';
 
 	// Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
 	    print ($object->prefix_comm?$object->prefix_comm:'&nbsp;');
 	    print '</td></tr>';
     }
@@ -234,7 +233,7 @@ if ($id > 0)
         $langs->load("compta");
 
 		print '<tr><td>';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print $langs->trans('CustomerCode').'</td><td>';
 		print $object->code_client;
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
@@ -242,7 +241,7 @@ if ($id > 0)
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("CustomerAccountancyCode",'customeraccountancycode',$object->code_compta,$object,$user->rights->societe->creer);
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		print $form->editfieldval("CustomerAccountancyCode",'customeraccountancycode',$object->code_compta,$object,$user->rights->societe->creer);
 		print '</td>';
 		print '</tr>';
@@ -251,12 +250,12 @@ if ($id > 0)
 	// Skype
   	if (! empty($conf->skype->enabled))
   	{
-		print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+		print '<td>'.$langs->trans('Skype').'</td><td>'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
   	}
 
 	// Assujeti a TVA ou pas
 	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -264,20 +263,20 @@ if ($id > 0)
 	// Local Taxes
 	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
 	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
 
 
 	// TVA Intra
-	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 	print $object->tva_intra;
 	print '</td></tr>';
 
@@ -289,7 +288,7 @@ if ($id > 0)
 	print '<td>';
 	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	if ($action == 'editconditions')
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id',1);
@@ -308,7 +307,7 @@ if ($id > 0)
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	if ($action == 'editmode')
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
@@ -323,11 +322,11 @@ if ($id > 0)
 	// Compte bancaire par défaut
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-	print $langs->trans('BankAccount');
+	print $langs->trans('PaymentBankAccount');
 	print '<td>';
 	if (($action != 'editbankaccount') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	if ($action == 'editbankaccount')
 	{
 		$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'fk_account',1);
@@ -350,7 +349,7 @@ if ($id > 0)
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
-	print '</td><td colspan="3">'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
+	print '</td><td>'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
@@ -365,27 +364,13 @@ if ($id > 0)
 	}
 	print '</td></tr></table>';
 	print '</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	$amount_discount=$object->getAvailableDiscounts();
 	if ($amount_discount < 0) dol_print_error($db,$object->error);
 	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
 	//else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
-
-	if ($object->client)
-	{
-		print '<tr>';
-		print '<td>';
-		print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
-		print '</td><td colspan="3">';
-		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
-		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-		//if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-		
-		print '</td>';
-		print '</tr>';
-	}
 
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -399,42 +384,12 @@ if ($id > 0)
 			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		print $object->price_level;
 		$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$object->price_level;
 		if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
 		print "</td>";
 		print '</tr>';
-	}
-
-	if ($object->client == 2 || $object->client == 3)
-	{
-		// Level of prospect
-		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('ProspectLevel');
-		print '<td>';
-		if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editlevel')
-			$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
-		else
-			print $object->getLibProspLevel();
-		print "</td>";
-		print '</tr>';
-
-		// Status
-		$object->loadCacheOfProspStatus();
-		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
-		print ' &nbsp; &nbsp; <div class="floatright">';
-		foreach($object->cacheprospectstatus as $key => $val)
-		{
-			$titlealt='default';
-			if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
-			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
-		}
-		print '</div></td></tr>';
 	}
 
     // Preferred shipping Method
@@ -445,7 +400,7 @@ if ($id > 0)
         print '<td>';
         if (($action != 'editshipping') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
         print '</tr></table>';
-        print '</td><td colspan="3">';
+        print '</td><td>';
         if ($action == 'editshipping')
         {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'shipping_method_id');
@@ -462,7 +417,7 @@ if ($id > 0)
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		$langs->load("categories");
 		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $form->showCategories( $object->id, 'customer', 1 );
 		print "</td></tr>";
 	}
@@ -484,8 +439,9 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
-        print '<td colspan="3">';
+
+        print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<td>';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);
         if ($result > 0)
@@ -503,12 +459,48 @@ if ($id > 0)
 
 	print "</table>";
 
-
+	if ($object->client == 2 || $object->client == 3)
+	{
+    	print '<br>';
+    
+    	print '<div class="underbanner clearboth"></div>';
+    	print '<table class="border" width="100%">';
+	
+	    // Level of prospect
+	    print '<tr><td class="titlefield nowrap">';
+	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	    print $langs->trans('ProspectLevel');
+	    print '<td>';
+	    if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+	    print '</tr></table>';
+	    print '</td><td>';
+	    if ($action == 'editlevel')
+	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
+	        else
+	            print $object->getLibProspLevel();
+	            print "</td>";
+	            print '</tr>';
+	
+	            // Status
+	            $object->loadCacheOfProspStatus();
+	            print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+	            print ' &nbsp; &nbsp; ';
+	            print '<div class="floatright">';
+	            foreach($object->cacheprospectstatus as $key => $val)
+	            {
+	                $titlealt='default';
+	                if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+	                if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
+	            }
+	            print '</div></td></tr>';
+	   print "</table>";
+	}
+	
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLISTE_LIMIT;
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
 	$outstandingBills = $object->get_OutstandingBill();
@@ -519,14 +511,33 @@ if ($id > 0)
 	}
 	
 	print '<table class="noborder" width="100%">';
+
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Summary").'</td>';
 	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
 	print '</tr>';
-	print '<tr class="impair">';
+	
+	// Max outstanding bill
+	if ($object->client)
+	{
+	    print '<tr class="impair">';
+	    print '<td>';
+	    print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
+	    print '</td><td>';
+	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
+	
+	    print '</td>';
+	    print '</tr>';
+	}
+	
+	// Outstanding bill
+	print '<tr class="pair">';
 	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
-	print '<td align="right">'.price($outstandingBills).$warn.'</td>';
+	print '<td>'.price($outstandingBills).$warn.'</td>';
 	print '</tr>';
+	
 	print '</table>';
 	print '<br>';
 

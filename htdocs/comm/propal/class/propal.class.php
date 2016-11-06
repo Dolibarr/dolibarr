@@ -389,8 +389,8 @@ class Propal extends CommonObject
      *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_options		extrafields array
      * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-     *      @param		string		    $origin				'order', ...
-     *      @param		int			    $origin_id			Id of origin object
+     *      @param		string		$origin				'order', ...
+     *      @param		int			$origin_id			Id of origin object
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
@@ -454,7 +454,14 @@ class Propal extends CommonObject
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
-            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+
+            // Clean vat code
+            $vat_src_code='';
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            }
 
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
@@ -496,6 +503,8 @@ class Propal extends CommonObject
             $this->line->label=$label;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
+            
+			$this->line->vat_src_code=$vat_src_code;
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
             $this->line->localtax2_tx=$txlocaltax2;
@@ -629,7 +638,14 @@ class Propal extends CommonObject
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
-            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
+            // Clean vat code
+            $vat_src_code='';
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            }
 
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
             $total_ht  = $tabprice[0];
@@ -681,6 +697,8 @@ class Propal extends CommonObject
             $this->line->remise_percent		= $remise_percent;
             $this->line->subprice			= $pu;
             $this->line->info_bits			= $info_bits;
+
+            $this->line->vat_src_code		= $vat_src_code;
             $this->line->total_ht			= $total_ht;
             $this->line->total_tva			= $total_tva;
             $this->line->total_localtax1	= $total_localtax1;
@@ -3214,44 +3232,67 @@ class Propal extends CommonObject
      *	@param      int		$withpicto		Add picto into link
      *	@param      string	$option			Where point the link ('expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
-        $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
-        if (! empty($this->ref))
-            $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (! empty($this->ref_client))
-            $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
+        $label='';
+        $url='';
+
+        if ($user->rights->propal->lire)
+        {
+            $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
+            if (! empty($this->ref))
+                $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            if (! empty($this->ref_client))
+                $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+            if (! empty($this->total_ht))
+                $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_tva))
+                $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_ttc))
+                $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+            if ($option == '') {
+                $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'compta') {  // deprecated
+                $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'expedition') {
+                $url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params;
+            }
+            if ($option == 'document') {
+                $url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params;
+            }
         }
-        if ($option == 'compta') {  // deprecated
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowPropal");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
         }
-        if ($option == 'expedition') {
-            $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
-        }
-        if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
-        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';        
         $linkend='</a>';
 
         if ($withpicto)
-            $result.=($link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), $this->picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 
@@ -3265,14 +3306,14 @@ class Propal extends CommonObject
         // For other object, here we call fetch_lines. But fetch_lines does not exists on proposal
 
         $sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
-        $sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+        $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
 	    $sql.= ' pt.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
         $sql.= ' p.description as product_desc,';
-        $sql.= ' p.entity';
-		$sql.= ' ,pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc';
+        $sql.= ' p.entity,';
+		$sql.= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
@@ -3307,6 +3348,8 @@ class Propal extends CommonObject
                 $this->lines[$i]->subprice			= $obj->subprice;
                 $this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
                 $this->lines[$i]->remise_percent	= $obj->remise_percent;
+
+                $this->lines[$i]->vat_src_code      = $obj->vat_src_code; 
                 $this->lines[$i]->tva_tx			= $obj->tva_tx;
                 $this->lines[$i]->info_bits			= $obj->info_bits;
                 $this->lines[$i]->total_ht			= $obj->total_ht;
@@ -3662,7 +3705,7 @@ class PropaleLigne  extends CommonObjectLine
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
         $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type,';
-		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql.= ' fk_remise_except, qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
@@ -3677,6 +3720,7 @@ class PropaleLigne  extends CommonObjectLine
         $sql.= " '".$this->product_type."',";
         $sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
         $sql.= " ".price2num($this->qty).",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
@@ -3747,9 +3791,10 @@ class PropaleLigne  extends CommonObjectLine
     /**
      * 	Delete line in database
      *
+     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	 int  <0 if ko, >0 if ok
      */
-    function delete()
+    function delete($notrigger=0)
     {
         global $conf,$user;
 
@@ -3773,13 +3818,16 @@ class PropaleLigne  extends CommonObjectLine
         		}
         	}
 
-            // Call trigger
-            $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
-            if ($result < 0)
-            {
-                $this->db->rollback();
-                return -1;
-            }
+        	if (! $error && ! $notrigger)
+        	{
+	            // Call trigger
+	            $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
+	            if ($result < 0)
+	            {
+	                $this->db->rollback();
+	                return -1;
+	            }
+        	}
             // End call triggers
 
             $this->db->commit();
@@ -3846,41 +3894,42 @@ class PropaleLigne  extends CommonObjectLine
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
         $sql.= " description='".$this->db->escape($this->desc)."'";
-        $sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-        $sql.= " , product_type=".$this->product_type;
-        $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
-        $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
-        $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , localtax1_type='".$this->localtax1_type."'";
-		$sql.= " , localtax2_type='".$this->localtax2_type."'";
-        $sql.= " , qty='".price2num($this->qty)."'";
-        $sql.= " , subprice=".price2num($this->subprice)."";
-        $sql.= " , remise_percent=".price2num($this->remise_percent)."";
-        $sql.= " , price=".price2num($this->price)."";					// TODO A virer
-        $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        $sql.= " , info_bits='".$this->info_bits."'";
+        $sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+        $sql.= ", product_type=".$this->product_type;
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+        $sql.= ", tva_tx='".price2num($this->tva_tx)."'";
+        $sql.= ", localtax1_tx=".price2num($this->localtax1_tx);
+        $sql.= ", localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= ", localtax1_type='".$this->localtax1_type."'";
+		$sql.= ", localtax2_type='".$this->localtax2_type."'";
+        $sql.= ", qty='".price2num($this->qty)."'";
+        $sql.= ", subprice=".price2num($this->subprice)."";
+        $sql.= ", remise_percent=".price2num($this->remise_percent)."";
+        $sql.= ", price=".price2num($this->price)."";					// TODO A virer
+        $sql.= ", remise=".price2num($this->remise)."";				// TODO A virer
+        $sql.= ", info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
         {
-            $sql.= " , total_ht=".price2num($this->total_ht)."";
-            $sql.= " , total_tva=".price2num($this->total_tva)."";
-            $sql.= " , total_ttc=".price2num($this->total_ttc)."";
-            $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
-            $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
+            $sql.= ", total_ht=".price2num($this->total_ht)."";
+            $sql.= ", total_tva=".price2num($this->total_tva)."";
+            $sql.= ", total_ttc=".price2num($this->total_ttc)."";
+            $sql.= ", total_localtax1=".price2num($this->total_localtax1)."";
+            $sql.= ", total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
-		$sql.= " , buy_price_ht=".price2num($this->pa_ht);
-        if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
-        $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
+		$sql.= ", fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
+		$sql.= ", buy_price_ht=".price2num($this->pa_ht);
+        if (strlen($this->special_code)) $sql.= ", special_code=".$this->special_code;
+        $sql.= ", fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
-        $sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
-        $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-	    $sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+        $sql.= ", date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= ", date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+	    $sql.= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql.= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
         $sql.= " WHERE rowid = ".$this->rowid;
 

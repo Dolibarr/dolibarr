@@ -170,7 +170,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -181,54 +181,58 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
 if (empty($reshook))
 {
-	if ($action == 'setstcomm')
-	{
-		$object = new Client($db);
-		$result=$object->fetch(GETPOST('stcommsocid'));
-		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->update($object->id, $user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$action='';
-	}
-}
+    // Do we click on purge search criteria ?
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+        $search_nom='';
+        $search_categ=0;
+        $search_sale='';
+    	$search_barcode="";
+        $search_customer_code='';
+        $search_supplier_code='';
+        $search_account_customer_code='';
+        $search_account_supplier_code='';
+    	$search_town="";
+    	$search_zip="";
+    	$search_state="";
+    	$search_country='';
+    	$search_idprof1='';
+    	$search_idprof2='';
+    	$search_idprof3='';
+    	$search_idprof4='';
+    	$search_idprof5='';
+    	$search_idprof6='';
+    	$search_type='';
+    	$search_type_thirdparty='';
+    	$search_status='';
+    	$search_stcomm='';
+     	$search_level_from='';
+     	$search_level_to='';
+    	$search_array_options=array();
+    }
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-    $search_nom='';
-    $search_categ=0;
-    $search_sale='';
-	$search_barcode="";
-    $search_customer_code='';
-    $search_supplier_code='';
-    $search_account_customer_code='';
-    $search_account_supplier_code='';
-	$search_town="";
-	$search_zip="";
-	$search_state="";
-	$search_country='';
-	$search_idprof1='';
-	$search_idprof2='';
-	$search_idprof3='';
-	$search_idprof4='';
-	$search_idprof5='';
-	$search_idprof6='';
-	$search_type='';
-	$search_type_thirdparty='';
-	$search_status='';
-	$search_stcomm='';
- 	$search_level_from='';
- 	$search_level_to='';
-	$search_array_options=array();
+    if ($action == 'setstcomm')
+    {
+        $object = new Client($db);
+        $result=$object->fetch(GETPOST('stcommsocid'));
+        $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+        $result=$object->update($object->id, $user);
+        if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+    
+        $action='';
+    }
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
@@ -341,8 +345,9 @@ else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4, s.fk_pays,";
+$sql.= " s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
+$sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -408,7 +413,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -438,9 +443,8 @@ if (! $resql)
 }
 
 $num = $db->num_rows($resql);
-$i = 0;
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
@@ -848,7 +852,7 @@ print '</td>';
 print "</tr>\n";
 
 $var=True;
-
+$i = 0;
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -980,6 +984,7 @@ while ($i < min($num, $limit))
     	print $s;
     	print '</td>';
     }
+
     if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
     {
 		// Prospect level
@@ -987,6 +992,7 @@ while ($i < min($num, $limit))
 		print $companystatic->getLibProspLevel();
 		print "</td>";
     }
+
     if (! empty($arrayfields['s.fk_stcomm']['checked']))
     {
         // Prospect status
@@ -1004,9 +1010,9 @@ while ($i < min($num, $limit))
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);
