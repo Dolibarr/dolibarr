@@ -35,11 +35,17 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
+$langs->load("compta");
+$langs->load("bills");
+$langs->load("admin");
 $langs->load("accountancy");
+$langs->load("salaries");
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+if (empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount))
+{
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 

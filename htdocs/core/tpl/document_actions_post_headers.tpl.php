@@ -20,7 +20,7 @@
 
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
-
+if (empty($permtoedit)) $permtoedit=-1;
 
 /*
  * Confirm form to delete
@@ -80,7 +80,14 @@ $formfile->list_of_documents(
     $param,
     0,
     $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
-    $permission
+    $permission,
+    0,
+    '',
+    0,
+    '',
+    '',
+    0,
+    $permtoedit
 );
 
 print "<br>";

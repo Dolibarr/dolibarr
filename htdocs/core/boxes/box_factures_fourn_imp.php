@@ -117,18 +117,12 @@ class box_factures_fourn_imp extends ModeleBoxes
                     }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
-                    );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
-                        'asisi' => 1
+                        'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(

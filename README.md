@@ -147,7 +147,7 @@ These are features that Dolibarr does **not** yet fully support:
 
 ## DOCUMENTATION
 
-Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](http://wiki.dolibarr.org).
+Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](https://wiki.dolibarr.org).
 
 ## CONTRIBUTING
 

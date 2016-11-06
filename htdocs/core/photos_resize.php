@@ -23,17 +23,6 @@
  *       \brief     File of page to resize photos
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -57,13 +46,18 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'project')
+{
+    $result=restrictedArea($user,'projet',$id);
+	if (! $user->rights->projet->lire) accessforbidden();
+	$accessallowed=1;
+}
 elseif ($modulepart == 'holiday')
 {
 	$result=restrictedArea($user,'holiday',$id,'holiday');
-	if ($modulepart=='holiday' && (! $user->rights->holiday->read)) accessforbidden();
+	if (! $user->rights->holiday->read) accessforbidden();
 	$accessallowed=1;
 }
-
 
 // Security:
 // Limit access if permissions are wrong
@@ -86,6 +80,17 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($object->type == Product::TYPE_SERVICE) $dir=$conf->service->multidir_output[$object->entity];
 	}
 }
+elseif ($modulepart == 'project')
+{
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    $object = new Project($db);
+    if ($id > 0)
+    {
+        $result = $object->fetch($id);
+        if ($result <= 0) dol_print_error($db,'Failed to load object');
+        $dir=$conf->projet->dir_output;	// By default
+    }
+}
 elseif ($modulepart == 'holiday')
 {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -96,6 +101,13 @@ elseif ($modulepart == 'holiday')
 		if ($result <= 0) dol_print_error($db,'Failed to load object');
 		$dir=$conf->holiday->dir_output;	// By default
 	}
+}
+
+if (empty($backtourl))
+{
+    if (in_array($modulepart, array('product','produit','service'))) $backtourl=DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('holiday'))) $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('project'))) $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
 
@@ -112,8 +124,8 @@ if ($cancel)
 	}
 	else
 	{
-		header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
-		exit;
+	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+	    exit;
 	}
 }
 
@@ -133,8 +145,8 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		}
 		else
 		{
-			header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
-			exit;
+    	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+    	    exit;
 		}
 	}
 	else
@@ -162,8 +174,8 @@ if ($action == 'confirm_crop')
 		}
 		else
 		{
-			header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
-			exit;
+    	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+    	    exit;
 		}
 	}
 	else
@@ -208,6 +220,7 @@ print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" t
 print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
+print '<input type="hidden" name="modulepart" value="'.$modulepart.'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br>';
 print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
@@ -243,7 +256,7 @@ if (! empty($conf->use_javascript_ajax))
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">
@@ -262,6 +275,7 @@ if (! empty($conf->use_javascript_ajax))
 	      <input type="hidden" id="product" name="product" value="'.$id.'" />
 	      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" />
+          <input type="hidden" name="modulepart" value="'.$modulepart.'" />
 	      <input type="hidden" name="id" value="'.$id.'" />
 	      <br>
 	      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />

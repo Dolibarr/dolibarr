@@ -11,12 +11,14 @@ PHPSupportSessions=Šis PHP palaiko sesijas.
 PHPSupportPOSTGETOk=Šis PHP palaiko kintamuosius POST ir GET.
 PHPSupportPOSTGETKo=Galimas dalykas Jūsų PHP nepalaiko kintamųjų POST ir/arba GET. Patikrinti savo parametrą <b>variables_order</b> php.ini.
 PHPSupportGD=Šis PHP palaiko GD grafikos funkcijas.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Šis PHP palaiko UTF8 funkcijos.
 PHPMemoryOK=Jūsų PHP maksimali sesijos atmintis yra nustatyta į <b>%s</b>. To turėtų būti pakankamai.
 PHPMemoryTooLow=Jūsų PHP maksimali sesijos atmintis yra nustatyta į <b>%s</b> baitų. Tai gali būti per mažai. Keisti savo <b>php.ini</b> ir nustatyti <b>memory_limit</b> parametrą mažiausiai į <b>%s</b> baitų.
 Recheck=Spauskite čia norėdami peržiūrėti daugiau reikšmingų bandymų
 ErrorPHPDoesNotSupportSessions=Jūsų įdiegta PHP nepalaiko sesijų. Ši funkcija reikalinga Dolibarr darbui. Patikrinkite savo PHP nustatymus.
 ErrorPHPDoesNotSupportGD=Jūsų įdiegta PHP nepalaiko grafinės GD funkcijos. Grafikai neprieinami.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Jūsų įdiegta PHP nepalaiko UTF8 funkcijos. Dolibarr negali tinkamai veikti. Išspręsti šią problemą prieš diegdami Dolibarr.
 ErrorDirDoesNotExists=Katalogas %s neegzistuoja.
 ErrorGoBackAndCorrectParameters=Eiti atgal ir ištaisyti klaidingus parametrus.
@@ -133,6 +135,10 @@ ActivateModule=Įjungti modulį %s
 ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
 WarningUpgrade=Įspėjimas:\nAr Jūs pasidarėte duomenų bazės atsarginę kopiją ?\nTai labai rekomenduotina: pavyzdžiui, dėl kai kurių klaidų duomenų bazės sistemoje (pvz. mysql versija 5.5.40/41/42/43), kai kurie duomenys ar lentelės gali būti prarasti šio proceso metu, todėl, prieš pradedant perkėlimą primygtinai rekomenduojama pasidaryti pilną savo duomenų bazės kopiją.\nSpauskite OK, kad pradėti perkėlimo procesą ...
 ErrorDatabaseVersionForbiddenForMigration=Jūsų duomenų bazės versija yra %s. Gali būti kritinė situacija su duomenų praradimu, jeigu pakeisite duomenų bazės struktūrą, kaip reikalaujama perkėlimo proceso metu. Šiuo tikslu perkėlimas nebus leidžiamas, kol nebus atliktas duomenų bazės programos atnaujinimas į aukštesnę versiją (žinomų klaidingų versijų sąrašas: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade
@@ -185,6 +191,8 @@ MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
 MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Perkrauti modulį %s
 ShowNotAvailableOptions=Parodyti negalimas opcijas
 HideNotAvailableOptions=Paslėpti negalimas opcijas

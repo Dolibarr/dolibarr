@@ -10,7 +10,6 @@ TimeSpentByYou=Dein Zeitaufwand
 MyProjectsArea=Mein Projektbereich
 GoToListOfTimeConsumed=Zur Stundenaufwandsliste wechseln
 GoToListOfTasks=Zur Aufgabenliste gehen
-ListPredefinedInvoicesAssociatedProject=Liste der Rechnungsvorlagen, die mit diesem Projekt verknüpft sind
 ListFichinterAssociatedProject=Liste Eingriffe, die mit diesem Projekt verknüpft sind
 ChildOfTask=Kindelement von Projekt/Aufgabe
 CloseAProject=Projekt schliessen

@@ -269,8 +269,6 @@ class html_cerfafr extends ModeleDon
             $this->error=$langs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
             return 0;
 		}
-        $this->error=$langs->trans("ErrorUnknown");
-        return 0;   // Error by default
     }
 }
 

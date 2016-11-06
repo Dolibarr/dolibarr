@@ -323,12 +323,12 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// Date
-					$pdf->SetXY($this->posxdate, $curY);
+					$pdf->SetXY($this->posxdate -1, $curY);
 					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
 					// Type
-					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
+					$pdf->SetXY($this->posxtype -1, $curY);
+					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled)) 
@@ -482,8 +482,6 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error=$langs->trans("ErrorConstantNotDefined","EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**

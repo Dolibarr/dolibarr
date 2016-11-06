@@ -89,12 +89,12 @@ class InvoiceApi extends DolibarrApi
      * 
      * Get a list of invoices
      * 
-     * @param int       $socid      Filter list with thirdparty ID
-     * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param int       $socid      Filter list with thirdparty ID
+     * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
      *
      * @return array Array of invoice objects
      *
@@ -103,12 +103,12 @@ class InvoiceApi extends DolibarrApi
      * @url GET thirdparty/{socid}/invoice/list
      * @url GET thirdparty/{socid}/invoice/list/{mode} 
      */
-    function getList($socid=0, $mode='', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $mode='') {
         global $db, $conf;
         
         $obj_ret = array();
         
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $socid;
             
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
@@ -160,7 +160,7 @@ class InvoiceApi extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $invoice_static = new Facture($db);

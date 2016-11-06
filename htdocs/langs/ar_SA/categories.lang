@@ -14,6 +14,7 @@ CustomersCategoriesArea=العملاء العلامات / المنطقة الف�
 MembersCategoriesArea=به أعضاء / المنطقة الفئات
 ContactsCategoriesArea=اتصالات به / المنطقة الفئات
 AccountsCategoriesArea=Accounts tags/categories area
+ProjectsCategoriesArea=Projects tags/categories area
 SubCats=الفئات الفرعية
 CatList=قائمة العلامات / فئات
 NewCategory=علامة جديدة / فئة
@@ -33,9 +34,10 @@ CompanyIsInSuppliersCategories=ويرتبط هذا الطرف الثالث لي�
 MemberIsInCategories=ويرتبط هذا العضو ليلي أعضاء علامات / فئات
 ContactIsInCategories=ويرتبط هذا الاتصال بعد اتصالات به / فئات
 ProductHasNoCategory=هذا المنتج / الخدمة ليست في أية علامات / فئات
-CompanyHasNoCategory=هذه مرشحين عن ليس في أية علامات / فئات
+CompanyHasNoCategory=This third party is not in any tags/categories
 MemberHasNoCategory=هذا العضو ليس في أية علامات / فئات
 ContactHasNoCategory=هذا الاتصال ليست في أية علامات / فئات
+ProjectHasNoCategory=This project is not in any tags/categories
 ClassifyInCategory=إضافة إلى علامة / فئة
 NotCategorized=من دون سمة / فئة
 CategoryExistsAtSameLevel=هذه الفئة موجودة بالفعل في نفس المكان
@@ -56,12 +58,14 @@ ProductsCategoriesShort=منتجات العلامات / فئات
 MembersCategoriesShort=به أعضاء / فئات
 ContactCategoriesShort=اتصالات به / فئات
 AccountsCategoriesShort=Accounts tags/categories
+ProjectsCategoriesShort=Projects tags/categories
 ThisCategoryHasNoProduct=هذه الفئة لا تحتوي على أي منتج.
 ThisCategoryHasNoSupplier=هذه الفئة لا تحتوي على أي مورد.
 ThisCategoryHasNoCustomer=هذه الفئة لا تحتوي على أي عميل.
 ThisCategoryHasNoMember=هذا التصنيف لا يحتوي على أي عضو.
 ThisCategoryHasNoContact=لا تحتوي هذه الفئة أي اتصال.
 ThisCategoryHasNoAccount=This category does not contain any account.
+ThisCategoryHasNoProject=This category does not contain any project.
 CategId=العلامة / فئة معرف
 CatSupList=قائمة المورد به / فئات
 CatCusList=قائمة العملاء / احتمال علامات / فئات
@@ -71,6 +75,7 @@ CatContactList=قائمة الاتصال به / فئات
 CatSupLinks=الروابط بين الموردين والعلامات / فئات
 CatCusLinks=الروابط بين العملاء / آفاق والعلامات / فئات
 CatProdLinks=الروابط بين المنتجات / الخدمات والعلامات / فئات
+CatProJectLinks=Links between projects and tags/categories
 DeleteFromCat=إزالة من العلامات / فئة
 ExtraFieldsCategories=سمات التكميلية
 CategoriesSetup=الكلمات / فئات الإعداد

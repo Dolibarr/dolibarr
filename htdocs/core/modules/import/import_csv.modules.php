@@ -454,6 +454,10 @@ class ImportCsv extends ModeleImports
                                     }
                                     if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
+                                {
+                                    $newval = price2num($newval);
+                                }
 
                                 //print 'Val to use as insert is '.$newval.'<br>';
 						    }

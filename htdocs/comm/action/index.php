@@ -970,7 +970,15 @@ if (empty($action) || $action == 'show_month')      // View by month
     $i=0;
     while ($i < 7)
     {
-        echo '  <td align="center">'.$langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7))."</td>\n";
+        print '  <td align="center">';
+        $numdayinweek=(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7);
+        if (! empty($conf->dol_optimize_smallscreen))
+        {
+            $labelshort=array(0=>'SundayMin',1=>'MondayMin',2=>'TuesdayMin',3=>'WednesdayMin',4=>'ThursdayMin',5=>'FridayMin',6=>'SaturdayMin');
+            print $langs->trans($labelshort[$numdayinweek]);
+        }
+        else print $langs->trans("Day".$numdayinweek);
+        print "</td>\n";
         $i++;
     }
     echo " </tr>\n";

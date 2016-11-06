@@ -208,6 +208,7 @@ if ($object->id > 0)
 
 	$modulepart = 'facture_fournisseur';
 	$permission = $user->rights->fournisseur->facture->creer;
+	$permtoedit = $user->rights->fournisseur->facture->creer;
 	$param = '&facid=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

@@ -182,21 +182,33 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	$sall="";
-	$sref="";
-	$snom="";
-	$sbarcode="";
-	$search_categ=0;
-	$tosell="";
-	$tobuy="";
-	$search_tobatch='';
-	$search_accountancy_code_sell='';
-	$search_accountancy_code_buy='';
-	$search_array_options=array();
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    // Purge search criteria
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+    	$sall="";
+    	$sref="";
+    	$snom="";
+    	$sbarcode="";
+    	$search_categ=0;
+    	$tosell="";
+    	$tobuy="";
+    	$search_tobatch='';
+    	$search_accountancy_code_sell='';
+    	$search_accountancy_code_buy='';
+    	$search_array_options=array();
+    }
 }
 
 
@@ -328,13 +340,12 @@ else
     {
     	$num = $db->num_rows($resql);
 
-    	$i = 0;
-
-    	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $action != 'list')
+    	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
     	{
-    		$objp = $db->fetch_object($resql);
-    		header("Location: card.php?id=".$objp->rowid);
-    		exit;
+    	    $obj = $db->fetch_object($resql);
+    	    $id = $obj->rowid;
+    	    header("Location: ".DOL_URL_ROOT.'/product/card.php?id='.$id);
+    	    exit;
     	}
 
     	$helpurl='';
@@ -358,23 +369,23 @@ else
 	    }
 
 	    $param='';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	    if ($search_categ > 0) $param.="&amp;search_categ=".$search_categ;
-    	if ($sref) $param="&amp;sref=".$sref;
-    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;
-    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".$sbarcode:"");
-    	if ($snom) $param.="&amp;snom=".$snom;
-    	if ($sall) $param.="&amp;sall=".$sall;
-    	if ($tosell != '') $param.="&amp;tosell=".$tosell;
-    	if ($tobuy != '') $param.="&amp;tobuy=".$tobuy;
-    	if ($fourn_id) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	    if ($search_categ > 0) $param.="&amp;search_categ=".urlencode($search_categ);
+    	if ($sref) $param="&amp;sref=".urlencode($sref);
+    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".urlencode($sbarcode):"");
+    	if ($snom) $param.="&amp;snom=".urlencode($snom);
+    	if ($sall) $param.="&amp;sall=".urlencode($sall);
+    	if ($tosell != '') $param.="&amp;tosell=".urlencode($tosell);
+    	if ($tobuy != '') $param.="&amp;tobuy=".urlencode($tobuy);
+    	if ($fourn_id > 0) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".urlencode($search_categ):"");
     	if ($type != '') $param.='&amp;type='.urlencode($type);
-		if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    	if ($search_tobatch) $param="&amp;search_ref_supplier=".$search_ref_supplier;
-    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".$search_accountancy_code_sell;
-    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".$search_accountancy_code_buy;
+		if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+    	if ($search_tobatch) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
+    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
     	// Add $param from extra fields
 	    foreach ($search_array_options as $key => $val)
 	    {
@@ -466,7 +477,7 @@ else
     		if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
-    		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
@@ -617,6 +628,7 @@ else
     		$product_fourn =new ProductFournisseur($db);
 
     		$var=true;
+    	    $i = 0;
     		while ($i < min($num,$limit))
     		{
     			$objp = $db->fetch_object($resql);

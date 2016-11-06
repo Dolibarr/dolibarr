@@ -5,23 +5,23 @@ NewLoan=新贷款
 ShowLoan=显示贷款
 PaymentLoan=贷款付款
 ShowLoanPayment=显示支付贷款
-LoanCapital=Capital
+LoanCapital=注册资金
 Insurance=保险
 Interest=利率
-Nbterms=术语数
-LoanAccountancyCapitalCode=会计代码（资本）
-LoanAccountancyInsuranceCode=会计代码（保险）
-LoanAccountancyInterestCode=会计代码（利率）
+Nbterms=一些条款
+LoanAccountancyCapitalCode=注册资金科目代码
+LoanAccountancyInsuranceCode=保险科目代码
+LoanAccountancyInterestCode=利息科目代码
 ConfirmDeleteLoan=确认删除本贷款
 LoanDeleted=成功删除贷款
 ConfirmPayLoan=确认支付本贷款
 LoanPaid=贷款已支付
 # Calc
 LoanCalc=银行贷款计算器
-PurchaseFinanceInfo=购买及金融信息
+PurchaseFinanceInfo=购买及财务信息
 SalePriceOfAsset=资产出售价格
 PercentageDown=贬值比率
-LengthOfMortgage=Duration of loan
+LengthOfMortgage=贷款期限
 AnnualInterestRate=年度利率
 ExplainCalculations=解释计算方式
 ShowMeCalculationsAndAmortization=显示计算结果及分期摊销
@@ -34,16 +34,16 @@ MonthlyInterestRateDesc=<b>月度利率</b> = 年度利率除以12（按每年12
 MonthTermDesc=贷款按每月计算的 <b>月限</b> =您借款年限乘以12
 MonthlyPaymentDesc=月度付款按以下公式计算
 AmortizationPaymentDesc= <a href="#摊销">摊销</a> 确定您每月支付的银行利息是多少，而本金又是多少。
-AmountFinanced=融资金额
+AmountFinanced=财务金额
 AmortizationMonthlyPaymentOverYears=月度付款的摊销：: <b>%s</b> 按 %s 年计算
 Totalsforyear=年度合计
 MonthlyPayment=月度付款
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s 将指向利率
-GoToPrincipal=%s 将指向资本
-YouWillSpend=You will spend %s in year %s
+GoToPrincipal=%s 将指向注册资金
+YouWillSpend=你将花费 %s 年 %s
 # Admin
-ConfigLoan=Configuration of the module loan
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
+ConfigLoan=货款模块设置
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=默认注册资金科目代码
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default

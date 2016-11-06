@@ -143,7 +143,7 @@ $objmodel = new $classname($db);
 
 
 // Define target path
-$dirname = $conf->banque->dir_temp;
+$dirname = $conf->bank->dir_temp;
 $filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
 
 

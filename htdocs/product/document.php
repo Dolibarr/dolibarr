@@ -231,6 +231,7 @@ if ($object->id)
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
+    
     // Merge propal PDF document PDF files
     if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
     {

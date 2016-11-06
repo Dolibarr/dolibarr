@@ -126,7 +126,7 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][0] = 11;
 		$this->rights[$r][1] = 'Lire les factures';
 		$this->rights[$r][2] = 'a';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -183,7 +183,20 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][4] = 'facture';
 		$this->rights[$r][5] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 1322;
+		$this->rights[$r][1] = 'Rouvrir une facture totalement réglée';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'invoice_advance';
+		$this->rights[$r][5] = 'reopen';
 
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=1;
@@ -288,7 +301,7 @@ class modFacture extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'invoice' AND entity = ".$conf->entity,
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
 		);
 

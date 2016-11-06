@@ -55,5 +55,8 @@ create table llx_bank_account
   currency_code			varchar(3) NOT NULL,
   min_allowed			integer DEFAULT 0,
   min_desired			integer DEFAULT 0,
-  comment				text
+  comment				text,						-- TODO rename in note_private
+  note_public     		text,
+  model_pdf       		varchar(255),
+  import_key      		varchar(14)
 )ENGINE=innodb;

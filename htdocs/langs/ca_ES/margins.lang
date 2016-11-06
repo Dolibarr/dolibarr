@@ -41,3 +41,4 @@ rateMustBeNumeric=El marge ha de ser un valor numèric
 markRateShouldBeLesserThan100=El marge té que ser menor que 100
 ShowMarginInfos=Mostrar info de marges
 CheckMargins=Detall de marges
+MarginPerSaleRepresentativeWarning=L'informe de marges per usuari utilitza l'enllaç entre tercers i agents comercials per calcular el marge de cada usuari. Degut a que alguns tercers no es poden enllaçar a cap agent comercial i que alguns tercers poden estar enllaçats amb varis agents comercials, alguns marges poden no aparèixer o aparèixer en vàries línies diferents.

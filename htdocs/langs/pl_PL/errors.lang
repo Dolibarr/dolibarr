@@ -129,7 +129,7 @@ ErrorPHPNeedModule=Błąd, PHP musi mieć zainstalowany moduł <b>%s</b>, aby ko
 ErrorOpenIDSetupNotComplete=Ty konfiguracji Dolibarr plik konfiguracyjny, aby umożliwić uwierzytelnianie OpenID, ale adres URL usługi OpenID nie jest zdefiniowany w stałej% s
 ErrorWarehouseMustDiffers=magazyn źródłowy i docelowy musi być różny
 ErrorBadFormat=Zły format!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Błąd, członek ten nie jest jeszcze związana z żadnymi thirdparty. Członkiem Link do istniejącej strony trzeciej lub utworzyć nowy thirdparty przed utworzeniem subskrypcji z faktury.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Błąd, występuje kilka dostaw związanych z tą przesyłką. Usunięcie odrzucone.
 ErrorCantDeletePaymentReconciliated=Nie można usunąć płatności, które generowane transakcji w banku, który został pojednaniem
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nie można usunąć płatności udostępnionej przez co najmniej jednego stanu zapłaci faktury z
@@ -174,6 +174,8 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Zapas dla artykułu %s jest niewystarcz
 ErrorStockIsNotEnoughToAddProductOnInvoice=Zapas dla artykułu %s jest niewystarczający, aby dodać go do nowej faktury
 ErrorStockIsNotEnoughToAddProductOnShipment=Zapas dla artykułu %s jest niewystarczający, aby dodać go do nowej dostawy
 ErrorStockIsNotEnoughToAddProductOnProposal=Zapas dla artykułu %s jest niewystarczający, aby dodać go do nowej propozycji handlowej
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.

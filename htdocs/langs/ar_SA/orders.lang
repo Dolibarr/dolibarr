@@ -157,3 +157,4 @@ OrderCreated=وقد تم إنشاء طلباتكم
 OrderFail=حدث خطأ أثناء إنشاء طلباتكم
 CreateOrders=إنشاء أوامر
 ToBillSeveralOrderSelectCustomer=لإنشاء فاتورة لعدة أوامر، انقر أولا على العملاء، ثم اختر "٪ الصورة".
+CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.

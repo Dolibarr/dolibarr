@@ -139,6 +139,7 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 /*
  * View
  */
+
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
 $helpurl = "";
 llxHeader('',$title,$helpurl);
@@ -152,8 +153,7 @@ if ($id > 0 || !empty($ref)) {
 
         // Onglets
         $head = bank_prepare_head($object);
-        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), 0,
-                'account');
+        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), 0, 'account');
 
 
         // Construit liste des fichiers
@@ -166,29 +166,25 @@ if ($id > 0 || !empty($ref)) {
         }
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
         
-        print '<table class="border"width="100%">';
-
-        // Ref
-        print '<tr><td valign="top" width="25%">' . $langs->trans("Ref") . '</td>';
-        print '<td colspan="3">';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
-        print '</td></tr>';
-
-        // Label
-        print '<tr><td valign="top">' . $langs->trans("Label") . '</td>';
-        print '<td colspan="3">' . $object->label . '</td></tr>';
-
-        // Status
-        print '<tr><td valign="top">' . $langs->trans("Status") . '</td>';
-        print '<td colspan="3">' . $object->getLibStatut(4) . '</td></tr>';
-        print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
+        
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+       
+        print '<table class="border" width="100%">';
+        print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
         print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
         print "</table>\n";
-        print "</div>\n";
+
+        print '</div>';
+        
+        dol_fiche_end();
 
         dol_htmloutput_mesg($mesg, $mesgs);
 
+        
         /*
          * Confirmation suppression fichier
          */
@@ -217,6 +213,7 @@ if ($id > 0 || !empty($ref)) {
 }
 else {
     Header('Location: index.php');
+    exit;
 }
 
 

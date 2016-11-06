@@ -361,7 +361,12 @@ if ($resql)
 		if (($mode == "" || $mode == -1) || $mode < 5) 
 		{
 		    print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
-    		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
+    		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) 
+    		{
+    		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
+                $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
+    		    print img_warning($textlate);
+    		}
     		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		}
 		if (($mode == "" || $mode == -1) || $mode >= 5) print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture));

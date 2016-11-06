@@ -102,13 +102,13 @@ class modSupplierProposal extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Read supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Create/modify supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
@@ -227,7 +227,7 @@ class modSupplierProposal extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'supplier_proposal' AND entity = ".$conf->entity,
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_proposal',".$conf->entity.")",
 		);
 

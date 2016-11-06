@@ -120,7 +120,7 @@ else
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
-		print $langs->trans("VATIntraValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
+		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	}
 	else
@@ -128,7 +128,7 @@ else
 		// Syntaxe ok
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
-		print $langs->trans("VATIntraValueIsValid").': ';
+		print $langs->trans("ValueIsValid").': ';
 		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$countryCode).'</font><br>';

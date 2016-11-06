@@ -76,7 +76,6 @@ $object->info($id); // This overwrite ->ref with login instead of id
 
 
 print '<div class="fichecenter">';
-
 print '<div class="underbanner clearboth"></div>';
 
 print '<br>';

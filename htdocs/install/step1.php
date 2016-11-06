@@ -66,7 +66,7 @@ $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir"
 // Alternative root directory name
 $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
-session_start(); // To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parameters)
+session_start();    // To be able to keep info into session (used for not losing password during navigation. The password must not transit through parameters)
 
 // Save a flag to tell to restore input value if we do back
 $_SESSION['dol_save_pass']=$db_pass;

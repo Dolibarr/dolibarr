@@ -100,3 +100,6 @@ WeeklyHours=Ore settimanali
 ColorUser=Colore dell'utente
 DisabledInMonoUserMode=Disabilitato in modalità manutenzione
 UserAccountancyCode=Codice contabile utente
+UserLogoff=User logout
+UserLogged=User logged
+DateEmployment=Date of Employment

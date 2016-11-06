@@ -55,5 +55,5 @@ ErrorOpenSurveyFillFirstSection=Δεν έχετε συμπληρώσει το π
 ErrorOpenSurveyOneChoice=Εισάγετε τουλάχιστον μία επιλογή
 ErrorInsertingComment=Υπήρξε ένα σφάλμα κατά την εισαγωγή του σχόλιου σας
 MoreChoices=Εισάγετε περισσότερες επιλογές για τους ψηφοφόρους
-SurveyExpiredInfo=The poll has been closed or voting delay has expired.
+SurveyExpiredInfo=Η δημοσκόπηση αυτή έχει λήξει ή ο χρόνος ψηφοφορίας έληξε.
 EmailSomeoneVoted=%s έχει γεμίσει μια γραμμή. \nΜπορείτε να βρείτε τη δημοσκόπηση σας στο σύνδεσμο:\n %s

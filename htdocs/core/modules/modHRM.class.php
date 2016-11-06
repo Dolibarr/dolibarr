@@ -99,21 +99,21 @@ class modHRM extends DolibarrModules
 
 		$this->rights[$r][0] = 4001;
 		$this->rights[$r][1] = 'See employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'read';
 		$r ++;
 		
 		$this->rights[$r][0] = 4002;
 		$this->rights[$r][1] = 'Create employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'write';
 		$r ++;
 		
 		$this->rights[$r][0] = 4003;
 		$this->rights[$r][1] = 'Delete employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'delete';
 		$r ++;
@@ -125,9 +125,11 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 		$r ++;
 
-		// Main menu entries
-		$this->menus = array (); // List of menus to add
-		$r = 0;
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 	
 	/**

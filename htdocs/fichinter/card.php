@@ -34,13 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-
 if ($conf->contrat->enabled)
 {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
@@ -612,6 +610,21 @@ if (empty($reshook))
 		}
 	}
 
+	// Classify Billed
+	else if ($action == 'classifydone' && $user->rights->ficheinter->creer)
+	{
+		$result=$object->setStatut(3);
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	
 	/*
 	 *  Mise a jour d'une ligne d'intervention
 	 */
@@ -753,6 +766,7 @@ if (empty($reshook))
 	$trigger_name='FICHINTER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromintervention';
+	$trackid='int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -842,8 +856,8 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if ($conf->contrat->enabled)
-	$formcontract = new FormContract($db);
+if ($conf->contrat->enabled) $formcontract = new FormContract($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 llxHeader('',$langs->trans("Intervention"));
 
@@ -932,6 +946,7 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
+		$soc=new Societe($db);
 		$soc->fetch($socid);
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -1090,7 +1105,7 @@ else if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Affichage en mode visu
-	*/
+ 	 */
 
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -1172,59 +1187,104 @@ else if ($id > 0 || ! empty($ref))
 	// Print form confirm
 	print $formconfirm;
 
-	print '<table class="border" width="100%">';
-
+	
+	// Intervention card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
+	
+	
+	$morehtmlref='<div class="refidno">';
+	// Ref customer
+	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
+	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    if ($user->rights->commande->creer)
+	    {
+	        if ($action != 'classify')
+	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	$morehtmlref.='</div>';
+	
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	    
+	
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border" width="100%">';
+    
 	// Ref
+	/*
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Third party
 	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1)."</td></tr>";
-
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
-	{
-		// Duration
-		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-		print '</tr>';
-	}
-
+    */
+    
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
-		print '<tr><td>'.$langs->trans("Dateo").'</td>';
-		print '<td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("Dateo").'</td>';
+		print '<td>';
 		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
 		// Date End
 		print '<tr><td>'.$langs->trans("Datee").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
 		// Date Terminate/close
 		print '<tr><td>'.$langs->trans("Datet").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $object->datet ? dol_print_date($object->datet, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $form->editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
 	print '</td>';
 	print '</tr>';
 
 	// Project
+	/*
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load('projects');
@@ -1252,7 +1312,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 		print '</td>';
 		print '</tr>';
-	}
+	}*/
 
 	// Contrat
 	if ($conf->contrat->enabled)
@@ -1271,7 +1331,7 @@ else if ($id > 0 || ! empty($ref))
 			print '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'contrat')
 		{
 			$formcontract= new Formcontract($db);
@@ -1296,13 +1356,37 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	//print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
-    $cols = 3;
+    $cols = 2;
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
+    print '</table>';
+    
+    print '</div>';
+    print '<div class="fichehalfright">';
+    print '<div class="ficheaddleft">';
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border centpercent">';
+    
+    if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+    {
+        // Duration
+        print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
+        print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+        print '</tr>';
+    }
+    
 	print "</table>";
+    
+	print '</div>';
+    print '</div>';
+    print '</div>';
+    
+    print '<div class="clearboth"></div><br>';
+    
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1635,7 +1719,7 @@ else if ($id > 0 || ! empty($ref))
 						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
 					}
 
-					if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))
+					if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 					{
 						if ($object->statut != 2)
 						{
@@ -1648,6 +1732,12 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Done
+            	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > 0 && $object->statut < 3)
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifydone">'.$langs->trans("InterventionClassifyDone").'</a></div>';
+				}
+				
 				// Clone
 				if ($user->rights->ficheinter->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
@@ -1684,7 +1774,7 @@ else if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		//print "<br>\n";
-		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+		print $somethingshown=$formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 
 		// Show links to link elements
@@ -1754,10 +1844,12 @@ else if ($id > 0 || ! empty($ref))
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 		$formmail->trackid='int'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{

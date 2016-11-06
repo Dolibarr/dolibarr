@@ -87,17 +87,17 @@ class Thirdparties extends DolibarrApi
      * 
      * Get a list of thirdparties
      * 
-     * @param   int     $mode       Set to 1 to show only customers 
-     *                              Set to 2 to show only prospects
-     *                              Set to 3 to show only those are not customer neither prospect
-     * @param   string  $email      Search by email filter
      * @param   string  $sortfield  Sort field
      * @param   string  $sortorder  Sort order
      * @param   int     $limit      Limit for list
      * @param   int     $page       Page number
-     * @return array Array of thirdparty objects
+     * @param   int     $mode       Set to 1 to show only customers 
+     *                              Set to 2 to show only prospects
+     *                              Set to 3 to show only those are not customer neither prospect
+     * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array               Array of thirdparty objects
      */
-    function index($mode=0, $email=NULL, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -107,35 +107,37 @@ class Thirdparties extends DolibarrApi
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
-        $sql = "SELECT s.rowid";
+        $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
         
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-        $sql.= " WHERE s.fk_stcomm = st.id";
-        if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-        if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
-        if ($mode == 3) $sql.= " AND s.client IN (0)";
-        $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
-        if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
-        if ($socid) $sql.= " AND s.rowid = ".$socid;
-        if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        
+        $sql.= " WHERE t.fk_stcomm = st.id";
+        if ($mode == 1) $sql.= " AND t.client IN (1, 3)";
+        if ($mode == 2) $sql.= " AND t.client IN (2, 3)";
+        if ($mode == 3) $sql.= " AND t.client IN (0)";
+        $sql.= ' AND t.entity IN ('.getEntity('societe', 1).')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";
+        //if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
+        if ($socid) $sql.= " AND t.rowid = ".$socid;
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-        
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
 
         if ($limit) {
@@ -152,7 +154,7 @@ class Thirdparties extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);

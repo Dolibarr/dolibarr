@@ -143,11 +143,6 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				""
 		);
-		$this->const[12] = array(
-				"ACCOUNTING_LIMIT_LIST_VENTILATION",
-				"chaine",
-				"50"
-		);
 		$this->const[13] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
@@ -207,11 +202,14 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				"csv"
 		);
+		/* Not required to disable this. This make not possible to do complete reconciliation.
+		Also, this is not a problem, lines added manually will be reported as "not binded into accounting export module
+		and will be binded manually to be created into general ledger
 		$this->const[24] = array(
 				"BANK_DISABLE_DIRECT_INPUT",
 				"yesno",
 				"1"
-		);
+		);*/
 
 		// Tabs
 		$this->tabs = array();
@@ -228,24 +226,34 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
+		$this->rights[$r][0] = 50440;
+		$this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'chartofaccount';
+		$this->rights[$r][5] = '';
+		$r++;
+		
 		$this->rights[$r][0] = 50401;
-		$this->rights[$r][1] = 'Read ventilation';
+		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][4] = 'bind';
+		$this->rights[$r][5] = 'write';
 		$r++;
 
+		/*
 		$this->rights[$r][0] = 50402;
-		$this->rights[$r][1] = 'Dispatched ventilation';
+		$this->rights[$r][1] = 'Make binding with products and invoices';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'dispatch';
+		$this->rights[$r][5] = 'dispatch_advanced';
 		$r++;
-
+        */
+		
 		$this->rights[$r][0] = 50411;
-		$this->rights[$r][1] = 'Lire les mouvements comptables';
+		$this->rights[$r][1] = 'Read operations in General Ledger';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -253,7 +261,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50412;
-		$this->rights[$r][1] = 'Creer/modifier/annuler les mouvements comptables';
+		$this->rights[$r][1] = 'Write/Edit operations in General Ledger';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -261,7 +269,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50420;
-		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
+		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, general ledger)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
@@ -276,16 +284,10 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = '';
 		$r++;
 
-		$this->rights[$r][0] = 50440;
-		$this->rights[$r][1] = 'Manage chart of accounts';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'chartofaccount';
-		$this->rights[$r][5] = '';
-		$r++;
 
-		// Main menu entries
-		$this->menus = array();
-		$r = 0;
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+
 	}
 }

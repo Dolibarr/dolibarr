@@ -24,7 +24,7 @@
  *	\brief      Dolibarr home page
  */
 
-define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
+define('NOCSRFCHECK',1);	// This is main home and login page. We must be able to go on it from another web site.
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -546,14 +546,15 @@ foreach($valid_dashboardlines as $board)
     $boxwork.= '<td align="right">';
     //if ($board->nbtodolate > 0)
     //{
-        $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days");
-        $boxwork.= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.$board->url.'"><span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
-        $boxwork.= $board->nbtodolate;
-        $boxwork.= '</span></a>';
+    $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
+    $textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+    $boxwork.= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.$board->url.'"><span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
+    $boxwork.= $board->nbtodolate;
+    $boxwork.= '</span></a>';
     //}
     $boxwork.='</td>';
     $boxwork.='<td align="left">';
-    if ($board->nbtodolate > 0) $boxwork.=img_picto($langs->trans("NActionsLate",$board->nbtodolate).' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')',"warning");
+    if ($board->nbtodolate > 0) $boxwork.=img_picto($textlate,"warning");
     else $boxwork.='&nbsp;';
     $boxwork.='</td>';
     /*print '<td class="nowrap" align="right">';

@@ -204,7 +204,7 @@ if ($mode == 'overwrite')
     print_liste_field_titre($langs->trans("Language").' (en_US, es_MX, ...)',$_SERVER["PHP_SELF"],'lang,transkey','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Key"),$_SERVER["PHP_SELF"],'transkey','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("NewTranslationStringToShow"),$_SERVER["PHP_SELF"],'transvalue','',$param,'',$sortfield,$sortorder);
-    if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
+    //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
     print '<td align="center"></td>';
     print "</tr>\n";
     
@@ -222,7 +222,7 @@ if ($mode == 'overwrite')
     print '<input type="text" class="quatrevingtpercent" name="transvalue" value="">';
     print '</td>';
     // Limit to superadmin
-    if (! empty($conf->multicompany->enabled) && !$user->entity)
+    /*if (! empty($conf->multicompany->enabled) && !$user->entity)
     {
     	print '<td>';
     	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
@@ -230,10 +230,10 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     }
     else
-    {
+    {*/
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-    }
+    //}
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
     print "</td>\n";
     print '</tr>';
@@ -371,7 +371,7 @@ if ($mode == 'searchkey')
     print_liste_field_titre($langs->trans("Language").' (en_US, es_MX, ...)',$_SERVER["PHP_SELF"],'lang,transkey','',$param,'',$sortfield,$sortorder).'</td>';
     print_liste_field_titre($langs->trans("Key"),$_SERVER["PHP_SELF"],'transkey','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("CurrentTranslationString"),$_SERVER["PHP_SELF"],'transvalue','',$param,'',$sortfield,$sortorder);
-    if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
+    //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
     print '<td align="center"></td>';
     print "</tr>\n";
 
@@ -388,18 +388,18 @@ if ($mode == 'searchkey')
     print '</td><td>';
     print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$transvalue.'">';
     // Limit to superadmin
-    if (! empty($conf->multicompany->enabled) && !$user->entity)
+    /*if (! empty($conf->multicompany->enabled) && !$user->entity)
     {
         print '</td><td>';
         print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
     }
     else
-    {
+    {*/
         print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
-    }
+    //}
     print '</td>';    
     // Action column
-    print '<td class="liste_titre" align="middle">';
+    print '<td class="liste_titre nowrap" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpitco;
     print '</td>';
@@ -427,6 +427,10 @@ if ($mode == 'searchkey')
             $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
             print $form->textwithpicto('', $htmltext, 1, 'warning');
         }
+        /*if (! empty($conf->multicompany->enabled) && !$user->entity)
+        {
+            print $val;
+        }*/
         print '</td></tr>'."\n";
     }
 

@@ -59,13 +59,26 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  *	View
  */
 
+$form = new Form($db);
+
 $helpurl='';
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-$form = new Form($db);
+$title = $langs->trans('ProductServiceCard');
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Notes');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Notes');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans("Notes"), $help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -80,20 +93,19 @@ if ($id > 0 || ! empty($ref))
     
     dol_fiche_head($head, 'note', $titre, 0, $picto);
 
-
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
-    print '<div class="fichecenter">';
+
+    $cssclass='titlefield';
+    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+    
+    //print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-	$cssclass='titlefield';
+    
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
 
     dol_fiche_end();
 }
