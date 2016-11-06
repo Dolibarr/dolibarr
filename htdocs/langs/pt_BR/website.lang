@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - website
-Shortname=Código
 WebsiteSetupDesc=Crie aqui o numero de entradas ao website que você precisa. Depois entre no menu websites para editá-las.
 DeleteWebsite=Apagar website
 ConfirmDeleteWebsite=Você tem certeza que deseja apagar este web site. Todas as páginas e conteúdos serão removidos.
@@ -8,16 +7,12 @@ WEBSITE_CSS_URL=URL do arquivo CSS externo.
 WEBSITE_CSS_INLINE=Conteúdo CSS
 MediaFiles=Biblioteca de mídias
 EditCss=Editar Estilos/CSS
-EditMenu=Editar Menu
 EditPageMeta=Editar Meta
-EditPageContent=Editar Conteúdo
 Website=Web Site
 Webpage=Página na web
-AddPage=Adicionar página
 PreviewOfSiteNotYetAvailable=A Pré-visualização do seu website <strong>%s</strong> ainda não está disponível. Primeiro você deverá adicionar uma página.
 RequestedPageHasNoContentYet=A página com id %s ainda não está disponível ou o arquivo .tpl.php em cache foi removido. Edite o conteúdo da página para resolver isso.
 PageDeleted=Página '%s' do website %s foi deletada
-PageAdded=Página '%s' adicionada
 ViewSiteInNewTab=Visualizar site numa nova aba
 ViewPageInNewTab=Visualizar página numa nova aba
 SetAsHomePage=Definir com Página Inicial

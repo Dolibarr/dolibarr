@@ -1,10 +1,4 @@
-# Dolibarr language file - Source file is en_US - marges
-
-Margin=Margem
-Margins=Margens
-TotalMargin=Margem total
-MarginOnProducts=Margem / Produtos
-MarginOnServices=Margem / Serviços
+# Dolibarr language file - Source file is en_US - margins
 MarginRate=Relação margem-preço de compra
 MarkRate=Relação margem-preço de venda
 DisplayMarginRates=Exibir relações margem-preço de compra
@@ -12,29 +6,20 @@ DisplayMarkRates=Exibir relações margem-preço de venda
 InputPrice=Preço de entrada
 margin=Gestão de margens de lucro
 margesSetup=Configuração das margens de lucro
-MarginDetails=Detalhes da margem
 ProductMargins=Margens de produtos
 CustomerMargins=Margems de clientes
 SalesRepresentativeMargins=Tolerância aos representante de vendas
 UserMargins=Margens do usuário
 ProductService=Produto ou serviço
-AllProducts=Todos os produtos e serviços
-ChooseProduct/Service=Escolher produto ou serviço
 ForceBuyingPriceIfNull=Compra Força preço / custo para o preço de venda se não definido
 ForceBuyingPriceIfNullDetails=Se o preço de compra / custo não definido, e essa opção "ON", a margem será zero em linha (compra / preço = custo preço de venda), caso contrário ("OFF"), marge será igual ao padrão sugerido.
 MARGIN_METHODE_FOR_DISCOUNT=Metodologia de margem para descontos globais
-UseDiscountAsProduct=Como um produto
-UseDiscountAsService=Como um serviço
-UseDiscountOnTotal=No subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como o produto, serviço, ou somente sob o sub-total na margem.
 MARGIN_TYPE=Compra / Preço de custo sugerido por padrão para cálculo da margem de
 MargeType1=Margem de melhor preço com fornecedor
 MargeType2=Margem sobre o Preço Médio Ponderado (PMP)
 MargeType3=Margem sobre o preço de custo
 MarginTypeDesc=* Margem de melhor preço de compra = Preço de venda - o melhor preço com fornecedor definido na ficha de produto <br> * margem sobre o preço médio ponderado (WAP) = Preço de VENDA - produto Preço Médio Ponderado (WAP) ou melhor preço de fornecedor se WAP ainda não definido <br> * Margem sobre o preço de custo = preço de VENDA - preço de custo definido na ficha de produto ou WAP se o preço de custo não definido, ou melhor preço fornecedor, se ainda não WAP definido
-CostPrice=Preço de custo
-UnitCharges=Custos unitários
-Charges=Custos
 AgentContactType=Tipo contato do agente comercial
 AgentContactTypeDetails=Defina o tipo de contato (conectado coma as faturas) sera usado para o relatorio de margem dos representantes
 rateMustBeNumeric=Rata deve ser um valor numerico
