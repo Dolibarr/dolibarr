@@ -134,7 +134,7 @@ $dolibarr_main_db_type='';
 
 
 // dolibarr_main_db_character_set
-// Database character set used to store data (forced during database creation).
+// Database character set used to store data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
 // dolibarr_main_db_character_set='utf8';
@@ -143,7 +143,7 @@ $dolibarr_main_db_character_set='utf8';
 
 
 // dolibarr_main_db_collation
-// Database character set used to sort data (forced during database creation).
+// Database character set used to sort data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
 // dolibarr_main_db_collation='utf8_unicode_ci';

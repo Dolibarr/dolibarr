@@ -177,3 +177,25 @@ ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
 
 ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
+
+create table llx_user_employment
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  entity            integer DEFAULT 1 NOT NULL, -- multi company id
+  ref				varchar(50),				-- reference
+  ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
+  fk_user			integer,
+  datec             datetime,
+  tms               timestamp,
+  fk_user_creat     integer,
+  fk_user_modif     integer,
+  job				varchar(128),				-- job position. may be a dictionnary
+  status            integer NOT NULL,			-- draft, active, closed
+  salary			double(24,8),				-- last and current value stored into llx_user
+  salaryextra		double(24,8),				-- last and current value stored into llx_user
+  weeklyhours		double(16,8),				-- last and current value stored into llx_user
+  dateemployment    date,						-- last and current value stored into llx_user
+  dateemploymentend date						-- last and current value stored into llx_user
+)ENGINE=innodb;
+
+

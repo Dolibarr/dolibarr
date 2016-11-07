@@ -13,6 +13,13 @@
 -- flush privileges;
 
 
+-- Requests to change character set and collation of a column
+
+-- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- You can check with show full columns from llx_accountingaccount;
+
+
 
 -- Requests to clean corrupted database
 
