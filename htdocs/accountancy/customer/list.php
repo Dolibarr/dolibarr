@@ -238,6 +238,7 @@ if ($result) {
 	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
@@ -246,19 +247,18 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print '</tr>';
 
 	// We add search filter
 	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_invoice" value="' . $search_invoice . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
-	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
@@ -308,11 +308,15 @@ if ($result) {
 					
 		print '<tr '. $bc[$var].'>';
 
+		// Line id
+		print '<td align="center">' . $objp->rowid . '</td>';
+		
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
+
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -341,7 +345,7 @@ if ($result) {
 		print price($objp->tva_tx_line);
 		print '</td>';
 		
-		// Accounting account suggested
+		// Suggested accounting account
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
 	    print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
 		if ($objp->product_id > 0)
@@ -354,9 +358,6 @@ if ($result) {
 		print '<td align="center">';
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1);
 		print '</td>';
-		
-		// Line id
-		print '<td align="center">' . $objp->rowid . '</td>';
 		
 		print '<td align="right">';
 		print '<input type="checkbox" class="checkforaction" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
