@@ -358,9 +358,9 @@ if ($result) {
 		    if ($objp->code_buy_l > 0) print $objp->code_buy_l;
 		    else print $langs->trans("Unknown");
 		} else {
-		    print $langs->trans("Default") . ' = ' . ($objp->code_buy_l > 0 ? $objp->code_buy_l : $langs->trans("Unknown"));
+		    print $langs->trans("Default") . ' = ' . ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : $langs->trans("Unknown"));
 		    print '<br>';
-		    print $langs->trans("Product") . ' = ' . ($objp->code_buy_p > 0 ? $objp->code_buy_p : $langs->trans("Unknown"));
+		    print $langs->trans("Product") . ' = ' . ($objp->code_buy_p > 0 ? length_accountg($objp->code_buy_p) : $langs->trans("Unknown"));
 		}
 		print '</td>';
 
