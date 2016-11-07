@@ -269,13 +269,13 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="6" value="' . $search_invoice . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="6" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_country" size="5" value="' . $search_country . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_tavintra" size="5" value="' . $search_tavintra . '"></td>';
 	print '<td class="liste_titre" align="right">';
