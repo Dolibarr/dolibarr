@@ -146,9 +146,9 @@ $dolibarr_main_db_character_set='utf8';
 // Database character set used to sort data (forced during database creation).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_collation='utf8_general_ci';
+// dolibarr_main_db_collation='utf8_unicode_ci';
 //
-$dolibarr_main_db_collation='utf8_general_ci';
+$dolibarr_main_db_collation='utf8_unicode_ci';
 
 
 
