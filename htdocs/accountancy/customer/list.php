@@ -158,9 +158,10 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 llxHeader('', $langs->trans("Ventilation"));
 
 // Customer Invoice lines
-$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype,";
+$sql .= " l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-$sql .= "  aa.rowid as aarowid";
+$sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
@@ -251,11 +252,11 @@ if ($result) {
 
 	// We add search filter
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_invoice" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_invoice" value="' . $search_invoice . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
@@ -278,35 +279,33 @@ if ($result) {
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
 		$objp->aarowid_suggest = '';
-		$code_sell_p_l_differ = '';
 
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-		if (! empty($objp->code_sell)) {
-			$objp->code_sell_p = $objp->code_sell;
-		} else {
-			$code_sell_p_notset = 'color:red';
-			if ($objp->type == 1) {
-				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			} elseif ($objp->type == 0) {
-				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			}
-		}
 		if ($objp->type_l == 1) {
-			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
 			}
 		} elseif ($objp->type_l == 0) {
-			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_p;
 			}
 		}
-		if ($objp->code_sell_l != $objp->code_sell_p)
-			$code_sell_p_l_differ = 'color:red';
+		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
+		if (! empty($objp->code_sell)) {
+			$objp->code_sell_p = $objp->code_sell;       // Code on product
+		} else {
+    	    $code_sell_p_notset = 'color:orange';
+		}
+		if (empty($objp->code_sell_l) && empty($objp->code_sell_p)) $code_sell_p_notset = 'color:red';
+		
+		// $objp->code_sell_p is now code of product/service
+		// $objp->code_sell_l is now default code of product/service
+					
 		print '<tr '. $bc[$var].'>';
 
 		// Ref Invoice
@@ -327,9 +326,9 @@ if ($result) {
 
 		print '</td>';
 
-		print '<td style="' . $code_sell_p_l_differ . '">' . dol_trunc($objp->product_label, 24) . '</td>';
+		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
-		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($objp->description, $trunclength)) . '</td>';
+		print '<td>' . nl2br(dol_trunc($objp->description, $trunclength)) . '</td>';
 		
 		print '<td align="right">';
 		print price($objp->total_ht);
@@ -344,13 +343,11 @@ if ($result) {
 		
 		// Accounting account suggested
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
-		if ($objp->code_sell_l == $objp->code_sell_p) {               // Test if there is a difference between code by default and code on product
-		    if ($objp->code_sell_l > 0) print $objp->code_sell_l;
-		    else print $langs->trans("Unknown");
-		} else {
-			print $langs->trans("Default") . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
-			print '<br>';
-			print $langs->trans("Product") . ' = ' . ($objp->code_sell_p > 0 ? length_accountg($objp->code_sell_p) : $langs->trans("Unknown"));
+	    print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
+		if ($objp->product_id > 0)
+		{
+		    print '<br>';
+		    print (($objp->type_l == 1)?$langs->trans("ThisService"):$langs->trans("ThisProduct")) . ' = ' . (empty($objp->code_sell_p) ? $langs->trans("Unknown") : length_accountg($objp->code_sell_p));
 		}
 		print '</td>';
 
