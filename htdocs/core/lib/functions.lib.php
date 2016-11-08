@@ -3098,7 +3098,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	Load a title with picto
  *
  *	@param	string	$titre				Title to show
- *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
@@ -3106,7 +3106,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
 {
 	global $conf;
 
@@ -3121,9 +3121,9 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
-	if (dol_strlen($mesg))
+	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$mesg.'</td>';
+		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 

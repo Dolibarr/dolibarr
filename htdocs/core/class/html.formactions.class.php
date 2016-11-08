@@ -180,7 +180,10 @@ class FormActions
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
         	else $title=$langs->trans("Actions");
 
-        	print load_fiche_titre($title,'','');
+        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">';
+        	$buttontoaddnewevent.= $langs->trans("AddEvent");
+        	$buttontoaddnewevent.= '</a>';
+        	print load_fiche_titre($title, $buttontoaddnewevent, '');
 
         	$page=0; $param=''; $sortfield='a.datep';
         	
