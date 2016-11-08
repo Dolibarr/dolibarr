@@ -5215,7 +5215,7 @@ class Form
 
         if (empty($reshook))
         {
-        	$num = count($object->linkedObjects);
+        	$nbofdifferenttypes = count($object->linkedObjects);
 
         	print '<br>';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
@@ -5232,7 +5232,7 @@ class Form
             print '<td></td>';
             print '</tr>';
 
-            $numoutput=0;
+            $nboftypesoutput=0;
 
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
@@ -5292,23 +5292,28 @@ class Form
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
+        		    if ($nboftypesoutput == ($nbofdifferenttypes - 1))    // No more type to show after
+        		    {
+        		        global $noMoreLinkedObjectBlockAfter;
+        		        $noMoreLinkedObjectBlockAfter=1;
+        		    }
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res)
         			{
-        			    $numoutput++;
+        			    $nboftypesoutput++;
         			    break;
         			}
         		}
         	}
 
-        	if (! $numoutput)
+        	if (! $nboftypesoutput)
         	{
         	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
 
         	print '</table>';
 
-        	return $num;
+        	return $nbofdifferenttypes;
         }
     }
 
