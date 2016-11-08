@@ -1887,7 +1887,7 @@ if (! function_exists("llxFooter"))
                 print '<div class="error">'.$msg.'</div>';
             }
 
-            define("MAIN_CORE_ERROR",0);
+            //define("MAIN_CORE_ERROR",0);      // Constant was defined and we can't change value of a constant
         }
 
         print "\n\n";
