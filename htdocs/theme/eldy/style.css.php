@@ -692,6 +692,30 @@ div.myavailability {
     .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
+    
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(300,'width'); ?>px;
+	}
+	select {
+		width: 98%;
+		<?php if (empty($conf->dol_use_jmobile)) { ?>max-width: 100px;<?php } ?>
+		min-width: 40px;
+	}
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }
+    
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -4640,30 +4664,6 @@ img.demothumb {
 	div.mainmenu {
     	min-width: 20px;
     }
-
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(300,'width'); ?>px;
-	}
-	select {
-		width: 98%;
-		<?php if (empty($conf->dol_use_jmobile)) { ?>max-width: 100px;<?php } ?>
-		min-width: 40px;
-	}
-	div.divphotoref {
-		padding-right: 5px;	
-	}
-    img.photoref, div.photoref {
-    	border: none;
-    	-moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-        padding: 4px;
-    	height: 20px;
-    	width: 20px;
-        object-fit: contain;
-    }
-	
 }
 
 <?php
