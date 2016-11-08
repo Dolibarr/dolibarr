@@ -250,13 +250,13 @@ class FormActions
      *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
      *  @param  string		    $htmlname       Name of select field
      *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
      *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
      *  @param  int		        $multiselect    1=Allow multiselect of action type
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
+    function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
         global $langs,$user,$form,$conf;
 
