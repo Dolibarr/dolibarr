@@ -24,6 +24,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- after changing const name, please insure that old constant was rename
+UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRPARTY_CREATION_INDIVIDUAL'  -- under 3.9.0
+UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRDPARTY_CREATION_INDIVIDUAL' -- under 4.0.1
 
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
