@@ -1243,7 +1243,7 @@ class ExtraFields
 		}
 		elseif ($type == 'mail')
 		{
-			$value=dol_print_email($value);
+			$value=dol_print_email($value,0,0,0,64,1,1);
 		}
 		elseif ($type == 'url')
 		{
@@ -1251,7 +1251,7 @@ class ExtraFields
 		}
 		elseif ($type == 'phone')
 		{
-			$value=dol_print_phone($value);
+			$value=dol_print_phone($value, '', 0, 0, '', '&nbsp;', 1);
 		}
 		elseif ($type == 'price')
 		{

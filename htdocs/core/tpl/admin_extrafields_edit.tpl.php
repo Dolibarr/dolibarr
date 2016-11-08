@@ -131,6 +131,7 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 $typewecanchangeinto=array(
     'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
 );
