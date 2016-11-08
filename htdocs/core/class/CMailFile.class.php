@@ -527,7 +527,7 @@ class CMailFile
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
 					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
-					else $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers);
+					else $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers);
 
 					if (! $res)
 					{
@@ -840,7 +840,7 @@ class CMailFile
 
 		// Receiver
 		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol2;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;    // Question: bcc must not be into header, only into SMTP command "RCPT TO". Does php mail support this ? 
 
 		// Delivery receipt
 		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol2;
