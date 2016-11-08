@@ -776,6 +776,8 @@ class FormFile
 
     /**
      *	Show a Document icon with link(s)
+     *  You may want to call this into a div like this:
+     *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
      *
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.

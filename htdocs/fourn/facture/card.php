@@ -412,6 +412,7 @@ if (empty($reshook))
 
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
+				    $error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -506,7 +507,7 @@ if (empty($reshook))
 
 							// Defined the new fk_parent_line
 							if ($result > 0 && $line->product_type == 9) {
-							$fk_parent_line = $result;
+                                $fk_parent_line = $result;
 							}
 						}
 
@@ -571,8 +572,6 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$db->begin();
-
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
@@ -745,34 +744,34 @@ if (empty($reshook))
 						}
 					}
 				}
+			}
+		}
 
-				if ($error)
+		if ($error)
+		{
+			$langs->load("errors");
+			$db->rollback();
+
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='create';
+			$_GET['socid']=$_POST['socid'];
+		}
+		else
+		{
+			$db->commit();
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$outputlangs = $langs;
+				$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result	< 0)
 				{
-					$langs->load("errors");
-					$db->rollback();
-
-					setEventMessages($object->error, $object->errors, 'errors');
-					$action='create';
-					$_GET['socid']=$_POST['socid'];
-				}
-				else
-				{
-					$db->commit();
-
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-						$outputlangs = $langs;
-						$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-						if ($result	< 0)
-						{
-							dol_print_error($db,$object->error,$object->errors);
-							exit;
-						}
-					}
-
-					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					dol_print_error($db,$object->error,$object->errors);
 					exit;
 				}
 			}
+
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			exit;
 		}
 	}
 

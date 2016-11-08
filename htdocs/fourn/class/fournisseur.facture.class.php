@@ -1765,9 +1765,10 @@ class FactureFournisseur extends CommonInvoice
      *	@param		int		$max			Max length of shown ref
      *	@param		int		$short			1=Return just URL
      *	@param		string	$moretitle		Add more text to title tooltip
+     *  @param	    int   	$notooltip		1=Disable tooltip
      * 	@return		string					String with URL
      */
-    public function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
+    public function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
     {
         global $langs, $conf;
 
@@ -1802,10 +1803,23 @@ class FactureFournisseur extends CommonInvoice
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
 
-        $linkstart='<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowSupplierInvoice");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend.' ');
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
         $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
         return $result;
     }
