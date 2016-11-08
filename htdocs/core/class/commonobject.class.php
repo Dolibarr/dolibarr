@@ -3280,7 +3280,7 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $langs, $user;
 		// TODO We should not use global var for this !
-		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
 		// Define usemargins
 		$usemargins=0;
@@ -3342,6 +3342,8 @@ abstract class CommonObject
 
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency').'</td>';
+
+        if ($outputalsopricetotalwithtax) print '<td align="right" width="80">'.$langs->trans('TotalTTCShort').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
