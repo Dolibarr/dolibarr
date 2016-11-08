@@ -1808,7 +1808,7 @@ if ($action == 'create')
 			// Remise dispo de type non avoir
 			$filter = 'fk_facture_source IS NULL';
 			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter);
+			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter, 0, '', 1);
 		}
 	}
 	if ($absolute_creditnote) {

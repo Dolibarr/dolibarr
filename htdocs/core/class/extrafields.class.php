@@ -76,14 +76,15 @@ class ExtraFields
 	'price'=>'ExtrafieldPrice',
 	'phone'=>'ExtrafieldPhone',
 	'mail'=>'ExtrafieldMail',
+	'url'=>'ExtrafieldUrl',
 	'select' => 'ExtrafieldSelect',
 	'sellist' => 'ExtrafieldSelectList',
 	'radio' => 'ExtrafieldRadio',
 	'checkbox' => 'ExtrafieldCheckBox',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 	'link' => 'ExtrafieldLink',
-	'separate' => 'ExtrafieldSeparator',
 	'password' => 'ExtrafieldPassword',
+	'separate' => 'ExtrafieldSeparator',
 	);
 
 	/**
@@ -195,6 +196,9 @@ class ExtraFields
 			} elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
+			} elseif($type=='url') {
+				$typedb='varchar';
+				$lengthdb='255';
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
 				$typedb='text';
 				$lengthdb='';
@@ -425,6 +429,9 @@ class ExtraFields
 			} elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
+			} elseif($type=='url') {
+				$typedb='varchar';
+				$lengthdb='255';
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
 				$typedb='text';
 				$lengthdb='';
@@ -693,6 +700,10 @@ class ExtraFields
     			//$showsize=10;
     			$showsize = 'minwidth100imp';
     		}
+    		elseif ($type == 'url')
+    		{
+    		    $showsize='minwidth400imp';
+    		}
     		else
     		{
     			if (round($size) < 12)
@@ -738,6 +749,10 @@ class ExtraFields
 		{
 			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
+		elseif (in_array($type, array('mail', 'phone', 'url')))
+		{
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+		}
 		elseif ($type == 'text')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -753,14 +768,6 @@ class ExtraFields
 				$checked=' value="1" ';
 			}
 			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
-		}
-		elseif ($type == 'mail')
-		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
-		}
-		elseif ($type == 'phone')
-		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
@@ -1237,6 +1244,10 @@ class ExtraFields
 		elseif ($type == 'mail')
 		{
 			$value=dol_print_email($value);
+		}
+		elseif ($type == 'url')
+		{
+			$value=dol_print_url($value,'_blank',32,1);
 		}
 		elseif ($type == 'phone')
 		{

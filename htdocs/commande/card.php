@@ -2019,7 +2019,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			} else {
 				// Remise dispo de type remise fixe (not credit note)
 				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount);
+				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1);
 			}
 		}
 		if ($absolute_creditnote) {
