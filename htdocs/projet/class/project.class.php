@@ -237,7 +237,15 @@ class Project extends CommonObject
         $this->description = trim($this->description);
 		if ($this->opp_amount < 0) $this->opp_amount='';
 		if ($this->opp_percent < 0) $this->opp_percent='';
-
+        if ($this->date_end && $this->date_end < $this->date_start)
+        {
+            $this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+            $this->errors[] = $this->error;
+            $this->db->rollback();
+            dol_syslog(get_class($this)."::update error -3 " . $this->error, LOG_ERR);
+            return -3;
+        }
+        
         if (dol_strlen(trim($this->ref)) > 0)
         {
             $this->db->begin();
@@ -1721,11 +1729,11 @@ class Project extends CommonObject
 	    global $conf;
 	
         if (! ($this->statut == 1)) return false;
-        if (! $this->datee) return false;
+        if (! $this->datee && ! $this->date_end) return false;
 
         $now = dol_now();
 
-        return $this->datee < ($now - $conf->projet->warning_delay);
+        return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
 	}	
 
 	
