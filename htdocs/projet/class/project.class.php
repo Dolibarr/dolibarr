@@ -695,10 +695,11 @@ class Project extends CommonObject
     /**
      * 		Validate a project
      *
-     * 		@param		User	$user		User that validate
-     * 		@return		int					<0 if KO, >0 if OK
+     * 		@param		User	$user		   User that validate
+     *      @param      int     $notrigger     1=Disable triggers
+     * 		@return		int					   <0 if KO, >0 if OK
      */
-    function setValid($user)
+    function setValid($user, $notrigger=0)
     {
         global $langs, $conf;
 
@@ -725,10 +726,13 @@ class Project extends CommonObject
             if ($resql)
             {
                 // Call trigger
-                $result=$this->call_trigger('PROJECT_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-
+                if (empty($notrigger))
+                {
+                    $result=$this->call_trigger('PROJECT_VALIDATE',$user);
+                    if ($result < 0) { $error++; }
+                    // End call triggers
+                }
+                
                 if (!$error)
                 {
                 	$this->statut=1;
@@ -1866,5 +1870,20 @@ class Project extends CommonObject
 		return 1;
 	}
 
+	
+	/**
+	 * 	Create an array of tasks of current project
+	 * 
+	 *  @param  User   $user       Object user we want project allowed to
+	 * 	@return int		           >0 if OK, <0 if KO
+	 */
+	function getLinesArray($user)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+	    $taskstatic = new Task($this->db);
+
+	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
+	}
+	
 }
 
