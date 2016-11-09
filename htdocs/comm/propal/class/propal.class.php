@@ -2734,34 +2734,46 @@ class Propal extends CommonObject
      */
     function getNomUrl($withpicto=0,$option='', $get_params='')
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
 
         $result='';
-        $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
-        if (! empty($this->ref))
-            $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (! empty($this->ref_client))
-            $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
-        }
-        if ($option == 'compta') {  // deprecated
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
-        }
-        if ($option == 'expedition') {
-            $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
-        }
-        if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
-        }
-        $linkend='</a>';
+        $label = '';
+
+	    if ($user->rights->propal->lire) {
+		    $label .= '<u>'.$langs->trans("ShowPropal").'</u>';
+		    if (!empty($this->ref)) {
+			    $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		    }
+		    if (!empty($this->ref_client)) {
+			    $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+		    }
+		    if (!empty($this->total_ht)) {
+			    $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1,
+					    $conf->currency);
+		    }
+		    if (!empty($this->total_tva)) {
+			    $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,
+					    $conf->currency);
+		    }
+		    if (!empty($this->total_ttc)) {
+			    $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1,
+					    $conf->currency);
+		    }
+		    $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		    if ($option == '') {
+			    $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id.$get_params.$linkclose;
+		    }
+		    if ($option == 'compta') {  // deprecated
+			    $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id.$get_params.$linkclose;
+		    }
+		    if ($option == 'expedition') {
+			    $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id.$get_params.$linkclose;
+		    }
+		    if ($option == 'document') {
+			    $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id.$get_params.$linkclose;
+		    }
+		    $linkend = '</a>';
+	    }
 
         $picto='propal';
 
