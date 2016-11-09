@@ -494,7 +494,7 @@ if (empty($reshook))
 							$pu_ht = price($prodcustprice->lines [0]->price);
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
-							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+							$tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
 				}

@@ -293,7 +293,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$jquerytheme = 'smoothness';
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
-	// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_nomousehover
+	// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover
 	$dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
 	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
 	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int');

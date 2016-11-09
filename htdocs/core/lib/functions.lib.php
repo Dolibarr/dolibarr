@@ -1080,9 +1080,9 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
 	global $conf, $langs;
 	$ret='';
 	if ($fieldrequired) $ret.='<span class="fieldrequired">';
-	if (empty($conf->dol_use_jmobile)) $ret.='<label for="'.$fieldkey.'">';
+	if (($conf->dol_use_jmobile != 4)) $ret.='<label for="'.$fieldkey.'">';
 	$ret.=$langs->trans($langkey);
-	if (empty($conf->dol_use_jmobile)) $ret.='</label>';
+	if (($conf->dol_use_jmobile != 4)) $ret.='</label>';
 	if ($fieldrequired) $ret.='</span>';
 	return $ret;
 }
@@ -3098,7 +3098,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	Load a title with picto
  *
  *	@param	string	$titre				Title to show
- *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
@@ -3106,7 +3106,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
 {
 	global $conf;
 
@@ -3121,9 +3121,9 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
-	if (dol_strlen($mesg))
+	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$mesg.'</td>';
+		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -3177,7 +3177,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Left
 	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding" style="width: 35%" valign="middle">';
+	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
@@ -3186,11 +3186,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Center
 	if ($center)
 	{
-		print '<td class="nobordernopadding center" style="width: 30%" valign="middle">'.$center.'</td>';
+		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
 	}
 
 	// Right
-	print '<td class="nobordernopadding" align="right" style="width: 35%" valign="middle">';
+	print '<td class="nobordernopadding valignmiddle" align="right">';
 	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
@@ -3208,20 +3208,20 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=0'.$options.'">1</a></li>';
-				if ($cpt > 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
-				else if ($cpt == 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=1'.$options.'">2</a></li>';
+				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page=0'.$options.'">1</a></li>';
+				if ($cpt > 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				else if ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page=1'.$options.'">2</a></li>';
 			}
 
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1).'</span></li>';
+					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
+					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
@@ -3229,14 +3229,14 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-2) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
-				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
-				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
+				if ($cpt<$nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
+				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
+			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
 	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
@@ -3315,7 +3315,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	}
 	if ($page > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
 		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	if ($betweenarrows)
@@ -3324,7 +3324,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	}
 	if ($nextpage > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
 		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
 	}
 	if ($afterarrows)
@@ -5197,7 +5197,7 @@ function dol_osencode($str)
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
  * 		@param	DoliDB	$db			Database handler
- * 		@param	string	$key		Code to get Id
+ * 		@param	string	$key		Code or Id to get Id or Code
  * 		@param	string	$tablename	Table name without prefix
  * 		@param	string	$fieldkey	Field for code
  * 		@param	string	$fieldid	Field for id
@@ -5479,7 +5479,7 @@ function printCommonFooter($zone='private')
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
-		if (empty($conf->dol_use_jmobile))
+		if (($conf->dol_use_jmobile != 4))
 		{
 			print "\n";
 			print '<script type="text/javascript">'."\n";

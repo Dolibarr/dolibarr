@@ -108,13 +108,12 @@ if (! $sortfield) $sortfield='b.datev';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && ($id > 0 || ! empty($ref)))
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))
 {
     $sortfield = 'b.datev, b.dateo, b.rowid';
-    $mode_balance_ok = true;
+    if ($id > 0 || ! empty($ref) || $account > 0) $mode_balance_ok = true;
 }
 if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
-
 
 $object = new Account($db);
 if ($id > 0 || ! empty($ref))
@@ -527,6 +526,9 @@ if ($page >= $nbtotalofpages)
     if ($page < 0) $page = 0;
 }
 
+// If not account defined $mode_balance_ok=false
+if (empty($account)) $mode_balance_ok=false;
+// If a search is done $mode_balance_ok=false
 if (! empty($search_ref)) $mode_balance_ok=false;
 if (! empty($req_nb)) $mode_balance_ok=false;
 if (! empty($type)) $mode_balance_ok=false;
@@ -879,6 +881,12 @@ if ($resql)
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
         {
+            if (! $account) 
+            {
+                dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+                exit;
+            }
+            
             //Loop on each record
             $sign = 1;
             $i = 0;

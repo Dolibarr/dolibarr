@@ -1002,7 +1002,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         if (get_class($filterobj) == 'Adherent' && $filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-        if (!empty($actioncode)) $sql.= " AND c.code='".$actioncode."' ";
+        // Condition on actioncode
+        if (! empty($actioncode))
+        {
+            if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+            {
+                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+                else 
+                {
+                    if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
+                    if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+                }
+            }
+            else
+            {
+                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+                else $sql.= " AND c.code = '".$db->escape($actioncode)."'";
+            }
+        }
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
@@ -1160,7 +1179,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.='<td><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out.='<td></td>';
 		$out.='<td>';
-	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0, 0, 0, 1);
+	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
 		$out.='</td>';
 		$out.='<td></td>';
 		$out.='<td></td>';
@@ -1235,8 +1254,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     			    if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
     			    if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
     			}
+			    $out.=$actionstatic->type;
 			}
-			$out.=$actionstatic->type;
+			else {
+			    $typelabel = $actionstatic->type;
+			    if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL"); 
+			    $out.=$typelabel;
+			}
 			$out.='</td>';
 
             // Title of event

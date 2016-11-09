@@ -309,7 +309,7 @@ if (empty($reshook))
 	elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
-	    $object->label=$_POST['label'];
+	    $object->label=GETPOST('label');
 	    $result=$object->update($user);
 	    if ($result < 0) dol_print_error($db);
 	}
@@ -412,6 +412,7 @@ if (empty($reshook))
 
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
+				    $error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -506,7 +507,7 @@ if (empty($reshook))
 
 							// Defined the new fk_parent_line
 							if ($result > 0 && $line->product_type == 9) {
-							$fk_parent_line = $result;
+                                $fk_parent_line = $result;
 							}
 						}
 
@@ -571,8 +572,6 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$db->begin();
-
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
@@ -745,34 +744,34 @@ if (empty($reshook))
 						}
 					}
 				}
+			}
+		}
 
-				if ($error)
+		if ($error)
+		{
+			$langs->load("errors");
+			$db->rollback();
+
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='create';
+			$_GET['socid']=$_POST['socid'];
+		}
+		else
+		{
+			$db->commit();
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$outputlangs = $langs;
+				$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result	< 0)
 				{
-					$langs->load("errors");
-					$db->rollback();
-
-					setEventMessages($object->error, $object->errors, 'errors');
-					$action='create';
-					$_GET['socid']=$_POST['socid'];
-				}
-				else
-				{
-					$db->commit();
-
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-						$outputlangs = $langs;
-						$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-						if ($result	< 0)
-						{
-							dol_print_error($db,$object->error,$object->errors);
-							exit;
-						}
-					}
-
-					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					dol_print_error($db,$object->error,$object->errors);
 					exit;
 				}
 			}
+
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			exit;
 		}
 	}
 
@@ -2252,6 +2251,24 @@ else
 
     	print '<table class="border centpercent">';
 
+    	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+		{
+    	    // Multicurrency Amount HT
+    	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+    	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+    	    print '</tr>';
+    	
+    	    // Multicurrency Amount VAT
+    	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+    	    print '<td>' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+    	    print '</tr>';
+    	
+    	    // Multicurrency Amount TTC
+    	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+    	    print '<td>' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+    	    print '</tr>';
+    	}
+
     	// Amount
     	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
     	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
@@ -2281,24 +2298,6 @@ else
     	    print '</tr>';
     	}
     	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-
-    	if (!empty($conf->multicurrency->enabled))
-    	{
-    	    // Multicurrency Amount HT
-    	    print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-    	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-    	    print '</tr>';
-    	
-    	    // Multicurrency Amount VAT
-    	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-    	    print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-    	    print '</tr>';
-    	
-    	    // Multicurrency Amount TTC
-    	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-    	    print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-    	    print '</tr>';
-    	}
 
     	print '</table>';
  

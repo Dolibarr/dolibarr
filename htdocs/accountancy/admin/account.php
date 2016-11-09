@@ -256,10 +256,8 @@ if ($resql) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
-	
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-	print '&nbsp;';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	print $searchpitco;
 	print '</td>';
 	print '</tr>';
 	

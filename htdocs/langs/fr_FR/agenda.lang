@@ -54,6 +54,7 @@ ShipmentValidatedInDolibarr=Expédition %s validée
 ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
 ShipmentDeletedInDolibarr=Expédition %s supprimée
+OrderCreatedInDolibarr=Commande %s créée
 OrderValidatedInDolibarr=Commande %s validée
 OrderDeliveredInDolibarr=Commande %s classée Livrée
 OrderCanceledInDolibarr=Commande %s annulée

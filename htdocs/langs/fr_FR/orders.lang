@@ -19,6 +19,7 @@ CustomerOrder=Commande client
 CustomersOrders=Commandes clients
 CustomersOrdersRunning=Commandes clients en cours
 CustomersOrdersAndOrdersLines=Commandes clients et ligne de commandes
+OrdersDeliveredToBill=Commandes clients délivrées à facturer
 OrdersToBill=Commandes clients à délivrer
 OrdersInProcess=Commandes clients en traitement
 OrdersToProcess=Commandes clients à traiter

@@ -129,10 +129,11 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 <?php
 // Define list of possible type transition
 $typewecanchangeinto=array(
-    'varchar'=>array('varchar', 'phone', 'mail', 'select'),
-    'mail'=>array('varchar', 'phone', 'mail', 'select'),
-    'phone'=>array('varchar', 'phone', 'mail', 'select'),
-    'select'=>array('varchar', 'phone', 'mail', 'select')
+    'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
 );
 if (in_array($type, array_keys($typewecanchangeinto)))
 {

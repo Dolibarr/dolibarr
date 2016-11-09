@@ -3910,15 +3910,16 @@ class Form
      *
      *  @param  string	$page        	Page URL where form is shown
      *  @param  int		$selected    	Value pre-selected
-     *	@param  string	$htmlname    	Nom du formulaire select. Si 'none', non modifiable. Example 'remise_id'.
+     *	@param  string	$htmlname    	Name of SELECT component. If 'none', not changeable. Example 'remise_id'.
      *	@param	int		$socid			Third party id
      * 	@param	float	$amount			Total amount available
      * 	@param	string	$filter			SQL filter on discounts
      * 	@param	int		$maxvalue		Max value for lines that can be selected
      *  @param  string	$more           More string to add
+     *  @param  int     $hidelist       1=Hide list
      *  @return	void
      */
-    function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='')
+    function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0)
     {
         global $conf,$langs;
         if ($htmlname != "none")
@@ -3929,25 +3930,30 @@ class Form
             print '<div class="inline-block">';
             if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
-                else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
+                if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
+                else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
             }
             else
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
-                else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
+                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
+                else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
             }
-            print '</div><div class="inline-block" style="padding-right: 10px">';
-            $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
-            if ($filter) $newfilter.=' AND ('.$filter.')';
-            $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
-            if ($nbqualifiedlines > 0)
-            {
-                print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
-                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
-                print '>';
-            }
+            if (empty($hidelist)) print ': ';
             print '</div>';
+            if (empty($hidelist))
+            {
+                print '<div class="inline-block" style="padding-right: 10px">';
+                $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
+                if ($filter) $newfilter.=' AND ('.$filter.')';
+                $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
+                if ($nbqualifiedlines > 0)
+                {
+                    print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
+                    if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+                    print '>';
+                }
+                print '</div>';
+            }
             if ($more) 
             {
                 print '<div class="inline-block">';
@@ -5209,7 +5215,7 @@ class Form
 
         if (empty($reshook))
         {
-        	$num = count($object->linkedObjects);
+        	$nbofdifferenttypes = count($object->linkedObjects);
 
         	print '<br>';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
@@ -5226,7 +5232,7 @@ class Form
             print '<td></td>';
             print '</tr>';
 
-            $numoutput=0;
+            $nboftypesoutput=0;
 
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
@@ -5286,23 +5292,28 @@ class Form
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
+        		    if ($nboftypesoutput == ($nbofdifferenttypes - 1))    // No more type to show after
+        		    {
+        		        global $noMoreLinkedObjectBlockAfter;
+        		        $noMoreLinkedObjectBlockAfter=1;
+        		    }
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res)
         			{
-        			    $numoutput++;
+        			    $nboftypesoutput++;
         			    break;
         			}
         		}
         	}
 
-        	if (! $numoutput)
+        	if (! $nboftypesoutput)
         	{
         	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
 
         	print '</table>';
 
-        	return $num;
+        	return $nbofdifferenttypes;
         }
     }
 
@@ -5555,8 +5566,8 @@ class Form
 
         //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
         //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
-        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(empty($conf->dol_use_jmobile)?'&lt;':'&nbsp;').'</span>';
-        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(empty($conf->dol_use_jmobile)?'&gt;':'&nbsp;').'</span>';
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';

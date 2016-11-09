@@ -101,6 +101,7 @@ KeywordFilter=Keyword filter
 CategoryFilter=Category filter
 ProductToAddSearch=Search product to add
 NoMatchFound=No match found
+ListOfProductsServices=List of products/services
 ProductAssociationList=List of products/services that are component of this virtual product/package
 ProductParentList=List of virtual products/services with this product as a component
 ErrorAssociationIsFatherOfThis=One of selected product is parent with current product
