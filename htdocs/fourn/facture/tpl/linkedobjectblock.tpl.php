@@ -54,6 +54,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
     </tr>
 <?php 
+}
 if (count($linkedObjectBlock) > 1)
 {
     ?>
