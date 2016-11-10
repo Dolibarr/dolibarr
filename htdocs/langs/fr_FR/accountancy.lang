@@ -41,7 +41,7 @@ AccountancyAreaDescSupplier=STEP %s: Vérifier que la liaison entre les lignes d
 AccountancyAreaDescWriteRecords=STEP %s: Ecrire les transactions dans le Grand Livre. Pour cela, aller sur chaque Journal, et cliquer sur le bouton "Enregistrer les opérations dans le Grand Livre".
 AccountancyAreaDescAnalyze=STEP %s: Ajouter ou modifier les opérations existantes et générer des rapports et des exportations.
 
-AccountancyAreaDescClosePeriod=STEP %s: Fermer la périodepour ne plus pouvoir faire de modification à l'avenir.
+AccountancyAreaDescClosePeriod=STEP %s: Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
 MenuAccountancy=Comptabilité
 Selectchartofaccounts=Sélectionnez le plan de compte actif
@@ -208,7 +208,7 @@ InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte c
 DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour la ventilation des transactions sur les salaires de paiement, les dons, les charges sociales et fiscales et la TVA lorsqu'aucun compte spécifique n'a été défini.
 Options=Options
 OptionModeProductSell=Mode ventes
-OptionModeProductBuy=Modes achats
+OptionModeProductBuy=Mode achats
 OptionModeProductSellDesc=Afficher tous les produits/services avec le compte comptable pour les ventes.
 OptionModeProductBuyDesc=Afficher tous les produits/services avec le compte comptable pour les achats.
 CleanFixHistory=Effacer les données comptables des lignes qui n'existent pas dans le plan comptable
