@@ -549,7 +549,7 @@ div.myavailability {
     margin-top: 6px;	
     margin-left: 4px;	
 }
-.selectlimit {
+.selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
 .strikefordisabled {
@@ -627,6 +627,7 @@ div.myavailability {
 	.minwidth500imp { min-width: 500px !important; }
 }
 .maxwidth50  { max-width: 50px; }
+.maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -670,12 +671,18 @@ div.myavailability {
 	div.titre {
 		line-height: 2em;
 	}
+    .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+    	height: 40px !important;
+    }
 	
-	input[type=text], select, textarea     { 
+    .quatrevingtpercent, .inputsearch {
+    	width: 95%;
+    }
+    	
+	input, input[type=text], input[type=password], select, textarea     { 
 		min-width: 20px; 
     	min-height: 1.4em;
     	line-height: 1.4em;
-    	margin: .5em 0;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
      }
@@ -684,6 +691,7 @@ div.myavailability {
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 50px; }
+    .maxwidth75onsmartphone { max-width: 75px; }
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
@@ -697,6 +705,28 @@ div.myavailability {
     .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
+    
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(300,'width'); ?>px;
+	}
+	select {
+		width: 98%;
+		min-width: 40px;
+	}
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }    
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -2245,10 +2275,7 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .border tbody tr td {
-	height: 20px;
-}
-div.tabBar table.border tr {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr {
 	height: 20px;
 }
 

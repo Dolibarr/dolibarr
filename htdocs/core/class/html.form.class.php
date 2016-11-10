@@ -211,9 +211,10 @@ class Form
                 if (empty($notabletag)) $ret.='</td>';
 
                 if (empty($notabletag)) $ret.='<td align="left">';
-               	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-               	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
-               	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                else $ret.='<div class="clearboth"></div>';
+               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' marginrightonly').'" name="modify" value="'.$langs->trans("Modify").'">';
+               	if (preg_match('/ckeditor|textarea/',$typeofdata) && empty($notabletag)) $ret.='<br>'."\n";
+               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' marginrightonly').'" name="cancel" value="'.$langs->trans("Cancel").'">';
                	if (empty($notabletag)) $ret.='</td>';
 
                	if (empty($notabletag)) $ret.='</tr></table>'."\n";
@@ -4485,7 +4486,7 @@ class Form
                 if ($usecalendar == "eldy")
                 {
                     // Zone de saisie manuelle de la date
-                    $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
+                    $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" class"minwidth100" maxlength="11" value="'.$formated_date.'"';
                     $retstring.=($disabled?' disabled':'');
                     $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "';  // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
                     $retstring.='>';
@@ -4513,7 +4514,7 @@ class Form
 			{
 			    //$retstring.='<div class="inline-block">';
                 // Day
-                $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'day" name="'.$prefix.'day">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50" id="'.$prefix.'day" name="'.$prefix.'day">';
 
                 if ($emptydate || $set_time == -1)
                 {
@@ -4527,7 +4528,7 @@ class Form
 
                 $retstring.="</select>";
 
-                $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'month" name="'.$prefix.'month">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50onsmartphone" id="'.$prefix.'month" name="'.$prefix.'month">';
                 if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected>&nbsp;</option>';
@@ -4545,11 +4546,11 @@ class Form
                 // Year
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50" type="text" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
-                    $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'year" name="'.$prefix.'year">';
+                    $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75" id="'.$prefix.'year" name="'.$prefix.'year">';
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
@@ -4566,7 +4567,7 @@ class Form
         if ($h)
         {
             // Show hour
-            $retstring.='<select'.($disabled?' disabled':'').' class="flat '.($fullday?$fullday.'hour':'').'" id="'.$prefix.'hour" name="'.$prefix.'hour">';
+            $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'hour':'').'" id="'.$prefix.'hour" name="'.$prefix.'hour">';
             if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
@@ -4580,7 +4581,7 @@ class Form
         if ($m)
         {
             // Show minutes
-            $retstring.='<select'.($disabled?' disabled':'').' class="flat '.($fullday?$fullday.'min':'').'" id="'.$prefix.'min" name="'.$prefix.'min">';
+            $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'min':'').'" id="'.$prefix.'min" name="'.$prefix.'min">';
             if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {

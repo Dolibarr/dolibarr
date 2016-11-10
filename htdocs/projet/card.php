@@ -698,7 +698,7 @@ else
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
         if ($conf->societe->enabled)
@@ -752,7 +752,7 @@ else
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
         print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
-        print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
+        print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
         print '</td></tr>';

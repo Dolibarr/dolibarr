@@ -542,7 +542,7 @@ div.myavailability {
     margin-top: 6px;
     margin-left: 4px;
 }
-.selectlimit {
+.selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
 .strikefordisabled {
@@ -622,6 +622,7 @@ div.myavailability {
     .minwidth500imp { min-width: 500px !important; }
 }
 .maxwidth50  { max-width: 50px; }
+.maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -665,12 +666,18 @@ div.myavailability {
 	div.titre {
 		line-height: 2em;
 	}
+    .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+    	height: 40px !important;
+    }
 	
-	input[type=text], select, textarea     { 
+    .quatrevingtpercent, .inputsearch {
+    	width: 95%;
+    }
+	
+	input, input[type=text], input[type=password], select, textarea     { 
 		min-width: 20px; 
     	min-height: 1.4em;
     	line-height: 1.4em;
-    	margin: .5em 0;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
      }
@@ -679,6 +686,7 @@ div.myavailability {
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 50px; }
+    .maxwidth75onsmartphone { max-width: 75px; }
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
@@ -699,7 +707,6 @@ div.myavailability {
 	}
 	select {
 		width: 98%;
-		<?php if (empty($conf->dol_use_jmobile)) { ?>max-width: 100px;<?php } ?>
 		min-width: 40px;
 	}
 	div.divphotoref {
@@ -2357,10 +2364,7 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-.border tbody tr, .border tbody tr td {
-	height: 20px;
-}
-div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 20px;
 }
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
