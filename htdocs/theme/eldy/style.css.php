@@ -680,6 +680,7 @@ div.myavailability {
     	line-height: 1.4em;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
+    	max-width: inherit;
      }
      
     .hideonsmartphone { display: none; }
