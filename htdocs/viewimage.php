@@ -36,7 +36,13 @@ if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
 // Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
+if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN"))
+{
+	define("NOLOGIN",'1');
+	// For multicompany
+	$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+	if (is_numeric($entity)) define("DOLENTITY", $entity);
+}
 
 /**
  * Header empty

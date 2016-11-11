@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 
 $langs->load('bills');
 $langs->load('compta');
+$langs->load('admin');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -504,7 +505,7 @@ if (empty($reshook))
     					$pu_ht = price($prodcustprice->lines[0]->price);
     					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
     					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-    					$prod->tva_tx = $prodcustprice->lines[0]->tva_tx;
+    					$tva_tx = $prodcustprice->lines[0]->tva_tx;
     				}
     			}
     		}

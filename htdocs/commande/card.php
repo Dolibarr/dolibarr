@@ -730,7 +730,7 @@ if (empty($reshook))
 								$pu_ht = price($prodcustprice->lines [0]->price);
 								$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 								$price_base_type = $prodcustprice->lines [0]->price_base_type;
-								$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+								$tva_tx = $prodcustprice->lines [0]->tva_tx;
 							}
 						}
 						else
@@ -2019,7 +2019,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			} else {
 				// Remise dispo de type remise fixe (not credit note)
 				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount);
+				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1);
 			}
 		}
 		if ($absolute_creditnote) {

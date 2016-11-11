@@ -149,7 +149,7 @@ if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour comp
 if ($dolibarr_main_db_type == 'mysql') $dolibarr_main_db_type = 'mysqli';
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysqli'?'utf8':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_general_ci':'');	// Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_unicode_ci':'');	// Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;

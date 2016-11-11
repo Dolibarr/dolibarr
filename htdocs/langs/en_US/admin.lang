@@ -354,6 +354,7 @@ Boolean=Boolean (Checkbox)
 ExtrafieldPhone = Phone
 ExtrafieldPrice = Price
 ExtrafieldMail = Email
+ExtrafieldUrl = Url
 ExtrafieldSelect = Select list
 ExtrafieldSelectList = Select from table
 ExtrafieldSeparator=Separator
@@ -398,7 +399,7 @@ EnableAndSetupModuleCron=If you want to have this recurring invoice beeing gener
 ModuleCompanyCodeAquarium=Return an accountancy code built by:<br>%s followed by third party supplier code for a supplier accountancy code,<br>%s followed by third party customer code for a customer accountancy code.
 ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
-Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1 validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval is always required.  
+Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.  
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 
 # Modules
@@ -1625,7 +1626,7 @@ AddOtherPagesOrServices=Add other pages or services
 AddModels=Add document or numbering templates
 AddSubstitutions=Add keys substitutions
 DetectionNotPossible=Detection not possible
-UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and will be checked on each future access) 
+UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and must be provided on each API call) 
 ListOfAvailableAPIs=List of available APIs
 activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
 CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.

@@ -635,7 +635,7 @@ PrintContentArea=Show page to print main content area
 MenuManager=Menu manager
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
 CoreErrorTitle=System error
-CoreErrorMessage=Sorry, an error occurred. Check the logs or contact your system administrator.
+CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Credit card
 FieldsWithAreMandatory=Fields with <b>%s</b> are mandatory
 FieldsWithIsForPublic=Fields with <b>%s</b> are shown on public list of members. If you don't want this, check off the "public" box.

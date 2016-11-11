@@ -1113,15 +1113,26 @@ class ActionComm extends CommonObject
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 		
+		$label = $this->label;
+		if (empty($label)) $label=$this->libelle;   // For backward compatibility
+
 		$result='';
+		
+		// Set label of typ
+		$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
+		}
+		
 		
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-		$label = $this->label;
-		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 		if (! empty($label))
 			$tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $label;
+		if (! empty($labeltype))
+			$tooltip .= '<br><b>' . $langs->trans('Type') . ':</b> ' . $labeltype;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
 
@@ -1129,11 +1140,11 @@ class ActionComm extends CommonObject
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color) 
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
-		if (empty($notooltip) && $user->rights->propal->lire)
+		if (empty($notooltip))
 		{
 		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label=$langs->trans("ShowSupplierProposal");
+		        $label=$langs->trans("ShowAction");
 		        $linkclose.=' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 		    }
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
@@ -1166,13 +1177,13 @@ class ActionComm extends CommonObject
         if ($withpicto == 2)
         {
             $libelle=$label;
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$labeltype;
             $libelleshort='';
         }
         else
         {
             $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=$labeltype;
             if ($maxlength < 0) $libelleshort=$this->ref;
             else $libelleshort=dol_trunc($libelle,$maxlength);
         }

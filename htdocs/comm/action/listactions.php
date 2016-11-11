@@ -194,7 +194,29 @@ if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resour
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
-if ($actioncode) $sql.=" AND c.code IN ('".$db->escape($actioncode)."')";
+// Condition on actioncode
+if (! empty($actioncode))
+{
+    if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+        else
+        {
+            if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
+            if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+        }
+    }
+    else
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+        else
+        {
+            $sql.=" AND c.code IN ('".implode("','", explode(',',$actioncode))."')";
+        }
+    }
+}
 if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
@@ -402,6 +424,7 @@ if ($resql)
 		{
     		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
     		else {
+    		    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
     		    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
     		    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
     		    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';

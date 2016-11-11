@@ -18,28 +18,29 @@
 
  use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-
+ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+ 
 /**
- * API class for orders
+ * API class for projects
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Orders extends DolibarrApi
+class Projects extends DolibarrApi
 {
 
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'ref',
+        'title'
     );
 
     /**
-     * @var Commande $commande {@type Commande}
+     * @var Project $project {@type Project}
      */
-    public $commande;
+    public $project;
 
     /**
      * Constructor
@@ -48,52 +49,52 @@ class Orders extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->commande = new Commande($this->db);
+        $this->project = new Project($this->db);
     }
 
     /**
-     * Get properties of a commande object
+     * Get properties of a project object
      *
-     * Return an array with commande informations
+     * Return an array with project informations
      *
-     * @param       int         $id         ID of order
+     * @param       int         $id         ID of project
      * @return 	array|mixed data without useless information
 	 *
      * @throws 	RestException
      */
     function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->commande->lire) {
+		if(! DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
 		}
 
-        $result = $this->commande->fetch($id);
+        $result = $this->project->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $this->commande->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->commande);
+        $this->project->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->project);
     }
 
     
    
     /**
-     * List orders
+     * List projects
      *
-     * Get a list of orders
+     * Get a list of projects
      *
      * @param string	       $sortfield	        Sort field
      * @param string	       $sortorder	        Sort order
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-     * @return  array                               Array of order objects
+     * @return  array                               Array of project objects
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
         global $db, $conf;
@@ -107,11 +108,11 @@ class Orders extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet as t";
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('commande', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('project', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -151,109 +152,145 @@ class Orders extends DolibarrApi
             while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
-                $commande_static = new Commande($db);
-                if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($commande_static);
+                $project_static = new Project($db);
+                if($project_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($project_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve commande list');
+            throw new RestException(503, 'Error when retrieve project list');
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No order found');
+            throw new RestException(404, 'No project found');
         }
 		return $obj_ret;
     }
 
     /**
-     * Create order object
+     * Create project object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of commande
+     * @return  int     ID of project
      */
     function post($request_data = NULL)
     {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			  throw new RestException(401, "Insuffisant rights");
 		  }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         foreach($request_data as $field => $value) {
-            $this->commande->$field = $value;
+            $this->project->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
-          $this->commande->lines = $lines;
+          $this->project->lines = $lines;
         }*/
-        if ($this->commande->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->commande->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->project->create(DolibarrApiAccess::$user) <= 0) {
+            $errormsg = $this->project->error;
+            throw new RestException(500, $errormsg ? $errormsg : "Error while creating project");
         }
 
-        return $this->commande->id;
+        return $this->project->id;
     }
 
     /**
-     * Get lines of an order
+     * Get tasks of a project
      *
-     * @param int   $id             Id of order
+     * @param int   $id             Id of project
      *
-     * @url	GET {id}/lines
+     * @url	GET {id}/tasks
      *
      * @return int
      */
     function getLines($id) {
-      if(! DolibarrApiAccess::$user->rights->commande->lire) {
+      if(! DolibarrApiAccess::$user->rights->projet->lire) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->project->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Project not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-      $this->commande->getLinesArray();
+      $this->project->getLinesArray(DolibarrApiAccess::$user);
       $result = array();
-      foreach ($this->commande->lines as $line) {
+      foreach ($this->project->lines as $line) {
         array_push($result,$this->_cleanObjectDatas($line));
       }
       return $result;
     }
 
+    
     /**
-     * Add a line to given order
+     * Get users and roles assigned to a project
      *
-     * @param int   $id             Id of commande to update
-     * @param array $request_data   Orderline data
+     * @param int   $id             Id of project
      *
-     * @url	POST {id}/lines
+     * @url	GET {id}/roles
      *
      * @return int
      */
+    function getRoles($id) {
+        if(! DolibarrApiAccess::$user->rights->projet->lire) {
+            throw new RestException(401);
+        }
+    
+        $result = $this->project->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+    
+        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+        $taskstatic=new Task($this->db);
+        $this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks(DolibarrApiAccess::$user, 0, $id, 0);
+        $result = array();
+        foreach ($this->project->roles as $line) {
+            array_push($result,$this->_cleanObjectDatas($line));
+        }
+        return $result;
+    }
+    
+    
+    /**
+     * Add a task to given project
+     *
+     * @param int   $id             Id of project to update
+     * @param array $request_data   Projectline data
+     *
+     * @url	POST {id}/tasks
+     *
+     * @return int
+     */
+    /*
     function postLine($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->project->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Project not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->addline(
+      $updateRes = $this->project->addline(
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -287,33 +324,35 @@ class Orders extends DolibarrApi
       }
       return false;
     }
-
+    */
+    
     /**
-     * Update a line to given order
+     * Update a task to given project
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of project to update
      * @param int   $lineid         Id of line to update
-     * @param array $request_data   Orderline data
+     * @param array $request_data   Projectline data
      *
-     * @url	PUT {id}/lines/{lineid}
+     * @url	PUT {id}/tasks/{lineid}
      *
      * @return object
      */
+    /*
     function putLine($id, $lineid, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->project->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Project not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->updateline(
+      $updateRes = $this->project->updateline(
                         $lineid,
                         $request_data->desc,
                         $request_data->subprice,
@@ -343,110 +382,125 @@ class Orders extends DolibarrApi
         return $this->_cleanObjectDatas($result);
       }
       return false;
-    }
+    }*/
+    
 
     /**
-     * Delete a line to given order
+     * Delete a tasks of given project
      *
      *
-     * @param int   $id             Id of commande to update
-     * @param int   $lineid         Id of line to delete
+     * @param int   $id             Id of project to update
+     * @param int   $taskid         Id of task to delete
      *
-     * @url	DELETE {id}/lines/{lineid}
+     * @url	DELETE {id}/tasks/{taskid}
      *
      * @return int
      */
-    function delLine($id, $lineid) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+    function delLine($id, $taskid) {
+      if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+      $result = $this->project->fetch($id);
+      if( ! ($result > 0) ) {
+         throw new RestException(404, 'Project not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object) $request_data;
-      $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
-      if ($updateRes > 0) {
-        return $this->get($id);
+    
+      require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+      $taskstatic=new Task($this->db);
+      $result = $taskstatic->fetch($taskid);
+      if( ! ($result > 0) ) {
+          throw new RestException(404, 'Task not found');
       }
-      return false;
+      
+      $deleteRes = $taskstatic->delete(DolibarrApiAccess::$user);
+      
+      if( ! ($deleteRes > 0)) {
+          throw new RestException(500, 'Error when delete tasks : '.$taskstatic->error);
+      }
+      
+      return array(
+          'success' => array(
+              'code' => 200,
+              'message' => 'Task deleted'
+          )
+      );
     }
 
+    
     /**
-     * Update order general fields (won't touch lines of order)
+     * Update project general fields (won't touch lines of project)
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of project to update
      * @param array $request_data   Datas
      *
      * @return int
      */
     function put($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
 
-        $result = $this->commande->fetch($id);
+        $result = $this->project->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Commande not found');
+            throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
-            $this->commande->$field = $value;
+            $this->project->$field = $value;
         }
 
-        if($this->commande->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
+        if($this->project->update(DolibarrApiAccess::$user, 0))
             return $this->get($id);
 
         return false;
     }
 
     /**
-     * Delete order
+     * Delete project
      *
-     * @param   int     $id         Order ID
+     * @param   int     $id         Project ID
      *
      * @return  array
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->projet->supprimer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->project->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if( ! $this->commande->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete order : '.$this->commande->error);
+        if( ! $this->project->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(500, 'Error when delete project : '.$this->project->error);
         }
 
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order deleted'
+                'message' => 'Project deleted'
             )
         );
 
     }
 
     /**
-     * Validate an order
+     * Validate a project
      *
-     * @param   int $id             Order ID
-     * @param   int $idwarehouse    Warehouse ID
+     * @param   int $id             Project ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
      * @url POST    {id}/validate
@@ -456,36 +510,35 @@ class Orders extends DolibarrApi
      * Error message: "Forbidden: Content type `text/plain` is not supported."
      * Workaround: send this in the body
      * {
-     *   "idwarehouse": 0,
      *   "notrigger": 0
      * }
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $notrigger=0)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+        if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->project->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->commande->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 		    throw new RestException(500, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
+		    throw new RestException(500, 'Error when validating Project: '.$this->project->error);
 		}
 
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order validated'
+                'message' => 'Project validated'
             )
         );
     }
@@ -499,13 +552,17 @@ class Orders extends DolibarrApi
      */
     function _validate($data)
     {
-        $commande = array();
-        foreach (Orders::$FIELDS as $field) {
+        $object = array();
+        foreach (self::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $commande[$field] = $data[$field];
+            $object[$field] = $data[$field];
 
         }
-        return $commande;
+        return $object;
     }
+    
+    
+    // TODO
+    // getSummaryOfTimeSpent
 }

@@ -230,24 +230,25 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("TypeFees"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
-	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_expensereport" size="10" value="' . $search_expensereport . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" align="right"></td>';
+	print '<td><input type="text" class="flat" name="search_expensereport" size="6" value="' . $search_expensereport . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre" align="right"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="6" name="search_account" value="' . $search_account . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(1);
@@ -265,6 +266,8 @@ if ($result) {
 
 		print '<tr '. $bc[$var].'>';
 
+		print '<td align="right">' . $objp->rowid . '</td>';
+
 		// Ref Invoice
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
@@ -280,8 +283,6 @@ if ($result) {
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
 
 		print '<td>' . $codeCompta . '</td>';
-
-		print '<td align="right">' . $objp->rowid . '</td>';
 
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
