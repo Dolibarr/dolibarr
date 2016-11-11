@@ -668,7 +668,15 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewMailing"));
+	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+	foreach($object->substitutionarray as $key => $val)
+	{
+		$htmltext.=$key.' = '.$langs->trans($val).'<br>';
+	}
+	$htmltext.='</i>';
+			
+	// Print mail form
+	print load_fiche_titre($langs->trans("NewMailing"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
 
 	dol_fiche_head();
 
@@ -693,21 +701,16 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
-	print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("MailMessage").'</span><br>';
-	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-	foreach($object->substitutionarray as $key => $val)
-	{
-		print $key.' = '.$langs->trans($val).'<br>';
-	}
-	print '</i></td>';
-	print '<td>';
+
+	print '</table>';
+	
+	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
-	print '</td></tr>';
-	print '</table>';
-
+	print '</div>';
+	
 	dol_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
