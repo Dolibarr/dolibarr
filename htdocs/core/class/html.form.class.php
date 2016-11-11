@@ -742,7 +742,7 @@ class Form
             }
             $out.= '</select>';
 
-			$out .= '<input id="location_incoterms" name="location_incoterms" size="14" value="'.$location_incoterms.'">';
+			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone" name="location_incoterms" value="'.$location_incoterms.'">';
 
 			if (!empty($page))
 			{
