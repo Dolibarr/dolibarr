@@ -23,8 +23,6 @@
 
 ALTER TABLE llx_facturedet ADD COLUMN fk_user_author integer after fk_unit;
 ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
-ALTER TABLE llx_facturedet ADD COLUMN fk_user_associate integer DEFAULT NULL after fk_unit;
-
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
