@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 
 $langs->load('bills');
 $langs->load('compta');
+$langs->load('admin');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));

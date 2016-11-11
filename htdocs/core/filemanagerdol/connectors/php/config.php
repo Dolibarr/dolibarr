@@ -45,9 +45,11 @@ $Config['Enabled'] = true ;
 
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website)?'':'_'.$website).'&file=' ;
+$extEntity=(empty($entity) ? 1 : $entity); // For multicompany with external access
 
+$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website)?'':'_'.$website).'&entity='.$extEntity.'&file=' ;
 $Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/' . $entity : '') . '/medias/') : ('/websites/'.$website));
+
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Useful if you are using a virtual directory, symbolic

@@ -364,11 +364,16 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td>';
+		
 		$contractstatic->id=$obj->cid;
 		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
+		
+		$var=!$var;
+
+		print "<tr ".$bc[$var].">";
+		
+		// Ref
+		print '<td>';
 		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
 
@@ -404,7 +409,7 @@ if ($resql)
 		{
 			print '<td align="center">';
 			print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
-			if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)))
+			if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0)
 			print ' '.img_picto($langs->trans("Late"),"warning");
 			else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '</td>';
@@ -413,7 +418,7 @@ if ($resql)
 		{
 		    print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
 		}
-		// Date fin
+		// End date
 		if (($mode == "" || $mode == -1) || $mode < 5) 
 		{
 		    print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
