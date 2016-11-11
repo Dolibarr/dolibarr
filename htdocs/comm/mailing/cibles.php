@@ -178,17 +178,24 @@ if ($object->fetch($id) >= 0)
 
 	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), 0, 'email');
 
-
-	print '<table class="border" width="100%">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlright='';
+	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+	
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+
+	
+	print '<div class="underbanner clearboth"></div>';
+	
+	print '<table class="border" width="100%">';
+/*
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object,'id', $linkback);
 	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+*/
+	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 
@@ -197,10 +204,10 @@ if ($object->fetch($id) >= 0)
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+/*	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
 	if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
 	print '</td></tr>';
-
+*/
 	// Nb of distinct emails
 	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");

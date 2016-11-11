@@ -790,15 +790,22 @@ else
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
+			$morehtmlright='';
+			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			
+			print '<div class="underbanner clearboth"></div>';
+			
 			print '<table class="border" width="100%">';
 
-			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+/*			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
-
+*/
 			// Description
-			print '<tr><td>'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
 			print $form->editfieldval("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
@@ -813,10 +820,12 @@ else
 			print '</td></tr>';
 
 			// Status
+			/*
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
 			if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
 			print'</td></tr>';
-
+			*/
+			
 			// Nb of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
@@ -988,7 +997,7 @@ else
 			}
 
 
-			$htmltext = '<i>'.$langs->trans("CommonSubstitutions").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 			foreach($object->substitutionarray as $key => $val)
 			{
 				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
@@ -996,7 +1005,7 @@ else
 			$htmltext.='</i>';
 			
 			// Print mail content
-			print load_fiche_titre($form->textwithpicto($langs->trans("EMail"), $htmltext), '','title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
 			
 			dol_fiche_head('');
 			
@@ -1054,17 +1063,26 @@ else
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
+			$morehtmlright='';
+			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			
+			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border" width="100%">';
 
+			/*
 			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
-
+			*/
+			
 			// Topic
-			print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 			// From
-			print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
 
@@ -1108,7 +1126,7 @@ else
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			
-			$htmltext = '<i>'.$langs->trans("CommonSubstitutions").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 			foreach($object->substitutionarray as $key => $val)
 			{
 				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
@@ -1116,7 +1134,7 @@ else
 			$htmltext.='</i>';
 			
 			// Print mail content
-			print load_fiche_titre($form->textwithpicto($langs->trans("EMail"), $htmltext), '','title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
 
 			dol_fiche_head();
 			
