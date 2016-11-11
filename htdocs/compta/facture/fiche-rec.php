@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('bills');
 $langs->load('compta');
+$langs->load('admin');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -148,14 +149,14 @@ if ($action == 'add')
 	$remin=GETPOST('remin');
 	$nb_gen_max=GETPOST('nb_gen_max', 'int');
 	//if (empty($nb_gen_max)) $nb_gen_max =0;
-	
+
 	if (GETPOST('frequency'))
 	{
-		if (empty($reyear) || empty($remonth) || empty($reday)) 
+		if (empty($reyear) || empty($remonth) || empty($reday))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("Date")), null, 'errors');
 			$action = "create";
-			$error++;	
+			$error++;
 		}
 		if ($nb_gen_max === '')
 		{
@@ -171,14 +172,14 @@ if ($action == 'add')
 		$object->note_private = GETPOST('note_private');
 		$object->note_public  = GETPOST('note_public');
 		$object->usenewprice = GETPOST('usenewprice');
-		
+
 		$object->frequency = $frequency;
 		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 		$object->nb_gen_max = $nb_gen_max;
 		$object->auto_validate = GETPOST('auto_validate', 'int');
-		
+
 		$object->fk_project = $projectid;
-		
+
 		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
 
@@ -187,9 +188,9 @@ if ($action == 'add')
 		{
             $srcObject = new Facture($db);
             $srcObject->fetch(GETPOST('facid','int'));
-            
+
             $srcObject->fetchObjectLinked();
-            
+
             if (! empty($srcObject->linkedObjectsIds['contrat']))
             {
                 $contractidid = reset($srcObject->linkedObjectsIds['contrat']);
@@ -199,12 +200,12 @@ if ($action == 'add')
                 $object->linked_objects[$object->origin] = $object->origin_id;
             }
 		}
-		
+
 		$db->begin();
 
 		$oldinvoice = new Facture($db);
 		$oldinvoice->fetch($id);
-		
+
 		$result = $object->create($user, $oldinvoice->id);
 		if ($result > 0)
 		{
@@ -222,18 +223,18 @@ if ($action == 'add')
 		    setEventMessages($object->error, $object->errors, 'errors');
 		    $action = "create";
 		}
-			
+
 		if (! $error)
 		{
 			$db->commit();
-			
+
 			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $object->id);
    			exit;
 		}
 		else
 		{
 		    $db->rollback();
-		    
+
 		    $error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
@@ -311,16 +312,16 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->factu
     $object->fetch_thirdparty();
 
     $db->begin();
-    
+
     $line=new FactureLigneRec($db);
-    
+
     // For triggers
     $line->id = $lineid;
-    
+
     if ($line->delete() > 0)
     {
         $result=$object->update_price(1);
-    
+
         if ($result > 0)
         {
             $db->commit();
@@ -401,7 +402,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
         setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
         $error ++;
     }
-    
+
     if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
         $ret = $object->fetch($id);
         if ($ret < 0) {
@@ -435,7 +436,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
             $tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
             $tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            	
+
             $pu_ht = $prod->price;
             $pu_ttc = $prod->price_ttc;
             $price_min = $prod->price_min;
@@ -542,7 +543,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
             $type = GETPOST('type');
             $fk_unit= GETPOST('units', 'alpha');
         }
-        
+
         // Margin
         $fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
         $buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
@@ -550,7 +551,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
         // Local Taxes
         $localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
         $localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
-        	
+
         $info_bits = 0;
         if ($tva_npr)
             $info_bits |= 0x01;
@@ -582,7 +583,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
                     if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
                 }*/
                 $object->fetch($object->id);    // Reload lines
-                
+
                 unset($_POST['prod_entry_mode']);
 
                 unset($_POST['qty']);
@@ -745,7 +746,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
                 }*/
 
                 $object->fetch($object->id);    // Reload lines
-                
+
                 unset($_POST['qty']);
                 unset($_POST['type']);
                 unset($_POST['productid']);
@@ -820,7 +821,7 @@ $companystatic = new Societe($db);
 $now = dol_now();
 $tmparray=dol_getdate($now);
 $today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
-	  
+
 
 /*
  * Create mode
@@ -832,11 +833,11 @@ if ($action == 'create')
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
 	$formproject = new FormProjets($db);
-	
+
 	if ($object->fetch($id, $ref) > 0)
 	{
 		$result = $object->getLinesArray();
-				
+
 	    print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -870,7 +871,7 @@ if ($action == 'create')
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
 		print '<textarea class="flat centpercent" name="note_private" wrap="soft" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
-		
+
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
@@ -894,7 +895,7 @@ if ($action == 'create')
     		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
     		print '</td></tr>';
     	}
-    	
+
 		// Bank account
 		if ($object->fk_account > 0)
 		{
@@ -907,24 +908,24 @@ if ($action == 'create')
 
 		print '<br><br>';
 
-		
+
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title, '', 'calendar');
-		
+
 		print '<table class="border" width="100%">';
-		
+
 		// Frequency
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
-		
+
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
 		print "</td></tr>";
-		
+
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
 		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max').'" size="5" />';
@@ -960,9 +961,9 @@ if ($action == 'create')
 		    $disableremove=1;
 		    $ret = $object->printObjectLines('', $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
 		}
-		
+
 		print "</table>\n";
-				
+
 		print '</td></tr>';
 
 		if ($flag_price_may_change)
@@ -1004,10 +1005,10 @@ else
     	}
 
     	print $formconfirm;
-    	
+
 		$author = new User($db);
 		$author->fetch($object->user_author);
-		
+
 		$head=array();
 		$h=0;
 		$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
@@ -1029,8 +1030,8 @@ else
 		$morehtmlref = $form->editfieldval($langs->trans("Ref"), 'ref', $object->ref, $object, $user->rights->facture->creer, 'string');
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref);
 		print '</td></tr>';
-		
-		
+
+
 		print '<tr><td>'.$langs->trans("Customer").'</td>';
 		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
 
@@ -1092,7 +1093,7 @@ else
 		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
 		print '</tr>';
-		
+
 		// Note private
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
@@ -1100,13 +1101,13 @@ else
 		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
 		print '</tr>';
-		
+
 		// Project
 		if (! empty($conf->projet->enabled)) {
 			$langs->load('projects');
 			print '<tr>';
 			print '<td>';
-	
+
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
@@ -1116,7 +1117,7 @@ else
 				print '</a></td>';
 			}
 			print '</tr></table>';
-	
+
 			print '</td><td colspan="3">';
 			if ($action == 'classify') {
 				$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
@@ -1156,7 +1157,7 @@ else
 		 */
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title, '', 'calendar');
-		
+
 		print '<table class="border" width="100%">';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
@@ -1180,7 +1181,7 @@ else
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
 		}
-		else 
+		else
 		{
 		    if ($object->frequency > 0)
 		    {
@@ -1192,7 +1193,7 @@ else
 		    }
 		}
 		print '</td></tr>';
-		
+
 		// Date when
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
@@ -1210,7 +1211,7 @@ else
 		}
 		print '</td>';
 		print '</tr>';
-				
+
 		// Max period / Rest period
 		print '<tr><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
@@ -1232,7 +1233,7 @@ else
 		}
 		print '</td>';
 		print '</tr>';
-		
+
 		// Status of generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0)
@@ -1247,28 +1248,28 @@ else
 		}
 		print '</td>';
 		print '</tr>';
-		
+
 		print '</table>';
-		
+
     	print '<br>';
-		
+
     	// Frequencry/Recurring section
 		if ($object->frequency > 0)
 		{
     		if (empty($conf->cron->enabled))
     		{
-    			print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));	
+    			print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));
     		}
-    		
+
     		print '<table class="border" width="100%">';
-    		
+
     		// Nb of generation already done
     		print '<tr><td class="titlefield">'.$langs->trans("NbOfGenerationDone").'</td>';
     		print '<td>';
     		print $object->nb_gen_done?$object->nb_gen_done:'0';
     		print '</td>';
     		print '</tr>';
-    		
+
     		// Date last
     		print '<tr><td>';
     		print $langs->trans("DateLastGeneration");
@@ -1276,12 +1277,12 @@ else
     		print dol_print_date($object->date_last_gen, 'dayhour');
     		print '</td>';
     		print '</tr>';
-    		
+
     		print '</table>';
-    		
+
     		print '<br>';
-		}		
-		
+		}
+
 		// Lines
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
         	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
@@ -1289,11 +1290,11 @@ else
         	<input type="hidden" name="mode" value="">
         	<input type="hidden" name="id" value="' . $object->id . '">
         	';
-		
+
 		if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
 		    include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
-		
+
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		// Show object lines
 		if (! empty($object->lines))
@@ -1302,28 +1303,28 @@ else
 		    //$disablemove=1;
 		    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
 		}
-		
+
 		// Form to add new line
 		if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
 		{
 		    if ($action != 'editline')
 		    {
     		    $var = true;
-    		
+
     		    // Add free products/services
-    		    $object->formAddObjectLine(0, $mysoc, $soc);                          // No date selector for template invoice  
-    		
+    		    $object->formAddObjectLine(0, $mysoc, $soc);                          // No date selector for template invoice
+
     		    $parameters = array();
     		    $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		    }
 		}
-		
+
 		print "</table>\n";
-		
+
 		print "</form>\n";
 
 		dol_fiche_end();
-		
+
 
 		/**
 		 * Barre d'actions
@@ -1363,15 +1364,15 @@ else
 		}
 
 		print '</div>';
-		
-		
+
+
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
-		
+
 		// Linked object block
 		$somethingshown = $form->showLinkedObjectBlock($object);
-		
+
         print '</div></div>';
 
 	}
@@ -1416,7 +1417,7 @@ else
 		else if ($year_date_when > 0)
 		{
 		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
-		}        
+		}
 
 		$nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -1424,15 +1425,15 @@ else
         	$result = $db->query($sql);
         	$nbtotalofrecords = $db->num_rows($result);
         }
-      
+
         $sql.= $db->order($sortfield, $sortorder);
         $sql.= $db->plimit($limit+1,$offset);
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			
+
 			$param='&socid='.$socid;
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 			if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -1457,9 +1458,9 @@ else
 			    $tmpkey=preg_replace('/search_options_/','',$key);
 			    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 			}
-			
+
 			$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-				
+
             print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
             if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1486,7 +1487,7 @@ else
 			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
 
-			
+
 			// Filters lines
 			print '<tr class="liste_titre">';
 			// Ref
@@ -1592,8 +1593,8 @@ else
 			print $searchpitco;
 			print '</td>';
 			print "</tr>\n";
-			
-			
+
+
 			if ($num > 0)
 			{
 				$var=true;
@@ -1617,7 +1618,7 @@ else
 					print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
 					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_last_gen,'day') : '').'</td>';
 					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_when,'day') : '').'</td>';
-						
+
 					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{
