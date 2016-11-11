@@ -23,8 +23,7 @@ use Luracast\Restler\Defaults;
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
- * Class for API
- *
+ * Class for API REST v1
  */
 class DolibarrApi
 {
@@ -55,6 +54,8 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
+        
+        $this->r->setAPIVersion(1);
     }
 
     /**
@@ -97,6 +98,7 @@ class DolibarrApi
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
+        unset($object->statuts_long);
         
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize

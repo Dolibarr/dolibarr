@@ -295,12 +295,16 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 * Edit orig.tar.gz file to remove 
 - debian
 - htdocs/includes/ckeditor
-- htdocs/includes/jszip
+- htdocs/includes/jquery/css
+- htdocs/includes/jquery/js
+- htdocs/includes/jquery/plugins/flot
+- htdocs/includes/jquery/plugins/multiselect
 - htdocs/includes/jquery/plugins/datatables
+- htdocs/includes/jszip
 - htdocs/includes/mike42
 - htdocs/includes/phpexcel or htdocs/includes/phpoffice
-- htdocs/includes/swiftmailer
 - htdocs/includes/restler/framework/Luracast/Restler/explorer
+- htdocs/includes/swiftmailer
 - htdocs/includes/tcpdf or htdocs/includes/tecnickcom
 And rename file into 
 dolibarr-x.y.z+dfsgw.tgz

@@ -43,24 +43,33 @@ llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M
 
 $form = new Form($db);
 
-$mil = new Mailing($db);
+$object = new Mailing($db);
 
-if ($mil->fetch($_REQUEST["id"]) >= 0)
+if ($object->fetch($_REQUEST["id"]) >= 0)
 {
-	$head = emailing_prepare_head($mil);
+	$head = emailing_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("Mailing"), 0, 'email');
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
-	print '<table width="100%"><tr><td>';
-	$mil->user_creation=$mil->user_creat;
-	$mil->date_creation=$mil->date_creat;
-	$mil->user_validation=$mil->user_valid;
-	$mil->date_validation=$mil->date_valid;
-	dol_print_object_info($mil);
-	print '</td></tr></table>';
+	$morehtmlright='';
+	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+	
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+	
+	print '<div class="underbanner clearboth"></div><br>';
+	
+	//print '<table width="100%"><tr><td>';
+	$object->user_creation=$object->user_creat;
+	$object->date_creation=$object->date_creat;
+	$object->user_validation=$object->user_valid;
+	$object->date_validation=$object->date_valid;
+	dol_print_object_info($object, 0);
+	//print '</td></tr></table>';
+	
 
-	print '</div>';
+	dol_fiche_end();
 }
 
 llxFooter();

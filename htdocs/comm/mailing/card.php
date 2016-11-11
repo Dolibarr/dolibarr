@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -668,7 +668,15 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewMailing"));
+	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+	foreach($object->substitutionarray as $key => $val)
+	{
+		$htmltext.=$key.' = '.$langs->trans($val).'<br>';
+	}
+	$htmltext.='</i>';
+			
+	// Print mail form
+	print load_fiche_titre($langs->trans("NewMailing"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
 
 	dol_fiche_head();
 
@@ -693,21 +701,16 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
-	print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("MailMessage").'</span><br>';
-	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-	foreach($object->substitutionarray as $key => $val)
-	{
-		print $key.' = '.$langs->trans($val).'<br>';
-	}
-	print '</i></td>';
-	print '<td>';
+
+	print '</table>';
+	
+	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
-	print '</td></tr>';
-	print '</table>';
-
+	print '</div>';
+	
 	dol_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
@@ -788,17 +791,24 @@ else
 				}
 			}
 
-			print '<table class="border" width="100%">';
-
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
-			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+			$morehtmlright='';
+			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			
+			print '<div class="underbanner clearboth"></div>';
+			
+			print '<table class="border" width="100%">';
+
+/*			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
-
+*/
 			// Description
-			print '<tr><td>'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
 			print $form->editfieldval("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
@@ -813,10 +823,12 @@ else
 			print '</td></tr>';
 
 			// Status
+			/*
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
 			if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
 			print'</td></tr>';
-
+			*/
+			
 			// Nb of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
@@ -987,11 +999,19 @@ else
 				print '<br>';
 			}
 
+
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			foreach($object->substitutionarray as $key => $val)
+			{
+				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
+			}
+			$htmltext.='</i>';
+			
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"),'','');
-
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
+			
 			dol_fiche_head('');
-
+			
 			print '<table class="border" width="100%">';
 
 			// Subject
@@ -1019,16 +1039,11 @@ else
             /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
             print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
             print '</td></tr>';*/
-
+			
+			print '</table>';
+			
 		    // Message
-			print '<tr><td valign="top">'.$langs->trans("MailMessage").'<br>';
-			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-			foreach($object->substitutionarray as $key => $val)
-			{
-				print $key.' = '.$langs->trans($val).'<br>';
-			}
-			print '</i></td>';
-			print '<td colspan="3" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
+			print '<div style="padding-top: 10px" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
 			{
 				$readonly=1;
@@ -1038,12 +1053,10 @@ else
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
-			print '</td>';
-			print '</tr>';
-
-			print '</table>';
+			print '</div>';
 
 			dol_fiche_end();
+			
 		}
 		else
 		{
@@ -1051,19 +1064,28 @@ else
 			 * Mailing en mode edition
 			 */
 
-			print '<table class="border" width="100%">';
-
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
+			$morehtmlright='';
+			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border" width="100%">';
+
+			/*
 			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
-
+			*/
+			
 			// Topic
-			print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 			// From
-			print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
 
@@ -1100,21 +1122,29 @@ else
 
 
 
-			print "\n";
+			print "<br>\n";
+			
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+			
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			foreach($object->substitutionarray as $key => $val)
+			{
+				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
+			}
+			$htmltext.='</i>';
+			
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"),'','');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
 
 			dol_fiche_head();
-
+			
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$object->sujet.'"></td></tr>';
+			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
 
 			$trackid=''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
 			dol_init_file_process($upload_dir, $trackid);
@@ -1159,23 +1189,17 @@ else
 			print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
 			print '</td></tr>';
-
+			
+			print '</table>';
+			
 			// Message
-			print '<tr><td valign="top">'.$langs->trans("MailMessage").'<br>';
-			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-			foreach($object->substitutionarray as $key => $val)
-			{
-				print $key.' = '.$langs->trans($val).'<br>';
-			}
-			print '</i></td>';
-			print '<td colspan="3">';
+			print '<div style="padding-top: 10px">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,120);
 			$doleditor->Create();
-			print '</td></tr>';
+			print '</div>';
 
-			print '</table>';
 
 			dol_fiche_end();
 

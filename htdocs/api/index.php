@@ -106,7 +106,10 @@ foreach ($modulesdir as $dir)
                 elseif ($module == 'facture') {
                     $moduledirforclass = 'compta/facture';
                 }
-
+                elseif ($module == 'project') {
+                    $moduledirforclass = 'projet';
+                }
+                
                 // Defined if module is enabled
                 $enabled=true;
                 if (empty($conf->$moduleforperm->enabled)) $enabled=false;
@@ -135,7 +138,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
+                                    dol_syslog("Found deprecated API by index.php classname=".$classname." into ".$dir);
                                     $api->r->addAPIClass($classname, '/');
                                 }
                             }
@@ -145,7 +148,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname." into ".$dir);
+                                    dol_syslog("Found API by index.php classname=".$classname." into ".$dir);
                                     $listofapis[] = $classname;
                                 }
                             }
@@ -161,13 +164,14 @@ foreach ($modulesdir as $dir)
 // shows the classes in the order they are added and it's a mess if they are
 // not sorted.
 sort($listofapis);
+//var_dump($listofapis);
 foreach ($listofapis as $classname)
 {
     $api->r->addAPIClass($classname);
 }
 
 // TODO If not found, redirect to explorer
-
+//var_dump($api);
 
 // Call API (we suppose we found it)
 $api->r->handle();

@@ -71,7 +71,6 @@ $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
 $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
-$dol_use_jmobile=$conf->dol_use_jmobile;
 
 
 //$conf->global->THEME_ELDY_ENABLE_PERSONALIZED=0;
@@ -221,7 +220,6 @@ print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
-print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
@@ -260,8 +258,6 @@ a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>)
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FFF;
 }
-
-<?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -306,7 +302,6 @@ span.timesheetalreadyrecorded input {
     border: none;
     /*background:	transparent;*/
 }
-<?php } ?>
 
 select.flat, form.flat select {
 	font-weight: normal;
@@ -341,9 +336,9 @@ input[type=checkbox] { background-color: transparent; border: none; box-shadow: 
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
-	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-color: #FBFFEA !important;
 	background-image:none !important;
-	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
@@ -351,9 +346,6 @@ input:-webkit-autofill {
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
 
-<?php if (! empty($dol_use_jmobile)) { ?>
-legend { margin-bottom: 8px; }
-<?php } ?>
 fieldset { border: 1px solid #AAAAAA !important; }
 
 
@@ -542,7 +534,7 @@ div.myavailability {
     margin-top: 6px;
     margin-left: 4px;
 }
-.selectlimit {
+.selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
 .strikefordisabled {
@@ -622,6 +614,7 @@ div.myavailability {
     .minwidth500imp { min-width: 500px !important; }
 }
 .maxwidth50  { max-width: 50px; }
+.maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -665,20 +658,28 @@ div.myavailability {
 	div.titre {
 		line-height: 2em;
 	}
+    .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+    	height: 40px !important;
+    }
 	
-	input[type=text], select, textarea     { 
+    .quatrevingtpercent, .inputsearch {
+    	width: 95%;
+    }
+	
+	input, input[type=text], input[type=password], select, textarea     { 
 		min-width: 20px; 
     	min-height: 1.4em;
     	line-height: 1.4em;
-    	margin: .5em 0;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
+    	max-width: inherit;
      }
      
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 50px; }
+    .maxwidth75onsmartphone { max-width: 75px; }
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
@@ -699,7 +700,6 @@ div.myavailability {
 	}
 	select {
 		width: 98%;
-		<?php if (empty($conf->dol_use_jmobile)) { ?>max-width: 100px;<?php } ?>
 		min-width: 40px;
 	}
 	div.divphotoref {
@@ -833,7 +833,6 @@ div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
-	<?php if (! empty($conf->dol_use_jmobile)) print ' margin-bottom: 10px;'."\n"; ?>
 }
 div.fichecenter {
 	width: 100%;
@@ -1929,10 +1928,7 @@ div.tabs {
 }
 div.tabsElem {
 	margin-top: 1px;
-	<?php if (! empty($conf->dol_use_jmobile)) { ?>;
-	margin-bottom: -1px;
-	<?php } ?>
-}		/* To avoid overlap of tabs when not browser */
+}	/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -2357,10 +2353,7 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-.border tbody tr, .border tbody tr td {
-	height: 20px;
-}
-div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 20px;
 }
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -2490,7 +2483,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print ($conf->dol_use_jmobile != 4)?'3':'7'; ?>px;
+	padding-top: 3px;
 }
 div.refid  {
 	font-weight: bold;
@@ -2526,10 +2519,8 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-<?php if ($conf->dol_use_jmobile != 4) { ?>
   padding-top: 6px;
   padding-bottom: 5px;
-<?php } ?>
 }
 .pagination {
   display: inline-block;
@@ -2538,22 +2529,12 @@ div.pagination li {
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-<?php if ($conf->dol_use_jmobile != 4) { ?>
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
-  /*
-  border-color: #ccc;
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);*/
-	background-repeat: repeat-x;
-<?php } ?>
+  background-repeat: repeat-x;
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -2585,13 +2566,6 @@ div.pagination li.litext a:hover {
 	background-color: transparent;
 	background-image: none;
 }
-<?php if ($conf->dol_use_jmobile == 4) { ?>
-div.pagination li.litext {
-  padding-top: 13px;
-  vertical-align: top;
-}
-<?php } ?>
-<?php if ($conf->dol_use_jmobile != 4) { ?>
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
@@ -2651,7 +2625,6 @@ div.pagination .disabled a:focus {
   background-color: #fff;
   border-color: #ddd;
 }
-<?php } ?>
 div.pagination li.pagination .active {
   text-decoration: underline;
 }
@@ -4230,11 +4203,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 6px;
 	padding-right: 6px;
-	<?php if (! empty($dol_use_jmobile)) { ?>
-	font-size: 13px;
-	<?php } else { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {

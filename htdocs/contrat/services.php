@@ -50,6 +50,7 @@ $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
 $search_status=GETPOST("search_status","alpha");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
+$search_product_category=GETPOST('search_product_category','int');
 $socid=GETPOST('socid','int');
 
 $opouvertureprevuemonth=GETPOST('opouvertureprevuemonth');
@@ -98,6 +99,9 @@ else
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 $companystatic=new Societe($db);
+
+$arrayfields=array();
+
 
 /*
  * Actions
@@ -153,8 +157,10 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
 $sql.= " WHERE c.entity = ".$conf->entity;
 $sql.= " AND c.rowid = cd.fk_contrat";
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 $sql.= " AND c.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
@@ -206,17 +212,67 @@ if ($resql)
 	if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 	if ($filter_datecloture != '') $param.='&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
 	
+	// List of mass actions available
+	$arrayofmassactions =  array(
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	//if ($user->rights->contrat->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	//if ($massaction == 'presend') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+	
+	print '<form method="POST" action="'. $_SERVER["PHP_SELF"] .'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
 	$title=$langs->trans("ListOfServices");
 	if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
 	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png');
-	
-	print '<form method="POST" action="'. $_SERVER["PHP_SELF"] .'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="liste" width="100%">';
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
 
+	if ($sall)
+	{
+	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	}
+
+	$morefilter = '';
+	
+	// If the user can view categories of products
+	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	{
+	    include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	    $moreforfilter.='<div class="divsearchfield">';
+	    $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+	    $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	    $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+	    $moreforfilter.='</div>';
+	}
+	
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
+	
+	
+	if (! empty($moreforfilter))
+	{
+	    print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	    print $moreforfilter;
+	    print '</div>';
+	}
+	
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Contract"),$_SERVER["PHP_SELF"], "c.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Service"),$_SERVER["PHP_SELF"], "p.description",$param,"","",$sortfield,$sortorder);
