@@ -621,6 +621,7 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth50imp  { max-width: 50px !important; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
@@ -698,10 +699,13 @@ div.myavailability {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
+	
+	/* intput, input[type=text], */
 	select {
 		width: 98%;
 		min-width: 40px;
 	}
+	
 	div.divphotoref {
 		padding-right: 5px;	
 	}
