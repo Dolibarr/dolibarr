@@ -1829,8 +1829,8 @@ else
             // Photo
             print '<tr>';
             print '<td>'.$langs->trans("Photo").'</td>';
-            print '<td valign="middle">';
-            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
+            print '<td>';
+            print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
             print '</td>';
             print '</tr>';
 
@@ -2035,7 +2035,7 @@ else
             // State
             if (empty($conf->global->USER_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td>';
+                print '<tr><td class="tdoverflow">'.fieldLabel('State','state_id').'</td><td>';
                 print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
                 print '</td></tr>';
             }

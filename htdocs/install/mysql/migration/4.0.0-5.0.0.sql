@@ -180,6 +180,8 @@ ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
 
 ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
+ALTER TABLE llx_mailing_cibles ADD COLUMN error_text varchar(255);
+
 
 create table llx_user_employment
 (
@@ -213,6 +215,5 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
-
 
 
