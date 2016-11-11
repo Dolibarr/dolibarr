@@ -333,7 +333,7 @@ if (empty($reshook))
 							dol_syslog("comm/mailing/card.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_WARNING);
 
 							$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql.=" SET statut=-1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
+							$sql.=" SET statut=-1, error_text='".$db->escape($mail->error)."', date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
 							$resql2=$db->query($sql);
 							if (! $resql2)
 							{

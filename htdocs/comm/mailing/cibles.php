@@ -38,16 +38,17 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
+// Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="email";
+if (! $sortorder) $sortorder="ASC";
 
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','int');
@@ -370,7 +371,7 @@ if ($object->fetch($id) >= 0)
 	}
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
@@ -452,11 +453,11 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Name
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth100" type="text" name="search_lastname" size="10" value="'.dol_escape_htmltag($search_lastname).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'">';
 		print '</td>';
 		// Firstname
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth100" type="text" name="search_firstname" size="10" value="'.dol_escape_htmltag($search_firstname).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'">';
 		print '</td>';
 		// Other
 		print '<td class="liste_titre">';
@@ -475,10 +476,10 @@ if ($object->fetch($id) >= 0)
 		print '<td class="liste_titre" align="right">';
 		print $formmailing->selectDestinariesStatus($search_dest_status,'search_dest_status',1);
 		print '</td>';
-		//Search Icon
+		// Action column
 		print '<td class="liste_titre" align="right">';
-		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Reset"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+		print $searchpitco;
 		print '</td>';
 		print '</tr>';
 
@@ -487,9 +488,10 @@ if ($object->fetch($id) >= 0)
 
 		if ($num)
 		{
-			while ($i < min($num,$conf->liste_limit))
+			while ($i < min($num,$limit))
 			{
 				$obj = $db->fetch_object($resql);
+
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
@@ -544,7 +546,7 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" class="nowrap">';
-					print $object::libStatutDest($obj->statut,2);
+					print $object::libStatutDest($obj->statut,2,$obj->error_text);
 					print '</td>';
 				}
 
