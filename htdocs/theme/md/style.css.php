@@ -677,16 +677,16 @@ div.myavailability {
     	line-height: 1.4em;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
-    	max-width: inherit;
+    	/* max-width: inherit; why this */
      }
      
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
-    .maxwidth50onsmartphone { max-width: 50px; }
-    .maxwidth75onsmartphone { max-width: 75px; }
-    .maxwidth100onsmartphone { max-width: 100px; }
-    .maxwidth150onsmartphone { max-width: 150px; }
+    .maxwidth50onsmartphone { max-width: 40px; }
+    .maxwidth75onsmartphone { max-width: 50px; }
+    .maxwidth100onsmartphone { max-width: 70px; }
+    .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -703,10 +703,13 @@ div.myavailability {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
+	
+	/* intput, input[type=text], */
 	select {
 		width: 98%;
 		min-width: 40px;
 	}
+	
 	div.divphotoref {
 		padding-right: 5px;	
 	}

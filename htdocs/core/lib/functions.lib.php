@@ -939,11 +939,12 @@ function dol_get_fiche_end($notab=0)
  *  @param	string	$moreparam  	More param to add in nav link url.
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
  *  @return	void
  */
-function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='', $onlybanner=0)
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlstatus='', $onlybanner=0, $morehtmlright='')
 {
 	global $conf, $form, $user, $langs;
 
@@ -1013,38 +1014,38 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+		$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 	} 
 	elseif ($object->element == 'product')
 	{
-	    //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
+	    //$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
         if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-            $morehtmlright.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+            $morehtmlstatus.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
-            $morehtmlright.=$object->getLibStatut(5,0);
+            $morehtmlstatus.=$object->getLibStatut(5,0);
         }
-        $morehtmlright.=' &nbsp; ';
-        //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
+        $morehtmlstatus.=' &nbsp; ';
+        //$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 	    if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-            $morehtmlright.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+            $morehtmlstatus.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
-            $morehtmlright.=$object->getLibStatut(5,1);
+            $morehtmlstatus.=$object->getLibStatut(5,1);
         }
 	}
 	elseif ($object->element == 'facture' || $object->element == 'invoice' || $object->element == 'invoice_supplier')
 	{
 	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
-		$morehtmlright.=$tmptxt;
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
+		$morehtmlstatus.=$tmptxt;
 	}
 	elseif ($object->element == 'facturerec') 
 	{
-	    $morehtmlright.='<!-- No status for recurring invoice -->';
+	    $morehtmlstatus.='<!-- No status for recurring invoice -->';
 	}
-	else {
+	else { // Generic case
 	    $tmptxt=$object->getLibStatut(6);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5); 
-		$morehtmlright.=$tmptxt;
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5); 
+		$morehtmlstatus.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
@@ -1062,7 +1063,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	
 	print '<div class="'.($onlybanner?'':'arearef ').'heightref valignmiddle" width="100%">';
-	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
 }

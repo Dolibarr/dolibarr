@@ -5578,32 +5578,9 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
 
         //print "xx".$previous_ref."x".$next_ref;
-        $ret.='<div style="vertical-align: middle">';
+        $ret.='<!-- Start banner content --><div style="vertical-align: middle">';
 
-		if ($morehtmlleft) 
-		{
-		    if ($conf->browser->layout == 'phone') $ret.='<div class="center">'.$morehtmlleft.'</div>';
-		    else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
-		}
-
-        $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
-
-        // For thirdparty, contact, user, member, the ref is the id, so we show something else
-        if ($object->element == 'societe')
-        {
-        	$ret.=dol_htmlentities($object->name);
-        }
-        else if (in_array($object->element, array('contact', 'user', 'member')))
-        {
-        	$ret.=dol_htmlentities($object->getFullName($langs));
-        }
-        else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
-        if ($morehtmlref)
-        {
-            $ret.=' '.$morehtmlref;
-        }
-		$ret.='</div>';
-
+        // Right part of banner
 		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
 
         if ($previous_ref || $next_ref || $morehtml)
@@ -5624,7 +5601,34 @@ class Form
             $ret.='</ul></div>';
         }
 		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
-        $ret.='</div>';
+
+        // Left part of banner
+		if ($morehtmlleft)
+		{
+		    if ($conf->browser->layout == 'phone') $ret.='<div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
+		    else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		}
+		
+		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
+		$ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
+		
+		// For thirdparty, contact, user, member, the ref is the id, so we show something else
+		if ($object->element == 'societe')
+		{
+		    $ret.=dol_htmlentities($object->name);
+		}
+		else if (in_array($object->element, array('contact', 'user', 'member')))
+		{
+		    $ret.=dol_htmlentities($object->getFullName($langs));
+		}
+		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
+		if ($morehtmlref)
+		{
+		    $ret.=' '.$morehtmlref;
+		}
+		$ret.='</div>';		
+		
+		$ret.='</div><!-- End banner content -->';
 
         return $ret;
     }
