@@ -236,7 +236,7 @@ class Account extends CommonObject
 
         $this->status = array(
             self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
-            self::STATUS_CLOSED => $langs->trans("StatusAccountOpened")
+            self::STATUS_CLOSED => $langs->trans("StatusAccountClosed")
         );
     }
 
