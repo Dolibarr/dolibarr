@@ -1146,12 +1146,12 @@ class Adherent extends CommonObject
                 $this->birth			= $this->db->jdate($obj->birthday);
 
                 $this->note_private		= $obj->note_private;
-                $this->note_public      = $obj->note_public;
+                $this->note_public      	= $obj->note_public;
                 $this->morphy			= $obj->morphy;
 
                 $this->typeid			= $obj->fk_adherent_type;
-                $this->type				= $obj->type;
-                $this->need_subscription = ($obj->subscription=='yes'?1:0);
+                $this->type			= $obj->type;
+                $this->need_subscription 	= $obj->subscription;
 
                 $this->user_id			= $obj->user_id;
                 $this->user_login		= $obj->user_login;
