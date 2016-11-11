@@ -108,8 +108,10 @@ ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafield
 ALTER TABLE llx_cotisation RENAME TO llx_subscription;
 ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
-ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
- 
+ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT '1';
+
+UPDATE llx_adherent_type SET subscription = '1' WHERE subscription = 'yes';
+
 CREATE TABLE llx_product_lot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
