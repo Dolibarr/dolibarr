@@ -65,7 +65,6 @@ create table llx_facturedet
   fk_unit           integer DEFAULT NULL, -- id of the unit code¡
   fk_user_author		integer,                -- user making creation
   fk_user_modif     integer,                -- user making last change
-  fk_user_associate integer DEFAULT NULL,   -- user associated to line
   fk_multicurrency	integer,
   multicurrency_code			varchar(255),
   multicurrency_subprice		double(24,8) DEFAULT 0,
