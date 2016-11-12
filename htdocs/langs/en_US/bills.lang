@@ -331,6 +331,7 @@ GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
 DateIsNotEnough=Date not reached yet
 InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
 # PaymentConditions
+Statut=Status
 PaymentConditionShortRECEP=Immediate
 PaymentConditionRECEP=Immediate
 PaymentConditionShort30D=30 days
