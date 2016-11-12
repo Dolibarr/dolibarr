@@ -233,6 +233,7 @@ if ($result) {
 
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("TypeFees"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
@@ -240,17 +241,16 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_expensereport" value="' . $search_expensereport . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_expensereport" value="' . $search_expensereport . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
@@ -271,6 +271,9 @@ if ($result) {
 		$objp->aarowid_suggest = $objp->aarowid;
 
 		print '<tr '. $bc[$var].'>';
+
+		// Line id
+		print '<td align="center">' . $objp->rowid . '</td>';
 
 		// Ref Expense report
 		$expensereport_static->ref = $objp->ref;
@@ -305,9 +308,6 @@ if ($result) {
 		print '<td align="center">';
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1);
 		print '</td>';
-
-		// Line id
-		print '<td align="center">' . $objp->rowid . '</td>';
 
 		// Colonne choix ligne a ventiler
 		print '<td align="right">';

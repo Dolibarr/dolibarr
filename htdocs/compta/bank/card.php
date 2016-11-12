@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2004-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
@@ -840,11 +840,11 @@ else
 
 		// Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="30" type="text" class="flat" name="label" value="'.(isset($_POST["label"])?$_POST["label"]:$object->label).'"></td></tr>';
+        print '<td><input type="text" class="flat minwidth300" name="label" value="'.(isset($_POST["label"])?$_POST["label"]:$object->label).'"></td></tr>';
 
         // Type
         print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
-        print '<td>';
+        print '<td class="maxwidth200onsmartphone">';
 		$formbank->selectTypeOfBankAccount((isset($_POST["type"])?$_POST["type"]:$object->type),"type");
         print '</td></tr>';
 
@@ -852,7 +852,7 @@ else
 		print '<tr><td class="fieldrequired">'.$langs->trans("Currency");
 		print '<input type="hidden" value="'.$object->currency_code.'">';
 		print '</td>';
-		print '<td>';
+		print '<td class="maxwidth200onsmartphone">';
 		$selectedcode=$object->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
@@ -862,8 +862,8 @@ else
 
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
-        print '<td>';
-        print $form->selectarray("clos", $object->status,(isset($_POST["clos"])?$_POST["clos"]:$object->clos));
+        print '<td class="maxwidth200onsmartphone">';
+        print $form->selectarray("clos", $object->status, (isset($_POST["clos"])?$_POST["clos"]:$object->clos));
         print '</td></tr>';
 
 		// Country
@@ -874,13 +874,13 @@ else
 		$object->country_code = getCountry($selectedcode, 2);	// Force country code on account to have following field on bank fields matching country rules
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
-		print '<td>';
+		print '<td class="maxwidth200onsmartphone">';
 		print $form->select_country($selectedcode,'account_country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
 		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td>';
+		print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
 		if ($selectedcode)
 		{
 			print $formcompany->select_state(isset($_POST["account_state_id"])?$_POST["account_state_id"]:$object->state_id,$selectedcode,'account_state_id');
@@ -909,7 +909,7 @@ else
 
 		// Web
         print '<tr><td>'.$langs->trans("Web").'</td>';
-        print '<td><input size="50" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
+        print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
         print '</td></tr>';
 
         // Tags-Categories
@@ -931,7 +931,7 @@ else
 		print '<td>';
 	    // Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,70);
+		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,'95%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1020,22 +1020,22 @@ else
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$object->iban.'"></td></tr>';
+			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.$object->iban.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
+			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-			print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
+			print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
 			print $object->domiciliation;
 			print "</textarea></td></tr>";
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-			print '<td><input size="30" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
+			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-			print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
+			print '<textarea class="flat quatrevingtpercent" name="owner_address" rows="'.ROWS_2.'">';
 			print $object->owner_address;
 			print "</textarea></td></tr>";
 

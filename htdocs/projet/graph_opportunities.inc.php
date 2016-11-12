@@ -83,8 +83,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    //if ($totalinprocess != $total)
 	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print '<tr class="liste_total"><td>';
+	    print '<tr class="liste_total"><td class="maxwidth150onsmartphone tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '<tr class="liste_total"><td class="minwidth150onsmartphone tdoverflow">';
 	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
 	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
 	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';

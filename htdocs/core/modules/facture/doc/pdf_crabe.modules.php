@@ -691,8 +691,6 @@ class pdf_crabe extends ModelePDFFactures
 			$this->error=$langs->transnoentities("ErrorConstantNotDefined","FAC_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->transnoentities("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 

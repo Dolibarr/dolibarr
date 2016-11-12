@@ -176,7 +176,7 @@ class Task extends CommonObject
      *
      *  @param	int		$id			Id object
      *  @param	int		$ref		ref object
-     *  @return int 		        <0 if KO, >0 if OK
+     *  @return int 		        <0 if KO, 0 if not found, >0 if OK
      */
     function fetch($id,$ref='')
     {
@@ -214,7 +214,9 @@ class Task extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->num_rows($resql))
+            $num_rows = $this->db->num_rows($resql);
+            
+            if ($num_rows)
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -241,7 +243,8 @@ class Task extends CommonObject
 
             $this->db->free($resql);
 
-            return 1;
+            if ($num_rows) return 1;
+            else return 0;
         }
         else
         {
@@ -754,7 +757,7 @@ class Task extends CommonObject
      * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
      *
      * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-     * @param	User	$usert			      Return roles on task for this internal user. If set userp must not be defined.
+     * @param	User	$usert			      Return roles on task for this internal user. If set userp must not be defined. -1 means no filter.
      * @param 	int		$projectid		      Project id list separated with , to filter on project
      * @param 	int		$taskid			      Task id to filter on a task
      * @param	string	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.

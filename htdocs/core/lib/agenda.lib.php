@@ -108,7 +108,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), 0, $multiselect);
+        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
 		print '</td></tr>';
 	}
 

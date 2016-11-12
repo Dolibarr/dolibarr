@@ -626,7 +626,7 @@ while ($i < min($num,$limit))
 	$projectstatic->user_author_id = $obj->fk_user_creat;
 	$projectstatic->public = $obj->public;
 	$projectstatic->ref = $obj->ref;
-	$projectstatic->datee = $obj->date_end;
+	$projectstatic->datee = $db->jdate($obj->date_end);
 	$projectstatic->statut = $obj->fk_statut;
 	$projectstatic->opp_status = $obj->fk_opp_status;
 	 

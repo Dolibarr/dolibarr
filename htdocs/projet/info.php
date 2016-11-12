@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("projects");
+
+$id     = GETPOST('id','int');
+$ref    = GETPOST('ref','alpha');
+$socid  = GETPOST('socid','int');
+$action = GETPOST('action','alpha');
 
 if (GETPOST('actioncode','array'))
 {
@@ -73,16 +78,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  */
 
 $form = new Form($db);
+$object = new Project($db);
 
 $title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$title,$help_url);
 
-$object = new Project($db);
-$object->fetch($id);
-$object->fetch_thirdparty();
-$object->info($id);
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+    $object->info($object->id);
+}
 
 $head = project_prepare_head($object);
 
@@ -141,7 +149,7 @@ if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
     }
     else
     {

@@ -140,7 +140,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 

@@ -1887,7 +1887,7 @@ if (! function_exists("llxFooter"))
                 print '<div class="error">'.$msg.'</div>';
             }
 
-            define("MAIN_CORE_ERROR",0);
+            //define("MAIN_CORE_ERROR",0);      // Constant was defined and we can't change value of a constant
         }
 
         print "\n\n";
@@ -1907,7 +1907,7 @@ if (! function_exists("llxFooter"))
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
 		// Wrapper to show tooltips
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
         {
     		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
     		print '<script type="text/javascript">

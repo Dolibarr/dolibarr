@@ -96,7 +96,6 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
-
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 if ($dateselect > 0)
 {
@@ -373,7 +372,29 @@ if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resour
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
-if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
+// Condition on actioncode
+if (! empty($actioncode))
+{
+    if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND ca.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        else
+        {
+            if ($actioncode == 'AC_OTH') $sql.= " AND ca.type != 'systemauto'";
+            if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        }
+    }
+    else
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND ca.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        else
+        {
+            $sql.=" AND ca.code IN ('".implode("','", explode(',',$actioncode))."')";
+        }
+    }
+}
 if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";

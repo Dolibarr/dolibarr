@@ -698,7 +698,7 @@ else
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
         if ($conf->societe->enabled)
@@ -752,7 +752,7 @@ else
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
         print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
-        print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
+        print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
         print '</td></tr>';
@@ -829,32 +829,11 @@ else
 
         print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-        print '</td></tr>';
-        */
-
-        // Label
-        //print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-        // Third party
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
-        else print'&nbsp;';
-        print '</td></tr>';
-        */
-
         // Visibility
         print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
         if ($object->public) print $langs->trans('SharedProject');
         else print $langs->trans('PrivateProject');
         print '</td></tr>';
-
-        // Statut
-        //print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    {
@@ -879,7 +858,11 @@ else
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($object->date_start,'day');
         $end=dol_print_date($object->date_end,'day');
-        if ($end) print ' - '.$end;
+        if ($end) 
+        {
+            print ' - '.$end;
+            if ($object->hasDelay()) print img_warning($langs->trans('Late'));
+        }
         print '</td></tr>';
     	     
         // Budget

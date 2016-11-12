@@ -3280,7 +3280,7 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $langs, $user;
 		// TODO We should not use global var for this !
-		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
 		// Define usemargins
 		$usemargins=0;
@@ -3342,6 +3342,8 @@ abstract class CommonObject
 
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency').'</td>';
+
+        if ($outputalsopricetotalwithtax) print '<td align="right" width="80">'.$langs->trans('TotalTTCShort').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
@@ -4444,12 +4446,12 @@ abstract class CommonObject
 					}
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr '.$class.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
 						$colspan='0';
 					}
 					else
 					{
-						$out .= '<tr '.$class.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
 					}
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))

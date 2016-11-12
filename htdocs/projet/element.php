@@ -506,8 +506,8 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
+                // Special cases				
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
-
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'projet_task')
 				{
@@ -737,6 +737,7 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
+				// Special cases
 				if ($tablename != 'expensereport_det')
 				{
 					if(method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
@@ -787,28 +788,34 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
+				    // Show ref with link
 					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
 						print ' - '.dol_trunc($element->label, 48);
 					}
 					else print $element->getNomUrl(1);
-
+						
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
 					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
 
-					if($element_doc === 'order_supplier') {
+					if ($element_doc === 'order_supplier') {
 						$element_doc='commande_fournisseur';
 						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
 					}
-					else if($element_doc === 'invoice_supplier') {
+					else if ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2,0,0,$this,'product').dol_sanitizeFileName($element->ref);
 						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2,0,0,null,'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
-					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
+					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+					
+					// Show supplier ref
+					if (! empty($element->ref_supplier)) print ' - '.$element->ref_supplier;
+					// Show customer ref
+					if (! empty($element->ref_customer)) print ' - '.$element->ref_customer;
 				}
 
 				print "</td>\n";

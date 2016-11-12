@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition comme
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée payée
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source lorsque la facture client dérivée est validée
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A la validation d'une commande, classer la proposition commerciale source "facturée"
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classez livré les commandes liées sur validation d'une expédition, si la quantité livrée est la même que celle de la commande
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classez la commande liée à expédiée quand une expédition est validée et que la quantité expédiée totale est la même que dans la commande
+AutomaticCreation=Création automatique
+AutomaticClassification=Classification automatique
