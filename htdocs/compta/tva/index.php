@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/index.php
- *      \ingroup    tax
+ *		\file       htdocs/compta/tva/index.php
+ *		\ingroup    tax
  *		\brief      Index page of VAT reports
  */
 require '../../main.inc.php';
