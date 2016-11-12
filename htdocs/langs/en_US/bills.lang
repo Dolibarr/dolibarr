@@ -75,6 +75,7 @@ PaymentsAlreadyDone=Payments already done
 PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Payment rule
 PaymentMode=Payment type
+PaymentTypeDC=Debit/Credit Card
 IdPaymentMode=Payment type (id)
 LabelPaymentMode=Payment type (label)
 PaymentModeShort=Payment type
@@ -330,6 +331,7 @@ GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
 DateIsNotEnough=Date not reached yet
 InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
 # PaymentConditions
+Statut=Status
 PaymentConditionShortRECEP=Immediate
 PaymentConditionRECEP=Immediate
 PaymentConditionShort30D=30 days
