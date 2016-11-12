@@ -25,8 +25,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 -- after changing const name, please insure that old constant was rename
-UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRPARTY_CREATION_INDIVIDUAL'  -- under 3.9.0
-UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRDPARTY_CREATION_INDIVIDUAL' -- under 4.0.1
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE __DECRYPT(name)__ = 'MAIN_THIRPARTY_CREATION_INDIVIDUAL';  -- under 3.9.0
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE __DECRYPT(name)__ = 'MAIN_THIRDPARTY_CREATION_INDIVIDUAL'; -- under 4.0.1
 
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
@@ -173,7 +173,7 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
