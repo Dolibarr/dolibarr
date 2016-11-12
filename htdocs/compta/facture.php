@@ -1433,7 +1433,7 @@ if (empty($reshook))
 								$pu_ht = price($prodcustprice->lines[0]->price);
 								$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 								$price_base_type = $prodcustprice->lines[0]->price_base_type;
-								$prod->tva_tx = $prodcustprice->lines[0]->tva_tx;
+								$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							}
 						}
 					}
@@ -2933,17 +2933,17 @@ else if ($id > 0 || ! empty($ref))
 	    }
 	}
 	$morehtmlref.='</div>';
-	
+
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
-	
+
 	// Type
 	print '<tr><td class="titlefield">' . $langs->trans('Type') . '</td><td>';
 	print $object->getLibType();
@@ -3303,7 +3303,7 @@ else if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	
+
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
@@ -3328,15 +3328,15 @@ else if ($id > 0 || ! empty($ref))
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Amount
-	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	
+
 	// Vat
 	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" class="nowrap">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	print '</tr>';
-	
+
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
 	{
@@ -3348,7 +3348,7 @@ else if ($id > 0 || ! empty($ref))
 	    print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 	    print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	}
-	
+
 	// Revenue stamp
 	if ($selleruserevenustamp) 	// Test company use revenue stamp
 	{
@@ -3375,14 +3375,14 @@ else if ($id > 0 || ! empty($ref))
         }
         print '</td></tr>';
 	}
-	
+
 	// Total with tax
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td class="nowrap">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	
+
 	print '</table>';
-	
+
 	// List of payments
-	
+
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
     $nbrows = 8;
@@ -3491,9 +3491,9 @@ else if ($id > 0 || ! empty($ref))
         if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
             print '</table>';
     }
-    
+
     print '<table class="noborder paymenttable" width="100%">';
-    
+
     // List of payments already done
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
@@ -3505,9 +3505,9 @@ else if ($id > 0 || ! empty($ref))
     print '<td class="liste_titre" align="right">' . $langs->trans('Amount') . '</td>';
     print '<td class="liste_titre" width="18">&nbsp;</td>';
     print '</tr>';
-    
+
     $var = true;
-    
+
     // Payments already done (from payment on this invoice)
     $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     $sql .= ' c.code as payment_code, c.libelle as payment_label,';
@@ -3518,12 +3518,12 @@ else if ($id > 0 || ! empty($ref))
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
     $sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
     $sql .= ' ORDER BY p.datep, p.tms';
-    
+
     $result = $db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
         $i = 0;
-        
+
         // if ($object->type != 2)
         // {
         if ($num > 0) {
@@ -3563,7 +3563,7 @@ else if ($id > 0 || ! empty($ref))
     } else {
         dol_print_error($db);
     }
-    
+
     if ($object->type != Facture::TYPE_CREDIT_NOTE) {
         // Total already paid
         print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -3572,10 +3572,10 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('AlreadyPaid');
         print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
-        
+
         $resteapayeraffiche = $resteapayer;
         $cssforamountpaymentcomplete = 'amountpaymentcomplete';
-        
+
         // Loop on each credit note or deposit amount applied
         $creditnoteamount = 0;
         $depositamount = 0;
@@ -3611,7 +3611,7 @@ else if ($id > 0 || ! empty($ref))
         } else {
             dol_print_error($db);
         }
-        
+
         // Paye partiellement 'escompte'
         if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
             print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
@@ -3647,7 +3647,7 @@ else if ($id > 0 || ! empty($ref))
             $resteapayeraffiche = 0;
             $cssforamountpaymentcomplete = '';
         }
-        
+
         // Billed
         print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
         
@@ -3667,10 +3667,10 @@ else if ($id > 0 || ! empty($ref))
         print '<tr><td colspan="' . $nbcols . '" align="right">';
         print $langs->trans('AlreadyPaidBack');
         print ' :</td><td align="right">' . price($sign * $totalpaye) . '</td><td>&nbsp;</td></tr>';
-        
+
         // Billed
         print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($sign * $object->total_ttc) . '</td><td>&nbsp;</td></tr>';
-        
+
         // Remainder to pay back
         print '<tr><td colspan="' . $nbcols . '" align="right">';
         if ($resteapayeraffiche <= 0)
@@ -3680,27 +3680,26 @@ else if ($id > 0 || ! empty($ref))
         print ' :</td>';
         print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
-        
+
         // Sold credit note
         // print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
         // print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign *
         // $object->total_ttc).'</b></td><td>&nbsp;</td></tr>';
     }
-    
+
     print '</table>';
-	                            
+
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
 	    $formmargin->displayMarginInfos($object);
 	}
-	
 
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div><br>';
-	
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
@@ -3811,8 +3810,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<div class="tabsAction">';
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		                                                                                          // modified by hook
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == 1)

@@ -49,7 +49,6 @@ BankLineConciliated=Transacción conciliada
 CustomerInvoicePayment=Pago de cliente
 WithdrawalPayment=Pago de retiro
 SocialContributionPayment=Pago de impuesto social/fiscal
-TransferDesc=Al crear una transferencia de una de sus cuentas bancarias hacia otra, Dolibarr crea dos registros contables (uno de débito en una cuenta y otro de crédito, del mismo importe, en la otra cuenta. Se utiliza para los dos registros la misma etiqueta de transferencia y la misma fecha)
 TransferFromToDone=La transferencia de <b>%s</b> hacia <b>%s</b> de <b>%s</b> %s ha sido registrada.
 ValidateCheckReceipt=¿Validar este recibo de cheque?
 ConfirmValidateCheckReceipt=¿Seguro que deseas validar este recibo de cheque? Ningún cambio será posible una vez que se valide

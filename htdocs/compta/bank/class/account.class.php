@@ -236,7 +236,7 @@ class Account extends CommonObject
 
         $this->status = array(
             self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
-            self::STATUS_CLOSED => $langs->trans("StatusAccountOpened")
+            self::STATUS_CLOSED => $langs->trans("StatusAccountClosed")
         );
     }
 
@@ -1244,7 +1244,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->label.$linkend;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

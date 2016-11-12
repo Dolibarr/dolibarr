@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,11 +125,11 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sref" value="'.dol_escape_htmltag($sref).'" size="6">';
+	print '<input type="text" class="flat maxwidth50" name="sref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	// Title
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sall" value="'.dol_escape_htmltag($sall).'" size="40">';
+	print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="sall" value="'.dol_escape_htmltag($sall).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
@@ -145,7 +145,7 @@ if ($result)
 
 	$email=new Mailing($db);
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
 

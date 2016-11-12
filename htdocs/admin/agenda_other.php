@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2008-2015	Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  	Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 if (!$user->admin)
     accessforbidden();
@@ -370,6 +370,7 @@ print '</td></tr>'."\n";
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
     $var=!$var;
+    print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr '.$bc[$var].'>'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
@@ -384,7 +385,7 @@ print '<tr '.$bc[$var].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
-$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), 1);
+$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
@@ -393,7 +394,7 @@ print '<tr '.$bc[$var].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
-$formactions->form_select_status_action('agenda',$conf->global->AGENDA_DEFAULT_FILTER_STATUS,1,'AGENDA_DEFAULT_FILTER_STATUS',1,2);
+$formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW

@@ -1986,6 +1986,30 @@ class Product extends CommonObject
 			$this->stats_commande['nb']=$obj->nb;
 			$this->stats_commande['rows']=$obj->nb_rows;
 			$this->stats_commande['qty']=$obj->qty?$obj->qty:0;
+
+			// if it's a virtual product, maybe it is in order by extension		
+			if (! empty($conf->global->ORDER_ADD_ORDERS_WITH_PARENT_PROD_IF_INCDEC))
+			{	
+				$TFather = $this->getFather();
+				if (is_array($TFather) && !empty($TFather)) {
+					foreach($TFather as &$fatherData) {
+						$pFather = new Product($this->db);
+						$pFather->id = $fatherData['id'];  
+						$qtyCoef = $fatherData['qty'];
+	
+						if ($fatherData['incdec']) {
+							$pFather->load_stats_commande($socid, $filtrestatut);
+							
+							$this->stats_commande['customers']+=$pFather->stats_commande['customers'];
+							$this->stats_commande['nb']+=$pFather->stats_commande['nb'];
+							$this->stats_commande['rows']+=$pFather->stats_commande['rows'];
+							$this->stats_commande['qty']+=$pFather->stats_commande['qty'] * $qtyCoef;
+							
+						}
+					}
+				}
+			}
+						
 			return 1;
 		}
 		else
@@ -3159,17 +3183,21 @@ class Product extends CommonObject
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
 
-        $tmptext='';
-		if ($this->weight)  $tmptext.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
-		if ($this->length)  $tmptext.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
-		if ($this->surface) $tmptext.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
-		if ($this->volume)  $tmptext.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-        if ($tmptext) $label .= $tmptext;
-        if (! empty($conf->productbatch->enabled))
+        if ($this->type == Product::TYPE_PRODUCT)
         {
-            $tmptext.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+            if ($this->weight)  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+    		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
+    		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+    		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+            if (! empty($conf->productbatch->enabled))
+            {
+                $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+            }
         }
-        $label.=$tmptext;
+        if ($this->type == Product::TYPE_SERVICE)
+        {
+            //
+        }
         if (! empty($this->entity)) $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
         

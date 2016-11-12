@@ -39,6 +39,9 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
+$search_ref=GETPOST('search_ref','alpha');
+$search_label=GETPOST('search_label','alpha');
+$search_number=GETPOST('search_number','alpha');
 $statut=GETPOST('statut')?GETPOST('statut', 'alpha'):'opened';                      // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -115,7 +118,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $statut = 'all';
-    
+    $search_ref='';
+    $search_label='';
+    $search_number='';
+    $search_statut='';
 }
     
     
@@ -123,6 +129,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 /*
  * View
  */
+
+$form=new Form($db);
 
 $title=$langs->trans('BankAccounts');
 
@@ -139,9 +147,11 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bankcacount_extrafields as ef on (c.rowid = ef.fk_object)";
 $sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
-if ($statut == 'opened') $sql.= " AND clos = 0";
-if ($statut == 'closed') $sql.= " AND clos = 1";
-
+if ($statut == 'opened')  $sql.= " AND clos = 0";
+if ($statut == 'closed')  $sql.= " AND clos = 1";
+if ($search_ref != '')    $sql.=natural_search('b.ref', $search_ref);
+if ($search_label != '')  $sql.=natural_search('b.label', $search_label);
+if ($search_number != '') $sql.=natural_search('b.number', $search_number);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -202,6 +212,9 @@ $arrayofselected=is_array($toselect)?$toselect:array();
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_ref != '')      $param.='&search_ref='.$search_ref;
+if ($search_label != '')    $param.='&search_label='.$search_label;
+if ($search_number != '')   $param.='&search_number='.$search_number;
 if ($statut != '')          $param.='&statut='.$statut;
 if ($show_files)            $param.='&show_files=' .$show_files;
 if ($optioncss != '')       $param.='&optioncss='.$optioncss;
@@ -266,8 +279,8 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 // Fields title
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['b.ref']['checked']))            print_liste_field_titre($arrayfields['b.ref']['label'],$_SERVER["PHP_SELF"],'b.ref','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.label']['checked']))          print_liste_field_titre($arrayfields['b.label']['label'],$_SERVER["PHP_SELF"],'b.label','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'],$_SERVER["PHP_SELF"],'b.clos','',$param,'align="center"',$sortfield,$sortorder);
@@ -300,17 +313,17 @@ if (! empty($arrayfields['b.ref']['checked']))
     print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
 }
-// Account type
-if (! empty($arrayfields['accountype']['checked']))
-{
-    print '<td class="liste_titre">';
-    print '</td>';
-}
-// Ref
+// Label
 if (! empty($arrayfields['b.label']['checked']))
 {
     print '<td class="liste_titre">';
     print '<input class="flat" size="6" type="text" name="search_label" value="'.$search_label.'">';
+    print '</td>';
+}
+// Account type
+if (! empty($arrayfields['accountype']['checked']))
+{
+    print '<td class="liste_titre">';
     print '</td>';
 }
 // Number
@@ -403,10 +416,10 @@ foreach ($accounts as $key=>$type)
 
 		print '<tr '.$bc[$var].'>';
 		print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
+		print '<td>'.$acc->label.'</td>';
 		print '<td>';
 		print $acc->type_lib[$acc->type];
 		print '</td>';
-		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
 		if ($acc->rappro)
@@ -421,7 +434,9 @@ foreach ($accounts as $key=>$type)
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
-		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+		// Status
+		print '<td align="center">'.$acc->getLibStatut(5).'</td>';
+		//
 		print '<td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bankentries.php?id='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
@@ -442,7 +457,7 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	//}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr '.$bc[$var].'><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 // Total
 foreach ($total as $key=>$solde)
 {

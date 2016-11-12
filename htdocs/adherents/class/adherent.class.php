@@ -1146,12 +1146,12 @@ class Adherent extends CommonObject
                 $this->birth			= $this->db->jdate($obj->birthday);
 
                 $this->note_private		= $obj->note_private;
-                $this->note_public      = $obj->note_public;
+                $this->note_public      	= $obj->note_public;
                 $this->morphy			= $obj->morphy;
 
                 $this->typeid			= $obj->fk_adherent_type;
-                $this->type				= $obj->type;
-                $this->need_subscription = ($obj->subscription=='yes'?1:0);
+                $this->type			= $obj->type;
+                $this->need_subscription 	= $obj->subscription;
 
                 $this->user_id			= $obj->user_id;
                 $this->user_login		= $obj->user_login;
@@ -1682,6 +1682,17 @@ class Adherent extends CommonObject
             if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
         }
         if ($mode == 5)
+        {
+            if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
+            if ($statut >= 1)
+            {
+                if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
+                elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
+                else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
+            }
+            if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+        }
+        if ($mode == 6)
         {
             if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
             if ($statut >= 1)

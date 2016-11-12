@@ -83,7 +83,7 @@ $formventilation = new FormVentilation($db);
  */
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_ref = '';
 	$search_invoice = '';
@@ -254,6 +254,7 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
@@ -263,21 +264,20 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="6" value="' . $search_invoice . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="6" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_country" size="5" value="' . $search_country . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_tavintra" size="5" value="' . $search_tavintra . '"></td>';
-	print '<td class="liste_titre" align="right"></td>';
 	print '<td class="liste_titre" align="right">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1);
 	print $searchpitco;
@@ -293,6 +293,8 @@ if ($result) {
 
 		print '<tr '. $bc[$var].'>';
 
+		print '<td align="right">' . $objp->rowid . '</td>';
+		
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->rowid;
@@ -319,7 +321,6 @@ if ($result) {
 		print '</a></td>';
 		print '<td>' . $objp->country .'</td>';
 		print '<td>' . $objp->tva_intra . '</td>';
-		print '<td align="right">' . $objp->rowid . '</td>';
 		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
 
 		print "</tr>";

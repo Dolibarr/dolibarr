@@ -809,7 +809,7 @@ while ($i < $num && $i < $conf->liste_limit)
 	if (! empty($arrayfields['d.statut']['checked']))
 	{
 	    print '<td align="right" class="nowrap">';
-	    print $memberstatic->LibStatut($obj->statut,$obj->subscription,$datefin,2);
+	    print $memberstatic->LibStatut($obj->statut,$obj->subscription,$datefin,5);
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
 	}

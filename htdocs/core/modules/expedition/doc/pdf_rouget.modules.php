@@ -580,8 +580,6 @@ class pdf_rouget extends ModelePdfExpedition
 			$this->error=$langs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->transnoentities("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -790,7 +788,7 @@ class pdf_rouget extends ModelePdfExpedition
 		// Show Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->SHIPPING_DRAFT_WATERMARK)) )
 		{
-            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->SHIPPING_DRAFT_WATERMARK);
+            		pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
 
 		//Prepare la suite
@@ -861,11 +859,11 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
 		$pdf->MultiCell($w, 4, $title, '', 'R');
-        $posy+=1;
 
 		$pdf->SetFont('','', $default_font_size + 1);
 
-		$posy+=4;
+		$posy+=5;
+		
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
@@ -873,10 +871,10 @@ class pdf_rouget extends ModelePdfExpedition
 		// Date planned delivery
 		if (! empty($object->date_delivery))
 		{
-    		$posy+=4;
-    		$pdf->SetXY($posx,$posy);
-    		$pdf->SetTextColor(0,0,60);
-    		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
+    			$posy+=4;
+    			$pdf->SetXY($posx,$posy);
+    			$pdf->SetTextColor(0,0,60);
+    			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
 		}
 		
 		if (! empty($object->thirdparty->code_client))
@@ -889,11 +887,10 @@ class pdf_rouget extends ModelePdfExpedition
 
 
 		$pdf->SetFont('','', $default_font_size + 3);
-	    $Yoff=25;
+		$Yoff=25;
 
-	    // Add list of linked orders
-
-	    $origin 	= $object->origin;
+		// Add list of linked orders
+		$origin 	= $object->origin;
 		$origin_id 	= $object->origin_id;
 
 	    // TODO move to external function

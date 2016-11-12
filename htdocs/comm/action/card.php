@@ -795,7 +795,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
-	if(!empty($origin) && !empty($originid))
+	if (!empty($origin) && !empty($originid))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
