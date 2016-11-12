@@ -307,7 +307,7 @@ else
 					'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
 					'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
 					'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
-					'link'				=>img_object($langs->trans("ExpenseReports"),"trip").' '.$expensereport->getNomUrl(0,32));  
+					'link'				=>$expensereport->getNomUrl(1);  
 			}
 			else
 			{

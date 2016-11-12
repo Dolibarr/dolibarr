@@ -1164,25 +1164,56 @@ class ExpenseReport extends CommonObject
     /**
      *  Return clicable name (with picto eventually)
      *
-     *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
-     *  @return     string                  String with URL
+     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		int		$max			Max length of shown ref
+     *	@param		int		$short			1=Return just URL
+     *	@param		string	$moretitle		Add more text to title tooltip
+     *	@param		int		$notooltip		1=Disable tooltip
+     *	@return		string					String with URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto=0,$max=0,$short=0,$moretitle='',$notooltip=0)
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$this->id.'">';
-        $linkend='</a>';
+        $url = DOL_URL_ROOT.'/expensereport/card.php?id='.$this->id;
+
+        if ($short) return $url;
 
         $picto='trip';
+        $label = '<u>' . $langs->trans("ShowExpenseReport") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        if ($moretitle) $label.=' - '.$moretitle;
 
-        $label=$langs->trans("Show").': '.$this->ref;
+        $ref=$this->ref;
+        if (empty($ref)) $ref=$this->id;
 
-        if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowExpenseReport");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
+        $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
         return $result;
     }
 

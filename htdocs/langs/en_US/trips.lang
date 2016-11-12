@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
 ExpenseReports=Expense reports
+ShowExpenseReport=Show expense report
 Trips=Expense reports
 TripsAndExpenses=Expenses reports
 TripsAndExpensesStatistics=Expense reports statistics
