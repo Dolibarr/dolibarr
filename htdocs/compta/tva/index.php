@@ -4,7 +4,6 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +145,8 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-    $coll_listsell			= vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-    $coll_listbuy			= vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
+    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
     
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);
