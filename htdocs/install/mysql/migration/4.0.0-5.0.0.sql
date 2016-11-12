@@ -48,6 +48,9 @@ ALTER TABLE llx_don ADD COLUMN date_valid datetime;
 
 DELETE FROM llx_menu where module='expensereport';
 
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_author integer after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
+
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
