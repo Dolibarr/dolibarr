@@ -772,7 +772,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs, $hookmanager;
+	global $conf, $langs, $hookmanager;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
@@ -897,9 +897,13 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
-	$parameters=array('tabname' => $active);
-	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
-
+	$parameters=array('tabname' => $active, 'out' => $out);
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
+	if ($reshook > 0)
+	{
+		$out = $hookmanager->resPrint;
+	}
+	
 	return $out;
 }
 
@@ -5335,8 +5339,9 @@ function picto_from_langcode($codelang)
 }
 
 /**
- *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
- *  Such values are declared into $conf->modules_parts['tab'].
+ *  Complete or removed entries into a head array (used to build tabs). 
+ *  For example, with value added by external modules. Such values are declared into $conf->modules_parts['tab'].
+ *  Or by change using hook completeTabsHead
  *
  *  @param	Conf			$conf           Object conf
  *  @param  Translate		$langs          Object langs
@@ -5363,6 +5368,8 @@ function picto_from_langcode($codelang)
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
+	global $hookmanager;
+	
 	if (isset($conf->modules_parts['tabs'][$type]) && is_array($conf->modules_parts['tabs'][$type]))
 	{
 		foreach ($conf->modules_parts['tabs'][$type] as $value)
@@ -5426,6 +5433,17 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					}
 				}
 			}
+		}
+	}
+	
+	// No need to make a return $head. Var is modified as a reference
+	if (! empty($hookmanaer))
+	{
+		$parameters=array('object' => $object, 'mode' => $mode, 'head'=>$head);
+		$reshook=$hookmanager->executeHooks('completeTabsHead',$parameters);
+		if ($reshook > 0)
+		{
+			$head = $hookmanager->resArray;
 		}
 	}
 }
