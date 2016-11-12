@@ -329,7 +329,7 @@ if ($result)
         	{
         		// On affiche ligne pour modifier droits
         		print '<tr '. $bc[$var].'>';
-        		print '<td class="maxwidthonsmartphone tdoverflow">'.img_object('',$picto).' '.$objMod->getName();
+        		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'"></a></td>';
         		print '<td align="center" class="nowrap">';
         		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
@@ -344,7 +344,7 @@ if ($result)
 		print '<tr '. $bc[$var].'>';
 
 		// Picto and label of permission
-		print '<td class="maxwidthonsmartphone tdoverflow">'.img_object('',$picto).' '.$objMod->getName().'</td>';
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
         // Permission and tick
         if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin

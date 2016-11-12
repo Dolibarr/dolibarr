@@ -1632,7 +1632,7 @@ activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is miss
 CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.
 LandingPage=Landing page
 SamePriceAlsoForSharedCompanies=If you use a multicompany module, with the choice "Single price", price will be also the same for all companies if products are shared between environments
-ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users manually if necessary.
+ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users or groups manually if necessary.
 UserHasNoPermissions=This user has no permission defined
 TypeCdr=Use "None" if the date of payment term is date of invoice plus a delta in days (delta is field "Nb of days")<br>Use "At end of month", if, after delta, the date must be increased to reach the end of month (+ an optional "Offset" in days)<br>Use "Current/Next" to have payment term date being the first Nth of the month (N is stored into field "Nb of days")
 ##### Resource ####

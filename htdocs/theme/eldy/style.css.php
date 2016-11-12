@@ -656,6 +656,13 @@ div.myavailability {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+    .tdoverflowonsmartphone {
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 	div.titre {
 		line-height: 2em;
 	}

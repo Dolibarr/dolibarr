@@ -632,7 +632,7 @@ if (count($object->records) > 0)
     if ($website && $action == 'preview')
     {
         $disabled='';
-        if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+        if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
     
         print ' &nbsp; ';
         
@@ -735,7 +735,7 @@ if (count($object->records) > 0)
         if ($action == 'preview')
         {
             $disabled='';
-            if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+            if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
         
             if ($pageid > 0)
             {
