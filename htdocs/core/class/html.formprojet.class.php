@@ -59,9 +59,10 @@ class FormProjets
 	 *  @param  string  $filterkey      Key to filter
 	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
+	 *  @param  string  $morecss        More css
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='')
 	{
 		global $langs,$conf,$form;
 
@@ -85,7 +86,7 @@ class FormProjets
 //				)
 			));
 
-			$out.='<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+			$out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{

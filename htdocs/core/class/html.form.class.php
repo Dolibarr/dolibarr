@@ -4493,7 +4493,7 @@ class Form
                 if ($usecalendar == "eldy")
                 {
                     // Zone de saisie manuelle de la date
-                    $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" class"minwidth100" maxlength="11" value="'.$formated_date.'"';
+                    $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidth75" maxlength="11" value="'.$formated_date.'"';
                     $retstring.=($disabled?' disabled':'');
                     $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "';  // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
                     $retstring.='>';
