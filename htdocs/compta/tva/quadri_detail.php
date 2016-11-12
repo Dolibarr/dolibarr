@@ -307,7 +307,8 @@ else
 					'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
 					'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
 					'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
-					'link'				=>$expensereport->getNomUrl(1);  
+					'link'				=>$expensereport->getNomUrl(1)
+				);
 			}
 			else
 			{
@@ -329,7 +330,8 @@ else
 					'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
 					'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
 					'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
-					'link'				=>$invoice_supplier->getNomUrl(1,'',12));
+					'link'				=>$invoice_supplier->getNomUrl(1,'',12)
+				);
 			}
 		}
 	}
