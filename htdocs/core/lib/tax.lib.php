@@ -230,17 +230,6 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $paymentfacturetable='paiementfourn_facturefourn';
         $invoicefieldref='ref';
     }
-    if ($direction == 'expensereport')
-    {
-        $expensereporttable='expensereport';
-        $expensereportdettable='expensereport_det';
-        $fk_expensereport='fk_expensereport';
-        $total_tva='total_tva';
-        $total_localtax1='total_localtax1';
-        $total_localtax2='total_localtax2';
-        $paymenttable='payment_expensereport';
-        $expensereportfieldref='ref';
-    }
 
     // CAS DES BIENS
 
@@ -527,129 +516,109 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     }
 
     // Expense Report
+	if ($direction == 'buy')
+	{
+		// Define sql request
+		$sql='';
 
-    // Define sql request
-    $sql='';
-    if ($modetax == 1)  // Option vat on delivery for goods (payment) and debit invoice for services
-    {
-        // Count on invoice date
-        $sql = "SELECT erd.rowid, erd.fk_c_type_fees as fees_type, erd.".$fk_expensereport." as erid, erd.tva_tx as rate, erd.total_ht as total_ht, erd.total_ttc as total_ttc, erd.".$total_tva." as total_vat, erd.comments as descr, erd.date as dateexpensereport,";
-        $sql .=" erd.".$total_localtax1." as total_localtax1, erd.".$total_localtax2." as total_localtax2, ";
-        $sql.= " er.".$expensereportfieldref." as ernum, er.total_ttc as ertotal_ttc, u.lastname as user_lastname, u.firstname as user_firstname, u.rowid as user_id,";
-        // $sql.= " er.date_debut as date_start, er.date_fin as date_end,";
-        $sql.= " f.id as fid, f.label as flabel";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$expensereporttable." as er,";
-        $sql.= " ".MAIN_DB_PREFIX.$expensereportdettable." as erd," ;
-        $sql.= " ".MAIN_DB_PREFIX."user as u";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f on erd.fk_c_type_fees = f.id";
-        $sql.= " WHERE er.entity = " . $conf->entity;
-        $sql.= " AND u.rowid = er.fk_user_author";
-        $sql.= " AND er.fk_statut in (5,6)"; // Validated or paid (partially or completely)
-        $sql.= " AND er.rowid = erd.".$fk_expensereport;
-        if ($y && $m)
-        {
-            $sql.= " AND erd.date >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND erd.date <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-        }
-        else if ($y)
-        {
-            $sql.= " AND erd.date >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND erd.date <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-        }
-        if ($q) $sql.= " AND (date_format(erd.date,'%m') > ".(($q-1)*3)." AND date_format(erd.date,'%m') <= ".($q*3).")";
-        if ($date_start && $date_end) $sql.= " AND erd.date >= '".$db->idate($date_start)."' AND erd.date <= '".$db->idate($date_end)."'";
-        $sql.= " ORDER BY erd.rowid, erd.".$fk_expensereport; 
-    }
-    else    // Option vat on delivery for goods (payments) and payments for services
-    {
-        // Count on payments date
-        $sql = "SELECT erd.rowid, erd.fk_c_type_fees as fees_type, erd.".$fk_expensereport." as erid, erd.tva_tx as rate, erd.total_ht as total_ht, erd.total_ttc as total_ttc, erd.".$total_tva." as total_vat, erd.comments as descr, erd.date as dateexpensereport,";
-        $sql .=" erd.".$total_localtax1." as total_localtax1, erd.".$total_localtax2." as total_localtax2, ";
-        $sql.= " er.".$expensereportfieldref." as ernum, er.total_ttc as ertotal_ttc, u.lastname as user_lastname, u.firstname as user_firstname, u.rowid as user_id,";
-        // $sql.= " er.date_debut as date_start, er.date_start as date_end,";
-        $sql.= " f.id as fid, f.label as flabel,";
-        $sql.= " pa.rowid as payment_id, pa.amount as payment_amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$expensereporttable." as er,";
-        $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
-        $sql.= " ".MAIN_DB_PREFIX."user as u,";
-        $sql.= " ".MAIN_DB_PREFIX.$expensereportdettable." as erd";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f on erd.fk_c_type_fees = f.id";
-        $sql.= " WHERE er.entity = " . $conf->entity;
-        $sql.= " AND er.fk_statut in (5,6)"; // Paid (partially or completely)
-        $sql.= " AND er.rowid = erd.".$fk_expensereport;
-        $sql.= " AND u.rowid = er.fk_user_author";
-        $sql.= " AND pa.rowid = er.".$fk_expensereport;
-        if ($y && $m)
-        {
-            $sql.= " AND erd.date >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND erd.date <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-        }
-        else if ($y)
-        {
-            $sql.= " AND erd.date >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND erd.date <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-        }
-        if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-        if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-        $sql.= " ORDER BY er.rowid, erd.".$fk_expensereport;
-    }
+		// Count on payments date
+		$sql = "SELECT e.rowid, d.product_type as dtype, e.rowid as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql .=" d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
+		$sql.= " e.date_debut as date_start, e.date_fin as date_end,";
+		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, s.nom as company_name, s.rowid as company_id, d.fk_c_type_fees as type,";
+		$sql.= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+		$sql.= " ".MAIN_DB_PREFIX."expensereport_det as d,";
+		$sql.= " ".MAIN_DB_PREFIX."expensereport as e,";
+		$sql.= " ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql.= " WHERE e.entity = " . $conf->entity;
+		$sql.= " AND e.fk_statut in (6)"; 
+		$sql.= " AND e.rowid = p.fk_expensereport";
+		$sql.= " AND s.rowid = e.entity";
+		$sql.= " AND d.fk_expensereport = e.rowid";
+		if ($y && $m)
+		{
+			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+		}
+		else if ($y)
+		{
+			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+		}
+		if ($q) $sql.= " AND (date_format(p.datep,'%m') > ".(($q-1)*3)." AND date_format(p.datep,'%m') <= ".($q*3).")";
+		if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+		$sql.= " AND (d.product_type = -1";                              
+		$sql.= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)";       // enhance detection of service
+		$sql.= " ORDER BY e.rowid";
 
-    if (! $sql)
-    {
-        dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
-        return -1;  // -1 = Not accountancy module enabled
-    }
-    if ($sql == 'TODO') return -2; // -2 = Feature not yet available
-    if ($sql != 'TODO')
-    {
-        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $rate = -1;
-            $oldrowid='';
-            while($assoc = $db->fetch_array($resql))
-            {
-                if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
-                if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
-                if (! isset($list[$assoc['rate']]['localtax1']))      $list[$assoc['rate']]['localtax1']=0;
-                if (! isset($list[$assoc['rate']]['localtax2']))      $list[$assoc['rate']]['localtax2']=0;
+		if (! $sql)
+		{
+			dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
+			return -1;  // -1 = Not accountancy module enabled
+		}
+		if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+		if ($sql != 'TODO')
+		{
+			dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$rate = -1;
+				$oldrowid='';
+				while($assoc = $db->fetch_array($resql))
+				{
+					if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
+					if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
+					if (! isset($list[$assoc['rate']]['localtax1']))      $list[$assoc['rate']]['localtax1']=0;
+					if (! isset($list[$assoc['rate']]['localtax2']))      $list[$assoc['rate']]['localtax2']=0;
 
-                $list[$assoc['rate']]['erdtotal_ttc'][] = $assoc['total_ttc'];
-                $list[$assoc['rate']]['ftype'][] = $assoc['fees_type'];
-                $list[$assoc['rate']]['erdate'][] = $assoc['dateexpensereport'];
-                $list[$assoc['rate']]['ulastname'][] = $assoc['user_lastname'];
-                $list[$assoc['rate']]['ufirstname'][] = $assoc['user_firstname'];
-                $list[$assoc['rate']]['uid'][] = $assoc['user_id'];
-                // $list[$assoc['rate']]['erddate_start'][] = $db->jdate($assoc['date_start']);
-                // $list[$assoc['rate']]['erddate_end'][] = $db->jdate($assoc['date_end']);
+					if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+					{
+						$oldrowid=$assoc['rowid'];
+						$list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
+						$list[$assoc['rate']]['localtax1']	 += $assoc['total_localtax1'];
+						$list[$assoc['rate']]['localtax2']	 += $assoc['total_localtax2'];
+					}
 
-                $list[$assoc['rate']]['erid'][] = $assoc['erid'];
-                $list[$assoc['rate']]['ernum'][] = $assoc['ernum'];
-                $list[$assoc['rate']]['ertotal_ttc'][] = $assoc['ertotal_ttc'];
-                $list[$assoc['rate']]['descr'][] = $assoc['descr'];
+					$list[$assoc['rate']]['vat'] = $assoc['total_vat'];
+					$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
+					$list[$assoc['rate']]['dtype'][] = 'ExpenseReportPayment';
+					$list[$assoc['rate']]['datef'][] = $assoc['datef'];
+					$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+					$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+					$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
+					$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-                $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-                $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
-                $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
-                $list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
+					$list[$assoc['rate']]['facid'][] = $assoc['facid'];
+					$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+					$list[$assoc['rate']]['type'][] = $assoc['type'];
+					$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
+					$list[$assoc['rate']]['descr'][] = $assoc['descr'];
 
-                $list[$assoc['rate']]['fid'][] = $assoc['fid'];
-                $list[$assoc['rate']]['flabel'][] = $assoc['flabel'];
+					$list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
+					$list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+					$list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
+					$list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
 
-                $list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
-                $list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
+					$list[$assoc['rate']]['pid'][] = $assoc['pid'];
+					$list[$assoc['rate']]['pref'][] = $assoc['pref'];
+					$list[$assoc['rate']]['ptype'][] = 'ExpenseReportPayment';
 
-                $rate = $assoc['rate'];
-            }
-        }
-        else
-        {
-            dol_print_error($db);
-            return -3;
-        }
-    }
+					$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
+					$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
 
-    return $list;
+					$rate = $assoc['rate'];
+				}
+			}
+			else
+			{
+				dol_print_error($db);
+				return -3;
+			}
+		}
+	}
+
+	return $list;
 }
 

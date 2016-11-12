@@ -148,10 +148,9 @@ for ($m = 1 ; $m < 13 ; $m++ )
 {
     $coll_listsell			= vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
     $coll_listbuy			= vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
-    $coll_listexpensereport	= vat_by_date($db, $y, 0, 0, 0, $modetax, 'expensereport', $m);
     
     $action = "tva";
-    $object = array(&$coll_listsell, &$coll_listbuy, &$coll_listexpensereport);
+    $object = array(&$coll_listsell, &$coll_listbuy);
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
