@@ -75,6 +75,7 @@ PaymentsAlreadyDone=Payments already done
 PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Payment rule
 PaymentMode=Payment type
+PaymentTypeDC=Debit/Credit Card
 IdPaymentMode=Payment type (id)
 LabelPaymentMode=Payment type (label)
 PaymentModeShort=Payment type
