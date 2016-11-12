@@ -1824,7 +1824,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
 						print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1972,10 +1972,11 @@ else
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print '<tr class="liste_titre">';
+						print '<td></td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 						print '<td align="center">'.$langs->trans('Type').'</td>';
-						print '<td colspan="2">'.$langs->trans('Description').'</td>';
+						print '<td>'.$langs->trans('Description').'</td>';
 						print '<td align="right">'.$langs->trans('VAT').'</td>';
 						print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 						print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1985,6 +1986,8 @@ else
 						
 						print '<tr '.$bc[true].'>';
 
+						print '<td></td>';
+						
 						// Select date
 						print '<td align="center">';
 						$form->select_date($date?$date:-1,'date');
@@ -2004,7 +2007,7 @@ else
 						print '</td>';
 
 						// Add comments
-						print '<td colspan="2">';
+						print '<td>';
 						print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
 						print '</td>';
 
@@ -2219,7 +2222,7 @@ print '</div>';
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
-print '<div style="width:50%">';
+print '<div class="fichehalfleft">';
 
 /*
  * Generate documents
