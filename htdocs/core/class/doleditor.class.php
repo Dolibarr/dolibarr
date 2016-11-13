@@ -108,7 +108,7 @@ class DolEditor
     		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
     		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
         	$modulepart='fckeditor';
-    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file=';
     		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
 
         	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
