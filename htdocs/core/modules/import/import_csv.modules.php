@@ -303,6 +303,8 @@ class ImportCsv extends ModeleImports
 		else
 		{
 			$last_insert_id_array = array(); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id (eg: extrafields fk_object will be set with the last inserted object's id)
+			$updatedone = false;
+			$insertdone = false;
 			// For each table to insert, me make a separate insert
 			foreach($objimport->array_import_tables[0] as $alias => $tablename)
 			{
@@ -548,7 +550,8 @@ class ImportCsv extends ModeleImports
     				    {
     				        $tmp=explode('-',$val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+							$keyfield = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+    				        $listfields[] = $keyfield;
                             $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
     				    }
@@ -563,45 +566,79 @@ class ImportCsv extends ModeleImports
 					if (!empty($listfields))
 					{
 						$updatedone = false;
+						$insertdone = false;
 						if(!empty($updatekeys)) {
-							// Build SQL UPDATE request
-							$sqlstart = 'UPDATE '.$tablename;
-							
-							$data = array_combine($listfields, $listvalues);
-							$set = array();
-							foreach ($data as $key => $val) {
-								$set[] = $key.' = '.$val;
-							}
-							$sqlstart.= ' SET '.implode(', ', $set);
-							
-							$where = array();
-							foreach ($updatekeys as $key) {
-								$key=preg_replace('/^.*\./i','',$key);
-								$where[] = $key.' = '.$data[$key];
-							}
-							$sqlend = ' WHERE '.implode(' AND ', $where);
-							
-							$sql = $sqlstart.$sqlend;
-							
-							// Run update request
-							$resql=$this->db->query($sql);
-							if($resql) {
-								if($this->db->db->affected_rows > 0) {
-									$this->nbupdate++;
-									$updatedone = true;
+							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
+							if(empty($lastinsertid)) {
+								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								
+								$data = array_combine($listfields, $listvalues);
+								$where = array();
+								$filters = array();
+								foreach ($updatekeys as $key) {
+									$col = $objimport->array_import_updatekeys[0][$key];
+									$key=preg_replace('/^.*\./i','',$key);
+									$where[] = $key.' = '.$data[$key];
+									$filters[] = $col.' = '.$data[$key];
+								}
+								$sqlSelect.= ' WHERE '.implode(' AND ', $where);
+								
+								$resql=$this->db->query($sqlSelect);
+								if($resql) {
+									$res = $this->db->fetch_object($resql);
+									if($resql->num_rows == 1) {
+										$lastinsertid = $res->rowid;
+										$last_insert_id_array[$tablename] = $lastinsertid;
+									} else {
+										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filter, ', '));
+										$this->errors[$error]['type']='SQL';
+										$error++;
+									}
+								}
+								else
+								{
+									//print 'E';
+									$this->errors[$error]['lib']=$this->db->lasterror();
+									$this->errors[$error]['type']='SQL';
+									$error++;
 								}
 							}
-							else
-							{
-								//print 'E';
-								$this->errors[$error]['lib']=$this->db->lasterror();
-								$this->errors[$error]['type']='SQL';
-								$error++;
+							
+							if(!empty($lastinsertid)) {
+								// Build SQL UPDATE request
+								$sqlstart = 'UPDATE '.$tablename;
+								
+								$data = array_combine($listfields, $listvalues);
+								$set = array();
+								foreach ($data as $key => $val) {
+									$set[] = $key.' = '.$val;
+								}
+								$sqlstart.= ' SET '.implode(', ', $set);
+								
+								if(empty($keyfield)) $keyfield = 'rowid';
+								$sqlend = ' WHERE '.$keyfield.' = '.$lastinsertid;
+								
+								$sql = $sqlstart.$sqlend;
+								
+								// Run update request
+								$resql=$this->db->query($sql);
+								if($resql) {
+									if($this->db->db->affected_rows > 0) {
+										$updatedone = true;
+									}
+								}
+								else
+								{
+									//print 'E';
+									$this->errors[$error]['lib']=$this->db->lasterror();
+									$this->errors[$error]['type']='SQL';
+									$error++;
+								}
 							}
 						}
 
 						// Update not done, we do insert
-						if(!$updatedone) {
+						if(!$error && !$updatedone) {
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
 							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
@@ -615,7 +652,7 @@ class ImportCsv extends ModeleImports
 							}
 							$sql = $sqlstart.$sqlend.')';
 							dol_syslog("import_csv.modules", LOG_DEBUG);
-	
+							
 							// Run insert request
 							if ($sql)
 							{
@@ -623,7 +660,7 @@ class ImportCsv extends ModeleImports
 								$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 								if ($resql)
 								{
-									$this->nbinsert++;
+									$insertdone = true;
 								}
 								else
 								{
@@ -643,6 +680,9 @@ class ImportCsv extends ModeleImports
 
 			    if ($error) break;
 			}
+
+			if($updatedone) $this->nbupdate++;
+			if($insertdone) $this->nbinsert++;
 		}
 
 		return 1;

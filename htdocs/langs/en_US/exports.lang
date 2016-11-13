@@ -124,3 +124,4 @@ FormatControlRule=Format control rule
 KeysToUseForUpdates=Key to use for updating data
 NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
+MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
