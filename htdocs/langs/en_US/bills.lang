@@ -76,6 +76,7 @@ PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Payment rule
 PaymentMode=Payment type
 PaymentTypeDC=Debit/Credit Card
+PaymentTypePP=PayPal
 IdPaymentMode=Payment type (id)
 LabelPaymentMode=Payment type (label)
 PaymentModeShort=Payment type
