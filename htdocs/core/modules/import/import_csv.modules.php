@@ -589,10 +589,12 @@ class ImportCsv extends ModeleImports
 									if($resql->num_rows == 1) {
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} else {
-										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filter, ', '));
+									} else if($resql->num_rows > 1) {
+										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filters, ', '));
 										$this->errors[$error]['type']='SQL';
 										$error++;
+									} else {
+										// No record found with filters, insert will be tried below
 									}
 								}
 								else
@@ -623,9 +625,8 @@ class ImportCsv extends ModeleImports
 								// Run update request
 								$resql=$this->db->query($sql);
 								if($resql) {
-									if($this->db->db->affected_rows > 0) {
-										$updatedone = true;
-									}
+									// No error, update has been done. $this->db->db->affected_rows can be 0 if data hasn't changed
+									$updatedone = true;
 								}
 								else
 								{
