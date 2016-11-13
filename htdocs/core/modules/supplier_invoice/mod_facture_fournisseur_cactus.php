@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
 
 
 /**
- *  \class mod_facture_fournisseur_cactus
- *  \brief Cactus Class of numbering models of suppliers invoices references
+ *  Cactus Class of numbering models of suppliers invoices references
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
@@ -91,11 +90,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			$row = $db->fetch_row($resql);
 			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
-		if (! $siyymm || preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
-		{
-			return true;
-		}
-		else
+		if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
