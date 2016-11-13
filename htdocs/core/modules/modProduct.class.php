@@ -248,6 +248,7 @@ class modProduct extends DolibarrModules
 		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','p.recuperableonly'=>'^[0|1]$');
 		$import_sample=array('p.ref'=>"PREF123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31','p.recuperableonly'=>'0 or 1');
 		$this->import_examplevalues_array[$r]=array_merge($import_sample,$import_extrafield_sample);
+		$this->import_updatekeys_array[$r]=array('p.ref'=>'Ref','p.barcode'=>'BarCode');
 
 		if (! empty($conf->fournisseur->enabled))
 		{
@@ -276,6 +277,7 @@ class modProduct extends DolibarrModules
 					'sp.unitprice'=>'50',
 					'sp.remise_percent'=>'0'
 			);
+			$this->import_updatekeys_array[$r]=array('sp.fk_product'=>'ProductOrService','sp.ref_fourn'=>'SupplierRef');
 		}
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))
