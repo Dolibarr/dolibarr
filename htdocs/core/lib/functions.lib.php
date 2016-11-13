@@ -5437,7 +5437,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 	}
 	
 	// No need to make a return $head. Var is modified as a reference
-	if (! empty($hookmanaer))
+	if (! empty($hookmanager))
 	{
 		$parameters=array('object' => $object, 'mode' => $mode, 'head'=>$head);
 		$reshook=$hookmanager->executeHooks('completeTabsHead',$parameters);
