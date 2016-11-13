@@ -126,6 +126,9 @@ class ExpenseReport extends CommonObject
 
         $now = dol_now();
 
+        $fuserid = $this->fk_user_author;
+        if (empty($fuserid)) $fuserid = $user->id;
+        
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
@@ -153,7 +156,7 @@ class ExpenseReport extends CommonObject
         $sql.= ", '".$this->db->idate($this->date_debut)."'";
         $sql.= ", '".$this->db->idate($this->date_fin)."'";
         $sql.= ", '".$this->db->idate($now)."'";
-        $sql.= ", ".($user->id > 0 ? $user->id:"null");
+        $sql.= ", ".$fuserid;
         $sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
         $sql.= ", ".($this->fk_user_modif > 0 ? $this->fk_user_modif:"null");
         $sql.= ", ".($this->fk_statut > 1 ? $this->fk_statut:0);
@@ -222,6 +225,78 @@ class ExpenseReport extends CommonObject
 
     }
 
+
+    /**
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param		int			$socid			Id of thirdparty
+     *	@return		int							New id of clone
+     */
+    function createFromClone($socid=0)
+    {
+        global $user,$hookmanager;
+    
+        $error=0;
+    
+        $this->context['createfromclone'] = 'createfromclone';
+    
+        $this->db->begin();
+    
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            //$line->fetch_optionals($line->rowid);
+    
+            // Load source object
+            $objFrom = clone $this;
+    
+            $this->id=0;
+            $this->ref = '';
+            $this->statut=0;
+    
+            // Clear fields
+            $this->fk_user_author     = $user->id;
+            $this->fk_user_valid      = '';
+            $this->date_create  	  = '';
+            $this->date_creation      = '';
+            $this->date_validation    = '';
+    
+            // Create clone
+            $result=$this->create($user);
+            if ($result < 0) $error++;
+    
+            if (! $error)
+            {
+                // Hook of thirdparty module
+                if (is_object($hookmanager))
+                {
+                    $parameters=array('objFrom'=>$objFrom);
+                    $action='';
+                    $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    if ($reshook < 0) $error++;
+                }
+    
+                // Call trigger
+                $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+    
+            unset($this->context['createfromclone']);
+    
+            // End
+            if (! $error)
+            {
+                $this->db->commit();
+                return $this->id;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
+    }
+    
+    
     /**
      * update
      *

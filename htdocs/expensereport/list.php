@@ -100,7 +100,7 @@ if (empty($user->socid)) $fieldstosearchall["d.note_private"]="NotePrivate";
 
 $arrayfields=array(
     'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'user'=>array('label'=>$langs->trans("Person"), 'checked'=>1),
+    'user'=>array('label'=>$langs->trans("User"), 'checked'=>1),
     'd.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1),
     'd.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1),
     'd.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
@@ -248,7 +248,8 @@ if ($search_status != '' && $search_status >= 0)
 	else $sql.=" AND d.fk_statut = ".$search_status;
 }
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+    && empty($user->rights->expensereport->writeall_advance))
 {
 	$childids = $user->getAllChildIds();
 	$childids[]=$user->id;
@@ -354,7 +355,7 @@ if ($resql)
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print "<tr class=\"liste_titre\">";
 	if (! empty($arrayfields['d.ref']['checked']))                  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.ref","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['user']['checked']))                   print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['user']['checked']))                   print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.date_debut']['checked']))           print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"d.date_debut","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.date_fin']['checked']))             print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"d.date_fin","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.total_ht']['checked']))             print_liste_field_titre($langs->trans("TotalHT"),$_SERVER["PHP_SELF"],"d.total_ht","",$param,'align="right"',$sortfield,$sortorder);
