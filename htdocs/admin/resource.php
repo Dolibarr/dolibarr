@@ -129,6 +129,52 @@ print '</td>';
 print '<td></td>';
 print '</tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ResourceOccupationEnable").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('RESOURCE_OCCUPATION');
+}
+else
+{
+	if (empty($conf->global->RESOURCE_OCCUPATION))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_RESOURCE_OCCUPATION">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_RESOURCE_OCCUPATION">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ResourceOccupationByQty").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('RESOURCE_OCCUPATION_BY_QTY');
+}
+else
+{
+	if (empty($conf->global->RESOURCE_OCCUPATION_BY_QTY))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_RESOURCE_OCCUPATION_BY_QTY">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_RESOURCE_OCCUPATION_BY_QTY">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
 print '</table>';
 
 print '</form>';

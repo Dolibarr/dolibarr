@@ -118,6 +118,7 @@ class ResourcePlacement extends CommonObject
             }
             else
             {
+                require_once DOL_DOCUMENT_ROOT."/resource/class/resourcelog.class.php";
                 $result = $resource->setStatus($user, $this->date_start, $this->date_end, ResourceStatus::$AVAILABLE, ResourceStatus::OCCUPIED, $this->id, $this->element, false, ResourceLog::RESOURCE_OCCUPY, $notrigger);
                 if ($result < 0)
                 {
