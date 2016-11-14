@@ -3342,7 +3342,7 @@ class Form
             }
 
         	// Now add questions
-            $more.='<table class="paddingrightonly" width="100%">'."\n";
+            $more.='<table class="paddingtopbottomonly" width="100%">'."\n";
             $more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {

@@ -2301,6 +2301,7 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
 /* Main boxes */
 
 table.liste, table.noborder, table.formdoc, div.noborder {
@@ -2313,36 +2314,16 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
-/*	border-right-width: 1px;
-	border-right-color: #BBB;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #BBB;
-	border-left-style: solid;
-*/
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 	
 	margin: 0px 0px 8px 0px;
-    /*
-	-moz-box-shadow: 2px 2px 4px #CCC;
-	-webkit-box-shadow: 2px 2px 4px #CCC;
-	box-shadow: 2px 2px 4px #CCC;
-    */
-	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
 	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-/*
-#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
-    border-top-width: 1px;
-    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-    border-top-style: solid;
-}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2354,6 +2335,10 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+table.paddingtopbottomonly tr td {
+	padding-top: 1px;
+	padding-bottom: 2px;
 }
 
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
