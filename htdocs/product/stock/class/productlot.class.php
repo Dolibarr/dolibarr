@@ -547,7 +547,15 @@ class Productlot extends CommonObject
         $label = '<u>' . $langs->trans("Batch") . '</u>';
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Batch') . ':</b> ' . $this->batch;
-
+        if ($this->eatby)
+        {
+            $label.= '<br><b>' . $langs->trans('EatByDate') . ':</b> ' . dol_print_date($this->eatby, 'day');
+        }
+        if ($this->sellby)
+        {
+            $label.= '<br><b>' . $langs->trans('SellByDate') . ':</b> ' . dol_print_date($this->sellby, 'day');
+        }
+        
         $link = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';

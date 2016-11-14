@@ -3310,8 +3310,7 @@ class Propal extends CommonObject
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
 	    $sql.= ' pt.fk_unit,';
-        $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-        $sql.= ' p.description as product_desc,';
+        $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.description as product_desc, p.tobatch as product_tobatch,';
         $sql.= ' p.entity,';
 		$sql.= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -3342,6 +3341,7 @@ class Propal extends CommonObject
                 $this->lines[$i]->entity            = $obj->entity;             // Product entity
                 $this->lines[$i]->product_label		= $obj->product_label;
                 $this->lines[$i]->product_desc		= $obj->product_desc;
+                $this->lines[$i]->product_tobatch   = $obj->product_tobatch;
                 $this->lines[$i]->fk_product_type	= $obj->fk_product_type;    // deprecated
                 $this->lines[$i]->product_type		= $obj->product_type;
                 $this->lines[$i]->qty				= $obj->qty;

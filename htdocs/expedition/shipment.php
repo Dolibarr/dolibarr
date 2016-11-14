@@ -42,6 +42,7 @@ $langs->load("bills");
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('stocks');
+$langs->load("productbatch");
 
 $id=GETPOST('id','int');			// id of order
 $ref= GETPOST('ref','alpha');
