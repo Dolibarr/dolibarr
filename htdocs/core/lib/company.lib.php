@@ -1126,6 +1126,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
     if (! empty($conf->agenda->enabled) || (! empty($conf->mailing->enabled) && ! empty($objcon->email)))
     {
+        $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+        
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -1166,7 +1168,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.='<td></td>';
 		$out.='<td>'.$langs->trans("Owner").'</td>';
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
-		$out.='<td align="center"></td>';
+		$out.='<td class="maxwidthsearch">';
+		//TODO Add selection of fields
+		$out.='</td>';
 		$out.='</tr>';
 
 		
@@ -1242,6 +1246,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($histo[$key]['dateend'],'hour');
                 else $out.='-'.dol_print_date($histo[$key]['dateend'],'dayhour');
             }
+            $late=0;
+            if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] == 0 && ! $histo[$key]['datestart'] && $histo[$key]['dateend'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $db->jdate($histo[$key]['dateend']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && ! $histo[$key]['dateend'] && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($late) $out.=img_warning($langs->trans("Late")).' ';
             $out.="</td>\n";
             
             // Type
