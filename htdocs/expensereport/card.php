@@ -46,6 +46,8 @@ $langs->load("mails");
 
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
+$confirm = GETPOST('confirm', 'alpha');
+
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debutday'), GETPOST('date_debutyear'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth'), GETPOST('dateday'), GETPOST('dateyear'));
@@ -192,6 +194,12 @@ if (empty($reshook))
     	$object->date_debut = $date_start;
     	$object->date_fin = $date_end;
     
+    	$object->fk_user_author             = GETPOST('fk_user_author','int');
+    	if (! ($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
+    	
+    	$fuser=new User($db);
+    	$fuser->fetch($object->fk_user_author);
+    	
     	$object->fk_statut = 1;
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
@@ -204,7 +212,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
     	 
-    	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
+    	if ($object->periode_existe($fuser,$object->date_debut,$object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -1198,18 +1206,35 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 	print '<tbody>';
+	
+	// Date start
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
 	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
+	
+	// Date end
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
 	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
+	
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
+	print '<td>';
+	$defaultselectuser=$user->id;
+	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
+    $include_users = array($user->id);
+    if (! empty($user->rights->expensereport->writeall)) $include_users=array();
+	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
+	print $s;
+	print '</td>';
+	print '</tr>';
+	
 	print '<tr>';
 	print '<td>'.$langs->trans("VALIDATOR").'</td>';
 	print '<td>';
@@ -1222,6 +1247,8 @@ if ($action == 'create')
 	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	print '</td>';
 	print '</tr>';
+	
+	// Payment mode
 	if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
 	{
 		print '<tr>';
@@ -1284,7 +1311,8 @@ else
 		{
 			if ($object->fk_user_author != $user->id)
 			{
-				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+				    && empty($user->rights->expensereport->writeall_advance))
 				{
 					print load_fiche_titre($langs->trans('TripCard'));
 
@@ -1322,6 +1350,14 @@ else
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
+				print '<tr>';
+				print '<td>'.$langs->trans("User").'</td>';
+				print '<td>';
+				$userfee=new User($db);
+				$userfee->fetch($object->fk_user_author);
+				print $userfee->getNomUrl(-1);
+				print '</td></tr>';
+				
             	// Ref
             	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>';
             	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
@@ -1372,13 +1408,6 @@ else
 					print '</td></tr>';
 				}
 
-				print '<tr>';
-				print '<td>'.$langs->trans("AUTHOR").'</td>';
-				print '<td>';
-				$userfee=new User($db);
-				$userfee->fetch($object->fk_user_author);
-				print $userfee->getNomUrl(-1);
-				print '</td></tr>';
 				if ($object->fk_statut==6)
 				{
 					print '<tr>';
@@ -1430,6 +1459,20 @@ else
 			{
 				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
+				// Clone confirmation
+				if ($action == 'clone') {
+				    // Create an array for form
+				    $formquestion = array(
+				        // 'text' => $langs->trans("ConfirmClone"),
+				        // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+				        // 1),
+				        // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+				        // => 1),
+                    );
+				    // Paiement incomplet. On demande si motif = escompte ou autre
+				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneExpenseReport'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+				}
+				
 				if ($action == 'save')
 				{
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
@@ -1543,6 +1586,19 @@ else
             	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';*/
 
+				// Author
+				print '<tr>';
+				print '<td class="titlefield">'.$langs->trans("User").'</td>';
+				print '<td>';
+				if ($object->fk_user_author > 0)
+				{
+				    $userauthor=new User($db);
+				    $result=$userauthor->fetch($object->fk_user_author);
+				    if ($result < 0) dol_print_error('',$userauthor->error);
+				    print $userauthor->getNomUrl(-1);
+				}
+				print '</td></tr>';
+				
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
@@ -1594,19 +1650,6 @@ else
 				print '<td>'.$langs->trans("AmountTTC").'</td>';
 				print '<td>'.price($object->total_ttc).'</td>';
 				print '</tr>';
-
-				// Author
-				print '<tr>';
-				print '<td>'.$langs->trans("AUTHOR").'</td>';
-				print '<td>';
-				if ($object->fk_user_author > 0)
-				{
-					$userauthor=new User($db);
-					$result=$userauthor->fetch($object->fk_user_author);
-					if ($result < 0) dol_print_error('',$userauthor->error);
-					print $userauthor->getNomUrl(-1);
-				}
-				print '</td></tr>';
 
 				// Validation date
 				print '<tr>';
@@ -1824,7 +1867,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
 						print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1972,10 +2015,11 @@ else
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print '<tr class="liste_titre">';
+						print '<td></td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 						print '<td align="center">'.$langs->trans('Type').'</td>';
-						print '<td colspan="2">'.$langs->trans('Description').'</td>';
+						print '<td>'.$langs->trans('Description').'</td>';
 						print '<td align="right">'.$langs->trans('VAT').'</td>';
 						print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 						print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1985,6 +2029,8 @@ else
 						
 						print '<tr '.$bc[true].'>';
 
+						print '<td></td>';
+						
 						// Select date
 						print '<td align="center">';
 						$form->select_date($date?$date:-1,'date');
@@ -2004,7 +2050,7 @@ else
 						print '</td>';
 
 						// Add comments
-						print '<td colspan="2">';
+						print '<td>';
 						print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
 						print '</td>';
 
@@ -2198,6 +2244,10 @@ if ($action != 'create' && $action != 'edit')
 	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 	
+	// Clone
+	if ($user->rights->expensereport->creer) {
+	    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=clone">' . $langs->trans("ToClone") . '</a></div>';
+	}
 	
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */ 
 	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut <= 4)
@@ -2219,7 +2269,7 @@ print '</div>';
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
-print '<div style="width:50%">';
+print '<div class="fichehalfleft">';
 
 /*
  * Generate documents

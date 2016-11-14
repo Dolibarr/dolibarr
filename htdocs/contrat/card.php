@@ -572,7 +572,7 @@ if (empty($reshook))
 	        if ($result > 0)
 	        {
 	        	// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && ! empty($conf->global->CONTRACT_ADDON_PDF))    // No generation if default type not defined
 				{
 					$outputlangs = $langs;
 					$newlang = '';

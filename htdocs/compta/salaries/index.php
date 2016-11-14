@@ -93,7 +93,7 @@ $accountstatic = new Account($db);
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql.= " ba.rowid as bid, ba.label as blabel,";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
@@ -230,8 +230,12 @@ if ($result)
 	        {
 	        	//$accountstatic->fetch($obj->fk_bank);
 	            $accountstatic->id=$obj->bid;
+	            $accountstatic->ref=$obj->bref;
+	            $accountstatic->number=$obj->bnumber;
+	            $accountstatic->accountancy_number=$obj->account_number;
+	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
 	            $accountstatic->label=$obj->blabel;
-	            print $accountstatic->getNomUrl(1);
+	        	print $accountstatic->getNomUrl(1);
 	        }
 	        else print '&nbsp;';
 	        print '</td>';

@@ -1,7 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2011-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,23 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+--
+-- Linked files
 -- ========================================================================
 
+ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
-create table llx_mailing_cibles
-(
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  fk_mailing		integer NOT NULL,
-  fk_contact		integer NOT NULL,
-  lastname			varchar(160),
-  firstname			varchar(160),
-  email				varchar(160) NOT NULL,
-  other				varchar(255) NULL,
-  tag				varchar(128) NULL,
-  statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
-  source_url		varchar(160),
-  source_id			integer,
-  source_type		varchar(16),
-  date_envoi		datetime,
-  error_text		varchar(255)						-- text with error if statut is -1
-)ENGINE=innodb;

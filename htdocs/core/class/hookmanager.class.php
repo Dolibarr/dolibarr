@@ -165,6 +165,7 @@ class HookManager
 				'paymentsupplierinvoices',
 				'printAddress',
 				'printSearchForm',
+				'printTabsHead',
 				'formatEvent',
                 'addCalendarChoice',
                 'printObjectLine',

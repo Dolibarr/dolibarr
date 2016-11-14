@@ -329,7 +329,7 @@ if ($result)
 	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="14" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	// On sell
 	print '<td class="liste_titre"></td>';

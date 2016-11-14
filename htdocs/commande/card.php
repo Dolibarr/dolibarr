@@ -99,7 +99,6 @@ $permissiondellink = $user->rights->commande->creer; 	// Used by the include of 
 $permissionedit = $user->rights->commande->creer; 		// Used by the include of actions_lineupdown.inc.php
 
 
-
 /*
  * Actions
  */
@@ -110,8 +109,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) $action='';
-
+	if ($cancel) 
+	{
+		if ($action != 'addlink')
+		{
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
+			header("Location: ".$urltogo);
+			exit;
+		}		
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		$action='';
+	}
+	
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
@@ -1725,7 +1734,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
 	print '</div>';
 
 	print '</form>';
