@@ -221,4 +221,4 @@ drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
-
+ALTER TABLE llx_loan ADD COLUMN fk_project integer DEFAULT NULL;

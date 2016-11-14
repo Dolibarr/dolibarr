@@ -47,5 +47,6 @@ create table llx_loan
   
   fk_user_author				integer DEFAULT NULL,
   fk_user_modif					integer DEFAULT NULL,
-  active						tinyint DEFAULT 1  NOT NULL
+  active						tinyint DEFAULT 1  NOT NULL,
+  fk_project					integer DEFAULT NULL
 )ENGINE=innodb;

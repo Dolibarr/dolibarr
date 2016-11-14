@@ -28,6 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("compta");
 $langs->load("bills");
@@ -45,134 +50,143 @@ $result = restrictedArea($user, 'loan', $id, '','');
 
 $object = new Loan($db);
 
+$hookmanager->initHooks(array('loancard','globalcard'));
+
 /*
  * Actions
  */
 
-// Classify paid
-if ($action == 'confirm_paid' && $confirm == 'yes')
-{
-	$object->fetch($id);
-	$result = $object->set_paid($user);
-    if ($result > 0)
-    {
-        setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($loan->error, null, 'errors');
-    }
-}
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Delete loan
-if ($action == 'confirm_delete' && $confirm == 'yes')
+if (empty($reshook))
 {
-	$object->fetch($id);
-	$result=$object->delete($user);
-	if ($result > 0)
+	// Classify paid
+	if ($action == 'confirm_paid' && $confirm == 'yes')
 	{
-		setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
-		header("Location: index.php");
-		exit;
+		$object->fetch($id);
+		$result = $object->set_paid($user);
+	    if ($result > 0)
+	    {
+	        setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
+	    }
+	    else
+	    {
+	        setEventMessages($loan->error, null, 'errors');
+	    }
 	}
-	else
-	{
-		setEventMessages($loan->error, null, 'errors');
-	}
-}
 
-// Add loan
-if ($action == 'add' && $user->rights->loan->write)
-{
-	if (! $cancel)
+	// Delete loan
+	if ($action == 'confirm_delete' && $confirm == 'yes')
 	{
-		$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
-		$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-
-		if (! $datestart)
+		$object->fetch($id);
+		$result=$object->delete($user);
+		if ($result > 0)
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
-			$action = 'create';
-		}
-		elseif (! $dateend)
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
-			$action = 'create';
-		}
-		elseif (! $_POST["capital"])
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
-			$action = 'create';
+			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
+			header("Location: index.php");
+			exit;
 		}
 		else
 		{
-			$object->label					= $_POST["label"];
-			$object->fk_bank				= $_POST["accountid"];
-			$object->capital				= $_POST["capital"];
-			$object->datestart				= $datestart;
-			$object->dateend				= $dateend;
-			$object->nbterm					= $_POST["nbterm"];
-			$object->rate					= $_POST["rate"];
-			$object->note_private 			= GETPOST('note_private');
-			$object->note_public 			= GETPOST('note_public');
+			setEventMessages($loan->error, null, 'errors');
+		}
+	}
 
-			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
-			$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
-			$accountancy_account_interest	= GETPOST('accountancy_account_interest');
+	// Add loan
+	if ($action == 'add' && $user->rights->loan->write)
+	{
+		if (! $cancel)
+		{
+			$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
+			$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 
-			if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
-			if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
-			if ($accountancy_account_interest <= 0) { $object->account_interest = ''; } else { $object->account_interest = $accountancy_account_interest; }
-
-			$id=$object->create($user);
-			if ($id <= 0)
+			if (! $datestart)
 			{
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
+				$action = 'create';
+			}
+			elseif (! $dateend)
+			{
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
+				$action = 'create';
+			}
+			elseif (! $_POST["capital"])
+			{
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
+				$action = 'create';
+			}
+			else
+			{
+				$object->label					= $_POST["label"];
+				$object->fk_bank				= $_POST["accountid"];
+				$object->capital				= $_POST["capital"];
+				$object->datestart				= $datestart;
+				$object->dateend				= $dateend;
+				$object->nbterm					= $_POST["nbterm"];
+				$object->rate					= $_POST["rate"];
+				$object->note_private 			= GETPOST('note_private');
+				$object->note_public 			= GETPOST('note_public');
+					$object->fk_project 			= GETPOST('fk_project');
+
+				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
+				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
+				$accountancy_account_interest	= GETPOST('accountancy_account_interest');
+
+				if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
+				if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
+				if ($accountancy_account_interest <= 0) { $object->account_interest = ''; } else { $object->account_interest = $accountancy_account_interest; }
+
+				$id=$object->create($user);
+				if ($id <= 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
-	}
-	else
-	{
-		header("Location: index.php");
-		exit();
-	}
-}
-
-// Update record
-else if ($action == 'update' && $user->rights->loan->write)
-{
-	if (! $cancel)
-	{
-		$result = $object->fetch($id);
-
-		if ($object->fetch($id))
+		else
 		{
-			$object->label		= GETPOST("label");
-			$object->datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-			$object->dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
-			$object->nbterm		= GETPOST("nbterm");
-			$object->rate		= GETPOST("rate");
+			header("Location: index.php");
+			exit();
 		}
+	}
 
-        $result = $object->update($user);
+	// Update record
+	else if ($action == 'update' && $user->rights->loan->write)
+	{
+		if (! $cancel)
+		{
+			$result = $object->fetch($id);
 
-        if ($result > 0)
-        {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
-            exit;
-        }
-        else
-        {
-	        setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-    else
-    {
-        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
-        exit;
-    }
+			if ($object->fetch($id))
+			{
+				$object->label		= GETPOST("label");
+				$object->datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+				$object->dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+				$object->nbterm		= GETPOST("nbterm");
+				$object->rate		= GETPOST("rate");
+					$object->fk_project		= GETPOST("fk_project");
+			}
+
+	        $result = $object->update($user);
+
+	        if ($result > 0)
+	        {
+	            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+	            exit;
+	        }
+	        else
+	        {
+		        setEventMessages($object->error, $object->errors, 'errors');
+	        }
+	    }
+	    else
+	    {
+	        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+	        exit;
+	    }
+	}
 }
-
 /*
  * View
  */
@@ -240,6 +254,20 @@ if ($action == 'create')
 	// Rate
     print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
 
+    // Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject=new FormProjets($db);
+
+		// Projet associe
+		$langs->load("projects");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject=$formproject->select_projects(-1,GETPOST("fk_project"),'fk_project',16,0,1,1);
+
+		print '</td></tr>';
+	}
     // Note Private
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
@@ -283,8 +311,8 @@ if ($action == 'create')
         print '<td>';
 		print $formaccountancy->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
         print '</td></tr>';
-	}			
-	else // For external software 
+	}
+	else // For external software
 	{
         // Accountancy_account_capital
         print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
@@ -300,11 +328,11 @@ if ($action == 'create')
         print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
         print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
         print '</td></tr>';
-        
+
         print '</table>';
 	}
 	print '</table>';
-	
+
 	dol_fiche_end();
 
     print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -438,6 +466,23 @@ if ($id > 0)
 		}
 		print '</td></tr>';
 
+		// projet
+		if (! empty($conf->projet->enabled)){
+			print '<tr><td class="nowrap">';
+			print $langs->trans("Project");
+			print '</td><td>';
+			if ($action == 'edit') {
+				$formproject=new FormProjets($db);
+				$numproject=$formproject->select_projects(-1,$object->fk_project,'fk_project',16,0,1,1);
+
+			} else {
+				$project=new Project($db);
+				$project->fetch($object->fk_project);
+				print $project->getNomUrl(1,'',1);;
+			}
+			print '</td></tr>';
+		}
+
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
@@ -445,7 +490,7 @@ if ($id > 0)
 
 		dol_fiche_end();
 
-	
+
 		if ($action == 'edit')
 		{
 			print '<div align="center">';
@@ -455,7 +500,7 @@ if ($id > 0)
 			print '</div>';
 			print '</form><br><br>';
 		}
-		
+
 		print '<table class="border" width="100%">';
 		print '<tr><td>';
 
@@ -537,33 +582,38 @@ if ($id > 0)
 		 */
 		if ($action != 'edit')
 		{
-			print '<div class="tabsAction">';
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			// modified by hook
+			if (empty($reshook))
+				{
+				print '<div class="tabsAction">';
 
-			// Edit
-			if ($user->rights->loan->write)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				// Edit
+				if ($user->rights->loan->write)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				}
+
+				// Emit payment
+				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
+				}
+
+				// Classify 'paid'
+				if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
+				}
+
+				// Delete
+				if ($user->rights->loan->delete)
+				{
+					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				}
+
+				print "</div>";
 			}
-
-			// Emit payment
-			if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
-			}
-
-			// Classify 'paid'
-			if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
-			}
-
-			// Delete
-			if ($user->rights->loan->delete)
-			{
-				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
-
-			print "</div>";
 		}
 	}
 	else
