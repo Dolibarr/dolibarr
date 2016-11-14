@@ -4096,7 +4096,7 @@ abstract class CommonObject
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
             {
-                $sql.= ", ".$name;
+                $sql.= ", `".$name."`";
             }
             $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
@@ -4260,7 +4260,7 @@ abstract class CommonObject
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
             	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
-                	$sql.=",".$attributeKey;
+                	$sql.=",`".$attributeKey."`";
             }
             $sql .= ") VALUES (".$this->id;
             foreach($new_array_options as $key => $value)
@@ -4364,7 +4364,7 @@ abstract class CommonObject
             }
 
             $this->db->begin();
-            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key."='".$this->db->escape($this->array_options["options_".$key])."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET `".$key."`='".$this->db->escape($this->array_options["options_".$key])."'";
             $sql .= " WHERE fk_object = ".$this->id;
             $resql = $this->db->query($sql);
             if (! $resql)
