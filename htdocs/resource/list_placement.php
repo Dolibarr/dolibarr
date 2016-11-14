@@ -254,7 +254,7 @@ if (empty($reshook))
                 $resplacement = new ResourcePlacement($db);
                 $result = $resplacement->fetch($i);
                 if ($result > 0) {
-                    $result = $resource->switchResource($resplacement->date_start, $resplacement->date_end, ResourceStatus::OCCUPIED, $resplacement->id, $resplacement->element, $object->id, $object->element, true);
+                    $result = $resource->switchResource($user, $resplacement->date_start, $resplacement->date_end, ResourceStatus::OCCUPIED, $resplacement->id, $resplacement->element, $object->id, $object->element, true);
                     if ($result < 0)
                     {
                         setEventMessages($resource->error, $resource->errors, 'errors');
