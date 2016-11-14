@@ -201,4 +201,4 @@ create table llx_user_employment
   dateemploymentend date						-- last and current value stored into llx_user
 )ENGINE=innodb;
 
-
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
