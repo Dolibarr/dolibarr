@@ -613,7 +613,7 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print load_fiche_titre($langs->trans("CreateShipment")).'<br>';
     print $langs->trans("ShipmentCreationIsDoneFromOrder");
     $action=''; $id=''; $ref='';
 }
@@ -623,7 +623,7 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print load_fiche_titre($langs->trans("CreateASending"));
+    print load_fiche_titre($langs->trans("CreateShipment"));
     if (! $origin)
     {
         setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
@@ -1715,7 +1715,7 @@ else if ($id || $ref)
     		//if ($filter) $sql.= $filter;
     		$sql.= " ORDER BY obj.fk_product";
 
-    		dol_syslog("show_list_sending_receive", LOG_DEBUG);
+    		dol_syslog("get list of shipment lines", LOG_DEBUG);
     		$resql = $db->query($sql);
     		if ($resql)
     		{

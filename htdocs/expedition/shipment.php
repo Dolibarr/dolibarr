@@ -695,7 +695,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if ($user->rights->expedition->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
@@ -703,7 +703,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#">'.$langs->trans("NewSending").'</a>';
+					print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
 				}
 			}
 			print "</div>";
@@ -721,42 +721,46 @@ if ($id > 0 || ! empty($ref))
 		{
 			if ($user->rights->expedition->creer)
 			{
-				print load_fiche_titre($langs->trans("NewSending"));
-
+				//print load_fiche_titre($langs->trans("CreateShipment"));
+                print '<div class="tabsAction">';
+                
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';
 				//print '<input type="hidden" name="id" value="'.$commande->id.'">';
                 print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
-				print '<table class="border" width="100%">';
+				//print '<table class="border" width="100%">';
 
 				$langs->load("stocks");
 
-				print '<tr>';
+				//print '<tr>';
 
 				if (! empty($conf->stock->enabled))
 				{
-					print '<td>'.$langs->trans("WarehouseSource").'</td>';
-					print '<td>';
+					//print '<td>';
+					print $langs->trans("WarehouseSource");
+					//print '</td>';
+					//print '<td>';
 					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
-					print '</td>';
+					//print '</td>';
 				}
-				print '<td align="center">';
-				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
+				//print '<td align="center">';
+				print '<input type="submit" class="butAction" named="save" value="'.$langs->trans("CreateShipment").'">';
 				if ($toBeShippedTotal <= 0)
 				{
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
-				print '</td></tr>';
+				//print '</td></tr>';
 
-				print "</table>";
+				//print "</table>";
 				print "</form>\n";
-				print '<br>';
+				
+				print '</div>';
 
 				$somethingshown=1;
 
@@ -764,7 +768,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused" href="#">'.$langs->trans("NewSending").'</a>';
+				print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}
