@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016      Charlie Benke  	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +128,32 @@ if ($action == 'add')
     			}
     		}
         }
+		if (! $error)
+		{
+			// attrname must not be a reserved word
+			if ($db->type == 'pgsql')
+			{
+				$sql="SELECT * FROM pg_get_keywords()";
+			}
+			else
+			{
+				$cats = array ();
+				$sql ="SELECT * FROM mysql.help_keyword";
+				$res = $db->query($sql);
+				if ($res)
+					while ($rec = $db->fetch_array($res))
+						$cats[] = $rec['name'];
+
+			}
+
+			if (in_array (strtoupper ($_POST["attrname"]), $cats))
+			{
+				$error++;
+				$langs->load("errors");
+				$mesg=$langs->trans("ErrorFieldCanNotBeReservedSQLWord",$langs->transnoentities("AttributeCode"));
+				$action = 'create';
+			}
+		}
 
 	    if (! $error)
 	    {
