@@ -174,10 +174,12 @@ class Entrepot extends CommonObject
 	function update($id, $user)
 	{
 		// Check if new parent is already a child of current warehouse
-		if(!empty($this->fk_parent)) {
+		if(!empty($this->fk_parent)) 
+		{
 			$TChildWarehouses = array($id);
 			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
-			if(in_array($this->fk_parent, $TChildWarehouses)) {
+			if(in_array($this->fk_parent, $TChildWarehouses)) 
+			{
 				$this->error = 'ErrorCannotAddThisParentWarehouse';
 				return -2;
 			}
@@ -189,13 +191,13 @@ class Entrepot extends CommonObject
 		$this->lieu=trim($this->lieu);
 
 		$this->address=trim($this->address);
-	        $this->zip=trim($this->zip);
-        	$this->town=trim($this->town);
-		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
+	    $this->zip=trim($this->zip);
+        $this->town=trim($this->town);
+		$this->country_id=($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
-		$sql .= ", fk_parent = '" . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL') ."'";
+		$sql .= ", fk_parent = " . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL');
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
