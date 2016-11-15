@@ -146,14 +146,15 @@ print '<script type="text/javascript">
 /*
  * Supplier Invoice lines
  */
-$sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht , l.qty, l.rowid, l.tva_tx, aa.label, aa.account_number, ";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-$sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " , " . MAIN_DB_PREFIX . "facture_fourn_det as l";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
-$sql .= " AND aa.rowid = l.fk_code_ventilation";
+$sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef,";
+$sql.= " l.fk_product, l.description, l.total_ht , l.qty, l.rowid, l.tva_tx, aa.label, aa.account_number, ";
+$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
+$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
+$sql.= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
+$sql.= " , " . MAIN_DB_PREFIX . "facture_fourn_det as l";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+$sql.= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
+$sql.= " AND aa.rowid = l.fk_code_ventilation";
 if (strlen(trim($search_invoice))) {
 	$sql .= " AND f.ref like '%" . $search_invoice . "%'";
 }
@@ -239,7 +240,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("InvoiceLabel"), $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -251,13 +253,14 @@ if ($result) {
 	
 	print '<tr class="liste_titre">';
     print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat" name="search_invoice" size="6" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="6" name="search_account" value="' . $search_account . '"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_invoice" value="' . $search_invoice . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(1);
@@ -276,12 +279,16 @@ if ($result) {
 		
 		print '<tr '. $bc[$var].'>';
 		
-		print '<td align="right">' . $objp->rowid . '</td>';
+		print '<td>' . $objp->rowid . '</td>';
 		
 		// Ref Invoice
 		$facturefournisseur_static->ref = $objp->facnumber;
 		$facturefournisseur_static->id = $objp->facid;
 		print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
+		
+		print '<td>';
+		print $objp->invoice_label;
+		print '</td>';
 		
 		// Ref Product
 		$product_static->ref = $objp->product_ref;

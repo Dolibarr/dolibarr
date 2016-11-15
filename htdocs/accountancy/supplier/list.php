@@ -164,18 +164,18 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
 // Supplier Invoice Lines
-$sql = "SELECT f.ref, f.rowid as facid, f.ref_supplier, f.datef,";
-$sql .= " l.fk_product, l.description, l.total_ht as price, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, ";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
-$sql .= " aa.rowid as aarowid";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-$sql .= " AND product_type <= 2";
-$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
+$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef,";
+$sql.= " l.fk_product, l.description, l.total_ht as price, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, ";
+$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
+$sql.= " aa.rowid as aarowid";
+$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
+$sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+$sql.= " AND product_type <= 2";
+$sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
 // Add search filter like
 if (strlen(trim($search_invoice))) {
 	$sql .= " AND (f.ref like '%" . $search_invoice . "%')";
@@ -246,7 +246,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("InvoiceLabel"), $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -258,12 +259,13 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_invoice" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . $search_invoice . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_vat" value="' . $search_vat . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
@@ -315,14 +317,18 @@ if ($result) {
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
-		print '<td align="center">' . $objp->rowid . '</td>';
+		print '<td>' . $objp->rowid . '</td>';
 		
 		// Ref Invoice
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
 
-		// Ref Supplier Invoice
+		print '<td>';
+		print $objp->invoice_label;
+		print '</td>';
+		
+		// Ref product
 		$productfourn_static->ref = $objp->product_ref;
 		$productfourn_static->id = $objp->product_id;
 		$productfourn_static->type = $objp->type;

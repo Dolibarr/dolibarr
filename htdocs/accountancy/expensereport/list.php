@@ -273,7 +273,7 @@ if ($result) {
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
-		print '<td align="center">' . $objp->rowid . '</td>';
+		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Expense report
 		$expensereport_static->ref = $objp->ref;
