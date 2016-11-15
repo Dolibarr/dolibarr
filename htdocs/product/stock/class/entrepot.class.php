@@ -191,8 +191,8 @@ class Entrepot extends CommonObject
 		$this->lieu=trim($this->lieu);
 
 		$this->address=trim($this->address);
-	    $this->zip=trim($this->zip);
-        $this->town=trim($this->town);
+		$this->zip=trim($this->zip);
+		$this->town=trim($this->town);
 		$this->country_id=($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
