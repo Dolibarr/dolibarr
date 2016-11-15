@@ -140,7 +140,8 @@ if ($action == 'validatehistory') {
 	$sql1 .= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
 	$sql1 .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
 	$sql1 .= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
-
+	$sql1 .= " AND f.entity IN (" . getEntity("accountancy", 1) . ")";
+	
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);

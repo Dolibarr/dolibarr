@@ -41,9 +41,7 @@ class FormVentilation extends Form
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
-		}
+	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
 		$sql .= ' ORDER BY import_key DESC';
 
 		dol_syslog(get_class($this) . "::select_bookkeeping_importkey", LOG_DEBUG);
@@ -232,9 +230,7 @@ class FormVentilation extends Form
 		// Auxiliary customer account
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
-		}
+	    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
 		$sql .= " ORDER BY code_compta";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -254,9 +250,7 @@ class FormVentilation extends Form
 		// Auxiliary supplier account
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
-		}
+	    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
 		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -297,9 +291,7 @@ class FormVentilation extends Form
 
 		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
-		}
+	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
 		$sql .= " ORDER BY date_format(doc_date,'%Y')";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -338,9 +330,7 @@ class FormVentilation extends Form
 
 		$sql = "SELECT DISTINCT code_journal";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
-		}
+	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
 		$sql .= " ORDER BY code_journal";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
