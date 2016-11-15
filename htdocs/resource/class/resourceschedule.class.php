@@ -726,7 +726,7 @@ class ResourceScheduleSection extends CommonObject
                 $sql.= " booker_count = ".(in_array($this->status, ResourceStatus::$OCCUPATION)?'1':'0');
             }
             $sql.= $where;
-            $sql.= " AND status IN (".implode(",", $target).")";
+            $sql.= " AND status = ".$this->status;
 
             dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -769,7 +769,6 @@ class ResourceScheduleSection extends CommonObject
         $error = 0;
         $total = count($selected);
         $left = 0;
-        $selectedstr = "";
 
         $this->db->begin();
 
@@ -781,29 +780,24 @@ class ResourceScheduleSection extends CommonObject
             $this->booker_type = null;
         }
 
-        //Get selected string
-        foreach ($selected as $i => $selection)
-        {
-            if ($i > 0) $selectedstr.= ',';
-            $selectedstr.= $selection;
-        }
-
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= " status = ".$this->status.",";
         if (in_array($this->status, ResourceStatus::$MANUAL)) $sql.= " status_manual = ".$this->status.",";
-        $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
-        $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
-        if (in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers uses counting, the rest use booker_id/type
+        if (in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers use counter, the rest use booker_id/type
         {
+            $sql.= " booker_id = null,";
+            $sql.= " booker_type = null,";
             $sql.= " booker_count = booker_count + 1";
         }
         else
         {
+            $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
+            $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
             $sql.= " booker_count = ".(in_array($this->status, ResourceStatus::$OCCUPATION)?'1':'0');
         }
         $sql.= " WHERE fk_schedule = ".$this->fk_schedule;
-        $sql.= " AND rowid IN (".$selectedstr.")";
+        $sql.= " AND rowid IN (".implode(",", $selected).")";
         $sql.= " AND status != ". ResourceStatus::NO_SCHEDULE;
         $sql.= " AND status IN (".implode(",", $target).")";
 
