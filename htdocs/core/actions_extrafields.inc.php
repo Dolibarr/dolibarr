@@ -130,27 +130,23 @@ if ($action == 'add')
         }
 		if (! $error)
 		{
+			$cats = array ();
 			// attrname must not be a reserved word
 			if ($db->type == 'pgsql')
-			{
-				$sql="SELECT * FROM pg_get_keywords()";
-			}
+				$sql ="SELECT word as reservedword FROM pg_get_keywords() WHERE catcode='R'";
 			else
-			{
-				$cats = array ();
-				$sql ="SELECT * FROM mysql.help_keyword";
-				$res = $db->query($sql);
-				if ($res)
-					while ($rec = $db->fetch_array($res))
-						$cats[] = $rec['name'];
-
-			}
+				$sql ="SELECT name as reservedword FROM mysql.help_keyword";
+	
+			$res = $db->query($sql);
+			if ($res)
+				while ($rec = $db->fetch_array($res)) 
+					$cats[] = $rec['reservedword'];
 
 			if (in_array (strtoupper ($_POST["attrname"]), $cats))
 			{
 				$error++;
 				$langs->load("errors");
-				$mesg=$langs->trans("ErrorFieldCanNotBeReservedSQLWord",$langs->transnoentities("AttributeCode"));
+				$mesg=$langs->trans("ErrorFieldCanNotBeReservedSQLWord", $langs->transnoentities("AttributeCode"));
 				$action = 'create';
 			}
 		}
