@@ -45,8 +45,9 @@ create table llx_loan
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),
   
+  fk_projet						integer DEFAULT NULL,
+  
   fk_user_author				integer DEFAULT NULL,
-  fk_user_modif					integer DEFAULT NULL,
-  active						tinyint DEFAULT 1  NOT NULL,
-  fk_projet					integer DEFAULT NULL
+  fk_user_modif					integer DEFAULT NULL
+  active						tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

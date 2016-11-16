@@ -223,4 +223,4 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
 ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
 
-ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
+ALTER TABLE llx_loan ADD COLUMN fk_project integer DEFAULT NULL;
