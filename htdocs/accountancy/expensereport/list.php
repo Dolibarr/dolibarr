@@ -40,6 +40,7 @@ $langs->load("other");
 $langs->load("trips");
 $langs->load("main");
 $langs->load("accountancy");
+$langs->load("productbatch");
 
 $action = GETPOST('action');
 
@@ -65,7 +66,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield)
-	$sortfield = "er.date_create, er.ref, erd.rowid";
+	$sortfield = "erd.date, erd.rowid";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
@@ -158,7 +159,8 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
 // Expense report lines
-$sql = "SELECT er.ref, er.rowid as erid, er.date_debut, erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, ";
+$sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
+$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.date,";
 $sql .= " f.id as fees_id, f.label as fees_label, f.accountancy_code as code_buy,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
@@ -233,8 +235,9 @@ if ($result) {
 
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("TypeFees"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -246,11 +249,12 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_expensereport" value="' . $search_expensereport . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
@@ -270,19 +274,22 @@ if ($result) {
 		$objp->aarowid_suggest = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
+		$expensereport_static->ref = $objp->ref;
+		$expensereport_static->id = $objp->erid;
+		
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
+		print '<td align="center">' . dol_print_date($objp->date, 'day') . '</td>';
+		
 		// Ref Expense report
-		$expensereport_static->ref = $objp->ref;
-		$expensereport_static->id = $objp->erid;
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
 		// Fees label
 		print '<td>';
-		print dol_trunc($objp->fees_label, 24);
+		print $objp->fees_label;
 		print '</td>';
 
 		// Fees description -- Can be null

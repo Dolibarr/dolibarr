@@ -39,6 +39,7 @@ $langs->load("other");
 $langs->load("main");
 $langs->load("accountancy");
 $langs->load("trips");
+$langs->load("productbatch");
 
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
@@ -60,7 +61,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield)
-	$sortfield = "er.date_create, er.ref, erd.rowid";
+	$sortfield = "erd.date, erd.rowid";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
@@ -144,7 +145,9 @@ print '<script type="text/javascript">
 /*
  * Expense reports lines
  */
-$sql = "SELECT er.ref, er.rowid as erid, erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, aa.label, aa.account_number, ";
+$sql = "SELECT er.ref, er.rowid as erid,";
+$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.date,";
+$sql .= " aa.label, aa.account_number,";
 $sql .= " f.id as fees_id, f.label as fees_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -230,8 +233,9 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("TypeFees"), $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -242,13 +246,14 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
 	print '<td class="liste_titre" align="right"></td>';
-	print '<td><input type="text" class="flat" name="search_expensereport" size="6" value="' . $search_expensereport . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="6" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(1);
@@ -264,16 +269,19 @@ if ($result) {
 		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 
+		$expensereport_static->ref = $objp->ref;
+		$expensereport_static->id = $objp->erid;
+		
 		print '<tr '. $bc[$var].'>';
 
 		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
-		$expensereport_static->ref = $objp->ref;
-		$expensereport_static->id = $objp->erid;
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
-		print '<td>' . dol_trunc($objp->fees_label, 24) . '</td>';
+		print '<td align="center">' . dol_print_date($objp->date, 'day') . '</td>';
+		
+		print '<td class="tdoverflow">' . $objp->fees_label . '</td>';
 
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
 		print '<td>' . nl2br(dol_trunc($objp->comments, $trunclength)) . '</td>';

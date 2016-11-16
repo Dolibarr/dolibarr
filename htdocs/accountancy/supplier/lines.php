@@ -39,6 +39,7 @@ $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
 $langs->load("accountancy");
+$langs->load("productbatch");
 
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
@@ -238,11 +239,12 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("InvoiceLabel"), $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("ProductLabel"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -253,14 +255,15 @@ if ($result) {
 	
 	print '<tr class="liste_titre">';
     print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_invoice" value="' . $search_invoice . '"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
+	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
 	print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(1);
@@ -277,32 +280,34 @@ if ($result) {
 		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 		
+		$facturefournisseur_static->ref = $objp->facnumber;
+		$facturefournisseur_static->id = $objp->facid;
+		
+		$product_static->ref = $objp->product_ref;
+		$product_static->id = $objp->product_id;
+		$product_static->type = $objp->type;
+		$product_static->label = $objp->product_label;
+		
 		print '<tr '. $bc[$var].'>';
 		
 		print '<td>' . $objp->rowid . '</td>';
 		
 		// Ref Invoice
-		$facturefournisseur_static->ref = $objp->facnumber;
-		$facturefournisseur_static->id = $objp->facid;
 		print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 		
 		print '<td>';
 		print $objp->invoice_label;
 		print '</td>';
 		
+		print '<td align="center">' . dol_print_date($objp->datef, 'day') . '</td>';
+		
 		// Ref Product
-		$product_static->ref = $objp->product_ref;
-		$product_static->id = $objp->product_id;
-		$product_static->type = $objp->type;
-		$product_static->label = $objp->product_label;
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
-		else
-			print '&nbsp;';
+	    if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 		
-		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
