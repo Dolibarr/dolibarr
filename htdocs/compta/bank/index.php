@@ -414,148 +414,172 @@ print '</tr>';
 
 
 
-$total = array(); $found = 0;
+$total = array(); $found = 0; $i=0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
-	//if ($type == 1)
-	//{
-	    $found++;
+    $found++;
 
-		$acc = new Account($db);
-		$acc->fetch($key);
+	$acc = new Account($db);
+	$acc->fetch($key);
 
-		$var = !$var;
-		$solde = $acc->solde(1);
+	$var = !$var;
+	$solde = $acc->solde(1);
 
-		print '<tr '.$bc[$var].'>';
+	print '<tr '.$bc[$var].'>';
 
-        // Ref
-        if (! empty($arrayfields['b.ref']['checked']))
-        {
-		  print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
-        }
-        
-        // Label
-        if (! empty($arrayfields['b.label']['checked']))
-        {
-    		print '<td>'.$acc->label.'</td>';
-        }
-        
-        // Account type
-        if (! empty($arrayfields['accountype']['checked']))
-        {
-            print '<td>';
-    		print $acc->type_lib[$acc->type];
-    		print '</td>';
-        }
-        
-        // Number
-        if (! empty($arrayfields['b.number']['checked']))
-        {
-            print '<td>'.$acc->number.'</td>';
-        }
-        
-        // Account number
-        if (! empty($arrayfields['b.account_number']['checked']))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-            print '<td>'.length_accountg($acc->account_number).'</td>';
-        }
-        
-        // Transactions to reconcile
-        if (! empty($arrayfields['toreconcile']['checked']))
-        {
-            print '<td align="center">';
-    		if ($acc->rappro)
-    		{
-    			$result=$acc->load_board($user,$acc->id);
-                if ($result<0) {
-                    setEventMessages($acc->error, $acc->errors, 'errors');
-                } else {
-                    print $result->nbtodo;
-                    if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
-                }
-    		}
-    		else print $langs->trans("FeatureDisabled");
-    		print '</td>';
-        }
-        
-        
-    	// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+    // Ref
+    if (! empty($arrayfields['b.ref']['checked']))
+    {
+        print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Label
+    if (! empty($arrayfields['b.label']['checked']))
+    {
+		print '<td>'.$acc->label.'</td>';
+        if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Account type
+    if (! empty($arrayfields['accountype']['checked']))
+    {
+        print '<td>';
+		print $acc->type_lib[$acc->type];
+		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Number
+    if (! empty($arrayfields['b.number']['checked']))
+    {
+        print '<td>'.$acc->number.'</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Account number
+    if (! empty($arrayfields['b.account_number']['checked']))
+    {
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+        print '<td>'.length_accountg($acc->account_number).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Transactions to reconcile
+    if (! empty($arrayfields['toreconcile']['checked']))
+    {
+        print '<td align="center">';
+		if ($acc->rappro)
 		{
-		   foreach($extrafields->attribute_label as $key => $val) 
-		   {
-				if (! empty($arrayfields["ef.".$key]['checked'])) 
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-		            if (! $i) $totalarray['nbfield']++;
-				}
-		   }
+			$result=$acc->load_board($user,$acc->id);
+            if ($result<0) {
+                setEventMessages($acc->error, $acc->errors, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
-        // Fields from hook
-	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-    	// Date creation
-        if (! empty($arrayfields['b.datec']['checked']))
-        {
-            print '<td align="center">';
-            print dol_print_date($acc->date_creation, 'dayhour');
-            print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-        }
-        // Date modification
-        if (! empty($arrayfields['b.tms']['checked']))
-        {
-            print '<td align="center">';
-            print dol_print_date($acc->date_update, 'dayhour');
-            print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-        }
-        
-        // Statut
-        if (! empty($arrayfields['b.clos']['checked']))
-        {
-    		print '<td align="center">'.$acc->getLibStatut(5).'</td>';
-        }
-        
-        // Balance
-        if (! empty($arrayfields['balance']['checked']))
-        {
-    		print '<td align="right">';
-    		print '<a href="'.DOL_URL_ROOT.'/compta/bankentries.php?id='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
-    		print '</td>';
-        }
-        
-		// Action column
-		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		{
-		    $selected=0;
-		    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-		    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-		}
+		else print $langs->trans("FeatureDisabled");
+	    print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			{
+				print '<td';
+				$align=$extrafields->getAlignFlag($key);
+				if ($align) print ' align="'.$align.'"';
+				print '>';
+				$tmpkey='options_'.$key;
+				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+				print '</td>';
+	            if (! $i) $totalarray['nbfield']++;
+			}
+	   }
+	}
+    // Fields from hook
+    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	// Date creation
+    if (! empty($arrayfields['b.datec']['checked']))
+    {
+        print '<td align="center">';
+        print dol_print_date($acc->date_creation, 'dayhour');
+        print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    // Date modification
+    if (! empty($arrayfields['b.tms']['checked']))
+    {
+        print '<td align="center">';
+        print dol_print_date($acc->date_update, 'dayhour');
+        print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Statut
+    if (! empty($arrayfields['b.clos']['checked']))
+    {
+		print '<td align="center">'.$acc->getLibStatut(5).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
+    }
+    
+    // Balance
+    if (! empty($arrayfields['balance']['checked']))
+    {
+		print '<td align="right">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		
-		print '</tr>';
+		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
+	    $totalarray['totalbalance'] += $solde;
+    }
+    
+	// Action column
+	print '<td class="nowrap" align="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+	    $selected=0;
+	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	}
+	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
+	
+	print '</tr>';
 
-		$total[$acc->currency_code] += $solde;
-	//}
+	$total[$acc->currency_code] += $solde;
+
+	$i++;
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-// Total
-foreach ($total as $key=>$solde)
+
+if (! $found) print '<tr '.$bc[$var].'><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+
+// Show total line
+if (isset($totalarray['totalbalancefield']))
 {
-	print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td><td></td></tr>';
+    print '<tr class="liste_total">';
+    $i=0;
+    while ($i < $totalarray['nbfield'])
+    {
+        $i++;
+        if ($i == 1)
+        {
+            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+        }
+        elseif ($totalarray['totalbalancefield'] == $i) print '<td align="right">'.price($totalarray['totalbalance'], 0, $langs, 0, 0, -1, $key).'</td>';
+        else print '<td></td>';
+    }
+    print '</tr>';
 }
 
 print '</table>';
