@@ -266,7 +266,7 @@ if ($result) {
 
 		print '<tr '. $bc[$var].'>';
 
-		print '<td align="right">' . $objp->rowid . '</td>';
+		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
 		$expensereport_static->ref = $objp->ref;

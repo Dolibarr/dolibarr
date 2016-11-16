@@ -223,7 +223,7 @@ if ($result) {
 
 	$center='<div class="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
 
-	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num_lines, 0, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	if ($msg) print $msg.'<br>';
 
@@ -273,7 +273,7 @@ if ($result) {
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
-		print '<td align="center">' . $objp->rowid . '</td>';
+		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Expense report
 		$expensereport_static->ref = $objp->ref;

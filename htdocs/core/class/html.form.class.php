@@ -2800,7 +2800,9 @@ class Form
 
 
     /**
-     *      Return list of payment modes
+     *      Return list of payment modes.
+     *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+     *      See instead to force the default value by the caller.
      *
      *      @param	int  	$selected        Id of payment term to preselect by default
      *      @param  string	$htmlname        Nom de la zone select
