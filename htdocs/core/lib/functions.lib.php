@@ -619,17 +619,18 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				Do not clean b tags
+ *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
  *  @return     string     				 		Escaped string
  *
  *  @see		dol_string_nohtmltag
  */
-function dol_escape_htmltag($stringtoescape,$keepb=0)
+function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
 	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
-	if ($keepb) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	else $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
+	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
 	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
@@ -4395,7 +4396,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	integer	$removelinefeed		1=Replace also all lines feeds by a space, 0=Only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -4404,6 +4405,7 @@ function picto_required()
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
 	$pattern = "/<[^<>]+>/";
+	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
 	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
 	$temp = preg_replace($pattern,"",$temp);
 
@@ -4425,7 +4427,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  *
  * @param 	string	$text		Input text
  * @return	string				Output text
- * @see dol_nboflines_bis
+ * @see dol_nboflines_bis, dol_string_nohtmltag, dol_escape_htmltag
  */
 function dolGetFirstLineOfText($text)
 {

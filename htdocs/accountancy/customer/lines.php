@@ -263,7 +263,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
@@ -278,7 +278,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tavintra" value="' . dol_escape_htmltag($search_tavintra) . '"></td>';
 	print '<td class="liste_titre" align="right">';
@@ -309,7 +309,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 
-		print '<td align="center">' . dol_print_date($objp->datef, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 		
 		// Ref Product
 		print '<td>';
@@ -318,12 +318,19 @@ if ($result) {
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 		
-		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
+		print '<td>';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
+		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
+		print '</td>';
+		
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td>' . $codecompta . '<a href="./card.php?id=' . $objp->fdid . '">';
+		print '<td>';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->fdid . '">';
 		print img_edit();
-		print '</a></td>';
+		print '</a>';
+		print '</td>';
 		print '<td>' . $objp->country .'</td>';
 		print '<td>' . $objp->tva_intra . '</td>';
 		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';

@@ -279,12 +279,15 @@ if ($result) {
 		// Ref Invoice
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
-		print '<td align="center">' . dol_print_date($objp->date, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 		
 		print '<td class="tdoverflow">' . $objp->fees_label . '</td>';
 
+		print '<td>';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
-		print '<td>' . nl2br(dol_trunc($objp->comments, $trunclength)) . '</td>';
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
+		print '</td>';
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 

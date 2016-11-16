@@ -300,6 +300,7 @@ if ($result) {
 		
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
+		$facturefourn_static->type = $objp->type;
 		
 		$code_buy_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
@@ -337,7 +338,7 @@ if ($result) {
 		print $objp->invoice_label;
 		print '</td>';
 		
-		print '<td align="center">' . dol_print_date($objp->datef, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 		
 		// Ref product
 		print '<td>';
@@ -346,9 +347,12 @@ if ($result) {
 		if ($objp->product_label) print '<br>'.$objp->product_label;
         print '</td>';
         
-		// TODO: we should set a user defined value to adjust user square / wide screen size
+        // Description
+		print '<td>';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
-		print '<td>' . nl2br(dol_trunc($objp->description, $trunclength)) . '</td>';
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
+		print '</td>';
 
 		print '<td align="right">';
 		print price($objp->price);
@@ -373,7 +377,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1);
+		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 		
 		// Colonne choix ligne a ventiler

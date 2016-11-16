@@ -30,6 +30,10 @@
  */
 class FormVentilation extends Form
 {
+    
+    private $options_cache = array();
+    
+    
 	/**
 	 * Return select filter with date of transaction
 	 *
@@ -70,63 +74,76 @@ class FormVentilation extends Form
 	 * @param int      $select_in          selectid value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int      $select_out         set value returned by select 0=rowid (default), 1=account_number
 	 * @param string   $morecss            More css non HTML object
-	 * @return string String with HTML select
+	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @return string                      String with HTML select
 	 */
-	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone') {
+	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	{
 		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
-
-		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
-		$sql .= " AND aa.active = 1";
-		$sql .= " ORDER BY aa.account_number";
-
-		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-
-		if (!$resql) {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
-			return -1;
-		}
-
-		$out = ajax_combobox($htmlname, $event);
-
-		// TODO Add $options in cache so next call will not execute the request
-		$selected = 0;
-		$options = array();
-		while ($obj = $this->db->fetch_object($resql)) 
+    	$options = array();
+		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
-			$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
-			$label = dol_trunc($label, $trunclength);
-
-			$select_value_in = $obj->rowid;
-			$select_value_out = $obj->rowid;
-
-			// Try to guess if we have found default value
-			if ($select_in == 1) {
-				$select_value_in = $obj->account_number;
-			}
-			if ($select_out == 1) {
-				$select_value_out = $obj->account_number;
-			}
-			// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
-			// Because same account_number can be share between different accounting_system and do have the same meaning
-			if ($selectid != '' && $selectid == $select_value_in) {
-			    //var_dump("Found ".$selectid." ".$select_value_in);
-				$selected = $select_value_out;
-			}
-
-			$options[$select_value_out] = $label;
+		    $options = $this->options_cache[$usecache];
 		}
+		else
+		{
+    		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
+    
+    		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
+    		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+    		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+    		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
+    		$sql .= " AND aa.active = 1";
+    		$sql .= " ORDER BY aa.account_number";
+    
+    		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
+    		$resql = $this->db->query($sql);
+    
+    		if (!$resql) {
+    			$this->error = "Error " . $this->db->lasterror();
+    			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
+    			return -1;
+    		}
 
+    		$out = ajax_combobox($htmlname, $event);
+    
+    		$selected = 0;
+    		while ($obj = $this->db->fetch_object($resql)) 
+    		{
+    			$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
+    			$label = dol_trunc($label, $trunclength);
+    
+    			$select_value_in = $obj->rowid;
+    			$select_value_out = $obj->rowid;
+    
+    			// Try to guess if we have found default value
+    			if ($select_in == 1) {
+    				$select_value_in = $obj->account_number;
+    			}
+    			if ($select_out == 1) {
+    				$select_value_out = $obj->account_number;
+    			}
+    			// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+    			// Because same account_number can be share between different accounting_system and do have the same meaning
+    			if ($selectid != '' && $selectid == $select_value_in) {
+    			    //var_dump("Found ".$selectid." ".$select_value_in);
+    				$selected = $select_value_out;
+    			}
+    
+    			$options[$select_value_out] = $label;
+    		}
+    		$this->db->free($resql);
+    		
+    		if ($usecache)
+    		{
+                $this->options_cache[$usecache] = $options;
+    		}
+		}
+		
 		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
-		$this->db->free($resql);
 		
 		return $out;
 	}

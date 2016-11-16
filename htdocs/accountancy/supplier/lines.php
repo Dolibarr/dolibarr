@@ -248,8 +248,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 	
@@ -263,8 +262,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-	print '<td class="liste_titre" align="right"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(1);
     print $searchpitco;
@@ -278,7 +276,7 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
+		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 		
 		$facturefournisseur_static->ref = $objp->facnumber;
 		$facturefournisseur_static->id = $objp->facid;
@@ -299,7 +297,7 @@ if ($result) {
 		print $objp->invoice_label;
 		print '</td>';
 		
-		print '<td align="center">' . dol_print_date($objp->datef, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 		
 		// Ref Product
 		print '<td>';
@@ -308,11 +306,16 @@ if ($result) {
 	    if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 		
-		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
+		print '<td>';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
+		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
+		print '</td>';
+		
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td>' . $codeCompta . '</td>';
-		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="left">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
 		

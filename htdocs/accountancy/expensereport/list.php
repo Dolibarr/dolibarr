@@ -282,7 +282,7 @@ if ($result) {
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
-		print '<td align="center">' . dol_print_date($objp->date, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 		
 		// Ref Expense report
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
@@ -293,9 +293,11 @@ if ($result) {
 		print '</td>';
 
 		// Fees description -- Can be null
-		// TODO: we should set a user defined value to adjust user square / wide screen size
+		print '<td>';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
-		print '<td>' . nl2br(dol_trunc($objp->comments, $trunclength)) . '</td>';
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
+		print '</td>';
 
 		print '<td align="right">';
 		print price($objp->price);
@@ -313,7 +315,7 @@ if ($result) {
 
 		// Colonne choix du compte
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1);
+		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Colonne choix ligne a ventiler

@@ -287,6 +287,10 @@ if ($result) {
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
 		$product_static->label = $objp->product_label;
+
+		$facture_static->ref = $objp->facnumber;
+		$facture_static->id = $objp->facid;
+		$facture_static->type = $objp->ftype;
 		
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
@@ -320,12 +324,9 @@ if ($result) {
 		print '<td>' . $objp->rowid . '</td>';
 		
 		// Ref Invoice
-		$facture_static->ref = $objp->facnumber;
-		$facture_static->id = $objp->facid;
-		$facture_static->type = $objp->ftype;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 
-		print '<td align="center">' . dol_print_date($objp->datef, 'day') . '</td>';
+		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 		
 		// Ref Product
 		print '<td>';
@@ -334,9 +335,11 @@ if ($result) {
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 		
-		
+		print '<td class="tdoverflow">';
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
-		print '<td class="tdoverflow">' . nl2br(dol_trunc($objp->description, $trunclength)) . '</td>';
+		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
+		print '</td>';
 		
 		print '<td align="right">';
 		print price($objp->total_ht);
@@ -360,7 +363,7 @@ if ($result) {
 		print '</td>';
 
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1);
+		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 		
 		print '<td align="right">';
