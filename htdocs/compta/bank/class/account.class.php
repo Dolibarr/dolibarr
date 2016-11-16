@@ -848,6 +848,7 @@ class Account extends CommonObject
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
+        $sql.= " ba.datec as date_creation, ba.tms as date_update,";
         $sql.= ' c.code as country_code, c.label as country,';
         $sql.= ' d.code_departement as state_code, d.nom as state';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -903,13 +904,15 @@ class Account extends CommonObject
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
 
+                $this->date_creation  = $this->db->jdate($obj->date_creation);
+                $this->date_update    = $this->db->jdate($obj->date_update);
+                
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 $this->fetch_optionals($this->id,$extralabels);
-
 
                 return 1;
             }
