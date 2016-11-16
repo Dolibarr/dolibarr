@@ -47,6 +47,7 @@ if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compt
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (! empty($conf->loan->enabled))         require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -58,6 +59,7 @@ if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
 if (! empty($conf->don->enabled))			$langs->load("donations");
+if (! empty($conf->loan->enabled))			$langs->load("loan");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -370,6 +372,19 @@ $listofreferent=array(
     'buttonnew'=>'AddDonation',
     'testnew'=>$user->rights->don->creer,
     'test'=>$conf->don->enabled && $user->rights->don->lire),
+'loan'=>array(
+	'name'=>"Loan",
+	'title'=>"ListLoanAssociatedProject",
+	'class'=>'Loan',
+	'margin'=>'add',
+	'table'=>'Loan',
+	'datefieldname'=>'datestart',
+	'disableamount'=>0,
+    'urlnew'=>DOL_URL_ROOT.'/loan/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'lang'=>'loan',
+    'buttonnew'=>'AddLoan',
+    'testnew'=>$user->rights->loan->creer,
+    'test'=>$conf->loan->enabled && $user->rights->loan->lire),
 'agenda'=>array(
 	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",
@@ -397,9 +412,9 @@ $parameters=array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent',$parameters,$object,$action);
 
 if(!empty($hookmanager->resArray)) {
-	
+
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
-	
+
 }
 
 if ($action=="addelement")
@@ -490,7 +505,7 @@ foreach ($listofreferent as $key => $value)
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-		
+
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$total_ht = 0;
@@ -506,7 +521,7 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
-                // Special cases				
+                // Special cases
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'projet_task')
@@ -529,7 +544,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
 				}
-				
+
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
@@ -795,7 +810,7 @@ foreach ($listofreferent as $key => $value)
 						print ' - '.dol_trunc($element->label, 48);
 					}
 					else print $element->getNomUrl(1);
-						
+
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
 					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
@@ -811,7 +826,7 @@ foreach ($listofreferent as $key => $value)
 					}
 
 					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
-					
+
 					// Show supplier ref
 					if (! empty($element->ref_supplier)) print ' - '.$element->ref_supplier;
 					// Show customer ref
@@ -826,7 +841,7 @@ foreach ($listofreferent as $key => $value)
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
 				    if ($tablename=='don') $date = $element->datedon;
-				    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') 
+				    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
     				{
     				    $date=($element->date_commande?$element->date_commande:$element->date_valid);
     				}

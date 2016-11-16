@@ -127,7 +127,7 @@ if (empty($reshook))
 				$object->rate					= $_POST["rate"];
 				$object->note_private 			= GETPOST('note_private');
 				$object->note_public 			= GETPOST('note_public');
-					$object->fk_project 			= GETPOST('fk_project');
+					$object->fk_projet 			= GETPOST('fk_projet');
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -165,7 +165,7 @@ if (empty($reshook))
 				$object->dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
 				$object->nbterm		= GETPOST("nbterm");
 				$object->rate		= GETPOST("rate");
-					$object->fk_project		= GETPOST("fk_project");
+					$object->fk_projet		= GETPOST("fk_projet");
 			}
 
 	        $result = $object->update($user);
@@ -264,7 +264,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects(-1,GETPOST("fk_project"),'fk_project',16,0,1,1);
+		$numproject=$formproject->select_projects(-1,GETPOST("fk_projet"),'fk_projet',16,0,1,1);
 
 		print '</td></tr>';
 	}
@@ -473,11 +473,11 @@ if ($id > 0)
 			print '</td><td>';
 			if ($action == 'edit') {
 				$formproject=new FormProjets($db);
-				$numproject=$formproject->select_projects(-1,$object->fk_project,'fk_project',16,0,1,1);
+				$numproject=$formproject->select_projects(-1,$object->fk_projet,'fk_projet',16,0,1,1);
 
 			} else {
 				$project=new Project($db);
-				$project->fetch($object->fk_project);
+				$project->fetch($object->fk_projet);
 				print $project->getNomUrl(1,'',1);;
 			}
 			print '</td></tr>';
