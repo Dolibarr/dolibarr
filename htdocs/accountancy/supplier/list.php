@@ -192,25 +192,25 @@ $sql.= " AND product_type <= 2";
 $sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
 // Add search filter like
 if (strlen(trim($search_invoice))) {
-	$sql .= " AND (f.ref like '%" . $search_invoice . "%')";
+    $sql .= natural_search("f.ref",$search_invoice);
 }
 if (strlen(trim($search_ref))) {
-	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+    $sql .= natural_search("p.ref",$search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND (p.label like '%" . $search_label . "%')";
+    $sql .= natural_search("p.label",$search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND (l.description like '%" . $search_desc . "%')";
+    $sql .= natural_search("l.description",$search_desc);
 }
 if (strlen(trim($search_amount))) {
-	$sql .= " AND l.total_ht like '" . $search_amount . "%'";
+    $sql .= natural_search("l.total_ht",$search_amount,1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+    $sql .= natural_search("aa.account_number",$search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
+    $sql .= natural_search("l.tva_tx",$search_vat,1);
 }
 $sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't share object for accountancy
 

@@ -49,7 +49,7 @@ $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
 // Select Box
-$mesCasesCochees = GETPOST('mesCasesCochees', 'array');
+$mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
@@ -84,15 +84,15 @@ if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
-
-// Defaut AccountingAccount RowId Product / Service
-// at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
-// so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
+
 
 /*
  * Action
  */
+
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
@@ -105,11 +105,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_vat = '';
 }
 
-if ($action == 'ventil' && ! empty($btn_ventil)) {
-    $msg='';
+// Mass actions
+$objectclass='Skeleton';
+$objectlabel='Skeleton';
+$permtoread = $user->rights->accounting->read;
+$permtodelete = $user->rights->accounting->delete;
+$uploaddir = $conf->accounting->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+if ($massaction == 'ventil') {
+	$msg='';
     //print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
     if (! empty($mesCasesCochees)) {
-        $msg = '<div>' . $langs->trans("SelectedLines") . ': '.count($_POST["mesCasesCochees"]).'</div>';
+        $msg = '<div>' . $langs->trans("SelectedLines") . ': '.count($mesCasesCochees).'</div>';
         $msg.='<div class="detail">';
         $mesCodesVentilChoisis = $codeventil;
         $cpt = 0;
@@ -117,7 +125,6 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
         $ko=0;
 
         foreach ( $mesCasesCochees as $maLigneCochee ) {
-            // print '<div><font color="red">id selectionnee : '.$monChoix."</font></div>";
             $maLigneCourante = explode("_", $maLigneCochee);
             $monId = $maLigneCourante[0];
             $monCompte = GETPOST('codeventil'.$monId);
@@ -138,11 +145,11 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
     
                 dol_syslog('accountancy/expensereport/list.php:: sql=' . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
-                    $ok++;
                     $msg.= '<div><font color="green">' . $langs->trans("LineOfExpenseReport") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
+                    $ok++;
                 } else {
-                    $ko++;
                     $msg.= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+                    $ko++;
                 }
             }
             
@@ -150,8 +157,8 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
         }
         $msg.='</div>';
         $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
-    } else {
-        setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+    //} else {
+    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
 }
 
@@ -179,22 +186,22 @@ $sql .= " WHERE er.fk_statut > 4 AND erd.fk_code_ventilation <= 0";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR f.accountancy_code IS NULL OR f.accountancy_code ='')";
 // Add search filter like
 if (strlen(trim($search_expensereport))) {
-	$sql .= " AND (er.ref like '%" . $search_expensereport . "%')";
+    $sql .= natural_search("er.ref",$search_expensereport);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND (f.label like '%" . $search_label . "%')";
+    $sql .= natural_search("f.label",$search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND (erd.comments like '%" . $search_desc . "%')";
+    $sql .= natural_search("erd.comments",$search_desc);
 }
 if (strlen(trim($search_amount))) {
-	$sql .= " AND erd.total_ht like '" . $search_amount . "%'";
+    $sql .= natural_search("erd.total_ht",$search_amount,1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+    $sql .= natural_search("aa.account_number",$search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= " AND (erd.tva_tx like '" . $search_vat . "%')";
+    $sql .= natural_search("erd.tva_tx",$search_vat,1);
 }
 $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don't share object for accountancy
 
@@ -222,6 +229,16 @@ if ($result) {
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
+	$arrayofmassactions =  array(
+	    'ventil'=>$langs->trans("Ventilate")
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	//if ($massaction == 'presend') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
+	
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -230,13 +247,13 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	$center='<div class="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
+	//$center='<div class="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
 
-	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-
-	if ($msg) print $msg.'<br>';
+	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoExpenseReport") . '</br><br>';
+
+	if ($msg) print $msg.'<br>';
 
 	$moreforfilter = '';
 
@@ -254,6 +271,7 @@ if ($result) {
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
+	// We add search filter
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
@@ -265,7 +283,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
-	$searchpicto=$form->showFilterAndCheckAddButtons(1);
+	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
@@ -273,7 +291,7 @@ if ($result) {
 	$expensereport_static = new ExpenseReport($db);
 	$form = new Form($db);
 
-	$var = True;
+	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
@@ -315,19 +333,18 @@ if ($result) {
 		print price($objp->tva_tx_line);
 		print '</td>';
 
-		// Accounting account suggested
+		// Current account
 		print '<td align="center">';
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 
-		// Colonne choix du compte
+		// Suggested accounting account
 		print '<td align="center">';
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
-		// Colonne choix ligne a ventiler
 		print '<td align="right">';
-		print '<input type="checkbox" class="checkforaction" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 
 		print "</tr>";
