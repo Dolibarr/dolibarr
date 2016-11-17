@@ -23,6 +23,9 @@ Chartofaccounts=Chart of accounts
 CurrentDedicatedAccountingAccount=Current dedicated account
 AssignDedicatedAccountingAccount=New account to assign
 InvoiceLabel=Invoice label
+OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to accounting account
+OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accounting account
+OtherInfo=Other information
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:

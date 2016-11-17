@@ -307,7 +307,7 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-$num=count($this->lines);
+$num=count($object->lines);
 
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);

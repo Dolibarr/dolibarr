@@ -171,12 +171,10 @@ print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevye
 print $langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
-print '<div class="inline-block divButAction">';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+//print '<div class="inline-block divButAction">';
 // TODO Remove this. Should be done into the repair.php script
 if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-print '</div>';
+//print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
@@ -193,7 +191,15 @@ if ($result) {
 
 $y = $year_current;
 
+$buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+$buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+
+
+
+
 $var = true;
+
+print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
@@ -215,7 +221,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid 
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
-
+$sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
 dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
@@ -240,6 +246,69 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
+
+
+print '<br>';
+
+
+print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
+print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
+for($i = 1; $i <= 12; $i ++) {
+    print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+}
+print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+
+$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
+$sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
+for($i = 1; $i <= 12; $i ++) {
+    $sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+}
+$sql .= "  SUM(fd.total_ht) as total";
+$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
+$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
+$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";   // We don't share object for accountancy
+$sql .= " AND aa.account_number IS NOT NULL";
+$sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
+
+dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+    $num = $db->num_rows($resql);
+
+    while ( $row = $db->fetch_row($resql)) {
+
+        $var = ! $var;
+        print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
+        print '<td align="left">' . $row[1] . '</td>';
+        for($i = 2; $i <= 12; $i ++) {
+            print '<td align="right">' . price($row[$i]) . '</td>';
+        }
+        print '<td align="right">' . price($row[13]) . '</td>';
+        print '<td align="right"><b>' . price($row[14]) . '</b></td>';
+        print '</tr>';
+    }
+    $db->free($resql);
+} else {
+    print $db->lasterror(); // Show last sql error
+}
+print "</table>\n";
+
+
+
+
+
+print '<br>';
+print '<br>';
+
+
+print_fiche_titre($langs->trans("OtherInfo"), '', '');
+
 
 print "<br>\n";
 print '<table class="noborder" width="100%">';
