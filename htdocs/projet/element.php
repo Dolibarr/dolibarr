@@ -348,7 +348,7 @@ $listofreferent=array(
 	'table'=>'projet_task',
 	'datefieldname'=>'task_date',
 	'disableamount'=>0,
-	'test'=>$conf->projet->enabled && $user->rights->projet->lire && $conf->salaries->enabled && empty($conf->global->PROJECT_HIDE_TASKS)),
+	'test'=>$conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS)),
 );
 
 if ($action=="addelement")
@@ -815,13 +815,21 @@ foreach ($listofreferent as $key => $value)
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
-						$total_ht_by_line = price2num($tmp['amount'],'MT');
-						if ($tmp['nblinesnull'] > 0)
-						{
-							$langs->load("errors");
-							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
-						}
+					    if (! empty($conf->salaries->enabled))
+					    {
+					        // TODO Permission to read daily rate
+    					    $tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
+    						$total_ht_by_line = price2num($tmp['amount'],'MT');
+    						if ($tmp['nblinesnull'] > 0)
+    						{
+    							$langs->load("errors");
+    							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
+    						}
+					    }
+					    else
+					    {
+					        print $langs->trans("ModuleDisabled");
+					    }
 					}
 					else
 					{
