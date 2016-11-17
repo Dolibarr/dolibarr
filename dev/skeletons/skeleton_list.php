@@ -52,9 +52,13 @@ dol_include_once('/mymodule/class/skeleton_class.class.php');
 $langs->load("mymodule");
 $langs->load("other");
 
-// Get parameters
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 

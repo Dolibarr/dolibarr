@@ -42,10 +42,14 @@ $langs->load("main");
 $langs->load("accountancy");
 $langs->load("productbatch");
 
-$action = GETPOST('action');
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 // Select Box
-$mesCasesCochees = GETPOST('mesCasesCochees', 'array');
+$mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
 $search_invoice = GETPOST('search_invoice', 'alpha');
@@ -81,12 +85,7 @@ if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
-
-// Defaut AccountingAccount RowId Product / Service
-// at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
-// so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
-
 // TODO: we should need to check if result is a really exist accountaccount rowid.....
 $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
 $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
@@ -96,10 +95,14 @@ $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUN
  * Action
  */
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $search_ref = '';
+    $search_invoice = '';    
     $search_label = '';
     $search_desc = '';
     $search_amount = '';
@@ -107,11 +110,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_vat = '';
 }
 
-if ($action == 'ventil' && ! empty($btn_ventil)) {
+// Mass actions
+$objectclass='Skeleton';
+$objectlabel='Skeleton';
+$permtoread = $user->rights->accounting->read;
+$permtodelete = $user->rights->accounting->delete;
+$uploaddir = $conf->accounting->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+if ($massaction == 'ventil') {
     $msg='';
     //print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
     if (! empty($mesCasesCochees)) {
-        $msg = '<div>' . $langs->trans("SelectedLines") . ': '.count($_POST["mesCasesCochees"]).'</div>';
+        $msg = '<div>' . $langs->trans("SelectedLines") . ': '.count($mesCasesCochees).'</div>';
         $msg.='<div class="detail">';
         $mesCodesVentilChoisis = $codeventil;
         $cpt = 0;
@@ -119,7 +130,6 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
         $ko=0;
 
         foreach ( $mesCasesCochees as $maLigneCochee ) {
-            // print '<div><font color="red">id selectionnee : '.$monChoix."</font></div>";
             $maLigneCourante = explode("_", $maLigneCochee);
             $monId = $maLigneCourante[0];
             $monCompte = GETPOST('codeventil'.$monId);
@@ -140,21 +150,21 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
     
                 dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
-                    $ok++;
                     $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
+                    $ok++;
                 } else {
-                    $ko++;
                     $msg.= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+                    $ko++;
                 }
             }
             
             $cpt++;
         }
         $msg.='</div>';
-    } else {
-        setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+        $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
+    //} else {
+    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
-    $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
 }
 
 
@@ -162,6 +172,9 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 /*
  * View
  */
+
+$form = new Form($db);
+
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
 // Supplier Invoice Lines
@@ -225,6 +238,16 @@ if ($result) {
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	
+	$arrayofmassactions =  array(
+	    'ventil'=>$langs->trans("Ventilate")
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	//if ($massaction == 'presend') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
+	
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -233,15 +256,15 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
-	$center='<div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
+	//$center='<div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
 	
-	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+
+	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
 
 	if ($msg) print $msg.'<br>';
 	
-	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
-
-    $moreforfilter = '';
+	$moreforfilter = '';
 	
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
@@ -259,6 +282,7 @@ if ($result) {
 	print_liste_field_titre('', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
+	// We add search filter
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
@@ -272,7 +296,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(1);
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpitco;
 	print '</td>';
 	print '</tr>';
@@ -281,7 +305,7 @@ if ($result) {
 	$productfourn_static = new ProductFournisseur($db);
 	$form = new Form($db);
 
-	$var = True;
+	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
@@ -317,7 +341,7 @@ if ($result) {
 		if ($objp->code_buy_l == -1) $objp->code_buy_l='';
 		
 		if (! empty($objp->code_buy)) {
-			$objp->code_buy_p = $objp->code_buy;
+			$objp->code_buy_p = $objp->code_buy;       // Code on product
 		} else {
 			$code_buy_p_notset = 'color:orange';
 		}
@@ -365,7 +389,7 @@ if ($result) {
 		print price($objp->tva_tx_line);
 		print '</td>';
 
-		// Accounting account suggested
+		// Current account
 		print '<td align="center" style="' . $code_buy_p_notset . '">';
 		print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : $langs->trans("Unknown"));
 		if ($objp->product_id > 0)
@@ -382,7 +406,7 @@ if ($result) {
 		
 		// Colonne choix ligne a ventiler
 		print '<td align="right">';
-		print '<input type="checkbox" class="checkforaction" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 
 		print "</tr>";

@@ -42,7 +42,11 @@ $langs->load("main");
 $langs->load("accountancy");
 $langs->load("productbatch");
 
-$action = GETPOST('action');
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 // Select Box
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
@@ -145,10 +149,10 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
             $cpt++;
         }
         $msg.='</div>';
+        $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
     } else {
         setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
-    $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
 }
 
 
@@ -156,6 +160,9 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 /*
  * View
  */
+
+$form = new Form($db);
+
 llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
 // Expense report lines

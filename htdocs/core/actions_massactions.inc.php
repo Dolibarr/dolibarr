@@ -41,7 +41,7 @@ $maxformassaction=1000;
 if (! empty($massaction) && count($toselect) < 1)
 {
     $error++;
-    setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+    setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
 if (! $error && count($toselect) > $maxformassaction)
 {

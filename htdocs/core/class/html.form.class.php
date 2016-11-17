@@ -509,11 +509,12 @@ class Form
     /**
      * Generate select HTML to choose massaction
      *
-     * @param	string	$selected		Selected value
+     * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
      * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+     * @param   int     $alwaysvisible  1=select button always visible 
      * @return	string					Select list
      */
-    function selectMassAction($selected, $arrayofaction)
+    function selectMassAction($selected, $arrayofaction, $alwaysvisible=0)
     {
     	global $conf,$langs,$hookmanager;
 
@@ -521,7 +522,7 @@ class Form
 
     	$disabled=0;
     	$ret='<div class="centpercent center">';
-    	$ret.='<select data-role="none" class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+    	$ret.='<select data-role="none" class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
     	$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
     	foreach($arrayofaction as $code => $label)
     	{
@@ -529,50 +530,55 @@ class Form
     	}
     	$ret.='</select>';
     	// Warning: if you set submit button to disabled, post using 'Enter' will no more work.
-    	$ret.='<input type="submit" data-role="none" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	$ret.='<input type="submit" data-role="none" name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
 
-    	$ret.='<!-- JS CODE TO ENABLE mass action select -->
-		<script type="text/javascript">
-    		function initCheckForSelect()
-    		{
-    			atleastoneselected=0;
-	    		jQuery(".checkforselect").each(function( index ) {
-	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
-	  			});
-	  			if (atleastoneselected)
-	  			{
-	  				jQuery(".massaction").show();
-	  			}
-	  			else
-	  			{
-	  				jQuery(".massaction").hide();
-	  			}
-    		}
-
-    	jQuery(document).ready(function () {
-    		initCheckForSelect();
-    		jQuery(".checkforselect").click(function() {
-    			initCheckForSelect();
-	  		});
-    	    /* Warning: if you set submit button to disabled, post using Enter will no more work
-	  		jQuery(".massactionselect").change(function() {
-	  			console.log( $( this ).val() );
-	  			if ($(this).val() != \'0\')
-	  			{
-	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
-	  			}
-	  			else
-	  			{
-	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
-	  			}
-	  		});
-    	    */
-    	});
-		</script>
-    	';
-
+    	if (! empty($conf->use_javascript_ajax))
+    	{
+        	$ret.='<!-- JS CODE TO ENABLE mass action select -->
+    		<script type="text/javascript">
+        		function initCheckForSelect()
+        		{
+        			atleastoneselected=0;
+    	    		jQuery(".checkforselect").each(function( index ) {
+    	  				/* console.log( index + ": " + $( this ).text() ); */
+    	  				if ($(this).is(\':checked\')) atleastoneselected++;
+    	  			});
+    	  			if (atleastoneselected || '.$alwaysvisible.')
+    	  			{
+    	  				jQuery(".massaction").show();
+        			    '.($selected ? 'if (atleastoneselected) jQuery(".massactionselect").val("'.$selected.'");' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) jQuery(".massactionselect").val("0");' : '').'
+    	  			}
+    	  			else
+    	  			{
+    	  				jQuery(".massaction").hide();
+    	            }
+        		}
+    
+        	jQuery(document).ready(function () {
+        		initCheckForSelect();
+        		jQuery(".checkforselect").click(function() {
+        			initCheckForSelect();
+    	  		});
+        	    /* Warning: if you set submit button to disabled, post using Enter will no more work
+    	  		jQuery(".massactionselect").change(function() {
+    	  			console.log( $( this ).val() );
+    	  			if ($(this).val() != \'0\')
+    	  			{
+    	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+    	  			}
+    	  			else
+    	  			{
+    	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+    	  			}
+    	  		});
+        	    */
+        	});
+    		</script>
+        	';
+    	}
+    	
     	return $ret;
     }
 
