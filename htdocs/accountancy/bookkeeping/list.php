@@ -307,6 +307,8 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
+$num=count($this->lines);
+
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
@@ -448,7 +450,9 @@ foreach ($object->lines as $line ) {
 }
 
 print '<tr class="liste_total">';
-print '<td colspan="6"></td>';
+if ($num < $limit) print '<td align="left" colspan="6">'.$langs->trans("Total").'</td>';
+else print '<td align="left" colspan="6">'.$langs->trans("Totalforthispage").'</td>';
+print '</td>';
 print '<td  align="right">';
 print price($total_debit);
 print '</td>';
