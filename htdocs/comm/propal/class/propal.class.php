@@ -3240,7 +3240,7 @@ class PropaleLigne  extends CommonObjectLine
         if (empty($this->pa_ht)) $this->pa_ht=0;
         if (empty($this->multicurrency_subprice))  $this->multicurrency_subprice=0;
         if (empty($this->multicurrency_total_ht))  $this->multicurrency_total_ht=0;
-        if (empty($this->multicurrency_total_vat)) $this->multicurrency_total_vat=0;
+        if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
         if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
         
        // if buy price not defined, define buyprice as configured in margin admin
