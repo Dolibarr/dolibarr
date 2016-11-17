@@ -335,7 +335,7 @@ if ($result) {
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 		
-		print '<td class="tdoverflow">';
+		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);

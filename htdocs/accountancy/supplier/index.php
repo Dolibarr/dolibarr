@@ -77,7 +77,7 @@ if ($action == 'validatehistory') {
 	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 	$resql = $db->query($sqlclean);
 	
-	// Now make the binding
+	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";

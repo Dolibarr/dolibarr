@@ -334,7 +334,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
 
-		print '<td class="tdoverflow">';
+		print '<td class="tdoverflowonsmartphone">';
 		print $objp->invoice_label;
 		print '</td>';
 		
