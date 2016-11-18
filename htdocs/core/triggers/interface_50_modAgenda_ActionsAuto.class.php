@@ -856,6 +856,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$ret=$actioncomm->create($user);       // User creating action
 		
+		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)
+		{
+			if (is_array($object->attachedfiles) && array_key_exists('paths',$object->attachedfiles) && count($object->attachedfiles['paths'])>0) {
+				foreach($object->attachedfiles['paths'] as $key=>$filespath) {
+					$srcfile = $filespath;
+					$destdir = $conf->agenda->dir_output . '/' . $ret;
+					$destfile = $destdir . '/' . $object->attachedfiles['names'][$key];
+					if (dol_mkdir($destdir) >= 0) {
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						dol_copy($srcfile, $destfile);
+					}
+				}
+			}
+		}
+		
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		
 		if ($ret > 0)
