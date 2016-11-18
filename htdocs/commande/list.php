@@ -259,6 +259,7 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='';
+	if ($sall)					$param.='&sall='.$sall;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($orderday)      		$param.='&orderday='.$orderday;
@@ -587,10 +588,13 @@ if ($resql)
 		print dol_print_date($db->jdate($objp->date_commande), 'day');
 		print '</td>';
 
-		// Delivery date
-		print '<td align="center">';
-		print dol_print_date($db->jdate($objp->date_delivery), 'day');
-		print '</td>';
+		if (empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)) 
+		{
+			// Delivery date
+			print '<td align="center">';
+			print dol_print_date($db->jdate($objp->date_delivery), 'day');
+			print '</td>';
+		}
 
 		// Amount HT
 		print '<td align="right" class="nowrap">'.price($objp->total_ht).'</td>';

@@ -65,7 +65,7 @@ class CommandeFournisseur extends CommonOrder
     //  		                                      -> 9=Refused  -> (reopen) 1=Validated
     //  Note: billed or not is on another field "billed"
     var $statuts;           // List of status
-    
+
     var $socid;
     var $fourn_id;
     var $date;
@@ -253,6 +253,8 @@ class CommandeFournisseur extends CommonOrder
             if ($this->statut == 0) $this->brouillon = 1;
 
 			$this->fetchObjectLinked();
+
+            $this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
@@ -517,7 +519,7 @@ class CommandeFournisseur extends CommonOrder
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
         if ($billed == 1) $billedtext=$langs->trans("Billed");
-        
+
         // List of language codes for status
         $statutshort[0] = 'StatusOrderDraftShort';
         $statutshort[1] = 'StatusOrderValidatedShort';
@@ -991,6 +993,8 @@ class CommandeFournisseur extends CommonOrder
                 $this->date_commande = $this->db->idate($date);
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
+				$this->date_commande = $date;
+				$this->methode_commande = $methode;
             }
             else
             {
@@ -1356,7 +1360,7 @@ class CommandeFournisseur extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2115,7 +2119,7 @@ class CommandeFournisseur extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2533,10 +2537,10 @@ class CommandeFournisseur extends CommonOrder
     public function hasDelay()
     {
         global $conf;
-		
+
         $now = dol_now();
         $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
-        
+
         return ($this->statut != 3) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
 }
