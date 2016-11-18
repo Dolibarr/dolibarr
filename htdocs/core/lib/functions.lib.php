@@ -957,8 +957,8 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
+ *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
 function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlstatus='', $onlybanner=0, $morehtmlright='')
