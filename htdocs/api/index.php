@@ -109,6 +109,9 @@ foreach ($modulesdir as $dir)
                 elseif ($module == 'project') {
                     $moduledirforclass = 'projet';
                 }
+                elseif ($module == 'stock') {
+                    $moduledirforclass = 'product/stock';
+                }
                 
                 // Defined if module is enabled
                 $enabled=true;

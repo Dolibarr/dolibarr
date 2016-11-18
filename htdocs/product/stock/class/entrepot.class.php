@@ -173,6 +173,8 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
+	    if (empty($id)) $id = $this->id;
+	    
 		// Check if new parent is already a child of current warehouse
 		if(!empty($this->fk_parent)) {
 			$TChildWarehouses = array($id);
