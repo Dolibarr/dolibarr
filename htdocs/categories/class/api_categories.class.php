@@ -151,7 +151,7 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
@@ -237,7 +237,7 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
@@ -337,6 +337,26 @@ class Categories extends DolibarrApi
                 'message' => 'Category deleted'
             )
         );
+    }
+    
+    
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     *
+     * @todo use an array for properties to clean
+     *
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        // Remove the subscriptions because they are handled as a subresource.
+        //unset($object->subscriptions);
+    
+        return $object;
     }
     
     /**

@@ -534,7 +534,8 @@ if ($resql)
 
         // Nb of products
         print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
-        print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+        $valtoshow=price2num($calcproducts['nb'], 'MS');
+        print empty($valtoshow)?'0':$valtoshow;
         print "</td></tr>";
 
         print '</table>';

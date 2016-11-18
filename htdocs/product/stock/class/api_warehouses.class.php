@@ -136,7 +136,7 @@ class Warehouses extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $warehouse_static = new Entrepot($db);
                 if($warehouse_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($warehouse_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($warehouse_static);
                 }
                 $i++;
             }
@@ -169,7 +169,7 @@ class Warehouses extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->warehouse->$field = $value;
         }
-        if($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
+        if($this->warehouse->create(DolibarrApiAccess::$user) <= 0) {
             throw new RestException(503, 'Error when create warehouse : '.$this->warehouse->error);
         }
         return $this->warehouse->id;
@@ -193,7 +193,7 @@ class Warehouses extends DolibarrApi
             throw new RestException(404, 'warehouse not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->warehouse->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -223,7 +223,7 @@ class Warehouses extends DolibarrApi
             throw new RestException(404, 'warehouse not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->warehouse->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
@@ -238,6 +238,27 @@ class Warehouses extends DolibarrApi
             )
         );
     }
+    
+    
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     *
+     * @todo use an array for properties to clean
+     *
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        // Remove the subscriptions because they are handled as a subresource.
+        //unset($object->subscriptions);
+    
+        return $object;
+    }
+    
     
     /**
      * Validate fields before create or update object
