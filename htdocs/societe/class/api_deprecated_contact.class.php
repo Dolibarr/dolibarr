@@ -126,7 +126,7 @@ class ContactApi extends DolibarrApi
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
-		$sql.= ' WHERE  c.entity IN (' . getEntity('contact', 1) . ')';
+		$sql.= ' WHERE  c.entity IN (' . getEntity('socpeople', 1) . ')';
 		if ($socid)
 			$sql.= " AND c.fk_soc = " . $socid;
 

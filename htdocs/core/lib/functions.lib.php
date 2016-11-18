@@ -102,7 +102,14 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 /**
  * 	Get list of entity id to use
  *
- * 	@param	string	$element	Current element ('actioncomm', ...)
+ * 	@param	string	$element	Current element 
+ *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource', 
+ *                              'product', 'productprice', 'stock',
+ *                              'propal', 'facture', 'facture_fourn',
+ *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',  
+ *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
+ *                              'email_template', 'event',  
  * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
  * 	@return	mixed				Entity id(s) to use
  */
@@ -110,6 +117,11 @@ function getEntity($element=false, $shared=0)
 {
 	global $conf, $mc;
 
+	// For backward compatibilty
+	if ($element == 'actioncomm') $element='agenda';
+	if ($element == 'fichinter')  $element='intervention';
+	if ($element == 'categorie')  $element='category';
+	
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared);
