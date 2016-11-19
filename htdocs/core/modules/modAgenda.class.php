@@ -189,7 +189,7 @@ class modAgenda extends DolibarrModules
 		// $r++;
 		$this->menu[$r]=array('fk_menu'=>0,
 													'type'=>'top',
-													'titre'=>'Agenda',
+													'titre'=>'TMenuAgenda',
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/index.php',
 													'langs'=>'agenda',
