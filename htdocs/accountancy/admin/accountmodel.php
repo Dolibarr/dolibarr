@@ -1262,8 +1262,8 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
-
+	$formaccountancy = new FormVentilation($db);
+	
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($fieldlist[$field] == 'country')
