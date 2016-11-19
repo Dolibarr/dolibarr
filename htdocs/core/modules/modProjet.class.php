@@ -206,7 +206,7 @@ class modProjet extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 		
 		//Exports
 		//--------
@@ -322,6 +322,40 @@ class modProjet extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
+		
+		
+		// Import list of tasks
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+    		$r++;
+    		$this->import_code[$r]='tasksofprojects';
+    		$this->import_label[$r]='ImportDatasetTasks';
+    		$this->import_icon[$r]='task';
+    		$this->import_entities_array[$r]=array('t.fk_projet'=>'project');	// We define here only fields that use another icon that the one defined into import_icon
+    		$this->import_tables_array[$r]=array('t'=>MAIN_DB_PREFIX.'projet_task','extra'=>MAIN_DB_PREFIX.'projet_task_extrafields');	// List of tables to insert into (insert done in same order)
+    		$this->import_fields_array[$r]=array('t.fk_projet'=>'ProjectRef*','t.ref'=>'RefTask*','t.label'=>'LabelTask*','t.dateo'=>"DateStart",'t.datee'=>"DateEnd",'t.planned_workload'=>"PlannedWorkload",'t.progress'=>"Progress",'t.note_private'=>"NotePrivate",'t.note_public'=>"NotePublic",'t.datec'=>"DateCreation");
+    		// Add extra fields
+    		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet_task' AND entity = ".$conf->entity;
+    		$resql=$this->db->query($sql);
+    		if ($resql)    // This can fail when class is used on old database (during migration for example)
+    		{
+    		    while ($obj=$this->db->fetch_object($resql))
+    		    {
+    		        $fieldname='extra.'.$obj->name;
+    		        $fieldlabel=ucfirst($obj->label);
+    		        $this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
+    		    }
+    		}
+    		// End add extra fields
+    		$this->import_fieldshidden_array[$r]=array('t.fk_user_creat'=>'user->id','extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet_task');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+    		$this->import_convertvalue_array[$r]=array(
+    		    't.fk_projet'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project'),
+    		    't.ref'=>array('rule'=>'getrefifauto')
+    		);
+    		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+    		$this->import_regex_array[$r]=array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','t.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','t.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+    		$this->import_examplevalues_array[$r]=array('t.fk_projet'=>'MyProjectRef','t.ref'=>"auto or TK2010-1234",'t.label'=>"My task",'t.progress'=>"0 (not started) to 100 (finished)",'t.datec'=>'1972-10-10','t.note_private'=>"My private note",'t.note_public'=>"My public note");
+		}		
 	}
 
 

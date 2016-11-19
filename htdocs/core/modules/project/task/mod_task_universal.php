@@ -102,10 +102,10 @@ class mod_task_universal extends ModeleNumRefTask
 	*  Return next value
 	*
 	*  @param	Societe		$objsoc		Object third party
-	*  @param   Project		$project	Object project
+	*  @param   Task		$object	    Object task
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$project)
+    function getNextValue($objsoc,$object)
     {
 		global $db,$conf;
 
@@ -120,8 +120,8 @@ class mod_task_universal extends ModeleNumRefTask
 			return 0;
 		}
 
-		$date=empty($project->date_c)?dol_now():$project->date_c;
-		$numFinal=get_next_value($db,$mask,'projet_task','ref','',$objsoc->code_client,$date);
+		$date=empty($object->date_c)?dol_now():$object->date_c;
+		$numFinal=get_next_value($db,$mask,'projet_task','ref','',(is_object($objsoc)?$objsoc->code_client:''),$date);
 
 		return  $numFinal;
 	}
@@ -131,12 +131,12 @@ class mod_task_universal extends ModeleNumRefTask
      *  Return next reference not yet used as a reference
      *
      *  @param	Societe		$objsoc     Object third party
-     *  @param  Project		$project	Object project
+     *  @param  Task		$object	    Object task
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc=0,$project='')
+    function project_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$project);
+        return $this->getNextValue($objsoc,$object);
     }
 }
 

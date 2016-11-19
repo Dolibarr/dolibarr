@@ -33,7 +33,9 @@ class Task extends CommonObject
 {
     public $element='project_task';		//!< Id that identify managed objects
     public $table_element='projet_task';	//!< Name of table without prefix where object is stored
+    public $fk_element='fk_task';
     public $picto = 'task';
+    protected $childtables=array('projet_task_time');    // To test if we can delete object
     
     var $fk_task_parent;
     var $label;
@@ -384,12 +386,21 @@ class Task extends CommonObject
 
         if ($this->hasChildren() > 0)
         {
+            dol_syslog(get_class($this)."::delete Can't delete record as it has some sub tasks", LOG_WARNING);
+            $this->error='ErrorRecordHasSubTasks';
+            $this->db->rollback();
+            return 0;
+        }
+
+        $objectisused = $this->isObjectUsed($this->id);
+        if (! empty($objectisused))
+        {
             dol_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
             $this->error='ErrorRecordHasChildren';
             $this->db->rollback();
             return 0;
         }
-
+        
         if (! $error)
         {
             // Delete linked contacts

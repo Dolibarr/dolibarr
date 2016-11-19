@@ -183,10 +183,16 @@ ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
 ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
 
+ALTER TABLE llx_projet ADD COLUMN import_key      	        	varchar(14);
+ALTER TABLE llx_projet_task ADD COLUMN import_key      		    varchar(14);
+ALTER TABLE llx_projet_task_time ADD COLUMN import_key      	varchar(14);
+
+
 ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
 ALTER TABLE llx_mailing_cibles ADD COLUMN error_text varchar(255);
 
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
 
 create table llx_user_employment
 (
@@ -209,6 +215,7 @@ create table llx_user_employment
 )ENGINE=innodb;
 
 
+
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
@@ -219,4 +226,5 @@ drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
-ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
+UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
+ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);

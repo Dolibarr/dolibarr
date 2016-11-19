@@ -2885,11 +2885,13 @@ abstract class CommonObject
      *  Function to check if an object is used by others.
      *  Check is done into this->childtables. There is no check into llx_element_element.
      *
-     *  @param	int		$id			Id of object
+     *  @param	int		$id			Force id of object
      *  @return	int					<0 if KO, 0 if not used, >0 if already used
      */
-    function isObjectUsed($id)
+    function isObjectUsed($id=0)
     {
+        if (empty($id)) $id=$this->id;
+        
         // Check parameters
         if (! isset($this->childtables) || ! is_array($this->childtables) || count($this->childtables) == 0)
         {

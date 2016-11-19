@@ -382,11 +382,11 @@ print "\n";
 
 print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="float">';
+print '<div class="float valignmiddle">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.$langs->trans("AssignTask").'">';
 //print '</form>';
 print '</div>';
 
