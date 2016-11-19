@@ -227,6 +227,7 @@ class StockMovements extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->stockmovement->$field = $value;
         }
         

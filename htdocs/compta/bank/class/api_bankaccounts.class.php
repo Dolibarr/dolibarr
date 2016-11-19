@@ -185,6 +185,7 @@ class BankAccounts extends DolibarrApi
         }
 
         foreach ($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $account->$field = $value;
         }
 

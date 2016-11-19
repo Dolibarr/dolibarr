@@ -106,6 +106,14 @@ class DolibarrApi
         unset($object->projet);     // Should be fk_project
         unset($object->project);    // Should be fk_project
         unset($object->author);     // Should be fk_user_author
+        unset($object->timespent_old_duration);
+        unset($object->timespent_id);
+        unset($object->timespent_duration);
+        unset($object->timespent_date);
+        unset($object->timespent_datehour);
+        unset($object->timespent_withhour);
+        unset($object->timespent_fk_user);
+        unset($object->timespent_note);
         
         unset($object->statuts);
         unset($object->statuts_short);

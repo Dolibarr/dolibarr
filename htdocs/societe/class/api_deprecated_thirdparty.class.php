@@ -328,6 +328,7 @@ class ThirdpartyApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->company->$field = $value;
         }
         

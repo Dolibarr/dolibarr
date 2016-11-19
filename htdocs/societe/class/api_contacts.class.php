@@ -222,7 +222,8 @@ class Contacts extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-			$this->contact->$field = $value;
+            if ($field == 'id') continue;
+		    $this->contact->$field = $value;
 		}
 
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))

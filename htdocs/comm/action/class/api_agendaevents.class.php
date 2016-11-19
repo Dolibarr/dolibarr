@@ -223,6 +223,7 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->expensereport->$field = $value;
         }
         

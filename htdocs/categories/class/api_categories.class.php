@@ -298,6 +298,7 @@ class Categories extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->category->$field = $value;
         }
         
