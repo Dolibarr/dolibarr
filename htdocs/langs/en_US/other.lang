@@ -2,6 +2,7 @@
 SecurityCode=Security code
 NumberingShort=N°
 Tools=Tools
+TMenuTools=TOOLS
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=Birthday
 BirthdayDate=Birthday date
