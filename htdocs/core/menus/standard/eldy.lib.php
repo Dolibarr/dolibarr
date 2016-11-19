@@ -109,13 +109,13 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 
 		$chaine="";
 		if (! empty($conf->product->enabled)) {
-			$chaine.=$langs->trans("Products");
+			$chaine.=$langs->trans("TMenuProducts");
 		}
 		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) {
 			$chaine.=" | ";
 		}
 		if (! empty($conf->service->enabled)) {
-			$chaine.=$langs->trans("Services");
+			$chaine.=$langs->trans("TMenuServices");
 		}
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
