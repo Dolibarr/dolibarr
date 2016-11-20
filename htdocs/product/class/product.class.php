@@ -926,7 +926,7 @@ class Product extends CommonObject
 			}
 			
 			// Delete from product_batch on product delete	
-			if (! $error && $this->hasbatch())
+			if (! $error)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.'product_batch';
 				$sql.= " WHERE fk_product_stock IN (";
