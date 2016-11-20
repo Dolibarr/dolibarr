@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file      	resource/class/resource.class.php
+ *  \file      	resource/class/dolresource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
 
@@ -25,6 +25,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+require_once DOL_DOCUMENT_ROOT."/resource/class/resourcelog.class.php";
 
 /**
  *	DAO Resource object
