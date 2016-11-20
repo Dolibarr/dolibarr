@@ -262,11 +262,12 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                             {
                                 if ($data['status'] == ResourceStatus::TAKEN)
                                 {
+                                    /** @var Dolresource $resource */
                                     $resource = $data['resource'];
                                     $result = $resource->freeResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type);
                                     if ($result < 0)
                                     {
-                                        setEventMessages($resource->error, $resource->errors, 'errors');
+                                        setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
                                         $error++;
                                         break;
                                     }
@@ -283,7 +284,7 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                                     $result = $resource->setStatus($user, $object->date_start, $object->date_end, ResourceStatus::$AVAILABLE, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
                                     if ($result < 0)
                                     {
-                                        setEventMessages($resource->error, $resource->errors, 'errors');
+                                        setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
                                         $error++;
                                         break 2;
                                     }
