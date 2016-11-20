@@ -1018,7 +1018,6 @@ SimpleNumRefModelDesc=Returns the reference number with format %syymm-nnnn where
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 ShowVATIntaInAddress=Hide VAT Intra num with addresses on documents
 TranslationUncomplete=Partial translation
-SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>. 
 MAIN_DISABLE_METEO=Disable meteo view
 TestLoginToAPI=Test login to API
 ProxyDesc=Some features of Dolibarr need to have an Internet access to work. Define here parameters for this. If the Dolibarr server is behind a Proxy server, those parameters tells Dolibarr how to access Internet through it. 
