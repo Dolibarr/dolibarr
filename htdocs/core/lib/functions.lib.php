@@ -5500,11 +5500,14 @@ function printCommonFooter($zone='private')
     	           });'."\n";
     	print '});'."\n";
     	
-    	print '<!-- Set handler to switch left menu page -->'."\n";
-    	print 'jQuery(".menuhider").click(function() {';
-    	print "  $('.side-nav').toggle();";
-    	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
-    	print '});'."\n";
+    	if (empty($conf->dol_use_jmobile))
+    	{
+        	print '<!-- Set handler to switch left menu page -->'."\n";
+        	print 'jQuery(".menuhider").click(function() {';
+        	print "  $('.side-nav').toggle();";
+        	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
+        	print '});'."\n";
+    	}
     	
     	print '</script>'."\n";
 	}
