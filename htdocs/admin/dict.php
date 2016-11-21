@@ -1036,7 +1036,7 @@ if ($id)
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-            if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
+            if ($fieldlist[$field]=='unit' || $fieldlist[$field]=='metric') { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $valuetoshow=''; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
             if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); }
@@ -1052,6 +1052,17 @@ if ($id)
 			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
 			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
 			if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
+			if ($fieldlist[$field]=='paper_size')      { $valuetoshow=$langs->trans("PaperSize"); }
+			if ($fieldlist[$field]=='orientation')     { $valuetoshow=$langs->trans("Orientation"); }
+			if ($fieldlist[$field]=='leftmargin')      { $valuetoshow=$langs->trans("LeftMargin"); }
+			if ($fieldlist[$field]=='topmargin')       { $valuetoshow=$langs->trans("TopMargin"); }
+			if ($fieldlist[$field]=='spacex')          { $valuetoshow=$langs->trans("SpaceX"); }
+			if ($fieldlist[$field]=='spacey')          { $valuetoshow=$langs->trans("SpaceY"); }
+			if ($fieldlist[$field]=='font_size')       { $valuetoshow=$langs->trans("FontSize"); }
+			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
+			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
+			if ($fieldlist[$field]=='nx')              { $valuetoshow=$langs->trans("NX"); }
+			if ($fieldlist[$field]=='ny')              { $valuetoshow=$langs->trans("NY"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1213,7 +1224,7 @@ if ($id)
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-            if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
+            if ($fieldlist[$field]=='unit' || $fieldlist[$field]=='metric') { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
             if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
@@ -1229,6 +1240,17 @@ if ($id)
 			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
 			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
 			if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
+			if ($fieldlist[$field]=='paper_size')      { $valuetoshow=$langs->trans("PaperSize"); }
+			if ($fieldlist[$field]=='orientation')     { $valuetoshow=$langs->trans("Orientation"); }
+			if ($fieldlist[$field]=='leftmargin')      { $valuetoshow=$langs->trans("LeftMargin"); }
+			if ($fieldlist[$field]=='topmargin')       { $valuetoshow=$langs->trans("TopMargin"); }
+			if ($fieldlist[$field]=='spacex')          { $valuetoshow=$langs->trans("SpaceX"); }
+			if ($fieldlist[$field]=='spacey')          { $valuetoshow=$langs->trans("SpaceY"); }
+			if ($fieldlist[$field]=='font_size')       { $valuetoshow=$langs->trans("FontSize"); }
+			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
+			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
+			if ($fieldlist[$field]=='nx')              { $valuetoshow=$langs->trans("NX"); }
+			if ($fieldlist[$field]=='ny')              { $valuetoshow=$langs->trans("NY"); }
 
             // Affiche nom du champ
             if ($showfield)
