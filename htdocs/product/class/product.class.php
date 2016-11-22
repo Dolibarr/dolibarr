@@ -46,6 +46,7 @@ class Product extends CommonObject
 	public $table_element='product';
 	public $fk_element='fk_product';
 	protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+	protected $stocktables=array('product_stock', 'product_batch', 'product_batch', 'stock_mouvement');
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -912,8 +913,12 @@ class Product extends CommonObject
 			return 0;
 		}
 
+		
+			
 		$objectisused = $this->isObjectUsed($id);
-		if (empty($objectisused))
+		$productisinstock = $this->isProductInstock();
+		
+		if (empty($objectisused) && empty($productisinstock))
 		{
 			$this->db->begin();
 
@@ -924,27 +929,11 @@ class Product extends CommonObject
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
-			
-			// Delete from product_batch on product delete	
-			if (! $error)
-			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX.'product_batch';
-				$sql.= " WHERE fk_product_stock IN (";
-				$sql.= "SELECT rowid FROM ".MAIN_DB_PREFIX.'product_stock';
-				$sql.= " WHERE fk_product = ".$id.")";
-				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
-				$result = $this->db->query($sql);
-				if (! $result)
-				{
-					$error++;
-					$this->errors[] = $this->db->lasterror();
-				}
-			}
-			
+					
    			// Delete all child tables
 			if (! $error)
 			{
-				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot','product_warehouse_properties');
+			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_customer_price','product_warehouse_properties');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -4371,4 +4360,48 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+	/**
+	 *	control is product is present in stock
+	 *
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 */
+	function isProductInstock()
+	{
+		// Check parameters
+		if (! isset($this->stocktables) || ! is_array($this->stocktables) || count($this->stocktables) == 0)
+		{
+		    dol_print_error('Called isProductInstock on a class with property this->stocktables not defined');
+		    return -1;
+		}
+
+		// Test if child exists
+		$hasstock=0;
+		foreach($this->stocktables as $table)
+		{
+		    // Check if third party can be deleted
+		    $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
+		    $sql.= " WHERE fk_product = ".$this->id;
+		    $resql=$this->db->query($sql);
+		    if ($resql)
+		    {
+			$obj=$this->db->fetch_object($resql);
+			$hasstock+=$obj->nb;
+			//print 'Found into table '.$table;
+			if ($hasstock) break;    // We found at least on, we stop here
+		    }
+		    else
+		    {
+			$this->error=$this->db->lasterror();
+			return -1;
+		    }
+		}
+		if ($hasstock > 0)
+		{
+			$this->error="ErrorProductHasStock";
+			return $hasstock;
+		}
+		else return 0;		
+	}
+	
 }
