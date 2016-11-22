@@ -26,6 +26,7 @@ DocumentModelStandard=Standard document model for interventions
 InterventionCardsAndInterventionLines=Interventions and lines of interventions
 InterventionClassifyBilled=Classify "Billed"
 InterventionClassifyUnBilled=Classify "Unbilled"
+InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Billed
 ShowIntervention=Show intervention
 SendInterventionRef=Submission of intervention %s
