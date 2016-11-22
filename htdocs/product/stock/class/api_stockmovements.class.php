@@ -275,7 +275,7 @@ class StockMovements extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param   object  $object    Object to clean
+     * @param   MouvementStock  $object    Object to clean
      * @return    array    Array of cleaned object properties
      *
      * @todo use an array for properties to clean

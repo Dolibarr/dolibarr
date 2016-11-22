@@ -780,7 +780,7 @@ class Task extends CommonObject
      * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
      * @param 	int		$projectid		      Project id list separated with , to filter on project
      * @param 	int		$taskid			      Task id to filter on a task
-     * @param	string	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+     * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
      * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
      */
     function getUserRolesForProjectsOrTasks($userp, $usert, $projectid='', $taskid=0, $filteronprojstatus=-1)
