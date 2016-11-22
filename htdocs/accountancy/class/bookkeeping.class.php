@@ -73,7 +73,7 @@ class BookKeeping extends CommonObject
 	public $id;
 	/**
 	 */
-	public $doc_date = '';
+	public $doc_date;
 	public $doc_type;
 	public $doc_ref;
 	public $fk_doc;
@@ -1163,9 +1163,12 @@ class BookKeeping extends CommonObject
 	 * @return void
 	 */
 	public function initAsSpecimen() {
-		$this->id = 0;
+		global $user;
 		
-		$this->doc_date = '';
+		$now=dol_now();
+		
+		$this->id = 0;
+		$this->doc_date = $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
 		$this->fk_doc = '';
@@ -1173,11 +1176,11 @@ class BookKeeping extends CommonObject
 		$this->code_tiers = '';
 		$this->numero_compte = '';
 		$this->label_compte = '';
-		$this->debit = '';
+		$this->debit = 99.9;
 		$this->credit = '';
 		$this->montant = '';
 		$this->sens = '';
-		$this->fk_user_author = '';
+		$this->fk_user_author = $user->id;
 		$this->import_key = '';
 		$this->code_journal = '';
 		$this->piece_num = '';

@@ -445,8 +445,6 @@ class Tasks extends DolibarrApi
         {
             throw new RestException(500, $this->task->error);
         }
-
-        return false;
     }
 
     /**

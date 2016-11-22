@@ -441,7 +441,6 @@ class Projects extends DolibarrApi
         {
             throw new RestException(500, $this->project->error);
         }
-        return false;
     }
 
     /**
