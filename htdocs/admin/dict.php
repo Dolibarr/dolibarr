@@ -1034,8 +1034,8 @@ if ($id)
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
             if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $align="center"; }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-            if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-            if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+            if ($fieldlist[$field]=='width' || $fieldlist[$field]=='nx') { $valuetoshow=$langs->trans("Width"); }
+            if ($fieldlist[$field]=='height' || $fieldlist[$field]=='ny') { $valuetoshow=$langs->trans("Height"); }
             if ($fieldlist[$field]=='unit' || $fieldlist[$field]=='metric') { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $valuetoshow=''; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
@@ -1061,8 +1061,7 @@ if ($id)
 			if ($fieldlist[$field]=='font_size')       { $valuetoshow=$langs->trans("FontSize"); }
 			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
 			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
-			if ($fieldlist[$field]=='nx')              { $valuetoshow=$langs->trans("NX"); }
-			if ($fieldlist[$field]=='ny')              { $valuetoshow=$langs->trans("NY"); }
+			if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1222,8 +1221,8 @@ if ($id)
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
             if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $align="center"; }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-            if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-            if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+            if ($fieldlist[$field]=='width' || $fieldlist[$field]=='nx') { $valuetoshow=$langs->trans("Width"); }
+            if ($fieldlist[$field]=='height' || $fieldlist[$field]=='ny') { $valuetoshow=$langs->trans("Height"); }
             if ($fieldlist[$field]=='unit' || $fieldlist[$field]=='metric') { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
@@ -1249,8 +1248,7 @@ if ($id)
 			if ($fieldlist[$field]=='font_size')       { $valuetoshow=$langs->trans("FontSize"); }
 			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
 			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
-			if ($fieldlist[$field]=='nx')              { $valuetoshow=$langs->trans("NX"); }
-			if ($fieldlist[$field]=='ny')              { $valuetoshow=$langs->trans("NY"); }
+			if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); }
 
             // Affiche nom du champ
             if ($showfield)
