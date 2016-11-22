@@ -381,11 +381,12 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
                     if (isset($result['return'])) $return = $result['return'];
                 }
 
-                // Switch each resource
+                // Switch taken resources
                 if (!$error && !isset($return))
                 {
                     foreach ($resources as $resource_id => $resource_type)
                     {
+                        //Fetch resource
                         $resource = fetchObjectByElement($resource_id, $resource_type);
                         if (!is_object($resource) || $resource->id != $resource_id)
                         {
@@ -393,12 +394,26 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
                             $error++;
                             break;
                         }
-                        $result = $resource->switchResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
-                        if ($result < 0)
+                        
+                        //Get resource status
+                        $res_status = $resource->getStatus($object->date_start, $object->date_end, $booker_id, $booker_type);
+                        if ($res_status < 0)
                         {
                             setEventMessages($resource->error, $resource->errors, 'errors');
                             $error++;
                             break;
+                        }
+                        
+                        //Switch the resource if taken by the current booker
+                        if ($res_status == ResourceStatus::TAKEN)
+                        {
+                            $result = $resource->switchResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
+                            if ($result < 0)
+                            {
+                                setEventMessages($resource->error, $resource->errors, 'errors');
+                                $error++;
+                                break;
+                            }
                         }
                     }
                 }
