@@ -120,7 +120,7 @@ if ($action == 'order' && isset($_POST['valid']))
                 $qty = GETPOST('tobuy'.$i, 'int');
                 //$desc = GETPOST('desc'.$i, 'alpha');
                 $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice FROM ';
+                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
                 $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
                 $sql .= ' WHERE rowid = ' . $supplierpriceid;
                 $resql = $db->query($sql);
@@ -152,6 +152,7 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $tva = $line->tva_tx / 100;
 	                    $line->total_tva = $line->total_ht * $tva;
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
+						$line->remise_percent = $obj->remise_percent;
 	                    $line->ref_fourn = $obj->ref_fourn;
 	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
                 	}
