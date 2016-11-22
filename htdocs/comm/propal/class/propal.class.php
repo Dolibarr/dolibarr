@@ -1596,7 +1596,7 @@ class Propal extends CommonObject
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-            $result = occupyAllResources($this, ResourceStatus::PLACED);
+            $result = occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::PLACED);
             if ($result < 0) { $error++; }
         }
 
@@ -2224,7 +2224,7 @@ class Propal extends CommonObject
                 //Attempt to restore the placed state
                 if ($oldstatus != Propal::STATUS_BILLED)
                 {
-                    occupyAllResources($this, ResourceStatus::PLACED);
+                    occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::PLACED);
                 }
             }
         }
@@ -2312,7 +2312,11 @@ class Propal extends CommonObject
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
                     require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-                    $result = occupyAllResources($this, ResourceStatus::OCCUPIED);
+                    $result = occupyAllResources(
+                        $this,
+                        array(ResourceStatus::TAKEN, ResourceStatus::PLACED),
+                        ResourceStatus::OCCUPIED
+                    );
                     if ($result < 0) { $error++; }
                 }
             }

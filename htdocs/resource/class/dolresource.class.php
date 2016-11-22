@@ -780,7 +780,6 @@ class Dolresource extends CommonObject
                         if ($section->booker_id == $booker_id && $section->booker_type == $booker_type)
                         {
                             $taken = true;
-                            $section_status = ResourceStatus::TAKEN;
                         }
                     }
                     //Only update status section if has higher priority

@@ -1174,7 +1174,12 @@ if (empty($reshook))
 										{
 											require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 											require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-											switchAllResources($lines[$i], ResourceStatus::OCCUPIED, $originid, $origin, $object->id, $object->element);
+											$result = switchAllResources($lines[$i], ResourceStatus::OCCUPIED, $originid, $origin, $object->id, $object->element);
+											if ($result < 0)
+											{
+												$error++;
+												break;
+											}
 										}
 									}
 								}

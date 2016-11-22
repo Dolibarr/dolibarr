@@ -2179,7 +2179,7 @@ class Facture extends CommonInvoice
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 				require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-				$result = occupyAllResources($this, ResourceStatus::OCCUPIED);
+				$result = occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::OCCUPIED);
 				if ($result < 0) $error ++;
 			}
 

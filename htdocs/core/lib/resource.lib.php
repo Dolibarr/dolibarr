@@ -142,19 +142,20 @@ function resource_admin_prepare_head() {
  *  Check each resources in service line's and occupies if available.
  *
  * @param   CommonObject    $object       Object
+ * @param   array           $target       Specific statuses to update only
  * @param   int             $status       Status to set on resources
  * @param   int             $booker_id    Booker id
  * @param   string          $booker_type  Booker type
  * @return  int                           <0 if KO, 0 > if OK
  */
-function occupyAllResources($object, $status, $booker_id=null, $booker_type=null)
+function occupyAllResources($object, $target, $status, $booker_id=null, $booker_type=null)
 {
     global $langs, $conf, $hookmanager, $user, $db;
 
     if (empty($booker_id)) $booker_id = $object->id;
     if (empty($booker_type)) $booker_type = $object->element;
     dol_syslog(__METHOD__." object_id=".$object->id." object_type=".$object->element, LOG_DEBUG);
-    dol_syslog("status=".$status." booker_id=".$booker_id." booker_type=".$booker_type, LOG_DEBUG);
+    dol_syslog("target=".implode(",", $target)."status=".$status." booker_id=".$booker_id." booker_type=".$booker_type, LOG_DEBUG);
 
     $error = 0;
     $return = null;
@@ -165,7 +166,7 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
     {
         foreach ($object->lines as $line)
         {
-            $result = occupyAllResources($line, $status, $booker_id, $booker_type);
+            $result = occupyAllResources($line, $target, $status, $booker_id, $booker_type);
             if ($result < 0)
             {
                 $error++;
@@ -281,7 +282,7 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                                 foreach ($root['dependency'] as $id => $resource)
                                 {
                                     /** @var Dolresource $resource */
-                                    $result = $resource->setStatus($user, $object->date_start, $object->date_end, ResourceStatus::$AVAILABLE, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
+                                    $result = $resource->setStatus($user, $object->date_start, $object->date_end, $target, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
                                     if ($result < 0)
                                     {
                                         setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
