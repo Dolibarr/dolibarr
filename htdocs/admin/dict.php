@@ -1062,6 +1062,7 @@ if ($id)
 			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
 			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
 			if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); }
+			if ($fieldlist[$field]=='percent')         { $valuetoshow=$langs->trans("Percentage"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1249,6 +1250,7 @@ if ($id)
 			if ($fieldlist[$field]=='custom_x')        { $valuetoshow=$langs->trans("CustomX"); }
 			if ($fieldlist[$field]=='custom_y')        { $valuetoshow=$langs->trans("CustomY"); }
 			if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); }
+			if ($fieldlist[$field]=='percent')         { $valuetoshow=$langs->trans("Percentage"); }
 
             // Affiche nom du champ
             if ($showfield)
