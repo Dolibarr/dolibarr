@@ -802,7 +802,7 @@ class FormFile
 		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
     	if (! empty($file_list))
     	{
-    	    $out='<dl class="dropdown">
+    	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';

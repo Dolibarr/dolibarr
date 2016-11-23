@@ -999,11 +999,12 @@ class Facture extends CommonInvoice
 	 *      @param  int		$short           1=Return just URL
 	 *      @param  string  $moretitle       Add more text to title tooltip
      *      @param	int  	$notooltip		 1=Disable tooltip
+     *      @param  int     $addlinktonote   1=Add link to notes
 	 *      @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0,$addlinktonotes=0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $form;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1058,6 +1059,21 @@ class Facture extends CommonInvoice
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
+
+		if ($addlinktonotes)
+		{
+		    $txttoshow=($user->societe_id>0?$this->note_public:$this->note_private);
+		    if ($txttoshow)
+		    {
+                $notetoshow=$langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow,1);
+    		    $result.=' <span class="note inline-block">';
+    		    $result.='<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">'.img_picto('','object_generic').'</a>';
+    		    //$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+    		    //$result.='</a>';
+    		    $result.='</span>';
+		    }
+		}
+		
 		return $result;
 	}
 

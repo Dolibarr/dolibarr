@@ -866,30 +866,25 @@ if ($resql)
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             $facturestatic->type=$obj->type;
+            $facturestatic->note_public=$obj->note_public;
+            $facturestatic->note_private=$obj->note_private;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
     
-                $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
                 $paiement = $facturestatic->getSommePaiement();
 				$remaintopay = $obj->total_ttc - $paiement;
     
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
                 print '<td class="nobordernopadding nowrap">';
-                print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
+                print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
                 print $obj->increment;
                 print '</td>';
     
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-                if (! empty($obj->note_private))
-                {
-    				print ' <span class="note">';
-    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$obj->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    				print '</span>';
-    			}
                 $filename=dol_sanitizeFileName($obj->facnumber);
                 $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->facid;
