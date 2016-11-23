@@ -641,6 +641,7 @@ class ResourceScheduleSection extends CommonObject
         $error = 0;
         $total = 0;
         $left = 0;
+        $multiple_booker = in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER);
 
         $this->db->begin();
 
@@ -662,7 +663,8 @@ class ResourceScheduleSection extends CommonObject
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= $where;
-        if ($skip_same)
+        //Don't skip same status if status is multiple booker
+        if ($skip_same && !$multiple_booker)
         {
             $sql.= " AND status != ".$this->status;
         }
@@ -693,12 +695,14 @@ class ResourceScheduleSection extends CommonObject
             {
                 $error++; $this->errors[]="Error ".$this->db->lasterror();
             }
-
-            if (! $error)
+            
+            //Check if section change count is correct
+            //Skip counting when status is multiple booker, which having same status doesn't mean that sections didn't change
+            if (! $error && ! $multiple_booker)
             {
                 $changed = $this->db->affected_rows($resql);
                 $left = $total - $changed;
-                dol_syslog(__METHOD__." check_total=".$check_total." total=".$total." changed=".$changed, LOG_DEBUG);
+                dol_syslog(__METHOD__." section check_total=".$check_total." total=".$total." changed=".$changed, LOG_DEBUG);
                 if ($check_total && $total != $changed)
                 {
                     $langs->load("other");
@@ -708,12 +712,12 @@ class ResourceScheduleSection extends CommonObject
             }
         }
 
-        // Update request
+        // Update booker request
         if (! $error)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
             if (in_array($this->status, ResourceStatus::$MANUAL)) $sql.= " status_manual = ".$this->status.",";
-            if (in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers use counter, the rest use booker_id/type
+            if ($multiple_booker) //Multiple bookers use counter, the rest use booker_id/type
             {
                 $sql.= " booker_id = null,";
                 $sql.= " booker_type = null,";
@@ -733,6 +737,20 @@ class ResourceScheduleSection extends CommonObject
             if (! $resql)
             {
                 $error++; $this->errors[]="Error ".$this->db->lasterror();
+            }
+            
+            //Check if section change count is correct, only when status is multiple booker
+            if (! $error && $multiple_booker)
+            {
+                $changed = $this->db->affected_rows($resql);
+                $left = $total - $changed;
+                dol_syslog(__METHOD__." booker check_total=".$check_total." total=".$total." changed=".$changed, LOG_DEBUG);
+                if ($check_total && $total != $changed)
+                {
+                    $langs->load("other");
+                    $this->errors[]=$langs->trans("ScheduleSectionsUnchanged", $left);
+                    $error++;
+                }
             }
         }
 
