@@ -779,6 +779,8 @@ class Dolresource extends CommonObject
                     {
                         if ($section->booker_id == $booker_id && $section->booker_type == $booker_type)
                         {
+                            //Override status of this section
+                            $section_status = ResourceStatus::TAKEN;
                             $taken = true;
                         }
                     }
