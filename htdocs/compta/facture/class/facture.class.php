@@ -1614,7 +1614,7 @@ class Facture extends CommonInvoice
 	/**
 	 *	Delete invoice
 	 *
-	 *	@param     	User	$user      	    User to delete.
+	 *	@param     	User	$user      	    User making the deletion.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, >0 if OK
