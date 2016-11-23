@@ -2217,7 +2217,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
-		// Origin
+		// Source reason (why we have an ordrer)
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Source');
@@ -2231,12 +2231,26 @@ if ($action == 'create' && $user->rights->commande->creer)
 		} else {
 			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 		}
-		// Removed because using dictionary is an admin feature, not a user feature. There is already the "star" to show info to admin users.
-		// This is to avoid too heavy screens and have an uniform look and feel for all screens.
-		// print '</td><td>';
-		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+		// TODO Order mode (how we receive order). Not yet implemented
+		/*
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('SourceMode');
+		print '</td>';
+		if ($action != 'editinputmode')
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinputmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetInputMode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editinputmode') {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'input_mode_id', 1);
+		} else {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'none');
+		}
+		print '</td></tr>';
+		*/
+		
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];

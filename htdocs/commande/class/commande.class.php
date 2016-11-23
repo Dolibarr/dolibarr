@@ -114,7 +114,7 @@ class Commande extends CommonOrder
      */
     public $availability;
 
-    public $demand_reason_id;
+    public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
     public $demand_reason_code;
     public $address;
     public $date;				// Date commande
@@ -123,14 +123,14 @@ class Commande extends CommonOrder
 	 * @see date
 	 */
     public $date_commande;
-    public $date_livraison;	// Date livraison souhaitee
+    public $date_livraison;	    // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
     public $fk_remise_except;
     public $remise_percent;
     public $remise_absolue;
     public $info_bits;
     public $rang;
     public $special_code;
-    public $source;			// Origin of order
+    public $source;			    // Order mode. How we received order (by phone, by email, ...)
     public $extraparams=array();
 
     public $linked_objects=array();
