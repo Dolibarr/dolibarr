@@ -46,7 +46,7 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/l
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-c
+
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');

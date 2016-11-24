@@ -44,9 +44,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->propal->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';

@@ -4016,7 +4016,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 	global $db,$mysoc;
 
 	if (! class_exists('Product')) {
-		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 	}
 
 	$ret=0;
@@ -4173,7 +4173,7 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if ($idprodfournprice > 0)
 	{
 		if (! class_exists('ProductFournisseur'))
-			require DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
@@ -4181,7 +4181,7 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	elseif ($idprod > 0)
 	{
 		if (! class_exists('Product'))
-			require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;
