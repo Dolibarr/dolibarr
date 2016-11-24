@@ -999,7 +999,7 @@ class Facture extends CommonInvoice
 	 *      @param  int		$short           1=Return just URL
 	 *      @param  string  $moretitle       Add more text to title tooltip
      *      @param	int  	$notooltip		 1=Disable tooltip
-     *      @param  int     $addlinktonote   1=Add link to notes
+     *      @param  int     $addlinktonotes  1=Add link to notes
 	 *      @return string 			         String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0,$addlinktonotes=0)
