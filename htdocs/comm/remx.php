@@ -537,6 +537,15 @@ if ($socid > 0)
 				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
+			elseif (preg_match('/\(EXCESS RECEIVED\)/',$obj->description))
+			{
+				print '<td class="nowrap">';
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print preg_replace('/\(EXCESS RECEIVED\)/',$langs->trans("Invoice"),$obj->description).' '.$facturestatic->getNomURl(1);
+				print '</td>';
+			}
 			else
 			{
 				print '<td>';
