@@ -388,7 +388,7 @@ if ($action == 'create')
 	print '<td colspan="3">';
     // Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,70);
+	$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -931,7 +931,7 @@ else
 		print '<td>';
 	    // Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,'95%');
+		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,'95%');
 		$doleditor->Create();
 		print '</td></tr>';
 

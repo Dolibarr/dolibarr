@@ -4469,12 +4469,12 @@ abstract class CommonObject
 					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
-					case "view":
-						$out .= $extrafields->showOutputField($key,$value);
-						break;
-					case "edit":
-						$out .= $extrafields->showInputField($key,$value,'',$keyprefix,'',0,$this->id);
-						break;
+    					case "view":
+    						$out .= $extrafields->showOutputField($key,$value);
+    						break;
+    					case "edit":
+    						$out .= $extrafields->showInputField($key,$value,'',$keyprefix,'',0,$this->id);
+    						break;
 					}
 
 					$out .= '</td>';
@@ -4485,6 +4485,8 @@ abstract class CommonObject
 				}
 			}
 			$out .= "\n";
+			// Add code to manage list depending on others
+			if (! empty($conf->use_javascript_ajax))
 			$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {

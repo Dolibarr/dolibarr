@@ -256,7 +256,7 @@ if ($action == 'create')
 
     print "<tr>".'<td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+    $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
     $doleditor->Create();
     print "</td></tr>\n";
 
@@ -531,7 +531,7 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
             print '<td class="valeur">';
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-            $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+            $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
             $doleditor->Create();
             print '</td>';
             print "</tr>\n";
