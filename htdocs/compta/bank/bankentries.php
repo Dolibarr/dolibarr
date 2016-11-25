@@ -651,7 +651,7 @@ if ($resql)
 	    print '</td><td>';
 	    print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
 	    print '<td colspan="2">';
-	    print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
+	    print '<input name="label" class="flat" type="text" size="40"  value="'.GETPOST("label").'">';
 	    if ($options) {
 	        print '<br>'.$langs->trans("Rubrique").': ';
 	        print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
