@@ -131,8 +131,8 @@ if ($action == "correct_stock")
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby=dol_mktime(12, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby=dol_mktime(12, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
         	 
 	        $result=$product->correct_stock_batch(
 	            $user,
