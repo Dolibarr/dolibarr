@@ -1961,6 +1961,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $old_statut = $this->statut;
                     $this->statut = $statut;
 
                     // Call trigger
@@ -1974,6 +1975,7 @@ class CommandeFournisseur extends CommonOrder
                     }
                     else
                     {
+                        $this->statut = $old_statut;
                         $this->db->rollback();
                         $this->error=$this->db->lasterror();
                         $result = -1;
