@@ -45,11 +45,14 @@ class GenericApi extends DolibarrApi
      * @return  array                   Response status and user token
      *
 	 * @throws RestException
+	 *
+	 * @url POST /login
+	 * @url GET /login
 	 */
 	public function login($login, $password, $entity=0, $reset=0) {
 
 	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
-	    
+
 		// Authentication mode
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
@@ -67,21 +70,21 @@ class GenericApi extends DolibarrApi
 		}
 
 		$token = 'failedtogenerateorgettoken';
-		
+
 		$tmpuser=new User($this->db);
 		$tmpuser->fetch(0, $login);
-		
+
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset)
 		{
     		// Generate token for user
     		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
-    
+
     		// We store API token into database
     		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
     		$sql.= " SET api_key = '".$this->db->escape($token)."'";
     		$sql.= " WHERE login = '".$this->db->escape($login)."'";
-    
+
     		dol_syslog(get_class($this)."::login", LOG_DEBUG);	// No log
     		$result = $this->db->query($sql);
     		if (!$result)
@@ -93,7 +96,7 @@ class GenericApi extends DolibarrApi
 		{
             $token = $tmpuser->api_key;
 		}
-		
+
 		//return token
 		return array(
 			'success' => array(
