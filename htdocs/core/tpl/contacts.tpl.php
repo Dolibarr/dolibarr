@@ -52,6 +52,7 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
+<div class="div-table-responsive">
 <div class="tagtable centpercent noborder allwidth">
 
 <?php 
@@ -237,6 +238,7 @@ if ($permission) {
 <?php $i++; ?>
 <?php } } ?>
 
+</div>
 </div>
 <!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->
 <?php

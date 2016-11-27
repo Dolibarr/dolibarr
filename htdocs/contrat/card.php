@@ -1928,7 +1928,9 @@ else
 			';
 
 			print '<br>';
-            print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
+
+            print '<div class="div-table-responsive">';
+			print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
 
             // Trick to not show product entries
             $savproductenabled=$conf->product->enabled;
@@ -1950,7 +1952,7 @@ else
         	$conf->product->enabled = $savproductenabled;
 
             print '</table>';
-
+            print '</div>';
             print '</form>';
         }
 
