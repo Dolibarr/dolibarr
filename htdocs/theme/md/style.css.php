@@ -636,6 +636,8 @@ div.myavailability {
 .titlefieldcreate { width: 20%; }
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.imgmaxwidth180 { max-width: 180px; }
+	
 
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
@@ -1038,6 +1040,9 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+img.fitcontain {
+    object-fit: contain;
+}
 div.photoref {
 	display:table-cell;
 	vertical-align:middle;
@@ -1051,6 +1056,7 @@ img.photorefnoborder {
     object-fit: contain;
     border: 1px solid #CCC;
 }
+
 .underrefbanner {
 }
 .underbanner {
@@ -4441,7 +4447,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-	.imgopensurveywizard { width:95%; height: auto; }
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 	
 	#tooltip {
 		position: absolute;
