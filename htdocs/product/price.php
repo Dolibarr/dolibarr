@@ -959,7 +959,7 @@ else
 				}
 			}
 			if ($action != 'edit_price_by_qty') {
-				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';  // FIXME a form into a table is not allowed
 				print '<input type="hidden" name="action" value="update_price_by_qty">';
 				print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
 				print '<input type="hidden" value="0" name="rowid">';
@@ -1345,6 +1345,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"),'','','','','',$backbutton, 0, 0, 'title_accountancy.png');
     		else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
     
+    		print '<div class="div-table-responsive">';
     		print '<table class="noborder" width="100%">';
     
     		print '<tr class="liste_titre">';
@@ -1450,6 +1451,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		
     		$db->free($result);
     		print "</table>";
+    		print '</div>';
     		print "<br>";
     	}
     } else {

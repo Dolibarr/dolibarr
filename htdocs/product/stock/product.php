@@ -785,8 +785,10 @@ if (empty($reshook))
  * Stock detail (by warehouse). May go down into batch details.
  */
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
+print '<tr class="liste_titre">';
+print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
 print '<td align="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
@@ -918,10 +920,11 @@ else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
 print "</table>";
+print '</div>';
 
 if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	
-	print '<br /><br />';
+	print '<br><br>';
 	print_titre($langs->trans('AddNewProductStockWarehouse'));
 	//print '<br />';
 	

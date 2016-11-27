@@ -603,7 +603,7 @@ else
 		print '<td>'.$object->label.'</td></tr>';*/
 
 		// Type
-		print '<tr><td>'.$langs->trans("AccountType").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
 
 		// Currency
@@ -683,12 +683,12 @@ else
 		
         // Categories
         if ($conf->categorie->enabled) {
-            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
             print $form->showCategories($object->id,'account',1);
             print "</td></tr>";
         }
 
-		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
+		print '<tr><td class="tdtop titlefield">'.$langs->trans("Comment").'</td>';
 		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
 
 		print '</table>';
