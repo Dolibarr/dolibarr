@@ -179,7 +179,10 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 	
-	print "<table class=\"noborder\" width=\"100%\">";
+	$moreforfilter='';
+	
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	print '<tr class="liste_titre">';
 	
@@ -244,6 +247,8 @@ if ($result) {
 		}
 	}
 	print "</table>";
+	
+	print "</div>";
 } else {
 	dol_print_error($db);
 }

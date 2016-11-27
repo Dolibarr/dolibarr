@@ -114,9 +114,13 @@ if ($resql)
 	
 	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
+	$moreforfilter='';
+	
 	$i = 0;
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Date").'</td>';
 	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
 	print '<td align="center">'.$langs->trans("Action").'</td>';
@@ -162,7 +166,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-	
+	print '</div>';
 	print '</form>';
 	
 	$db->free($resql);

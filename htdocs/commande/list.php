@@ -845,7 +845,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// Fields title
 	print '<tr class="liste_titre">';
@@ -1421,9 +1422,8 @@ if ($resql)
 	print $hookmanager->resPrint;
 				
 	print '</table>'."\n";
-
-	print '<br />';
-
+	print '</div>';
+	
 	print '</form>'."\n";
 
 	//print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';

@@ -414,8 +414,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	});'."\n";
 							print '	</script>'."\n";
 						}
-						print '<table class="liste" width="100%">';
-	                    print '<tr class="liste_titre">';
+
+                        print '<div class="div-table-responsive">';
+                        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+						print '<tr class="liste_titre">';
 	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -539,6 +542,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";
+	                    
+	                    print "</div>";
 	                }
 	                $db->free($resql);
 	            }
@@ -642,7 +647,10 @@ if (empty($action))
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        print '<table class="noborder" width="100%">';
+
+        print '<div class="div-table-responsive">';
+        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$paramlist,'align="center"',$sortfield,$sortorder);
@@ -726,6 +734,7 @@ if (empty($action))
             $i++;
         }
         print "</table>";
+        print "</div>";
         print "</form>\n";
     }
     else

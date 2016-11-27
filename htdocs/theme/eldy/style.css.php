@@ -582,13 +582,16 @@ div.myavailability {
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
-.table-responsive {
+/*.table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+}*/
+.div-table-responsive {
+    overflow-x: auto;
+    min-height: 0.01%;
 }
-
 
 
 /* ============================================================================== */
@@ -613,6 +616,7 @@ div.myavailability {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
@@ -627,6 +631,7 @@ div.myavailability {
 .titlefieldcreate { width: 20%; }
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.imgmaxwidth180 { max-width: 180px; }
 
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
@@ -984,6 +989,9 @@ img.photoref, div.photoref {
     padding: 4px;
 	height: 80px;
 	width: 80px;
+    object-fit: contain;
+}
+img.fitcontain {
     object-fit: contain;
 }
 div.photoref {
@@ -2397,7 +2405,6 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
 }
-
 .table-key-border-col {
 	/* width: 25%; */
 	vertical-align:top;
@@ -4511,7 +4518,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-	.imgopensurveywizard { width:95%; height: auto; }
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	#tooltip {
 		position: absolute;

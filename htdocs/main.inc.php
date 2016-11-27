@@ -849,6 +849,7 @@ if (! defined('NOREQUIRETRAN'))
 $bc=array(0=>'class="impair"',1=>'class="pair"');
 $bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
 $bcnd=array(0=>'class="impair nodrag nodrop nohover"',1=>'class="pair nodrag nodrop nohoverpair"');		// Used for tr to add new lines
+$bctag=array(0=>'class="impair tagtr"',1=>'class="pair tagtr"');
 
 // Define messages variables
 $mesg=''; $warning=''; $error=0;

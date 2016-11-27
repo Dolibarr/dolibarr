@@ -347,8 +347,9 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print '<br>';
-print "\n";
+
+dol_fiche_end();
+
 
 // Filter on user
 /*	dol_fiche_head('');
@@ -393,7 +394,9 @@ print '</div>';
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
@@ -444,8 +447,7 @@ else
 	print '<tr><td colspan="10">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
-
-dol_fiche_end();
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Save").'">';

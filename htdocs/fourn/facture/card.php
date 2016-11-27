@@ -2560,6 +2560,7 @@ else
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
+        print '<div class="div-table-responsive">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
@@ -2587,8 +2588,7 @@ else
         }
 
         print '</table>';
-
-
+        print '</div>';
         print '</form>';
 
         dol_fiche_end();

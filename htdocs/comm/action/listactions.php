@@ -132,7 +132,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $actioncode='';
     $search_title='';
@@ -335,9 +335,13 @@ if ($resql)
     
     print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
+    $moreforfilter='';
+    
     $i = 0;
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
@@ -354,11 +358,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
-	//{
-	    print '<td class="liste_titre"></td>';
-	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
-	//}
+    print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
@@ -367,7 +367,6 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	//print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
     print '<td></td>';
 	// Action column
@@ -499,7 +498,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-
+    print '</div>';
 	print '</form>';
 
 	$db->free($resql);

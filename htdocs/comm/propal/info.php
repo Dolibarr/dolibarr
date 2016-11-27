@@ -43,6 +43,8 @@ $result = restrictedArea($user, 'propal', $id);
  *	View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $object = new Propal($db);

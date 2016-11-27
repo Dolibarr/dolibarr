@@ -111,8 +111,18 @@ if ($result)
 	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+    $moreforfilter = '';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"m.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"m.titre",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"m.date_creat",$param,"",'align="center"',$sortfield,$sortorder);
@@ -193,7 +203,9 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
-	print '</table></form>';
+	print '</table>';
+	print '</div>';
+	print '</form>';
 	$db->free($result);
 }
 else

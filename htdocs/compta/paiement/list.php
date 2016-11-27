@@ -129,7 +129,7 @@ else
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
-    $sql.= " ba.rowid as bid, ba.label,";
+    $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -222,7 +222,9 @@ if ($resql)
     
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
     
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
@@ -320,10 +322,14 @@ if ($resql)
 	    if (! empty($conf->banque->enabled))
 	    {
 	        print '<td>';
-	        if ($objp->bid)
+	        if ($objp->bid > 0)
 	        {
 	            $accountstatic->id=$objp->bid;
-	            $accountstatic->label=$objp->label;
+	            $accountstatic->ref=$objp->bref;
+	            $accountstatic->label=$objp->blabel;
+	            $accountstatic->number=$objp->number;
+	            $accountstatic->account_number=$objp->account_number;
+	            $accountstatic->accountancy_journal=$objp->accountancy_journal;
 	            print $accountstatic->getNomUrl(1);
 	        }
 	        else print '&nbsp;';
@@ -347,6 +353,7 @@ if ($resql)
         $i++;
     }
     print "</table>\n";
+    print "</div>";
     print "</form>\n";
 }
 else

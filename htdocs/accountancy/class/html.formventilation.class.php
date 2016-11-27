@@ -71,8 +71,8 @@ class FormVentilation extends Form
 	 * @param string   $htmlname           Name of field in html form
 	 * @param int      $showempty          Add an empty field
 	 * @param array    $event              Event options
-	 * @param int      $select_in          selectid value is a aa.rowid (0 default) or aa.account_number (1)
-	 * @param int      $select_out         set value returned by select 0=rowid (default), 1=account_number
+	 * @param int      $select_in          0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
+	 * @param int      $select_out         Set value returned by select. 0=rowid (default), 1=account_number
 	 * @param string   $morecss            More css non HTML object
 	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @return string                      String with HTML select
