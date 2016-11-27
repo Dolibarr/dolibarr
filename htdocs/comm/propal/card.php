@@ -797,7 +797,7 @@ if (empty($reshook))
 								$pu_ht = price($prodcustprice->lines [0]->price);
 								$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 								$price_base_type = $prodcustprice->lines [0]->price_base_type;
-								$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+								$tva_tx = $prodcustprice->lines [0]->tva_tx;
 							}
 						}
 					}
@@ -1828,7 +1828,7 @@ if ($action == 'create')
 			// Remise dispo de type non avoir
 			$filter = 'fk_facture_source IS NULL';
 			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter);
+			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter, 0, '', 1);
 		}
 	}
 	if ($absolute_creditnote) {
@@ -2404,7 +2404,7 @@ if ($action == 'create')
 
 		$var = true;
 
-		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));

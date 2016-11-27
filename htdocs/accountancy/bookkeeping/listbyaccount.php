@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr>
- * largely based on the great work of :
+ * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr> largely based on the great work of :
  *  - Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
  *  - Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *  - Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
@@ -18,7 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -72,11 +70,8 @@ $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
-if (empty($search_date_start)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
-}
-
+if (empty($search_date_start)) $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 
 $object = new BookKeeping($db);
 
@@ -126,16 +121,17 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
   }
 }
 
+
 /*
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
 	$search_accountancy_code_start = '';
-  $search_label_account = '';
+    $search_label_account = '';
 	$search_mvt_label = '';
 	$search_direction = '';
 	$search_ledger_code = '';

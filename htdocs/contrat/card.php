@@ -494,7 +494,7 @@ if (empty($reshook))
 							$pu_ht = price($prodcustprice->lines [0]->price);
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
-							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+							$tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
 				}
@@ -572,7 +572,7 @@ if (empty($reshook))
 	        if ($result > 0)
 	        {
 	        	// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && ! empty($conf->global->CONTRACT_ADDON_PDF))    // No generation if default type not defined
 				{
 					$outputlangs = $langs;
 					$newlang = '';
@@ -1160,14 +1160,14 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
 
 
-    $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
+    $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
     print $doleditor->Create(1);
 
 
     if (empty($user->societe_id))
     {
         print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
-        $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
+        $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
     }
@@ -1630,7 +1630,7 @@ else
                     $nbrows=ROWS_2;
                     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
                     $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-                    $doleditor=new DolEditor('product_desc',$objp->description,'',92,'dolibarr_details','',false,true,$enable,$nbrows,70);
+                    $doleditor=new DolEditor('product_desc',$objp->description,'',92,'dolibarr_details','',false,true,$enable,$nbrows,'90%');
                     $doleditor->Create();
 
                     print '</td>';

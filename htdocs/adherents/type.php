@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_lastname="";
     $search_login="";
@@ -181,8 +181,11 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		print '<table class="noborder" width="100%">';
-
+		$moreforfilter = '';
+		
+		print '<div class="div-table-responsive">';
+		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+		
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';
 		print '<td>'.$langs->trans("Label").'</td>';
@@ -209,6 +212,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			$i++;
 		}
 		print "</table>";
+		print '</div>';
 	}
 	else
 	{
@@ -252,7 +256,7 @@ if ($action == 'create')
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -299,13 +303,13 @@ if ($rowid > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 		print '<td>';
 		print $form->showrefnav($object, 'rowid', $linkback);
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.dol_escape_htmltag($object->libelle).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.dol_escape_htmltag($object->libelle).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print yn($object->subscription);
@@ -462,9 +466,16 @@ if ($rowid > 0)
 		        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 		    }
 
-		    print '<br>';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
+				
+			print '<br>';
             print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-		    print '<table class="noborder" width="100%">';
+		    
+            $moreforfilter = '';
+            
+            print '<div class="div-table-responsive">';
+            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		    print '<tr class="liste_titre">';
 		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -477,9 +488,6 @@ if ($rowid > 0)
 		    print "</tr>\n";
 
 			// Lignes des champs de filtre
-			print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
-
 			print '<tr class="liste_titre">';
 
 			print '<td class="liste_titre" align="left">';
@@ -502,7 +510,6 @@ if ($rowid > 0)
 			print '</td>';
 
 			print "</tr>\n";
-			print '</form>';
 
 		    $var=True;
 		    while ($i < $num && $i < $conf->liste_limit)
@@ -596,7 +603,9 @@ if ($rowid > 0)
 		    }
 
 		    print "</table>\n";
-
+            print '</div>';
+            print '</form>';
+            
 			if ($num > $conf->liste_limit)
 			{
 			    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
@@ -650,7 +659,7 @@ if ($rowid > 0)
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

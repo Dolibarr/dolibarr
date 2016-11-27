@@ -24,6 +24,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- after changing const name, please insure that old constant was rename
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRDPARTY_CREATION_INDIVIDUAL')__; -- under 4.0.1
 
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
@@ -44,6 +47,9 @@ ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_don ADD COLUMN date_valid datetime;
 
 DELETE FROM llx_menu where module='expensereport';
+
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_author integer after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
@@ -105,8 +111,10 @@ ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafield
 ALTER TABLE llx_cotisation RENAME TO llx_subscription;
 ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
-ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
- 
+ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT '1';
+
+UPDATE llx_adherent_type SET subscription = '1' WHERE subscription = 'yes';
+
 CREATE TABLE llx_product_lot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -168,15 +176,58 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
 ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
 
+ALTER TABLE llx_projet ADD COLUMN import_key      	        	varchar(14);
+ALTER TABLE llx_projet_task ADD COLUMN import_key      		    varchar(14);
+ALTER TABLE llx_projet_task_time ADD COLUMN import_key      	varchar(14);
+
+
 ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
+ALTER TABLE llx_mailing_cibles ADD COLUMN error_text varchar(255);
+
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
+
+create table llx_user_employment
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  entity            integer DEFAULT 1 NOT NULL, -- multi company id
+  ref				varchar(50),				-- reference
+  ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
+  fk_user			integer,
+  datec             datetime,
+  tms               timestamp,
+  fk_user_creat     integer,
+  fk_user_modif     integer,
+  job				varchar(128),				-- job position. may be a dictionnary
+  status            integer NOT NULL,			-- draft, active, closed
+  salary			double(24,8),				-- last and current value stored into llx_user
+  salaryextra		double(24,8),				-- last and current value stored into llx_user
+  weeklyhours		double(16,8),				-- last and current value stored into llx_user
+  dateemployment    date,						-- last and current value stored into llx_user
+  dateemploymentend date						-- last and current value stored into llx_user
+)ENGINE=innodb;
+
+
+
+-- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
+drop table tmp_links_double;
+--select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
+create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
+--select * from tmp_links_double;
+delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);	--update to avoid duplicate, delete to delete
+drop table tmp_links_double;
+
+ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
+
+UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
+ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 -- Product attributes
 CREATE TABLE llx_product_attribute

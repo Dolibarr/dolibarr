@@ -329,8 +329,8 @@ if ($result)
         	{
         		// On affiche ligne pour modifier droits
         		print '<tr '. $bc[$var].'>';
-        		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-        		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
+        		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto).' '.$objMod->getName();
+        		print '<a name="'.$objMod->getName().'"></a></td>';
         		print '<td align="center" class="nowrap">';
         		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
         		print '/';
@@ -344,7 +344,7 @@ if ($result)
 		print '<tr '. $bc[$var].'>';
 
 		// Picto and label of permission
-		print '<td>'.img_object('',$picto).' '.$objMod->getName().'</td>';
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
         // Permission and tick
         if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin
@@ -403,7 +403,7 @@ if ($result)
         }
 
 		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
-		print '<td>'.$permlabel. '</td>';
+		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
 
 		print '</tr>'."\n";
 

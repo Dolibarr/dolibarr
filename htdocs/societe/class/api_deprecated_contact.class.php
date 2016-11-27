@@ -126,7 +126,7 @@ class ContactApi extends DolibarrApi
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
-		$sql.= ' WHERE  c.entity IN (' . getEntity('contact', 1) . ')';
+		$sql.= ' WHERE  c.entity IN (' . getEntity('socpeople', 1) . ')';
 		if ($socid)
 			$sql.= " AND c.fk_soc = " . $socid;
 
@@ -239,7 +239,8 @@ class ContactApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-			$this->contact->$field = $value;
+            if ($field == 'id') continue;
+		    $this->contact->$field = $value;
 		}
 
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))

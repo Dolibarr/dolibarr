@@ -28,7 +28,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
-require DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 $action	= GETPOST('action','alpha');
 $element = GETPOST('element', 'alpha');
@@ -48,7 +48,7 @@ if (isset($action) && ! empty($action))
 
 	if ($action == 'build' && ! empty($element))
 	{
-		require DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
 		$ecmdirtmp = new EcmDirectory($db);

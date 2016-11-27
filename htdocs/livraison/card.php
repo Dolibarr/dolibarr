@@ -750,14 +750,6 @@ else
 			// Rien a droite
 
 			print '</td></tr></table>';
-
-			// List of existing shipment and delivery receipts
-			/*if ($expedition->origin_id)
-			{
-				print '<br>';
-				//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
-				show_list_sending_receive($expedition->origin,$expedition->origin_id);
-			}*/
 		}
 		else
 		{

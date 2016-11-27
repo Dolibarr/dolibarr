@@ -632,7 +632,7 @@ if (count($object->records) > 0)
     if ($website && $action == 'preview')
     {
         $disabled='';
-        if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+        if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
     
         print ' &nbsp; ';
         
@@ -735,7 +735,7 @@ if (count($object->records) > 0)
         if ($action == 'preview')
         {
             $disabled='';
-            if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+            if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
         
             if ($pageid > 0)
             {
@@ -978,7 +978,7 @@ if ($action == 'editcontent')
     $contentforedit .= $objectpage->content;
     
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
+    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
     $doleditor->Create(0, '', false);
 }
 

@@ -114,7 +114,7 @@ class Categories extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('categorie', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('category', 1).')';
         if (!empty($type))
         {
             $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
@@ -151,7 +151,7 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
@@ -204,7 +204,7 @@ class Categories extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
         $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
@@ -237,7 +237,7 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
@@ -298,6 +298,7 @@ class Categories extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->category->$field = $value;
         }
         
@@ -337,6 +338,26 @@ class Categories extends DolibarrApi
                 'message' => 'Category deleted'
             )
         );
+    }
+    
+    
+    /**
+     * Clean sensible object datas
+     *
+     * @param   Categorie  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     *
+     * @todo use an array for properties to clean
+     *
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        // Remove the subscriptions because they are handled as a subresource.
+        //unset($object->subscriptions);
+    
+        return $object;
     }
     
     /**

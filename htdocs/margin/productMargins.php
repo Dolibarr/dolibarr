@@ -203,8 +203,11 @@ if ($result)
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',0,0,'');
 
+	$moreforfilter='';
+	
 	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
@@ -324,6 +327,7 @@ if ($result)
 	print "</tr>\n";
 
 	print "</table>";
+	print '</div>';
 }
 else
 {

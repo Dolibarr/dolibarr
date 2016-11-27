@@ -587,9 +587,10 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *	@param		string	$option			On what the link points
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return		string					Chain with URL
      */
-    public function getNomUrl($withpicto=0,$option='')
+    public function getNomUrl($withpicto=0,$option='',$notooltip=0)
     {
         global $langs, $conf;
 
@@ -606,14 +607,28 @@ class CommandeFournisseur extends CommonOrder
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $picto='order';
+        $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
+            
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowOrder");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        $picto='order';
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 
@@ -1946,6 +1961,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $old_statut = $this->statut;
                     $this->statut = $statut;
 
                     // Call trigger
@@ -1959,6 +1975,7 @@ class CommandeFournisseur extends CommonOrder
                     }
                     else
                     {
+                        $this->statut = $old_statut;
                         $this->db->rollback();
                         $this->error=$this->db->lasterror();
                         $result = -1;
@@ -2273,10 +2290,10 @@ class CommandeFournisseur extends CommonOrder
 
             // Clean vat code
             $vat_src_code='';
-            if (preg_match('/\((.*)\)/', $vatrate, $reg))
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
                 $vat_src_code = $reg[1];
-                $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+                $vatrate = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
             
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);

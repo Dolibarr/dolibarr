@@ -371,7 +371,7 @@ class Orders extends DolibarrApi
       }
 			$request_data = (object) $request_data;
       $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
-      if ($updateRes == 1) {
+      if ($updateRes > 0) {
         return $this->get($id);
       }
       return false;
@@ -399,6 +399,7 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->commande->$field = $value;
         }
 

@@ -107,7 +107,6 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
 	$morehtmlref='<div class="refidno">';
@@ -152,7 +151,6 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 	
     print '<table class="border" width="100%">';
-
 
 	// Ref
 	/*

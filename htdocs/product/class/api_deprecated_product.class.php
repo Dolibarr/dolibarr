@@ -307,6 +307,7 @@ class ProductApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->product->$field = $value;
         }
         

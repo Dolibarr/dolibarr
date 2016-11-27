@@ -78,8 +78,6 @@ llxHeader();
 $param='';
 $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
 
-print '<div class="corps">'."\n";
-
 print load_fiche_titre($langs->trans("OpenSurveyArea"));
 
 // List of surveys into database
@@ -90,7 +88,11 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print '<table class="liste">'."\n";
+$moreforfilter = '';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.id_sondage",$param,"","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Title"), $_SERVER["PHP_SELF"], "p.titre",$param,"","",$sortfield,$sortorder);
@@ -104,7 +106,7 @@ print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
 print '<td></td>';
-print '<td><input type="text" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
+print '<td><input type="text" class="maxwidth100onsmartphone" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
 print '<td></td>';
 print '<td></td>';
 print '<td></td>';
@@ -197,10 +199,8 @@ while ($i < min($num,$limit))
 }
 
 print '</table>'."\n";
-
+print '</div>';
 print '</form>';
-
-print '</div>'."\n";
 
 llxFooter();
 

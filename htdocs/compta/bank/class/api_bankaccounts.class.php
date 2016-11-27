@@ -70,7 +70,7 @@ class BankAccounts extends DolibarrApi
         }
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('banque', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('bank_account', 1).')';
         // Add sql filters
         if ($sqlfilters) 
         {
@@ -185,6 +185,7 @@ class BankAccounts extends DolibarrApi
         }
 
         foreach ($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $account->$field = $value;
         }
 

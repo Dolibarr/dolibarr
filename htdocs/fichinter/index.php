@@ -169,7 +169,7 @@ if (! empty($conf->ficheinter->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('fichinter', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
 	$sql.= " AND f.fk_statut = 0";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -288,7 +288,7 @@ if (! empty($conf->fichinter->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('fichinter', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
 	$sql.= " AND f.fk_statut = 1";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

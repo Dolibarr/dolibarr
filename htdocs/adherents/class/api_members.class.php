@@ -200,6 +200,7 @@ class Members extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             // Process the status separately because it must be updated using
             // the validate() and resiliate() methods of the class Adherent.
             if ($field == 'statut') {

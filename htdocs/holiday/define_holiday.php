@@ -170,7 +170,11 @@ else
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<input type="hidden" name="action" value="update" />';
 
-    print '<table class="noborder" width="100%;">';
+    $moreforfilter='';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+    
     print "<tr class=\"liste_titre\">";
     print '<td width="55%">'.$langs->trans('Employee').'</td>';
     if (count($typeleaves))
@@ -244,7 +248,7 @@ else
     }
 
     print '</table>';
-
+    print '</div>';
     print '</form>';
 }
 

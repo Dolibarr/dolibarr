@@ -26,20 +26,20 @@ Dolibarr better:
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
 - Remove not used function calculate_byte(). Use dol_print_size() instead.
 - Function pdf_getTotalQty is now deprecated. Not used by Dolibarr core.
+- Method commande->deleteline($lineid) has been replaced with commande->deleteline($user, $lineid).
 - Method expensereport->delete(id, user) has been replaced with ->delete(user)
   Method warehouse->delete(id) has been replace with ->delete(user)
   This is to follow good practice to make a fetch on object before deleting it.
-- The form to add a product to a draft proposal/order/invoice from the product card is hidden by default.
+- The form to add a product to a draft proposal/order/invoice, from the product card, is hidden by default.
   It was not commonly used and usage generates some problems (cost price for margin calculation not entered, vat setting).  
   Set constant PRODUCT_ADD_FORM_ADD_TO to retrieve it.
-- The javascript "datatables" library was used to be provided into Dolibarr sources, but it was not used by application.
+- The javascript "datatables" library was previously provided into Dolibarr sources, but it was not used by application.
   So there is no reason to maintain its compatibility with other dolibarr components. If an external module need this 
-  library, this external module must embed hte library in his own sources/packages.
-- Trigger name SUPPLIER_PROPOSAL_CREATE has been renamed into PROPOSAL_SUPPLIER_CREATE
-- A new paramater sqlfilters was introduced to allow filter on any fields int the REST API. Few old parameters
-  no more required were also removed. Use this new one if you ware using one of them.
-- Method commande->deleteline($lindeid) has been replaced with commande->deleteline($user, $lineid).
-
+  library, this external module must embed the library in his own sources/packages.
+- Trigger name SUPPLIER_PROPOSAL_CREATE has been renamed into PROPOSAL_SUPPLIER_CREATE.
+- A new paramater sqlfilters was introduced to allow filter on any fields int the REST API. Few old parameters,
+  no more required, were also removed. Use this new one if you were using one of them.
+- The trigger that activate or close a contract line is run on a contract line, not on contract.
 
 
 ***** ChangeLog for 4.0.2 compared to 4.0.1 *****

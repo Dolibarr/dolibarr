@@ -97,6 +97,11 @@ class Project extends CommonObject
 	 */
 	public $date_m;
 
+	/**
+	 * @var Task[]
+	 */
+	public $lines;
+	
 
     /**
      *  Constructor
@@ -228,7 +233,7 @@ class Project extends CommonObject
      *
      * @param  User		$user       User object of making update
      * @param  int		$notrigger  1=Disable all triggers
-     * @return int
+     * @return int                  <=0 if KO, >0 if OK
      */
     function update($user, $notrigger=0)
     {
@@ -241,7 +246,15 @@ class Project extends CommonObject
         $this->description = trim($this->description);
 		if ($this->opp_amount < 0) $this->opp_amount='';
 		if ($this->opp_percent < 0) $this->opp_percent='';
-
+        if ($this->date_end && $this->date_end < $this->date_start)
+        {
+            $this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+            $this->errors[] = $this->error;
+            $this->db->rollback();
+            dol_syslog(get_class($this)."::update error -3 " . $this->error, LOG_ERR);
+            return -3;
+        }
+        
         if (dol_strlen(trim($this->ref)) > 0)
         {
             $this->db->begin();
@@ -338,7 +351,7 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Get object and lines from database
+     * 	Get object from database
      *
      * 	@param      int		$id       	Id of object to load
      * 	@param		string	$ref		Ref of project
@@ -695,10 +708,11 @@ class Project extends CommonObject
     /**
      * 		Validate a project
      *
-     * 		@param		User	$user		User that validate
-     * 		@return		int					<0 if KO, >0 if OK
+     * 		@param		User	$user		   User that validate
+     *      @param      int     $notrigger     1=Disable triggers
+     * 		@return		int					   <0 if KO, >0 if OK
      */
-    function setValid($user)
+    function setValid($user, $notrigger=0)
     {
         global $langs, $conf;
 
@@ -725,10 +739,13 @@ class Project extends CommonObject
             if ($resql)
             {
                 // Call trigger
-                $result=$this->call_trigger('PROJECT_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-
+                if (empty($notrigger))
+                {
+                    $result=$this->call_trigger('PROJECT_VALIDATE',$user);
+                    if ($result < 0) { $error++; }
+                    // End call triggers
+                }
+                
                 if (!$error)
                 {
                 	$this->statut=1;
@@ -1750,12 +1767,12 @@ class Project extends CommonObject
 	    global $conf;
 
         if (! ($this->statut == 1)) return false;
-        if (! $this->datee) return false;
+        if (! $this->datee && ! $this->date_end) return false;
 
         $now = dol_now();
 
-        return $this->datee < ($now - $conf->projet->warning_delay);
-	}
+        return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
+	}	
 
 
 	/**
@@ -1866,5 +1883,20 @@ class Project extends CommonObject
 		return 1;
 	}
 
+	
+	/**
+	 * 	Create an array of tasks of current project
+	 * 
+	 *  @param  User   $user       Object user we want project allowed to
+	 * 	@return int		           >0 if OK, <0 if KO
+	 */
+	function getLinesArray($user)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+	    $taskstatic = new Task($this->db);
+
+	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
+	}
+	
 }
 
