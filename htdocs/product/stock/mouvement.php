@@ -701,6 +701,7 @@ if ($resql)
 	
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    
     print "<tr class=\"liste_titre\">";
     if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],$_SERVER["PHP_SELF"],'m.rowid','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],$_SERVER["PHP_SELF"],'m.datem','',$param,'',$sortfield,$sortorder);
@@ -742,7 +743,7 @@ if ($resql)
     {
 	    // Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	    print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.datem']['checked'])) 
@@ -1005,12 +1006,13 @@ if ($resql)
     print "</table>";
     print '</div>';
     print "</form>";
-    print "<br>";
 
     // Add number of product when there is a filter on period
     if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
     {
-    	$productidselected=0;
+        print "<br>";
+        
+        $productidselected=0;
     	foreach ($arrayofuniqueproduct as $key => $val)
     	{
     		$productidselected=$key;
@@ -1036,8 +1038,6 @@ if ($resql)
     	print "<br>\n";
     	//print '</td></tr>';
     }
-
-
 }
 else
 {

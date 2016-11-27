@@ -289,8 +289,10 @@ if ($sall)
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
 
-print '<table class="noborder" width="100%;">';
-print "<tr class=\"liste_titre\">";
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
@@ -453,6 +455,7 @@ if($holiday_payes == '2')
 }
 
 print '</table>';
+print '</div>';
 print '</form>';
 
 /*if ($user_id == $user->id)
