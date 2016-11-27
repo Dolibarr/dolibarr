@@ -924,10 +924,10 @@ class Product extends CommonObject
 
 			if (! $error && empty($notrigger))
 			{
-                // Call trigger
-                $result=$this->call_trigger('PRODUCT_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PRODUCT_DELETE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 					
    			// Delete all child tables
@@ -1100,11 +1100,11 @@ class Product extends CommonObject
 				// We do not save if main fields are empty
 				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"])
 				{
-    				if (! $this->db->query($sql2))
-    				{
-    					$this->error=$this->db->lasterror();
-    					return -1;
-    				}
+    					if (! $this->db->query($sql2))
+	    				{
+    						$this->error=$this->db->lasterror();
+    						return -1;
+    					}
 				}
 			}
 			else
