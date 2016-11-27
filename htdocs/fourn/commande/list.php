@@ -489,7 +489,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['cf.ref']['checked']))            print_liste_field_titre($arrayfields['cf.ref']['label'],$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
@@ -919,6 +920,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>\n";
+	print '</div>';
 	print "</form>\n";
 
 	if (! empty($conf->facture->enable)) print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';

@@ -704,6 +704,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 		$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 		
+        print '<div class="div-table-responsive">';
 		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 		
 		print '<tr class="liste_titre">';
@@ -975,6 +976,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '</tr>';
 
 		print "</table>";
+		print '</div>';
 		print "</form>";
 	}
 }

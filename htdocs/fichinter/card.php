@@ -1241,16 +1241,6 @@ else if ($id > 0 || ! empty($ref))
     
     print '<table class="border" width="100%">';
     
-	// Ref
-	/*
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td></tr>';
-
-	// Third party
-	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1)."</td></tr>";
-    */
-    
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1282,37 +1272,6 @@ else if ($id > 0 || ! empty($ref))
 	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
 	print '</td>';
 	print '</tr>';
-
-	// Project
-	/*
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load('projects');
-		print '<tr>';
-		print '<td>';
-
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project');
-		print '</td>';
-		if ($action != 'classify')
-		{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
-			print img_edit($langs->trans('SetProject'),1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'classify')
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid', 0, 0, 1);
-		}
-		else
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none', 0, 0);
-		}
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Contrat
 	if ($conf->contrat->enabled)
@@ -1354,9 +1313,6 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 	}
-
-	// Statut
-	//print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
     $cols = 2;

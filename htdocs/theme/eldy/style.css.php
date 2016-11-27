@@ -582,13 +582,16 @@ div.myavailability {
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
-.table-responsive {
+/*.table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+}*/
+.div-table-responsive {
+    overflow-x: auto;
+    min-height: 0.01%;
 }
-
 
 
 /* ============================================================================== */
@@ -2397,7 +2400,6 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
 }
-
 .table-key-border-col {
 	/* width: 25%; */
 	vertical-align:top;

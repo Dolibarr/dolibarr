@@ -261,6 +261,7 @@ if ($resql)
 	$colspan_warehouse = 1;
 	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1; }
 	
+    print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
@@ -381,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)

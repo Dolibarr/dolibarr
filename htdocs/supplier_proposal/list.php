@@ -341,6 +341,7 @@ if ($result)
     }
 	
 
+    print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
@@ -514,7 +515,8 @@ if ($result)
 	}
 
 	print '</table>';
-
+    print '</div>';
+    
 	print '</form>';
 
 	$db->free($result);

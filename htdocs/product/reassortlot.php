@@ -249,7 +249,8 @@ if ($resql)
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
@@ -381,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)
