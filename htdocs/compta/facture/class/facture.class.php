@@ -424,7 +424,7 @@ class Facture extends CommonInvoice
 				    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 				    {
 				        $origin_id = $tmp_origin_id;
-    					$ret = $this->add_object_linked($origin, $origin_id);
+    					$ret = $this->add_object_linked($this->origin, $origin_id);
     					if (! $ret)
     					{
     						dol_print_error($this->db);
@@ -434,7 +434,7 @@ class Facture extends CommonInvoice
 				    
 					if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 					{
-    					$originforcontact = $origin;
+    					$originforcontact = $this->origin;
     					$originidforcontact = $origin_id;
     					if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
     					{
