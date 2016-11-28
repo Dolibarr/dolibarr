@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,14 +279,16 @@ if ($action == 'create')
     dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-    print "<tr>";
+
     // Label
-    print '<td class="fieldrequired">';
+    print "<tr>";
+    print '<td class="titlefieldcreate fieldrequired">';
     print $langs->trans("Label");
     print '</td>';
-    print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
+    print '<td><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
     print '</tr>';
     print '<tr>';
+
     // Type
     print '<td class="fieldrequired">';
     print $langs->trans("Type");
@@ -294,6 +297,7 @@ if ($action == 'create')
     $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode")?GETPOST("actioncode"):'','actioncode',1);
     print '</td>';
     print '</tr>';
+
 	// Date end period
     print '<tr>';
     print '<td class="fieldrequired">';
@@ -303,6 +307,7 @@ if ($action == 'create')
     print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print '</tr>';
+
     // Amount
     print '<tr>';
     print '<td class="fieldrequired">';
@@ -310,10 +315,12 @@ if ($action == 'create')
     print '</td>';
 	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
     print '</tr>';
+
     // Payment Mode
     print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
     $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
     print '</td></tr>';
+
     // Bank Account
     if (! empty($conf->banque->enabled))
     {
@@ -321,6 +328,7 @@ if ($action == 'create')
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
     }
+
     // Date due
     print '<tr>';
     print '<td class="fieldrequired">';
@@ -337,7 +345,9 @@ if ($action == 'create')
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print '<div>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
     print '</form>';
 }
@@ -587,7 +597,7 @@ if ($id > 0)
 			{
 				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php",1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
 			}
-			
+
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
