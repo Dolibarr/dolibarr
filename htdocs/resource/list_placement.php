@@ -422,7 +422,7 @@ if ($resource->id)
             foreach ($elements as $element_id => $element_type)
             {
                 $element = fetchObjectByElement($element_id, $element_type);
-                if (is_object($element) || $element->id != $element_id)
+                if (is_object($element) && $element->id == $element_id)
                 {
                     //Check if has sell status
                     if ($element->status != 1) continue;
