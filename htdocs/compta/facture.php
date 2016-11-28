@@ -3870,7 +3870,10 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 			}
-
+			
+			$discount = new DiscountAbsolute($db);
+			$result = $discount->fetch(0, $object->id);
+			
 			// Reopen a standard paid invoice
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
