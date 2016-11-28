@@ -476,6 +476,7 @@ if ($sql_select)
 			$txt='';
 			print img_object($langs->trans("ShowReduc"),'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			?>
@@ -488,6 +489,12 @@ if ($sql_select)
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				}
+				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 				}
 				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{

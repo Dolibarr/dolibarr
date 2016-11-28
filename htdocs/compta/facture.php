@@ -602,7 +602,7 @@ if (empty($reshook))
 
 		$canconvert=0;
 		if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
@@ -626,6 +626,8 @@ if (empty($reshook))
 				$discount->description = '(CREDIT_NOTE)';
 			elseif ($object->type == Facture::TYPE_DEPOSIT)
 				$discount->description = '(DEPOSIT)';
+			elseif ($object->type == Facture::TYPE_STANDARD)
+				$discount->description = '(EXCESS RECEIVED)';
 			else {
 				setEventMessages($langs->trans('CantConvertToReducAnInvoiceOfThisType'), null, 'errors');
 			}
@@ -634,13 +636,22 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
-
-			foreach ($amount_ht as $tva_tx => $xxx)
-			{
-				$discount->amount_ht = abs($amount_ht[$tva_tx]);
-				$discount->amount_tva = abs($amount_tva[$tva_tx]);
-				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-				$discount->tva_tx = abs($tva_tx);
+			
+			if ($object->type == Facture::TYPE_STANDARD) {
+				
+				// If we're on a standard invoice, we have to get excess received to create it in TTC wuthout VAT
+				
+				$sql = 'SELECT SUM(pf.amount) as total_paiements
+						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
+						WHERE pf.fk_facture = 10 AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid ORDER BY p.datep, p.tms';
+				
+				$resql = $db->query($sql);
+				$res = $db->fetch_object($resql);
+				$total_paiements = $res->total_paiements;
+				
+				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
+				$discount->amount_tva = 0;
+				$discount->tva_tx = 0;
 
 				$result = $discount->create($user);
 				if ($result < 0)
@@ -648,6 +659,24 @@ if (empty($reshook))
 					$error++;
 					break;
 				}
+				
+			} else {
+			
+				foreach ($amount_ht as $tva_tx => $xxx)
+				{
+					$discount->amount_ht = abs($amount_ht[$tva_tx]);
+					$discount->amount_tva = abs($amount_tva[$tva_tx]);
+					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+					$discount->tva_tx = abs($tva_tx);
+	
+					$result = $discount->create($user);
+					if ($result < 0)
+					{
+						$error++;
+						break;
+					}
+				}
+			
 			}
 
 			if (empty($error))
@@ -2637,8 +2666,8 @@ else if ($id > 0 || ! empty($ref))
 		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
-		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')";
-		$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%'";
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%'))";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'";
 	}
 
 	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
@@ -2661,7 +2690,10 @@ else if ($id > 0 || ! empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		$text = $langs->trans('ConfirmConvertToReduc');
+		if($object->type == 0) $type_fac = 'ExcessReceived';
+		elseif($object->type == 2) $type_fac = 'CreditNote';
+		elseif($object->type == 3) $type_fac = 'Deposit';
+		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
@@ -3904,7 +3936,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reverse back money or convert to reduction
-			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD) {
 				// For credit note only
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement)
 				{
@@ -3918,6 +3950,11 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// For standard invoice with excess received
+				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->facture->creer && empty($discount->id))
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>';
+				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
