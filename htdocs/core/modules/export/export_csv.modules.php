@@ -177,7 +177,6 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_header($outputlangs)
 	{
-		
 		return 0;
 	}
 
@@ -197,7 +196,6 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
-		
 		global $conf;
  
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
@@ -217,7 +215,7 @@ class ExportCsv extends ModeleExports
 			fwrite($this->handle,$newvalue.$this->separator);
 		}
 		fwrite($this->handle,"\n");
-		
+
 		return 0;
 	}
 
@@ -314,8 +312,7 @@ class ExportCsv extends ModeleExports
 	{
 		global $conf;
 		$addquote=0;
-		dol_syslog("ExportCsv::csvClean ".$newvalue);
-
+		
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";
    		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
