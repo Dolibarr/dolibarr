@@ -820,6 +820,23 @@ $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
+// Load object modBarCodeProduct
+$res=0;
+if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
+{
+	$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+	$dirbarcode=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+	foreach ($dirbarcode as $dirroot)
+	{
+		$res=dol_include_once($dirroot.$module.'.php');
+		if ($res) break;
+	}
+	if ($res > 0)
+	{
+			$modBarCodeProduct =new $module();
+	}
+}
+
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
@@ -856,22 +873,6 @@ else
         {
         	$modCodeProduct = new $module();
         }
-
-		// Load object modBarCodeProduct
-		if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
-		{
-			$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
-			$dirbarcode=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
-            foreach ($dirbarcode as $dirroot)
-            {
-                $res=dol_include_once($dirroot.$module.'.php');
-                if ($res) break;
-            }
-        	if ($res > 0)
-        	{
-				$modBarCodeProduct =new $module();
-        	}
-		}
 
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1483,10 +1484,13 @@ else
                 if (($action != 'editbarcodetype') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
-                if ($action == 'editbarcodetype')
+                if ($action == 'editbarcodetype' || $action == 'editbarcode')
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
                     $formbarcode = new FormBarCode($db);
+		}
+                if ($action == 'editbarcodetype')
+                {
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
                 }
                 else
@@ -1506,13 +1510,16 @@ else
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
                 {
-                    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="action" value="setbarcode">';
-                    print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-                    print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$object->barcode.'">';
-                    print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-                    print '</form>';
+			$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+			if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="setbarcode">';
+			print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
+			print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+			print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			print '</form>';
                 }
                 else
                 {
