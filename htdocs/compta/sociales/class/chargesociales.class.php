@@ -34,6 +34,7 @@ class ChargeSociales extends CommonObject
     public $element='chargesociales';
     public $table='chargesociales';
     public $table_element='chargesociales';
+	var $picto = 'bill';
 
     /**
      * {@inheritdoc}
