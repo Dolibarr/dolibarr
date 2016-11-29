@@ -288,7 +288,7 @@ if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->dele
 
 		if (!$error)
 		{
-			$result = $objresource->freeResource($user, $objelement->datep, $objelement->datef, ResourceStatus::OCCUPIED, $element_id, $element_type);
+			$result = $objresource->freeResource($user, $objelement->datep, $objelement->datef, null, ResourceStatus::OCCUPIED, $element_id, $element_type);
 			if ($result < 0)
 			{
 				setEventMessages($objresource->error, $objresource->errors, 'errors');

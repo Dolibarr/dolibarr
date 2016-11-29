@@ -935,7 +935,7 @@ class Dolresource extends CommonObject
     /**
      * Switch the resource
      *
-     * @param   User   $user                User that modifies
+     * @param   User   $user               User that modifies
      * @param   int    $date_start         Start date
      * @param   int    $date_end           End date
      * @param   int    $status             Status
@@ -1051,17 +1051,18 @@ class Dolresource extends CommonObject
      * @param   User   $user          User that modifies
      * @param   int    $date_start    Start date
      * @param   int    $date_end      End date
+     * @param   array  $target        Specific statuses to update only or null
      * @param   int    $status        Status to change
      * @param   int    $booker_id     Booker id
      * @param   string $booker_type   Booker type
      * @param   bool   $notrigger     false=launch triggers after, true=disable triggers
      * @return  int                   <0 if KO, 0> OK
      */
-    public function freeResource($user, $date_start, $date_end, $status, $booker_id, $booker_type, $notrigger = false)
+    public function freeResource($user, $date_start, $date_end, $target, $status, $booker_id, $booker_type, $notrigger = false)
     {
         global $langs,$conf;
 
-        dol_syslog(__METHOD__." id=".$this->id." status=".$status, LOG_DEBUG);
+        dol_syslog(__METHOD__." id=".$this->id." target=".(isset($target)?implode(',', $target):'')." status=".$status, LOG_DEBUG);
         dol_syslog("date_start=".$date_start." date_end=".$date_end." booker_id=".$booker_id." booker_type=".$booker_type, LOG_DEBUG);
 
         $changed = 0;
@@ -1093,7 +1094,7 @@ class Dolresource extends CommonObject
                 $section->booker_id = $booker_id;
                 $section->booker_type = $booker_type;
 
-                $result = $section->restoreSections();
+                $result = $section->restoreSections($target);
                 if ($result < 0)
                 {
                     $this->errors = $section->errors;

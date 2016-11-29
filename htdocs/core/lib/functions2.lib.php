@@ -2377,7 +2377,7 @@ function getScheduleSections($object, $date_start, $date_end, $date_format, $tz_
                     if (!is_object($booker) || $booker->id != $section->booker_id) {
                         $booker = null;
                         //Something went wrong, so convert it to manual and reload info
-                        $section->restoreSections($user, true);
+                        $section->restoreSections();
                         $section->fetch($section->id);
                     }
                 }

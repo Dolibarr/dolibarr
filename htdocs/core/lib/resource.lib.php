@@ -265,7 +265,7 @@ function occupyAllResources($object, $target, $status, $booker_id=null, $booker_
                                 {
                                     /** @var Dolresource $resource */
                                     $resource = $data['resource'];
-                                    $result = $resource->freeResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type);
+                                    $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
                                     if ($result < 0)
                                     {
                                         setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
@@ -517,7 +517,7 @@ function freeAllResources($object, $status, $booker_id=null, $booker_type=null)
                             $error++;
                             break;
                         }
-                        $result = $resource->freeResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type);
+                        $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
                         if ($result < 0)
                         {
                             setEventMessages($resource->error, $resource->errors, 'errors');
@@ -554,7 +554,7 @@ function freeAllResources($object, $status, $booker_id=null, $booker_type=null)
                             $error++;
                             break;
                         }
-                        $result = $resource->freeResource($user, $object->datep, $object->datef, $status, $booker_id, $booker_type);
+                        $result = $resource->freeResource($user, $object->datep, $object->datef, null, $status, $booker_id, $booker_type);
                         if ($result < 0)
                         {
                             setEventMessages($resource->error, $resource->errors, 'errors');

@@ -963,20 +963,24 @@ class ResourceScheduleSection extends CommonObject
     /**
      * Restores sections status to manually set one, ensures that booker and status is the same.
      *
+     * @param  array $target        Specific statuses to update only or null
      * @return int                  <0 if KO, 0 if none restored, 0> restored amount
      */
-    public function restoreSections()
+    public function restoreSections($target = null)
     {
         $error = 0;
         $changed = 0;
         $this->db->begin();
 
         // Clean parameters
-        if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-        if (in_array($this->status, ResourceStatus::$AVAILABLE))
+        if (!empty($this->status))
         {
-            $this->booker_id = null;
-            $this->booker_type = null;
+            if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
+            if (in_array($this->status, ResourceStatus::$AVAILABLE))
+            {
+                $this->booker_id = null;
+                $this->booker_type = null;
+            }
         }
 
         //Common WHERE sql
@@ -984,13 +988,14 @@ class ResourceScheduleSection extends CommonObject
         $where.= " AND date_end >= ".$this->date_start;
         $where.= " AND date_start <= ".$this->date_end;
         $where.= " AND status != ". ResourceStatus::NO_SCHEDULE;
-        $where.= " AND status = ".$this->status;
+        if (!empty($target)) $where.= " AND status IN (".implode(",", $target).")";
+        if (!empty($this->status)) $where.= " AND status = ".$this->status;
         if (!empty($this->booker_id)) $where.= " AND booker_id = ".$this->booker_id;
         if (!empty($this->booker_type)) $where.= " AND booker_type = '".$this->db->escape($this->booker_type)."'";
 
         // Decrement count request, only if bigger than zero
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        if (in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers uses counting, the rest use booker_id/type
+        if (!empty($this->status) && in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers uses counting, the rest use booker_id/type
         {
             $sql.= " booker_count = booker_count - 1";
         }

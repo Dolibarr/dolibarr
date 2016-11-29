@@ -88,7 +88,7 @@ if (empty($reshook))
         if ($confirm == 'yes') {
             //Release the occupied sections
             $error = 0;
-            $result = $resource->freeResource($user, $object->date_start, $object->date_end, ResourceStatus::OCCUPIED, $object->id, $object->element);
+            $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, ResourceStatus::OCCUPIED, $object->id, $object->element);
             if ($result < 0)
             {
                 setEventMessages($resource->error, $resource->errors, 'errors');
