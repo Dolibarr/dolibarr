@@ -178,7 +178,7 @@ $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don'
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

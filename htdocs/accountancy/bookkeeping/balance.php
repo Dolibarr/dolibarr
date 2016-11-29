@@ -143,7 +143,7 @@ else {
     
     // List
 
-    $nbtotalofrecords = 0;
+    $nbtotalofrecords = -1;
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
         if ($nbtotalofrecords < 0) {

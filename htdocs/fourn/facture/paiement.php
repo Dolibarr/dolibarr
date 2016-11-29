@@ -627,6 +627,14 @@ if (empty($action))
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
+    
+    $nbtotalofrecords = -1;
+    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    {
+        $result = $db->query($sql);
+        $nbtotalofrecords = $db->num_rows($result);
+    }
+    
     $sql.= $db->plimit($limit+1, $offset);
 
     $resql = $db->query($sql);
@@ -643,7 +651,7 @@ if (empty($action))
         $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
         if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, 0, 'title_accountancy.png');
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords, 'title_accountancy.png');
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

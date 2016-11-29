@@ -293,7 +293,7 @@ llxHeader('', $title_page);
 
 // List
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 	if ($nbtotalofrecords < 0) {
