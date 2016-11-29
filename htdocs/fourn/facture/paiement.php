@@ -83,13 +83,19 @@ if ($user->societe_id > 0)
 $hookmanager->initHooks(array('paymentsupplier'));
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+$arrayfields=array();
+
 
 
 /*
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
     $search_account="";
@@ -100,6 +106,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $day='';
     $year='';
     $month='';
+    $search_array_options=array();
 }
 
 $parameters=array('socid'=>$socid);
@@ -590,10 +597,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (empty($action))
 {
-    if ($page == -1) $page = 0 ;
     $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $sortfield = GETPOST("sortfield",'alpha');
+    $sortorder = GETPOST("sortorder",'alpha');
+    $page=GETPOST("page",'int');
+    if ($page == -1) { $page = 0 ; }
     $offset = $limit * $page ;
-
+    $pageprev = $page - 1;
+    $pagenext = $page + 1;
     if (! $sortorder) $sortorder='DESC';
     if (! $sortfield) $sortfield='p.datep';
 
@@ -644,53 +655,86 @@ if (empty($action))
         $i = 0;
         $var=True;
 
-        $paramlist='';
-        $paramlist.=($search_ref?"&search_ref=".urlencode($search_ref):"");
-        $paramlist.=($search_company?"&search_company=".urlencode($search_company):"");
-        $paramlist.=($search_amount?"&search_amount=".urlencode($search_amount):"");
-        $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
-        if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
-
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords, 'title_accountancy.png');
+        $param='';
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        if ($search_ref)            $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
+        if ($search_company)        $param.=($search_company?"&search_company=".urlencode($search_company):"");
+        if ($search_amount != '')   $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
+        if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+    	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+    	// Add $param from extra fields
+    	foreach ($search_array_options as $key => $val)
+    	{
+    	    $crit=$val;
+    	    $tmpkey=preg_replace('/search_options_/','',$key);
+    	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    	}
+    	
+    	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+        
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+        print '<input type="hidden" name="action" value="list">';
+        print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+        print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+        $moreforfilter='';
+        
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+    	else $moreforfilter = $hookmanager->resPrint;
+    
+        if ($moreforfilter)
+        {
+       		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+            print $moreforfilter;
+            print '</div>';
+        }
+    
+        $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+        $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+        
         print '<div class="div-table-responsive">';
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$paramlist,'align="center"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$paramlist,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
+        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
 
         // Lines for filters fields
         print '<tr class="liste_titre">';
         print '<td align="left">';
-        print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+        print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
         print '<td>&nbsp;</td>';
         print '<td align="left">';
-        print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
+        print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
         print '</td>';
         print '<td>';
         $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
         print '</td>';
         print '<td align="left">';
-        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
+        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
         print '</td>';
         print '<td>';
         $form->select_comptes($search_account,'search_account',0,'',1);
         print '</td>';
         print '<td align="right">';
-        print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+        print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
         $searchpitco=$form->showFilterAndCheckAddButtons(0);
