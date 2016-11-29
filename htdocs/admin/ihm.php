@@ -38,6 +38,7 @@ $langs->load("products");
 $langs->load("members");
 $langs->load("projects");
 $langs->load("hrm");
+$langs->load("agenda");
 
 if (! $user->admin) accessforbidden();
 
