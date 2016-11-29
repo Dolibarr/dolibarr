@@ -200,7 +200,7 @@ else {
 		$port = $_SERVER['SERVER_PORT'];
 	}
 
-	$tmp = $uri.'://'.$_SERVER['SERVER_NAME'].($port ?: '').($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
+	$tmp = $uri.'://'.$_SERVER['SERVER_NAME'].($port ? ':'.$port : '').($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 }
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
