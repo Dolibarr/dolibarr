@@ -72,6 +72,14 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
     }
 }
 
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+    $object->fetch($id);
+    $result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+    if ($result < 0)
+        setEventMessages($object->error, $object->errors, 'errors');
+}
+
 // payment mode
 if ($action == 'setmode' && $user->rights->tax->charges->creer) {
     $object->fetch($id);
@@ -356,6 +364,8 @@ if ($id > 0)
 	{
 		$head=tax_prepare_head($object);
 
+		$totalpaye = $object->getSommePaiement();
+		
 		// Clone confirmation
 		if ($action === 'clone')
 		{
@@ -389,17 +399,34 @@ if ($id > 0)
 		
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 		
-		print '<table class="border" width="100%">';
-
+		
+		$morehtmlref='<div class="refidno">';
+		// Ref customer
+		$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.='</div>';
+		
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
 		
+		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+		print '<div class="underbanner clearboth"></div>';
+		
+		print '<table class="border" width="100%">';
+
+        /*		
 		// Ref
 		print '<tr><td class="fieldtitle">'.$langs->trans("Ref").'</td><td colspan="2">';
 		print $form->showrefnav($object,'id',$linkback);
 		print "</td></tr>";
+        */
 
 		// Label
-		if ($action == 'edit')
+		/*if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
 			print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
@@ -408,79 +435,10 @@ if ($id > 0)
 		else
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->lib.'</td></tr>';
-		}
-
+		}*/
+		
 		// Type
 		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
-
-		$rowspan=6;
-        if (! empty($conf->banque->enabled)) $rowspan++;
-		print '<td rowspan="'.$rowspan.'" valign="top">';
-
-		/*
-		 * Payments
-		 */
-		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
-		$sql.= "c.code as type_code,c.libelle as paiement_type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql.= " WHERE p.fk_charge = ".$id;
-		$sql.= " AND p.fk_charge = cs.rowid";
-		$sql.= " AND cs.entity = ".$conf->entity;
-		$sql.= " AND p.fk_typepaiement = c.id";
-		$sql.= " ORDER BY dp DESC";
-
-		//print $sql;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0; $total = 0;
-			print '<table class="nobordernopadding paymenttable" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("RefPayment").'</td>';
-			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td>'.$langs->trans("Type").'</td>';
-      		print '<td align="right">'.$langs->trans("Amount").'</td>';
-      		print '<td>&nbsp;</td>';
-      		print '</tr>';
-
-			$var=True;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-                $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
-                print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
-				print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-				print "</tr>";
-				$totalpaye += $objp->amount;
-				$i++;
-			}
-
-			if ($object->paye == 0)
-			{
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-
-				$resteapayer = $object->amount - $totalpaye;
-
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-			}
-			print "</table>";
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</td>";
-
 		print "</tr>";
 
     	// Period end date
@@ -555,10 +513,83 @@ if ($id > 0)
         }
 
 		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
+		//print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
 		print '</table>';
 
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
+		
+		/*
+		 * Payments
+		 */
+		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
+		$sql.= "c.code as type_code,c.libelle as paiement_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+		$sql.= " WHERE p.fk_charge = ".$id;
+		$sql.= " AND p.fk_charge = cs.rowid";
+		$sql.= " AND cs.entity = ".$conf->entity;
+		$sql.= " AND p.fk_typepaiement = c.id";
+		$sql.= " ORDER BY dp DESC";
+		
+		//print $sql;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+		    $num = $db->num_rows($resql);
+		    $i = 0; $total = 0;
+		    print '<table class="noborder paymenttable">';
+		    print '<tr class="liste_titre">';
+		    print '<td>'.$langs->trans("RefPayment").'</td>';
+		    print '<td>'.$langs->trans("Date").'</td>';
+		    print '<td>'.$langs->trans("Type").'</td>';
+		    print '<td align="right">'.$langs->trans("Amount").'</td>';
+		    print '<td>&nbsp;</td>';
+		    print '</tr>';
+		
+		    $var=True;
+		    while ($i < $num)
+		    {
+		        $objp = $db->fetch_object($resql);
+		        $var=!$var;
+		        print "<tr ".$bc[$var]."><td>";
+		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+		        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
+		        print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+		        print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+		        print "</tr>";
+		        $totalpaye += $objp->amount;
+		        $i++;
+		    }
+		
+		    if ($object->paye == 0)
+		    {
+		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		
+		        $resteapayer = $object->amount - $totalpaye;
+		
+		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+		        print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		    }
+		    print "</table>";
+		    $db->free($resql);
+		}
+		else
+		{
+		    dol_print_error($db);
+		}		
+		
+		print '</div>';
+		print '</div>';
+		print '</div>';
+		
+		print '<div class="clearboth"></div>';
+		
 		dol_fiche_end();
 		
 		
