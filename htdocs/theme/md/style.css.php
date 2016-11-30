@@ -2951,7 +2951,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #D0DAD4;
+  background: #E0EAE4;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
