@@ -189,22 +189,18 @@ class ExportCsv extends ModeleExports
      *  @param      Translate	$outputlangs    				Object lang to translate values
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
-	 * 
-	 * //TODO transnoentities send back UTF-8 so using an ISO charset at this point create an issue
-	 * 		  (get a blank screen and an empty file)
-	 *        my feeling is that we should not force charset till we are not writing the final result.  
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
 		global $conf;
- 
+
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 		}
 		else
 		{
-			$outputlangs->charset_output = $conf->file->character_set_client;
+			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
 		foreach($array_selected_sorted as $code => $value)
@@ -215,7 +211,6 @@ class ExportCsv extends ModeleExports
 			fwrite($this->handle,$newvalue.$this->separator);
 		}
 		fwrite($this->handle,"\n");
-
 		return 0;
 	}
 
@@ -228,10 +223,6 @@ class ExportCsv extends ModeleExports
      *  @param     	Translate	$outputlangs    			Object lang to translate values
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
-	 * 
-	 * //TODO transnoentities send back UTF-8 so using an ISO charset at this point create an issue
-	 * 		  (get a blank screen and an empty file)
-	 *        my feeling is that we should not force charset till we are not writing the final result.  
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
@@ -243,7 +234,7 @@ class ExportCsv extends ModeleExports
 		}
 		else
 		{
-			$outputlangs->charset_output = $conf->file->character_set_client; 
+			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
 		$this->col=0;
@@ -313,6 +304,7 @@ class ExportCsv extends ModeleExports
 		global $conf;
 		$addquote=0;
 		
+
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";
    		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
