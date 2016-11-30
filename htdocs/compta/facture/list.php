@@ -401,7 +401,7 @@ $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

@@ -101,7 +101,7 @@ class FormPropal
         }
 
         print '<select class="flat" name="'.$htmlname.'">';
-        if ($showempty) print '<option value="">&nbsp;</option>';
+        if ($showempty) print '<option value="-1">&nbsp;</option>';
 
         foreach($listofstatus as $key => $obj)
         {
@@ -113,7 +113,7 @@ class FormPropal
 					continue;
 				}
             }
-            if ($selected == $obj['id'])
+            if ($selected != '' && $selected == $obj['id'])
             {
                 print '<option value="'.$obj['id'].'" selected>';
             }

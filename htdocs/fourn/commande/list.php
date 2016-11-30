@@ -121,7 +121,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $fieldstosearchall = array(
     'cf.ref'=>'Ref',
     'cf.ref_supplier'=>'RefSupplierOrder',
-    //'pd.description'=>'Description',
+    'pd.description'=>'Description',
     's.nom'=>"ThirdParty",
     'cf.note_public'=>'NotePublic',
 );
@@ -371,7 +371,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

@@ -3174,7 +3174,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 	
@@ -3204,7 +3204,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
+	if (!empty($titre) && $savtotalnboflines >= 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center
