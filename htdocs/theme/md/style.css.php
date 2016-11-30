@@ -2944,14 +2944,14 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #302010;
+  color: #303020;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFBF9A;
-  -moz-border-radius:3px;
-  -webkit-border-radius: 3px;
-  border-radius:3px;
-  background: #EFCFAA;
+  border: 1px solid #AAAAAA;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #E0EAE4;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
