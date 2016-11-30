@@ -2209,6 +2209,7 @@ if ($action == 'create')
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	if (! empty($object->lines))
@@ -2230,7 +2231,8 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-
+    print '</div>';
+    
 	print "</form>\n";
 
 	dol_fiche_end();
@@ -2384,7 +2386,7 @@ if ($action == 'create')
 
 		$var = true;
 
-		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));

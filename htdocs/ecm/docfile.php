@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,14 +159,13 @@ llxHeader();
 
 $form=new Form($db);
 
-$fullpath=$conf->ecm->dir_output.'/'.$ecmdir->label.'/'.$urlfile;
+$fullpath=$conf->ecm->dir_output.'/'.$relativepath.$urlfile;
 
 $file = new stdClass();
 $file->section_id=$ecmdir->id;
 $file->label=$urlfile;
 
 $head = ecm_file_prepare_head($file);
-dol_fiche_head($head, 'card', $langs->trans("File"), 0, 'generic');
 
 if ($_GET["action"] == 'edit')
 {
@@ -177,8 +176,10 @@ if ($_GET["action"] == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 }
 
+dol_fiche_head($head, 'card', $langs->trans("File"), 0, 'generic');
+
 print '<table class="border" width="100%">';
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 $s='';
 $tmpecmdir=new EcmDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
@@ -203,7 +204,7 @@ while ($tmpecmdir && $result > 0)
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print ' -> ';
-if (GETPOST('action') == 'edit') print '<input type="text" name="label" size="64" value="'.$urlfile.'">';
+if (GETPOST('action') == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else print $urlfile;
 print '</td></tr>';
 /*print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
@@ -234,20 +235,39 @@ print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
 */
-if ($_GET["action"] == 'edit')
-{
-	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
-}
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+print '<tr><td>'.$langs->trans("DirectDownloadLink").'</td><td>';
+$modulepart='ecm';
+$forcedownload=1;
+$rellink='/document.php?modulepart='.$modulepart;
+if ($forcedownload) $rellink.='&attachment=1';
+if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
+$filepath=$relativepath.$file->label;
+$rellink.='&file='.urlencode($filepath);
+$fulllink=$urlwithroot.$rellink;
+print img_picto('','object_globe.png').' ';
+print '<input type="text" class="quatrevingtpercent" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
+print ' <a data-ajax="false" href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+print '</td></tr>';
 print '</table>';
+
+dol_fiche_end();
+
 if ($_GET["action"] == 'edit')
 {
-	print '</form>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
+
+    print '</form>';
 }
-print '</div>';
 
 
 // Confirmation de la suppression d'une ligne categorie

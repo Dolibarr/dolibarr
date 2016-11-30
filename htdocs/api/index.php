@@ -109,6 +109,12 @@ foreach ($modulesdir as $dir)
                 elseif ($module == 'project') {
                     $moduledirforclass = 'projet';
                 }
+                elseif ($module == 'task') {
+                    $moduledirforclass = 'projet';
+                }
+                elseif ($module == 'stock') {
+                    $moduledirforclass = 'product/stock';
+                }
                 
                 // Defined if module is enabled
                 $enabled=true;
@@ -138,7 +144,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found deprecated API by index.php classname=".$classname." into ".$dir);
+                                    dol_syslog("Found deprecated API by index.php: classname=".$classname." into ".$dir." - ".$dir_part.$file_searched);
                                     $api->r->addAPIClass($classname, '/');
                                 }
                             }
@@ -148,7 +154,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API by index.php classname=".$classname." into ".$dir);
+                                    dol_syslog("Found API by index.php: classname=".$classname." into ".$dir." - ".$dir_part.$file_searched);
                                     $listofapis[] = $classname;
                                 }
                             }
@@ -175,7 +181,3 @@ foreach ($listofapis as $classname)
 
 // Call API (we suppose we found it)
 $api->r->handle();
-
-
-
-

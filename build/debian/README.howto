@@ -73,7 +73,8 @@ Ex: https://alioth.debian.org/users/eldy-guest
 # msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX
  
 # To check package integrity
-# lintian --pedantic -E -I package.deb   To test a package   
+# lintian --pedantic -E -I package.deb   To test a binary package   
+# lintian --pedantic -E -I package.dsc   To test a source package   
 
 # To manipulate packages
 # dpkg -l                                List all packages
@@ -181,8 +182,8 @@ To test a package
 > cp ../build-area/* /srv/chroot/unstable/tmp
 > sudo schroot -c name_of_chroot
 > cd /tmp
-> lintian --pedantic -E -I dolibarr*.deb
-> lintian --pedantic -E -I dolibarr*.dsc
+> lintian --no-tag-display-limit --pedantic -E -I dolibarr*.deb
+> lintian --no-tag-display-limit --pedantic -E -I dolibarr*.dsc
 > dpkg -i dolibarr*.deb  ou   pour avoir des traces: dpkg -D77777 -i dolibarr*.deb
 > apt-get install -f
 

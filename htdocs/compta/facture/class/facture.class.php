@@ -409,7 +409,7 @@ class Facture extends CommonInvoice
 			{
 				foreach($this->linked_objects as $origin => $tmp_origin_id)
 				{
-				    if (is_array($tmp_origin_id))       // New baheviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+				    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 				    {
 				        foreach($tmp_origin_id as $origin_id)
 				        {
@@ -431,43 +431,43 @@ class Facture extends CommonInvoice
     						$error++;
     					}
 				    }
-				    
-					if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-					{
-    					$originforcontact = $origin;
-    					$originidforcontact = $origin_id;
-    					if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-    					{
-    					    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-    					    $exp = new Expedition($this->db);
-    					    $exp->fetch($origin_id);
-    					    $exp->fetchObjectLinked();
-    					    if (count($exp->linkedObjectsIds['commande']) > 0) 
-    					    {
-    					        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
-    					        {
-    					            $originforcontact = 'commande';
-    					            $originidforcontact = $value->id;
-    					            break; // We take first one
-    					        }
-    					    }
-    					}
-    					
-    					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    					$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-			
-    					$resqlcontact = $this->db->query($sqlcontact);
-    					if ($resqlcontact)
-    					{
-    					    while($objcontact = $this->db->fetch_object($resqlcontact))
-    					    {
-    					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
-    					        $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
-    					    }
-    					}
-    					else dol_print_error($resqlcontact);
-					}
 				}
+			}
+			
+			if (! $error && $this->id && ! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && ! empty($this->origin) && ! empty($this->origin_id))   // Get contact from origin object
+			{
+				$originforcontact = $this->origin;
+				$originidforcontact = $this->origin_id;
+				if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+				{
+				    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+				    $exp = new Expedition($this->db);
+				    $exp->fetch($this->origin_id);
+				    $exp->fetchObjectLinked();
+				    if (count($exp->linkedObjectsIds['commande']) > 0) 
+				    {
+				        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+				        {
+				            $originforcontact = 'commande';
+				            $originidforcontact = $value->id;
+				            break; // We take first one
+				        }
+				    }
+				}
+				
+				$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+				$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+	
+				$resqlcontact = $this->db->query($sqlcontact);
+				if ($resqlcontact)
+				{
+				    while($objcontact = $this->db->fetch_object($resqlcontact))
+				    {
+				        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+				        $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+				    }
+				}
+				else dol_print_error($resqlcontact);
 			}
 
 			/*
@@ -999,11 +999,12 @@ class Facture extends CommonInvoice
 	 *      @param  int		$short           1=Return just URL
 	 *      @param  string  $moretitle       Add more text to title tooltip
      *      @param	int  	$notooltip		 1=Disable tooltip
+     *      @param  int     $addlinktonotes  1=Add link to notes
 	 *      @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0,$addlinktonotes=0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $form;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1058,6 +1059,21 @@ class Facture extends CommonInvoice
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
+
+		if ($addlinktonotes)
+		{
+		    $txttoshow=($user->societe_id>0?$this->note_public:$this->note_private);
+		    if ($txttoshow)
+		    {
+                $notetoshow=$langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow,1);
+    		    $result.=' <span class="note inline-block">';
+    		    $result.='<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">'.img_picto('','object_generic').'</a>';
+    		    //$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+    		    //$result.='</a>';
+    		    $result.='</span>';
+		    }
+		}
+		
 		return $result;
 	}
 
@@ -1614,7 +1630,7 @@ class Facture extends CommonInvoice
 	/**
 	 *	Delete invoice
 	 *
-	 *	@param     	User	$user      	    User to delete.
+	 *	@param     	User	$user      	    User making the deletion.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, >0 if OK
@@ -2821,7 +2837,8 @@ class Facture extends CommonInvoice
 	 */
 	function deleteline($rowid)
 	{
-
+        global $user;
+        
 		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
 
 		if (! $this->brouillon)
@@ -2847,13 +2864,14 @@ class Facture extends CommonInvoice
 		}
 
 		$line=new FactureLigne($this->db);
-
+		
         $line->context = $this->context;
 
 		// For triggers
-		$line->fetch($rowid);
-
-		if ($line->delete() > 0)
+		$result = $line->fetch($rowid);
+		if (! ($result > 0)) dol_print_error($db, $line->error, $line->errors);
+		
+		if ($line->delete($user) > 0)
 		{
 			$result=$this->update_price(1);
 
@@ -4208,13 +4226,13 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql.= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation,';
-		$sql.= ' fd.fk_unit, fk_user_author, fk_user_modif,';
+		$sql.= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql.= ' fd.situation_percent, fd.fk_prev_id,';
+		$sql.= ' fd.multicurrency_subprice,';
+		$sql.= ' fd.multicurrency_total_ht,';
+		$sql.= ' fd.multicurrency_total_tva,';
+		$sql.= ' fd.multicurrency_total_ttc,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
-		$sql.= ' , fd.multicurrency_subprice';
-		$sql.= ' , fd.multicurrency_total_ht';
-		$sql.= ' , fd.multicurrency_total_tva';
-		$sql.= ' , fd.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql.= ' WHERE fd.rowid = '.$rowid;
@@ -4278,6 +4296,7 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		else
 		{
+		    $this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -4633,8 +4652,9 @@ class FactureLigne extends CommonInvoiceLine
 
 	/**
 	 * 	Delete line in database
-	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *  TODO Add param User $user and notrigger (see skeleton)
+     *
+	 *	@return	    int		           <0 if KO, >0 if OK
 	 */
 	function delete()
 	{

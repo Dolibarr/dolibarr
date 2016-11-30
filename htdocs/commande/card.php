@@ -44,9 +44,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->propal->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
@@ -2217,7 +2217,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
-		// Origin
+		// Source reason (why we have an ordrer)
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Source');
@@ -2231,12 +2231,26 @@ if ($action == 'create' && $user->rights->commande->creer)
 		} else {
 			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 		}
-		// Removed because using dictionary is an admin feature, not a user feature. There is already the "star" to show info to admin users.
-		// This is to avoid too heavy screens and have an uniform look and feel for all screens.
-		// print '</td><td>';
-		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+		// TODO Order mode (how we receive order). Not yet implemented
+		/*
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('SourceMode');
+		print '</td>';
+		if ($action != 'editinputmode')
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinputmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetInputMode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editinputmode') {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'input_mode_id', 1);
+		} else {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'none');
+		}
+		print '</td></tr>';
+		*/
+		
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
@@ -2395,6 +2409,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
+        print '<div class="div-table-responsive">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
@@ -2420,7 +2435,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 		}
 		print '</table>';
-
+        print '</div>';
+        
 		print "</form>\n";
 
 		dol_fiche_end();

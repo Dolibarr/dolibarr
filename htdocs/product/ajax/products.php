@@ -64,7 +64,7 @@ dol_syslog(join(',', $_GET));
 
 if (! empty($action) && $action == 'fetch' && ! empty($id))
 {
-	require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 	$outjson = array();
 

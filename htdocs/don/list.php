@@ -113,7 +113,7 @@ if (trim($search_name) != '')
 if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
 
 $sql.= $db->order($sortfield,$sortorder);
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -157,7 +157,9 @@ if ($resql)
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
     
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
@@ -237,6 +239,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
+	print '</div>';
     print "</form>\n";
     $db->free($resql);
 }

@@ -1649,6 +1649,7 @@ if ($action == 'create')
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form
@@ -1674,7 +1675,7 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-
+    print '</div>';
 	print "</form>\n";
 
 	dol_fiche_end();

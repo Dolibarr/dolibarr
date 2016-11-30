@@ -97,6 +97,11 @@ class Project extends CommonObject
 	 */
 	public $date_m;
 
+	/**
+	 * @var Task[]
+	 */
+	public $lines;
+	
 
     /**
      *  Constructor
@@ -228,7 +233,7 @@ class Project extends CommonObject
      *
      * @param  User		$user       User object of making update
      * @param  int		$notrigger  1=Disable all triggers
-     * @return int
+     * @return int                  <=0 if KO, >0 if OK
      */
     function update($user, $notrigger=0)
     {
@@ -346,7 +351,7 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Get object and lines from database
+     * 	Get object from database
      *
      * 	@param      int		$id       	Id of object to load
      * 	@param		string	$ref		Ref of project

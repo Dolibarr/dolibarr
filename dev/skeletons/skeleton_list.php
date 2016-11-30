@@ -52,9 +52,13 @@ dol_include_once('/mymodule/class/skeleton_class.class.php');
 $langs->load("mymodule");
 $langs->load("other");
 
-// Get parameters
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
@@ -212,7 +216,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mytable_extrafields as ef on (u.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mytable_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= " WHERE 1 = 1";
 //$sql.= " WHERE u.entity IN (".getEntity('mytable',1).")";
 if ($search_field1) $sql.= natural_search("field1",$search_field1);
@@ -239,7 +243,7 @@ $sql.=$db->order($sortfield,$sortorder);
 //$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -329,6 +333,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
+print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 // Fields title
@@ -531,6 +536,7 @@ $reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // N
 print $hookmanager->resPrint;
 
 print '</table>'."\n";
+print '</div>'."\n";
 
 print '</form>'."\n";
 

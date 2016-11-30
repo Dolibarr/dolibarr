@@ -188,6 +188,7 @@ class Subscriptions extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $subscription->$field = $value;
         }
 

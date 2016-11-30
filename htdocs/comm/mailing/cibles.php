@@ -238,14 +238,22 @@ if ($object->fetch($id) >= 0)
 	{
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
 
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre">'.$langs->trans("RecipientSelectionModules").'</td>';
-		print '<td class="liste_titre" align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
-		print '<td class="liste_titre" align="left">'.$langs->trans("Filter").'</td>';
-		print '<td class="liste_titre" align="center">&nbsp;</td>';
-		print "</tr>\n";
-
+		//print '<table class="noborder" width="100%">';
+		print '<div class="tagtable centpercent liste_titre_bydiv" id="tablelines">';
+		
+		//print '<tr class="liste_titre">';
+		print '<div class="tagtr liste_titre">';
+		//print '<td class="liste_titre">'.$langs->trans("RecipientSelectionModules").'</td>';
+		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
+		//print '<td class="liste_titre" align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
+		print '<div class="tagtd" align="center">'.$langs->trans("NbOfUniqueEMails").'</div>';
+		//print '<td class="liste_titre" align="left">'.$langs->trans("Filter").'</td>';
+		print '<div class="tagtd" align="left">'.$langs->trans("Filter").'</div>';
+		//print '<td class="liste_titre" align="center">&nbsp;</td>';
+		print '<div class="tagtd">&nbsp;</div>';
+		//print "</tr>\n";
+		print '</div>';
+		
 		clearstatcache();
 
 		$var=true;
@@ -303,19 +311,28 @@ if ($object->fetch($id) >= 0)
 				if ($qualified)
 				{
 					$var = !$var;
-					print '<tr '.$bc[$var].'>';
+					//print '<tr '.$bc[$var].'>';
+//					print '<div '.$bctag[$var].'>';
 
 					if ($allowaddtarget)
 					{
-						print '<form name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
+					else
+					{
+					    print '<div '.$bctag[$var].'>';
+					}
 
-					print '<td>';
+					//print '<td>';
+					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
-					print '</td>';
-
+					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto);
+					print ' ';
+					print $obj->getDesc();
+					//print '</td>';
+					print '</div>';
+						
 					try {
 						$nbofrecipient=$obj->getNbOfRecipients('');
 					}
@@ -324,7 +341,8 @@ if ($object->fetch($id) >= 0)
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
 
-					print '<td align="center">';
+					//print '<td align="center">';
+					print '<div class="tagtd center">';
 					if ($nbofrecipient >= 0)
 					{
 						print $nbofrecipient;
@@ -333,41 +351,54 @@ if ($object->fetch($id) >= 0)
 					{
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
-					print '</td>';
-
-					print '<td align="left">';
-					try {
-						$filter=$obj->formFilter();
-					}
-					catch(Exception $e)
-					{
-						dol_syslog($e->getMessage(), LOG_ERR);
-					}
-					if ($filter) print $filter;
-					else print $langs->trans("None");
-					print '</td>';
-
-					print '<td align="right">';
+					//print '</td>';
+					print '</div>';
+						
+					//print '<td align="left">';
+					print '<div class="tagtd" align="left">';
 					if ($allowaddtarget)
 					{
-						print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+    					try {
+    						$filter=$obj->formFilter();
+    					}
+    					catch(Exception $e)
+    					{
+    						dol_syslog($e->getMessage(), LOG_ERR);
+    					}
+    					if ($filter) print $filter;
+    					else print $langs->trans("None");
+					}
+					//print '</td>';
+					print '</div>';
+						
+					//print '<td align="right">';
+					print '<div class="tagtd" align="right">';
+					if ($allowaddtarget)
+					{
+						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					}
 					else
 					{
+					    print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
-					print '</td>';
-
+					//print '</td>';
+					print '</div>';
+						
 					if ($allowaddtarget) print '</form>';
-
-					print "</tr>\n";
+					else print '</div>';
+						
+					//print "</tr>\n";
+//					print '</div>'."\n";
 				}
 			}
 		}	// End foreach dir
 
-		print '</table>';
-		print '<br>';
+		//print '</table>';
+		print '</div>';
+		
+		print '<br><br>';
 	}
 
 	// List of selected targets
@@ -381,7 +412,7 @@ if ($object->fetch($id) >= 0)
 	$sql .= $db->order($sortfield,$sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = -1;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 	    $result = $db->query($sql);

@@ -126,7 +126,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -212,7 +212,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -307,6 +307,7 @@ class ProductApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->product->$field = $value;
         }
         

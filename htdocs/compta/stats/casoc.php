@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
@@ -22,7 +22,7 @@
 
 /**
  *       \file        htdocs/compta/stats/casoc.php
- *       \brief       Page reporting CA par societe
+ *       \brief       Page reporting Turnover (CA) by thirdparty
  */
 
 require '../../main.inc.php';
@@ -150,6 +150,7 @@ $tableparams = array_merge($commonparams, $tableparams);
 foreach($allparams as $key => $value) {
     $paramslink .= '&' . $key . '=' . $value;
 }
+
 
 /*
  * View
@@ -338,8 +339,13 @@ foreach($headerparams as $key => $value)
 {
      print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 }
-print "<table class=\"noborder\" width=\"100%\">";
-    // Category filter
+
+$moreforfilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+// Category filter
 print '<tr class="liste_titre">';
 print '<td>';
 print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
@@ -614,6 +620,8 @@ if (count($amount)) {
 }
 
 print "</table>";
+print "</div>";
+
 print '</form>';
 
 llxFooter();

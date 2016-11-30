@@ -71,7 +71,11 @@ if ($lastUpdate)
 else print $langs->trans('None');
 print "</div><br>\n";
 
-print '<table class="noborder" width="100%">';
+$moreforfilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+
 print '<tbody>';
 print '<tr class="liste_titre">';
 
@@ -122,7 +126,7 @@ if ($log_holiday == '2')
 
 print '</tbody>'."\n";
 print '</table>'."\n";
-
+print '</div>';
 
 llxFooter();
 

@@ -388,7 +388,7 @@ if ($action == 'create')
 	print '<td colspan="3">';
     // Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,70);
+	$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -603,7 +603,7 @@ else
 		print '<td>'.$object->label.'</td></tr>';*/
 
 		// Type
-		print '<tr><td>'.$langs->trans("AccountType").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
 
 		// Currency
@@ -683,12 +683,12 @@ else
 		
         // Categories
         if ($conf->categorie->enabled) {
-            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
             print $form->showCategories($object->id,'account',1);
             print "</td></tr>";
         }
 
-		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
+		print '<tr><td class="tdtop titlefield">'.$langs->trans("Comment").'</td>';
 		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
 
 		print '</table>';
@@ -931,7 +931,7 @@ else
 		print '<td>';
 	    // Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,'95%');
+		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$object->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,'95%');
 		$doleditor->Create();
 		print '</td></tr>';
 

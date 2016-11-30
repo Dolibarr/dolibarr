@@ -615,12 +615,12 @@ if ($action == 'create' && $user->rights->projet->creer)
         });
         </script>';
 }
-else
+elseif ($object->id > 0) 
 {
     /*
      * Show or edit
      */
-
+    
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -1126,6 +1126,10 @@ else
     // Hook to add more things on page
     $parameters=array();
     $reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+}
+else
+{
+    print $langs->trans("RecordNotFound");
 }
 
 llxFooter();

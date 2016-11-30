@@ -1961,6 +1961,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $old_statut = $this->statut;
                     $this->statut = $statut;
 
                     // Call trigger
@@ -1974,6 +1975,7 @@ class CommandeFournisseur extends CommonOrder
                     }
                     else
                     {
+                        $this->statut = $old_statut;
                         $this->db->rollback();
                         $this->error=$this->db->lasterror();
                         $result = -1;
@@ -2288,10 +2290,10 @@ class CommandeFournisseur extends CommonOrder
 
             // Clean vat code
             $vat_src_code='';
-            if (preg_match('/\((.*)\)/', $vatrate, $reg))
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
                 $vat_src_code = $reg[1];
-                $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+                $vatrate = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
             
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);

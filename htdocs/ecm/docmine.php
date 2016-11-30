@@ -222,7 +222,7 @@ if ($action == 'edit')
 }
 
 print '<table class="border" width="100%">';
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 $s='';
 $tmpecmdir=new EcmDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
@@ -233,7 +233,7 @@ while ($tmpecmdir && $result > 0)
 	$tmpecmdir->ref=$tmpecmdir->label;
 	if ($i == 0 && $action == 'edit')
 	{
-		$s='<input type="text" name="label" size="40" maxlength="32" value="'.$tmpecmdir->label.'">';
+		$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
 	}
 	else $s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
@@ -251,7 +251,7 @@ while ($tmpecmdir && $result > 0)
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print '</td></tr>';
-print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 if ($action == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';

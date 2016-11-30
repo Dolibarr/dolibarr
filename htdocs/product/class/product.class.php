@@ -924,7 +924,23 @@ class Product extends CommonObject
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
-
+			
+			// Delete from product_batch on product delete	
+			if (! $error)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.'product_batch';
+				$sql.= " WHERE fk_product_stock IN (";
+				$sql.= "SELECT rowid FROM ".MAIN_DB_PREFIX.'product_stock';
+				$sql.= " WHERE fk_product = ".$id.")";
+				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if (! $result)
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+			
    			// Delete all child tables
 			if (! $error)
 			{
@@ -2168,7 +2184,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_contrat";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('contrat', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('contract', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND c.statut != 0";
@@ -2794,7 +2810,7 @@ class Product extends CommonObject
 
 		$list = array();
 
-		$sql = "SELECT p.fk_soc";
+		$sql = "SELECT DISTINCT p.fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
 		$sql.= " WHERE p.fk_product = ".$this->id;
 		$sql.= " AND p.entity = ".$conf->entity;

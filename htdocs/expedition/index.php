@@ -24,8 +24,8 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");

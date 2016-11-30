@@ -126,29 +126,19 @@ TypeContact_order_supplier_internal_SHIPPING=Representative following-up shippin
 TypeContact_order_supplier_external_BILLING=Supplier invoice contact
 TypeContact_order_supplier_external_SHIPPING=Supplier shipping contact
 TypeContact_order_supplier_external_CUSTOMER=Supplier contact following-up order
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON not defined
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_OrderNotChecked=No orders to invoice selected
-# Sources
-OrderSource0=Commercial proposal
-OrderSource1=Internet
-OrderSource2=Mail campaign
-OrderSource3=Phone compaign
-OrderSource4=Fax campaign
-OrderSource5=Commercial
-OrderSource6=Store
-QtyOrdered=Qty ordered
-# Documents models
-PDFEinsteinDescription=A complete order model (logo...)
-PDFEdisonDescription=A simple order model
-PDFProformaDescription=A complete proforma invoice (logo…)
-# Orders modes
+# Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Mail
 OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Phone
+# Documents models
+PDFEinsteinDescription=A complete order model (logo...)
+PDFEdisonDescription=A simple order model
+PDFProformaDescription=A complete proforma invoice (logo…)
 CreateInvoiceForThisCustomer=Bill orders
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders. 
@@ -159,3 +149,4 @@ OrderFail=An error happened during your orders creation
 CreateOrders=Create orders
 ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
+SetShippingMode=Set shipping mode
