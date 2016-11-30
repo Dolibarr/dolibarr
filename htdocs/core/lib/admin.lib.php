@@ -975,7 +975,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 
                             if (! empty($objMod->dictionaries))
                             {
-                                //var_dump($objMod->dictionaries['tabname']);var_dump(max($taborder));
+                                //var_dump($objMod->dictionaries['tabname']);
                                 $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
                                 foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = max($taborder)+1; $tabname[] = $val; }
                                 foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
