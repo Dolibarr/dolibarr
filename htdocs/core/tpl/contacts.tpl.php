@@ -52,6 +52,7 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
+<div class="div-table-responsive">
 <div class="tagtable centpercent noborder allwidth">
 
 <?php 
@@ -110,11 +111,10 @@ if ($permission) {
 		<div class="tagtd nowrap maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
 			<?php 
-			// add company icon for direct link 
-			if ($selectedCompany && empty($conf->dol_use_jmobile)) 
+			// add company icon before select list 
+			if ($selectedCompany) 
 			{
-				$companystatic->fetch($selectedCompany);
-				echo $companystatic->getNomUrl(2, '', 0, 1); 
+			    echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
 			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
@@ -238,6 +238,7 @@ if ($permission) {
 <?php $i++; ?>
 <?php } } ?>
 
+</div>
 </div>
 <!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->
 <?php

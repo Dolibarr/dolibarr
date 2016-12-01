@@ -4,7 +4,6 @@ ACCOUNTING_EXPORT_DATE=Formato de fecha para el archivo de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportación con cuenta global
 AccountAccountingSuggest=Sugerencia de cuenta contable
-Reports=Reportes
 Bookkeeping=Libro mayor
 CAHTF=Total de compra al proveedor antes de impuestos
 Processing=Procesando

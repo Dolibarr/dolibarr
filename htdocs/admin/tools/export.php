@@ -289,7 +289,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".$db::LABEL." dump via php
+    $sqlhead .= "-- ".$db::LABEL." dump via php with Dolibarr ".DOL_VERSION."
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------

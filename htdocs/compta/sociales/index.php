@@ -76,6 +76,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
+	$search_status='';
     $typeid="";
 	$year="";
 	$month="";
@@ -104,7 +105,7 @@ $sql.= " AND cs.entity = ".$conf->entity;
 if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
 if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
-if ($search_status != '') $sql.=" AND cs.paye = ".$db->escape($search_status);
+if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -173,8 +174,9 @@ if ($resql)
 	}
 	else
 	{
-
-		print '<table class="liste" width="100%">';
+	    print '<div class="div-table-responsive">';
+	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	    
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
@@ -285,6 +287,7 @@ if ($resql)
 		}
 		
 		print '</table>';
+		print '</div>';
 	}
 	print '</form>';
 }

@@ -50,8 +50,6 @@ $action = GETPOST('action', 'alpha');
 
 // Parameters ACCOUNTING_* and others
 $list = array (
-    //'ACCOUNTING_LIMIT_LIST_VENTILATION',  Useless, we can change value dynamically, so we use default global setup
-    'ACCOUNTING_MANAGE_ZERO',
     'ACCOUNTING_LENGTH_GACCOUNT',
     'ACCOUNTING_LENGTH_AACCOUNT' ,
     'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
@@ -85,13 +83,11 @@ if ($action == 'update') {
 		$error ++;
 	}
 	
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
+	if ($error) {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-    foreach ( $list as $constname ) {
+    foreach ($list as $constname) {
         $constvalue = GETPOST($constname, 'alpha');
 
         if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -259,49 +255,41 @@ if (! empty($user->admin))
         print '</a></td>';
     }
     print '</tr>';
+    
+    $var = ! $var;
+    print "<tr " . $bc[$var] . ">";
+    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 }
 
 
 // Param a user $user->rights->accountancy->chartofaccount can access
-foreach ( $list as $key ) {
+foreach ($list as $key) 
+{
     $var = ! $var;
 
-    if ($key != 'ACCOUNTING_MANAGE_ZERO')
-    {
-        print '<tr ' . $bc[$var] . ' class="value">';
-        // Param
-        $label = $langs->trans($key);
-        print '<td>'.$label.'</td>';
-        // Value
-        print '<td align="right">';
-        print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
-        print '</td>';
-        print '</tr>';
-    }
-    if ($key == 'ACCOUNTING_MANAGE_ZERO')
-    {
-        $var = ! $var;
-        print "<tr " . $bc[$var] . ">";
-        print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
-        if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-            print '<td align="right""><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
-            print img_picto($langs->trans("Activated"), 'switch_on');
-            print '</a></td>';
-        } else {
-            print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
-            print img_picto($langs->trans("Disabled"), 'switch_off');
-            print '</a></td>';
-        }
-        print '</tr>';
-    }
+    print '<tr ' . $bc[$var] . ' class="value">';
+    // Param
+    $label = $langs->trans($key);
+    print '<td>'.$label.'</td>';
+    // Value
+    print '<td align="right">';
+    print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '</td>';
+    print '</tr>';
 }
 
 
 print '</table>';
-
-
-
-
 
 
 

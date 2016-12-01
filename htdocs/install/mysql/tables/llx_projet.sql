@@ -41,5 +41,6 @@ create table llx_projet
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
   budget_amount    double(24,8),				
-  model_pdf        varchar(255)
+  model_pdf        varchar(255),
+  import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

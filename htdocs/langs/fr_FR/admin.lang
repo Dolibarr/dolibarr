@@ -58,8 +58,8 @@ ErrorCodeCantContainZero=Erreur, le code ne peut contenir la valeur 0
 DisableJavascript=Désactive les fonctions Javascript et Ajax (Recommandé pour les personnes aveugles ou navigateurs text).
 UseSearchToSelectCompanyTooltip=Si vous avez un nombre important de tiers (>100 000), vous pourrez améliorer les performances en positionnant la constante COMPANY_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
 UseSearchToSelectContactTooltip=Si vous avez un nombre important de contacts (>100 000), vous pourrez améliorer les performances en positionnant la constante CONTACT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
-DelaiedFullListToSelectCompany=Attendre que vous ayez appuyez sur une touche avant de charger le contenu de la liste des tiers (Cela peut augmenter les performances si vous avez un grand nombre de tiers)
-DelaiedFullListToSelectContact=Attendre que vous ayez appuyez sur une touche avant de charger le contenu de la liste des contacts (Cela peut augmenter les performances si vous avez un grand nombre de contacts)
+DelaiedFullListToSelectCompany=Attendre que vous ayez appuyez sur une touche avant de charger le contenu de la liste déroulante des tiers (Cela peut augmenter les performances si vous avez un grand nombre de contacts)
+DelaiedFullListToSelectContact=Attendre que vous ayez appuyez sur une touche avant de charger le contenu de la liste déroulante des contacts/adresses (Cela peut augmenter les performances si vous avez un grand nombre de contacts)
 NumberOfKeyToSearch=Nb carac. déclenchant recherche : %s
 NotAvailableWhenAjaxDisabled=Non disponible quand Ajax est désactivé
 AllowToSelectProjectFromOtherCompany=Sur les éléments d'un tiers, autorise la sélection d'un projet lié à un autre tiers
@@ -1017,7 +1017,7 @@ SimpleNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'
 ShowProfIdInAddress=Afficher l'identifiant professionnel dans les adresses sur les documents
 ShowVATIntaInAddress=Cacher l'identifiant de TVA Intracommunautaire dans les adresses sur les documents
 TranslationUncomplete=Traduction partielle
-SomeTranslationAreUncomplete=Certaines langues sont traduites partiellement ou peuvent contenir des erreurs. Si vous en détectez, vous pouvez corriger les fichiers langues depuis  <a href="http://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
+SomeTranslationAreUncomplete=Certaines langues sont traduites partiellement ou peuvent contenir des erreurs. Si vous en détectez, vous pouvez corriger les fichiers langues depuis  <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
 MAIN_DISABLE_METEO=Désactiver la vue météo
 TestLoginToAPI=Tester connexion à l'API
 ProxyDesc=Certaines fonctions de Dolibarr nécessitent que le serveur ait accès à internet. Définissez ici les paramètres de ces accès. Si le serveur Dolibarr est derrière un proxy, ces paramètres indiquent à Dolibarr comment le traverser.
@@ -1062,7 +1062,7 @@ TotalNumberOfActivatedModules=Nombre total de modules/fonctionnalités activés:
 YouMustEnableOneModule=Vous devez activer au moins une fonctionnalité
 ClassNotFoundIntoPathWarning=La classe %s n'a pas été trouvée dans le chemin PHP
 YesInSummer=Oui en été
-OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles qu'en soient les permissions de ces utilisateurs):
+OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles qu'en soient les permissions de ces utilisateurs) et seulement si les permissions leur ont été données:
 SuhosinSessionEncrypt=Stockage des sessions chiffrées par Suhosin
 ConditionIsCurrently=La condition est actuellement %s
 YouUseBestDriver=Vous utilisez le driver %s qui est le driver recommandé actuellement.
@@ -1140,6 +1140,8 @@ FreeLegalTextOnSupplierProposal=Texte libre sur les demande de tarifs fournisseu
 WatermarkOnDraftSupplierProposal=Filigrane sur le brouillon de la demande de prix-fournisseur (aucun si vide)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Demander le compte bancaire cible durant la création de la demande de prix fournisseur
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Demander pour l'entrepôt-source pour la commande
+##### Suppliers Orders #####
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Demandez le compte bancaire destination de commande fournisseur
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modèles de numérotation des commandes
@@ -1320,7 +1322,7 @@ ViewProductDescInFormAbility=Visualisation des descriptions produits dans les fo
 MergePropalProductCard=Ajoute dans l'onglet Fichiers joints des produits/services, une option pour fusionner le document PDF du produit au PDF des propositions Azur si le produit/services est inclut dans la proposition.
 ViewProductDescInThirdpartyLanguageAbility=Visualisation des descriptions de produits dans la langue du tiers
 UseSearchToSelectProductTooltip=Si vous avez un nombre important de produits (>100 000), vous pourrez améliorer les performances en positionnant la constante PRODUCT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
-UseSearchToSelectProduct=Utilisez un champ avec auto-complétion pour choisir les produits (plutôt qu'une liste déroulante).
+UseSearchToSelectProduct=Attendre que vous ayez appuyez sur une touche avant de charger le contenu de la liste déroulante des produits (Cela peut augmenter les performances si vous avez un grand nombre de contacts)
 SetDefaultBarcodeTypeProducts=Type de code-barre utilisé par défaut pour les produits
 SetDefaultBarcodeTypeThirdParties=Type de code-barre utilisé par défaut pour les tiers
 UseUnits=Définir une unité de mesure pour la quantité lors de l'édition de lignes de commande, proposition ou facture
@@ -1632,3 +1634,8 @@ SamePriceAlsoForSharedCompanies=Si vous utilisez un module multi-société, avec
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les permissions pour le(s) module(s) activé(s) ont été donnés aux utilisateurs admin uniquement. Vous devrez peut-être accorder des autorisations aux autres utilisateurs manuellement si nécessaire.
 UserHasNoPermissions=Cet utilisateur n'a pas de permission définie
 TypeCdr=Utilisez "Aucune" si la date du terme de paiement est la date de la facture plus un delta en jours (delta est le champ "Nb de jours") <br> Utilisez "À la fin du mois", si, après le delta, la date doit être augmentée pour atteindre la fin du mois (+ un «Offset» optionnel en jours) <br> Utilisez "Coutant/Suivant" pour que la date du terme de paiement soit la premier Nième jour du mois qui suit (N est stocké dans le champ "Nb de jours")
+##### Resource ####
+ResourceSetup=Configuration du module Ressource
+UseSearchToSelectResource=Utilisez un champ avec auto-complétion pour choisir les ressources (plutôt qu'une liste déroulante).
+DisabledResourceLinkUser=Supprimer le lien entre la ressource et l'utilisateur
+DisabledResourceLinkContact=Désactiver le lient entre la ressource et le contact/adresse

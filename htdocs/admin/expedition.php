@@ -215,7 +215,7 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 $form=new Form($db);
 
-llxHeader("","");
+llxHeader("",$langs->trans("SendingsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');

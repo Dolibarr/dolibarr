@@ -315,7 +315,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -450,7 +450,8 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 		
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
@@ -626,7 +627,7 @@ while ($i < min($num,$limit))
 	$projectstatic->user_author_id = $obj->fk_user_creat;
 	$projectstatic->public = $obj->public;
 	$projectstatic->ref = $obj->ref;
-	$projectstatic->datee = $obj->date_end;
+	$projectstatic->datee = $db->jdate($obj->date_end);
 	$projectstatic->statut = $obj->fk_statut;
 	$projectstatic->opp_status = $obj->fk_opp_status;
 	 
@@ -867,6 +868,7 @@ $reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // N
 print $hookmanager->resPrint;
 
 print "</table>\n";
+print '</div>';
 print "</form>\n";
 
 

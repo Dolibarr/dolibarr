@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  *
@@ -342,8 +342,6 @@ if ($step == 1 || ! $datatoimport)
 	dol_fiche_head($head, 'step1', $langs->trans("NewImport"));
 
 
-	print '<table class="notopnoleftnoright" width="100%">';
-
 	print $langs->trans("SelectImportDataSet").'<br>';
 
 	// Affiche les modules d'imports
@@ -387,10 +385,7 @@ if ($step == 1 || ! $datatoimport)
 	}
 	print '</table>';
 
-	print '</table>';
-
     dol_fiche_end();
-
 }
 
 
@@ -413,7 +408,7 @@ if ($step == 2 && $datatoimport)
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
@@ -422,15 +417,16 @@ if ($step == 2 && $datatoimport)
 	print '</td></tr>';
 
 	// Lot de donnees a importer
-	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br>'."\n";
 
+	dol_fiche_end();
+	
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -463,9 +459,6 @@ if ($step == 2 && $datatoimport)
 	}
 
 	print '</table></form>';
-
-    dol_fiche_end();
-
 }
 
 
@@ -498,7 +491,7 @@ if ($step == 3 && $datatoimport)
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
@@ -507,7 +500,7 @@ if ($step == 3 && $datatoimport)
 	print '</td></tr>';
 
 	// Lot de donnees a importer
-	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
@@ -519,7 +512,7 @@ if ($step == 3 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
@@ -528,9 +521,11 @@ if ($step == 3 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br>'."\n";
+	
+	dol_fiche_end();
 
-
+    print '<br>';
+    
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
@@ -542,7 +537,7 @@ if ($step == 3 && $datatoimport)
 
 	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
 
-	print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
+	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
 	$var=false;
@@ -602,8 +597,6 @@ if ($step == 3 && $datatoimport)
 	}
 
 	print '</table></form>';
-
-    dol_fiche_end();
 }
 
 
@@ -719,7 +712,7 @@ if ($step == 4 && $datatoimport)
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
@@ -728,7 +721,7 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	// Lot de donnees a importer
-	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
@@ -740,7 +733,7 @@ if ($step == 4 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
@@ -748,7 +741,7 @@ if ($step == 4 && $datatoimport)
 
 	// Separator and enclosure
     if ($model == 'csv') {
-		print '<tr><td width="25%">'.$langs->trans("CsvOptions").'</td>';
+		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
 		print '<form>';
 		print '<input type="hidden" value="'.$step.'" name="step">';
@@ -767,7 +760,7 @@ if ($step == 4 && $datatoimport)
     }
 
 	// File to import
-	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
+	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
 	$modulepart='import';
 	$relativepath=GETPOST('filetoimport');
@@ -777,6 +770,9 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	
+	dol_fiche_end();
+	
 	print '<br>'."\n";
 
 
@@ -801,7 +797,7 @@ if ($step == 4 && $datatoimport)
     print '</form>';
 
 	// Title of array with fields
-	print '<table class="nobordernopadding" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
 	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
@@ -999,8 +995,6 @@ if ($step == 4 && $datatoimport)
 
 	print '</table>';
 
-    dol_fiche_end();
-
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -1183,7 +1177,7 @@ if ($step == 5 && $datatoimport)
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
@@ -1204,7 +1198,7 @@ if ($step == 5 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
@@ -1212,7 +1206,7 @@ if ($step == 5 && $datatoimport)
 
 	// Separator and enclosure
 	if ($model == 'csv') {
-	    print '<tr><td width="25%">'.$langs->trans("CsvOptions").'</td>';
+	    print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 	    print '<td>';
 	    print $langs->trans("Separator").' : ';
 	    print htmlentities($separator);
@@ -1441,9 +1435,9 @@ if ($step == 5 && $datatoimport)
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
-        if (! count($arrayoferrors) && ! count($arrayofwarnings)) print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br><br>';
-        else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
-
+        if (! count($arrayoferrors) && ! count($arrayofwarnings)) print '<center>'.img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b></center><br><br>';
+        else print '<b>'.$langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
+        
         // Show Errors
         //var_dump($arrayoferrors);
         if (count($arrayoferrors))
@@ -1585,7 +1579,7 @@ if ($step == 6 && $datatoimport)
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
@@ -1606,12 +1600,23 @@ if ($step == 6 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
+	// Separator and enclosure
+	if ($model == 'csv') {
+	    print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
+	    print '<td>';
+	    print $langs->trans("Separator").' : ';
+	    print htmlentities($separator);
+	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
+	    print htmlentities($enclosure);
+	    print '</td></tr>';
+	}
+	
 	// File to import
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';

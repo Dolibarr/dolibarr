@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -232,30 +233,39 @@ if (empty($reshook))
 			$batch="batchl".$i."_0";
 			$stockLocation="ent1".$i."_0";
 	    	$qty = "qtyl".$i;
- 
-			if (isset($_POST[$batch]))
+
+			if ($objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
 			{
-				//shipment line with batch-enable product
-				$qty .= '_'.$j;
-				while (isset($_POST[$batch]))
-				{
-					// save line of detail into sub_qty
-					$sub_qty[$j]['q']=GETPOST($qty,'int');				// the qty we want to move for this stock record
-					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');		// the id into llx_product_batch of stock record to move
-					$subtotalqty+=$sub_qty[$j]['q'];
-				
-					//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
-					
-					$j++;
-					$batch="batchl".$i."_".$j;
-					$qty = "qtyl".$i.'_'.$j;
-				}
-
-				$batch_line[$i]['detail']=$sub_qty;		// array of details
-				$batch_line[$i]['qty']=$subtotalqty;
-				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
-
-				$totalqty+=$subtotalqty;
+			    if (isset($_POST[$batch]))
+			    {
+    				//shipment line with batch-enable product
+    				$qty .= '_'.$j;
+    				while (isset($_POST[$batch]))
+    				{
+    					// save line of detail into sub_qty
+    					$sub_qty[$j]['q']=GETPOST($qty,'int');				// the qty we want to move for this stock record
+    					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');		// the id into llx_product_batch of stock record to move
+    					$subtotalqty+=$sub_qty[$j]['q'];
+    				
+    					//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+    					
+    					$j++;
+    					$batch="batchl".$i."_".$j;
+    					$qty = "qtyl".$i.'_'.$j;
+    				}
+    
+    				$batch_line[$i]['detail']=$sub_qty;		// array of details
+    				$batch_line[$i]['qty']=$subtotalqty;
+    				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+    
+    				$totalqty+=$subtotalqty;
+			    }
+			    else
+			    {
+			        // Case we dont use the list of available qty for each warehouse/lot
+			        // GUI does not allow this yet
+			        setEventMessage('StockRequiredToChooseWhichLotToUse', 'errors');
+			    }
 			}
 			else if (isset($_POST[$stockLocation]))
 			{
@@ -603,7 +613,7 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print load_fiche_titre($langs->trans("CreateShipment")).'<br>';
     print $langs->trans("ShipmentCreationIsDoneFromOrder");
     $action=''; $id=''; $ref='';
 }
@@ -613,7 +623,7 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print load_fiche_titre($langs->trans("CreateASending"));
+    print load_fiche_titre($langs->trans("CreateShipment"));
     if (! $origin)
     {
         setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
@@ -626,8 +636,6 @@ if ($action == 'create')
         $object = new $classname($db);
         if ($object->fetch($origin_id))	// This include the fetch_lines
         {
-            //var_dump($object);
-
             $soc = new Societe($db);
             $soc->fetch($object->socid);
 
@@ -652,7 +660,7 @@ if ($action == 'create')
             print '<table class="border centpercent">';
 
             // Ref
-            print '<tr><td class="fieldrequired">';
+            print '<tr><td class="titlefieldcreate fieldrequired">';
             if ($origin == 'commande' && ! empty($conf->commande->enabled))
             {
                 print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
@@ -675,7 +683,7 @@ if ($action == 'create')
             print '</tr>';
 
             // Tiers
-            print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
+            print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Company').'</td>';
             print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
             print '</tr>';
 
@@ -691,7 +699,7 @@ if ($action == 'create')
             // Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
             print $doleditor->Create(1);
             print "</td></tr>";
 
@@ -700,7 +708,7 @@ if ($action == 'create')
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
                 print '<td colspan="3">';
-                $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         		print $doleditor->Create(1);
                 print "</td></tr>";
             }
@@ -708,19 +716,18 @@ if ($action == 'create')
             // Weight
             print '<tr><td>';
             print $langs->trans("Weight");
-            print '</td><td width="90px"><input name="weight" size="5" value="'.GETPOST('weight','int').'"></td><td>';
+            print '</td><td><input name="weight" size="4" value="'.GETPOST('weight','int').'"> ';
             print $formproduct->select_measuring_units("weight_units","weight",GETPOST('weight_units','int'));
-            print '</td></tr><tr><td>';
-            print $langs->trans("Width");
-            print ' </td><td><input name="sizeW" size="5" value="'.GETPOST('sizeW','int').'"></td><td rowspan="3">';
+            print '</td></tr>';
+            // Dim
+            print '<tr><td>';
+            print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
+            print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW','int').'">';
+            print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH','int').'">';
+            print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS','int').'">';
+            print ' ';
             print $formproduct->select_measuring_units("size_units","size");
-            print '</td></tr><tr><td>';
-            print $langs->trans("Height");
-            print '</td><td><input name="sizeH" size="5" value="'.GETPOST('sizeH','int').'"></td>';
-            print '</tr><tr><td>';
-            print $langs->trans("Depth");
-            print '</td><td><input name="sizeS" size="5" value="'.GETPOST('sizeS','int').'"></td>';
-            print '</tr>';
+            print '</td></tr>';
 
             // Delivery method
             print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
@@ -864,6 +871,7 @@ if ($action == 'create')
                     $product_static->type=$line->fk_product_type;
                     $product_static->id=$line->fk_product;
                     $product_static->ref=$line->ref;
+                    $product_static->status_batch=$line->product_tobatch;
                     $text=$product_static->getNomUrl(1);
                     $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
@@ -1136,9 +1144,10 @@ if ($action == 'create')
 						$subj=0;
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						
+						$warehouseObject=new Entrepot($db);
+						$productlotObject=new Productlot($db);
 						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
 						{
-							$warehouseObject=new Entrepot($db);
 							$warehouseObject->fetch($warehouse_id);
 							if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 								foreach ($stock_warehouse->detail_batch as $dbatch)
@@ -1156,7 +1165,11 @@ if ($action == 'create')
 									 
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-									print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+									$productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
+									print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
+									print ' ('.$dbatch->qty.')';
+									//print $langs->trans("DetailBatchFormat", 'ee'.$dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
 									{
@@ -1243,6 +1256,7 @@ else if ($id || $ref)
 /* *************************************************************************** */
 {
 	$lines = $object->lines;
+
 	$num_prod = count($lines);
 
 	if ($object->id > 0)
@@ -1687,7 +1701,7 @@ else if ($id || $ref)
     		$sql.= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
     		$sql.= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition,";
     		//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
-    		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+    		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
     		$sql.= ' p.description as product_desc';
     		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
     		$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
@@ -1701,7 +1715,7 @@ else if ($id || $ref)
     		//if ($filter) $sql.= $filter;
     		$sql.= " ORDER BY obj.fk_product";
 
-    		dol_syslog("show_list_sending_receive", LOG_DEBUG);
+    		dol_syslog("get list of shipment lines", LOG_DEBUG);
     		$resql = $db->query($sql);
     		if ($resql)
     		{
@@ -1751,6 +1765,7 @@ else if ($id || $ref)
 				$product_static->type=$lines[$i]->fk_product_type;
 				$product_static->id=$lines[$i]->fk_product;
 				$product_static->ref=$lines[$i]->ref;
+				$product_static->status_batch=$lines[$i]->product_tobatch;
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.$label;
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));

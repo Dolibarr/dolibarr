@@ -64,7 +64,7 @@ $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user=GETPOST('search_user','int');
-$search_request_author=GETPOST('search_request_author','int');
+$search_request_author=GETPOST('search_request_author','alpha');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
@@ -121,7 +121,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $fieldstosearchall = array(
     'cf.ref'=>'Ref',
     'cf.ref_supplier'=>'RefSupplierOrder',
-    //'pd.description'=>'Description',
+    'pd.description'=>'Description',
     's.nom'=>"ThirdParty",
     'cf.note_public'=>'NotePublic',
 );
@@ -192,7 +192,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_type='';
     $search_country='';
     $search_type_thirdparty='';
-    $search_request_author=-1;
+    $search_request_author='';
     $search_total_ht='';
     $search_total_vat='';
     $search_total_ttc='';
@@ -205,7 +205,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $deliveryyear='';
     $billed='';
     $search_array_options=array();
-    
+
 }
 
 if (empty($reshook))
@@ -248,7 +248,7 @@ if ($socid > 0)
 	$fourn->fetch($socid);
 	$title .= ' - '.$fourn->name;
 }
-if ($status) 
+if ($status)
 {
     if ($status == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
     if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
@@ -293,14 +293,14 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE cf.fk_soc = s.rowid';
-$sql.= ' AND cf.entity IN ('.getEntity('supplier_order', 1).')';
+$sql.= ' AND cf.entity IN ('.getEntity('commande_fournisseur', 1).')';
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('cf.ref', $search_ref);
 if ($search_refsupp) $sql.= natural_search("cf.ref_supplier", $search_refsupp);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_request_author > 0) $sql.= " AND u.login LIKE '%".$db->escape($search_request_author)."%'";
+if ($search_request_author) $sql.= " AND u.login LIKE '%".$db->escape($search_request_author)."%'";
 if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
 
 //Required triple check because statut=0 means draft filter
@@ -371,7 +371,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -382,7 +382,7 @@ $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
-{	
+{
 	if ($socid > 0)
 	{
 		$soc = new Societe($db);
@@ -393,7 +393,7 @@ if ($resql)
 	{
 		$title = $langs->trans('ListOfSupplierOrders');
 	}
-    
+
 	$num = $db->num_rows($resql);
 
 	$param='';
@@ -410,13 +410,13 @@ if ($resql)
 	if ($search_ref)      		$param.='&search_ref='.$search_ref;
 	if ($search_company)  		$param.='&search_company='.$search_company;
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
-	if ($search_request_author > 0) $param.='&search_request_author='.$search_request_author;
+	if ($search_request_author) $param.='&search_request_author='.$search_request_author;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($billed != '')          $param.="&billed=".$billed; 
+	if ($billed != '')          $param.="&billed=".$billed;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
@@ -425,9 +425,9 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-	
+
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -437,9 +437,9 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-	
+
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
-	
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -447,7 +447,7 @@ if ($resql)
     }
 
     $moreforfilter='';
-    
+
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
@@ -485,11 +485,12 @@ if ($resql)
         print $moreforfilter;
         print '</div>';
     }
-    
+
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['cf.ref']['checked']))            print_liste_field_titre($arrayfields['cf.ref']['label'],$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
@@ -511,9 +512,9 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
 				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -538,7 +539,7 @@ if ($resql)
 		print '<td class="liste_titre"><input size="8" type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
 	}
 	// Ref customer
-	if (! empty($arrayfields['cf.ref_supplier']['checked'])) 
+	if (! empty($arrayfields['cf.ref_supplier']['checked']))
 	{
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	}
@@ -551,11 +552,11 @@ if ($resql)
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		print '<td class="liste_titre">';
-		//print '<input type="text" class="flat" size="6" name="search_request_author" value="'.$search_request_author.'">';
+		print '<input type="text" class="flat" size="6" name="search_request_author" value="'.$search_request_author.'">';
 		print '</td>';
 	}
 	// Thirpdarty
-	if (! empty($arrayfields['s.nom']['checked'])) 
+	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_company" value="'.$search_company.'"></td>';
 	}
@@ -594,7 +595,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Date delivery
-	if (! empty($arrayfields['cf.date_delivery']['checked'])) 
+	if (! empty($arrayfields['cf.date_delivery']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
         if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
@@ -622,7 +623,7 @@ if ($resql)
 	    print '<td class="liste_titre" align="right">';
 	    print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 	    print '</td>';
-	}	
+	}
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -649,7 +650,7 @@ if ($resql)
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;	
+	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['cf.datec']['checked']))
 	{
@@ -681,13 +682,13 @@ if ($resql)
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
 	print '</td>';
-	
+
 	print "</tr>\n";
 
 	$total=0;
 	$subtotal=0;
     $productstat_cache=array();
-	
+
     $userstatic = new User($db);
 	$objectstatic=new CommandeFournisseur($db);
 	$projectstatic=new Project($db);
@@ -699,7 +700,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		
+
         $objectstatic->id=$obj->rowid;
         $objectstatic->ref=$obj->ref;
         $objectstatic->ref_supplier = $obj->ref_supplier;
@@ -708,7 +709,7 @@ if ($resql)
         $objectstatic->total_ttc = $obj->total_ttc;
         $objectstatic->date_delivery = $db->jdate($obj->date_delivery);
         $objectstatic->statut = $obj->fk_statut;
-        
+
 		print "<tr ".$bc[$var].">";
 
 		// Ref
@@ -814,7 +815,7 @@ if ($resql)
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
-        
+
 		// Order date
 		if (! empty($arrayfields['cf.date_commande']['checked']))
 		{
@@ -859,7 +860,7 @@ if ($resql)
 		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 		    $totalarray['totalttc'] += $obj->total_ttc;
         }
-		
+
         // Extra fields
         if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
         {
@@ -910,7 +911,7 @@ if ($resql)
             print '<td align="center">'.yn($obj->billed).'</td>';
             if (! $i) $totalarray['nbfield']++;
         }
-        
+
         // Action column
         print '<td></td>';
         if (! $i) $totalarray['nbfield']++;
@@ -919,6 +920,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>\n";
+	print '</div>';
 	print "</form>\n";
 
 	if (! empty($conf->facture->enable)) print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';

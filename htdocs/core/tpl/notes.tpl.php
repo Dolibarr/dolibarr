@@ -63,8 +63,8 @@ elseif ($module == 'shipping')    		 { $permission=$user->rights->expedition->cr
 elseif ($module == 'product')    		 { $permission=$user->rights->produit->creer;}
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:100';	// Rem: This var is for all notes, not only thirdparties note.
-else $typeofdata='textarea:12:100';
+if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:95%';	// Rem: This var is for all notes, not only thirdparties note.
+else $typeofdata='textarea:12:95%';
 
 ?>
 
@@ -72,14 +72,14 @@ else $typeofdata='textarea:12:100';
 <div class="tagtable border table-border centpercent">
 <?php if ($module != 'product') {   // No public note yet on products ?>
 	<div class="tagtr table-border-row">
-		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0); ?></div>
+		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1); ?></div>
 	</div>
 <?php } ?>
 <?php if (empty($user->societe_id)) { ?>
 	<div class="tagtr table-border-row">
-		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0); ?></div>
+		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1); ?></div>
 	</div>
 <?php } ?>
 </div>

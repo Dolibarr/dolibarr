@@ -23,8 +23,7 @@ use Luracast\Restler\Defaults;
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
- * Class for API
- *
+ * Class for API REST v1
  */
 class DolibarrApi
 {
@@ -55,6 +54,8 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
+        
+        $this->r->setAPIVersion(1);
     }
 
     /**
@@ -92,11 +93,38 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
         
-        unset($object->lignes); // should be lines
+        unset($object->lignes); // should be ->lines
+        unset($object->oldline);
+        
+        unset($object->error);
+        unset($object->errors);
+        
+        unset($object->ref_previous);
+        unset($object->ref_next);
+        unset($object->ref_int);
+        
+        unset($object->projet);     // Should be fk_project
+        unset($object->project);    // Should be fk_project
+        unset($object->author);     // Should be fk_user_author
+        unset($object->timespent_old_duration);
+        unset($object->timespent_id);
+        unset($object->timespent_duration);
+        unset($object->timespent_date);
+        unset($object->timespent_datehour);
+        unset($object->timespent_withhour);
+        unset($object->timespent_fk_user);
+        unset($object->timespent_note);
         
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
+        unset($object->statuts_long);
+        
+        unset($object->element);
+        unset($object->fk_element);
+        unset($object->table_element);
+        unset($object->table_element_line);
+        unset($object->picto);
         
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize

@@ -2,6 +2,7 @@
 WarehouseCard=Fiche entrepôt
 Warehouse=Entrepôt
 Warehouses=Entrepôts
+ParentWarehouse=Entrepôt parent
 NewWarehouse=Nouvel entrepôt ou zone de stockage
 WarehouseEdit=Édition entrepôt
 MenuNewWarehouse=Nouvel entrepôt

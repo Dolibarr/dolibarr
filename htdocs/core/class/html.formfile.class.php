@@ -62,7 +62,7 @@ class FormFile
      *  @param  int		$addcancel		1=Add 'Cancel' button
      *	@param	int		$sectionid		If upload must be done inside a particular ECM section
      * 	@param	int		$perm			Value of permission to allow upload
-     *  @param  int		$size           Length of input file area
+     *  @param  int		$size           Length of input file area. Deprecated.
      *  @param	Object	$object			Object to use (when attachment is done on an element)
      *  @param	string	$options		Add an option column
      *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
@@ -106,7 +106,7 @@ class FormFile
 
             if (! empty($options)) $out .= '<td>'.$options.'</td>';
 
-            $out .= '<td valign="middle" class="nowrap">';
+            $out .= '<td valign="middle">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
@@ -121,10 +121,10 @@ class FormFile
             {
                 $out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
-            $out .= '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
+            $out .= '<input class="flat minwidth400" type="file" name="userfile"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
-            $out .= '&nbsp;';
+            $out .= ' ';
             $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
@@ -183,11 +183,11 @@ class FormFile
 	            $out .= '<div class="valignmiddle" >';
 	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
-	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
+	            $out .= '<input type="text" name="link" class="flat minwidth400imp" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
 	            $out .= '</div>';
 	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
-	            $out .= '<input type="text" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
+	            $out .= '<input type="text" class="flat" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
 	            $out .= '</div>';
@@ -549,6 +549,7 @@ class FormFile
             $buttonlabeltoshow=$buttonlabel;
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
+            if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -776,6 +777,8 @@ class FormFile
 
     /**
      *	Show a Document icon with link(s)
+     *  You may want to call this into a div like this:
+     *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
      *
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
@@ -800,7 +803,7 @@ class FormFile
 		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
     	if (! empty($file_list))
     	{
-    	    $out='<dl class="dropdown">
+    	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
@@ -932,7 +935,8 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">'."\n";
+			
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -968,6 +972,7 @@ class FormFile
 					
 					$editline=0;
 					
+			        print '<!-- Line list_of_documents '.$key.' -->'."\n";
 					print '<tr '.$bc[$var].'>';
 					print '<td class="tdoverflow">';
 					
@@ -1128,7 +1133,7 @@ class FormFile
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="nobordernopadding">';
+        print '<table width="100%" class="nobordernopadding">'."\n";
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
@@ -1137,7 +1142,7 @@ class FormFile
         print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre('','','');
-        print '</tr>';
+        print '</tr>'."\n";
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
@@ -1273,6 +1278,7 @@ class FormFile
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
                 $var=!$var;
+                print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
@@ -1449,6 +1455,7 @@ class FormFile
             else
 			{
                 print '<td>';
+                print img_picto('', 'object_globe').' ';
                 print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
                 print $link->label;
                 print '</a>';

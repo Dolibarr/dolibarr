@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 
 $langs->load('bills');
 $langs->load('compta');
+$langs->load('admin');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -504,7 +505,7 @@ if (empty($reshook))
     					$pu_ht = price($prodcustprice->lines[0]->price);
     					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
     					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-    					$prod->tva_tx = $prodcustprice->lines[0]->tva_tx;
+    					$tva_tx = $prodcustprice->lines[0]->tva_tx;
     				}
     			}
     		}
@@ -711,11 +712,11 @@ if (empty($reshook))
             $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
             // Unset extrafield
             if (is_array($extralabelsline)) 
-    	{
+    	    {
                 // Get extra fields
                 foreach ($extralabelsline as $key => $value)
-    	    {
-    		unset($_POST["options_" . $key]);
+    	        {
+    		         unset($_POST["options_" . $key]);
                 }
             }
     
@@ -1554,7 +1555,7 @@ else
 		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
 		}        
 
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
         	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         	{
         		$result = $db->query($sql);
@@ -1609,7 +1610,10 @@ else
 			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
 			$i = 0;
-			print '<table class="noborder" width="100%">';
+
+			print '<div class="div-table-responsive">';
+            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -1779,6 +1783,9 @@ else
 			else print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
+			print "</div>";
+			print "</form>";
+			
 			$db->free($resql);
 		}
 		else

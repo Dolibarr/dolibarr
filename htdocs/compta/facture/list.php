@@ -402,7 +402,7 @@ $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -638,7 +638,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['f.facnumber']['checked']))          print_liste_field_titre($arrayfields['f.facnumber']['label'],$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
@@ -868,30 +869,25 @@ if ($resql)
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             $facturestatic->type=$obj->type;
+            $facturestatic->note_public=$obj->note_public;
+            $facturestatic->note_private=$obj->note_private;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
     
-                $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
                 $paiement = $facturestatic->getSommePaiement();
 				$remaintopay = $obj->total_ttc - $paiement;
     
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
                 print '<td class="nobordernopadding nowrap">';
-                print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
+                print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
                 print $obj->increment;
                 print '</td>';
     
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-                if (! empty($obj->note_private))
-                {
-    				print ' <span class="note">';
-    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$obj->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    				print '</span>';
-    			}
                 $filename=dol_sanitizeFileName($obj->facnumber);
                 $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->facid;
@@ -1142,6 +1138,7 @@ if ($resql)
 	print $hookmanager->resPrint;
     
 	print "</table>\n";
+    print "</div>";
     
     print "</form>\n";
     

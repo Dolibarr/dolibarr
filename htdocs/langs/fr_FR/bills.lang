@@ -421,6 +421,7 @@ ShowUnpaidAll=Afficher tous les impayés
 ShowUnpaidLateOnly=Afficher uniquement les factures impayées en retard
 PaymentInvoiceRef=Paiement facture %s
 ValidateInvoice=Valider facture
+ValidateInvoices=Factures validées
 Cash=Liquide
 Reported=Différé
 DisabledBecausePayments=Non disponible car il existe des paiements
@@ -482,4 +483,5 @@ ToCreateARecurringInvoiceGene=Pour générer de futures factures régulièrement
 ToCreateARecurringInvoiceGeneAuto=Si vous devez utiliser de telles factures, demandez à votre administrateur d'activer le module <strong>%s</strong>. Notez que les deux méthodes de générations de factures (manuelles et automatiques) peuvent être utilisées simultanément sans risque de création de doublon.
 DeleteRepeatableInvoice=Supprimer facture modèle
 ConfirmDeleteRepeatableInvoice=Est-ce votre sûr de vouloir supprimer la facture modèle ?
-
+CreateOneBillByThird=Créer une facture par tiers (autrement, une facture par commande)
+BillCreated=%s facture(s) créée(s)

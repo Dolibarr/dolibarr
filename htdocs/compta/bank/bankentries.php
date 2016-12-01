@@ -501,7 +501,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -526,6 +526,9 @@ if ($page >= $nbtotalofpages)
     if ($page < 0) $page = 0;
 }
 
+// If not account defined $mode_balance_ok=false
+if (empty($account)) $mode_balance_ok=false;
+// If a search is done $mode_balance_ok=false
 if (! empty($search_ref)) $mode_balance_ok=false;
 if (! empty($req_nb)) $mode_balance_ok=false;
 if (! empty($type)) $mode_balance_ok=false;
@@ -674,7 +677,7 @@ if ($resql)
 	}	
 	
 	
-	/// ajax adjust value date
+	/// ajax to adjust value date with plus and less picto
 	print '
     <script type="text/javascript">
     $(function() {
@@ -725,18 +728,18 @@ if ($resql)
 	
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' : ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From') . ' ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
 	
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From') . ' ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
 	$moreforfilter .= $form->select_date($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
 	
 	$parameters=array();
@@ -754,7 +757,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	// Fields title
 	print '<tr class="liste_titre">';
@@ -878,6 +882,12 @@ if ($resql)
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
         {
+            if (! $account) 
+            {
+                dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+                exit;
+            }
+            
             //Loop on each record
             $sign = 1;
             $i = 0;
@@ -1080,7 +1090,7 @@ if ($resql)
     	   print '<td align="center" class="nowrap">';
     	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
     	   print '&nbsp;';
-    	   print '<span>';
+    	   print '<span class="inline-block">';
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
     	   print img_edit_remove() . "</a> ";
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1286,6 +1296,8 @@ if ($resql)
 	}
 
 	print "</table>";
+	print "</div>";
+	
     print '</form>';
 	$db->free($resql);
 }

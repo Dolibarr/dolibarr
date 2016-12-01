@@ -169,7 +169,7 @@ if (! empty($conf->ficheinter->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('fichinter', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
 	$sql.= " AND f.fk_statut = 0";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -280,15 +280,15 @@ else dol_print_error($db);
 /*
  * interventions to process
  */
-/*
-if (! empty($conf->fichinter->enabled))
+
+if (! empty($conf->ficheinter->enabled))
 {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('fichinter', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
 	$sql.= " AND f.fk_statut = 1";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -348,9 +348,6 @@ if (! empty($conf->fichinter->enabled))
 	}
 	else dol_print_error($db);
 }
-*/
-
-
 
 print '</div></div></div>';
 

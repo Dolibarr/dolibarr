@@ -162,8 +162,8 @@ if ($action == "correct_stock")
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby=dol_mktime(12, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby=dol_mktime(12, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
         	 
 	        $result=$product->correct_stock_batch(
 	            $user,
@@ -456,7 +456,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -534,7 +534,8 @@ if ($resql)
 
         // Nb of products
         print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
-        print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+        $valtoshow=price2num($calcproducts['nb'], 'MS');
+        print empty($valtoshow)?'0':$valtoshow;
         print "</td></tr>";
 
         print '</table>';
@@ -698,7 +699,9 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    
     print "<tr class=\"liste_titre\">";
     if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],$_SERVER["PHP_SELF"],'m.rowid','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],$_SERVER["PHP_SELF"],'m.datem','',$param,'',$sortfield,$sortorder);
@@ -740,7 +743,7 @@ if ($resql)
     {
 	    // Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	    print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.datem']['checked'])) 
@@ -1000,12 +1003,16 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table></form><br>";
+    print "</table>";
+    print '</div>';
+    print "</form>";
 
     // Add number of product when there is a filter on period
     if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
     {
-    	$productidselected=0;
+        print "<br>";
+        
+        $productidselected=0;
     	foreach ($arrayofuniqueproduct as $key => $val)
     	{
     		$productidselected=$key;
@@ -1031,8 +1038,6 @@ if ($resql)
     	print "<br>\n";
     	//print '</td></tr>';
     }
-
-
 }
 else
 {

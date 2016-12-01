@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr>
- * largely based on the great work of :
+ * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr> largely based on the great work of :
  *  - Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
  *  - Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *  - Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
@@ -18,7 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -72,11 +70,8 @@ $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
-if (empty($search_date_start)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
-}
-
+if (empty($search_date_start)) $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 
 $object = new BookKeeping($db);
 
@@ -126,16 +121,17 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
   }
 }
 
+
 /*
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
 	$search_accountancy_code_start = '';
-  $search_label_account = '';
+    $search_label_account = '';
 	$search_mvt_label = '';
 	$search_direction = '';
 	$search_ledger_code = '';
@@ -160,13 +156,13 @@ if ($action == 'delmouvconfirm') {
  * View
  */
 
-$title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+$title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting");
 
 llxHeader('', $title_page);
 
 // List
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
 	if ($nbtotalofrecords < 0) {
@@ -211,7 +207,9 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,'','',$limit);
+$viewflat = ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a>';
+
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
@@ -222,8 +220,6 @@ else
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '</div>';
-
-print ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a><br><br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -335,14 +331,15 @@ foreach ( $object->lines as $line ) {
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché
-print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+print '<tr class="liste_total">';
+print '<td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
 
 // Affiche le Total
 print '<tr class="liste_total">';
-print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>';
+print '<td align="right" colspan="5">'.$langs->trans("Total").':</td>';
 print '<td  align="right">';
 print price($total_debit);
 print '</td>';

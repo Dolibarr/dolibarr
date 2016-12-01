@@ -38,11 +38,14 @@ class Login
 	 *
 	 * @param   string  $login			Username
 	 * @param   string  $password		User password
-	 * @param   int     $entity			User entity
-	 * @param   int     $reset          Reset token
+	 * @param   int     $entity			Entity (when multicompany module is used). Empty means 1=first company.
+	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token, meaning that all future access using current token will failed)
      * @return  array                   Response status and user token
      *
 	 * @throws RestException
+	 * 
+	 * @url GET /
+	 * @url POST /
 	 */
 	public function index($login, $password, $entity=0, $reset=0) {
 

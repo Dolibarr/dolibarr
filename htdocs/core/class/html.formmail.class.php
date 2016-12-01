@@ -322,8 +322,8 @@ class FormMail extends Form
         	// Zone to select its email template
         	if (count($modelmail_array)>0)
         	{
-	        	$out.= '<div style="padding: 3px 0 3px 0">'."\n";
-	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
+        	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
@@ -336,7 +336,7 @@ class FormMail extends Form
         	        'invoice_supplier_send','thirdparty'
            	    )))
         	{
-        	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';

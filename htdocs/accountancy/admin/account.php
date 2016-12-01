@@ -155,24 +155,24 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON aa.account_par
 $sql .= " WHERE asy.rowid = " . $pcgver;
 
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND aa.label like '%" . $search_label . "%'";
+	$sql .= natural_search("aa.label", $search_label);
 }
 if (strlen(trim($search_accountparent))) {
-	$sql .= " AND aa.account_parent like '%" . $search_accountparent . "%'";
+	$sql .= natural_search("aa.account_parent", $search_accountparent);
 }
 if (strlen(trim($search_pcgtype))) {
-	$sql .= " AND aa.pcg_type like '%" . $search_pcgtype . "%'";
+	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 }
 if (strlen(trim($search_pcgsubtype))) {
-	$sql .= " AND aa.pcg_subtype like '%" . $search_pcgsubtype . "%'";
+	$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
@@ -198,11 +198,9 @@ if ($resql) {
 	
 	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy');
 	
-	$i = 0;
-	
 	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
 	
-	// Box to select active chart of accoun
+	// Box to select active chart of account
     $var = ! $var;
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
@@ -235,7 +233,7 @@ if ($resql) {
 	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
 	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
 	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
-	print '<br/><br/>';
+	print '<br><br>';
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -256,10 +254,8 @@ if ($resql) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
-	
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-	print '&nbsp;';
-	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	print $searchpitco;
 	print '</td>';
 	print '</tr>';
 	
@@ -268,9 +264,11 @@ if ($resql) {
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 	
-	while ( $i < min($num, $limit) ) {
+	$i = 0;
+	while ( $i < min($num, $limit) ) 
+	{
 		$obj = $db->fetch_object($resql);
-		
+
 		$accountstatic->id = $obj->rowid;
 		$accountstatic->label = $obj->label;
 		$accountstatic->account_number = $obj->account_number;
@@ -320,7 +318,7 @@ if ($resql) {
 		
 		print "</tr>\n";
 		$var = ! $var;
-		$i ++;
+		$i++;
 	}
 	
 	print "</table>";

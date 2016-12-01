@@ -72,7 +72,6 @@ $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
 $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
-$dol_use_jmobile=$conf->dol_use_jmobile;
 
 
 //$conf->global->THEME_ELDY_ENABLE_PERSONALIZED=0;
@@ -163,14 +162,20 @@ $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
+
 $tmppart=explode(',',$colorbackvmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
+
 $tmppart=explode(',',$colorbacktitle1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
+if ($colortexttitle == '')
+{
+	$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+	if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+	else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
+}
+
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -215,7 +220,6 @@ print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
-print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
@@ -251,7 +255,9 @@ a.tab { font-weight: bold !important; }
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 
-<?php if (empty($dol_use_jmobile)) { ?>
+input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
+    background-color: #FDFDFD;
+}
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -264,7 +270,6 @@ textarea.cke_source:focus
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
     border: 1px solid #C0C0C0;
     margin: 0px 0px 0px 0px;
 }
@@ -286,7 +291,7 @@ input.removedassigned  {
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
 }
-input.smallpadd {
+input.smallpadd {	/* Used for timesheet input */
 	padding-left: 1px !important;
 	padding-right: 1px !important;
 }
@@ -299,13 +304,8 @@ span.timesheetalreadyrecorded input {
     /*background:	transparent;*/
 }
 
-<?php } ?>
-
 select.flat, form.flat select {
 	font-weight: normal;
-}
-input:disabled {
-	background:#f4f4f4;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
@@ -315,6 +315,10 @@ input:disabled {
 }
 .opacitytransp {
 	opacity: 0;
+}
+select:invalid { color: gray; }
+input:disabled {
+	background:#f4f4f4;
 }
 
 input.liste_titre {
@@ -331,14 +335,15 @@ input.removedfile {
 textarea:disabled {
 	background:#f4f4f4;
 }
+input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
-	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-color: #FBFFEA !important;
 	background-image:none !important;
-	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
@@ -346,9 +351,6 @@ input:-webkit-autofill {
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
 
-<?php if (! empty($dol_use_jmobile)) { ?>
-legend { margin-bottom: 8px; }
-<?php } ?>
 fieldset { border: 1px solid #AAAAAA !important; }
 
 
@@ -538,7 +540,7 @@ div.myavailability {
     margin-top: 6px;	
     margin-left: 4px;	
 }
-.selectlimit {
+.selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
 .strikefordisabled {
@@ -591,6 +593,10 @@ div.myavailability {
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
+.div-table-responsive {
+    overflow-x: auto;
+    min-height: 0.01%;
+}
 
 
 /* ============================================================================== */
@@ -600,30 +606,40 @@ div.myavailability {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
-.minwidth100 { min-width: 100px; }
-.minwidth200 { min-width: 200px; }
-.minwidth300 { min-width: 300px; }
-.minwidth400 { min-width: 400px; }
-.minwidth500 { min-width: 500px; }
-.minwidth50imp  { min-width: 50px !important; }
-.minwidth100imp { min-width: 100px !important; }
-.minwidth200imp { min-width: 200px !important; }
-.minwidth300imp { min-width: 300px !important; }
-.minwidth400imp { min-width: 400px !important; }
-.minwidth500imp { min-width: 500px !important; }
+/* rule to reduce top menu - 3rd reduction */
+@media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
+{
+	.minwidth100 { min-width: 100px; }
+	.minwidth200 { min-width: 200px; }
+	.minwidth300 { min-width: 300px; }
+	.minwidth400 { min-width: 400px; }
+	.minwidth500 { min-width: 500px; }
+	.minwidth50imp  { min-width: 50px !important; }
+	.minwidth100imp { min-width: 100px !important; }
+	.minwidth200imp { min-width: 200px !important; }
+	.minwidth300imp { min-width: 300px !important; }
+	.minwidth400imp { min-width: 400px !important; }
+	.minwidth500imp { min-width: 500px !important; }
+}
+.maxwidth25  { max-width: 25px; }
+.maxwidth50  { max-width: 50px; }
+.maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth50imp  { max-width: 50px !important; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.imgmaxwidth180 { max-width: 180px; }
+	
 
-/* Force values for small screen */
+/* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
 	.titlefield { width: 30% !important; }
@@ -636,6 +652,7 @@ div.myavailability {
     .minwidth500imp { min-width: 300px !important; }
 }
 
+/* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
     .maxwidthonsmartphone { max-width: 100px; }
@@ -647,14 +664,43 @@ div.myavailability {
     .minwidth500imp { min-width: 100px !important; }
 }
 
-/* Force values for small screen */
+/* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+    .tdoverflowonsmartphone {
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+	div.titre {
+		line-height: 2em;
+	}
+    .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+    	height: 40px !important;
+    }
+	
+    .quatrevingtpercent, .inputsearch {
+    	width: 95%;
+    }
+    	
+	input, input[type=text], input[type=password], select, textarea     { 
+		min-width: 20px; 
+    	min-height: 1.4em;
+    	line-height: 1.4em;
+    	padding: .4em .1em;
+    	border: 1px solid #BBB;
+    	/* max-width: inherit; why this */
+     }
+     
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
-    .maxwidth100onsmartphone { max-width: 100px; }
-    .maxwidth150onsmartphone { max-width: 150px; }
+    .maxwidth50onsmartphone { max-width: 40px; }
+    .maxwidth75onsmartphone { max-width: 50px; }
+    .maxwidth100onsmartphone { max-width: 70px; }
+    .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -666,6 +712,31 @@ div.myavailability {
     .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
+    
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(300,'width'); ?>px;
+	}
+	
+	/* intput, input[type=text], */
+	select {
+		width: 98%;
+		min-width: 40px;
+	}
+	
+	div.divphotoref {
+		padding-right: 5px;	
+	}
+    img.photoref, div.photoref {
+    	border: none;
+    	-moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 4px;
+    	height: 20px;
+    	width: 20px;
+        object-fit: contain;
+    }    
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -969,6 +1040,9 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+img.fitcontain {
+    object-fit: contain;
+}
 div.photoref {
 	display:table-cell;
 	vertical-align:middle;
@@ -982,6 +1056,7 @@ img.photorefnoborder {
     object-fit: contain;
     border: 1px solid #CCC;
 }
+
 .underrefbanner {
 }
 .underbanner {
@@ -2083,13 +2158,11 @@ span.butAction, span.butActionDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
-	<?php // if (empty($conf->dol_use_jmobile)) { ?>
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
 	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	<?php // } ?>
 	background-repeat: repeat-x;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
 	border-color: #0044cc #0044cc #002a80;
@@ -2214,10 +2287,7 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .border tbody tr td {
-	height: 20px;
-}
-div.tabBar table.border tr {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr {
 	height: 20px;
 }
 
@@ -2242,6 +2312,7 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
 /* Main boxes */
 
 table.liste, table.noborder, table.formdoc, div.noborder {
@@ -2254,36 +2325,16 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
-/*	border-right-width: 1px;
-	border-right-color: #BBB;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #BBB;
-	border-left-style: solid;
-*/
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 	
 	margin: 0px 0px 8px 0px;
-    /*
-	-moz-box-shadow: 2px 2px 4px #CCC;
-	-webkit-box-shadow: 2px 2px 4px #CCC;
-	box-shadow: 2px 2px 4px #CCC;
-    */
-	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
 	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-/*
-#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
-    border-top-width: 1px;
-    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-    border-top-style: solid;
-}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2295,6 +2346,10 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+table.paddingtopbottomonly tr td {
+	padding-top: 1px;
+	padding-bottom: 2px;
 }
 
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
@@ -2351,7 +2406,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
+	padding-top: 3px;
 }
 div.refid  {
 	font-weight: bold;
@@ -2387,10 +2442,8 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding-top: 6px;
   padding-bottom: 5px;
-<?php } ?>
 }
 .pagination {
   display: inline-block;
@@ -2400,7 +2453,6 @@ div.pagination li {
 
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
@@ -2414,7 +2466,6 @@ div.pagination li.pagination span {
     background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
     background-repeat: repeat-x;
-<?php } ?>
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -2427,13 +2478,6 @@ border: none;
   padding-left: 4px;
   font-weight: bold;
 }
-<?php if (! empty($conf->dol_use_jmobile)) { ?>
-div.pagination li.litext {
-  padding-top: 13px;
-  vertical-align: top;
-}
-<?php } ?>
-<?php if (empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
@@ -2485,7 +2529,6 @@ div.pagination .disabled a:focus {
   background-color: #fff;
   border-color: #ddd;
 }
-<?php } ?>
 div.pagination li.pagination .active {
   text-decoration: underline;
 }
@@ -2901,14 +2944,14 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #302010;
+  color: #303020;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFBF9A;
-  -moz-border-radius:3px;
-  -webkit-border-radius: 3px;
-  border-radius:3px;
-  background: #EFCFAA;
+  border: 1px solid #AAAAAA;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #E0EAE4;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -4083,11 +4126,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 6px;
 	padding-right: 6px;
-	<?php if (! empty($dol_use_jmobile)) { ?>
-	font-size: 13px;
-	<?php } else { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -4362,6 +4401,8 @@ border-top-right-radius: 6px;
 img.demothumb {
     box-shadow: 2px 2px 8px #888;
 	margin-bottom: 4px;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4406,7 +4447,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-	.imgopensurveywizard { width:95%; height: auto; }
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 	
 	#tooltip {
 		position: absolute;
@@ -4509,8 +4550,7 @@ img.demothumb {
 		width: <?php print dol_size(300,'width'); ?>px;
 	}
 	select {
-		width: 100%;
-		max-width: 100px;
+		width: 98%;
 		min-width: 0 !important;
 	}
 	div.divphotoref {

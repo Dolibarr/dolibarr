@@ -107,7 +107,7 @@ class AgendaEvents extends DolibarrApi
             
         $sql = "SELECT t.id as rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('actioncomm', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('agenda', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         // Insert sale filter
         if ($search_sale > 0)
@@ -223,6 +223,7 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->expensereport->$field = $value;
         }
         

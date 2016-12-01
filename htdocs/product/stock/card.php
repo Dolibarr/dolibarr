@@ -204,7 +204,7 @@ if ($action == 'create')
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -332,7 +332,8 @@ else
 				
 			// Nb of products
 			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
-			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+            $valtoshow=price2num($calcproducts['nb'], 'MS');
+            print empty($valtoshow)?'0':$valtoshow;
 			print "</td></tr>";
 				
 			print '</table>';
@@ -485,13 +486,19 @@ else
 					$productstatic->entity=$objp->entity;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
+					
+					// Label
 					print '<td>'.$objp->produit.'</td>';
 
-					print '<td align="right">'.$objp->value.'</td>';
+					print '<td align="right">';
+					$valtoshow=price2num($objp->value, 'MS');
+					print empty($valtoshow)?'0':$valtoshow;
+					print '</td>';
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
 					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
+					
                     // Total PMP
 					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
 					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
@@ -530,7 +537,10 @@ else
 				$db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total" align="right">'.$totalunit.'</td>';
+				print '<td class="liste_total" align="right">';
+				$valtoshow=price2num($totalunit, 'MS');
+				print empty($valtoshow)?'0':$valtoshow;
+				print '</td>';
 				print '<td class="liste_total">&nbsp;</td>';
                 print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -583,7 +593,7 @@ else
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
 			$doleditor->Create();
 			print '</td></tr>';
 

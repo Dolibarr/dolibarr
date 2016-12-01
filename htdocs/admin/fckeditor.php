@@ -46,27 +46,27 @@ if (!$user->admin) accessforbidden();
 $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProduct',
-'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
 'USERSIGN' => 'FCKeditorForUserSignature',
+'MAILING' => 'FCKeditorForMailing',
 'MAIL' => 'FCKeditorForMail'
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
 'SOCIETE' => 1,
 'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-'MAILING' => ! empty($conf->mailing->enabled),
 'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled)),
 'USERSIGN' => 1,
+'MAILING' => ! empty($conf->mailing->enabled),
 'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled))
 );
 // Picto
 $picto = array(
 'SOCIETE' => 'generic',
 'PRODUCTDESC' => 'product',
-'MAILING' => 'email',
-'DETAILS' => 'generic',
+'DETAILS' => 'product',
 'USERSIGN' => 'user',
+'MAILING' => 'email',
 'MAIL' => 'email'
 );
 
