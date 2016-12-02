@@ -186,7 +186,9 @@ else {
 		{
 			if ($conf->global->ENTREPOT_EXTRA_STATUS)
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, 3);
+				// hide products in closed warehouse, but show products for internal transfer
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, Entrepot::STATUS_OPEN_INTERNAL);
 			}
 			else
 			{
