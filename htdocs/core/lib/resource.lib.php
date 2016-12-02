@@ -285,7 +285,8 @@ function occupyAllResources($object, $target, $status, $booker_id=null, $booker_
                                     $result = $resource->setStatus($user, $object->date_start, $object->date_end, $target, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
                                     if ($result < 0)
                                     {
-                                        setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
+                                        setEventMessages($resource->ref, null, 'errors');
+                                        setEventMessages($resource->error, $resource->errors, 'errors');
                                         $error++;
                                         break 2;
                                     }

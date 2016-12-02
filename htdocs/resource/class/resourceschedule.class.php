@@ -632,9 +632,10 @@ class ResourceScheduleSection extends CommonObject
      * @param  array $target        Specific statuses to update only
      * @param  bool  $check_total   Ensure that all sections are changed
      * @param  bool  $skip_same     Ignores sections that their status is in target when counting sections, affects $check_total behaviour
+     * @param  bool  $set_manual    Sets the manual status so restore sections can revert the changes
      * @return int                  <0 if KO, 0 if all was updated, 0> left some without update
      */
-    public function updateSections($target, $check_total, $skip_same = false)
+    public function updateSections($target, $check_total, $skip_same = false, $set_manual = false)
     {
         global $langs;
 
@@ -647,7 +648,7 @@ class ResourceScheduleSection extends CommonObject
 
         // Clean parameters
         if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-        if (in_array($this->status, ResourceStatus::$AVAILABLE))
+        if (!in_array($this->status, ResourceStatus::$SINGLE_BOOKER))
         {
             $this->booker_id = null;
             $this->booker_type = null;
@@ -716,17 +717,15 @@ class ResourceScheduleSection extends CommonObject
         if (! $error)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-            if (in_array($this->status, ResourceStatus::$MANUAL)) $sql.= " status_manual = ".$this->status.",";
+            if ($set_manual && in_array($this->status, ResourceStatus::$MANUAL)) $sql.= " status_manual = ".$this->status.",";
+            $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
+            $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
             if ($multiple_booker) //Multiple bookers use counter, the rest use booker_id/type
             {
-                $sql.= " booker_id = null,";
-                $sql.= " booker_type = null,";
                 $sql.= " booker_count = booker_count + 1";
             }
             else
             {
-                $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
-                $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
                 $sql.= " booker_count = ".(in_array($this->status, ResourceStatus::$OCCUPATION)?'1':'0');
             }
             $sql.= $where;
@@ -792,7 +791,7 @@ class ResourceScheduleSection extends CommonObject
 
         // Clean parameters
         if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-        if (in_array($this->status, ResourceStatus::$AVAILABLE))
+        if (!in_array($this->status, ResourceStatus::$SINGLE_BOOKER))
         {
             $this->booker_id = null;
             $this->booker_type = null;
@@ -802,16 +801,14 @@ class ResourceScheduleSection extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= " status = ".$this->status.",";
         if (in_array($this->status, ResourceStatus::$MANUAL)) $sql.= " status_manual = ".$this->status.",";
+        $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
+        $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
         if (in_array($this->status, ResourceStatus::$MULTIPLE_BOOKER)) //Multiple bookers use counter, the rest use booker_id/type
         {
-            $sql.= " booker_id = null,";
-            $sql.= " booker_type = null,";
             $sql.= " booker_count = booker_count + 1";
         }
         else
         {
-            $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
-            $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
             $sql.= " booker_count = ".(in_array($this->status, ResourceStatus::$OCCUPATION)?'1':'0');
         }
         $sql.= " WHERE fk_schedule = ".$this->fk_schedule;
@@ -976,7 +973,7 @@ class ResourceScheduleSection extends CommonObject
         if (!empty($this->status))
         {
             if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-            if (in_array($this->status, ResourceStatus::$AVAILABLE))
+            if (!in_array($this->status, ResourceStatus::$SINGLE_BOOKER))
             {
                 $this->booker_id = null;
                 $this->booker_type = null;

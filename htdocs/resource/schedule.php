@@ -231,7 +231,7 @@ else if ($action == 'edit' && !empty($confirm) && $user->rights->resource->sched
         {
             $section->date_start = $range_start;
             $section->date_end = $range_end;
-            $result = $section->updateSections(ResourceStatus::$MANUAL, false);
+            $result = $section->updateSections(ResourceStatus::$MANUAL, false, false, true);
         }
         else
         {

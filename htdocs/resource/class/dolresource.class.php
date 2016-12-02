@@ -872,7 +872,7 @@ class Dolresource extends CommonObject
                     $section->booker_id = $booker_id;
                     $section->booker_type = $booker_type;
 
-                    $result = $section->updateSections($target, true, $skip_same);
+                    $result = $section->updateSections($target, true, $skip_same, false);
                     if ($result != 0)
                     {
                         $this->errors = $section->errors;
@@ -1942,6 +1942,11 @@ class ResourceStatus
     //Statuses that are assigned automatically in occupation process
     public static $OCCUPATION = array(
         ResourceStatus::PLACED,
+        ResourceStatus::OCCUPIED,
+    );
+
+    //Statuses that can have a booker
+    public static $SINGLE_BOOKER = array(
         ResourceStatus::OCCUPIED,
     );
 
