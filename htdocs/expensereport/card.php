@@ -1999,7 +1999,8 @@ if ($action != 'create' && $action != 'edit')
 	// If bank module is not used	
 	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == 5)
 	{
-		if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+		if ($object->paid == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
