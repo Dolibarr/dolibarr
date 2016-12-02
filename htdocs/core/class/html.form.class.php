@@ -1742,6 +1742,8 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         if ($warehouseStatus)
         {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
         }
         
         //Price by customer
@@ -1756,6 +1758,7 @@ class Form
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
         if ($warehouseStatus)
         {
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN (1, '.$warehouseStatus.'))';
         }
         if ($finished == 0)
         {
