@@ -1698,7 +1698,7 @@ class Form
      * 	@param		int		$forcecombo		    Force to use combo box
      *  @param      string  $morecss            Add more css on select
      *  @param      int     $hidepriceinlabel   1=Hide prices in label
-     *  @param      int     $warehouseStatus    Additional warehousestatus to filter (stock from status 1 is always shown)
+     *  @param      int     $warehouseStatus    Additional warehousestatus to filter (products with stock from status 1 are always shown)
      *  @return     array    				    Array of keys for json
      */
     function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0,$morecss='',$hidepriceinlabel=0, $warehouseStatus=0)
@@ -1709,7 +1709,7 @@ class Form
         $outarray=array();
 
         $selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
-        $selectFieldsGrouped = ", sum(ps.reel) as stock";      
+        $warehouseStatus ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
 
         $sql = "SELECT ";
         $sql.= $selectFields . $selectFieldsGrouped;
@@ -1724,7 +1724,7 @@ class Form
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= ", pl.label as label_translated";
-            $selectFields.= ", pl.label as label_translated";
+            $selectFields.= ", label_translated";
         }
 		// Price by quantity
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
@@ -1739,9 +1739,11 @@ class Form
 			$sql.= " DESC LIMIT 1) as price_by_qty";
             $selectFields.= ", price_rowid, price_by_qty";
 		}
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";        
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
-        $sql.= " JOIN ".MAIN_DB_PREFIX."entrepot as e on (ps.fk_entrepot = e.rowid AND e.statut IN (1, ".$warehouseStatus."))";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        if ($warehouseStatus)
+        {
+        }
+        
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
         	$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
@@ -1752,6 +1754,9 @@ class Form
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        if ($warehouseStatus)
+        {
+        }
         if ($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;
@@ -1787,7 +1792,10 @@ class Form
           	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$db->escape($prefix.$filterkey)."%'";
         	$sql.=')';
         }
-        $sql.= ' GROUP BY'.$selectFields;
+        if ($warehouseStatus)
+        {
+            $sql.= ' GROUP BY'.$selectFields;
+        }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
 
