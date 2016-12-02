@@ -120,7 +120,7 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 // Count total nb of records without orderby and limit
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

@@ -157,7 +157,7 @@ if (! empty($enddate))
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	
 	dol_syslog(__FILE__, LOG_DEBUG);

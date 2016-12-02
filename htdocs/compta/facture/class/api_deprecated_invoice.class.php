@@ -137,7 +137,7 @@ class InvoiceApi extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
