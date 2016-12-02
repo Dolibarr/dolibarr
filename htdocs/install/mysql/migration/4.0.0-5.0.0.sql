@@ -219,6 +219,15 @@ create table llx_user_employment
 )ENGINE=innodb;
 
 
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_debut (date_debut);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_fin (date_fin);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_statut (fk_statut);
+
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_author (fk_user_author);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_approve (fk_user_approve);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_approve);
+
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
 drop table tmp_links_double;
@@ -229,6 +238,8 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
+
+ALTER TABLE llx_expensereport ADD UNIQUE INDEX idx_expensereport_uk_ref (ref, entity);
 
 UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
 ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
