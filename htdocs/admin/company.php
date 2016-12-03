@@ -306,12 +306,12 @@ if ($action == 'edit' || $action == 'updateedit')
 	$var=true;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 	// Name
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-	print '<input name="nom" id="name" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM:$_POST["nom"]) . '" autofocus="autofocus"></td></tr>'."\n";
+	print '<input name="nom" id="name" class="minwidth200" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM:$_POST["nom"]) . '" autofocus="autofocus"></td></tr>'."\n";
 
 	// Addresse
 	$var=!$var;
@@ -320,11 +320,11 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
-	print '<input name="zipcode" id="zipcode" value="'. ($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP:$_POST["zipcode"]) . '" size="10"></td></tr>'."\n";
+	print '<input class="minwidth100" name="zipcode" id="zipcode" value="'. ($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP:$_POST["zipcode"]) . '"></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';
-	print '<input name="town" id="town" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN:$_POST["town"]) . '"></td></tr>'."\n";
+	print '<input name="town" class="minwidth100" id="town" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN:$_POST["town"]) . '"></td></tr>'."\n";
 
 	// Country
 	$var=!$var;
@@ -356,20 +356,20 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-	print '<input name="mail" id="email" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
+	print '<input name="mail" id="email" class="minwidth200" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Web
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-	print '<input name="web" id="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
+	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Barcode
 	if (! empty($conf->barcode->enabled)) {
 		$var=!$var;
 		print '<tr '.$bc[$var].'><td><label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
-		print '<input name="barcode" id="barcode" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
+		print '<input name="barcode" id="barcode" class="minwidth150" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
 		print '</td></tr>';
 	}
 
@@ -377,7 +377,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	$var=!$var;
 	print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
-	print '<input type="file" class="flat" name="logo" id="logo" size="50">';
+	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
 	print '</td><td class="nocellnopadd" valign="middle" align="right">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -393,7 +393,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Note
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td valign="top"><label for="note">'.$langs->trans("Note").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? $conf->global->MAIN_INFO_SOCIETE_NOTE : '').'</textarea></td></tr>';
 	print '</td></tr>';
 
@@ -410,13 +410,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Managing Director(s)
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%"><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" size="80" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
+	print '<tr '.$bc[$var].'><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
+	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
 
 	// Capital
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%"><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-	print '<input name="capital" id="capital" size="20" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
+	print '<tr '.$bc[$var].'><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
+	print '<input name="capital" id="capital" class="minwidth100" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
 
 	// Juridical Status
 	$var=!$var;
@@ -432,10 +432,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId1",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid1">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid1">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="siren" id="profid1" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
+			print '<input name="siren" id="profid1" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
 		}
 		else
 		{
@@ -448,10 +448,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId2",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid2">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid2">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="siret" id="profid2" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
+			print '<input name="siret" id="profid2" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
 		}
 		else
 		{
@@ -464,10 +464,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId3",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid3">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid3">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="ape" id="profid3" size="20" value="' . (! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
+			print '<input name="ape" id="profid3" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
 		}
 		else
 		{
@@ -480,10 +480,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId4",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid4">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid4">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="rcs" id="profid4" size="20" value="' . (! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
+			print '<input name="rcs" id="profid4" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
 		}
 		else
 		{
@@ -496,10 +496,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId5",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid5">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid5">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="MAIN_INFO_PROFID5" id="profid5" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
+			print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
 		}
 		else
 		{
@@ -512,10 +512,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	if ($langs->transcountry("ProfId6",$mysoc->country_code) != '-')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%"><label for="profid6">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</label></td><td>';
+		print '<tr '.$bc[$var].'><td><label for="profid6">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="MAIN_INFO_PROFID6" id="profid6" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
+			print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
 		}
 		else
 		{
@@ -526,13 +526,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// TVA Intra
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%"><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" size="20" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
+	print '<tr '.$bc[$var].'><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
 	print '</td></tr>';
 	
 	// Object of the company
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%"><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="object" id="object" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
 	print '</td></tr>';
 
@@ -543,12 +543,12 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 	$var=true;
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%"><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
 	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',0,1) . '</td></tr>';
 
 	print "</table>";
@@ -558,7 +558,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td align="right">&nbsp;</td>';
 	print "</tr>\n";
 	$var=true;
