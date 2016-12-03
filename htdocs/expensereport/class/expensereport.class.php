@@ -1411,7 +1411,8 @@ class ExpenseReport extends CommonObject
 
 
     /**
-     * Return list of people with permission to validate trips and expenses
+     * Return list of people with permission to validate expense reports.
+     * Search for permission "approve expense report"
      *
      * @return  array       Array of user ids
      */
@@ -1419,10 +1420,15 @@ class ExpenseReport extends CommonObject
     {
         $users_validator=array();
 
-        $sql = "SELECT fk_user";
+        $sql = "SELECT DISTINCT ur.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
-        $sql.= " WHERE ur.fk_id = rd.id and module = 'expensereport' AND perms = 'approve'";                    // Permission 'Approve';
-
+        $sql.= " WHERE ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'";                                              // Permission 'Approve';
+        $sql.= "UNION";
+        $sql.= " SELECT DISTINCT ugu.fk_user";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
+        $sql.= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'";       // Permission 'Approve';
+        //print $sql;
+        
         dol_syslog(get_class($this)."::fetch_users_approver_expensereport sql=".$sql);
         $result = $this->db->query($sql);
         if($result)
