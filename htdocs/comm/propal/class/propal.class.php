@@ -670,6 +670,7 @@ class Propal extends CommonObject
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new PropaleLigne($this->db);
             $line->fetch($rowid);
+			$line->fetch_optionals(); // Fetch extrafields for oldcopy
 
 			$staticline = clone $line;
 

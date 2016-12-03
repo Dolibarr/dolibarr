@@ -203,7 +203,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity = ".$conf->entity;
+$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport', 1).")";
 // Search all
 if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
