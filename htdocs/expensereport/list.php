@@ -192,7 +192,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
-$sql.= " d.date_debut, d.date_fin, d.date_valid,";
+$sql.= " d.date_debut, d.date_fin, d.date_valid, d.date_create, d.tms as date_modif,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.statut, u.photo";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -203,7 +203,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity = ".$conf->entity;
+$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport', 1).")";
 // Search all
 if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
@@ -275,7 +275,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -290,7 +290,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param="";
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -308,7 +308,7 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	// List of mass actions available
 	$arrayofmassactions =  array(
 	    //'presend'=>$langs->trans("SendByMail"),
@@ -317,7 +317,7 @@ if ($resql)
 	if ($user->rights->expensereport->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-	
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -334,9 +334,9 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
 	$moreforfilter='';
-    
+
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
@@ -348,10 +348,10 @@ if ($resql)
 	    print $moreforfilter;
 	    print '</div>';
 	}
-	
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print "<tr class=\"liste_titre\">";
@@ -493,10 +493,10 @@ if ($resql)
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
 	$total_total_tva = 0;
-	
+
 	$expensereportstatic=new ExpenseReport($db);
 	$usertmp = new User($db);
-	
+
 	if ($num > 0)
 	{
         $i=0;
@@ -512,6 +512,8 @@ if ($resql)
 			$expensereportstatic->valid=$obj->date_valid;
 			$expensereportstatic->date_debut=$obj->date_debut;
 			$expensereportstatic->date_fin=$obj->date_fin;
+			$expensereportstatic->date_create=$obj->date_create;
+			$expensereportstatic->date_modif=$obj->date_modif;
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
@@ -594,7 +596,7 @@ if ($resql)
             if (! empty($arrayfields['d.datec']['checked']))
             {
                 print '<td align="center" class="nowrap">';
-                print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+                print dol_print_date($db->jdate($obj->date_create), 'dayhour');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
@@ -602,7 +604,7 @@ if ($resql)
             if (! empty($arrayfields['d.tms']['checked']))
             {
                 print '<td align="center" class="nowrap">';
-                print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+                print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
@@ -657,18 +659,18 @@ if ($resql)
 	    }
 	    print '</tr>';
 	}
-	
+
 	$db->free($resql);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	print '</table>'."\n";
     print '</div>';
-    
+
 	print '</form>'."\n";
-	
+
 	/*
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{

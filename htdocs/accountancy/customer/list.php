@@ -215,7 +215,7 @@ $sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";    // We don't sha
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

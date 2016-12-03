@@ -280,8 +280,8 @@ else dol_print_error($db);
 /*
  * interventions to process
  */
-/*
-if (! empty($conf->fichinter->enabled))
+
+if (! empty($conf->ficheinter->enabled))
 {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."fichinter as f";
@@ -348,9 +348,6 @@ if (! empty($conf->fichinter->enabled))
 	}
 	else dol_print_error($db);
 }
-*/
-
-
 
 print '</div></div></div>';
 
