@@ -2380,7 +2380,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 	vertical-align: middle;
 }
 div .tdtop {
-    vertical-align: top;
+    vertical-align: top !important;
 	padding-top: 5px !important;
 	padding-bottom: 0px;
 }
