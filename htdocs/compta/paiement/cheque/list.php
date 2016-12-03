@@ -160,7 +160,7 @@ if ($resql)
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td></td>';
     print '<td class="liste_titre" align="right">';
@@ -179,7 +179,7 @@ if ($resql)
     		print "<tr ".$bc[$var].">";
     
     		// Num ref cheque
-    		print '<td width="80">';
+    		print '<td>';
     		$checkdepositstatic->id=$objp->rowid;
     		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
     		$checkdepositstatic->statut=$objp->statut;
