@@ -133,7 +133,7 @@ $sql.= " d.date_debut, d.date_fin, d.date_valid,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
-$sql.= " WHERE d.entity = ".$conf->entity;
+$sql.= ' WHERE d.entity IN ('.getEntity('expensereport', 1).')';
 // Search all
 if (!empty($sall))
 {
