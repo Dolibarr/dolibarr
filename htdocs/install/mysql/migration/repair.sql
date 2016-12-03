@@ -21,6 +21,13 @@
 
 
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
+
+
+
 -- Requests to clean corrupted database
 
 
