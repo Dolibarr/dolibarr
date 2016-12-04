@@ -1693,7 +1693,7 @@ else
             if ($object->statut > 0)
             {
                 print '<tr '.$bc[$var].'>';
-                print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr></td>';
+                print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium"></td>';
                 print "</tr>\n";
             }
 

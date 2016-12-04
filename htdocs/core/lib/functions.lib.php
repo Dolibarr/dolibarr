@@ -1216,6 +1216,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
+ *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
