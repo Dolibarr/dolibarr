@@ -1479,7 +1479,7 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo {
+#img_logo, .img-logo {
 	max-width: 200px;
 	max-height: 100px;
 }
