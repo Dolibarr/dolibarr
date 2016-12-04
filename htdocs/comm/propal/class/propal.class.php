@@ -2221,13 +2221,13 @@ class Propal extends CommonObject
             {
                 $result = freeAllResources($this, ResourceStatus::OCCUPIED);
                 if ($result < 0) { $error++; }
+            }
 
-                //Attempt to restore the placed state
-                if (! $error && $oldstatus != Propal::STATUS_BILLED)
-                {
-                    $result = occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::PLACED);
-                    if ($result < 0) { $error++; }
-                }
+            //Attempt to restore the placed state
+            if (! $error && $this->statut == Propal::STATUS_VALIDATED)
+            {
+                $result = occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::PLACED);
+                if ($result < 0) { $error++; }
             }
         }
 
