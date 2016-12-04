@@ -121,7 +121,7 @@ if (empty($reshook))
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-	
+
 	else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
 	{
 		if (! GETPOST('dateend'))
@@ -999,7 +999,8 @@ llxHeader('',$langs->trans("Contract"),"");
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+    
 $objectlignestatic=new ContratLigne($db);
 
 // Load object modContract
@@ -1086,34 +1087,36 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     // Ref
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>';
     if (! empty($modCodeContract->code_auto)) {
     	$tmpcode=$langs->trans("Draft");
     } else {
-    	$tmpcode='<input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+    	$tmpcode='<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
     }
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
+	print $tmpcode;
+	print '</td></tr>';
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td colspan="2"><input type="text" size="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
+	print '<td><input type="text" class="maxwidth150" name="ref_customer" id="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer','alpha')).'"></td></tr>';
 
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
-	print '<td colspan="2"><input type="text" size="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
+	print '<td><input type="text" class="maxwidth150" name="ref_supplier" id="ref_supplier" value="'.dol_escape_htmltag(GETPOST('ref_supplier','alpha')).'"></td></tr>';
 
     // Thirdparty
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid>0)
 	{
-		print '<td colspan="2">';
+		print '<td>';
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 	}
 	else
 	{
-		print '<td colspan="2">';
+		print '<td>';
 		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td>';
 	}
@@ -1122,7 +1125,7 @@ if ($action == 'create')
 	if($socid>0)
 	{
 		// Ligne info remises tiers
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
@@ -1158,11 +1161,9 @@ if ($action == 'create')
     }
 
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
-
-
     $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
     print $doleditor->Create(1);
-
+    print '</td></tr>';
 
     if (empty($user->societe_id))
     {
@@ -1293,47 +1294,75 @@ else
         	print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
         }
 
-        print '<table class="border" width="100%">';
+		// Contract card
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-        // Ref du contrat
-        if (! empty($modCodeContract->code_auto)) {
-	        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	        print "</td></tr>";
-        } else {
-        	print '<tr>';
-        	print '<td class="titlefieldcreate">';
-        	print $form->editfieldkey("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
-        	print '</td><td>';
-        	print $form->editfieldval("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
-        	print '</td>';
-        	print '</tr>';
-        }
-
-        print '<tr>';
-		print '<td>';
-		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
-		print '</td><td>';
-		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
-		print '</td>';
-		print '</tr>';
         
-		print '<tr>';
-		print '<td>';
-		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
-		print '</td><td>';
-		print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
-		print '</td>';
-		print '</tr>';
+        $morehtmlref='';
+        if (! empty($modCodeContract->code_auto)) {
+            $morehtmlref.=$object->ref;
+        } else {
+            $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,$object,$user->rights->contrat->creer,'string','',0,3);
+            $morehtmlref.=$form->editfieldval("",'ref',$object->ref,$object,$user->rights->contrat->creer,'string','',0,2);
+        }
+        
+		$morehtmlref.='<div class="refidno">';
+		// Ref customer
+		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->contrat->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
+		// Ref supplier
+		$morehtmlref.='<br>';
+		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
+		// Thirdparty
+	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	    // Project
+	    if (! empty($conf->projet->enabled))
+	    {
+	        $langs->load("projects");
+	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	        if ($user->rights->contrat->creer)
+	        {
+	            if ($action != 'classify')
+	                $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	                if ($action == 'classify') {
+	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                    $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                    $morehtmlref.='</form>';
+	                } else {
+	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+	                }
+	        } else {
+	            if (! empty($object->fk_project)) {
+	                $proj = new Project($db);
+	                $proj->fetch($object->fk_project);
+	                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	                $morehtmlref.=$proj->ref;
+	                $morehtmlref.='</a>';
+	            } else {
+	                $morehtmlref.='';
+	            }
+	        }
+	    }
+	    $morehtmlref.='</div>';
 
-        // Customer
-        print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
+	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
+
+
+	    print '<div class="fichecenter">';
+	    print '<div class="underbanner clearboth"></div>';
+        
+	    
+        print '<table class="border" width="100%">';
+	    
         // Ligne info remises tiers
-        print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
+        print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
         if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
         $absolute_discount=$object->thirdparty->getAvailableDiscounts();
@@ -1343,44 +1372,15 @@ else
         print '.';
         print '</td></tr>';
 
-        // Statut contrat
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        if ($object->statut==0) print $object->getLibStatut(2);
-        else print $object->getLibStatut(4);
-        print "</td></tr>";
-
         // Date
         print '<tr>';
-		print '<td>';
+		print '<td class="titlefield">';
 		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
 		print '</td><td>';
 		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
 		print '</td>';
 		print '</tr>';
-       /* print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";*/
 
-        // Projet
-        if (! empty($conf->projet->enabled))
-        {
-            $langs->load("projects");
-            print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
-            print $langs->trans("Project");
-            print '</td>';
-            if ($action != "classify" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
-            print '</tr></table>';
-            print '</td><td colspan="3">';
-            if ($action == "classify")
-            {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "projectid", 1, 0, 1);
-            }
-            else
-            {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "none", 0, 0);
-            }
-            print "</td></tr>";
-        }
 
         // Other attributes
         $cols = 3;
@@ -1388,12 +1388,14 @@ else
 
         print "</table>";
 
+        print '</div>';
+        
         if (! empty($object->brouillon) && $user->rights->contrat->creer)
         {
             print '</form>';
         }
 
-        echo '<br>';
+        //echo '<br>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
@@ -1457,8 +1459,8 @@ else
 
                 print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
                 print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
-                print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
-                print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
+                print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
+                print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
 	            if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1606,7 +1608,7 @@ else
                 }
                 // Ligne en mode update
                 else
-              {
+                {
                     // Ligne carac
                     print "<tr ".$bc[$var].">";
                     print '<td>';
@@ -1926,8 +1928,6 @@ else
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
 			';
-
-			print '<br>';
 
             print '<div class="div-table-responsive">';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines

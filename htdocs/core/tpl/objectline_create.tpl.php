@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 <?php 
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore?'':' liste_titre_add'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2; }
