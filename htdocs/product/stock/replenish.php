@@ -552,7 +552,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock();
+		$prod->load_stock('warehouseopen, warehouseinternal');
 
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
