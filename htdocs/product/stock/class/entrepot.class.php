@@ -565,7 +565,7 @@ class Entrepot extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='',$showfullpath=0, $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
 		$langs->load("stocks");
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
