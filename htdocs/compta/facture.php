@@ -2484,8 +2484,7 @@ if ($action == 'create')
 	$htmltext='';
 	if (GETPOST('fac_rec','int') > 0)
 	{
-    	$dateexample=dol_now();
-    	if (! empty($datefacture?$datefacture:$dateinvoice)) $dateexample=($datefacture?$datefacture:$dateinvoice);
+    	if (empty($dateexample)) $dateexample=dol_now();
     	$substitutionarray=array(
     	    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
     	    '__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ttc).')',
