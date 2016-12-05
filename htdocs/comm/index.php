@@ -385,7 +385,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
     if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE cf.fk_soc = s.rowid";
     $sql.= " AND cf.fk_statut = 0";
-    $sql.= " AND cf.entity IN (".getEntity('commande_fournisseur', 1).")";
+    $sql.= " AND cf.entity IN (".getEntity('supplier_order', 1).")";
     if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)	$sql.= " AND cf.fk_soc = ".$socid;
 

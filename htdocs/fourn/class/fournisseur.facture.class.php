@@ -208,7 +208,7 @@ class FactureFournisseur extends CommonInvoice
      *    Create supplier invoice into database
      *
      *    @param      User		$user       object utilisateur qui cree
-     *    @return     int    	     		id facture si ok, < 0 si erreur
+     *    @return     int    	     		Id invoice created if OK, < 0 if KO
      */
     public function create($user)
     {
@@ -313,32 +313,84 @@ class FactureFournisseur extends CommonInvoice
                 }
             }
 
-            foreach ($this->lines as $i => $val)
-            {
-                $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-                $sql .= ' VALUES ('.$this->id.');';
-
-                dol_syslog(get_class($this)."::create", LOG_DEBUG);
-                $resql_insert=$this->db->query($sql);
-                if ($resql_insert)
+			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
+			{
+                dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
+                foreach ($this->lines as $i => $val)
                 {
-                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-
-                    $this->updateline(
-                        $idligne,
-                        $this->lines[$i]->description,
-                        $this->lines[$i]->pu_ht,
-                        $this->lines[$i]->tva_tx,
-                        $this->lines[$i]->localtax1_tx,
-                        $this->lines[$i]->localtax2_tx,
-                        $this->lines[$i]->qty,
-                        $this->lines[$i]->fk_product,
-                        'HT',
-                        (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
-                        $this->lines[$i]->product_type
-                    );
+                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+                    $sql .= ' VALUES ('.$this->id.')';
+    
+                    $resql_insert=$this->db->query($sql);
+                    if ($resql_insert)
+                    {
+                        $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+    
+                        var_dump($this->lines[$i]);exit;
+                        $this->updateline(
+                            $idligne,
+                            $this->lines[$i]->description,
+                            $this->lines[$i]->pu_ht,
+                            $this->lines[$i]->tva_tx,
+                            $this->lines[$i]->localtax1_tx,
+                            $this->lines[$i]->localtax2_tx,
+                            $this->lines[$i]->qty,
+                            $this->lines[$i]->fk_product,
+                            'HT',
+                            (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
+                            $this->lines[$i]->product_type
+                        );
+                    }
+                    else
+                    {
+                        $this->error=$this->db->lasterror();
+                        $this->db->rollback();
+                        return -5;
+                    }
                 }
-            }
+			}
+			else	// If this->lines is an array of invoice line arrays
+			{
+			    dol_syslog("There is ".count($this->lines)." lines that are array lines");
+			    foreach ($this->lines as $i => $val)
+			    {
+                	$line = $this->lines[$i];
+                	
+                	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+                	if (! is_object($line)) $line = (object) $line;
+			        
+                	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+			        $sql .= ' VALUES ('.$this->id.')';
+			    
+			        $resql_insert=$this->db->query($sql);
+			        if ($resql_insert)
+			        {
+			            $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+			    
+			            $this->updateline(
+			                $idligne,
+			                $line->description,
+			                $line->pu_ht,
+			                $line->tva_tx,
+			                $line->localtax1_tx,
+			                $line->localtax2_tx,
+			                $line->qty,
+			                $line->fk_product,
+			                'HT',
+			                (! empty($line->info_bits)?$line->info_bits:''),
+			                $line->product_type
+			                );
+			        }
+			        else
+			        {
+			            $this->error=$this->db->lasterror();
+			            $this->db->rollback();
+			            return -5;
+			        }
+			    }			    
+			}
+			
             // Update total price
             $result=$this->update_price();
             if ($result > 0)

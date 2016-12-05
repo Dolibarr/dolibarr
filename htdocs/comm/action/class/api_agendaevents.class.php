@@ -146,13 +146,13 @@ class AgendaEvents extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);
                 if($actioncomm_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($actioncomm_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve Agenda Event list');
+            throw new RestException(503, 'Error when retrieve Agenda Event list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Agenda Event found');

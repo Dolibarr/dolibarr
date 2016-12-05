@@ -151,13 +151,13 @@ class Products extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
                 if($product_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve product list');
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No product found');

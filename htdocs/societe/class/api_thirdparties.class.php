@@ -159,13 +159,13 @@ class Thirdparties extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);
                 if($soc_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($soc_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($soc_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve thirdparties : ' . $sql);
+            throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'Thirdparties not found');

@@ -1183,10 +1183,10 @@ else
         print '</td></tr>';
 
         print '<tr><td>';
-        print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
+        print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("VCard"),'vcard.png').' ';
-		print $langs->trans("VCard");
+		print img_picto($langs->trans("Download"),'vcard.png').' ';
+		print $langs->trans("Download");
 		print '</a>';
         print '</td></tr>';
 

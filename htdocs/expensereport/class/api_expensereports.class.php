@@ -144,13 +144,13 @@ class ExpenseReports extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $expensereport_static = new ExpenseReport($db);
                 if($expensereport_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($expensereport_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve Expense Report list');
+            throw new RestException(503, 'Error when retrieve Expense Report list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Expense Report found');

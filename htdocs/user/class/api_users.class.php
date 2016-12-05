@@ -111,13 +111,13 @@ class Users extends DolibarrApi
 	            $obj = $db->fetch_object($result);
 	            $user_static = new User($db);
 	            if($user_static->fetch($obj->rowid)) {
-	                $obj_ret[] = parent::_cleanObjectDatas($user_static);
+	                $obj_ret[] = $this->_cleanObjectDatas($user_static);
 	            }
 	            $i++;
 	        }
 	    }
 	    else {
-	        throw new RestException(503, 'Error when retrieve User list');
+	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
 	    }
 	    if( ! count($obj_ret)) {
 	        throw new RestException(404, 'No User found');
