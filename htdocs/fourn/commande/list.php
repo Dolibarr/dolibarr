@@ -293,7 +293,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE cf.fk_soc = s.rowid';
-$sql.= ' AND cf.entity IN ('.getEntity('commande_fournisseur', 1).')';
+$sql.= ' AND cf.entity IN ('.getEntity('supplier_order', 1).')';
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('cf.ref', $search_ref);

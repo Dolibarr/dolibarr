@@ -162,7 +162,7 @@ class Projects extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve project list');
+            throw new RestException(503, 'Error when retrieve project list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No project found');
@@ -531,9 +531,6 @@ class Projects extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     

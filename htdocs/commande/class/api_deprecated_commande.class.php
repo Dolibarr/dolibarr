@@ -167,13 +167,13 @@ class CommandeApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($commande_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve commande list');
+            throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No commande found');

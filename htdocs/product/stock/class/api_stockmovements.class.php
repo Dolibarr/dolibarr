@@ -144,7 +144,7 @@ class StockMovements extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve stock movement list : '.$stockmovement_static->error);
+            throw new RestException(503, 'Error when retrieve stock movement list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No stock movement found');
@@ -277,9 +277,6 @@ class StockMovements extends DolibarrApi
      *
      * @param   MouvementStock  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     

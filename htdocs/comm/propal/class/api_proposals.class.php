@@ -150,13 +150,13 @@ class Proposals extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $propal_static = new Propal($db);
                 if($propal_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($propal_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($propal_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve propal list');
+            throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No order found');

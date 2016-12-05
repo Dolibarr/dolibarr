@@ -160,7 +160,7 @@ class Contacts extends DolibarrApi
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
-					$obj_ret[] = parent::_cleanObjectDatas($contact_static);
+					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
 				$i++;
 			}

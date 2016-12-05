@@ -169,7 +169,7 @@ class Tasks extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve task list');
+            throw new RestException(503, 'Error when retrieve task list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No task found');
@@ -544,9 +544,6 @@ class Tasks extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     
