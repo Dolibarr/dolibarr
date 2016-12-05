@@ -941,6 +941,20 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
+	// Prof Id 5
+	if ($fromcompany->idprof5)
+	{
+		$field=$outputlangs->transcountrynoentities("ProfId5",$fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof5);
+	}
+	// Prof Id 6
+	if ($fromcompany->idprof6)
+	{
+		$field=$outputlangs->transcountrynoentities("ProfId6",$fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
+	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
