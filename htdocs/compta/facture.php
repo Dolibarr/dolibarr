@@ -2484,6 +2484,7 @@ if ($action == 'create')
 	$htmltext='';
 	if (GETPOST('fac_rec','int') > 0)
 	{
+    	$dateexample=($datefacture ? $datefacture : $dateinvoice);
     	if (empty($dateexample)) $dateexample=dol_now();
     	$substitutionarray=array(
     	    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
