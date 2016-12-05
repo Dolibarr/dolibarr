@@ -21,6 +21,7 @@
  *	\brief      Fichier de la classe des fonctions predefinie de composants html
  */
 
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 /**
  *	Class with static methods for building HTML components related to products
@@ -168,7 +169,7 @@ class FormProduct
 	 *
 	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname       Name of html select html
-	 *  @param  string	$filtertype     For filter, additional filter on status other then 1
+	 *  @param  string	$filterstatus   For filter, additional filter on status other then 1 (open_all). No filter when empty
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
@@ -181,15 +182,15 @@ class FormProduct
 	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
 		
 		$out='';
-		
-		$this->loadWarehouses($fk_product, '', + $filtertype, true, $exclude); // filter on numeric status
+		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
+		$this->loadWarehouses($fk_product, '', + $filterstatus, true, $exclude); // filter on numeric status
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)
