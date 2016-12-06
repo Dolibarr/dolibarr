@@ -50,7 +50,7 @@ $id = GETPOST('id', 'int');
 $price_by_qty_rowid = GETPOST('pbq', 'int');
 $finished = GETPOST('finished', 'int');
 $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
-$warehouseStatus = GETPOST('warehousestatus', 'int');
+$warehouseStatus = GETPOST('warehousestatus', 'alpha');
 
 
 /*

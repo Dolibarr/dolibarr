@@ -55,18 +55,36 @@ class FormProduct
 	 *
 	 * @param	int		$fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
-	 * @param	int		$status		      	additional filter on status other then 1
+	 * @param	string	$status		      	warehouse status filter, following comma separated filter options can be used
+     *										'warehouseopen' = select products from open warehouses,
+	 *										'warehouseclosed' = select products from closed warehouses, 
+	 *										'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true, $exclude='')
+	function loadWarehouses($fk_product=0, $batch = '', $status='', $sumStock = true, $exclude='')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 		
 		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+
+		$warehouseStatus = array();
+
+		if (preg_match('/warehouseclosed/', $status)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
+		}
+		if (preg_match('/warehouseopen/', $status)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
+		}
+		if (preg_match('/warehouseinternal/', $status)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
+		}
 		
 		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
 		if (!empty($fk_product)) 
@@ -95,9 +113,9 @@ class FormProduct
             }
 		}
 		$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-		if (!empty($status))
+		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (1, ".$status.")";
+			$sql.= " AND e.statut IN (".implode(',',$warehouseStatus).")";
 		}
 		else
 		{
@@ -169,7 +187,10 @@ class FormProduct
 	 *
 	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname       Name of html select html
-	 *  @param  string	$filterstatus   For filter, additional filter on status other then 1 (open_all). No filter when empty
+	 *  @param  string	$filterstatus   warehouse status filter, following comma separated filter options can be used
+     *									'warehouseopen' = select products from open warehouses,
+	 *									'warehouseclosed' = select products from closed warehouses, 
+	 *									'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
@@ -190,7 +211,7 @@ class FormProduct
 		
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
-		$this->loadWarehouses($fk_product, '', + $filterstatus, true, $exclude); // filter on numeric status
+		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude);
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)

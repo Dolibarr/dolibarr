@@ -383,11 +383,11 @@ if ($conf->productbatch->enabled)
 }
 // In warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw, 'id_sw', Entrepot::STATUS_OPEN_INTERNAL, 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Out warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw, 'id_tw', Entrepot::STATUS_OPEN_INTERNAL, 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Qty
 print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
