@@ -1629,7 +1629,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 
 	// Template to use by default
-	print '<tr><td>' . $langs->trans('Model') . '</td>';
+	print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
 	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
