@@ -8,7 +8,7 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 }
 
 // Add extra fields
-$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND entity IN (0, ".$conf->entity.')';
+$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.')';
 //print $sql;
 $resql=$this->db->query($sql);
 if ($resql)    // This can fail when class is used on old database (during migration for example)

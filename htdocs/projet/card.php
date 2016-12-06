@@ -927,7 +927,7 @@ elseif ($object->id > 0)
                 /* Change percent of default percent of new status is higher */
                 if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
                 {
-                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
                     jQuery("#opp_percent").val(defaultpercent);
 
                 }
