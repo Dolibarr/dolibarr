@@ -660,7 +660,7 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 *
 	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Value to show (for date type it must be in timestamp format)
+	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format)
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -668,7 +668,7 @@ class ExtraFields
 	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
-	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0, $objectid=0)
+	function showInputField($key, $value, $moreparam='', $keyprefix='', $keysuffix='', $showsize=0, $objectid=0)
 	{
 		global $conf,$langs;
 
@@ -1163,10 +1163,17 @@ class ExtraFields
 			dol_include_once($InfoFieldList[1]);
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
-                $object = new $InfoFieldList[0]($this->db);
-                if (!empty($value)) $object->fetch($value);
-                $valuetoshow=$object->ref;
-                if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
+			    $valuetoshow=$value;
+                if (!empty($value)) 
+                {
+                    $object = new $InfoFieldList[0]($this->db);
+                    $resfetch=$object->fetch($value);
+                    if ($resfetch > 0) 
+                    {
+                        $valuetoshow=$object->ref;
+                        if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
+                    }
+                }
                 $out.='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$valuetoshow.'" >';
 			}
 			else
