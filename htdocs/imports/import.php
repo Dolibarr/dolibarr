@@ -868,13 +868,13 @@ if ($step == 4 && $datatoimport)
 
 		$i++;
 
-		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
+		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_label[0]);
 		$tablealias=preg_replace('/(\..*)$/i','',$code);
 		$tablename=$objimport->array_import_tables[0][$tablealias];
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-		print '<td class="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowrap" style="font-weight: normal">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
 		$newlabel=preg_replace('/\*$/','',$label);
 		$text=$langs->trans($newlabel);
