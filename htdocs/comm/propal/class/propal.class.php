@@ -2245,6 +2245,7 @@ class Propal extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
+		    $this->statut = $oldstatus;
 		    if (!empty($this->errors))
 		    {
     			foreach($this->errors as $errmsg)

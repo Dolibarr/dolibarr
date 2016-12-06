@@ -1150,7 +1150,7 @@ class Dolresource extends CommonObject
         else
         {
             $this->db->commit();
-            return 1;
+            return $changed;
         }
     }
 }
