@@ -272,19 +272,11 @@ class modAdherent extends DolibarrModules
         $this->export_label[$r]='MembersAndSubscriptions';
         $this->export_permission[$r]=array(array("adherent","export"));
         $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
-        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.dateadh'=>'Date','c.cotisation'=>'Numeric');
+        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.cotisation'=>'Numeric');
         $this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
-
-		// Add extra fields
-		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity = ".$conf->entity;
-		$resql=$this->db->query($sql);
-		while ($obj=$this->db->fetch_object($resql))
-		{
-			$fieldname='extra.'.$obj->name;
-			$fieldlabel=ucfirst($obj->label);
-			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			$this->export_entities_array[$r][$fieldname]='member';
-		}
+        // Add extra fields
+        $keyforselect='adherent'; $keyforelement='member'; $keyforaliasextra='extra';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent_type as ta, '.MAIN_DB_PREFIX.'adherent as a)';
