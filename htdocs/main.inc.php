@@ -973,6 +973,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
+        if (! empty($conf->global->MAIN_SET_META_CHARSET)) $metacharset=$conf->global->MAIN_SET_META_CHARSET;
+        print '<meta charset="'.$metacharset.'">'."\n";
+        if (! empty($conf->global->MAIN_SET_META_CONTENT)) $metacontent=$conf->global->MAIN_SET_META_CONTENT;
+        print '<meta content="'.$metacontent.'" name="viewport">'."\n";
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
