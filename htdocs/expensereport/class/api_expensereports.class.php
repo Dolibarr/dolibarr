@@ -101,17 +101,12 @@ class ExpenseReports extends DolibarrApi
 
         // case of external user, $societe param is ignored and replaced by user's socid
         //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+        
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('expensereport', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_author IN (".$user_ids.")";
         
-        // Insert sale filter
-        if ($search_sale > 0)
-        {
-            $sql .= " AND sc.fk_user = ".$search_sale;
-        }
         // Add sql filters
         if ($sqlfilters) 
         {

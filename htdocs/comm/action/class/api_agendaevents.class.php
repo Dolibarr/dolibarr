@@ -102,13 +102,19 @@ class AgendaEvents extends DolibarrApi
         
         $obj_ret = array();
 
-        // case of external user, $societe param is ignored and replaced by user's socid
-        //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+        // case of external user
+        $socid = 0;
+        if (! empty(DolibarrApiAccess::$user->societe_id)) $socid = DolibarrApiAccess::$user->societe_id;
+        
+        // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        
         $sql = "SELECT t.id as rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('agenda', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
+        if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter
         if ($search_sale > 0)
         {
