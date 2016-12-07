@@ -341,6 +341,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
+
+print '<div class="div-table-responsive">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
@@ -378,7 +380,7 @@ print '</td>';
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" size="6" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50onsmartphone" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
@@ -428,6 +430,7 @@ foreach($listofdata as $key => $val)
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

@@ -4871,17 +4871,17 @@ class Form
         if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
         {
         	$minLengthToAutocomplete=0;
-        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-        			<script type="text/javascript">
-        				$(document).ready(function () {
-        					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
-        				    dir: \'ltr\',
-        					width: \'resolve\',		/* off or resolve */
-        					minimumInputLength: '.$minLengthToAutocomplete.'
-        				});
-        			});
-        		   </script>';
+        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+        	
+        	// Enhance with select2
+        	$nodatarole='';
+        	if ($conf->use_javascript_ajax)
+        	{
+        	    include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        	    $comboenhancement = ajax_combobox($htmlname);
+        	    $out.=$comboenhancement;
+        	    $nodatarole=($comboenhancement?' data-role="none"':'');
+        	}
         }
 
         $out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
