@@ -867,12 +867,13 @@ if ($step == 4 && $datatoimport)
 		print '<tr '.$bc[$var].' height="'.$height.'">';
 
 		$i++;
-		
 		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
+
 		$tablealias=preg_replace('/(\..*)$/i','',$code);
 		$tablename=$objimport->array_import_tables[0][$tablealias];
-		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$objimport->array_import_icon[0];
-		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$objimport->array_import_label[0];
+
+		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;    // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
+		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$objimport->array_import_label[0];    // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
 		print '<td class="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
