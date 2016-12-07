@@ -372,7 +372,7 @@ class ImportCsv extends ModeleImports
                                     
                                     if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
-                                        $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
+                                        $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
                                         $method=$objimport->array_import_convertvalue[0][$val]['method'];
                                         if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '')

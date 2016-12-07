@@ -529,7 +529,15 @@ if ($step == 3 && $datatoimport)
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-
+	
+	print '<input type="hidden" value="'.$step.'" name="step">';
+	print '<input type="hidden" value="'.$format.'" name="format">';
+	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
+	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
+	print '<input type="hidden" value="'.$separator.'" name="separator">';
+	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
+	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
+	
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
@@ -543,14 +551,30 @@ if ($step == 3 && $datatoimport)
 	$var=false;
 	print '<tr '.$bc[$var].'><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
-	print '<input type="hidden" value="'.$step.'" name="step">';
-	print '<input type="hidden" value="'.$format.'" name="format">';
-	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
-	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
-	print '<input type="hidden" value="'.$separator.'" name="separator">';
-	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
-	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
+	$out = (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled':'');
+	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
+	$out='';
+	if (! empty($conf->global->MAIN_UPLOAD_DOC))
+	{
+	    $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
+	    $maxphp=@ini_get('upload_max_filesize');	// En inconnu
+	    if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp*1;
+	    if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
+	    if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
+	    if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
+	    // Now $max and $maxphp are in Kb
+	    if ($maxphp > 0) $max=min($max,$maxphp);
+
+        $langs->load('other');
+        $out .= ' ';
+        $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+	}
+	else
+	{
+	    $out .= ' ('.$langs->trans("UploadDisabled").')';
+	}
+	print $out;
+	print '</td>';
 	print "</tr>\n";
 
 	// Search available imports
