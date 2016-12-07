@@ -3289,7 +3289,8 @@ abstract class CommonObject
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printObjectHeads', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($hookmanager->resPrint))
+		print $hookmanager->resPrint;
+		if (empty($reshook))
 		{
 			print '<tr class="liste_titre nodrag nodrop">';
 
