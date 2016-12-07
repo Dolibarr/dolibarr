@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 {

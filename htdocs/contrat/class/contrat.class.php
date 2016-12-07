@@ -1151,6 +1151,16 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
 		if (! $error)
 		{
 			// We remove directory
