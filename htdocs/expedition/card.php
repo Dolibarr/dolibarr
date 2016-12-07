@@ -862,7 +862,7 @@ if ($action == 'create')
                 if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
-                    $product->load_stock();
+                    $product->load_stock('warehouseopen');
 
                     print '<td>';
                     print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
