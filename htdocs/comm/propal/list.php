@@ -289,7 +289,7 @@ if ($sall) {
 }
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '')
+if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 }

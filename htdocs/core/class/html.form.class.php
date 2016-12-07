@@ -562,10 +562,17 @@ class Form
         		jQuery(".checkforselect").click(function() {
         			initCheckForSelect();
     	  		});
-        	    /* Warning: if you set submit button to disabled, post using Enter will no more work
     	  		jQuery(".massactionselect").change(function() {
-    	  			console.log( $( this ).val() );
-    	  			if ($(this).val() != \'0\')
+        			var massaction = $( this ).val();  
+        			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
+        			if (massaction == "builddoc") 
+                    {
+                        urlform = urlform + "#show_files";
+    	            }
+        			$( this ).closest("form").attr("action", urlform);
+                    console.log("we select a mass action "+massaction+" - "+urlform);
+        	        /* Warning: if you set submit button to disabled, post using Enter will no more work
+        			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
     	  			}
@@ -573,8 +580,8 @@ class Form
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
     	  			}
-    	  		});
-        	    */
+        	        */
+    	        });
         	});
     		</script>
         	';
