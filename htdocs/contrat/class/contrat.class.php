@@ -56,7 +56,7 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	var $ref_customer;
-	
+
 	/**
 	 * Supplier reference of the contract
 	 * @var string
@@ -536,7 +536,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    Load a contract from database
 	 *
@@ -1135,6 +1135,16 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
 		if (! $error)
 		{
 			// We remove directory
@@ -1329,7 +1339,7 @@ class Contrat extends CommonObject
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
 			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-					
+
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1352,9 +1362,9 @@ class Contrat extends CommonObject
 
 		    if (empty($pa_ht)) $pa_ht=0;
 
-			
+
 			// if buy price not defined, define buyprice as configured in margin admin
-			if ($this->pa_ht == 0) 
+			if ($this->pa_ht == 0)
 			{
 				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0)
 				{
@@ -1513,7 +1523,7 @@ class Contrat extends CommonObject
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/','',$tvatx);  // Remove code into vatrate.
-		
+
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -1537,7 +1547,7 @@ class Contrat extends CommonObject
 	    if (empty($pa_ht)) $pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
 			{
@@ -2579,7 +2589,7 @@ class ContratLigne extends CommonObjectLine
 	    if (empty($this->pa_ht)) $this->pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
