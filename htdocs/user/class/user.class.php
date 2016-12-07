@@ -2440,6 +2440,7 @@ class User extends CommonObject
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
+	 * @see getAllChildIds 
 	 */
 	function get_children()
 	{
@@ -2602,6 +2603,7 @@ class User extends CommonObject
 	 * 	Return list of all child users id in herarchy (all sublevels).
 	 *
 	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 *  @see get_children
 	 */
 	function getAllChildIds()
 	{
