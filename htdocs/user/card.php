@@ -148,7 +148,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
 		if ($id <> $user->id) {
 			$object = new User($db);
-			$object->id = $id;
+			$object->fetch($id);
 			$result = $object->delete();
 			if ($result < 0) {
 				$langs->load("errors");
