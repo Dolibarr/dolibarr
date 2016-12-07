@@ -33,23 +33,23 @@ class Loan extends CommonObject
     public $table='loan';
     public $table_element='loan';
 
-	var $rowid;
-    var $datestart;
-	var $dateend;
-    var $label;
-    var $capital;
-	var $nbterm;
-	var $rate;
-	var $paid;
-	var $account_capital;
-	var $account_insurance;
-	var $account_interest;
-    var $date_creation;
-    var $date_modification;
-    var $date_validation;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+    public $rowid;
+    public $datestart;
+    public $dateend;
+    public $label;
+    public $capital;
+    public $nbterm;
+    public $rate;
+    public $paid;
+    public $account_capital;
+    public $account_insurance;
+    public $account_interest;
+    public $date_creation;
+    public $date_modification;
+    public $date_validation;
+    public $fk_bank;
+    public $fk_user_creat;
+    public $fk_user_modif;
 
 
     /**
