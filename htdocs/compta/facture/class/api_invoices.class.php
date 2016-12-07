@@ -153,6 +153,7 @@ class Invoices extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+            $i=0;
             $num = $db->num_rows($result);
             while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
@@ -177,7 +178,7 @@ class Invoices extends DolibarrApi
      * Create invoice object
      * 
      * @param array $request_data   Request datas
-     * @return int  ID of invoice
+     * @return int                  ID of invoice
      */
     function post($request_data = NULL)
     {
@@ -278,7 +279,7 @@ class Invoices extends DolibarrApi
     /**
      * Validate fields before create or update object
      * 
-     * @param array $data   Datas to validate
+     * @param array|null    $data       Datas to validate
      * @return array
      * 
      * @throws RestException
@@ -293,4 +294,5 @@ class Invoices extends DolibarrApi
         }
         return $invoice;
     }
+    
 }

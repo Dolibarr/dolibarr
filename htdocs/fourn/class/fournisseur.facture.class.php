@@ -326,7 +326,6 @@ class FactureFournisseur extends CommonInvoice
                     {
                         $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
     
-                        var_dump($this->lines[$i]);exit;
                         $this->updateline(
                             $idligne,
                             $this->lines[$i]->description,

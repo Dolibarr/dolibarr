@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 /**
  * API class for supplier invoices
@@ -153,6 +153,7 @@ class SupplierInvoices extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+            $i = 0;
             $num = $db->num_rows($result);
             while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
