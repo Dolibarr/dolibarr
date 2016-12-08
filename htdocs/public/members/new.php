@@ -238,11 +238,10 @@ if ($action == 'add')
             $adh->pass        = $_POST["pass1"];
         }
         $adh->photo       = $_POST["photo"];
-        $adh->note        = $_POST["note"];
         $adh->country_id  = $_POST["country_id"];
         $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
-        $adh->note        = $_POST["comment"];
+        $adh->note_private= $_POST["note_private"];
         $adh->morphy      = $_POST["morphy"];
         $adh->birth       = $birthday;
 
@@ -520,7 +519,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 // Comments
 print '<tr>';
 print '<td valign="top">'.$langs->trans("Comments").'</td>';
-print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.dol_escape_htmltag(GETPOST('comment')).'</textarea></td>';
+print '<td valign="top"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
