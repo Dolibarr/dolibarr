@@ -21,12 +21,13 @@ CREATE TABLE llx_ecm_files
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   label				varchar(64) NOT NULL,
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  filepath    		varchar(750) NOT NULL,   	    -- relative to dolibarr document dir. example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
-  fullpath    		varchar(750) NOT NULL,   	    -- relative to dolibarr document dir. example abc/def/myfile
   fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
   description		text,
   keywords          text,                           -- list of keywords, separated with comma
   cover             text,                           -- is this file a file to use for a cover
+  position          integer,                        -- position of file among others
   gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded' 
   extraparams		varchar(255),					-- for stocking other parameters with json format
   date_c			datetime,

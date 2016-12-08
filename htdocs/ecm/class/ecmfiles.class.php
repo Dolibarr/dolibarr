@@ -20,10 +20,9 @@
  */
 
 /**
- * \file    dev/skeletons/skeleton_class.class.php
- * \ingroup mymodule othermodule1 othermodule2
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \file    ecm/ecmfiles.class.php
+ * \ingroup ecm
+ * \brief   Class to manage ECM Files (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -32,37 +31,41 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Skeleton_Class
- *
- * Put here description of your class
- *
- * @see CommonObject
+ * Class to manage ECM files
  */
-class Skeleton_Class extends CommonObject
+class EcmFiles //extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed objects
 	 */
-	public $element = 'skeleton';
+	public $element = 'ecmfiles';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'skeleton';
+	public $table_element = 'ecm_files';
 
 	/**
-	 * @var Skeleton_ClassLine[] Lines
 	 */
-	public $lines = array();
+	public $label;
+	public $entity;
+	public $filename;
+	public $filepath;
+	public $fullpath_orig;
+	public $description;
+	public $keywords;
+	public $cover;
+	public $position;
+	public $gen_or_uploaded;
+	public $extraparams;
+	public $date_c = '';
+	public $date_m = '';
+	public $fk_user_c;
+	public $fk_user_m;
+	public $acl;
 
 	/**
-	 * @var mixed Sample property 1
 	 */
-	public $prop1;
-	/**
-	 * @var mixed Sample property 2
-	 */
-	public $prop2;
-	//...
+	
 
 	/**
 	 * Constructor
@@ -84,31 +87,94 @@ class Skeleton_Class extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+	    global $conf;
+	    
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->prop1)) {
-			$this->prop1 = trim($this->prop1);
+		
+		if (isset($this->label)) {
+			 $this->label = trim($this->label);
 		}
-		if (isset($this->prop2)) {
-			$this->prop2 = trim($this->prop2);
+		if (isset($this->entity)) {
+			 $this->entity = trim($this->entity);
 		}
-		//...
+		if (isset($this->filename)) {
+			 $this->filename = trim($this->filename);
+		}
+		if (isset($this->filepath)) {
+			 $this->filepath = trim($this->filepath);
+		}
+		if (isset($this->fullpath_orig)) {
+			 $this->fullpath_orig = trim($this->fullpath_orig);
+		}
+		if (isset($this->description)) {
+			 $this->description = trim($this->description);
+		}
+		if (isset($this->keywords)) {
+			 $this->keywords = trim($this->keywords);
+		}
+		if (isset($this->cover)) {
+			 $this->cover = trim($this->cover);
+		}
+		if (isset($this->gen_or_uploaded)) {
+			 $this->gen_or_uploaded = trim($this->gen_or_uploaded);
+		}
+		if (isset($this->extraparams)) {
+			 $this->extraparams = trim($this->extraparams);
+		}
+		if (isset($this->fk_user_c)) {
+			 $this->fk_user_c = trim($this->fk_user_c);
+		}
+		if (isset($this->fk_user_m)) {
+			 $this->fk_user_m = trim($this->fk_user_m);
+		}
+		if (isset($this->acl)) {
+			 $this->acl = trim($this->acl);
+		}
+        if (empty($this->date_c)) $this->date_c = dol_now();
+		
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		$sql .= ' field1,';
-		$sql .= ' field2';
-		//...
+		$sql.= 'label,';
+		$sql.= 'entity,';
+		$sql.= 'filename,';
+		$sql.= 'filepath,';
+		$sql.= 'fullpath_orig,';
+		$sql.= 'description,';
+		$sql.= 'keywords,';
+		$sql.= 'cover,';
+		$sql.= 'position,';
+		$sql.= 'gen_or_uploaded,';
+		$sql.= 'extraparams,';
+		$sql.= 'date_c,';
+		$sql.= 'date_m,';
+		$sql.= 'fk_user_c,';
+		$sql.= 'fk_user_m,';
+		$sql.= 'acl';
 		$sql .= ') VALUES (';
-		$sql .= ' \'' . $this->prop1 . '\',';
-		$sql .= ' \'' . $this->prop2 . '\'';
-		//...
+		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
+		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
+		$sql .= ' '.(! isset($this->filename)?'NULL':"'".$this->db->escape($this->filename)."'").',';
+		$sql .= ' '.(! isset($this->filepath)?'NULL':"'".$this->db->escape($this->filepath)."'").',';
+		$sql .= ' '.(! isset($this->fullpath_orig)?'NULL':"'".$this->db->escape($this->fullpath_orig)."'").',';
+		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
+		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
+		$sql .= ' '.(! isset($this->cover)?'NULL':"'".$this->db->escape($this->cover)."'").',';
+		$sql .= ' '.(! isset($this->position)?'0':$this->db->escape($this->position)).',';
+		$sql .= ' '.(! isset($this->gen_or_uploaded)?'NULL':"'".$this->db->escape($this->gen_or_uploaded)."'").',';
+		$sql .= ' '.(! isset($this->extraparams)?'NULL':"'".$this->db->escape($this->extraparams)."'").',';
+		$sql .= ' '."'".$this->db->idate($this->date_c)."'".',';
+		$sql .= ' '.(! isset($this->date_m) || dol_strlen($this->date_m)==0?'NULL':"'".$this->db->idate($this->date_m)."'").',';
+		$sql .= ' '.(! isset($this->fk_user_c)?$user->id:$this->fk_user_c).',';
+		$sql .= ' '.(! isset($this->fk_user_m)?'NULL':$this->fk_user_m).',';
+		$sql .= ' '.(! isset($this->acl)?'NULL':"'".$this->db->escape($this->acl)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -149,27 +215,43 @@ class Skeleton_Class extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param  int    $id          Id object
+	 * @param  string $ref         Ref = md5 = label
+	 * @param  string $fullpath    Full path of file (relative path to document directory)
+	 * @return int                 <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $fullpath = '')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		$sql .= ' t.field1,';
-		$sql .= ' t.field2';
-		//...
+		$sql .= " t.label,";
+		$sql .= " t.entity,";
+		$sql .= " t.filename,";
+		$sql .= " t.filepath,";
+		$sql .= " t.fullpath_orig,";
+		$sql .= " t.description,";
+		$sql .= " t.keywords,";
+		$sql .= " t.cover,";
+		$sql .= " t.position,";
+		$sql .= " t.gen_or_uploaded,";
+		$sql .= " t.extraparams,";
+		$sql .= " t.date_c,";
+		$sql .= " t.date_m,";
+		$sql .= " t.fk_user_c,";
+		$sql .= " t.fk_user_m,";
+		$sql .= " t.acl";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
 		}
-		if (null !== $ref) {
-			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
+		if ($fullpath) {
+			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($fullpath)) . "' AND t.filename = '".$this->db->escape(basename($fullpath))."'";
+		}
+		elseif (null !== $ref) {
+			$sql .= " AND t.label = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' AND t.rowid = ' . $id;
 		}
@@ -181,9 +263,23 @@ class Skeleton_Class extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->prop1 = $obj->field1;
-				$this->prop2 = $obj->field2;
-				//...
+				
+				$this->label = $obj->label;
+				$this->entity = $obj->entity;
+				$this->filename = $obj->filename;
+				$this->filepath = $obj->filepath;
+				$this->fullpath_orig = $obj->fullpath_orig;
+				$this->description = $obj->description;
+				$this->keywords = $obj->keywords;
+				$this->cover = $obj->cover;
+				$this->position = $obj->position;
+				$this->gen_or_uploaded = $obj->gen_or_uploaded;
+				$this->extraparams = $obj->extraparams;
+				$this->date_c = $this->db->jdate($obj->date_c);
+				$this->date_m = $this->db->jdate($obj->date_m);
+				$this->fk_user_c = $obj->fk_user_c;
+				$this->fk_user_m = $obj->fk_user_m;
+				$this->acl = $obj->acl;
 			}
 			
 			// Retrieve all extrafields for invoice
@@ -194,7 +290,6 @@ class Skeleton_Class extends CommonObject
 			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 			$this->fetch_optionals($this->id,$extralabels);
             */
-			
 			// $this->fetch_lines();
 			
 			$this->db->free($resql);
@@ -230,9 +325,22 @@ class Skeleton_Class extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		$sql .= ' t.field1,';
-		$sql .= ' t.field2';
-		//...
+		$sql .= " t.label,";
+		$sql .= " t.entity,";
+		$sql .= " t.filename,";
+		$sql .= " t.filepath,";
+		$sql .= " t.fullpath_orig,";
+		$sql .= " t.description,";
+		$sql .= " t.keywords,";
+		$sql .= " t.cover,";
+		$sql .= " t.position,";
+		$sql .= " t.gen_or_uploaded,";
+		$sql .= " t.extraparams,";
+		$sql .= " t.date_c,";
+		$sql .= " t.date_m,";
+		$sql .= " t.fk_user_c,";
+		$sql .= " t.fk_user_m,";
+		$sql .= " t.acl";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -244,7 +352,7 @@ class Skeleton_Class extends CommonObject
 		}
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
 		}
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
@@ -256,21 +364,33 @@ class Skeleton_Class extends CommonObject
 		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
 		}
 
-		//$this->lines = array();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new Skeleton_ClassLine();
+				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				$line->prop1 = $obj->field1;
-				$line->prop2 = $obj->field2;
-
-				//$this->lines[$line->id] = $line;
-				//...
+				
+				$line->label = $obj->label;
+				$line->entity = $obj->entity;
+				$line->filename = $obj->filename;
+				$line->filepath = $obj->filepath;
+				$line->fullpath_orig = $obj->fullpath_orig;
+				$line->description = $obj->description;
+				$line->keywords = $obj->keywords;
+				$line->cover = $obj->cover;
+				$line->position = $obj->position;
+				$line->gen_or_uploaded = $obj->gen_or_uploaded;
+				$line->extraparams = $obj->extraparams;
+				$line->date_c = $this->db->jdate($obj->date_c);
+				$line->date_m = $this->db->jdate($obj->date_m);
+				$line->fk_user_c = $obj->fk_user_c;
+				$line->fk_user_m = $obj->fk_user_m;
+				$line->acl = $obj->acl;
 			}
 			$this->db->free($resql);
 
@@ -298,22 +418,70 @@ class Skeleton_Class extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		if (isset($this->prop1)) {
-			$this->prop1 = trim($this->prop1);
+		
+		if (isset($this->label)) {
+			 $this->label = trim($this->label);
 		}
-		if (isset($this->prop2)) {
-			$this->prop2 = trim($this->prop2);
+		if (isset($this->entity)) {
+			 $this->entity = trim($this->entity);
 		}
-		//...
+		if (isset($this->filename)) {
+			 $this->filename = trim($this->filename);
+		}
+		if (isset($this->filepath)) {
+			 $this->filepath = trim($this->filepath);
+		}
+		if (isset($this->fullpath_orig)) {
+			 $this->fullpath_orig = trim($this->fullpath_orig);
+		}
+		if (isset($this->description)) {
+			 $this->description = trim($this->description);
+		}
+		if (isset($this->keywords)) {
+			 $this->keywords = trim($this->keywords);
+		}
+		if (isset($this->cover)) {
+			 $this->cover = trim($this->cover);
+		}
+		if (isset($this->gen_or_uploaded)) {
+			 $this->gen_or_uploaded = trim($this->gen_or_uploaded);
+		}
+		if (isset($this->extraparams)) {
+			 $this->extraparams = trim($this->extraparams);
+		}
+		if (isset($this->fk_user_c)) {
+			 $this->fk_user_c = trim($this->fk_user_c);
+		}
+		if (isset($this->fk_user_m)) {
+			 $this->fk_user_m = trim($this->fk_user_m);
+		}
+		if (isset($this->acl)) {
+			 $this->acl = trim($this->acl);
+		}
+
+		
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
-        $sql .= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
-		//...
+		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
+		$sql .= ' entity = '.(isset($this->entity)?$this->entity:$conf->entity).',';
+		$sql .= ' filename = '.(isset($this->filename)?"'".$this->db->escape($this->filename)."'":"null").',';
+		$sql .= ' filepath = '.(isset($this->filepath)?"'".$this->db->escape($this->filepath)."'":"null").',';
+		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig)?"'".$this->db->escape($this->fullpath_orig)."'":"null").',';
+		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
+		$sql .= ' keywords = '.(isset($this->keywords)?"'".$this->db->escape($this->keywords)."'":"null").',';
+		$sql .= ' cover = '.(isset($this->cover)?"'".$this->db->escape($this->cover)."'":"null").',';
+		$sql .= ' position = '.(isset($this->position)?$this->db->escape($this->position):"0").',';
+		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded)?"'".$this->db->escape($this->gen_or_uploaded)."'":"null").',';
+		$sql .= ' extraparams = '.(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null").',';
+		$sql .= ' date_c = '.(! isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
+		$sql .= ' date_m = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').',';
+		$sql .= ' fk_user_c = '.(isset($this->fk_user_c)?$this->fk_user_c:"null").',';
+		$sql .= ' fk_user_m = '.(isset($this->fk_user_m)?$this->fk_user_m:"null").',';
+		$sql .= ' acl = '.(isset($this->acl)?"'".$this->db->escape($this->acl)."'":"null");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -414,7 +582,7 @@ class Skeleton_Class extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Skeleton_Class($this->db);
+		$object = new Ecmfiles($this->db);
 
 		$this->db->begin();
 
@@ -473,7 +641,7 @@ class Skeleton_Class extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
+        $url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
         
         $linkclose='';
         if (empty($notooltip))
@@ -570,28 +738,27 @@ class Skeleton_Class extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+	    global $conf,$user;
+	    
 		$this->id = 0;
-		$this->prop1 = 'prop1';
-		$this->prop2 = 'prop2';
+		
+		$this->label = '0a1b2c3e4f59999999';
+		$this->entity = '1';
+		$this->filename = 'myspecimenfilefile.pdf';
+		$this->filepath = '/aaa/bbb';
+		$this->fullpath_orig = 'c:/file on my disk.pdf';
+		$this->description = 'This is a long description of file';
+		$this->keywords = 'key1,key2';
+		$this->cover = '1';
+		$this->position = '5';
+		$this->gen_or_uploaded = 'uploaded';
+		$this->extraparams = '';
+		$this->date_c = (dol_now() - 3600 * 24 * 10);
+		$this->date_m = '';
+		$this->fk_user_c = $user->id;
+		$this->fk_user_m = '';
+		$this->acl = '';
 	}
 
 }
 
-/**
- * Class Skeleton_ClassLine
- */
-class Skeleton_ClassLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
-	public $prop1;
-	/**
-	 * @var mixed Sample line property 2
-	 */
-	public $prop2;
-}

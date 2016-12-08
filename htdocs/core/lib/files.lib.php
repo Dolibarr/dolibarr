@@ -743,7 +743,30 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 				{
 					if ($nophperrors) $ok=@unlink($filename);
 					else $ok=unlink($filename);
-					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
+					if ($ok) 
+					{
+					    dol_syslog("Removed file ".$filename, LOG_DEBUG);
+					    
+	                    // Delete entry into ecm database
+    				    $rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filename);
+    				    if (! preg_match('/\/temp\//', $rel_filetodelete))     // If not a tmp file
+    				    {
+    				        $rel_filetodelete = preg_replace('/^\//', '', $rel_filetodelete);
+    				        
+    				        dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
+        				    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+        				    $ecmfile=new EcmFiles($db);
+        				    $result = $ecmfile->fetch(0, '', $rel_filetodelete);
+        				    if ($result >= 0)
+        				    {
+        				        $result = $ecmfile->delete($user);
+        				    }
+        				    if ($result < 0)
+        				    {
+        				        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+        				    }
+    				    }
+					}
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 					// TODO Failure to remove can be because file was already removed or because of permission
 					// If error because of not exists, we must can return true but we should return false if this is a permission problem
@@ -1000,7 +1023,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
- * @param	string	$link					Link to add
+ * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
@@ -1043,7 +1066,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
 				$info = pathinfo($destfile);
 				$destfile = $info['filename'].'.'.strtolower($info['extension']);
-				    
+
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 				if (is_numeric($resupload) && $resupload > 0)
 				{
@@ -1056,6 +1079,30 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
 						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
+					}
+					else   // Update table of files 
+					{
+					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+					    if (! preg_match('/\/temp\//', $rel_dir))     // If not a tmp file
+					    {
+					        $rel_dir = preg_replace('/\/$/', '', $rel_dir);
+					        $rel_dir = preg_replace('/^\//', '', $rel_dir);
+    					    
+    					    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    					    $ecmfile=new EcmFiles($db);
+    					    $ecmfile->label = md5_file($destpath);
+    					    $ecmfile->filename = $destfile;
+    					    $ecmfile->filepath = $rel_dir;
+    					    $ecmfile->fullpath_orig = $TFile['name'][$i];
+    					    $ecmfile->gen_or_uploaded = 'uploaded';
+    					    $ecmfile->description = '';    // indexed content
+    					    $ecmfile->keyword = '';        // keyword content
+    					    $result = $ecmfile->create($user);
+                            if ($result < 0)
+                            {
+                                setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+                            }
+					    }
 					}
 					if (image_format_supported($destpath) == 1)
 					{
@@ -1145,7 +1192,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 	{
 		$pathtodelete=$listofpaths[$keytodelete];
 		$filetodelete=$listofnames[$keytodelete];
-		if (empty($donotdeletefile)) $result = dol_delete_file($pathtodelete,1);
+		if (empty($donotdeletefile)) $result = dol_delete_file($pathtodelete,1);  // The delete of ecm database is inside the function dol_delete_file
 		else $result=0;
 		if ($result >= 0)
 		{
