@@ -1791,7 +1791,7 @@ if ($action == 'create')
 				}
 
 				// Delete
-				if ($user->rights->supplier_proposal->supprimer) {
+				if (($object->statut == 0 && $user->rights->supplier_proposal->creer) || $user->rights->supplier_proposal->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete"';
 					print '>' . $langs->trans('Delete') . '</a></div>';
 				}
