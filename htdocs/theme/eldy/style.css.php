@@ -3041,10 +3041,10 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #303020;
+  color: #303035;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #AAAAAA;
+  border: 1px solid #e0e0e0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
