@@ -1427,26 +1427,6 @@ else
 				// Other attributes
 				//$cols = 3;
 				//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
-				
-				// Public note
-				print '<tr>';
-				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-				print '<td valign="top">';
-
-				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-				print $doleditor->Create(1);
-				print '</td></tr>';
-
-				// Private note
-				if (empty($user->societe_id)) {
-					print '<tr>';
-					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-					print '<td valign="top">';
-
-					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-					print $doleditor->Create(1);
-					print '</td></tr>';
-				}
 
 				print '</table>';
 
@@ -1624,14 +1604,6 @@ else
 				print '</tr>';
 				*/
 
-				print '<tr>';
-				print '<td>'.$langs->trans("NotePublic").'</td>';
-				print '<td>'.$object->note_public.'</td>';
-				print '</tr>';
-				print '<tr>';
-				print '<td>'.$langs->trans("NotePrivate").'</td>';
-				print '<td>'.$object->note_private.'</td>';
-				print '</tr>';
 				// Amount
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
