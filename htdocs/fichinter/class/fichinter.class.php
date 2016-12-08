@@ -1349,7 +1349,7 @@ class FichinterLigne extends CommonObjectLine
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
-		$sql.= ",date=".$this->db->idate($this->datei);
+		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
