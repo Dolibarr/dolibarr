@@ -115,6 +115,7 @@ NEW: Usage of vat code seems ok everywhere.
 NEW: User date of employment added.
 NEW: Use small photo of user on all user links.
 NEW: Use new archi to select fields into list of time spent.
+NEW: Available substitution key (__INVOICE_MONTH__, __INVOICE_PREVIOUS_MONTH__, ...) to use into note text of recurring invoices.
 
 For developers:
 NEW: Add ORDER_MODIFY trigger on each order modification.
