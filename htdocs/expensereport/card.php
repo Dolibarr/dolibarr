@@ -2252,7 +2252,7 @@ print '<div class="fichehalfleft">';
  * Generate documents
  */
 
-if($user->rights->expensereport->export && $action != 'edit')
+if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
 {
 	$filename	=	dol_sanitizeFileName($object->ref);
 	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
