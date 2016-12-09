@@ -42,9 +42,11 @@ if ($resql)    // This can fail when class is used on old database (during migra
 				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 				break;
 		}
-		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-		$this->export_entities_array[$r][$fieldname]=$keyforelement;
+		if ($obj->type!='separate') {
+			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+			$this->export_entities_array[$r][$fieldname]=$keyforelement;
+		}
 	}
 }
 // End add axtra fields
