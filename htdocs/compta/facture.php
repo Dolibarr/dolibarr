@@ -898,7 +898,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard or deposit or proforma invoice
+		// Standard or deposit or proforma invoice, not from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && GETPOST('fac_rec') <= 0)
 		{
 			if (GETPOST('socid', 'int') < 1)
@@ -2075,6 +2075,8 @@ if ($action == 'create')
 	}
 	print '</tr>' . "\n";
 
+	$exampletemplateinvoice=new FactureRec($db);
+	
 	// Overwrite value if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec','int') > 0)
 	{
@@ -2109,7 +2111,10 @@ if ($action == 'create')
 					$objp = $db->fetch_object($resql);
 					print '<option value="' . $objp->rowid . '"';
 					if (GETPOST('fac_rec') == $objp->rowid)
-						print ' selected';
+					{
+					    print ' selected';
+                        $exampletemplateinvoice->fetch(GETPOST('fac_rec'));
+					}
 					print '>' . $objp->titre . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
 				}
@@ -2387,9 +2392,10 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('DateInvoice') . '</td><td colspan="2">';
-	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';
 
@@ -2474,9 +2480,39 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	// Help of substitution key
+	$htmltext='';
+	if (GETPOST('fac_rec','int') > 0)
+	{
+    	$dateexample=($datefacture ? $datefacture : $dateinvoice);
+    	if (empty($dateexample)) $dateexample=dol_now();
+    	$substitutionarray=array(
+    	    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
+    	    '__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ttc).')',
+    	    '__INVOICE_PREVIOUS_MONTH__' => $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%m').')',
+    	    '__INVOICE_MONTH__' =>  $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%m').')',
+    	    '__INVOICE_NEXT_MONTH__' => $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'),'%m').')',
+    	    '__INVOICE_PREVIOUS_MONTH_TEXT__' => $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%B').')',
+    	    '__INVOICE_MONTH_TEXT__' =>  $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%B').')',
+    	    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')',
+    	    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'),'%Y').')',
+    	    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
+    	    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
+    	);
+    	
+    	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+    	foreach($substitutionarray as $key => $val)
+    	{
+    	    $htmltext.=$key.' = '.$langs->trans($val).'<br>';
+    	}
+    	$htmltext.='</i>';	
+	}
+	
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td class="border tdtop">';
+	print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
+	print '</td>';
 	print '<td valign="top" colspan="2">';
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -2485,7 +2521,9 @@ if ($action == 'create')
 	if (empty($user->societe_id))
 	{
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td class="border tdtop">';
+		print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
+		print '</td>';
 		print '<td valign="top" colspan="2">';
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);

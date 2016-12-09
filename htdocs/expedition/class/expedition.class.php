@@ -892,7 +892,7 @@ class Expedition extends CommonObject
 				$result=$product->fetch($fk_product);
 
 				if ($entrepot_id > 0) {
-					$product->load_stock();
+					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
 				else

@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 <?php 
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore?'':' liste_titre_add'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2; }
@@ -184,7 +184,15 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			if ($conf->global->ENTREPOT_EXTRA_STATUS)
+			{
+				// hide products in closed warehouse, but show products for internal transfer
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, 'warehouseopen,warehouseinternal');
+			}
+			else
+			{
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			}
 		}
 		else
 		{

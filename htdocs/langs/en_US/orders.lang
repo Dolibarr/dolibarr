@@ -53,6 +53,7 @@ StatusOrderBilled=Billed
 StatusOrderReceivedPartially=Partially received
 StatusOrderReceivedAll=Everything received
 ShippingExist=A shipment exists
+QtyOrdered=Qty ordered
 ProductQtyInDraft=Product quantity into draft orders
 ProductQtyInDraftOrWaitingApproved=Product quantity into draft or approved orders, not yet ordered 
 MenuOrdersToBill=Orders delivered

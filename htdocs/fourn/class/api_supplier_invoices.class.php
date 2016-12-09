@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 /**
- * API class for invoices
+ * API class for supplier invoices
  *
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Invoices extends DolibarrApi
+class SupplierInvoices extends DolibarrApi
 {
     /**
      *
@@ -36,7 +37,7 @@ class Invoices extends DolibarrApi
     );
 
     /**
-     * @var Facture $invoice {@type Facture}
+     * @var FactureFournisseur $invoice {@type FactureFournisseur}
      */
     public $invoice;
 
@@ -47,28 +48,28 @@ class Invoices extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->invoice = new Facture($this->db);
+        $this->invoice = new FactureFournisseur($this->db);
     }
 
     /**
-     * Get properties of a invoice object
+     * Get properties of a supplier invoice object
      *
-     * Return an array with invoice informations
+     * Return an array with supplier invoice information
      * 
-     * @param 	int 	$id ID of invoice
+     * @param 	int 	$id ID of supplier invoice
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
     function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->facture->lire) {
+		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
 			throw new RestException(401);
 		}
 			
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
+            throw new RestException(404, 'Supplier invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
@@ -81,15 +82,15 @@ class Invoices extends DolibarrApi
     /**
      * List invoices
      * 
-     * Get a list of invoices
+     * Get a list of supplier invoices
      * 
      * @param string	$sortfield	      Sort field
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
      * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	  Thirdparty ids to filter invoices of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
-     * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
      * @return array                      Array of invoice objects
      *
 	 * @throws RestException
@@ -101,21 +102,20 @@ class Invoices extends DolibarrApi
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
-        
+            
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as t";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as t";
         
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('facture', 1).')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
+        $sql.= ' WHERE t.entity IN ('.getEntity('supplier_invoice', 1).')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         
 		// Filter by status
@@ -153,12 +153,12 @@ class Invoices extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
-            $i=0;
+            $i = 0;
             $num = $db->num_rows($result);
             while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
-                $invoice_static = new Facture($db);
+                $invoice_static = new FactureFournisseur($db);
                 if($invoice_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($invoice_static);
                 }
@@ -166,23 +166,23 @@ class Invoices extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve invoice list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve supplier invoice list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No invoice found');
+            throw new RestException(404, 'No supplier invoice found');
         }
 		return $obj_ret;
     }
     
     /**
-     * Create invoice object
+     * Create supplier invoice object
      * 
      * @param array $request_data   Request datas
-     * @return int                  ID of invoice
+     * @return int  ID of supplier invoice
      */
     function post($request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
         // Check mandatory fields
@@ -211,21 +211,21 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Update invoice
+     * Update supplier invoice
      *
-     * @param int   $id             Id of invoice to update
+     * @param int   $id             Id of supplier invoice to update
      * @param array $request_data   Datas   
      * @return int 
      */
     function put($id, $request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401);
 		}
         
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
+            throw new RestException(404, 'Supplier invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
@@ -244,19 +244,19 @@ class Invoices extends DolibarrApi
     }
     
     /**
-     * Delete invoice
+     * Delete supplier invoice
      *
-     * @param int   $id Invoice ID
+     * @param int   $id Supplier invoice ID
      * @return type
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->facture->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->supprimer) {
 			throw new RestException(401);
 		}
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
+            throw new RestException(404, 'Supplier invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
@@ -271,15 +271,31 @@ class Invoices extends DolibarrApi
          return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Invoice deleted'
+                'message' => 'Supplier invoice deleted'
             )
         );
+    }
+    
+    
+    /**
+     * Clean sensible object datas
+     *
+     * @param   Object  $object    Object to clean
+     * @return  array              Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        unset($object->rowid);
+    
+        return $object;
     }
     
     /**
      * Validate fields before create or update object
      * 
-     * @param array|null    $data       Datas to validate
+     * @param array $data   Datas to validate
      * @return array
      * 
      * @throws RestException
@@ -294,5 +310,4 @@ class Invoices extends DolibarrApi
         }
         return $invoice;
     }
-    
 }

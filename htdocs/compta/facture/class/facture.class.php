@@ -296,6 +296,10 @@ class Facture extends CommonInvoice
 			$this->mode_reglement_id = GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
 			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOST('fk_account') : $_facrec->fk_account;
 
+			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
+			$this->total_ht          = $_facrec->total_ht;
+			$this->total_ttc         = $_facrec->total_ttc;
+				
 			// Fields always coming from template
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
@@ -314,7 +318,7 @@ class Facture extends CommonInvoice
 			$this->brouillon = 1;
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
-				
+
 			$forceduedate = $this->calculate_date_lim_reglement();
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
@@ -327,6 +331,39 @@ class Facture extends CommonInvoice
                 //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
                 $result = $_facrec->setNextDate($next_date,1);
 			}
+
+			// Define lang of customer
+			$outputlangs = $langs;
+			$newlang='';
+
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) $newlang=$this->thirdparty->default_lang;  // for proposal, order, invoice, ...
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) $newlang=$this->default_lang;                  // for thirdparty
+			if (! empty($newlang))
+			{
+			    $outputlangs = new Translate("",$conf);
+			    $outputlangs->setDefaultLang($newlang);
+			}
+
+			// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
+			$substitutionarray=array(
+			    '__TOTAL_HT__' => price($this->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code),
+			    '__TOTAL_TTC__' => price($this->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code),
+			    '__INVOICE_PREVIOUS_MONTH__' => dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%m'),
+			    '__INVOICE_MONTH__' => dol_print_date($this->date, '%m'),
+			    '__INVOICE_NEXT_MONTH__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%m'),
+			    '__INVOICE_PREVIOUS_MONTH_TEXT__' => dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%B'),
+			    '__INVOICE_MONTH_TEXT__' => dol_print_date($this->date, '%B'),
+			    '__INVOICE_NEXT_MONTH_TEXT__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%B'),
+			    '__INVOICE_PREVIOUS_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y'),
+			    '__INVOICE_YEAR__' => dol_print_date($this->date, '%Y'),
+			    '__INVOICE_NEXT_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y'),
+			);
+			
+			$substitutionisok=true;
+			complete_substitutions_array($substitutionarray, $outputlangs);
+			
+			$this->note_public=make_substitutions($this->note_public,$substitutionarray);
+			$this->note_private=make_substitutions($this->note_private,$substitutionarray);
 		}
 
 		// Define due date if not already defined

@@ -50,18 +50,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
-	const STATUS_OPEN_INTERNAL = 2;
-	
-	/**
-	 * Warehouse open and operations for customer shipping and internal stock transfers/corrections allowed (not for supplier dispatch).
-	 */
-	const STATUS_OPEN_SHIPPING = 3;
-	
-	/**
-	 * Warehouse open and operations for supplier dispatch internal stock transfers/corrections allowed (not for customer shipping).
-	 */
-	const STATUS_OPEN_DISPATCH = 4;
-	
+	const STATUS_OPEN_INTERNAL = 2;	
 
 	var $libelle;
 	var $description;
@@ -91,8 +80,6 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
-			$this->statuts[self::STATUS_OPEN_SHIPPING] = 'OpenShipping';
-			$this->statuts[self::STATUS_OPEN_DISPATCH] = 'OpenDispatch';
 		}
 		else
 		{
@@ -578,7 +565,7 @@ class Entrepot extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='',$showfullpath=0, $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
 		$langs->load("stocks");
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips

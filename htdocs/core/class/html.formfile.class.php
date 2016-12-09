@@ -140,10 +140,8 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    //$out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
                     $out .= ' ';
-                    $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    //$out .= ')';
+                    $out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
                 }
             }
             else

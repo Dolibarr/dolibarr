@@ -111,6 +111,7 @@ class InvoiceApi extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $socid;
             
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
@@ -165,13 +166,13 @@ class InvoiceApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $invoice_static = new Facture($db);
                 if($invoice_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($invoice_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($invoice_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve invoice list');
+            throw new RestException(503, 'Error when retrieve invoice list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No invoice found');

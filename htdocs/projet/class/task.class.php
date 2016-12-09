@@ -623,7 +623,7 @@ class Task extends CommonObject
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
-     * @param	string	$morewherefilter	Add more filter into where SQL request
+     * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
      * @param	string	$filteronprojuser	Filter on user that is a contact of project
      * @param	string	$filterontaskuser	Filter on user assigned to task
      * @return 	array						Array of tasks

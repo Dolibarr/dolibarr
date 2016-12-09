@@ -165,6 +165,7 @@ class ThirdpartyApi extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
             
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
@@ -218,13 +219,13 @@ class ThirdpartyApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);
                 if($soc_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($soc_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($soc_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve thirdparties : ' . $sql);
+            throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'Thirdparties not found');
