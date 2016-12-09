@@ -657,7 +657,6 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$error++;
-					break;
 				}
 				
 			} else {
