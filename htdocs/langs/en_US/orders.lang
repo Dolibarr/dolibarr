@@ -101,6 +101,7 @@ OnProcessOrders=In process orders
 RefOrder=Ref. order
 RefCustomerOrder=Ref. order for customer
 RefOrderSupplier=Ref. order for supplier
+RefOrderSupplierShort=Ref. order supplier
 SendOrderByMail=Send order by mail
 ActionsOnOrder=Events on order
 NoArticleOfTypeProduct=No article of type 'product' so no shippable article for this order
