@@ -283,7 +283,6 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
 		if(!$user->rights->societe->client->voir) {
 			$subordinatesids = $user->getAllChildIds();
-			var_dump($subordinatesids);
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' '.count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).'))' : '';
 		}
 
