@@ -2585,7 +2585,7 @@ function img_warning($titlealt = 'default', $morealt = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
 }
 
 /**
