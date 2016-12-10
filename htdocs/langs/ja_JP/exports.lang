@@ -26,8 +26,6 @@ FieldTitle=フィールドのタイトル
 NowClickToGenerateToBuildExportFile=現在、コンボボックスでファイル形式を選択し、エクスポートファイルを作成するには &quot;生成&quot;をクリックして...
 AvailableFormats=利用可能なフォーマット
 LibraryShort=図書館
-LibraryUsed=ライブラリを使用
-LibraryVersion=バージョン
 Step=手順
 FormatedImport=Import assistant
 FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
@@ -87,7 +85,7 @@ TooMuchWarnings=そこに警告と<b>%s</b>他のソース行はまだですが�
 EmptyLine=空行（破棄されます）
 CorrectErrorBeforeRunningImport=あなたは、最初の決定的なインポートを実行する前にすべてのエラーを修正する必要があります。
 FileWasImported=ファイルが数<b>%s</b>でインポートされた。
-YouCanUseImportIdToFindRecord=あなたは、フィールド<b>import_key = '%s &quot;</b>をフィルタリングすることにより、データベース内のすべてのインポートされたレコードを見つけることができます。
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=エラーや警告なしなしで行数<b>：%s。</b>
 NbOfLinesImported=正常にインポート行数<b>：%s。</b>
 DataComeFromNoWhere=挿入する値は、ソース·ファイル内のどこから来ている。
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>カンマ区切りファイル</b>形式（。CSV）。 <br>こ
 Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Options
 Separator=Separator
 Enclosure=Enclosure

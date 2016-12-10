@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Sicherheitsschlüssel
-Calendar=Kalender
 NumberingShort=Nr.
 Tools=Hilfsprogramme
 ToolsDesc=Alle sonstigen Hilfsprogramme, die nicht in anderen Menü-Einträgen enthalten sind, werden hier zusammengefasst. <br /><br />Alle Hilfsprogramme können über das linke Menü erreicht werden.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Versanddaten mit E-Mail versendet
 Notify_MEMBER_VALIDATE=Mitglied bestätigt
 Notify_MEMBER_MODIFY=Mitglied bearbeitet
 Notify_MEMBER_SUBSCRIPTION=Mitglied hat unterzeichnet
-Notify_MEMBER_RESILIATE=Mitglied auflösen
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Mitglied gelöscht
 Notify_PROJECT_CREATE=Projekt-Erstellung
 Notify_TASK_CREATE=Aufgabe erstellt
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Gesamtgröße der angehängten Dateien/Dokumente
 MaxSize=Maximalgröße
 AttachANewFile=Neue Datei/Dokument anhängen
 LinkedObject=Verknüpftes Objekt
-Miscellaneous=Verschiedenes
 NbOfActiveNotifications= Anzahl Benachrichtigungen ( Anz.  E-Mail Empfänger)
 PredefinedMailTest=Dies ist ein Test-Mail.\n Die beiden Zeilen sind durch eine Zeilenschaltung getrennt.
 PredefinedMailTestHtml=Dies ist ein (HTML)-<b>Test</b> Mail (das Wort Test muss in Fettschrift erscheinen). <br> Die beiden Zeilen sollten durch eine Zeilenschaltung getrennt sein.
@@ -201,33 +199,13 @@ IfAmountHigherThan=Wenn der Betrag höher als <strong>%s</strong>
 SourcesRepository=Repository für Quellcodes
 Chart=Grafik
 
-##### Calendar common #####
-NewCompanyToDolibarr=Firma %s zugefügt
-ContractValidatedInDolibarr=Vertrag %s freigegeben
-PropalClosedSignedInDolibarr=Angebot %s unterschrieben
-PropalClosedRefusedInDolibarr=Angebot %s abgelehnt
-PropalValidatedInDolibarr=Angebot %s freigegeben
-PropalClassifiedBilledInDolibarr=Angebot %s als verrechnet eingestuft
-InvoiceValidatedInDolibarr=Rechnung %s freigegeben
-InvoicePaidInDolibarr=Rechnung %s bezahlt
-InvoiceCanceledInDolibarr=Rechnung %s storniert
-MemberValidatedInDolibarr=Mitglied %s freigegeben
-MemberResiliatedInDolibarr=Mitglied %s aufgehoben
-MemberDeletedInDolibarr=Mitglied %s gelöscht
-MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
-ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft
-ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markieren
-ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markieren
-ShipmentDeletedInDolibarr=Lieferung %s gelöscht
 ##### Export #####
-Export=Export
 ExportsArea=Exportübersicht
 AvailableFormats=Verfügbare Formate
 LibraryUsed=Verwendete Bibliothek
-LibraryVersion=Bibliotheksversion
+LibraryVersion=Bibliothek Version
 ExportableDatas=Exportfähige Daten
 NoExportableData=Keine exportfähigen Daten (keine Module mit exportfähigen Dateien oder fehlende Berechtigungen)
-NewExport=Neuer Export
 ##### External sites #####
 WebsiteSetup=Einrichtung der Modul-Website
 WEBSITE_PAGEURL=URL der Seite

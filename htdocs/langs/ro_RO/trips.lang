@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Raport Cheltuieli
 ExpenseReports=Rapoarte Cheltuieli
+ShowExpenseReport=Show expense report
 Trips=Rapoarte Cheltuieli
 TripsAndExpenses=Rapoarte Cheltuieli
 TripsAndExpensesStatistics=Statistici Rapoarte Cheltuieli
@@ -8,12 +9,13 @@ TripCard=Fisa Raport Cheltuieli
 AddTrip=Creare Raport Cheltuieli
 ListOfTrips=Listă rapoarte de cheltuieli
 ListOfFees=Lista note cheltuieli
+TypeFees=Tipuri taxe
 ShowTrip=Show expense report
 NewTrip= Raport de cheltuieli nou
 CompanyVisited=Societatea / Instituţia vizitată
 FeesKilometersOrAmout=Valoarea  sau km
 DeleteTrip=Șterge raport de cheltuieli
-ConfirmDeleteTrip=Sunteți sigur că doriți să ștergeți acest raport cheltuieli?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Listă rapoarte de cheltuieli
 ListToApprove=În așteptare pentru aprobare
 ExpensesArea=Rapoarte de cheltuieli
@@ -27,7 +29,7 @@ TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Line raport de cheltuieli
 TF_OTHER=Altele
-TF_TRIP=Transportation
+TF_TRIP=Transport
 TF_LUNCH=Prânz
 TF_METRO=Metrou
 TF_TRAIN=Tren
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_AUTHOR=Tu nu esti autorul acestui raport de cheltuieli. Operatiune anulata.
 
-ConfirmRefuseTrip=Sunteți sigur că doriți să respingeti acest raport cheltuieli?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Aproba raport de cheltuieli
-ConfirmValideTrip=Sunteți sigur că doriți să aprobati acest raport cheltuieli?
+ConfirmValideTrip=Sunteți sigur că doriți să aprobaţi acest raport de cheltuieli?
 
 PaidTrip=Plăste un raport de cheltuieli
-ConfirmPaidTrip=Sunteţi sigur că doriţi sa clasati acest raport de cheltuieli ca "Platit" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Sunteți sigur că doriți să anulați acest raport cheltuieli?
+ConfirmCancelTrip=Sunteți sigur că doriți să anulaţi acest raport de cheltuieli?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Valideaza raport de cheltuieli
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+ConfirmSaveTrip=Sunteți sigur că doriți să validaţi acest raport de cheltuieli?
 
 NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Plata Raport cheltuieli

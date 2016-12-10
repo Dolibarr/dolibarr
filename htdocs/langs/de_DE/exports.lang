@@ -26,8 +26,6 @@ FieldTitle=Feldbezeichnung
 NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren...
 AvailableFormats=Verfügbare Formate
 LibraryShort=Bibliothek
-LibraryUsed=Verwendete Bibliothek
-LibraryVersion=Bibliotheksversion
 Step=Schritt
 FormatedImport=Import-Assistent
 FormatedImportDesc1=Dieser Bereich erlaubt Ihnen den einfachen Import persönlicher Daten über einen Assistenten (ohne techn. Kenntnisse).
@@ -87,7 +85,7 @@ TooMuchWarnings=Es gibt noch <b>%s</b> weitere Zeilen mit Warnungen. Die Ausgabe
 EmptyLine=Leerzeile (verworfen)
 CorrectErrorBeforeRunningImport=Beheben Sie zuerst alle Fehler bevor Sie den endgültigen Import starten.
 FileWasImported=Datei wurde mit der Nummer <b>%s</b> importiert.
-YouCanUseImportIdToFindRecord=Sie können alle importierten Einträge in Ihrer Datenbank finden, indem Sie nach dem Feld <b>import_key='%s'</b> filtern.
+YouCanUseImportIdToFindRecord=Sie können alle importierten Einträge in der Datenbank finden, indem Sie über das Feld <b>import_key='%s'</b> filtern.
 NbOfLinesOK=Zeilenanzahl ohne Fehler und Warnungen: <b>%s</b>.
 NbOfLinesImported=Anzahl der erfolgreich importierten Zeilen: <b>%s</b>.
 DataComeFromNoWhere=Der einzufügende Wert kommt nicht aus der Quelldatei.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> Format (.csv). <br> Dies ist ein Text
 Excel95FormatDesc=<b>Excel</b> Dateiformat (.xls)<br>Dies ist das Excel 95 Format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> Dateiformat (.xlsx)<br>Dies ist das Excel 2007 Format (XML).
 TsvFormatDesc=<b>Tabulator getrennte Werte</b> Dateiformat (.tsv)<br>Dies ist ein Textdatei-Format. Felder werden mit einem Tabulator [tab] getrennt.
-ExportFieldAutomaticallyAdded=Feld <b>%s</b> wurde automatisch hinzugefügt. So wird vermieden, dass ähnliche Zeilen als doppelte Datensätze behandelt werden (durch dieses Feld erhalten alle Zeilen eine eigene ID und unterscheiden sich daher).
+ExportFieldAutomaticallyAdded=Das Feld <b>%s</b> wurde automatisch hinzugefügt - Dadurch wird vermieden, daß ähnliche Zeilen als doppelt erkannt werden (durch das hinzufügen dieses Feldes hat jede Zeile eine eigene ID).
 CsvOptions=CSV Optionen
 Separator=Trennzeichen
 Enclosure=Beilage

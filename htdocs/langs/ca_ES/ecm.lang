@@ -32,13 +32,13 @@ ECMDocsByProducts=Documents enllaçats a productes
 ECMDocsByProjects=Documents enllaçats a projectes
 ECMDocsByUsers=Documents referents a usuaris
 ECMDocsByInterventions=Documents relacionats amb les intervencions
+ECMDocsByExpenseReports=Documents relacionats als informes de despeses
 ECMNoDirectoryYet=No s'ha creat carpeta
 ShowECMSection=Mostrar carpeta
 DeleteSection=Eliminació carpeta
-ConfirmDeleteSection=Confirmeu l'eliminació de la carpeta <b>%s</b>?
+ConfirmDeleteSection=Vols eliminar el directori <b>%s</b>?
 ECMDirectoryForFiles=Carpeta relativa per a fitxers
 CannotRemoveDirectoryContainsFiles=No es pot eliminar perquè té arxius
 ECMFileManager=Explorador de fitxers
 ECMSelectASection=Seleccioneu una carpeta en l'arbre de l'esquerra
 DirNotSynchronizedSyncFirst=Aquest directori va ser creat o modificat fora del mòdul GED. Feu clic al botó "Actualitza" per resincronitzar la informació del disc i la base de dades per veure el contingut d'aquest directori.
-

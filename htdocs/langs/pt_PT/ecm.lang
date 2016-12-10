@@ -32,13 +32,13 @@ ECMDocsByProducts=Documentos associados a produtos
 ECMDocsByProjects=Documentos associados a projectos
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Nenhuma pasta criada
 ShowECMSection=Mostrar Pasta
 DeleteSection=Apagar Pasta
-ConfirmDeleteSection=Confirma o eliminar da pasta <b>%s</b>?
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Pasta relativa para ficheiros
 CannotRemoveDirectoryContainsFiles=Não se pode eliminar porque contem ficheiros
 ECMFileManager=Explorador de Ficheiros
 ECMSelectASection=Seleccione uma pasta na árvore da esquerda
 DirNotSynchronizedSyncFirst=Esta pasta parece ter sido criada ou modificada fora módulo GED. Deve clicar em "Actualizar" para sincronizar o disco e a base de dados para obter o conteúdo desta pasta.
-

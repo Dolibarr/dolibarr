@@ -32,13 +32,13 @@ ECMDocsByProducts=Dokumenty súvisiace s produktmi
 ECMDocsByProjects=Dokumenty súvisiace s projektmi
 ECMDocsByUsers=Dokumenty súvisiace s používateľmi
 ECMDocsByInterventions=Dokumenty súvisiace so zákrokom.
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=No vytvoril adresár
 ShowECMSection=Zobraziť adresár
 DeleteSection=Odstráňte adresár
-ConfirmDeleteSection=Môžete potvrdiť, že chcete zmazať adresára <b>%s?</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Relatívny adresár pre súbory
 CannotRemoveDirectoryContainsFiles=Nie je možné odstrániť, pretože obsahuje niektoré súbory
 ECMFileManager=Správca súborov
 ECMSelectASection=Vyberte adresár na ľavej strane stromu ...
 DirNotSynchronizedSyncFirst=Tento adresár sa zdá byť vytvorená alebo zmenená mimo modulu ECM. Musíte kliknúť na tlačidlo &quot;Obnoviť&quot; prvú synchronizáciu disku a databázu, aby sa obsah tohto adresára.
-

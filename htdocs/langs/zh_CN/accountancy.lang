@@ -8,60 +8,90 @@ ACCOUNTING_EXPORT_AMOUNT=导出数量
 ACCOUNTING_EXPORT_DEVISE=导出货币
 Selectformat=请选择文件格式
 ACCOUNTING_EXPORT_PREFIX_SPEC=文件唯一前缀
-
+ThisService=This service
+ThisProduct=This product
+DefaultForService=Default for service
+DefaultForProduct=Default for product
+CantSuggest=Can't suggest
+AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
 ConfigAccountingExpert=配置财务会计专家模块
+Journalization=Journalization
 Journaux=日记帐
 JournalFinancial=财务日记帐
 BackToChartofaccounts=返回科目表
+Chartofaccounts=账户图表
+CurrentDedicatedAccountingAccount=Current dedicated account
+AssignDedicatedAccountingAccount=New account to assign
+InvoiceLabel=Invoice label
+OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to accounting account
+OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accounting account
+OtherInfo=Other information
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making thee journalization (writing record in Journals and General ledger)
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
-AccountancyAreaDescChart=STEP %s: Create or check your chart of account from menu %s
-AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your invoice lines.<br>For this you can use the menu entry %s.
-AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on your payment lines.<br>For this, go on the card of each financial account. You can start from page %s.
-AccountancyAreaDescVat=STEP %s: Check the binding between vat payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to VAT payments.<br>You can set accounting accounts to use for each VAT from page %s.
-AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payment of salaries.<br>For this you can use the menu entry %s.
-AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (social or fiscal contributions) and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of social contributions.<br>For this you can use the menu entry %s.
-AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. This will save you time in future for the next steps by suggesting you the correct default accounting account on records related to payments of donation.<br>You can set the account dedicated for that from the menu entry %s.
+AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
+AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
+AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescVat=STEP %s: Check the binding between vat rates and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescExpenseReport=STEP %s: Check the binding between type of expense report and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.
+AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (miscellaneous taxes) and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. You can set the account dedicated for that from the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Check the default binding between miscellaneous transaction lines and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescLoan=STEP %s: Check the binding between loans payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
 
-AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
-AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done. Complete missing bindings. Once binding is complete, application will be able to record transactions in General Ledger in one click.<br>For this you can use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. Add or edit existing transactions and generate reports
+AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. For this, go into each Journal, and click into button "Journalize transactions in General Ledger".
+AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
 
-Selectchartofaccounts=请选择会计科目表
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
+
+MenuAccountancy=会计
+Selectchartofaccounts=Select active chart of accounts
+ChangeAndLoad=Change and load
 Addanaccount=添加一个会计帐户
 AccountAccounting=会计账户
 AccountAccountingShort=账户
-AccountAccountingSuggest=建议会计账户
+AccountAccountingSuggest=Accounting account suggested
+MenuDefaultAccounts=Default accounts
+MenuVatAccounts=Vat accounts
+MenuTaxAccounts=Tax accounts
+MenuExpenseReportAccounts=Expense report accounts
+MenuLoanAccounts=Loan accounts
+MenuProductsAccounts=Product accounts
+ProductsBinding=Products accounts
 Ventilation=Binding to accounts
-ProductsBinding=Products bindings
-
-MenuAccountancy=会计
 CustomersVentilation=Customer invoice binding
 SuppliersVentilation=Supplier invoice binding
-Reports=报表
-NewAccount=新建会计账户
-Create=创建
+ExpenseReportsVentilation=Expense report binding
 CreateMvts=Create new transaction
 UpdateMvts=Modification of a transaction
-WriteBookKeeping=Record operations in General Ledger
+WriteBookKeeping=Journalize transactions in General Ledger
 Bookkeeping=总帐
 AccountBalance=账目平衡
 
 CAHTF=税前供应商采购总计
+TotalExpenseReport=Total expense report
 InvoiceLines=Lines of invoices to bind
 InvoiceLinesDone=Bound lines of invoices
+ExpenseReportLines=Lines of expense reports to bind
+ExpenseReportLinesDone=Bound lines of expense reports
 IntoAccount=Bind line with the accounting account
 
-Ventilate=Bind
 
+Ventilate=Bind
+LineId=Id line
 Processing=处理
-EndProcessing=处理的结束
-AnyLineVentilate=Any lines to bind
+EndProcessing=Process terminated.
 SelectedLines=选定的行
 Lineofinvoice=发票行
+LineOfExpenseReport=Line of expense report
+NoAccountSelected=No accounting account selected
 VentilatedinAccount=Binded successfully to the accounting account
 NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
@@ -71,12 +101,12 @@ ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maxi
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LENGTH_DESCRIPTION=长度在房源展示产品及服务介绍（最佳= 50）
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=长度在列表显示的产品与服务帐户说明的形式（最佳= 50）
+ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
-ACCOUNTING_MANAGE_ZERO=在管理会计科目中结尾的零。一些国家需要。默认禁用。小心函数“帐户的长度”。
-BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
+BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 
 ACCOUNTING_SELL_JOURNAL=卖杂志
 ACCOUNTING_PURCHASE_JOURNAL=购买杂志
@@ -84,14 +114,14 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=其他杂志
 ACCOUNTING_EXPENSEREPORT_JOURNAL=费用报表日记
 ACCOUNTING_SOCIAL_JOURNAL=社交杂志
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=转账账户
-ACCOUNTING_ACCOUNT_SUSPENSE=等待帐户
-DONATION_ACCOUNTINGACCOUNT=注册捐款帐户
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
+DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=会计帐户默认情况下，购买产品（如在产品表没有定义）
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=会计帐户默认情况下为销售的产品（如在产品表没有定义）
-ACCOUNTING_SERVICE_BUY_ACCOUNT=会计帐户默认情况下为买服务（如果服务表没有定义）
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=会计帐户默认情况下为卖服务（如果服务表没有定义）
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (used if not defined in the service sheet)
 
 Doctype=文件类型
 Docdate=日期
@@ -101,22 +131,24 @@ Labelcompte=标签帐户
 Sens=SENS
 Codejournal=日记帐
 NumPiece=件数
+TransactionNumShort=Num. transaction
 AccountingCategory=会计分类
+GroupByAccountAccounting=Group by accounting account
 NotMatch=未设定
 DeleteMvt=删除常规分类账清单
 DelYear=删除整年
 DelJournal=删除整月
-ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specific journal. At least one criteria is required.
 ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
-DelBookKeeping=删除总帐的记录
-DescSellsJournal=出售的”日记帐“
-DescPurchasesJournal=购买的”日记帐“
+DelBookKeeping=Delete record of the general ledger
 FinanceJournal=财务账
+ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=财务账包括全部银行账户付款类型
-DescJournalOnlyBindedVisible=This is a view of records that are bound to products/services accountancy account and can be recorded into the General Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the General Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
+FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=付款发票的客户
 ThirdPartyAccount=合伙人账户
@@ -127,12 +159,10 @@ ErrorDebitCredit=借记卡和信用卡在同一时间不能有一个值
 
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
-
 ListAccounts=会计账目清单
 
 Pcgtype=账户类
 Pcgsubtype=在类账户
-Accountparent=Root帐户
 
 TotalVente=Total turnover before tax
 TotalMarge=总销售利润率
@@ -144,7 +174,11 @@ DescVentilTodoCustomer=Bind invoice lines not already bound with a product accou
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
 DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilDoneSupplier=在这里请教发票的供应商的明细和其会计帐户列表
+DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
+DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic binding done
@@ -152,7 +186,7 @@ AutomaticBindingDone=Automatic binding done
 ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，因为它是用来
 MvtNotCorrectlyBalanced=不正确的移转调拨。 Credit = %s. Debit = %s
 FicheVentilation=Binding card
-GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerIsWritten=Transactions are written in the general ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
 NoNewRecordSaved=No new record saved
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
@@ -178,14 +212,19 @@ Modelcsv_cogilog=导出到 Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=初始化会计
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of chart of accounts is complete.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases.
+DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
 Options=选项
 OptionModeProductSell=销售模式
 OptionModeProductBuy=采购模式
-OptionModeProductSellDesc=显示所有没有定义为销售的会计帐户的产品。
-OptionModeProductBuyDesc=显示所有没有定义为采购的会计帐户的产品。
+OptionModeProductSellDesc=Show all products with accounting account for sales.
+OptionModeProductBuyDesc=Show all products with accounting account for purchases.
 CleanFixHistory=从不存在的会计图表中删除科目代码
 CleanHistory=Reset all bindings for selected year
+
+WithoutValidAccount=Without valid dedicated account
+WithValidAccount=With valid dedicated account
+ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
 
 ## Dictionary
 Range=会计科目范围
@@ -193,7 +232,7 @@ Calculated=计算
 Formula=公式
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=这个国家没有可用的会计分类
+ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=本页不支持设置导出格式
 BookeppingLineAlreayExists=已存在的账簿明细行
 
@@ -201,4 +240,3 @@ Binded=Lines bound
 ToBind=Lines to bind
 
 WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
-

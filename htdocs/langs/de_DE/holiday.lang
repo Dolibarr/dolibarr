@@ -2,7 +2,7 @@
 HRM=Personal
 Holidays=Urlaub
 CPTitreMenu=Urlaub
-MenuReportMonth=Monatsauszug
+MenuReportMonth=Monatsaufstellung
 MenuAddCP=Neuer Urlaubsantrag
 NotActiveModCP=Sie müssen das Urlaubsmodul aktivieren um diese Seite zu sehen.
 AddCP=Erstellen Sie ein Urlaubs-Antrag
