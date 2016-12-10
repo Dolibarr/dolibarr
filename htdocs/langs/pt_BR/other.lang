@@ -154,7 +154,6 @@ ShipmentValidatedInDolibarr=Envio %s validado
 ShipmentClassifyClosedInDolibarr=Expedição %s classificada como faturada
 ShipmentUnClassifyCloseddInDolibarr=Expedição %s classificada como reaberta
 ShipmentDeletedInDolibarr=Envio %s cancelado
-Export=Exportar
 NoExportableData=não existe dados exportáveis (sem módulos com dados exportáveis gastodos, necessitam de permissões)
 WebsiteSetup=Configuração do módulo website
 WEBSITE_PAGEURL=URL da página
