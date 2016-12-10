@@ -75,16 +75,19 @@ function fichinter_prepare_head($object)
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
  		$nbResource = 0;
 		$objectres=new Dolresource($db);
- 		foreach ($objectres->available_resources as $modresources => $resources)
+		if (is_array($objectres->available_resources))
 		{
-			$resources=(array) $resources;  // To be sure $resources is an array
-			foreach($resources as $resource_obj)
+	 		foreach ($objectres->available_resources as $modresources => $resources)
 			{
-				$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
-				
+				$resources=(array) $resources;  // To be sure $resources is an array
+				foreach($resources as $resource_obj)
+				{
+					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
+					
+				}
 			}
 		}
-		
+				
    		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
