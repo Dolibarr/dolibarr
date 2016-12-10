@@ -74,9 +74,8 @@ $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {
-	setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
-	$socid=0;
-	$action='create';
+	$langs->load('errors');
+	print($langs->trans('ErrorRecordNotFound'));
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
