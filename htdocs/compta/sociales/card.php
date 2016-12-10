@@ -426,7 +426,7 @@ if ($id > 0)
 		
 		print '<table class="border" width="100%">';
 
-        /*		
+        /*
 		// Ref
 		print '<tr><td>'.$langs->trans("Ref").'</td><td>';
 		print $form->showrefnav($object,'id',$linkback);
@@ -446,7 +446,7 @@ if ($id > 0)
 		}*/
 		
 		// Type
-		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
+		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
 		print "</tr>";
 
     	// Period end date
