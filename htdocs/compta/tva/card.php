@@ -27,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
 $langs->load("compta");
 $langs->load("banks");
@@ -38,7 +39,7 @@ $refund=GETPOST("refund","int");
 if (empty($refund)) $refund=0;
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -179,8 +180,9 @@ if ($action == 'delete')
 /*
  *	View
  */
-
-llxHeader();
+$title=$langs->trans("VAT") . " - " . $langs->trans("Card");
+$help_url='';
+llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
 
@@ -299,11 +301,7 @@ if ($action == 'create')
 // View mode
 if ($id)
 {
-	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+	$head=vat_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
 
