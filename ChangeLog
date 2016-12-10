@@ -115,7 +115,7 @@ NEW: Add hidden option to hide column qty ordered on shipments.
 NEW: Add view of virtual stock into product list (when appropriate)
 NEW: Add warning on tasks when they are late (add also the warning tolerance parameter)
 NEW: Add weight/volume for one product into shipment export
-NEW: Add width and height on product card
+NEW: Add width and height on product table
 NEW: allow a document to be linked to project from another customer on config
 NEW: allow project to be shared across entities (for multicompany module)
 NEW: All variant of ckeditor config can be tested into the setup page of module.
