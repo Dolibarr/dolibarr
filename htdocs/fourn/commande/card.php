@@ -1401,7 +1401,7 @@ if ($action=='create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
+		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) $currency_code = $societe->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
