@@ -236,13 +236,13 @@ if ($action == 'create')
     print '</label>';
     print '</div>';
     print "<br>\n";
-	
+
     dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
     print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
     print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
@@ -263,7 +263,7 @@ if ($action == 'create')
 
     if (! empty($conf->banque->enabled))
     {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
     }
@@ -273,12 +273,12 @@ if ($action == 'create')
 	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
 	print "</td>\n";
 	print "</tr>";
-	
+
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-	
+
     // Other attributes
     $parameters=array('colspan' => ' colspan="1"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -296,13 +296,7 @@ if ($action == 'create')
     print '</form>';
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
+// View mode
 if ($id)
 {
 	$h = 0;
@@ -317,7 +311,7 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $object->ref;
 	print '</td></tr>';
 
@@ -325,19 +319,19 @@ if ($id)
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
 
 	print '<tr><td>';
 	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -348,7 +342,7 @@ if ($id)
 
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
@@ -356,14 +350,12 @@ if ($id)
 	}
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('formObjectOptions','',$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
 
 	dol_fiche_end();
 
-	
 	/*
 	 * Action buttons
 	 */
