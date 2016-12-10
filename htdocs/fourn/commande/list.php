@@ -130,7 +130,7 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
 $checkedtypetiers=0;
 $arrayfields=array(
     'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>1),
+    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplierShort"), 'checked'=>1, 'enabled'=>1),
     'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
     'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),

@@ -77,7 +77,6 @@ TypeContact_order_supplier_external_BILLING=Contato fatura fornecedor
 TypeContact_order_supplier_external_SHIPPING=Contato envio fornecedor
 TypeContact_order_supplier_external_CUSTOMER=Contato fornecedor seguindo o pedido
 Error_OrderNotChecked=Nenhum pedido seleçionado para se faturar
-OrderSource3=Campanha telefônica
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=O modelo simplificado do pedido
 PDFProformaDescription=A proforma fatura completa (logomarca...)
