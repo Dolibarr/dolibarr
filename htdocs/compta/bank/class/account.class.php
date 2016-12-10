@@ -1931,7 +1931,7 @@ class AccountLine extends CommonObject
      */
     function info($id)
     {
-        $sql = 'SELECT b.rowid, b.datec,';
+        $sql = 'SELECT b.rowid, b.datec, b.tms as datem,';
         $sql.= ' b.fk_user_author, b.fk_user_rappro';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
         $sql.= ' WHERE b.rowid = '.$id;
@@ -1958,6 +1958,7 @@ class AccountLine extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datem);
                 //$this->date_rappro       = $obj->daterappro;    // Not yet managed
             }
             $this->db->free($result);
