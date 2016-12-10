@@ -130,7 +130,7 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
 $checkedtypetiers=0;
 $arrayfields=array(
     'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>1),
+    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplierShort"), 'checked'=>1, 'enabled'=>1),
     'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
     'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
@@ -293,7 +293,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE cf.fk_soc = s.rowid';
-$sql.= ' AND cf.entity IN ('.getEntity('commande_fournisseur', 1).')';
+$sql.= ' AND cf.entity IN ('.getEntity('supplier_order', 1).')';
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('cf.ref', $search_ref);

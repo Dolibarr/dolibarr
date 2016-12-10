@@ -1439,7 +1439,7 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
-#img_logo {
+#img_logo, .img_logo {
 	max-width: 200px;
 	max-height: 100px;
 }
@@ -2380,7 +2380,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 	vertical-align: middle;
 }
 div .tdtop {
-    vertical-align: top;
+    vertical-align: top !important;
 	padding-top: 5px !important;
 	padding-bottom: 0px;
 }
@@ -3041,10 +3041,10 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #303020;
+  color: #303035;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #AAAAAA;
+  border: 1px solid #e0e0e0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;

@@ -243,3 +243,6 @@ ALTER TABLE llx_expensereport ADD UNIQUE INDEX idx_expensereport_uk_ref (ref, en
 
 UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
 ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
+
+ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
+

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2014-2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

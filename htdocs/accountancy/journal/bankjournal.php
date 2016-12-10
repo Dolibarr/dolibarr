@@ -153,7 +153,8 @@ if ($result) {
 	// one line for bank jounral = tabbq
 	// one line for thirdparty journal = tabtp
 	$i = 0;
-	while ( $i < $num ) {
+	while ( $i < $num ) 
+	{
 		$obj = $db->fetch_object($result);
 
 		// Set accountancy code (for bank and thirdparty)
@@ -314,7 +315,8 @@ if (! $error && $action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 		    // Line into bank account
-    		foreach ( $tabbq[$key] as $k => $mt ) {
+    		foreach ( $tabbq[$key] as $k => $mt ) 
+    		{
     			$bookkeeping = new BookKeeping($db);
     			$bookkeeping->doc_date = $val["date"];
     			$bookkeeping->doc_ref = $val["ref"];
@@ -363,9 +365,18 @@ if (! $error && $action == 'writebookkeeping') {
     
     			$result = $bookkeeping->create($user);
     			if ($result < 0) {
-    				$error++;
-    				$errorforline++;
-    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+    				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+    				{
+    					$error++;
+    					$errorforline++;
+    					//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+    				}
+    				else
+    				{
+	    				$error++;
+	    				$errorforline++;
+	    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+    				}
     			}
     		}
 		}
@@ -462,16 +473,6 @@ if (! $error && $action == 'writebookkeeping') {
 	
 	$action = '';
 }
-
-
-
-
-/*
- * View
- */
-
-$form = new Form($db);
-
 
 // Export
 if ($action == 'export_csv') {
@@ -633,6 +634,15 @@ if ($action == 'export_csv') {
 	}
 }
 
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
 if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
@@ -689,7 +699,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("Type") . "</td>";
 	print "<td>" . $langs->trans("PaymentMode") . "</td>";
-	print "<td align='right'>" . $langs->trans("Debit") . "</td><td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$var = true;
@@ -697,7 +708,7 @@ if (empty($action) || $action == 'view') {
 
 	foreach ( $tabpay as $key => $val ) {      // $key is rowid in llx_bank
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
-		
+
 		$reflabel = $val["ref"];
 		if ($reflabel == '(SupplierInvoicePayment)') {
 			$reflabel = $langs->trans('Supplier');
@@ -721,7 +732,7 @@ if (empty($action) || $action == 'view') {
 		    $sqlmid = 'SELECT payfac.fk_facture as id';
 		    $sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac";
 		    $sqlmid .= " WHERE payfac.fk_paiement=" . $val["paymentid"];
-		    dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+		    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 		    $resultmid = $db->query($sqlmid);
 		    if ($resultmid) {
 		        $objmid = $db->fetch_object($resultmid);
@@ -735,7 +746,7 @@ if (empty($action) || $action == 'view') {
 		    $sqlmid = 'SELECT payfac.fk_facturefourn as id';
 		    $sqlmid .= " FROM " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfac";
 		    $sqlmid .= " WHERE payfac.fk_paiementfourn=" . $val["paymentsupplierid"];
-		    dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+		    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 		    $resultmid = $db->query($sqlmid);
 		    if ($resultmid) {
 		        $objmid = $db->fetch_object($resultmid);
@@ -744,14 +755,14 @@ if (empty($action) || $action == 'view') {
 		    }
 		    else dol_print_error($db);
 		}
-		
+
 
 		/*$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];*/
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) {
-
+		foreach ( $tabbq[$key] as $k => $mt ) 
+		{
 		    print "<tr " . $bc[$var] . ">";
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
 		    print "<td>" . $date . "</td>";
@@ -809,7 +820,7 @@ if (empty($action) || $action == 'view') {
         		{
         		    print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
         		}
-				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . 
+				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE); 
 				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";

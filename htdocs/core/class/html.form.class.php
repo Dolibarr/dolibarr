@@ -78,9 +78,9 @@ class Form
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-     * @param	string	$moreparam		More param to add on a href URL*
+     * @param	string	$moreparam		More param to add on a href URL.
      * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
-     * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':'
+     * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' ' 
      * @return	string					HTML edit field
      */
     function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
@@ -119,6 +119,7 @@ class Form
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
             if ($htmlname && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 	        if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
+	        if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
@@ -561,10 +562,17 @@ class Form
         		jQuery(".checkforselect").click(function() {
         			initCheckForSelect();
     	  		});
-        	    /* Warning: if you set submit button to disabled, post using Enter will no more work
     	  		jQuery(".massactionselect").change(function() {
-    	  			console.log( $( this ).val() );
-    	  			if ($(this).val() != \'0\')
+        			var massaction = $( this ).val();  
+        			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
+        			if (massaction == "builddoc") 
+                    {
+                        urlform = urlform + "#show_files";
+    	            }
+        			$( this ).closest("form").attr("action", urlform);
+                    console.log("we select a mass action "+massaction+" - "+urlform);
+        	        /* Warning: if you set submit button to disabled, post using Enter will no more work
+        			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
     	  			}
@@ -572,8 +580,8 @@ class Form
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
     	  			}
-    	  		});
-        	    */
+        	        */
+    	        });
         	});
     		</script>
         	';
@@ -1635,9 +1643,13 @@ class Form
      * 	@param		int			$forcecombo				Force to use combo box
      *  @param      string      $morecss                Add more css on select
      *  @param      int         $hidepriceinlabel       1=Hide prices in label
+     *  @param      string      $warehouseStatus        warehouse status filter, following comma separated filter options can be used
+     *										            'warehouseopen' = select products from open warehouses,
+	 *										            'warehouseclosed' = select products from closed warehouses, 
+	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0, $warehouseStatus='')
     {
         global $langs,$conf;
 
@@ -1656,7 +1668,7 @@ class Form
                 unset($producttmpselect);
             }
             // mode=1 means customers products
-            $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
+            $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&warehousestatus='.$warehouseStatus;
             //Price by customer
             if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
             	$urloption.='&socid='.$socid;
@@ -1677,7 +1689,7 @@ class Form
         }
         else
 		{
-            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel);
+            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel, $warehouseStatus);
         }
     }
 
@@ -1698,28 +1710,54 @@ class Form
      * 	@param		int		$forcecombo		    Force to use combo box
      *  @param      string  $morecss            Add more css on select
      *  @param      int     $hidepriceinlabel   1=Hide prices in label
+     *  @param      string  $warehouseStatus    warehouse status filter, following comma separated filter options can be used
+     *										    'warehouseopen' = select products from open warehouses,
+	 *										    'warehouseclosed' = select products from closed warehouses, 
+	 *										    'warehouseinternal' = select products from warehouses for internal correct/transfer only
      *  @return     array    				    Array of keys for json
      */
-    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0,$morecss='',$hidepriceinlabel=0)
+    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0,$morecss='',$hidepriceinlabel=0, $warehouseStatus='')
     {
         global $langs,$conf,$user,$db;
 
         $out='';
         $outarray=array();
 
-        $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
+        $warehouseStatusArray = array();
+        if (! empty($warehouseStatus))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+            if (preg_match('/warehouseclosed/', $warehouseStatus)) 
+            {
+                $warehouseStatusArray[] = Entrepot::STATUS_CLOSED;
+            }
+            if (preg_match('/warehouseopen/', $warehouseStatus)) 
+            {
+                $warehouseStatusArray[] = Entrepot::STATUS_OPEN_ALL;
+            }
+            if (preg_match('/warehouseinternal/', $warehouseStatus)) 
+            {
+                $warehouseStatusArray[] = Entrepot::STATUS_OPEN_INTERNAL;
+            }
+        }		
 
+        $selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
+        (count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
+
+        $sql = "SELECT ";
+        $sql.= $selectFields . $selectFieldsGrouped;
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
         	$sql.=' ,pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
         	$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
+            $selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
         }
 
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= ", pl.label as label_translated";
+            $selectFields.= ", label_translated";
         }
 		// Price by quantity
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
@@ -1732,8 +1770,15 @@ class Form
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1) as price_by_qty";
+            $selectFields.= ", price_rowid, price_by_qty";
 		}
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        if (count($warehouseStatusArray))
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
+        }
+        
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
         	$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
@@ -1744,6 +1789,10 @@ class Form
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        if (count($warehouseStatusArray))
+        {
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.implode(',',$warehouseStatusArray).'))';
+        }
         if ($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;
@@ -1778,6 +1827,10 @@ class Form
             if (count($scrit) > 1) $sql.=")";
           	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$db->escape($prefix.$filterkey)."%'";
         	$sql.=')';
+        }
+        if (count($warehouseStatusArray))
+        {
+            $sql.= ' GROUP BY'.$selectFields;
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
@@ -4818,17 +4871,17 @@ class Form
         if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
         {
         	$minLengthToAutocomplete=0;
-        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-        			<script type="text/javascript">
-        				$(document).ready(function () {
-        					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
-        				    dir: \'ltr\',
-        					width: \'resolve\',		/* off or resolve */
-        					minimumInputLength: '.$minLengthToAutocomplete.'
-        				});
-        			});
-        		   </script>';
+        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+        	
+        	// Enhance with select2
+        	$nodatarole='';
+        	if ($conf->use_javascript_ajax)
+        	{
+        	    include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        	    $comboenhancement = ajax_combobox($htmlname);
+        	    $out.=$comboenhancement;
+        	    $nodatarole=($comboenhancement?' data-role="none"':'');
+        	}
         }
 
         $out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';

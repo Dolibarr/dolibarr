@@ -83,6 +83,9 @@ class Adherent extends CommonObject
     var $datevalid;
     var $birth;
 
+    var $note_public;
+    var $note_private;
+
     var $typeid;			// Id type adherent
     var $type;				// Libelle type adherent
     var $need_subscription;
@@ -410,7 +413,9 @@ class Adherent extends CommonObject
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
+		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
+		$this->note_public=($this->note_public?$this->note_public:$this->note_public);
+		$this->note_private=($this->note_private?$this->note_private:$this->note_private);
 
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -440,7 +445,7 @@ class Adherent extends CommonObject
         $sql.= ", phone_perso=" .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note_private=" .($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
-        $sql.= ", note_public=" .($this->note_private?"'".$this->db->escape($this->note_public)."'":"null");
+        $sql.= ", note_public=" .($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
         $sql.= ", public='".$this->public."'";
         $sql.= ", statut="  .$this->statut;
@@ -1146,11 +1151,11 @@ class Adherent extends CommonObject
                 $this->birth			= $this->db->jdate($obj->birthday);
 
                 $this->note_private		= $obj->note_private;
-                $this->note_public      	= $obj->note_public;
+                $this->note_public		= $obj->note_public;
                 $this->morphy			= $obj->morphy;
 
                 $this->typeid			= $obj->fk_adherent_type;
-                $this->type			= $obj->type;
+                $this->type				= $obj->type;
                 $this->need_subscription 	= $obj->subscription;
 
                 $this->user_id			= $obj->user_id;

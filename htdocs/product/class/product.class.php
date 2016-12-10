@@ -35,7 +35,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 /**
  * Class to manage products or services
@@ -2054,7 +2054,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('supplier_order', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
@@ -2142,7 +2142,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE cf.rowid = fd.fk_commande";
 		$sql.= " AND cf.fk_soc = s.rowid";
-		$sql.= " AND cf.entity IN (".getEntity('commande_fournisseur', 1).")";
+		$sql.= " AND cf.entity IN (".getEntity('supplier_order', 1).")";
 		$sql.= " AND fd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND cf.fk_soc = ".$socid;
@@ -2530,7 +2530,7 @@ class Product extends CommonObject
 		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('supplier_order', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
@@ -3471,16 +3471,39 @@ class Product extends CommonObject
 	/**
 	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
+	 *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
 	 *
-	 *    @param      string   $option     '', 'nobatch' = Do not load batch information, 'novirtual' = Do not load virtual stock
+	 *    @param      string   $option 		'' = Load all stock info, also from closed and internal warehouses, 
+	 *										'nobatch' = Do not load batch information, 
+	 *										'novirtual' = Do not load virtual stock,
+	 *										'warehouseopen' = Load stock from open warehouses,
+	 *										'warehouseclosed' = Load stock from closed warehouses, 
+	 *										'warehouseinternal' = Load stock from warehouses for internal correct/transfer only
 	 *    @return     int                  < 0 if KO, > 0 if OK
 	 *    @see		  load_virtual_stock, getBatchInfo
 	 */
 	function load_stock($option='')
 	{
+		global $conf;
+		
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
 		$this->stock_theorique = 0;
+
+		$warehouseStatus = array();
+
+		if (preg_match('/warehouseclosed/', $option)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
+		}
+		if (preg_match('/warehouseopen/', $option)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
+		}
+		if (preg_match('/warehouseinternal/', $option)) 
+		{
+			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
+		}
 		
 		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
@@ -3488,6 +3511,7 @@ class Product extends CommonObject
 		$sql.= " WHERE w.entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND w.rowid = ps.fk_entrepot";
 		$sql.= " AND ps.fk_product = ".$this->id;
+		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) $sql.= " AND w.statut IN (".implode(',',$warehouseStatus).")";
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);

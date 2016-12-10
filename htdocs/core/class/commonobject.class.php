@@ -3301,7 +3301,7 @@ abstract class CommonObject
 		}
 
 		// VAT
-		print '<td class="linecolvat" align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td class="linecolvat" align="right" width="80">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
 		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
@@ -4470,10 +4470,10 @@ abstract class CommonObject
 
 					switch($mode) {
     					case "view":
-    						$out .= $extrafields->showOutputField($key,$value);
+    						$out .= $extrafields->showOutputField($key, $value);
     						break;
     					case "edit":
-    						$out .= $extrafields->showInputField($key,$value,'',$keyprefix,'',0,$this->id);
+    						$out .= $extrafields->showInputField($key, $value, '', $keyprefix, '', 0, $this->id);
     						break;
 					}
 

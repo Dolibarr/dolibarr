@@ -81,9 +81,6 @@ class DolibarrApi
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 

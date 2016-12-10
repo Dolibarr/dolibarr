@@ -152,13 +152,13 @@ class CategoryApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -233,13 +233,13 @@ class CategoryApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');

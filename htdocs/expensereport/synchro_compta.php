@@ -139,6 +139,7 @@ else:
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 	$sql.= " WHERE d.fk_statut = 6";
+    $sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
 	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);

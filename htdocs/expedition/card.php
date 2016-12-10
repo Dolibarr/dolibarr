@@ -767,7 +767,7 @@ if ($action == 'create')
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			if (count($liste) > 1)
 			{
-    			print "<tr><td>".$langs->trans("Model")."</td>";
+    			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
                 print '<td colspan="3">';
     			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
                 print "</td></tr>\n";
@@ -862,7 +862,7 @@ if ($action == 'create')
                 if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
-                    $product->load_stock();
+                    $product->load_stock('warehouseopen');
 
                     print '<td>';
                     print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne

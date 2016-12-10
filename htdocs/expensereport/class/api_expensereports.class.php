@@ -101,17 +101,12 @@ class ExpenseReports extends DolibarrApi
 
         // case of external user, $societe param is ignored and replaced by user's socid
         //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+        
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('expensereport', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_author IN (".$user_ids.")";
         
-        // Insert sale filter
-        if ($search_sale > 0)
-        {
-            $sql .= " AND sc.fk_user = ".$search_sale;
-        }
         // Add sql filters
         if ($sqlfilters) 
         {
@@ -144,13 +139,13 @@ class ExpenseReports extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $expensereport_static = new ExpenseReport($db);
                 if($expensereport_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($expensereport_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve Expense Report list');
+            throw new RestException(503, 'Error when retrieve Expense Report list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Expense Report found');

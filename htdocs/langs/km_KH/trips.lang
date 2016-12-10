@@ -1,0 +1,89 @@
+# Dolibarr language file - Source file is en_US - trips
+ExpenseReport=Expense report
+ExpenseReports=Expense reports
+ShowExpenseReport=Show expense report
+Trips=Expense reports
+TripsAndExpenses=Expenses reports
+TripsAndExpensesStatistics=Expense reports statistics
+TripCard=Expense report card
+AddTrip=Create expense report
+ListOfTrips=List of expense reports
+ListOfFees=List of fees
+TypeFees=Types of fees
+ShowTrip=Show expense report
+NewTrip=New expense report
+CompanyVisited=Company/foundation visited
+FeesKilometersOrAmout=Amount or kilometers
+DeleteTrip=Delete expense report
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
+ListTripsAndExpenses=List of expense reports
+ListToApprove=Waiting for approval
+ExpensesArea=Expense reports area
+ClassifyRefunded=Classify 'Refunded'
+ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
+TripId=Id expense report
+AnyOtherInThisListCanValidate=Person to inform for validation.
+TripSociete=Information company
+TripNDF=Informations expense report
+PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+ExpenseReportLine=Expense report line
+TF_OTHER=Other
+TF_TRIP=Transportation
+TF_LUNCH=Lunch
+TF_METRO=Metro
+TF_TRAIN=Train
+TF_BUS=Bus
+TF_CAR=Car
+TF_PEAGE=Toll
+TF_ESSENCE=Fuel
+TF_HOTEL=Hotel
+TF_TAXI=Taxi
+
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+AucuneLigne=There is no expense report declared yet
+
+ModePaiement=Payment mode
+
+VALIDATOR=User responsible for approval
+VALIDOR=Approved by
+AUTHOR=Recorded by
+AUTHORPAIEMENT=Paid by
+REFUSEUR=Denied by
+CANCEL_USER=Deleted by
+
+MOTIF_REFUS=Reason
+MOTIF_CANCEL=Reason
+
+DATE_REFUS=Deny date
+DATE_SAVE=Validation date
+DATE_CANCEL=Cancelation date
+DATE_PAIEMENT=Payment date
+
+BROUILLONNER=Reopen
+ValidateAndSubmit=Validate and submit for approval
+ValidatedWaitingApproval=Validated (waiting for approval)
+
+NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
+
+ValideTrip=Approve expense report
+ConfirmValideTrip=Are you sure you want to approve this expense report?
+
+PaidTrip=Pay an expense report
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
+
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
+
+BrouillonnerTrip=Move back expense report to status "Draft"
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
+
+SaveTrip=Validate expense report
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
+
+NoTripsToExportCSV=No expense report to export for this period.
+ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToApprove=Expense reports to approve
+ExpenseReportsToPay=Expense reports to pay

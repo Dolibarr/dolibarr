@@ -157,7 +157,7 @@ class Categories extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -243,7 +243,7 @@ class Categories extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -346,9 +346,6 @@ class Categories extends DolibarrApi
      *
      * @param   Categorie  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     
