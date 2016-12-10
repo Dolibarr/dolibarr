@@ -300,7 +300,7 @@ if ($search_ref) $sql .= natural_search('cf.ref', $search_ref);
 if ($search_refsupp) $sql.= natural_search("cf.ref_supplier", $search_refsupp);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_request_author) $sql.= " AND u.login LIKE '%".$db->escape($search_request_author)."%'";
+if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
 if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
 
 //Required triple check because statut=0 means draft filter
@@ -379,7 +379,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit+1, $offset);
-
 $resql = $db->query($sql);
 if ($resql)
 {
