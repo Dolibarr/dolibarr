@@ -1070,17 +1070,17 @@ if (empty($reshook))
 
 	// Set project
 	else if ($action == 'classin' && $user->rights->propal->creer) {
-		$object->setProject($_POST['projectid']);
+		$object->setProject(GETPOST('projectid','int'));
 	}
 
 	// Delai de livraison
 	else if ($action == 'setavailability' && $user->rights->propal->creer) {
-		$result = $object->availability($_POST['availability_id']);
+		$result = $object->set_availability($user, GETPOST('availability_id','int'));
 	}
 
 	// Origine de la propale
 	else if ($action == 'setdemandreason' && $user->rights->propal->creer) {
-		$result = $object->demand_reason($_POST['demand_reason_id']);
+		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id','int'));
 	}
 
 	// Conditions de reglement
@@ -1701,10 +1701,10 @@ if ($action == 'create')
 
 
 	// Proposal card
-	
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', 0, 1);
@@ -1744,17 +1744,17 @@ if ($action == 'create')
         }
     }
     $morehtmlref.='</div>';
-    
-    
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-    
+
+
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
 	print '<table class="border" width="100%">';
-    
+
     // Ref
     /*
 	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
@@ -1784,7 +1784,7 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
     */
-	
+
 	// Company
 	/*
 	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
@@ -2107,42 +2107,42 @@ if ($action == 'create')
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	
+
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
     print '<table class="border centpercent">';
-    
+
     if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
     {
         // Multicurrency Amount HT
         print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
         print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
         print '</tr>';
-    
+
         // Multicurrency Amount VAT
         print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
         print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
         print '</tr>';
-    
+
         // Multicurrency Amount TTC
         print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
         print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
         print '</tr>';
     }
-        
+
 	// Amount HT
 	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
+
 	// Amount VAT
 	print '<tr><td>' . $langs->trans('AmountVAT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
+
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 	// Localtax1
 	{
@@ -2156,27 +2156,27 @@ if ($action == 'create')
 	    print '<td class="nowrap">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Amount TTC
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
+
 	// Statut
 	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
-	
+
 	print '</table>';
-	
+
 	// Margin Infos
 	if (! empty($conf->margin->enabled))
 	{
 	    $formmargin->displayMarginInfos($object);
 	}
-	
+
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div><br>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
@@ -2232,7 +2232,7 @@ if ($action == 'create')
 
 	print '</table>';
     print '</div>';
-    
+
 	print "</form>\n";
 
 	dol_fiche_end();
@@ -2391,7 +2391,7 @@ if ($action == 'create')
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-		
+
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
