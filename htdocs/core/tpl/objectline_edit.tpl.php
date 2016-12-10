@@ -122,6 +122,7 @@ $coldisplay=-1; // We remove first td
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled)) {
+		$colspan++;
 		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="8" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
