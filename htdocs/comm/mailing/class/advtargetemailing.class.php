@@ -606,6 +606,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * Load object in memory from database
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
+	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
 	function query_contact($arrayquery, $withThirdpartyFilter = 0)
