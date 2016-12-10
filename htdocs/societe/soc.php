@@ -1698,7 +1698,7 @@ else
             // VAT is used
             print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td colspan="3">';
             print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
-            print '</td>';
+            print '</td></tr>';
 
             // Local Taxes
             //TODO: Place into a function to control showing by country or study better option
@@ -1751,7 +1751,7 @@ else
             }
             
             // VAT Code
-            print '<td>'.fieldLabel('VATIntra','intra_vat').'</td>';
+            print '<tr><td>'.fieldLabel('VATIntra','intra_vat').'</td>';
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
