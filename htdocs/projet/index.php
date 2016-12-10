@@ -199,8 +199,8 @@ print "</table>";
     // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
     
     print '<br>';
-    
-    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
+    $max=5;
+    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array(), $max);
 //}
 
 print '</div></div></div>';
