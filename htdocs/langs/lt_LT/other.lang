@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Saugos kodas
-Calendar=Kalendorius
 NumberingShort=N°
 Tools=Įrankiai
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Pakrovimas (važtaraštis) išsiųstas paštu
 Notify_MEMBER_VALIDATE=Narys patvirtintas
 Notify_MEMBER_MODIFY=Narys modifikuotas
 Notify_MEMBER_SUBSCRIPTION=Narys prijungtas
-Notify_MEMBER_RESILIATE=Narys atkurtas
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Narys ištrintas
 Notify_PROJECT_CREATE=Projekto kūrimas
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Iš viso prikabintų failų/dokumentų dydis
 MaxSize=Maksimalus dydis
 AttachANewFile=Pridėti naują failą/dokumentą
 LinkedObject=Susietas objektas
-Miscellaneous=Įvairus
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Tai yra pašto bandymas.\nDvi eilutės yra atskirtos eilutės perkėlimo ženklu.\n\n __SIGNATURE__
 PredefinedMailTestHtml=Tai yra pašto <b>bandymas</b> (žodis bandymas turi būti paryškintas) <br>Dvi eilutės yra atskirtos eilutės perkėlimo ženklu.<br><br>__SIGNATURE__
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Eksportas
 ExportsArea=Eksporto sritis
 AvailableFormats=Galimi formatai
-LibraryUsed=Naudotos bibliotekos
-LibraryVersion=Versija
+LibraryUsed=Panaudota biblioteka
+LibraryVersion=Library version
 ExportableDatas=Eksportuotini duomenys
 NoExportableData=Nėra eksportuotinų duomenų (nėra modulių su įkeltais eksportuotinais duomenimis arba trūksta leidimų)
-NewExport=Naujas eksportas
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Pavadinimas
+WEBSITE_DESCRIPTION=Aprašymas
 WEBSITE_KEYWORDS=Keywords

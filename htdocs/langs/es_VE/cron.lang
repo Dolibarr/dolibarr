@@ -1,0 +1,79 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Consultar Tarea programada
+Permission23102 = Crear/actualizar Tarea programada
+Permission23103 = Borrar Tarea Programada
+Permission23104 = Ejecutar Taraea programada
+# Admin
+CronSetup= Configuración del módulo Programador
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
+OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
+KeyForCronAccess=Clave para la URL para ejecutar tareas Cron
+FileToLaunchCronJobs=Comando para ejecutar tareas Cron
+CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada crontab para ejecutar el comando cada 5 minutos
+CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
+CronMethodDoesNotExists=Class %s does not contains any method %s
+# Menu
+EnabledAndDisabled=Enabled and disabled
+# Page list
+CronLastOutput=Res. ult. ejec.
+CronLastResult=Últ. cód. res.
+CronCommand=Comando
+CronList=Tareas programadas
+CronDelete=Borrar tareas programadas
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Launch scheduled job
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas
+CronTask=Tarea
+CronNone=Ninguna
+CronDtStart=Not before
+CronDtEnd=Not after
+CronDtNextLaunch=Sig. ejec.
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
+CronFrequency=Frecuencia
+CronClass=Clase
+CronMethod=Metodo
+CronModule=Modulo
+CronNoJobs=Sin trabajos registrados
+CronPriority=Prioridad
+CronLabel=Etiqueta
+CronNbRun=Núm. ejec.
+CronMaxRun=Max nb. launch
+CronEach=Toda(s)
+JobFinished=Tareas lanzadas y finalizadas
+#Page card
+CronAdd= Tarea Nueva
+CronEvery=Ejecutar la tarea cada
+CronObject=Instancia/Objeto a crear
+CronArgs=Parametros
+CronSaveSucess=Save successfully
+CronNote=Comentario
+CronFieldMandatory=campos %s son obligatorios
+CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
+CronStatusActiveBtn=Activo
+CronStatusInactiveBtn=Inactivo
+CronTaskInactive=Esta tarea esta inactiva
+CronId=Id
+CronClassFile=Clases (nombre archivo)
+CronModuleHelp=Nombre del directorio del módulo Dolibarr (también funciona con módulos externos). <BR> Por ejemplo, para realizar un fetch del objeto Product /htdocs/<u>product</u>/class/product.class.php, el valor del módulo es <i>product</i>
+CronClassFileHelp=El nombre del archivo a cargar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/<u>product.class.php</u>, el valor del nombre del archivo de la clase es <i>product.class.php</i>
+CronObjectHelp=El nombre del objeto a cargar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del nombre de la clase es <i>Product</i>
+CronMethodHelp=El métpdp a lanzar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
+CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, los valores pueden ser <i>0, ProductRef</i>
+CronCommandHelp=El comando en línea del sistema a ejecutar.
+CronCreateJob=Crear nueva tarea programada
+CronFrom=De
+# Info
+# Common
+CronType=Tipo de tarea
+CronType_method=Llamar a un método de clase Dolibarr
+CronType_command=Comando Shell
+CronCannotLoadClass=No se puede cargar la clase %s u objeto %s
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Tarea desactivada
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

@@ -1,33 +1,35 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Raport z wydatków
-ExpenseReports=Raporty wydatków
-Trips=Raporty wydatków
-TripsAndExpenses=Koszty raporty
-TripsAndExpensesStatistics=Statystyki raporty wydatków
+ExpenseReport=Raport kosztów
+ExpenseReports=Raporty kosztów
+ShowExpenseReport=Pokaż raport kosztowy
+Trips=Raporty kosztów
+TripsAndExpenses=Raporty kosztów
+TripsAndExpensesStatistics=Statystyki raportów kosztów
 TripCard=Koszty karta raport
-AddTrip=Tworzenie raportu wydatków
-ListOfTrips=Wykaza raportów kosztowych
+AddTrip=Stwórz raport kosztów
+ListOfTrips=Lista raportów kosztowych
 ListOfFees=Wykaz opłat
+TypeFees=Types of fees
 ShowTrip=Pokaż raport kosztowy
-NewTrip=Nowy raport z wydatków
+NewTrip=Nowy raport kosztów
 CompanyVisited=Firm / fundacji odwiedzonych
 FeesKilometersOrAmout=Kwota lub kilometry
-DeleteTrip=Usuń raport wydatków
-ConfirmDeleteTrip=Czy na pewno chcesz usunąć ten raport wydatków?
-ListTripsAndExpenses=Wykaz raportów kosztowych
-ListToApprove=Czeka na zatwierdzenie
-ExpensesArea=Obszar raporty wydatków
+DeleteTrip=Usuń raport kosztów
+ConfirmDeleteTrip=Czy usunąć ten raport kosztów?
+ListTripsAndExpenses=Lista raportów kosztowych
+ListToApprove=Czeka na zaakceptowanie
+ExpensesArea=Obszar raportów kosztowych
 ClassifyRefunded=Zakfalifikowano do refundacji.
-ExpenseReportWaitingForApproval=Nowy raport wydatek został przedłożony do zatwierdzenia
-ExpenseReportWaitingForApprovalMessage=Nowy raport wydatek został złożony i czeka na zatwierdzenie. - Użytkownika:% s - Czas:% s Kliknij tutaj aby sprawdzić:% s
-TripId=Raport z wydatków Id
+ExpenseReportWaitingForApproval=Nowy raport kosztów został wysłany do zakaceptowania
+ExpenseReportWaitingForApprovalMessage=Nowy raport kosztów został wysłany i czeka na zaakceptowanie.\n- Użytkownik: %s\n- Czas: %s\nKliknij tutaj aby sprawdzić: %s
+TripId=ID raportu kosztowego
 AnyOtherInThisListCanValidate=Osoba do informowania o jej potwierdzenie.
 TripSociete=Informacje o firmie
 TripNDF=Informacje raport z wydatków
-PDFStandardExpenseReports=Standardowy szablon do generowania dokumentu PDF do raportu wydatków
+PDFStandardExpenseReports=Standardowy szablon do generowania dokumentu PDF dla raportu kosztowego
 ExpenseReportLine=Linia raport z wydatków
 TF_OTHER=Inny
-TF_TRIP=Transportation
+TF_TRIP=Transport
 TF_LUNCH=Obiad
 TF_METRO=Metro
 TF_TRAIN=Pociąg
@@ -45,7 +47,7 @@ ModePaiement=Sposób płatności
 
 VALIDATOR=Użytkownik odpowiedzialny za zatwierdzenie
 VALIDOR=Zatwierdzony przez
-AUTHOR=Nagrany przez
+AUTHOR=Zarejestrowany przez
 AUTHORPAIEMENT=Płacone przez
 REFUSEUR=Odmowa przez
 CANCEL_USER=Usunięte przez
@@ -53,35 +55,35 @@ CANCEL_USER=Usunięte przez
 MOTIF_REFUS=Powód
 MOTIF_CANCEL=Powód
 
-DATE_REFUS=Datę Deny
-DATE_SAVE=Data Validation
-DATE_CANCEL=Anulowanie daty
-DATE_PAIEMENT=Termin płatności
+DATE_REFUS=Data odmowy
+DATE_SAVE=Data zatwierdzenia
+DATE_CANCEL=Data anulowania
+DATE_PAIEMENT=Data płatności
 
 BROUILLONNER=Otworzyć na nowo
-ValidateAndSubmit=Weryfikacja i przedkłada do zatwierdzenia
-ValidatedWaitingApproval=Zatwierdzona (czeka na zatwierdzenie)
+ValidateAndSubmit=Zatwierdź i wyślij do zaakceptowania
+ValidatedWaitingApproval=Zatwierdzony (czeka na zaakceptowanie)
 
-NOT_AUTHOR=Nie jesteś autorem tego raportu wydatków. Operacja anulowana.
+NOT_AUTHOR=Nie jesteś autorem tego raportu kosztowego. Operacja anulowana.
 
-ConfirmRefuseTrip=Czy na pewno chcesz odrzucić ten raport wydatków?
+ConfirmRefuseTrip=Czy odrzucić ten raport kosztów?
 
 ValideTrip=Zatwierdzić raport wydatków
-ConfirmValideTrip=Czy na pewno chcesz, aby zatwierdzić ten raport wydatków?
+ConfirmValideTrip=Czy zaakceptować ten raport kosztów?
 
 PaidTrip=Zapłać raport wydatków
-ConfirmPaidTrip=Czy na pewno chcesz się status tego raportu wydatków do "Paid" zmienić?
+ConfirmPaidTrip=Czy zmienić status tego raportu kosztów na "Zapłacone"?
 
-ConfirmCancelTrip=Czy na pewno chcesz anulować to raport wydatków?
+ConfirmCancelTrip=Czy anulować ten raport kosztów?
 
 BrouillonnerTrip=Cofnij raport kosztów do statusu "Szkic"
-ConfirmBrouillonnerTrip=Czy na pewno chcesz przenieść ten raport wydatków do statusu "projektu"?
+ConfirmBrouillonnerTrip=Czy zmienić status tego raportu kosztów na "Szkic"?
 
 SaveTrip=Weryfikacja raportu wydatków
-ConfirmSaveTrip=Czy na pewno chcesz, aby potwierdzić ten raport wydatków?
+ConfirmSaveTrip=Czy zatwierdzić ten raport kosztów?
 
-NoTripsToExportCSV=Nie raport z wydatków na eksport za ten okres.
+NoTripsToExportCSV=Brak raportu kosztowego to eksportowania za ten okres czasu.
 ExpenseReportPayment=Płatność Raport wydatek
 
-ExpenseReportsToApprove=Expense reports to approve
-ExpenseReportsToPay=Raporty wydatków płacić
+ExpenseReportsToApprove=Raporty kosztów do zaakceptowania
+ExpenseReportsToPay=Raporty kosztowe do zapłaty

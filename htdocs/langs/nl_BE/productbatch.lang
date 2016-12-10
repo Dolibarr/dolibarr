@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Gebruik lot / serienummer
+ProductStatusOnBatch=Ja (lot / serienummer vereist)
+ProductStatusNotOnBatch=Nee (lot / serial niet gebruikt)
+ProductStatusOnBatchShort=Ja
+ProductStatusNotOnBatchShort=Nee
+Batch=Lot / Serienummer
+atleast1batchfield=Vervaldatum of uiterste verkoopdatum of Lot / Serienummer
+batch_number=Lot / Serienummer
+BatchNumberShort=Lot / Serienummer
+EatByDate=Vervaldatum
+SellByDate=Uiterste verkoop datum
+DetailBatchNumber=Lot / Serienummer informatie
+DetailBatchFormat=Lot / Ser: % s - Verval: %s - Verkoop: %s (Aantal: %d)
+printBatch=Lot / Ser: %s
+printEatby=Verval: %s
+printSellby=Verkoop: %s
+printQty=Aantal: %d
+AddDispatchBatchLine=Voeg een regel toe voor houdbaarheids ontvangst
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic increase/decrease stock mode is forced to shipping validate and manual dispatching for reception and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot

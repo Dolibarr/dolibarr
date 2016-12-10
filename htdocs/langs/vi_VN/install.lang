@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Để trống nếu người dùng không có mật khẩu
 SaveConfigurationFile=Lưu giá trị
 ServerConnection=Kết nối máy chủ
 DatabaseCreation=Tạo ra cơ sở dữ liệu
-UserCreation=Người dùng tạo ra
 CreateDatabaseObjects=Cơ sở dữ liệu đối tượng sáng tạo
 ReferenceDataLoading=Tài liệu tham khảo dữ liệu tải
 TablesAndPrimaryKeysCreation=Bàn phím chính tạo
@@ -133,12 +132,12 @@ MigrationFinished=Di cư đã hoàn thành
 LastStepDesc=<strong>Bước cuối cùng:</strong> Xác định đây đăng nhập và mật khẩu bạn có kế hoạch sử dụng để kết nối với phần mềm. Đừng mất này vì nó là tài khoản để quản lý tất cả những người khác.
 ActivateModule=Kích hoạt module %s
 ShowEditTechnicalParameters=Click vào đây để hiển thị các thông số tiên tiến / chỉnh sửa (chế độ chuyên môn)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ DoliWamp, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
+KeepDefaultValuesDeb=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một gói phần mềm Linux (Ubuntu, Debian, Fedora ...), do đó giá trị đề xuất ở đây đã được tối ưu hóa. Chỉ có mật khẩu của chủ sở hữu cơ sở dữ liệu để tạo ra phải được hoàn tất. Thay đổi các thông số khác chỉ khi bạn biết những gì bạn làm.
+KeepDefaultValuesMamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ DoliMamp, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
+KeepDefaultValuesProxmox=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một thiết bị ảo Proxmox, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Mở hợp đồng đóng cửa do lỗi
 MigrationReopenThisContract=Mở lại hợp đồng %s
 MigrationReopenedContractsNumber=Hợp đồng sửa đổi %s
 MigrationReopeningContractsNothingToUpdate=Không có hợp đồng đóng mở
-MigrationBankTransfertsUpdate=Cập nhật liên kết giữa các giao dịch ngân hàng và chuyển khoản ngân hàng
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Tất cả các liên kết được cập nhật
 MigrationShipmentOrderMatching=Sendings cập nhật nhận
 MigrationDeliveryOrderMatching=Cập nhật nhận giao hàng

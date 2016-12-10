@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuración del módulo PayPal
+PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+PaypalOrCBDoPayment=Continuar el pago mediante tarjeta o Paypal
+PaypalDoPayment=Continuar el pago mediante Paypal
+PAYPAL_API_SANDBOX=Modo de pruebas (sandbox)
+PAYPAL_API_USER=Nombre usuario API
+PAYPAL_API_PASSWORD=Contraseña usuario API
+PAYPAL_API_SIGNATURE=Firma API
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sólo Paypal
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Sólo PayPal
+PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ThisIsTransactionId=Identificador de la transacción: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Añadir la url del pago Paypal al enviar un documento por e-mail
+PredefinedMailContentLink=Puede hacer clic en el enlace seguro de abajo para realizar su pago a través de PayPal\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Actualmente se encuentra en modo "sandbox"
+NewPaypalPaymentReceived=Nuevo pago Paypal recibido
+NewPaypalPaymentFailed=Nuevo intento de pago Paypal sin éxito
+PAYPAL_PAYONLINE_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
+ReturnURLAfterPayment=URL de retorno después del pago
+ValidationOfPaypalPaymentFailed=La validación del pago Paypal ha fallado
+PaypalConfirmPaymentPageWasCalledButFailed=La página de confirmación de pago para Paypal fue llamada por Paypal pero la confirmación falló
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Detailed Error Message
+ShortErrorMessage=Short Error Message
+ErrorCode=Error Code
+ErrorSeverityCode=Error Severity Code

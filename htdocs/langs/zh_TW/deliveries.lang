@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=交貨
 DeliveryRef=Ref Delivery
-DeliveryCard=交付卡
+DeliveryCard=Receipt card
 DeliveryOrder=交貨單
 DeliveryDate=交貨日期
-CreateDeliveryOrder=產生交貨單
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=出貨日期設置
 ValidateDeliveryReceipt=驗證送達回執
-ValidateDeliveryReceiptConfirm=你確定要驗證這個交貨收據嗎？
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=刪除送達回執
-DeleteDeliveryReceiptConfirm=你確定要刪除送達回執<b>%s</b>嗎？
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=送貨方式
 TrackingNumber=追蹤號碼
 DeliveryNotValidated=交付未驗證
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=取消
+StatusDeliveryDraft=草案
+StatusDeliveryValidated=已收到
 # merou PDF model
 NameAndSignature=姓名及簽署：
 ToAndDate=To___________________________________對____ / _____ / __________

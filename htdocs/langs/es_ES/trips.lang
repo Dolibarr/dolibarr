@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Gasto
 ExpenseReports=Informes de gastos
+ShowExpenseReport=Ver informe de gastos
 Trips=Gastos
 TripsAndExpenses=Gastos
 TripsAndExpensesStatistics=Estadísticas de gastos
@@ -8,6 +9,7 @@ TripCard=Ficha de gasto
 AddTrip=Crear gasto
 ListOfTrips=Listado de gastos
 ListOfFees=Listado de honorarios
+TypeFees=Tipos de honorarios
 ShowTrip=Ver informe de gastos
 NewTrip=Nuevo gasto
 CompanyVisited=Empresa/institución visitada

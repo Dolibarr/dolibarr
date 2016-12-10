@@ -32,13 +32,13 @@ ECMDocsByProducts=文件與產品
 ECMDocsByProjects=Documents linked to projects
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=No directory created
 ShowECMSection=顯示目錄
 DeleteSection=刪除目錄
-ConfirmDeleteSection=你能確認你要刪除的目錄<b>%s嗎</b> ？
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=相對目錄的文件
 CannotRemoveDirectoryContainsFiles=刪除不可能的，因為它包含了一些文件
 ECMFileManager=檔案管理員
 ECMSelectASection=左樹中選擇一個目錄...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
-
