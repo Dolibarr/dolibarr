@@ -1696,7 +1696,7 @@ else
             if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
 
             // VAT is used
-            print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td colspan="3">';
+            print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td>';
             print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
             print '</td>';
 
@@ -1752,7 +1752,7 @@ else
             
             // VAT Code
             print '<td>'.fieldLabel('VATIntra','intra_vat').'</td>';
-            print '<td colspan="3">';
+            print '<td>';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
