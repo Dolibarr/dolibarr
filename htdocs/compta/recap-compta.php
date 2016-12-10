@@ -89,6 +89,13 @@ if ($socid > 0)
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_user_valid = u.rowid";
+		
+		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		    $sql.= " AND f.type IN (0,1,2,5)";
+		} else {
+		    $sql.= " AND f.type IN (0,1,2,3,5)";
+		}
+		
 		$sql.= " ORDER BY f.datef ASC";
 
 		$resql=$db->query($sql);
