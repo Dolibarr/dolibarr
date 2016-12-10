@@ -991,6 +991,7 @@ if (empty($reshook))
 	}
 }
 
+
 /*
  * View
  */
@@ -1381,7 +1382,6 @@ else
 		print '</td>';
 		print '</tr>';
 
-
         // Other attributes
         $cols = 3;
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -1395,7 +1395,7 @@ else
             print '</form>';
         }
 
-        //echo '<br>';
+        echo '<br>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
