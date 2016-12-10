@@ -500,8 +500,10 @@ if ($mode != 'marketplace')
         else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
 
         $textexternal='';
+	$imginfo="info";
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
+ 	    $imginfo="info_black";
             $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
             if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
             if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
@@ -645,7 +647,7 @@ if ($mode != 'marketplace')
         $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
         $text.=$langs->trans("DetectionNotPossible");
 
-        print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
+        print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20');
 
         print '</td>';
 
@@ -659,8 +661,6 @@ if ($mode != 'marketplace')
         if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: left"');
         if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: left"');
 
-        // Picto external
-        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: left"');
 
         print $versiontrans;
 
