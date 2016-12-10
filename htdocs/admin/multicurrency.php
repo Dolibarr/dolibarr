@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
 // Translations
+$langs->load("admin");
 $langs->load("multicurrency");
 
 // Access control
