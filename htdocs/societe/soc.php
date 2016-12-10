@@ -72,6 +72,12 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
+if ($action == 'view' && $object->fetch($socid)<=0)
+{
+	setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+	$socid=0;
+	$action='create';
+}
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
