@@ -835,8 +835,8 @@ else
     			$i++;
     		}
 
-    		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', '', '', 'paginationatbottom');
-
+    		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', 'paginationatbottom', $limit);
+    		
     		$db->free($resql);
 
     		print "</table>";

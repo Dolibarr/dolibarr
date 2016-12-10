@@ -1203,7 +1203,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->commande->creer)
+	    if ($user->rights->ficheinter->creer)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
