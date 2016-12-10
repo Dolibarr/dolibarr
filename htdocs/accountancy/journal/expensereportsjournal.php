@@ -187,11 +187,11 @@ if ($action == 'writebookkeeping') {
 		// Fees
 		foreach ( $tabht[$key] as $k => $mt ) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k);
+			$accountingaccount->fetch(null, $k, true);
 			if ($mt) {
 				// get compte id and label
 				$accountingaccount = new AccountingAccount($db);
-				if ($accountingaccount->fetch(null, $k)) {
+				if ($accountingaccount->fetch(null, $k, true)) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
@@ -355,7 +355,7 @@ if ($action == 'export_csv') {
 			// Fees
 			foreach ( $tabht[$key] as $k => $mt ) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(null, $k);
+				$accountingaccount->fetch(null, $k, true);
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
@@ -464,7 +464,7 @@ if (empty($action) || $action == 'view') {
 		// Fees
 		foreach ( $tabht[$key] as $k => $mt ) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k);
+			$accountingaccount->fetch(null, $k, true);
 
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";

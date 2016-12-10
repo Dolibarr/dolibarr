@@ -50,7 +50,7 @@ class Propal extends CommonObject
     public $fk_element='fk_propal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='propal';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -503,7 +503,7 @@ class Propal extends CommonObject
             $this->line->label=$label;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
-            
+
 			$this->line->vat_src_code=$vat_src_code;
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
@@ -638,7 +638,7 @@ class Propal extends CommonObject
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
-            
+
             // Clean vat code
             $vat_src_code='';
             if (preg_match('/\((.*)\)/', $txtva, $reg))
@@ -1180,7 +1180,7 @@ class Propal extends CommonObject
         $clonedObj->ref = $modPropale->getNextValue($objsoc,$clonedObj);
 
         // Create clone
-        
+
         $result=$clonedObj->create($user);
         if ($result < 0) $error++;
         else
@@ -1541,7 +1541,7 @@ class Propal extends CommonObject
             dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
             return 0;
         }
-        
+
         if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate))))
         {
@@ -1551,7 +1551,7 @@ class Propal extends CommonObject
         }
 
         $now=dol_now();
-            
+
         $this->db->begin();
 
         // Numbering module definition
@@ -1839,7 +1839,7 @@ class Propal extends CommonObject
      */
     function set_availability($user, $id, $notrigger=0)
     {
-        if (! empty($user->rights->propal->creer))
+        if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;
 
@@ -1849,7 +1849,7 @@ class Propal extends CommonObject
             $sql.= " SET fk_availability = '".$id."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(__METHOD__, LOG_DEBUG);
+            dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (!$resql)
             {
@@ -1861,6 +1861,7 @@ class Propal extends CommonObject
             {
             	$this->oldcopy= clone $this;
             	$this->fk_availability = $id;
+            	$this->availability_id = $availability_id;
             }
 
             if (! $notrigger && empty($error))
@@ -1887,6 +1888,14 @@ class Propal extends CommonObject
             	return -1*$error;
             }
         }
+        else
+        {
+        	$error_str='Propal status do not meet requirement '.$this->statut;
+        	dol_syslog(__METHOD__.$error_str, LOG_ERR);
+        	$this->error=$error_str;
+        	$this->errors[]= $this->error;
+        	return -2;
+        }
     }
 
     /**
@@ -1899,14 +1908,14 @@ class Propal extends CommonObject
      */
     function set_demand_reason($user, $id, $notrigger=0)
     {
-        if (! empty($user->rights->propal->creer))
+        if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;
 
         	$this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-            $sql.= " SET fk_input_reason = '".$id."'";
+            $sql.= " SET fk_input_reason = ".$id;
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1922,6 +1931,7 @@ class Propal extends CommonObject
             {
             	$this->oldcopy= clone $this;
             	$this->fk_input_reason = $id;
+            	$this->demand_reason_id = $id;
             }
 
 
@@ -1948,6 +1958,14 @@ class Propal extends CommonObject
             	$this->db->rollback();
             	return -1*$error;
             }
+        }
+        else
+        {
+        	$error_str='Propal status do not meet requirement '.$this->statut;
+        	dol_syslog(__METHOD__.$error_str, LOG_ERR);
+        	$this->error=$error_str;
+        	$this->errors[]= $this->error;
+        	return -2;
         }
     }
 
@@ -2406,7 +2424,7 @@ class Propal extends CommonObject
         	$this->statut = self::STATUS_DRAFT;
             $this->brouillon = 1;
         }
-        
+
         if (! $notrigger && empty($error))
         {
         	// Call trigger
@@ -2733,6 +2751,7 @@ class Propal extends CommonObject
      *  @param	int	$availability_id	Id of new delivery time
      * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *  @return int                  	>0 if OK, <0 if KO
+     *  @deprecated  use set_availability
      */
     function availability($availability_id, $notrigger=0)
     {
@@ -2753,7 +2772,7 @@ class Propal extends CommonObject
             	$this->errors[]=$this->db->error();
             	$error++;
             }
-            
+
             if (! $error)
             {
             	$this->oldcopy= clone $this;
@@ -2800,6 +2819,7 @@ class Propal extends CommonObject
      *	@param	int $demand_reason_id 	Id of new source demand
      * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return int						>0 si ok, <0 si ko
+     *	@deprecated use set_demand_reason
      */
     function demand_reason($demand_reason_id, $notrigger=0)
     {
@@ -2820,7 +2840,7 @@ class Propal extends CommonObject
             	$this->errors[]=$this->db->error();
             	$error++;
             }
-            
+
             if (! $error)
             {
             	$this->oldcopy= clone $this;
@@ -3241,7 +3261,7 @@ class Propal extends CommonObject
         global $langs, $conf, $user;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result='';
         $label='';
         $url='';
@@ -3272,7 +3292,7 @@ class Propal extends CommonObject
                 $url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params;
             }
         }
-        
+
         $linkclose='';
         if (empty($notooltip) && $user->rights->propal->lire)
         {
@@ -3284,9 +3304,9 @@ class Propal extends CommonObject
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
         }
-        
+
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';        
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
         if ($withpicto)
@@ -3350,7 +3370,7 @@ class Propal extends CommonObject
                 $this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
                 $this->lines[$i]->remise_percent	= $obj->remise_percent;
 
-                $this->lines[$i]->vat_src_code      = $obj->vat_src_code; 
+                $this->lines[$i]->vat_src_code      = $obj->vat_src_code;
                 $this->lines[$i]->tva_tx			= $obj->tva_tx;
                 $this->lines[$i]->info_bits			= $obj->info_bits;
                 $this->lines[$i]->total_ht			= $obj->total_ht;
@@ -3684,7 +3704,7 @@ class PropaleLigne  extends CommonObjectLine
         if (empty($this->multicurrency_total_ht))  $this->multicurrency_total_ht=0;
         if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
         if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
-        
+
        // if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{
