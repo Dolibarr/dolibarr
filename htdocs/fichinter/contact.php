@@ -120,7 +120,6 @@ if ($id > 0 || ! empty($ref))
 	$head = fichinter_prepare_head($object);
 	dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"), 0, 'intervention');
 
-
 	// Intervention card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
@@ -166,12 +165,8 @@ if ($id > 0 || ! empty($ref))
 	}
 	$morehtmlref.='</div>';
 	
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 	    
-	dol_fiche_end();
-	
-	print '<br>';
-	
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
 
