@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Envio
 DeliveryRef=Ref Delivery
-DeliveryCard=Ficha Envio
+DeliveryCard=Receipt card
 DeliveryOrder=Ordem de Envio
 DeliveryDate=Data de Envio
-CreateDeliveryOrder=Gerar Ordem de Entrega
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
-ValidateDeliveryReceiptConfirm=Deseja mesmo confirmar esta entrega?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Eliminar recibo de entrega
-DeleteDeliveryReceiptConfirm=Tem certeza de que deseja eliminar <b>%s</b> recibo de entrega?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
 DeliveryNotValidated=Entrega não validada
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Cancelada
+StatusDeliveryDraft=Rascunho
+StatusDeliveryValidated=Recebido
 # merou PDF model
 NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________

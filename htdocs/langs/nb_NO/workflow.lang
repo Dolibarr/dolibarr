@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilbud som fakturert når 
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til betalt
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til validert
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassifiser lenket kildetilbud som fakturert når kundefaktura blir validert
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassifiser ordre som sendt dersom mengde som er sendt er det samme som i ordren
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassifiser lenket kildeordre til levert når en forsendelse er validert og sendt kvantitet er det samme som i ordre
+AutomaticCreation=Automatisk opprettelse
+AutomaticClassification=Automatisk klassifisering

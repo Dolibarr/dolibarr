@@ -1,6 +1,7 @@
+# Dolibarr language file - Source file is en_US - languages
 LinkANewFile=Link a novao ficheiro/documento
 LinkedFiles=Ficheiros e documento ligados
-NoLinkFound=sem reigisto de ligações
+NoLinkFound=Nenhumas ligações registadas
 LinkComplete=Os ficheiros foram ligados com sucesso
 ErrorFileNotLinked=Os ficheiros não puderam ser ligados
 LinkRemoved=A ligação %s foi removida

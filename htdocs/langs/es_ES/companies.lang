@@ -77,6 +77,7 @@ VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
 CopyAddressFromSoc=Copiar dirección de la empresa
 ThirdpartyNotCustomerNotSupplierSoNoRef=Tercero que no es cliente ni proveedor, sin objetos referenciados
+PaymentBankAccount=Cuenta bancaria de pago
 ##### Local Taxes #####
 LocalTax1IsUsed=Usar segunda tasa
 LocalTax1IsUsedES= Sujeto a RE
@@ -271,7 +272,7 @@ DefaultContact=Contacto por defecto
 AddThirdParty=Crear tercero
 DeleteACompany=Eliminar una empresa
 PersonalInformations=Información personal
-AccountancyCode=Código contable
+AccountancyCode=Cuenta contable
 CustomerCode=Código cliente
 SupplierCode=Código proveedor
 CustomerCodeShort=Código cliente
