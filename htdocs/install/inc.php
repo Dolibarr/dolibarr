@@ -507,9 +507,8 @@ function detect_dolibarr_main_document_root()
 {
 	// If PHP is in CGI mode, SCRIPT_FILENAME is PHP's path.
 	// Since that's not what we want, we suggest $_SERVER["DOCUMENT_ROOT"]
-	if (preg_match('/php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',
-			$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"])
-	) {
+	if ($_SERVER["SCRIPT_FILENAME"] == 'php' || preg_match('/[\\/]php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"]))
+	{
 		$dolibarr_main_document_root = $_SERVER["DOCUMENT_ROOT"];
 
 		if (!preg_match('/[\\/]dolibarr[\\/]htdocs$/i', $dolibarr_main_document_root)) {
