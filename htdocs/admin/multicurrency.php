@@ -323,8 +323,17 @@ print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></form></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurrency")).'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">1';
+print '</td></form></tr>';
+
 foreach ($TCurrency as &$currency)
 {
+	if($currency->code == $conf->currency) continue;
+	
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
@@ -334,10 +343,12 @@ foreach ($TCurrency as &$currency)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
-	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;';
+	print '1 '.$conf->currency.' = ';
+	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';
+
 	print '</td></tr>';
 }
 
