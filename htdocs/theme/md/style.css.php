@@ -2711,6 +2711,10 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
+tr.liste_titre td.liste_titre {		/* For last line of table headers only */
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 div.liste_titre {
 	padding-left: 3px;
 }

@@ -832,7 +832,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$form->select_comptes($account,'account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
     	print '</td>';
 	}
@@ -850,7 +850,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
     	print $form->textwithpicto('', $htmltext, 1);
     	print '</td>';

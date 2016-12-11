@@ -410,7 +410,7 @@ if (! empty($arrayfields['b.clos']['checked']))
 // Balance
 if (! empty($arrayfields['balance']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 // Action column
 print '<td class="liste_titre" align="middle">';

@@ -6005,9 +6005,10 @@ class Form
     {
         global $conf, $langs;
 
-        $out='';
+        $out='<div class="nowrap">';
         $out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         $out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        $out.='</div>';
         if ($addcheckuncheckall)
         {
             if (! empty($conf->use_javascript_ajax)) $out.='<input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions">';

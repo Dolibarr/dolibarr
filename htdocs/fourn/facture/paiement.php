@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -717,23 +717,23 @@ if (empty($action))
 
         // Lines for filters fields
         print '<tr class="liste_titre">';
-        print '<td align="left">';
+        print '<td  class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
-        print '<td>&nbsp;</td>';
-        print '<td align="left">';
+        print '<td class="liste_titre">&nbsp;</td>';
+        print '<td class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
         print '</td>';
-        print '<td>';
+        print '<td class="liste_titre">';
         $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
         print '</td>';
-        print '<td align="left">';
+        print '<td class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
         print '</td>';
-        print '<td>';
+        print '<td class="liste_titre">';
         $form->select_comptes($search_account,'search_account',0,'',1);
         print '</td>';
-        print '<td align="right">';
+        print '<td class="liste_titre" align="right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
