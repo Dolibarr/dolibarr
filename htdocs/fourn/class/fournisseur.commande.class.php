@@ -2319,7 +2319,7 @@ class CommandeFournisseur extends CommonOrder
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
-            $subprice = price2num($pu,'MU');
+            $subprice = price2num($pu_ht,'MU');
 
             $this->line=new CommandeFournisseurLigne($this->db);
             $this->line->fetch($rowid);
@@ -2375,9 +2375,11 @@ class CommandeFournisseur extends CommonOrder
 
 
             // Mise a jour info denormalisees au niveau facture
-            if (! $error)
+            if ($result > 0)
             {
                 $this->update_price('','auto');
+				$this->db->commit();
+				return $result;
             }
             else
             {
