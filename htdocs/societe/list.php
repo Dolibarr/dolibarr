@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $langs->load("companies");
+$langs->load("commercial");
 $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("bills");
