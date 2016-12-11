@@ -2748,17 +2748,17 @@ class Commande extends CommonOrder
      *  Update a line in database
      *
      *  @param    	int				$rowid            	Id of line to update
-     *  @param    	string			$desc             	Description de la ligne
-     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	string			$desc             	Description of line
+     *  @param    	float			$pu               	Unit price
      *  @param    	float			$qty              	Quantity
-     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$remise_percent   	Percent of discount
      *  @param    	float			$txtva           	Taux TVA
      * 	@param		float			$txlocaltax1		Local tax 1 rate
      *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	int		$date_start        	Start date of the line
-     *  @param    	int		$date_end          	End date of the line
+     *  @param    	int				$date_start        	Start date of the line
+     *  @param    	int				$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -2768,6 +2768,7 @@ class Commande extends CommonOrder
      *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array			$array_options		extrafields array
      * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+     *  @param		float			$pu_ht_devise		Unit price in foreign currency
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null, $pu_ht_devise = 0)
