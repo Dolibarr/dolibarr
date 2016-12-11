@@ -116,9 +116,11 @@ if (empty($reshook))
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
-		}		
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
-		$action='';
+		}
+        else {
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $id);
+            exit();
+        }
 	}
 	
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
