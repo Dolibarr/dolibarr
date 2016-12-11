@@ -3956,7 +3956,11 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmulticurrencyrate">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" />';
+            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" /> ';
+			print '<select name="calculation_mode">';
+			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
+			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
+			print '</select> ';
             print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             print '</form>';
         }
@@ -4231,6 +4235,10 @@ class Form
 		}
 
         $out.= '</select>';
+		// Make select dynamic
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		$out.= ajax_combobox($htmlname);
+		
         return $out;
     }
 
