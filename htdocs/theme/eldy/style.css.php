@@ -588,9 +588,14 @@ div.myavailability {
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+/* Style used for most tables */ 
 .div-table-responsive {
     overflow-x: auto;
-    /*min-height: 0.01%;*/
+    min-height: 0.01%;
+}
+/* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
+div.fiche>form>div.div-table-responsive {
+    overflow-x: auto;
     min-height: 350px;
 }
 
