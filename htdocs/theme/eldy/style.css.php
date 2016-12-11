@@ -589,9 +589,8 @@ div.myavailability {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 .div-table-responsive {
-    overflow-x: auto;
-    /*min-height: 0.01%;*/
-    min-height: 350px;
+    overflow-x: visible;
+    overflow-y:visible;
 }
 
 
