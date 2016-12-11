@@ -824,7 +824,7 @@ class Propal extends CommonObject
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
 		// Multicurrency
-		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		if (empty($this->fk_multicurrency))
 		{
 			$this->multicurrency_code = $conf->currency;
