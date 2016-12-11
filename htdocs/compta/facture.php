@@ -2977,7 +2977,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -3430,7 +3430,8 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</table>';
 
-	// List of payments
+	
+	// List of previous situation invoices
 
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
@@ -3541,9 +3542,11 @@ else if ($id > 0 || ! empty($ref))
             print '</table>';
     }
 
+    
+    // List of payments already done
+    
     print '<table class="noborder paymenttable" width="100%">';
 
-    // List of payments already done
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
     print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';

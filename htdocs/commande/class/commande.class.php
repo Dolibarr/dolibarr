@@ -2748,17 +2748,17 @@ class Commande extends CommonOrder
      *  Update a line in database
      *
      *  @param    	int				$rowid            	Id of line to update
-     *  @param    	string			$desc             	Description de la ligne
-     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	string			$desc             	Description of line
+     *  @param    	float			$pu               	Unit price
      *  @param    	float			$qty              	Quantity
-     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$remise_percent   	Percent of discount
      *  @param    	float			$txtva           	Taux TVA
      * 	@param		float			$txlocaltax1		Local tax 1 rate
      *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	int		$date_start        	Start date of the line
-     *  @param    	int		$date_end          	End date of the line
+     *  @param    	int				$date_start        	Start date of the line
+     *  @param    	int				$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)

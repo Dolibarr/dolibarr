@@ -135,7 +135,8 @@ function societe_prepare_head(Societe $object)
     // Bank accounrs
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
-	$langs->load('banks');
+        $langs->load("banks");
+
         $nbBankAccount=0;
         $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("BankAccounts");
