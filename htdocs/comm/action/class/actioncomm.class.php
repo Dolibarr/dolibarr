@@ -685,7 +685,8 @@ class ActionComm extends CommonObject
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-            freeAllResources($this, ResourceStatus::OCCUPIED);
+            $result = freeAllResources($this, ResourceStatus::OCCUPIED);
+            if ($result < 0) $error++;
         }
 
         if (!$error)

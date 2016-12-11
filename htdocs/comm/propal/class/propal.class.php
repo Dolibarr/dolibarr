@@ -2495,7 +2495,8 @@ class Propal extends CommonObject
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-            freeAllResources($this, ResourceStatus::PLACED);
+            $result = freeAllResources($this, ResourceStatus::PLACED);
+            if ($result < 0) $error++;
         }
         
         if (! $notrigger && empty($error))
@@ -3911,7 +3912,7 @@ class PropaleLigne  extends CommonObjectLine
         dol_syslog("PropaleLigne::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
-            // Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            // Free resource for safety if is occupied
             if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
             {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
@@ -4060,7 +4061,7 @@ class PropaleLigne  extends CommonObjectLine
         		}
         	}
 
-            // Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            // Free resource for safety if is occupied
             if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
             {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';

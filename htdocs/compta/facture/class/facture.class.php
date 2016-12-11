@@ -1924,12 +1924,13 @@ class Facture extends CommonInvoice
 			dol_print_error($this->db);
 		}
 
-        // Free possibly taken resources
-        if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        // Check resources
+        if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-            freeAllResources($this, ResourceStatus::OCCUPIED);
+            $result = occupyAllResources($this, ResourceStatus::$AVAILABLE, ResourceStatus::OCCUPIED);
+            if ($result < 0) $error ++;
         }
 
         if (! $error)
@@ -1965,6 +1966,7 @@ class Facture extends CommonInvoice
 	 */
 	function set_canceled($user,$close_code='',$close_note='')
 	{
+		global $conf;
 
 		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
 
@@ -1988,6 +1990,19 @@ class Facture extends CommonInvoice
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				// Free possibly taken resources
+				if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+					require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+					$result = freeAllResources($this, ResourceStatus::OCCUPIED);
+					if ($result < 0)
+					{
+						$this->db->rollback();
+						return -1;
+					}
+				}
+				
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_CANCEL',$user);
 	            if ($result < 0)
@@ -2375,7 +2390,8 @@ class Facture extends CommonInvoice
 				{
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-					freeAllResources($this, ResourceStatus::OCCUPIED);
+					$result = freeAllResources($this, ResourceStatus::OCCUPIED);
+                    if ($result < 0) $error++;
 				}
 
 	            // Call trigger
@@ -4705,7 +4721,7 @@ class FactureLigne extends CommonInvoiceLine
         		}
         	}
 
-			// Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            // Free resource for safety if is occupied
 			if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
@@ -4756,7 +4772,7 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		// End call triggers
 
-		// Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            // Free resource for safety if is occupied
 		if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
