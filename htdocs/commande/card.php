@@ -117,8 +117,8 @@ if (empty($reshook))
 			header("Location: ".$urltogo);
 			exit;
 		}
-		else {
-            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $id); // Pour reaffichage de la fiche en cours d'edition
+        else {
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $id);
             exit();
         }
 	}
