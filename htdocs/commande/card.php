@@ -117,10 +117,11 @@ if (empty($reshook))
 			header("Location: ".$urltogo);
 			exit;
 		}
-        else {
-            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $id);
-            exit();
+		if ($id > 0 || ! empty($ref)) {
+		    $ret = $object->fetch($id,$ref);
+		    $object->fetch_thirdparty();
         }
+		$action='';
 	}
 	
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
