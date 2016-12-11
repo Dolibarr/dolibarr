@@ -58,7 +58,7 @@ $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
