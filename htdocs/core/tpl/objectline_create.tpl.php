@@ -698,6 +698,7 @@ function setforfree() {
 	jQuery("#prod_entry_mode_free").prop('checked',true);
 	jQuery("#prod_entry_mode_predef").prop('checked',false);
 	jQuery("#price_ht").show();
+	jQuery("#multicurrency_price_ht").show();
 	jQuery("#price_ttc").show();	// May no exists
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
@@ -717,6 +718,7 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_free").prop('checked',false);
 	jQuery("#prod_entry_mode_predef").prop('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();

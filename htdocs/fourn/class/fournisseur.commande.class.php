@@ -2375,7 +2375,7 @@ class CommandeFournisseur extends CommonOrder
 
 
             // Mise a jour info denormalisees au niveau facture
-            if ($result > 0)
+            if ($result >= 0)
             {
                 $this->update_price('','auto');
 				$this->db->commit();

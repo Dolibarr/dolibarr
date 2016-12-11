@@ -111,13 +111,16 @@ if (empty($reshook))
 {
 	if ($cancel) 
 	{
-		if ($action != 'addlink')
+		if ($action != 'addlink' && $action != 'updateline')
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
-		}		
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		}
+		if ($id > 0 || ! empty($ref)) {
+		    $ret = $object->fetch($id,$ref);
+		    $object->fetch_thirdparty();
+        }
 		$action='';
 	}
 	

@@ -103,6 +103,7 @@ class box_comptes extends ModeleBoxes
                     $objp = $db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
+					$account_static->ref = $objp->ref;
                     $account_static->label = $objp->label;
                     $account_static->number = $objp->number;
                     $solde=$account_static->solde(0);
