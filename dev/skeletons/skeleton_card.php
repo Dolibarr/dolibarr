@@ -53,31 +53,34 @@ $langs->load("other");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
 
+if (empty($action) && empty($id) && empty($ref)) $action='view';
+
 // Protection if external user
 if ($user->societe_id > 0)
 {
 	//accessforbidden();
 }
+//$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($action) && empty($id) && empty($ref)) $action='list';
 
-// Load object if id or ref is provided as parameter
-$object=new Skeleton_Class($db);
-if (($id > 0 || ! empty($ref)) && $action != 'add')
-{
-	$result=$object->fetch($id,$ref);
-	if ($result < 0) dol_print_error($db);
-}
+$object = new Skeleton_Class($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('skeleton'));
-$extrafields = new ExtraFields($db);
 
 
 
@@ -88,11 +91,23 @@ $extrafields = new ExtraFields($db);
 ********************************************************************/
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
+	if ($cancel) 
+	{
+		if ($action != 'addlink')
+		{
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+			header("Location: ".$urltogo);
+			exit;
+		}		
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		$action='';
+	}
+	
 	// Action to add record
 	if ($action == 'add')
 	{
@@ -138,11 +153,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
-
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
+	if ($action == 'update')
 	{
 		$error=0;
 
@@ -281,8 +293,13 @@ if (($id || $ref) && $action == 'edit')
 
 
 // Part to show record
-if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
+    $res = $object->fetch_optionals($object->id, $extralabels);
+
+	$head = commande_prepare_head($object);
+	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+		
 	print load_fiche_titre($langs->trans("MyModule"));
     
 	dol_fiche_head();
@@ -293,7 +310,7 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 	}
 	
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_VIEW
 	print '</table>';
 	
@@ -322,9 +339,9 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 
 
 	// Example 2 : Adding links to objects
-	//$somethingshown=$form->showLinkedObjectBlock($object);
-	//$linktoelem = $form->showLinkToObjectBlock($object);
-	//if ($linktoelem) print '<br>'.$linktoelem;
+	// Show links to link elements
+	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('skeleton'));
+	//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 }
 

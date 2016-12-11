@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Računovodska koda za izplačilo plač
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Računovodska koda za finančno bremenitev
 Salary=Plača
 Salaries=Plače
-Employee=Zaposleni
 NewSalaryPayment=Novo izplačilo plače
 SalaryPayment=Izplačilo plače
 SalariesPayments=Izplačila plač
 ShowSalaryPayment=Prikaži izplačilo plač
-THM=Povprečna urna postavka
-TJM=Povprečna dnevna postavka
+THM=Average hourly rate
+TJM=Average daily rate
 CurrentSalary=Trenutna plača
 THMDescription=Ta kalkulacija se lahko uporabi za izračun stroškov porabljenega časa na projektu, ki ga vnese uporabnik, če je uporabljen projektni modul
 TJMDescription=Ta vrednost je trenutno samo informativna in se ne uporablja v nobeni kalkulaciji

@@ -1,24 +1,19 @@
 # Dolibarr language file - Source file is en_US - members
 MembersArea=منطقة الأعضاء
-PublicMembersArea=أعضاء منطقة العامة
 MemberCard=بطاقة عضو
 SubscriptionCard=بطاقة الاشتراك
 Member=عضو
 Members=أعضاء
-MemberAccount=دخول الأعضاء
 ShowMember=وتظهر بطاقة عضو
 UserNotLinkedToMember=المستخدم لا ترتبط عضو
-ThirdpartyNotLinkedToMember=Third-party not linked to a member
+ThirdpartyNotLinkedToMember=طرف ثالث لا علاقة لعضو
 MembersTickets=أعضاء التذاكر
 FundationMembers=أعضاء المؤسسة
-Attributs=الصفات
-ErrorMemberTypeNotDefined=عضو نوع غير معرف
-ListOfPublicMembers=قائمة بأسماء أعضاء العمومية
 ListOfValidatedPublicMembers=قائمة الأعضاء العامة المصادق
 ErrorThisMemberIsNotPublic=ليست عضوا في هذا العام
 ErrorMemberIsAlreadyLinkedToThisThirdParty=عضو آخر (الاسم : <b>٪ ق</b> ، ادخل : <b>٪)</b> مرتبطة بالفعل الى طرف ثالث <b>٪ ق.</b> إزالة هذه الوصلة الاولى بسبب طرف ثالث لا يمكن أن يرتبط فقط عضو (والعكس بالعكس).
 ErrorUserPermissionAllowsToLinksToItselfOnly=لأسباب أمنية ، يجب أن تمنح أذونات لتحرير جميع المستخدمين لتكون قادرة على ربط عضو لمستخدم هذا ليس لك.
-ThisIsContentOfYourCard=هذه هي تفاصيل بطاقتك
+ThisIsContentOfYourCard=Hi.<br><br>This is a remind of the information we get about you. Feel free to contact us if something looks wrong.<br><br>
 CardContent=مضمون البطاقة الخاصة بك عضوا
 SetLinkToUser=وصلة إلى مستخدم Dolibarr
 SetLinkToThirdParty=وصلة إلى طرف ثالث Dolibarr
@@ -28,29 +23,24 @@ MembersListToValid=قائمة مشاريع أعضاء (ينبغي التأكد �
 MembersListValid=قائمة أعضاء صالحة
 MembersListUpToDate=قائمة الأعضاء صالحة لغاية تاريخ الاكتتاب
 MembersListNotUpToDate=قائمة صحيحة مع أعضاء من تاريخ الاكتتاب
-MembersListResiliated=قائمة الأعضاء resiliated
+MembersListResiliated=List of terminated members
 MembersListQualified=قائمة الأعضاء المؤهلين
 MenuMembersToValidate=أعضاء مشروع
 MenuMembersValidated=صادق أعضاء
 MenuMembersUpToDate=حتى الآن من أعضاء
 MenuMembersNotUpToDate=وحتى الآن من أصل أعضاء
-MenuMembersResiliated=أعضاء Resiliated
+MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=أعضاء مع اشتراك لتلقي
-DateAbonment=تاريخ الاكتتاب
 DateSubscription=تاريخ الاكتتاب
-DateNextSubscription=الاكتتاب القادم
 DateEndSubscription=تاريخ انتهاء الاكتتاب
 EndSubscription=انتهاء الاكتتاب
 SubscriptionId=الاكتتاب معرف
 MemberId=عضو المعرف
 NewMember=عضو جديد
-NewType=عضو جديد من نوع
 MemberType=عضو نوع
 MemberTypeId=عضو نوع معرف
 MemberTypeLabel=عضو نوع العلامة
 MembersTypes=أعضاء أنواع
-MembersAttributes=أعضاء الصفات
-SearchAMember=البحث عن عضو
 MemberStatusDraft=مشروع (لا بد من التحقق من صحة)
 MemberStatusDraftShort=مسودة
 MemberStatusActive=صادق (تنتظر الاكتتاب)
@@ -59,20 +49,12 @@ MemberStatusActiveLate=انتهاء الاكتتاب
 MemberStatusActiveLateShort=انتهى
 MemberStatusPaid=الاكتتاب حتى الآن
 MemberStatusPaidShort=حتى الآن
-MemberStatusResiliated=عضو Resiliated
-MemberStatusResiliatedShort=Resiliated
+MemberStatusResiliated=Terminated member
+MemberStatusResiliatedShort=Terminated
 MembersStatusToValid=أعضاء مشروع
-MembersStatusToValidShort=أعضاء مشروع
-MembersStatusValidated=صادق أعضاء
-MembersStatusPaid=الاكتتاب حتى الآن
-MembersStatusPaidShort=حتى الآن
-MembersStatusNotPaid=الاكتتاب قديمة
-MembersStatusNotPaidShort=عفا عليها الزمن
-MembersStatusResiliated=أعضاء Resiliated
-MembersStatusResiliatedShort=أعضاء Resiliated
+MembersStatusResiliated=Terminated members
 NewCotisation=مساهمة جديدة
 PaymentSubscription=دفع مساهمة جديدة
-EditMember=عضو تحرير
 SubscriptionEndDate=تاريخ انتهاء الاكتتاب
 MembersTypeSetup=أعضاء نوع الإعداد
 NewSubscription=إشتراك جديد
@@ -81,56 +63,48 @@ Subscription=الاكتتاب
 Subscriptions=الاشتراكات
 SubscriptionLate=متأخر
 SubscriptionNotReceived=الاشتراك لم يتلق
-SubscriptionLateShort=متأخر
-SubscriptionNotReceivedShort=لم يتلق
 ListOfSubscriptions=قائمة الاشتراكات
 SendCardByMail=أرسل بطاقة
-AddMember=Create member
+AddMember=إنشاء عضو
 NoTypeDefinedGoToSetup=لا يجوز لأي عضو في أنواع محددة. الذهاب إلى الإعداد -- أنواع الأعضاء
 NewMemberType=عضو جديد من نوع
 WelcomeEMail=مرحبا بك في البريد الإلكتروني
 SubscriptionRequired=الاشتراك المطلوب
-EditType=عضو تحرير نوع
 DeleteType=حذف
 VoteAllowed=يسمح التصويت
 Physical=المادية
 Moral=الأخلاقية
 MorPhy=المعنوية / المادية
 Reenable=Reenable
-ResiliateMember=عضو Resiliate
-ConfirmResiliateMember=هل أنت متأكد من أن هذا resiliate؟
+ResiliateMember=Terminate a member
+ConfirmResiliateMember=Are you sure you want to terminate this member?
 DeleteMember=حذف عضو
-ConfirmDeleteMember=هل أنت متأكد من أنك تريد حذف هذا العضو (عضو حذف حذف كل ما له الاشتراك؟
+ConfirmDeleteMember=Are you sure you want to delete this member (Deleting a member will delete all his subscriptions)?
 DeleteSubscription=الغاء الاشتراك
-ConfirmDeleteSubscription=هل أنت متأكد من أنك تريد حذف هذا الاشتراك؟
+ConfirmDeleteSubscription=Are you sure you want to delete this subscription?
 Filehtpasswd=htpasswd الملف
 ValidateMember=صحة عضوا
-ConfirmValidateMember=هل أنت متأكد أنك تريد التحقق من صحة هذا؟
+ConfirmValidateMember=Are you sure you want to validate this member?
 FollowingLinksArePublic=الارتباطات التالية تفتح صفحة لا يحمي أي Dolibarr تصريح. فهي ليست formated صفحة ، تقدم مثالا على الكيفية التي تظهر في قائمة الأعضاء في قاعدة البيانات.
 PublicMemberList=عضو في لائحة عامة
 BlankSubscriptionForm=استمارة الاشتراك
 BlankSubscriptionFormDesc=يمكن أن توفر لك Dolibarr URL العام للسماح للزوار خارجي لطرح للاكتتاب للمؤسسة. إذا تم تمكين وحدة الدفع عبر الإنترنت، سيتم أيضا نموذج الدفع سيتم توفيرها تلقائيا.
 EnablePublicSubscriptionForm=تمكين الجمهور لصناعة السيارات في شكل اكتتاب
-MemberPublicLinks=الروابط العامة / صفحات
 ExportDataset_member_1=واشتراكات الأعضاء
 ImportDataset_member_1=الأعضاء
-LastMembers=ق أعضاء الماضي ٪
-LastMembersModified=آخر تعديل اعضاء ق ٪
-LastSubscriptionsModified=%s آخر تعديل الاشتراكات
-AttributeName=اسم السمة
+LastMembersModified=Latest %s modified members
+LastSubscriptionsModified=Latest %s modified subscriptions
 String=سلسلة
 Text=النص
 Int=Int
-Date=تاريخ
 DateAndTime=التاريخ والوقت
 PublicMemberCard=عضو بطاقة العامة
-MemberNotOrNoMoreExpectedToSubscribe=أو ليست عضوا في أي أكثر من المتوقع للاكتتاب
-AddSubscription=Create subscription
+SubscriptionNotRecorded=Subscription not recorded
+AddSubscription=إنشاء الاشتراك
 ShowSubscription=وتظهر اكتتاب
-MemberModifiedInDolibarr=عضو في تعديل Dolibarr
 SendAnEMailToMember=البريد الإلكتروني لإرسال معلومات العضو
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
 DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=البريد الإلكتروني لعضو في موضوع المصادقة
@@ -141,23 +115,20 @@ DescADHERENT_MAIL_RESIL_SUBJECT=موضوع البريد الإلكتروني ل�
 DescADHERENT_MAIL_RESIL=البريد الإلكتروني لعضو resiliation
 DescADHERENT_MAIL_FROM=البريد الإلكتروني للمرسل البريد الإلكتروني التلقائي
 DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
-DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_ETIQUETTE_TEXT=النص المطبوع على أوراق عنوان الأعضاء
 DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
 DescADHERENT_CARD_HEADER_TEXT=نص مطبوع على رأس عضو البطاقات
 DescADHERENT_CARD_TEXT=نص مطبوع على بطاقات الأعضاء
 DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
 DescADHERENT_CARD_FOOTER_TEXT=نص مطبوع على أسفل بطاقات الأعضاء
-GlobalConfigUsedIfNotDefined=وسيتم استخدام النص المحدد في إعداد وحدة مؤسسة إذا لم يتم تعريف هنا
-MayBeOverwrited=ويمكن overwrited هذا النص من حيث القيمة المحددة لنوع العضو
 ShowTypeCard=وتبين من نوع '٪ ق'
 HTPasswordExport=الملف htpassword جيل
 NoThirdPartyAssociatedToMember=لم يرتبط بها من طرف ثالث لهذا العضو
-ThirdPartyDolibarr=Dolibarr طرف ثالث
 MembersAndSubscriptions= وأعضاء Subscriptions
 MoreActions=تكميلية العمل على تسجيل
-MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
-MoreActionBankDirect=إنشاء سجل المعاملات مباشرة على حساب
-MoreActionBankViaInvoice=إنشاء الفاتورة والدفع على حساب
+MoreActionsOnSubscription=الإجراءات التكميلية، اقترح افتراضيا عند تسجيل الاشتراك
+MoreActionBankDirect=Create a direct entry on bank account
+MoreActionBankViaInvoice=Create an invoice, and a payment on bank account
 MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
 LinkToGeneratedPages=بطاقات زيارة انتج
 LinkToGeneratedPagesDesc=هذه الشاشة تسمح لك لإنشاء ملفات الشعبي مع بطاقات العمل لجميع أعضاء أو عضو معين.
@@ -170,8 +141,7 @@ LastSubscriptionAmount=آخر مبلغ الاشتراك
 MembersStatisticsByCountries=أعضاء إحصاءات حسب البلد
 MembersStatisticsByState=أعضاء إحصاءات الولاية / المقاطعة
 MembersStatisticsByTown=أعضاء إحصاءات بلدة
-MembersStatisticsByRegion=Members statistics by region
-MemberByRegion=Members by region
+MembersStatisticsByRegion=إحصائيات الأعضاء حسب المنطقة
 NbOfMembers=عدد الأعضاء
 NoValidatedMemberYet=العثور على أي أعضاء التحقق من صحة
 MembersByCountryDesc=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الدول. لكن الرسم يعتمد على خدمة غوغل الرسم البياني على الإنترنت ويتوفر فقط إذا كان على اتصال بالإنترنت ويعمل.
@@ -182,7 +152,6 @@ MenuMembersStats=إحصائيات
 LastMemberDate=آخر عضو تاريخ
 Nature=طبيعة
 Public=معلومات علنية
-Exports=صادرات
 NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة
 NewMemberForm=الأعضاء الجدد في شكل
 SubscriptionsStatistics=إحصاءات عن الاشتراكات
@@ -192,16 +161,11 @@ TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أسا�
 DefaultAmount=المبلغ الافتراضي للاكتتاب
 CanEditAmount=يمكن للزائر اختيار / تحرير كمية من اكتتابها
 MEMBER_NEWFORM_PAYONLINE=القفز على صفحة الدفع عبر الانترنت المتكاملة
-Associations=أسس
-Collectivités=المنظمات
-Particuliers=الشخصية
-Entreprises=الشركات
-DOLIBARRFOUNDATION_PAYMENT_FORM=أن يسدد الاشتراك باستخدام حوالة مصرفية، راجع صفحة <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> الدفع باستخدام بطاقة ائتمان أو باي بال، وانقر على زر في أسفل هذه الصفحة. <br>
-ByProperties=By characteristics
-MembersStatisticsByProperties=Members statistics by characteristics
-MembersByNature=This screen show you statistics on members by nature.
-MembersByRegion=This screen show you statistics on members by region.
-VATToUseForSubscriptions=VAT rate to use for subscriptions
-NoVatOnSubscription=No TVA for subscriptions
-MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s
+ByProperties=حسب الخصائص
+MembersStatisticsByProperties=إحصائيات الأعضاء حسب الخصائص
+MembersByNature=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الطبيعة.
+MembersByRegion=هذه الشاشة تظهر لك إحصاءات عن أعضاء حسب المنطقة.
+VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في اشتراكات
+NoVatOnSubscription=لا TVA للاشتراكات
+MEMBER_PAYONLINE_SENDEMAIL=Email to use for email warning when Dolibarr receive a confirmation of a validated payment for a subscription (Example: paymentdone@example.com)
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=المنتج يستخدم لخط الاشتراك في فاتورة و:٪ الصورة

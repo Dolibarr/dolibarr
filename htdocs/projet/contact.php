@@ -47,7 +47,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 
 /*
@@ -76,11 +76,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -149,73 +149,110 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 
-	/*
-	 *   Projet synthese pour rappel
-	*/
-	print '<table class="border" width="100%">';
+    // Project card
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    $morehtmlref='<div class="refidno">';
+    // Title
+    $morehtmlref.=$object->title;
+    // Thirdparty
+    if ($object->thirdparty->id > 0) 
+    {
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    }
+    $morehtmlref.='</div>';
+    
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    }
+    
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-		$objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-		$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	print '</td></tr>';
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-	// Customer
-	print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-	print '<td colspan="3">';
-	if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td></tr>';
-
+    print '<table class="border" width="100%">';
+        
 	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) print $langs->trans('SharedProject');
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	// Opportunity status
+    	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+    	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+    	if ($code) print $langs->trans("OppStatus".$code);
+    	print '</td></tr>';
+    
+        // Opportunity percent
+        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,'',$langs,1,0).' %';
+        print '</td></tr>';
 
-	// Date start
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'day');
-	print '</td></tr>';
+    	// Opportunity Amount
+    	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+    	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+    	print '</td></tr>';
+    }
+    
+    // Date start - end
+    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+    print dol_print_date($object->date_start,'day');
+    $end=dol_print_date($object->date_end,'day');
+    if ($end) print ' - '.$end;
+    print '</td></tr>';
 
-	// Date end
-	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'day');
-	print '</td></tr>';
-
-	// Opportunity status
-	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-	if ($code) print $langs->trans("OppStatus".$code);
-	print '</td></tr>';
-
-	// Opportunity Amount
-	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
-	print '</td></tr>';
-
-	// Budget
+    // Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
 	print '</td></tr>';
 
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		
 	print "</table>";
 
-	print '</div>';
-
+    print '</div>';
+    print '<div class="fichehalfright">';
+    print '<div class="ficheaddleft">';
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border" width="100%">';
+    
+    // Description
+    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+    print nl2br($object->description);
+    print '</td></tr>';
+    
+    // Categories
+    if($conf->categorie->enabled) {
+        print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+        print $form->showCategories($object->id,'project',1);
+        print "</td></tr>";
+    }
+    
+    print '</table>';
+    
+    print '</div>';
+    print '</div>';
+    print '</div>';
+    
+    print '<div class="clearboth"></div>';
+        
+    dol_fiche_end();
+    
+    print '<br>';
+    
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 	foreach($dirtpls as $reldir)

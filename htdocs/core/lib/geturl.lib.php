@@ -27,8 +27,8 @@
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'DELETE'
  * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with PUTALREADYFORMATED
- * @param	string    $followlocation		1=Follow location, 0=Do not follow
- * @param	array     $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	integer   $followlocation		1=Follow location, 0=Do not follow
+ * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						    Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
@@ -54,10 +54,14 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));
+	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
+	
 	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 
+	// TLSv1 by default or change to TLSv1.2 in module configuration
+    //curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->MAIN_CURL_SSLVERSION)?1:$conf->global->MAIN_CURL_SSLVERSION));
+    
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -113,29 +117,38 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     //getting response from server
     $response = curl_exec($ch);
 
-    $status = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
-    dol_syslog("getURLContent request=".$status);
-
+    $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
+    
+    dol_syslog("getURLContent request=".$request);
     dol_syslog("getURLContent response=".$response);
 
     $rep=array();
-    $rep['content']=$response;
-    $rep['curl_error_no']='';
-    $rep['curl_error_msg']='';
-
     if (curl_errno($ch))
     {
+        // Ad keys to $rep
+        $rep['content']=$response;
+        
         // moving to display page to display curl errors
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent curl_error array is ".join(',',$rep));
+		dol_syslog("getURLContent response array is ".join(',',$rep));
     }
     else
     {
     	$info = curl_getinfo($ch);
-    	$rep['header_size']=$info['header_size'];
 
+    	// Ad keys to $rep
+    	$rep = $info;
+    	//$rep['header_size']=$info['header_size'];
+    	//$rep['http_code']=$info['http_code'];
+    	dol_syslog("getURLContent http_code=".$rep['http_code']);
+    	
+        // Add more keys to $rep
+        $rep['content']=$response;
+    	$rep['curl_error_no']='';
+    	$rep['curl_error_msg']='';
+    	 
     	//closing the curl
         curl_close($ch);
     }

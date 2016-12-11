@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - propal
+ProposalCard=Angebotskarte
+LastModifiedProposals=Die letzen %s bearbeiteten Angebote
+PropalsToClose=Zu schliessende Angebote
+DefaultProposalDurationValidity=Standardmässige Gültigkeitsdatuer (Tage)
+UseCustomerContactAsPropalRecipientIfExist=Falls vorhanden die Adresse des Kundenkontakts statt des Geschäftspartners verwenden
+TypeContact_propal_external_CUSTOMER=Kundenkontakt für Angebot
+DefaultModelPropalToBill=Standard-Template, wenn Sie ein Angebot schliessen wollen (zur Verrechung)
+DefaultModelPropalClosed=Standard-Template, wenn sie ein Angebot schliessen wollen (ohne Rechnung)

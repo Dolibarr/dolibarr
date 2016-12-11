@@ -1,7 +1,6 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resurse
 MenuResourceAdd=Resursă nouă
-MenuResourcePlanning=Planificare resursă
 DeleteResource=Şterge resursa
 ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
 NoResourceInDatabase=Nicio resursă în baza de date.
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Descriere resursă
 
 ResourcesLinkedToElement=Resurse legate de elementul
 
-ShowResourcePlanning=Arată planificare resursă
-GotoDate=Mergi la data
+ShowResource=Arata Resursă
 
 ResourceElementPage=Element resurse
 ResourceCreatedWithSuccess=Resursă creată
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Linie resursă ștearsă
 RessourceLineSuccessfullyUpdated=Linie  resursă actualizată
 ResourceLinkedWithSuccess=Resursă legată cu succes
 
-TitleResourceCard=Fişă resursă
 ConfirmDeleteResource=Confirmaţi ştergerea acestei resurse
 RessourceSuccessfullyDeleted=Resursă ştearsă
 DictionaryResourceType=Tipuri resurse

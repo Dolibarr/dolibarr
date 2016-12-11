@@ -1,7 +1,6 @@
-
-MenuResourceIndex=Resources
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resurssit
 MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 NoResourceInDatabase=No resource in database.
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Resource description
 
 ResourcesLinkedToElement=Resources linked to element
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResource=Show resource
 
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource successfully created
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 ResourceLinkedWithSuccess=Resource linked with success
 
-TitleResourceCard=Resource card
 ConfirmDeleteResource=Confirm to delete this resource
 RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources

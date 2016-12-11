@@ -16,6 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *       \file       htdocs/projet/stats/index.php
+ *       \ingroup    project
+ *       \brief      Page for project statistics
+ */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -43,6 +49,7 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
+$langs->load('companies');
 $langs->load('projects');
 
 
@@ -114,15 +121,15 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->setShowPointValue($showpointvalue);
 			$px->setShowPercent(1);
 			$px->SetMaxValue($px->GetCeilMaxValue());
-			$px->SetWidth(300);
-			$px->SetHeight(300);
+			$px->SetWidth($WIDTH);
+			$px->SetHeight($HEIGHT);
 			$px->SetShading(3);
 			$px->SetHorizTickIncrement(1);
 			$px->SetCssPrefix("cssboxes");
 			$px->SetType(array (
 					'pie'
 			));
-			$px->SetTitle($langs->trans('OpportunitiesStatusForOpenedProjects'));
+			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
 			if ($result<0) {
 				setEventMessages($px->error, null, 'errors');
@@ -208,7 +215,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	// Build graphic with transformation rate
-	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear);
+	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear, 0, 0);
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
@@ -246,6 +253,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 // Show array
 $stats_project->year=0;
 $data_all_year = $stats_project->getAllByYear();
+
 if (!empty($year)) $stats_project->year=$year;
 $arrayyears=array();
 foreach($data_all_year as $val) {
@@ -276,7 +284,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 if ($mode == 'customer') $filter='s.client in (1,2,3)';
 if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1);
+print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
@@ -297,11 +305,12 @@ print '<br><br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfProjects").'</td>';
+print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-	print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
 }
 print '</tr>';
 
@@ -320,6 +329,7 @@ foreach ($data_all_year as $val)
 		{
 			print '<td align="right">0</td>';
 			print '<td align="right">0</td>';
+			print '<td align="right">0</td>';
 		}
 		print '<td align="right">0</td>';
 		print '</tr>';
@@ -330,8 +340,9 @@ foreach ($data_all_year as $val)
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-		print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+		print '<td align="right">'.($val['total']?price(price2num($val['total'],'MT'),1):'0').'</td>';
+		print '<td align="right">'.($val['avg']?price(price2num($val['avg'],'MT'),1):'0').'</td>';
+		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'],'MT'),1):'0').'</td>';
 	}
 	print '</tr>';
 	$oldyear=$year;

@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,245 +18,200 @@
  */
 
 /**
- * \file		htdocs/accountancy/class/bookkeeping.class.php
- * \ingroup		Accounting Expert
- * \brief		File of class to manage book keeping
+ *	\file       htdocs/accountancy/class/bookkeeping.class.php
+ *	\ingroup    Advanced accountancy
+ *	\brief      File of class to manage general ledger
  */
 
+// Class
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+
 /**
- *	Class to manage accountancy book keeping
+ * Class to manage general ledger
  */
 class BookKeeping extends CommonObject
 {
-	var $doc_date;
-	var $doc_type;
-	var $doc_ref;
-	var $date_create;
-	var $fk_doc;
-	var $fk_docdet;
-	var $code_tiers;
-	var $numero_compte;
-	var $label_compte;
-	var $debit;
-	var $credit;
-	var $montant;
-	var $sens;
-	var $fk_user_author;
-	var $code_journal;
-	var $piece_num;
-	var $linesexport = array ();
-	var $linesmvt = array ();
-
-    /**
-     *  Constructor
-     *
-     *  @param	DoliDB		$db		Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-    }
-
 	/**
-     *      Load a line into memory from database
-     *
-     *      @param	int		$id		 	id of line to get
-     *      @return	int					<0 if KO, >0 if OK
-     */
-	function fetch($id)
-	{
-		$sql = "SELECT rowid, doc_date, doc_type,";
-		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers, ";
-		$sql .= " numero_compte, label_compte, debit, credit, ";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
-		$sql .= " WHERE rowid = '" . $id . "'";
-
-		dol_syslog(get_class($this) . "fetch sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-
-			$this->id = $obj->rowid;
-
-			$this->doc_date = $this->db->jdate($obj->doc_date);
-			$this->doc_type = $obj->doc_type;
-			$this->doc_ref = $obj->doc_ref;
-			$this->fk_doc = $obj->fk_doc;
-			$this->fk_docdet = $obj->fk_docdet;
-			$this->code_tiers = $obj->code_tiers;
-			$this->numero_compte = $obj->numero_compte;
-			$this->label_compte = $obj->label_compte;
-			$this->debit = $obj->debit;
-			$this->credit = $obj->credit;
-			$this->montant = $obj->montant;
-			$this->sens = $obj->sens;
-			$this->code_journal = $obj->code_journal;
-			$this->piece_num = $obj->piece_num;
-		}
-		else
-		{
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
-			return - 1;
-		}
-
-		return 1;
-	}
-
-	/**
-     *      Load an accounting document into memory from database
-     *
-     *      @param	int		$piecenum 	Accounting document to get
-     *      @return	int					<0 if KO, >0 if OK
-     */
-	function fetch_per_mvt($piecenum)
-	{
-		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-		$sql .= " WHERE piece_num = '" . $piecenum . "'";
-
-		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-
-			$this->piece_num = $obj->piece_num;
-			$this->code_journal = $obj->code_journal;
-			$this->doc_date = $this->db->jdate($obj->doc_date);
-			$this->doc_ref = $obj->doc_ref;
-			$this->doc_type = $obj->doc_type;
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
-			return - 1;
-		}
-
-		return 1;
-	}
-
-	/**
-     *      Return next number movement
-     *
-     *      @return    string			Last number
-     */
-	function getNextNumMvt() {
-		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-
-		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-
-		if ($result)
-		{
-			$obj = $this->db->fetch_object($result);
-
-			return $obj->max;
-		}
-		else
-		{
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);
-			return - 1;
-		}
-	}
-
-	/**
-     *      Load all informations of accountancy document
-     *
-     *      @param	int		$piecenum	id of line to get
-     *      @return	int					<0 if KO, >0 if OK
-     */
-	function fetch_all_per_mvt($piecenum)
-	{
-		$sql = "SELECT rowid, doc_date, doc_type,";
-		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
-		$sql .= " numero_compte, label_compte, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
-		$sql .= " WHERE piece_num = '" . $piecenum . "'";
-
-		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-
-			while ( $obj = $this->db->fetch_object($result) ) {
-
-				$line = new BookKeepingLine();
-
-				$line->id = $obj->rowid;
-
-				$line->doc_date = $this->db->jdate($obj->doc_date);
-				$line->doc_type = $obj->doc_type;
-				$line->doc_ref = $obj->doc_ref;
-				$line->fk_doc = $obj->fk_doc;
-				$line->fk_docdet = $obj->fk_docdet;
-				$line->code_tiers = $obj->code_tiers;
-				$line->numero_compte = $obj->numero_compte;
-				$line->label_compte = $obj->label_compte;
-				$line->debit = $obj->debit;
-				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
-				$line->sens = $obj->sens;
-				$line->code_journal = $obj->code_journal;
-				$line->piece_num = $obj->piece_num;
-
-				$this->linesmvt[] = $line;
-			}
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
-			return - 1;
-		}
-
-		return 1;
-	}
-
-	/**
-	 * Insert line into bookkeeping
 	 *
-	 * @param 	User	$user		User who inserted operation
-	 * @return	int <0 KO >0 OK
+	 * @var string Error code (or message)
+	 * @deprecated
+	 *
+	 * @see Accountingbookkeeping::errors
 	 */
-	function create($user='')
-	{
-		global $conf;
-
+	public $error;
+	/**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
+	/**
+	 *
+	 * @var string Id to identify managed objects
+	 */
+	public $element = 'accountingbookkeeping';
+	/**
+	 *
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'accounting_bookkeeping';  
+	
+	
+	public $entity = 1;
+	
+	
+	/**
+	 *
+	 * @var BookKeepingLine[] Lines
+	 */
+	public $lines = array ();
+	
+	
+	/**
+	 *
+	 * @var int ID
+	 */
+	public $id;
+	/**
+	 */
+	public $doc_date;
+	public $doc_type;
+	public $doc_ref;
+	public $fk_doc;
+	public $fk_docdet;
+	public $code_tiers;
+	public $numero_compte;
+	public $label_compte;
+	public $debit;
+	public $credit;
+	public $montant;
+	public $sens;
+	public $fk_user_author;
+	public $import_key;
+	public $code_journal;
+	public $piece_num;
+	
+	/**
+	 */
+	
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db) {
+		$this->db = $db;
+	}
+	
+	/**
+	 * Create object into database
+	 *
+	 * @param  User    $user       User that creates
+	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int                 <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false) {
+	    global $conf, $langs;
+	    
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$error = 0;
+		
+		// Clean parameters
+		if (isset($this->doc_type)) {
+			$this->doc_type = trim($this->doc_type);
+		}
+		if (isset($this->doc_ref)) {
+			$this->doc_ref = trim($this->doc_ref);
+		}
+		if (isset($this->fk_doc)) {
+			$this->fk_doc = trim($this->fk_doc);
+		}
+		if (isset($this->fk_docdet)) {
+			$this->fk_docdet = trim($this->fk_docdet);
+		}
+		if (isset($this->code_tiers)) {
+			$this->code_tiers = trim($this->code_tiers);
+		}
+		if (isset($this->numero_compte)) {
+			$this->numero_compte = trim($this->numero_compte);
+		}
+		if (isset($this->label_compte)) {
+			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->debit)) {
+			$this->debit = trim($this->debit);
+		}
+		if (isset($this->credit)) {
+			$this->credit = trim($this->credit);
+		}
+		if (isset($this->montant)) {
+			$this->montant = trim($this->montant);
+		}
+		if (isset($this->sens)) {
+			$this->sens = trim($this->sens);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+		if (isset($this->code_journal)) {
+			$this->code_journal = trim($this->code_journal);
+		}
+		if (isset($this->piece_num)) {
+			$this->piece_num = trim($this->piece_num);
+		}
+		if (empty($this->debit)) $this->debit = 0;
+		if (empty($this->credit)) $this->credit = 0;
+		
+		// Check parameters
+		if (empty($this->numero_compte) || $this->numero_compte == '-1')
+		{
+		    $langs->load("errors");
+            $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet);		    
+		    return -1;
+		}
+		
+		
+		$this->db->begin();
+		
 		$this->piece_num = 0;
-
+		
 		// first check if line not yet in bookkeeping
-		$sql = "SELECT count(*)";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
+		$sql = "SELECT count(*) as nb";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
 		$sql .= " AND numero_compte = '" . $this->numero_compte . "'";
-
-		dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		
 		$resql = $this->db->query($sql);
-
+		
 		if ($resql) {
-			$row = $this->db->fetch_array($resql);
-			if ($row[0] == 0) {
-
+			$row = $this->db->fetch_object($resql);
+			if ($row->nb == 0) 
+			{
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
-				$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
-				$sqlnum .= " WHERE doc_type = '" . $this->doc_type . "'";
-				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";
-				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";
-
+				$sqlnum .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+				$sqlnum .= " WHERE doc_type = '" . $this->doc_type . "'";		// For example doc_type = 'bank' 
+				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";		// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
+				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";			// ref of source object
+			    $sqlnum .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+				
 				dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
-				if ($resqlnum)
-				{
+				if ($resqlnum) {
 					$objnum = $this->db->fetch_object($resqlnum);
 					$this->piece_num = $objnum->piece_num;
 				}
 				dol_syslog(get_class($this) . ":: create this->piece_num=" . $this->piece_num, LOG_DEBUG);
-				if (empty($this->piece_num))
-				{
+				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
-					$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
-
+					$sqlnum .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+				    $sqlnum .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+						
 					dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 					$resqlnum = $this->db->query($sqlnum);
 					if ($resqlnum) {
@@ -269,14 +223,13 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
 				}
-
+				
 				$now = dol_now();
 				if (empty($this->date_create)) {
 					$this->date_create = $now;
 				}
-
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (";
 				
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				$sql .= "doc_date";
 				$sql .= ", doc_type";
 				$sql .= ", doc_ref";
@@ -293,10 +246,9 @@ class BookKeeping extends CommonObject
 				$sql .= ", import_key";
 				$sql .= ", code_journal";
 				$sql .= ", piece_num";
-
+				$sql .= ', entity';				
 				$sql .= ") VALUES (";
-				
-				$sql .= "'" . $this->doc_date . "'";
+				$sql .= "'" . $this->db->idate($this->doc_date) . "'";
 				$sql .= ",'" . $this->doc_type . "'";
 				$sql .= ",'" . $this->doc_ref . "'";
 				$sql .= "," . $this->fk_doc;
@@ -308,57 +260,840 @@ class BookKeeping extends CommonObject
 				$sql .= "," . $this->credit;
 				$sql .= "," . $this->montant;
 				$sql .= ",'" . $this->sens . "'";
-				$sql .= ",'" . $this->fk_user_author."'";
-				$sql .= ",'" . $this->date_create . "'";
+				$sql .= ",'" . $this->fk_user_author . "'";
+				$sql .= ",'" . $this->db->idate($this->date_create). "'";
 				$sql .= ",'" . $this->code_journal . "'";
 				$sql .= "," . $this->piece_num;
-				
+				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
 				$sql .= ")";
-
+				
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
-
+					$id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+					
 					if ($id > 0) {
 						$this->id = $id;
 						$result = 0;
 					} else {
-						$result = - 2;
-						dol_syslog("BookKeeping::Create Error $result lecture ID");
+						$result = -2;
+						$error ++;
+						$this->errors[] = 'Error Create Error ' . $result . ' lecture ID';
+						dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 					}
 				} else {
-					$result = - 1;
-					dol_syslog("BookKeeping::Create Error $result INSERT Mysql");
+					$result = -1;
+					$error ++;
+					$this->errors[] = 'Error ' . $this->db->lasterror();
+					dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 				}
-			} else {
-				$result = - 3;
-				dol_syslog("BookKeeping::Create Error $result SELECT Mysql");
+			} else {     // Already exists
+				$result = -3;
+				$error++;
+				$this->error='BookkeepingRecordAlreadyExists';
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_WARNING);
 			}
 		} else {
-			$result = - 5;
-			dol_syslog("BookKeeping::Create Error $result SELECT Mysql");
+			$result = -5;
+			$error ++;
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
-
-		return $result;
+		
+		if (! $error) {
+			
+			if (! $notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action to call a trigger.
+				
+				// // Call triggers
+				// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+				// if ($result < 0) $error++;
+				// // End call triggers
+			}
+		}
+		
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $result;
+		}
 	}
-
+	
+	/**
+	 * Create object into database
+	 *
+	 * @param  User    $user       User that creates
+	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int                 <0 if KO, Id of created object if OK
+	 */
+	public function createStd(User $user, $notrigger = false) {
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$error = 0;
+		
+		// Clean parameters
+		
+		if (isset($this->doc_type)) {
+			$this->doc_type = trim($this->doc_type);
+		}
+		if (isset($this->doc_ref)) {
+			$this->doc_ref = trim($this->doc_ref);
+		}
+		if (isset($this->fk_doc)) {
+			$this->fk_doc = trim($this->fk_doc);
+		}
+		if (isset($this->fk_docdet)) {
+			$this->fk_docdet = trim($this->fk_docdet);
+		}
+		if (isset($this->code_tiers)) {
+			$this->code_tiers = trim($this->code_tiers);
+		}
+		if (isset($this->numero_compte)) {
+			$this->numero_compte = trim($this->numero_compte);
+		}
+		if (isset($this->label_compte)) {
+			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->debit)) {
+			$this->debit = trim($this->debit);
+		}
+		if (isset($this->credit)) {
+			$this->credit = trim($this->credit);
+		}
+		if (isset($this->montant)) {
+			$this->montant = trim($this->montant);
+		}
+		if (isset($this->sens)) {
+			$this->sens = trim($this->sens);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+		if (isset($this->code_journal)) {
+			$this->code_journal = trim($this->code_journal);
+		}
+		if (isset($this->piece_num)) {
+			$this->piece_num = trim($this->piece_num);
+		}
+		if (empty($this->debit)) $this->debit = 0;
+		if (empty($this->credit)) $this->credit = 0;
+		
+		// Check parameters
+		// Put here code to add control on parameters values
+		
+		// Insert request
+		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql .= 'doc_date,';
+		$sql .= 'doc_type,';
+		$sql .= 'doc_ref,';
+		$sql .= 'fk_doc,';
+		$sql .= 'fk_docdet,';
+		$sql .= 'code_tiers,';
+		$sql .= 'numero_compte,';
+		$sql .= 'label_compte,';
+		$sql .= 'debit,';
+		$sql .= 'credit,';
+		$sql .= 'montant,';
+		$sql .= 'sens,';
+		$sql .= 'fk_user_author,';
+		$sql .= 'import_key,';
+		$sql .= 'code_journal,';
+		$sql .= 'piece_num,';
+		$sql .= 'entity';
+		$sql .= ') VALUES (';
+		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
+		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
+		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
+		$sql .= ' ' . (empty($this->fk_doc) ? '0' : $this->fk_doc) . ',';
+		$sql .= ' ' . (empty($this->fk_docdet) ? '0' : $this->fk_docdet) . ',';
+		$sql .= ' ' . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ',';
+		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : $this->debit ). ',';
+		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : $this->credit ). ',';
+		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
+		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
+		$sql .= ' ' . $user->id . ',';
+		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
+		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
+		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->piece_num).',';
+		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
+		$sql .= ')';
+		
+		$this->db->begin();
+		
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error ++;
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+		}
+		
+		if (! $error) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			
+			if (! $notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action to call a trigger.
+				
+				// // Call triggers
+				// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+				// if ($result < 0) $error++;
+				// // End call triggers
+			}
+		}
+		
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			
+			return - 1 * $error;
+		} else {
+			$this->db->commit();
+			
+			return $this->id;
+		}
+	}
+	
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int $id Id object
+	 * @param string $ref Ref
+	 * 
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null) {
+		global $conf;
+		
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$sql = 'SELECT';
+		$sql .= ' t.rowid,';
+		$sql .= " t.doc_date,";
+		$sql .= " t.doc_type,";
+		$sql .= " t.doc_ref,";
+		$sql .= " t.fk_doc,";
+		$sql .= " t.fk_docdet,";
+		$sql .= " t.code_tiers,";
+		$sql .= " t.numero_compte,";
+		$sql .= " t.label_compte,";
+		$sql .= " t.debit,";
+		$sql .= " t.credit,";
+		$sql .= " t.montant,";
+		$sql .= " t.sens,";
+		$sql .= " t.fk_user_author,";
+		$sql .= " t.import_key,";
+		$sql .= " t.code_journal,";
+		$sql .= " t.piece_num";
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' WHERE 1 = 1';
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		if (null !== $ref) {
+			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
+		} else {
+			$sql .= ' AND t.rowid = ' . $id;
+		}
+		
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$numrows = $this->db->num_rows($resql);
+			if ($numrows) {
+				$obj = $this->db->fetch_object($resql);
+				
+				$this->id = $obj->rowid;
+				
+				$this->doc_date = $this->db->jdate($obj->doc_date);
+				$this->doc_type = $obj->doc_type;
+				$this->doc_ref = $obj->doc_ref;
+				$this->fk_doc = $obj->fk_doc;
+				$this->fk_docdet = $obj->fk_docdet;
+				$this->code_tiers = $obj->code_tiers;
+				$this->numero_compte = $obj->numero_compte;
+				$this->label_compte = $obj->label_compte;
+				$this->debit = $obj->debit;
+				$this->credit = $obj->credit;
+				$this->montant = $obj->montant;
+				$this->sens = $obj->sens;
+				$this->fk_user_author = $obj->fk_user_author;
+				$this->import_key = $obj->import_key;
+				$this->code_journal = $obj->code_journal;
+				$this->piece_num = $obj->piece_num;
+			}
+			$this->db->free($resql);
+			
+			if ($numrows) {
+				return 1;
+			} else {
+				return 0;
+			}
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			
+			return - 1;
+		}
+	}
+  
+  /**
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *       
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+		global $conf;
+		
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$sql = 'SELECT';
+		$sql .= ' t.rowid,';
+		$sql .= " t.doc_date,";
+		$sql .= " t.doc_type,";
+		$sql .= " t.doc_ref,";
+		$sql .= " t.fk_doc,";
+		$sql .= " t.fk_docdet,";
+		$sql .= " t.code_tiers,";
+		$sql .= " t.numero_compte,";
+		$sql .= " t.label_compte,";
+		$sql .= " t.debit,";
+		$sql .= " t.credit,";
+		$sql .= " t.montant,";
+		$sql .= " t.sens,";
+		$sql .= " t.fk_user_author,";
+		$sql .= " t.import_key,";
+		$sql .= " t.code_journal,";
+		$sql .= " t.piece_num";
+		// Manage filter
+		$sqlwhere = array ();
+		if (count($filter) > 0) {
+			foreach ( $filter as $key => $value ) {
+				if ($key == 't.doc_date') {
+					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.code_tiers>=' || $key == 't.code_tiers<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
+					$sqlwhere[] = $key . '=' . $value;
+				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} elseif ($key == 't.label_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				}else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' WHERE 1 = 1';
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+        // Affichage par compte comptable
+        $sql .= ' ORDER BY t.numero_compte ASC';
+		if (! empty($sortfield)) {
+            $sql .= ', ' . $sortfield . ' ' .$sortorder;
+		}
+		if (! empty($limit)) {
+			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
+		} 
+		$this->lines = array ();
+		
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new BookKeepingLine();
+				
+				$line->id = $obj->rowid;
+				
+				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_type = $obj->doc_type;
+				$line->doc_ref = $obj->doc_ref;
+				$line->fk_doc = $obj->fk_doc;
+				$line->fk_docdet = $obj->fk_docdet;
+				$line->code_tiers = $obj->code_tiers;
+				$line->numero_compte = $obj->numero_compte;
+				$line->label_compte = $obj->label_compte;
+				$line->debit = $obj->debit;
+				$line->credit = $obj->credit;
+				$line->montant = $obj->montant;
+				$line->sens = $obj->sens;
+				$line->fk_user_author = $obj->fk_user_author;
+				$line->import_key = $obj->import_key;
+				$line->code_journal = $obj->code_journal;
+				$line->piece_num = $obj->piece_num;
+				
+				$this->lines[] = $line;
+			}
+			$this->db->free($resql);
+			
+			return $num;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			
+			return - 1;
+		}
+	}
+  
+	
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *       
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+		global $conf;
+		
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$sql = 'SELECT';
+		$sql .= ' t.rowid,';
+		$sql .= " t.doc_date,";
+		$sql .= " t.doc_type,";
+		$sql .= " t.doc_ref,";
+		$sql .= " t.fk_doc,";
+		$sql .= " t.fk_docdet,";
+		$sql .= " t.code_tiers,";
+		$sql .= " t.numero_compte,";
+		$sql .= " t.label_compte,";
+		$sql .= " t.debit,";
+		$sql .= " t.credit,";
+		$sql .= " t.montant,";
+		$sql .= " t.sens,";
+		$sql .= " t.fk_user_author,";
+		$sql .= " t.import_key,";
+		$sql .= " t.code_journal,";
+		$sql .= " t.piece_num";
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		// Manage filter
+		$sqlwhere = array ();
+		if (count($filter) > 0) {
+			foreach ( $filter as $key => $value ) {
+				if ($key == 't.doc_date') {
+					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.code_tiers>=' || $key == 't.code_tiers<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
+					$sqlwhere[] = $key . '=' . $value;
+				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+		$sql.= ' WHERE 1 = 1';
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+		
+		if (! empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (! empty($limit)) {
+			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
+		}
+		$this->lines = array ();
+		
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new BookKeepingLine();
+				
+				$line->id = $obj->rowid;
+				
+				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_type = $obj->doc_type;
+				$line->doc_ref = $obj->doc_ref;
+				$line->fk_doc = $obj->fk_doc;
+				$line->fk_docdet = $obj->fk_docdet;
+				$line->code_tiers = $obj->code_tiers;
+				$line->numero_compte = $obj->numero_compte;
+				$line->label_compte = $obj->label_compte;
+				$line->debit = $obj->debit;
+				$line->credit = $obj->credit;
+				$line->montant = $obj->montant;
+				$line->sens = $obj->sens;
+				$line->fk_user_author = $obj->fk_user_author;
+				$line->import_key = $obj->import_key;
+				$line->code_journal = $obj->code_journal;
+				$line->piece_num = $obj->piece_num;
+				
+				$this->lines[] = $line;
+			}
+			$this->db->free($resql);
+			
+			return $num;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			
+			return - 1;
+		}
+	}
+	
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+		global $conf;
+		
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+	
+		$sql = 'SELECT';
+		$sql .= " t.numero_compte,";
+		$sql .= " SUM(t.debit) as debit,";
+		$sql .= " SUM(t.credit) as credit";
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		// Manage filter
+		$sqlwhere = array ();
+		if (count($filter) > 0) {
+			foreach ( $filter as $key => $value ) {
+				if ($key == 't.doc_date') {
+					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.code_tiers>=' || $key == 't.code_tiers<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
+					$sqlwhere[] = $key . '=' . $value;
+				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+		$sql.= ' WHERE 1 = 1';
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+		
+		$sql .= ' GROUP BY t.numero_compte';
+	
+		if (! empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder); 
+		}
+		if (! empty($limit)) {
+			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
+		}
+		$this->lines = array ();
+	
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+	
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new BookKeepingLine();
+				
+				$line->numero_compte = $obj->numero_compte;
+				$line->debit = $obj->debit;
+				$line->credit = $obj->credit;
+				$this->lines[] = $line;
+			}
+			$this->db->free($resql);
+	
+			return $num;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+	
+			return - 1;
+		}
+	}
+	
+	/**
+	 * Update object into database
+	 *
+	 * @param User $user User that modifies
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 *       
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false) {
+		$error = 0;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		// Clean parameters
+		
+		if (isset($this->doc_type)) {
+			$this->doc_type = trim($this->doc_type);
+		}
+		if (isset($this->doc_ref)) {
+			$this->doc_ref = trim($this->doc_ref);
+		}
+		if (isset($this->fk_doc)) {
+			$this->fk_doc = trim($this->fk_doc);
+		}
+		if (isset($this->fk_docdet)) {
+			$this->fk_docdet = trim($this->fk_docdet);
+		}
+		if (isset($this->code_tiers)) {
+			$this->code_tiers = trim($this->code_tiers);
+		}
+		if (isset($this->numero_compte)) {
+			$this->numero_compte = trim($this->numero_compte);
+		}
+		if (isset($this->label_compte)) {
+			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->debit)) {
+			$this->debit = trim($this->debit);
+		}
+		if (isset($this->credit)) {
+			$this->credit = trim($this->credit);
+		}
+		if (isset($this->montant)) {
+			$this->montant = trim($this->montant);
+		}
+		if (isset($this->sens)) {
+			$this->sens = trim($this->sens);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+		if (isset($this->code_journal)) {
+			$this->code_journal = trim($this->code_journal);
+		}
+		if (isset($this->piece_num)) {
+			$this->piece_num = trim($this->piece_num);
+		}
+		
+		// Check parameters
+		// Put here code to add a control on parameters values
+		
+		// Update request
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql .= ' doc_date = ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) != 0 ? "'" . $this->db->idate($this->doc_date) . "'" : 'null') . ',';
+		$sql .= ' doc_type = ' . (isset($this->doc_type) ? "'" . $this->db->escape($this->doc_type) . "'" : "null") . ',';
+		$sql .= ' doc_ref = ' . (isset($this->doc_ref) ? "'" . $this->db->escape($this->doc_ref) . "'" : "null") . ',';
+		$sql .= ' fk_doc = ' . (isset($this->fk_doc) ? $this->fk_doc : "null") . ',';
+		$sql .= ' fk_docdet = ' . (isset($this->fk_docdet) ? $this->fk_docdet : "null") . ',';
+		$sql .= ' code_tiers = ' . (isset($this->code_tiers) ? "'" . $this->db->escape($this->code_tiers) . "'" : "null") . ',';
+		$sql .= ' numero_compte = ' . (isset($this->numero_compte) ? "'" . $this->db->escape($this->numero_compte) . "'" : "null") . ',';
+		$sql .= ' label_compte = ' . (isset($this->label_compte) ? "'" . $this->db->escape($this->label_compte) . "'" : "null") . ',';
+		$sql .= ' debit = ' . (isset($this->debit) ? $this->debit : "null") . ',';
+		$sql .= ' credit = ' . (isset($this->credit) ? $this->credit : "null") . ',';
+		$sql .= ' montant = ' . (isset($this->montant) ? $this->montant : "null") . ',';
+		$sql .= ' sens = ' . (isset($this->sens) ? "'" . $this->db->escape($this->sens) . "'" : "null") . ',';
+		$sql .= ' fk_user_author = ' . (isset($this->fk_user_author) ? $this->fk_user_author : "null") . ',';
+		$sql .= ' import_key = ' . (isset($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null") . ',';
+		$sql .= ' code_journal = ' . (isset($this->code_journal) ? "'" . $this->db->escape($this->code_journal) . "'" : "null") . ',';
+		$sql .= ' piece_num = ' . (isset($this->piece_num) ? $this->piece_num : "null");
+		$sql .= ' WHERE rowid=' . $this->id;
+		
+		$this->db->begin();
+		
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error ++;
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+		}
+		
+		if (! $error && ! $notrigger) {
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action calls a trigger.
+			
+			// // Call triggers
+			// $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+			// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+			// // End call triggers
+		}
+		
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			
+			return - 1 * $error;
+		} else {
+			$this->db->commit();
+			
+			return 1;
+		}
+	}
+	
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user User that deletes
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 *       
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false) {
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		$error = 0;
+		
+		$this->db->begin();
+		
+		if (! $error) {
+			if (! $notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action calls a trigger.
+				
+				// // Call triggers
+				// $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+				// // End call triggers
+			}
+		}
+		
+		if (! $error) {
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
+			$sql .= ' WHERE rowid=' . $this->id;
+			
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$error ++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			}
+		}
+		
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			
+			return - 1 * $error;
+		} else {
+			$this->db->commit();
+			
+			return 1;
+		}
+	}
+	
 	/**
 	 * Delete bookkepping by importkey
 	 *
-	 * @param	string 	$importkey		Import key
-	 * @return	int						Result
+	 * @param  string       $importkey      Import key
+	 * @return int Result
 	 */
-	function delete_by_importkey($importkey) {
+	function deleteByImportkey($importkey) {
 		$this->db->begin();
-
+		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE import_key = '" . $importkey . "'";
-
+		
 		$resql = $this->db->query($sql);
-
+		
+		if (! $resql) {
+			$this->errors[] = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this)."::delete Error " . $this->db->lasterror(), LOG_ERR);
+			$this->db->rollback();
+			return - 1;
+		}
+		
+		$this->db->commit();
+		return 1;
+	}
+	
+	/**
+	 * Delete bookkepping by year
+	 *
+	 * @param  string $delyear      Year to delete
+	 * @param  string $journal      Journal to delete
+	 * @return int                  <0 if KO, >0 if OK
+	 */
+	function deleteByYearAndJournal($delyear='', $journal='') {
+	    global $conf;
+	    
+	    if (empty($delyear) && empty($journal)) 
+	    {
+	        return -1;
+	    }
+	    
+		$this->db->begin();
+		
+		// first check if line not yet in bookkeeping
+		$sql = "DELETE";
+		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql.= " WHERE 1 = 1";
+		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
+		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$resql = $this->db->query($sql);
+		
+		if (! $resql) {
+			$this->errors[] = "Error " . $this->db->lasterror();
+			foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1;
+		}
+		
+		$this->db->commit();
+		return 1;
+	}
+	
+	/**
+	 * Delete bookkepping by piece number
+	 *
+	 * @param int $piecenum peicenum to delete
+	 * @return int Result
+	 */
+	function deleteMvtNum($piecenum) {
+	    global $conf;
+	    
+		$this->db->begin();
+		
+		// first check if line not yet in bookkeeping
+		$sql = "DELETE";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " WHERE piece_num = " . $piecenum;
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		$resql = $this->db->query($sql);
+		
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -368,317 +1103,174 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-
+		
 		$this->db->commit();
 		return 1;
 	}
-
+	
 	/**
-	 *	Create object into database
+	 * Load an object from its id and create a new one in database
 	 *
-	 *	@param	User	$user      		Object user that create
-	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 *	@return	int						<0 if KO, >0 if OK
+	 * @param int $fromid Id of object to clone
+	 *       
+	 * @return int New id of clone
 	 */
-	function create_std($user, $notrigger = 0)
-	{
+	public function createFromClone($fromid) {
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		global $user;
 		$error = 0;
-
-		// Clean parameters
-		if (isset($this->doc_type))
-			$this->doc_type = trim($this->doc_type);
-		if (isset($this->doc_ref))
-			$this->doc_ref = trim($this->doc_ref);
-		if (isset($this->fk_doc))
-			$this->fk_doc = trim($this->fk_doc);
-		if (isset($this->fk_docdet))
-			$this->fk_docdet = trim($this->fk_docdet);
-		if (isset($this->code_tiers))
-			$this->code_tiers = trim($this->code_tiers);
-		if (isset($this->numero_compte))
-			$this->numero_compte = trim($this->numero_compte);
-		if (isset($this->label_compte))
-			$this->label_compte = trim($this->label_compte);
-		if (isset($this->debit))
-			$this->debit = trim($this->debit);
-		if (isset($this->credit))
-			$this->credit = trim($this->credit);
-		if (isset($this->montant))
-			$this->montant = trim($this->montant);
-		if (isset($this->sens))
-			$this->sens = trim($this->sens);
-		if (isset($this->fk_user_author))
-			$this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->import_key))
-			$this->import_key = trim($this->import_key);
-		if (isset($this->code_journal))
-			$this->code_journal = trim($this->code_journal);
-		if (isset($this->piece_num))
-			$this->piece_num = trim($this->piece_num);
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-		// Insert request
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping(";
-		$sql .= "doc_date,";
-		$sql .= "doc_type,";
-		$sql .= "doc_ref,";
-		$sql .= "fk_doc,";
-		$sql .= "fk_docdet,";
-		$sql .= "code_tiers,";
-		$sql .= "numero_compte,";
-		$sql .= "label_compte,";
-		$sql .= "debit,";
-		$sql .= "credit,";
-		$sql .= "montant,";
-		$sql .= "sens,";
-		$sql .= "fk_user_author,";
-		$sql .= "import_key,";
-		$sql .= "code_journal,";
-		$sql .= "piece_num";
-
-		$sql .= ") VALUES (";
-
-		$sql .= " " . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : $this->db->idate($this->doc_date)) . ",";
-		$sql .= " " . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ",";
-		$sql .= " " . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ",";
-		$sql .= " " . (! isset($this->fk_doc) ? 'NULL' : "'" . $this->fk_doc . "'") . ",";
-		$sql .= " " . (! isset($this->fk_docdet) ? 'NULL' : "'" . $this->fk_docdet . "'") . ",";
-		$sql .= " " . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ",";
-		$sql .= " " . (! isset($this->numero_compte) ? 'NULL' : "'" . $this->db->escape($this->numero_compte) . "'") . ",";
-		$sql .= " " . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ",";
-		$sql .= " " . (! isset($this->debit) ? 'NULL' : "'" . $this->debit . "'") . ",";
-		$sql .= " " . (! isset($this->credit) ? 'NULL' : "'" . $this->credit . "'") . ",";
-		$sql .= " " . (! isset($this->montant) ? 'NULL' : "'" . $this->montant . "'") . ",";
-		$sql .= " " . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ",";
-		$sql .= " " . $user->id . ",";
-		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ",";
-		$sql .= " " . (! isset($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ",";
-		$sql .= " " . (! isset($this->piece_num) ? 'NULL' : "'" . $this->piece_num . "'") . "";
-
-		$sql .= ")";
-
+		$object = new Accountingbookkeeping($this->db);
+		
 		$this->db->begin();
-
-		dol_syslog(get_class($this) . "::create_std sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql) {
+		
+		// Load source object
+		$object->fetch($fromid);
+		// Reset object
+		$object->id = 0;
+		
+		// Clear fields
+		// ...
+		
+		// Create clone
+		$result = $object->create($user);
+		
+		// Other options
+		if ($result < 0) {
 			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
+			$this->errors = $object->errors;
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
-
+		
+		// End
 		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
-
-//			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
-//			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::create_std " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return - 1 * $error;
+			$this->db->commit();
+			
+			return $object->id;
 		} else {
-			$this->db->commit();
-			return $this->id;
+			$this->db->rollback();
+			
+			return - 1;
 		}
 	}
-
+	
 	/**
-	 *	Update object into database
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
 	 *
-	 *	@param	User	$user      		Object user that create
-	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 *	@return	int						<0 if KO, >0 if OK
+	 * @return void
 	 */
-	function update($user = 0, $notrigger = 0)
-	{
-		$error = 0;
-
-		// Clean parameters
-		if (isset($this->doc_type))
-			$this->doc_type = trim($this->doc_type);
-		if (isset($this->doc_ref))
-			$this->doc_ref = trim($this->doc_ref);
-		if (isset($this->fk_doc))
-			$this->fk_doc = trim($this->fk_doc);
-		if (isset($this->fk_docdet))
-			$this->fk_docdet = trim($this->fk_docdet);
-		if (isset($this->code_tiers))
-			$this->code_tiers = trim($this->code_tiers);
-		if (isset($this->numero_compte))
-			$this->numero_compte = trim($this->numero_compte);
-		if (isset($this->label_compte))
-			$this->label_compte = trim($this->label_compte);
-		if (isset($this->debit))
-			$this->debit = trim($this->debit);
-		if (isset($this->credit))
-			$this->credit = trim($this->credit);
-		if (isset($this->montant))
-			$this->montant = trim($this->montant);
-		if (isset($this->sens))
-			$this->sens = trim($this->sens);
-		if (isset($this->fk_user_author))
-			$this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->import_key))
-			$this->import_key = trim($this->import_key);
-		if (isset($this->code_journal))
-			$this->code_journal = trim($this->code_journal);
-		if (isset($this->piece_num))
-			$this->piece_num = trim($this->piece_num);
-
-		// Check parameters
-		// Put here code to add a control on parameters values
-
-		// Update request
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-
-		$sql .= " doc_date=" . (dol_strlen($this->doc_date) != 0 ? "'" . $this->db->idate($this->doc_date) . "'" : 'null') . ",";
-		$sql .= " doc_type=" . (isset($this->doc_type) ? "'" . $this->db->escape($this->doc_type) . "'" : "null") . ",";
-		$sql .= " doc_ref=" . (isset($this->doc_ref) ? "'" . $this->db->escape($this->doc_ref) . "'" : "null") . ",";
-		$sql .= " fk_doc=" . (isset($this->fk_doc) ? $this->fk_doc : "null") . ",";
-		$sql .= " fk_docdet=" . (isset($this->fk_docdet) ? $this->fk_docdet : "null") . ",";
-		$sql .= " code_tiers=" . (isset($this->code_tiers) ? "'" . $this->db->escape($this->code_tiers) . "'" : "null") . ",";
-		$sql .= " numero_compte=" . (isset($this->numero_compte) ? "'" . $this->db->escape($this->numero_compte) . "'" : "null") . ",";
-		$sql .= " label_compte=" . (isset($this->label_compte) ? "'" . $this->db->escape($this->label_compte) . "'" : "null") . ",";
-		$sql .= " debit=" . (isset($this->debit) ? $this->debit : "null") . ",";
-		$sql .= " credit=" . (isset($this->credit) ? $this->credit : "null") . ",";
-		$sql .= " montant=" . (isset($this->montant) ? $this->montant : "null") . ",";
-		$sql .= " sens=" . (isset($this->sens) ? "'" . $this->db->escape($this->sens) . "'" : "null") . ",";
-		$sql .= " fk_user_author=" . (isset($this->fk_user_author) ? $this->fk_user_author : "null") . ",";
-		$sql .= " import_key=" . (isset($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null") . ",";
-		$sql .= " code_journal=" . (isset($this->code_journal) ? "'" . $this->db->escape($this->code_journal) . "'" : "null") . ",";
-		$sql .= " piece_num=" . (isset($this->piece_num) ? $this->piece_num : "null") . "";
-
-		$sql .= " WHERE rowid=" . $this->id;
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
-		}
-
-//		if (! $error) {
-//			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
-//			}
-//		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return - 1 * $error;
+	public function initAsSpecimen() {
+		global $user;
+		
+		$now=dol_now();
+		
+		$this->id = 0;
+		$this->doc_date = $now;
+		$this->doc_type = '';
+		$this->doc_ref = '';
+		$this->fk_doc = '';
+		$this->fk_docdet = '';
+		$this->code_tiers = '';
+		$this->numero_compte = '';
+		$this->label_compte = '';
+		$this->debit = 99.9;
+		$this->credit = '';
+		$this->montant = '';
+		$this->sens = '';
+		$this->fk_user_author = $user->id;
+		$this->import_key = '';
+		$this->code_journal = '';
+		$this->piece_num = '';
+	}
+	
+	/**
+	 * Load an accounting document into memory from database
+	 *
+	 * @param int $piecenum Accounting document to get
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchPerMvt($piecenum) {
+		global $conf;
+		
+	    $sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " WHERE piece_num = " . $piecenum;
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			
+			$this->piece_num = $obj->piece_num;
+			$this->code_journal = $obj->code_journal;
+			$this->doc_date = $this->db->jdate($obj->doc_date);
+			$this->doc_ref = $obj->doc_ref;
+			$this->doc_type = $obj->doc_type;
 		} else {
-			$this->db->commit();
-			return 1;
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
+			return - 1;
+		}
+		
+		return 1;
+	}
+	
+	/**
+	 * Return next number movement
+	 *
+	 * @return string      Next numero to use
+	 */
+	public function getNextNumMvt() 
+	{
+	    global $conf;
+	    
+		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . $this->table_element;
+	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+	        if ($obj) $result = $obj->max;
+	        if (empty($result)) $result = 1;
+	        return $result;
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);
+			return - 1;
 		}
 	}
-
+	
 	/**
-	 *	Delete object in database
+	 * Load all informations of accountancy document
 	 *
-	 *	@param	User	$user      		Object user that create
-	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 *	@return	int						<0 if KO, >0 if OK
+	 * @param int $piecenum id of line to get
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-//		if (! $notrigger)
-//		{
-//			// Call trigger
-//			$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
-//			if ($result < 0) $error++;
-//            // End call triggers
-//		}
-
-		if (! $error) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-			$sql .= " WHERE rowid=" . $this->id;
-
-			dol_syslog(get_class($this) . "::delete sql=" . $sql);
-			$resql = $this->db->query($sql);
-			if (! $resql) {
-				$error ++;
-				$this->errors[] = "Error " . $this->db->lasterror();
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return - 1 * $error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-	/**
-	 * Delete bookkepping by importkey
-	 *
-	 * @param	string	$model		Model
-	 * @return	int					Result
-	 */
-	function export_bookkeping($model = 'ebp')
-	{
+	function fetch_all_per_mvt($piecenum) {
+	    global $conf;
+	    
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
 		$sql .= " numero_compte, label_compte, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-
-		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
-
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			$this->linesexport = array ();
-
-			$num = $this->db->num_rows($resql);
-			while ( $obj = $this->db->fetch_object($resql) ) {
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " WHERE piece_num = " . $piecenum;
+	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			
+			while ( $obj = $this->db->fetch_object($result) ) {
+				
 				$line = new BookKeepingLine();
-
+				
 				$line->id = $obj->rowid;
-
+				
 				$line->doc_date = $this->db->jdate($obj->doc_date);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
@@ -693,41 +1285,252 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-
+				
+				$this->linesmvt[] = $line;
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
+			return - 1;
+		}
+		
+		return 1;
+	}
+	
+	/**
+	 * Export bookkeping
+	 *
+	 * @param string $model Model
+	 * @return int Result
+	 */
+	function export_bookkeping($model = 'ebp') {
+	    global $conf;
+	    
+		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
+		$sql .= " numero_compte, label_compte, debit, credit,";
+		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
+		
+		$resql = $this->db->query($sql);
+		
+		if ($resql) {
+			$this->linesexport = array ();
+			
+			$num = $this->db->num_rows($resql);
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new BookKeepingLine();
+				
+				$line->id = $obj->rowid;
+				
+				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_type = $obj->doc_type;
+				$line->doc_ref = $obj->doc_ref;
+				$line->fk_doc = $obj->fk_doc;
+				$line->fk_docdet = $obj->fk_docdet;
+				$line->code_tiers = $obj->code_tiers;
+				$line->numero_compte = $obj->numero_compte;
+				$line->label_compte = $obj->label_compte;
+				$line->debit = $obj->debit;
+				$line->credit = $obj->credit;
+				$line->montant = $obj->montant;
+				$line->sens = $obj->sens;
+				$line->code_journal = $obj->code_journal;
+				$line->piece_num = $obj->piece_num;
+				
 				$this->linesexport[] = $line;
 			}
 			$this->db->free($resql);
-
+			
 			return $num;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::export_bookkeping " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
+  
+  
+  
+    /**
+    * Return list of accounts with label by chart of accounts
+    *
+    * @param string  $selectid   Preselected chart of accounts
+    * @param string  $htmlname   Name of field in html form
+    * @param int     $showempty  Add an empty field
+    * @param array   $event      Event options
+    * @param int     $select_in  Value is a aa.rowid (0 default) or aa.account_number (1)
+    * @param int     $select_out Set value returned by select 0=rowid (default), 1=account_number
+    * @param int     $aabase     Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
+    * @return string String with HTML select
+    */
+    function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
+        global $conf;
+        
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+        
+        $pcgver = $conf->global->CHARTOFACCOUNTS;
+        
+        $sql = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte";
+        $sql .= " AND aa.active = 1";
+        $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+        $sql .= " AND asy.rowid = " . $pcgver;
+	    $sql .= " AND ab.entity IN (" . getEntity("accountancy", 1) . ")";
+        $sql .= " ORDER BY account_number ASC";
+        
+        dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        
+        if (! $resql) {
+            $this->error = "Error " . $this->db->lasterror();
+            dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
+            return - 1;
+        }
+        
+        $out = ajax_combobox($htmlname, $event);
+        
+        $options = array();
+        $selected = null;
+        
+        while ($obj = $this->db->fetch_object($resql)) {
+            $label = length_accountg($obj->account_number) . ' - ' . $obj->label;
+            
+            $select_value_in = $obj->rowid;
+            $select_value_out = $obj->rowid;
+            
+            if ($select_in == 1) {
+                $select_value_in = $obj->account_number;
+            }
+            if ($select_out == 1) {
+                $select_value_out = $obj->account_number;
+            }
+            
+            // Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+            // Because same account_number can be share between different accounting_system and do have the same meaning
+            if (($selectid != '') && $selectid == $select_value_in) {
+                $selected = $select_value_out;
+            }
+            
+            $options[$select_value_out] = $label;
+        }
+        
+        $out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+        $this->db->free($resql);
+        return $out;
+    }
+
+  
+	
+	/**
+	* Description of a root accounting account 
+	*
+	* @param 	string 	$account	Accounting account
+	* @return 	string 	            Root account
+	*/
+	function get_compte_racine($account = null)
+	{	
+		global $conf;
+		$pcgver = $conf->global->CHARTOFACCOUNTS;
+        
+        $sql  = "SELECT root.account_number, root.label as label";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+        $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+        $sql .= " AND asy.rowid = " . $pcgver;
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as parent ON aa.account_parent = parent.rowid";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as root ON parent.account_parent = root.rowid";
+        $sql .= " WHERE aa.account_number = '" . $account . "'";  
+        $sql .= " AND parent.active = 1";
+        $sql .= " AND root.active = 1";
+        $sql .= " AND aa.entity IN (" . getEntity("accountancy", 1) . ")";
+        
+		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);	
+			}
+							
+			return $obj->label;
+			
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+
+			return -1;
+		}
+	}
+  
+  
+  /**
+	* Description of accounting account
+	*
+	* @param 	string 	$account	Accounting account
+	* @return 	string 	            Account desc
+	*/
+	function get_compte_desc($account = null)
+	{	
+		global $conf;
+		
+		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa ";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " AND aa.account_number = '" . $account . "'";
+		$sql .= " AND asy.rowid = " . $pcgver;
+		$sql .= " AND aa.active = 1";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
+	    $sql .= " WHERE aa.entity IN (" . getEntity("accountancy", 1) . ")";
+		
+		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);	
+			}
+			
+			if(empty($obj->category)){				
+				return $obj->label;
+			}else{
+				return $obj->label.' ('.$obj->category.')';
+				
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+			return -1;
+		}
+	}
+	
 }
+
 
 /**
  * Class BookKeepingLine
  */
 class BookKeepingLine
 {
-	var $id;
-	var $doc_date;
-	var $doc_type;
-	var $doc_ref;
-	var $fk_doc;
-	var $fk_docdet;
-	var $code_tiers;
-	var $numero_compte;
-	var $label_compte;
-	var $debit;
-	var $credit;
-	var $montant;
-	var $sens;
-	var $fk_user_author;
-	var $code_journal;
-	var $piece_num;
+	public $id;
+	public $doc_date = '';
+	public $doc_type;
+	public $doc_ref;
+	public $fk_doc;
+	public $fk_docdet;
+	public $code_tiers;
+	public $numero_compte;
+	public $label_compte;
+	public $debit;
+	public $credit;
+	public $montant;
+	public $sens;
+	public $fk_user_author;
+	public $import_key;
+	public $code_journal;
+	public $piece_num;
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,8 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-
+$projectid=GETPOST('projectid')?GETPOST('projectid','int'):GETPOST("fk_projet",'int');
+    
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
 
@@ -169,9 +170,10 @@ if ($action == 'add')
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if ($object->create($user) > 0)
+		$res = $object->create($user);
+		if ($res > 0)
 		{
-			header("Location: index.php");
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
 		}
 		else
@@ -264,7 +266,7 @@ if ($action == 'builddoc')
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -283,12 +285,12 @@ if ($action == 'builddoc')
  * View
  */
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+llxHeader('',$langs->trans("Donation"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
 $form=new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
-
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
@@ -303,11 +305,8 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-    $nbrows=11;
-    if (! empty($conf->projet->enabled)) $nbrows++;
-
     // Date
-	print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
@@ -322,7 +321,7 @@ if ($action == 'create')
 	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.GETPOST("lastname").'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.GETPOST("firstname").'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" cols="40" rows="3">'.GETPOST("address").'</textarea></td></tr>';
+	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.GETPOST("address").'</textarea></td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -332,7 +331,7 @@ if ($action == 'create')
     print '</tr>';
 
 	// Country
-    print '<tr><td width="25%"><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
     print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>';
@@ -344,7 +343,7 @@ if ($action == 'create')
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -354,18 +353,15 @@ if ($action == 'create')
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
 
 	if (! empty($conf->projet->enabled))
     {
-
-    	$formproject=new FormProjets($db);
-
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects(-1, GETPOST("fk_projet"),'fk_projet', 0, 0, 1, 1);
+        $formproject->select_projects(-1, $projectid,'fk_projet', 0, 0, 1, 1);
 		print "</td></tr>\n";
     }
 
@@ -382,7 +378,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 }
@@ -420,16 +420,13 @@ if (! empty($id) && $action == 'edit')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $object->getNomUrl();
 	print '</td>';
 	print '</tr>';
 
-    $nbrows=12;
-    if (! empty($conf->projet->enabled)) $nbrows++;
-
 	// Date
-	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($object->date,'','','','',"update");
 	print '</td>';
 
@@ -451,11 +448,11 @@ if (! empty($id) && $action == 'edit')
 	print "</tr>\n";
 
 	$langs->load("companies");
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$object->societe.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.$object->address.'</textarea></td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$object->societe.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Address").'</td><td>';
+	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.$object->address.'</textarea></td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -465,7 +462,7 @@ if (! empty($id) && $action == 'edit')
 	print '</tr>';
 
 	// Country
-	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
@@ -540,23 +537,65 @@ if (! empty($id) && $action != 'edit')
 	$head = donation_prepare_head($object);
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="border" width="100%">';
-
+	// Print form confirm
+	print $formconfirm;
+	
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.=$langs->trans('Project') . ' ';
+	    if ($user->rights->don->creer)
+	    {
+	        if ($action != 'classify')
+	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	$morehtmlref.='</div>';
+	
+	
+    dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
-    $nbrows=12;
-    if (! empty($conf->projet->enabled)) $nbrows++;
+
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border" width="100%">';
 
 	// Ref
-	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	/*
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $form->showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
 	print '</td>';
 	print '</tr>';
-
+    */
 	// Date
-	print '<tr><td width="25%">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td colspan="2">';
 	print dol_print_date($object->date,"day");
 	print "</td>";
 
@@ -571,11 +610,61 @@ if (! empty($id) && $action != 'edit')
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td>';
+	/*print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td>';
 
-	$rowspan=6;
-	if (! empty($conf->projet->enabled)) $rowspan++;
-	print '<td rowspan="'.$rowspan.'" valign="top">';
+	// Zip / Town
+	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+	print $object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
+	
+	// Country
+	print '<tr><td>'.$langs->trans('Country').'</td><td>';
+	if (! empty($object->country_code))
+	{
+	    $img=picto_from_langcode($object->country_code);
+	    print ($img?$img.' ':'');
+	    print $object->country;
+	}
+	else
+	{
+	    print $object->country_olddata;
+	}
+	print '</td></tr>';
+	
+	// EMail
+	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email).'</td></tr>';
+	*/
+	
+	// Payment mode
+	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
+	$form->form_modes_reglement(null, $object->modepaymentid,'none');
+	print "</td></tr>\n";
+	
+	//print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	
+	// Project
+	/*
+	if (! empty($conf->projet->enabled))
+	{
+	    print '<tr>';
+	    print '<td>'.$langs->trans("Project").'</td>';
+	    print '<td>';
+	    $projettmp=new Project($db);
+	    $projettmp->id=$object->fk_projet;
+	    $projettmp->ref=$object->project;
+	    if(! empty($object->fk_projet)) print $projettmp->getNomUrl(1);
+	    print '</td>';
+	    print '</tr>';
+	}*/
+	
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
 
 	/*
 	 * Payments
@@ -597,13 +686,12 @@ if (! empty($id) && $action != 'edit')
 	{
 		$num = $db->num_rows($resql);
 		$i = 0; $total = 0;
-		print '<table class="nobordernopadding" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
    		print '<td align="right">'.$langs->trans("Amount").'</td>';
-   		print '<td>&nbsp;</td>';
    		print '</tr>';
 
 		$var=True;
@@ -614,9 +702,9 @@ if (! empty($id) && $action != 'edit')
 			print "<tr ".$bc[$var]."><td>";
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-		        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
-                               print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-			print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+		    $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
+            print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+			print '<td align="right">'.price($objp->amount)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;
 			$i++;
@@ -624,13 +712,13 @@ if (! empty($id) && $action != 'edit')
 
 		if ($object->paid == 0)
 		{
-			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaid)."</td></tr>\n";
+			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
 
-			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($remaintopay)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);
@@ -639,70 +727,19 @@ if (! empty($id) && $action != 'edit')
 	{
 		dol_print_error($db);
 	}
-	print "</td>";
 
-	print "</tr>";
+	print '</div>';
+	print '</div>';
+	print '</div>';
 
-	// Zip / Town
-	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-	print $object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
+	print '<div class="clearboth"></div>';
 
-	// Country
-	print '<tr><td>'.$langs->trans('Country').'</td><td>';
-	if (! empty($object->country_code))
-	{
-		$img=picto_from_langcode($object->country_code);
-		print ($img?$img.' ':'');
-		print $object->country;
-	}
-	else
-	{
-		print $object->country_olddata;
-	}
-	print '</td></tr>';
-
-	// EMail
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email).'</td></tr>';
-
-	// Payment mode
-	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	$form->form_modes_reglement(null, $object->modepaymentid,'none');
-	print "</td></tr>\n";
-
-	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-    // Project
-    if (! empty($conf->projet->enabled))
-    {
-        print '<tr>';
-		print '<td>'.$langs->trans("Project").'</td>';
-		print '<td>';
-			$projettmp=new Project($db);
-			$projettmp->id=$object->fk_projet;
-			$projettmp->ref=$object->project;
-			print $projettmp->getNomUrl(1);
-		print '</td>';
-		print '</tr>';
-    }
-
-    // Other attributes
-    $parameters=array('colspan' => ' colspan="2"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
-    {
-       	print $object->showOptionals($extrafields);
-    }
-
-	print "</table>\n";
-	print "</form>\n";
-
-	print "</div>";
+    dol_fiche_end();
 
 	$remaintopay = $object->amount - $totalpaid;
 
-	/**
-	 * Actions buttons
-	 */
+	// Actions buttons
+
 	print '<div class="tabsAction">';
 
 	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -712,7 +749,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paye == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paid == 0)
     {
         print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }
@@ -739,9 +776,9 @@ if (! empty($id) && $action != 'edit')
 	// Delete
 	if ($user->rights->don->supprimer)
 	{
-		if ($don->statut == -1 || $don->statut == 0)
+		if ($object->statut == -1 || $object->statut == 0)
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$don->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
 		}
 		else
 		{
@@ -756,7 +793,7 @@ if (! empty($id) && $action != 'edit')
 	print "</div>";
 
 
-	print '<table width="100%"><tr><td width="50%" valign="top">';
+    print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
 	 * Documents generes
@@ -769,13 +806,11 @@ if (! empty($id) && $action != 'edit')
 
 	$var=true;
 
-	print '<br>';
-	$formfile->show_documents('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-	print '</td><td>&nbsp;</td>';
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	print '</tr></table>';
-
+	print '</div></div></div>';
 }
 
 llxFooter();

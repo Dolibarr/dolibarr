@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -36,6 +36,7 @@ $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$cancel=GETPOST('cancel');
 
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
@@ -54,6 +55,10 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
+if ($id > 0)
+{
+    $result=$object->fetch($id);
+}
 
 $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -61,52 +66,56 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
+
 /*
  * Actions
  */
 
+if ($cancel)
+{
+    header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+    exit;
+}
+
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer)
 {
-	$categorie = new Categorie($db);
-	$result=$categorie->fetch($id);
-
-	$categorie->label          = $label;
-	$categorie->description    = dol_htmlcleanlastbr($description);
-	$categorie->color          = $color;
-	$categorie->socid          = ($socid ? $socid : 'null');
-	$categorie->visible        = $visible;
+	$object->label          = $label;
+	$object->description    = dol_htmlcleanlastbr($description);
+	$object->color          = $color;
+	$object->socid          = ($socid ? $socid : 'null');
+	$object->visible        = $visible;
 
 	if ($parent != "-1")
-		$categorie->fk_parent = $parent;
+		$object->fk_parent = $parent;
 	else
-		$categorie->fk_parent = "";
+		$object->fk_parent = "";
 
 
-	if (empty($categorie->label))
+	if (empty($object->label))
 	{
 	    $error++;
 		$action = 'edit';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
-	if (! $error && empty($categorie->error))
+	if (! $error && empty($object->error))
 	{
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$categorie);
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if (! $error && $categorie->update($user) > 0)
+		if (! $error && $object->update($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
 			exit;
 		}
 		else
 		{
-			setEventMessages($categorie->error, $categorie->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessages($categorie->error, $categorie->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -138,7 +147,7 @@ dol_fiche_head('');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td class="fieldrequired" width="25%">';
+print '<tr><td class="titlefieldcreate fieldrequired">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
 print '</tr>';
@@ -148,7 +157,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
+$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -176,7 +185,7 @@ print '</table>';
 dol_fiche_end();
 
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><input type="submit" class="button" name"submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 print '</form>';
 

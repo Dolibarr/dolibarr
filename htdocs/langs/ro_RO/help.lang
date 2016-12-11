@@ -4,7 +4,6 @@ EMailSupport=E-mail-uri suport
 RemoteControlSupport=Suport în timp real / remote
 OtherSupport=Alte tipuri de suport
 ToSeeListOfAvailableRessources=Pentru a contacta / vezi resurse disponibile:
-ClickHere=Click aici
 HelpCenter=Centrul de Ajutor
 DolibarrHelpCenter=Dolibarr Centrul de Ajutor şi Asistenţă
 ToGoBackToDolibarr=Altfel, faceţi clic <a href="%s">aici pentru a utiliza Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Sursa suport
 TypeSupportCommunauty=Comunitate (gratuit)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tip
-NeedHelpCenter=Aveţi nevoie de ajutor sau suport?
+NeedHelpCenter=Need help or support?
 Efficiency=Eficienţa
 TypeHelpOnly=Numai Ajutor
 TypeHelpDev=Ajutor + Dezvoltare
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Uneori, nu există nicio companie disponibilă în mom
 BackToHelpCenter=Altfel, clic aici pentru a merge <a href="%s">înapoi la pentru pagina de start a Centrul de Ajutor</a>.
 LinkToGoldMember=Puteți apela unul dintre antrenori preselectati de Dolibarr pentru limba (%s) făcând clic pe balonul Widget (statusul și prețul maxim sunt actualizate automat):
 PossibleLanguages=Limbi suportate
-MakeADonation=Ajută  proiectul Dolibarr, faceţi o donaţie
 SubscribeToFoundation=Ajută proiectul Dolibarr, subscrie la fundație
 SeeOfficalSupport=Pentru suport oficial Dolibarr în limba dvs:  <br><b><a href="%s" target="_blank">%s</a></b>

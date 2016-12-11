@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-
 Language_ar_AR=ภาษาอาหรับ
 Language_ar_SA=ภาษาอาหรับ
 Language_bn_BD=ประเทศบังคลาเทศ
@@ -32,6 +31,7 @@ Language_es_MX=สเปน (เม็กซิโก)
 Language_es_PY=สเปน (ปารากวัย)
 Language_es_PE=เสปน (เปรู)
 Language_es_PR=สเปน (เปอร์โตริโก)
+Language_es_VE=Spanish (Venezuela)
 Language_et_EE=เอสโตเนีย
 Language_eu_ES=ชาวแบสค์
 Language_fa_IR=เปอร์เซีย

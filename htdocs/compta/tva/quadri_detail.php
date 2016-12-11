@@ -3,7 +3,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 $langs->load("bills");
 $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
+$langs->load("trips");
 $langs->load("other");
 
 // Date range
@@ -104,16 +108,18 @@ foreach($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $form=new Form($db);
 
 $company_static=new Societe($db);
 $invoice_customer=new Facture($db);
 $invoice_supplier=new FactureFournisseur($db);
+$expensereport=new ExpenseReport($db);
 $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
+$paymentexpensereport_static=new PaymentExpenseReport($db);
 
 //print load_fiche_titre($langs->trans("VAT"),"");
 
@@ -149,16 +155,20 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
+	// Customers invoices
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
 	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
+
+	// Suppliers invoices
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
+
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
@@ -185,26 +195,29 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
+	// Customers invoices
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
 	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
+
+	// Suppliers invoices
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
+
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
-
+$vatexpensereport=$langs->trans("VATPaid");
 
 // VAT Received and paid
-
-echo '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 
 $y = $year_current;
 $total = 0;
@@ -242,21 +255,21 @@ else
 			$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
 			$invoice_customer->type=$x_coll[$my_coll_rate]['type'][$id];
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
-				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
-				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
-				'pid'       =>$x_coll[$my_coll_rate]['pid'][$id],
-				'pref'      =>$x_coll[$my_coll_rate]['pref'][$id],
-				'ptype'     =>$x_coll[$my_coll_rate]['ptype'][$id],
-				'payment_id'=>$x_coll[$my_coll_rate]['payment_id'][$id],
-				'payment_amount'=>$x_coll[$my_coll_rate]['payment_amount'][$id],
-				'ftotal_ttc'=>$x_coll[$my_coll_rate]['ftotal_ttc'][$id],
-				'dtotal_ttc'=>$x_coll[$my_coll_rate]['dtotal_ttc'][$id],
-				'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
-				'ddate_start'=>$x_coll[$my_coll_rate]['ddate_start'][$id],
-				'ddate_end'  =>$x_coll[$my_coll_rate]['ddate_end'][$id],
-				'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
-				'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1,'',12));
+				'id'				=>$x_coll[$my_coll_rate]['facid'][$id],
+				'descr'				=>$x_coll[$my_coll_rate]['descr'][$id],
+				'pid'				=>$x_coll[$my_coll_rate]['pid'][$id],
+				'pref'				=>$x_coll[$my_coll_rate]['pref'][$id],
+				'ptype'				=>$x_coll[$my_coll_rate]['ptype'][$id],
+				'payment_id'		=>$x_coll[$my_coll_rate]['payment_id'][$id],
+				'payment_amount'	=>$x_coll[$my_coll_rate]['payment_amount'][$id],
+				'ftotal_ttc'		=>$x_coll[$my_coll_rate]['ftotal_ttc'][$id],
+				'dtotal_ttc'		=>$x_coll[$my_coll_rate]['dtotal_ttc'][$id],
+				'dtype'				=>$x_coll[$my_coll_rate]['dtype'][$id],
+				'ddate_start'		=>$x_coll[$my_coll_rate]['ddate_start'][$id],
+				'ddate_end'			=>$x_coll[$my_coll_rate]['ddate_end'][$id],
+				'totalht'			=>$x_coll[$my_coll_rate]['totalht_list'][$id],
+				'vat'				=>$x_coll[$my_coll_rate]['vat_list'][$id],
+				'link'				=>$invoice_customer->getNomUrl(1,'',12));
 		}
 	}
 	// tva paid
@@ -272,25 +285,54 @@ else
 
 		foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy)
 		{
-			$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
-			$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
-			$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
-			$x_both[$my_paye_rate]['paye']['detail'][] = array(
-				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
-				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
-				'pid'       =>$x_paye[$my_paye_rate]['pid'][$id],
-				'pref'      =>$x_paye[$my_paye_rate]['pref'][$id],
-				'ptype'     =>$x_paye[$my_paye_rate]['ptype'][$id],
-				'payment_id'=>$x_paye[$my_paye_rate]['payment_id'][$id],
-				'payment_amount'=>$x_paye[$my_paye_rate]['payment_amount'][$id],
-				'ftotal_ttc'=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
-				'dtotal_ttc'=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
-				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
-				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
-				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
-				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
-				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
-				'link'      =>$invoice_supplier->getNomUrl(1,'',12));
+			// ExpenseReport
+			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment')
+			{
+				$expensereport->id=$x_paye[$my_paye_rate]['facid'][$id];
+				$expensereport->ref=$x_paye[$my_paye_rate]['facnum'][$id];
+				$expensereport->type=$x_paye[$my_paye_rate]['type'][$id];
+
+				$x_both[$my_paye_rate]['paye']['detail'][] = array(
+					'id'				=>$x_paye[$my_paye_rate]['facid'][$id],
+					'descr'				=>$x_paye[$my_paye_rate]['descr'][$id],
+					'pid'				=>$x_paye[$my_paye_rate]['pid'][$id],
+					'pref'				=>$x_paye[$my_paye_rate]['pref'][$id],
+					'ptype'				=>$x_paye[$my_paye_rate]['ptype'][$id],
+					'payment_id'		=>$x_paye[$my_paye_rate]['payment_id'][$id],
+					'payment_amount'	=>$x_paye[$my_paye_rate]['payment_amount'][$id],
+					'ftotal_ttc'		=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
+					'dtotal_ttc'		=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
+					'dtype'				=>$x_paye[$my_paye_rate]['dtype'][$id],
+					'ddate_start'		=>$x_paye[$my_paye_rate]['ddate_start'][$id],
+					'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
+					'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
+					'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
+					'link'				=>$expensereport->getNomUrl(1)
+				);
+			}
+			else
+			{
+				$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
+				$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
+				$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
+				$x_both[$my_paye_rate]['paye']['detail'][] = array(
+					'id'				=>$x_paye[$my_paye_rate]['facid'][$id],
+					'descr'				=>$x_paye[$my_paye_rate]['descr'][$id],
+					'pid'				=>$x_paye[$my_paye_rate]['pid'][$id],
+					'pref'				=>$x_paye[$my_paye_rate]['pref'][$id],
+					'ptype'				=>$x_paye[$my_paye_rate]['ptype'][$id],
+					'payment_id'		=>$x_paye[$my_paye_rate]['payment_id'][$id],
+					'payment_amount'	=>$x_paye[$my_paye_rate]['payment_amount'][$id],
+					'ftotal_ttc'		=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
+					'dtotal_ttc'		=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
+					'dtype'				=>$x_paye[$my_paye_rate]['dtype'][$id],
+					'ddate_start'		=>$x_paye[$my_paye_rate]['ddate_start'][$id],
+					'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
+					'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
+					'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
+					'link'				=>$invoice_supplier->getNomUrl(1,'',12)
+				);
+			}
 		}
 	}
 	//now we have an array (x_both) indexed by rates for coll and paye
@@ -320,16 +362,18 @@ else
 	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
-	
+
 	$action = "tvadetail";
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 	foreach(array_keys($x_coll) as $rate)
 	{
 		$subtot_coll_total_ht = 0;
@@ -372,12 +416,12 @@ else
 				{
 					if ($type) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-		            if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg))
-		            {
-		                if ($reg[1]=='DEPOSIT') $fields['descr']=$langs->transnoentitiesnoconv('Deposit');
-		                elseif ($reg[1]=='CREDIT_NOTE') $fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
-		                else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
-		            }
+					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg))
+					{
+						if ($reg[1]=='DEPOSIT') $fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+						elseif ($reg[1]=='CREDIT_NOTE') $fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+						else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+					}
 					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
 
 					// Show range
@@ -416,7 +460,7 @@ else
 						print $langs->trans("NotUsedForGoods");
 					}
 					else {
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';
@@ -477,7 +521,7 @@ else
 
 	//print table headers for this quadri - expenses now
 	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
 	if ($modetax == 0)
@@ -567,7 +611,7 @@ else
 					}
 					else
 					{
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';
@@ -608,7 +652,7 @@ else
         print '</tr>';
 	}
 
-	if (count($x_paye) == 0)   // Show a total ine if nothing shown
+	if (count($x_paye) == 0)   // Show a total line if nothing shown
 	{
         print '<tr class="liste_total">';
         print '<td>&nbsp;</td>';
@@ -638,6 +682,5 @@ else
 }
 echo '</table>';
 
-$db->close();
-
 llxFooter();
+$db->close();

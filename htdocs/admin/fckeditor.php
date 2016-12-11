@@ -46,27 +46,27 @@ if (!$user->admin) accessforbidden();
 $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProduct',
-'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
 'USERSIGN' => 'FCKeditorForUserSignature',
+'MAILING' => 'FCKeditorForMailing',
 'MAIL' => 'FCKeditorForMail'
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
 'SOCIETE' => 1,
 'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-'MAILING' => ! empty($conf->mailing->enabled),
-'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
+'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled)),
 'USERSIGN' => 1,
+'MAILING' => ! empty($conf->mailing->enabled),
 'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled))
 );
 // Picto
 $picto = array(
 'SOCIETE' => 'generic',
 'PRODUCTDESC' => 'product',
-'MAILING' => 'email',
-'DETAILS' => 'generic',
+'DETAILS' => 'product',
 'USERSIGN' => 'user',
+'MAILING' => 'email',
 'MAIL' => 'email'
 );
 
@@ -189,7 +189,19 @@ else
     show_skin(null,1);
     print '<br>'."\n";
     
-	print load_fiche_titre($langs->trans("TestSubmitForm"),'(mode='.$mode.')','');
+    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','Full');
+    $linkstomode='';
+    foreach($listofmodes as $newmode)
+    {
+        if ($linkstomode) $linkstomode.=' - ';
+        $linkstomode.='<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+        if ($mode == $newmode) $linkstomode.='<strong>';
+        $linkstomode.=$newmode;
+        if ($mode == $newmode) $linkstomode.='</strong>';
+        $linkstomode.='</a>';
+    }
+    $linkstomode.='';
+	print load_fiche_titre($langs->trans("TestSubmitForm"),$linkstomode,'');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
     $uselocalbrowser=true;
     $readonly=($mode=='dolibarr_readonly'?1:0);

@@ -38,7 +38,7 @@ $result = restrictedArea($user, 'don', $id, '');
  * View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("Donation"));
 
 if ($id)
 {
@@ -57,6 +57,5 @@ if ($id)
     print '</div>';
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

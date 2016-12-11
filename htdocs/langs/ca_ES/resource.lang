@@ -1,8 +1,7 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Recursos
 MenuResourceAdd=Nou recurs
-MenuResourcePlanning=Planificació de recursos
-DeleteResource=Eliminar recurs
+DeleteResource=Elimina recurs
 ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
 NoResourceInDatabase=Sense recursos a la base de dades.
 NoResourceLinked=Sense recursos enllaçats
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Descripció de recurs
 
 ResourcesLinkedToElement=Recurs enllaçat a element
 
-ShowResourcePlanning=Veure planificació de recursos
-GotoDate=Anar a la data
+ShowResource=Mostra recursos
 
 ResourceElementPage=Elements de recursos
 ResourceCreatedWithSuccess=Recurs creat correctament
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Línia de recurs eliminada correctament
 RessourceLineSuccessfullyUpdated=Línia de recurs actualitzada correctament
 ResourceLinkedWithSuccess=Recurs enllaçat correntament
 
-TitleResourceCard=Fitxa de recurs
 ConfirmDeleteResource=Estàs segur de voler eliminar aquest element?
 RessourceSuccessfullyDeleted=Recurs eliminat correctament
 DictionaryResourceType=Tipus de recurs

@@ -44,7 +44,8 @@ class modImport extends DolibarrModules
 		$this->numero = 250;
 
 		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->module_position = 70;
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Outils d'imports de donnees Dolibarr (via un assistant)";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version
@@ -84,5 +85,11 @@ class modImport extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'run';
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

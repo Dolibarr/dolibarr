@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/env php
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
@@ -206,7 +207,7 @@ if ($resql) {
 
 		$var = ! $var;
 
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;
 		$thirdpartystatic->name = $obj->name;

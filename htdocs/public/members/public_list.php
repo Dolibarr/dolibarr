@@ -81,9 +81,10 @@ function llxFooterVierge()
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -113,7 +114,7 @@ $sql.= " AND statut = 1";
 $sql.= " AND public = 1";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
-//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
+//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.subscription";
 //$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);

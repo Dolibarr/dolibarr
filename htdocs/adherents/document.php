@@ -69,14 +69,14 @@ if ($result < 0)
 	dol_print_error($db);
 	exit;
 }
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'member') . '/' . dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -85,7 +85,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-llxHeader();
+$title=$langs->trans("Member") . " - " . $langs->trans("Documents");
+$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+llxHeader("",$title,$helpurl);
 
 if ($id > 0)
 {
@@ -156,6 +158,7 @@ if ($id > 0)
 
 		$modulepart = 'member';
 		$permission = $user->rights->adherent->creer;
+		$permtoedit = $user->rights->adherent->creer;
 		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";

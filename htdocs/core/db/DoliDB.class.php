@@ -36,7 +36,7 @@ abstract class DoliDB implements Database
 	/** @var string Charset used to force charset when creating database */
 	public $forcecharset='utf8';
 	/** @var string Collate used to force collate when creating database */
-	public $forcecollate='utf8_general_ci';
+	public $forcecollate='utf8_unicode_ci';
 	/** @var resource Resultset of last query */
 	private $_results;
 	/** @var bool true if connected, else false */
@@ -221,7 +221,7 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
-	 * @param	string	$sortorder  Sort order
+	 * @param	'ASC'|'DESC'	$sortorder  Sort order
 	 * @return	string      		String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=null,$sortorder=null)
@@ -236,9 +236,11 @@ abstract class DoliDB implements Database
 				else $return.=',';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				if (! empty($sortorder))
-				{
-					$return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
+				// Only ASC and DESC values are valid SQL
+				if (strtoupper($sortorder) === 'ASC') {
+					$return .= ' ASC';
+				} elseif (strtoupper($sortorder) === 'DESC') {
+					$return .= ' DESC';
 				}
 			}
 			return $return;

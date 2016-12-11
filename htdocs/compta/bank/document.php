@@ -92,18 +92,10 @@ if ($_POST["sendit"] && !empty($conf->global->MAIN_UPLOAD_DOC)) {
                     $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),
                     0, 0, $_FILES['userfile']['error']);
             if (is_numeric($resupload) && $resupload > 0) {
-                if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name'])
-                        == 1) {
-                    // Create small thumbs for image (Ratio is near 16/9)
-                    // Used on logon for example
-                    $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'],
-                            $maxwidthsmall, $maxheightsmall, '_small', $quality,
-                            "thumbs");
-                    // Create mini thumbs for image (Ratio is near 16/9)
-                    // Used on menu or for setup page for example
-                    $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'],
-                            $maxwidthmini, $maxheightmini, '_mini', $quality,
-                            "thumbs");
+                if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1) 
+                {
+                    // Create thumbs
+                    $object->addThumbs($upload_dir . "/" . $_FILES['userfile']['name']);
                 }
                 $mesg = '<div class="ok">' . $langs->trans("FileTransferComplete") . '</div>';
             }
@@ -148,7 +140,9 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
@@ -159,8 +153,7 @@ if ($id > 0 || !empty($ref)) {
 
         // Onglets
         $head = bank_prepare_head($object);
-        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), 0,
-                'account');
+        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), 0, 'account');
 
 
         // Construit liste des fichiers
@@ -172,30 +165,26 @@ if ($id > 0 || !empty($ref)) {
             $totalsize+=$file['size'];
         }
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-        print '<table class="border"width="100%">';
-
-        // Ref
-        // Ref
-        print '<tr><td valign="top" width="25%">' . $langs->trans("Ref") . '</td>';
-        print '<td colspan="3">';
-        print $form->showrefnav($object, 'ref', '', 1, 'ref');
-        print '</td></tr>';
-
-        // Label
-        print '<tr><td valign="top">' . $langs->trans("Label") . '</td>';
-        print '<td colspan="3">' . $object->label . '</td></tr>';
-
-        // Status
-        print '<tr><td valign="top">' . $langs->trans("Status") . '</td>';
-        print '<td colspan="3">' . $object->getLibStatut(4) . '</td></tr>';
-        print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        
+        
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+       
+        print '<table class="border" width="100%">';
+        print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
         print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
         print "</table>\n";
-        print "</div>\n";
+
+        print '</div>';
+        
+        dol_fiche_end();
 
         dol_htmloutput_mesg($mesg, $mesgs);
 
+        
         /*
          * Confirmation suppression fichier
          */
@@ -224,6 +213,7 @@ if ($id > 0 || !empty($ref)) {
 }
 else {
     Header('Location: index.php');
+    exit;
 }
 
 

@@ -155,19 +155,21 @@ class Translate
 	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
+	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
-	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
+	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='',$loadfromfileonly=0)
 	{
 		global $conf,$db;
 
-		if (count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
+		// Load $this->tab_translate[] from database
+		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
 
 		// Check parameters
 		if (empty($domain))
 		{
 			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
-			exit;
+			return -1;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
 
@@ -241,7 +243,7 @@ class Translate
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))
 					{
-				        $this->tab_translate+=$tmparray;	// Faster than array_merge($tmparray,$this->tab_translate). Note: If a valuer already exists into tab_translate, value into tmparaay is not added.
+				        $this->tab_translate+=$tmparray;	// Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
 						//print $newdomain."\n";
 						//var_dump($this->tab_translate);
 						if ($alt == 2) $fileread=1;
@@ -261,7 +263,8 @@ class Translate
 							{
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
-								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
+								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
+								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
@@ -278,6 +281,7 @@ class Translate
 									else
 									{
 										$this->tab_translate[$key]=$value;
+										//if ($domain == 'orders') print "$tab[0] value $value<br>";
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -333,19 +337,20 @@ class Translate
 
 		// This part is deprecated and replaced with table llx_overwrite_trans
 		// Kept for backward compatibility.
-		$overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
-        if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
-        {
-    		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
-            $tmparray=explode(',', $conf->global->$overwritekey);
-            foreach($tmparray as $tmp)
+		if (empty($loadfromfileonly))
+		{
+    		$overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
             {
-                $tmparray2=explode(':',$tmp);
-                if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
+        		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                    if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
+                }
             }
-        }
-		
-        
+		}		
         
         // Check to be sure that SeparatorDecimal differs from SeparatorThousand
 		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
@@ -735,7 +740,7 @@ class Translate
 	 *
 	 * 	@param	string	$langdir		Directory to scan
 	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
-	 *  @param	int		$usecode		Show code instead of country name for language variant
+	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
@@ -751,9 +756,13 @@ class Translate
 			{
 				$this->load("languages");
 
-				if ($usecode || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				if ($usecode == 2)
 				{
-					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
+				    $langs_available[$dir] = $dir;
+				}
+				if ($usecode == 1 || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				{
+				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}
 				else
 				{
@@ -853,9 +862,10 @@ class Translate
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
 		// Check if a translation is available (this can call getTradFromKey)
-		if ($this->transnoentitiesnoconv($key) != $key)
+		$tmp=$this->transnoentitiesnoconv($key);
+		if ($tmp != $key && $tmp != 'ErrorBadValueForParamNotAString')
 		{
-			return $this->transnoentitiesnoconv($key);    // Found in language array
+			return $tmp;    // Found in language array
 		}
 
 		// Check in cache
@@ -904,7 +914,8 @@ class Translate
 	}
 
 	/**
-	 *	Return a currency code into its symbol
+	 *	Return a currency code into its symbol. 
+	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.

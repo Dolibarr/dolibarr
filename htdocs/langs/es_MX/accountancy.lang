@@ -1,0 +1,35 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas para el archivo de exportación
+ACCOUNTING_EXPORT_DATE=Formato de fecha para el archivo de exportación
+ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportación con cuenta global
+AccountAccountingSuggest=Sugerencia de cuenta contable
+Bookkeeping=Libro mayor
+CAHTF=Total de compra al proveedor antes de impuestos
+Processing=Procesando
+EndProcessing=Fin del proceso
+SelectedLines=Partidas seleccionadas
+Lineofinvoice=Partida de factura
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud para mostrar la descripción de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para mostrar el formato de descripción de la cuenta de productos y servicios en listados (Ideal = 50)
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de varios
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de reporte de gastos
+ACCOUNTING_SOCIAL_JOURNAL=Diario Social
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de transferencia
+ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta de espera
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable por defecto para productos comprados (si no ha sido definido por la hoja de producto)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable por defecto para los productos vendidos (si no ha sido definido en la hoja del producto)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable por defecto para los servicios comprados (si no ha sido definido en la hoja del servicio)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable por defecto para los servicios vendidos (si no ha sido definido en la hoja del servicio)
+Labelcompte=Descripción de la cuenta
+Sens=Significado
+DelBookKeeping=Borrar los registros del libro mayor
+DescFinanceJournal=Diario financiero incluyendo todos los tipos de pagos por cuenta bancaria
+ErrorDebitCredit=Débito y Crédito no pueden tener un valor al mismo tiempo
+Pcgtype=Tipo de cuenta
+Pcgsubtype=Subtipo de cuenta
+TotalVente=Facturación total antes de impuestos
+TotalMarge=Margen de ventas total
+ErrorAccountancyCodeIsAlreadyUse=Error, no es posible eliminar ésta cuenta contable porque está siendo usada
+MvtNotCorrectlyBalanced=Movimiento balanceado incorrectamente. Crédito = %s. Débito = %s
+GeneralLedgerIsWritten=Las operaciones son escritas en el libro mayor

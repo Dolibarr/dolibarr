@@ -264,6 +264,8 @@ class Menubase
         $sql.= " t.mainmenu,";
         $sql.= " t.leftmenu,";
         $sql.= " t.fk_menu,";
+        $sql.= " t.fk_mainmenu,";
+        $sql.= " t.fk_leftmenu,";
         $sql.= " t.position,";
         $sql.= " t.url,";
         $sql.= " t.target,";
@@ -293,6 +295,8 @@ class Menubase
                 $this->mainmenu = $obj->mainmenu;
                 $this->leftmenu = $obj->leftmenu;
                 $this->fk_menu = $obj->fk_menu;
+                $this->fk_mainmenu = $obj->fk_mainmenu;
+                $this->fk_leftmenu = $obj->fk_leftmenu;
                 $this->position = $obj->position;
                 $this->url = $obj->url;
                 $this->target = $obj->target;
@@ -445,7 +449,7 @@ class Menubase
 
         		if (empty($val['fk_leftmenu']))
         		{
-        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
+        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         			//var_dump($this->newmenu->liste);
         		}
         		else
@@ -474,7 +478,7 @@ class Menubase
         				}
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
-        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         		}
         	}
         }

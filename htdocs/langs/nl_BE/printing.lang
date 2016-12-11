@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - printing
+ListDrivers=Lijst van beschikbare drivers
+PrintTestDesc=Beschikbare printers
+NoActivePrintingModuleFound=Geen actieve module om af te drukken
+TargetedPrinter=Doelprinter
+GCP_State=Printer Status
+GCP_connectionStatus=Online Status
+PRINTIPP_PASSWORD=Paswoord
+NoDefaultPrinterDefined=Geen standaard printer gevonden
+IPP_Color=Kleur

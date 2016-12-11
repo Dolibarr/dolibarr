@@ -1,24 +1,19 @@
 # Dolibarr language file - Source file is en_US - members
 MembersArea=بخش کاربران
-PublicMembersArea=بخش کاربران عمومی
 MemberCard=کارت اعضا
 SubscriptionCard=کارت اشتراک
 Member=عضو
 Members=کاربران
-MemberAccount=ورود اعضا
 ShowMember=کارت نمایش عضو
 UserNotLinkedToMember=کاربر به یک عضو مرتبط نیست
 ThirdpartyNotLinkedToMember=شخص ثالث به عضو لینک نشده است
 MembersTickets=کاربران بلیط
 FundationMembers=اعضای بنیاد
-Attributs=خواص
-ErrorMemberTypeNotDefined=نوع کاربران تعریف نشده
-ListOfPublicMembers=فهرست کاربران عمومی
 ListOfValidatedPublicMembers=فهرست کاربران عمومی معتبر
 ErrorThisMemberIsNotPublic=این عضو است عمومی نمی
 ErrorMemberIsAlreadyLinkedToThisThirdParty=یکی دیگر از عضو (نام و نام <b>خانوادگی:٪ S،</b> وارد <b>کنید:٪ s)</b> در حال حاضر به شخص <b>ثالث٪ s در</b> ارتباط است. حذف این لینک برای اولین بار به دلیل یک شخص ثالث می تواند تنها به یک عضو (و بالعکس) پیوند داده نمی شود.
 ErrorUserPermissionAllowsToLinksToItselfOnly=به دلایل امنیتی، شما باید مجوز اعطا شده به ویرایش تمام کاربران قادر به پیوند عضو به یک کاربر است که مال شما نیست.
-ThisIsContentOfYourCard=این جزئیات از کارت شما است
+ThisIsContentOfYourCard=Hi.<br><br>This is a remind of the information we get about you. Feel free to contact us if something looks wrong.<br><br>
 CardContent=محتوا از کارت عضو شما
 SetLinkToUser=پیوند به یک کاربر Dolibarr
 SetLinkToThirdParty=لینک به شخص ثالث Dolibarr
@@ -28,29 +23,24 @@ MembersListToValid=لیست اعضای پیش نویس (به اعتبار شود
 MembersListValid=لیست اعضای معتبر
 MembersListUpToDate=فهرست کاربران معتبر با به اشتراک عضویت
 MembersListNotUpToDate=فهرست کاربران معتبر با اشتراک از تاریخ
-MembersListResiliated=لیست اعضای resiliated
+MembersListResiliated=List of terminated members
 MembersListQualified=لیست اعضای واجد شرایط
 MenuMembersToValidate=عضو پیش نویس
 MenuMembersValidated=اعضای اعتبار
 MenuMembersUpToDate=تا اعضای تاریخ
 MenuMembersNotUpToDate=از اعضای تاریخ
-MenuMembersResiliated=اعضای Resiliated
+MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=کاربران با اشتراک برای دریافت
-DateAbonment=تاریخ ثبت نام
 DateSubscription=تاریخ ثبت نام
-DateNextSubscription=اشتراک بعدی
 DateEndSubscription=تاریخ پایان ثبت نام
 EndSubscription=اشتراک پایان
 SubscriptionId=شناسه اشتراک
 MemberId=نام کاربری
 NewMember=عضو جدید
-NewType=نوع عضو جدید
 MemberType=نوع کاربران
 MemberTypeId=نوع شناسه عضو
 MemberTypeLabel=نوع کاربران برچسب
 MembersTypes=انواع کاربران
-MembersAttributes=ویژگی های کاربران
-SearchAMember=جستجو در
 MemberStatusDraft=پیش نویس (نیاز به تایید می شود)
 MemberStatusDraftShort=پیش نویس
 MemberStatusActive=اعتبار (انتظار آبونمان)
@@ -59,20 +49,12 @@ MemberStatusActiveLate=اشتراک منقضی
 MemberStatusActiveLateShort=منقضی شده
 MemberStatusPaid=اشتراک به روز
 MemberStatusPaidShort=به روز
-MemberStatusResiliated=عضو Resiliated
-MemberStatusResiliatedShort=Resiliated
+MemberStatusResiliated=Terminated member
+MemberStatusResiliatedShort=Terminated
 MembersStatusToValid=عضو پیش نویس
-MembersStatusToValidShort=عضو پیش نویس
-MembersStatusValidated=اعضای اعتبار
-MembersStatusPaid=اشتراک به روز
-MembersStatusPaidShort=به روز
-MembersStatusNotPaid=اشتراک از تاریخ
-MembersStatusNotPaidShort=از تاریخ
-MembersStatusResiliated=اعضای Resiliated
-MembersStatusResiliatedShort=اعضای Resiliated
+MembersStatusResiliated=Terminated members
 NewCotisation=سهم های جدید
 PaymentSubscription=پرداخت سهم جدید
-EditMember=ویرایش عضو
 SubscriptionEndDate=تاریخ پایان اشتراک در
 MembersTypeSetup=نوع کاربران راه اندازی
 NewSubscription=اشتراک جدید
@@ -81,8 +63,6 @@ Subscription=اشتراک
 Subscriptions=اشتراک ها
 SubscriptionLate=دیر
 SubscriptionNotReceived=اشتراک هرگز دریافت
-SubscriptionLateShort=دیر
-SubscriptionNotReceivedShort=هرگز دریافت
 ListOfSubscriptions=فهرست اشتراک ها
 SendCardByMail=ارسال کارت توسط ایمیل
 AddMember=Create member
@@ -90,44 +70,38 @@ NoTypeDefinedGoToSetup=هیچ نوع عضو تعریف شده است. برو ب�
 NewMemberType=نوع عضو جدید
 WelcomeEMail=خوش آمدید ایمیل
 SubscriptionRequired=اشتراک مورد نیاز
-EditType=نوع ویرایش عضو
 DeleteType=حذف کردن
 VoteAllowed=رای اجازه
 Physical=فیزیکی
 Moral=اخلاقی
 MorPhy=با اخلاق / فیزیکی
 Reenable=را دوباره فعال کنید
-ResiliateMember=Resiliate عضو
-ConfirmResiliateMember=آیا مطمئن هستید که می خواهید به resiliate این عضو؟
+ResiliateMember=Terminate a member
+ConfirmResiliateMember=Are you sure you want to terminate this member?
 DeleteMember=حذف عضو
-ConfirmDeleteMember=آیا مطمئن هستید که می خواهید به حذف این عضو (حذف یک عضو تمام اشتراک های خود را حذف کنید)؟
+ConfirmDeleteMember=Are you sure you want to delete this member (Deleting a member will delete all his subscriptions)?
 DeleteSubscription=حذف اشتراک
-ConfirmDeleteSubscription=آیا مطمئن هستید که می خواهید این اشتراک را حذف کنید؟
+ConfirmDeleteSubscription=Are you sure you want to delete this subscription?
 Filehtpasswd=فایل htpasswd
 ValidateMember=اعتبارسنجی عضو
-ConfirmValidateMember=آیا مطمئن هستید که می خواهید به اعتبار این عضو؟
+ConfirmValidateMember=Are you sure you want to validate this member?
 FollowingLinksArePublic=لینک های زیر صفحات باز شده توسط هر اجازه Dolibarr محافظت نشده است. آنها صفحات formated نیست، که به عنوان مثال برای نشان دادن چگونگی به لیست پایگاه داده کاربران.
 PublicMemberList=فهرست کاربران عمومی
 BlankSubscriptionForm=شکل خودکار اشتراک عمومی
 BlankSubscriptionFormDesc=Dolibarr می تواند به شما URL های عمومی ارائه اجازه می دهد تا بازدید کننده خارجی به درخواست برای عضویت در پایه و اساس. اگر یک ماژول پرداخت آنلاین فعال باشد، به صورت پرداخت نیز به صورت خودکار ارائه خواهند شد.
 EnablePublicSubscriptionForm=فعال کردن فرم خودکار اشتراک عمومی
-MemberPublicLinks=لینک های عمومی / صفحات
 ExportDataset_member_1=کاربران و اشتراک
 ImportDataset_member_1=کاربران
-LastMembers=عضو تاریخ و زمان آخرین٪ بازدید کنندگان
-LastMembersModified=تاریخ و زمان آخرین٪ اعضای اصلاح شده
-LastSubscriptionsModified=تاریخ و زمان آخرین٪ s به اشتراک اصلاح شده
-AttributeName=نام صفت
+LastMembersModified=Latest %s modified members
+LastSubscriptionsModified=Latest %s modified subscriptions
 String=رشته
 Text=متن
 Int=بین المللی
-Date=تاریخ
 DateAndTime=تاریخ و زمان
 PublicMemberCard=کاربران کارت های عمومی
-MemberNotOrNoMoreExpectedToSubscribe=کاربران بیشتری انتظار می رود نیست و یا هیچ به اشتراک
+SubscriptionNotRecorded=Subscription not recorded
 AddSubscription=Create subscription
 ShowSubscription=نمایش اشتراک
-MemberModifiedInDolibarr=کاربران تغییر در Dolibarr
 SendAnEMailToMember=ارسال ایمیل به اطلاعات به عضو
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع ایمیل را دریافت کرده در مورد خودکار کتیبه مهمان
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=فرستادن به ایمیل دریافت در صورت خودکار کتیبه مهمان
@@ -147,17 +121,14 @@ DescADHERENT_CARD_HEADER_TEXT=متن چاپ شده در بالای کارت ها
 DescADHERENT_CARD_TEXT=متن چاپ شده بر روی کارت های عضو (چین در سمت چپ)
 DescADHERENT_CARD_TEXT_RIGHT=متن چاپ شده بر روی کارت های عضو (چین در سمت راست)
 DescADHERENT_CARD_FOOTER_TEXT=متن چاپ شده در پایین از کارت های عضو
-GlobalConfigUsedIfNotDefined=متن تعریف شده در راه اندازی ماژول بنیاد استفاده خواهد شد اگر در اینجا تعریف نشده
-MayBeOverwrited=این متن را می توان با مقدار مشخص شده برای نوع عضو overwrited
 ShowTypeCard=نمایش نوع «٪ s '
 HTPasswordExport=نسل فایل htpassword
 NoThirdPartyAssociatedToMember=بدون شخص ثالث مرتبط به این کاربر
-ThirdPartyDolibarr=شخص ثالث Dolibarr
 MembersAndSubscriptions= کاربران و اشتراک
 MoreActions=اقدام مکمل در ضبط
 MoreActionsOnSubscription=اقدام مکمل، پیشنهاد به طور پیش فرض هنگام ضبط اشتراک
-MoreActionBankDirect=ایجاد یک رکورد معامله مستقیم بر روی حساب کاربری
-MoreActionBankViaInvoice=ایجاد یک صورت حساب و پرداخت در حساب
+MoreActionBankDirect=Create a direct entry on bank account
+MoreActionBankViaInvoice=Create an invoice, and a payment on bank account
 MoreActionInvoiceOnly=ایجاد یک فاکتور بدون پرداخت
 LinkToGeneratedPages=ایجاد کارت های کسب و
 LinkToGeneratedPagesDesc=این صفحه نمایش شما اجازه می دهد برای تولید فایل های PDF با کارت های کسب و کار برای همه اعضای خود را یا یکی از اعضای خاص است.
@@ -171,7 +142,6 @@ MembersStatisticsByCountries=آمار کاربران بر اساس کشور
 MembersStatisticsByState=آمار کاربران توسط ایالت / استان
 MembersStatisticsByTown=آمار کاربران توسط شهر
 MembersStatisticsByRegion=آمار کاربران بر اساس منطقه
-MemberByRegion=تعداد کاربران بر اساس منطقه
 NbOfMembers=تعداد اعضا
 NoValidatedMemberYet=هیچ اعتبار یافت
 MembersByCountryDesc=این صفحه آمار در اعضا را با کشورهای به شما نشان دهد. گرافیک در گوگل خدمات گراف آنلاین بستگی دارد با این حال و در دسترس است تنها در صورت اتصال به اینترنت در حال کار است.
@@ -182,7 +152,6 @@ MenuMembersStats=ارقام
 LastMemberDate=آخرین تاریخ عضو
 Nature=طبیعت
 Public=اطلاعات عمومی
-Exports=صادرات
 NewMemberbyWeb=عضو جدید اضافه شده است. در انتظار تایید
 NewMemberForm=فرم عضو جدید
 SubscriptionsStatistics=آمار اشتراک
@@ -192,16 +161,11 @@ TurnoverOrBudget=گردش مالی (برای یک شرکت) و یا بودجه (
 DefaultAmount=مقدار پیش فرض از اشتراک
 CanEditAmount=بازدید کنندگان می توانند / ویرایش میزان اشتراک خود را انتخاب کنید
 MEMBER_NEWFORM_PAYONLINE=پرش در یکپارچه صفحه پرداخت آنلاین
-Associations=مبانی
-Collectivités=سازمان ها
-Particuliers=شخصی
-Entreprises=شرکت
-DOLIBARRFOUNDATION_PAYMENT_FORM=برای پرداخت اشتراک خود را با استفاده از یک انتقال بانکی، صفحه را ببینید <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> برای پرداخت با استفاده از یک کارت اعتباری یا پی پال، بر روی دکمه در پایین این صفحه کلیک کنید. <br>
 ByProperties=با ویژگی
 MembersStatisticsByProperties=آمار کاربران توسط ویژگی
 MembersByNature=This screen show you statistics on members by nature.
 MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=نرخ مالیات بر ارزش افزوده برای استفاده از اشتراک ها
 NoVatOnSubscription=بدون TVA برای اشتراک
-MEMBER_PAYONLINE_SENDEMAIL=ایمیل برای هشدار دادن به هنگام Dolibarr دریافت تایید از پرداخت اعتبار برای اشتراک
+MEMBER_PAYONLINE_SENDEMAIL=Email to use for email warning when Dolibarr receive a confirmation of a validated payment for a subscription (Example: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s

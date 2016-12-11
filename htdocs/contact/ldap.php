@@ -170,12 +170,12 @@ if ($result > 0)
 	$info=$object->_load_ldap_info();
 	$dn=$object->_load_ldap_dn($info,1);
 	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records=$ldap->getAttribute($dn,$search);
+	$records = $ldap->getAttribute($dn,$search);
 
 	//var_dump($records);
 
 	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{

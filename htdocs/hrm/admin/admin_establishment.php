@@ -61,7 +61,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -110,7 +110,8 @@ if ($result)
             
 			$establishmentstatic->id=$obj->rowid;
 			$establishmentstatic->name=$obj->name;
-
+			$establishmentstatic->status=$obj->status;
+			
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
@@ -119,7 +120,7 @@ if ($result)
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
-			print $establishmenttmp->getLibStatus(5);
+			print $establishmentstatic->getLibStatus(5);
 			print '</td>';
             print "</tr>\n";
 
@@ -129,7 +130,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
 	print '</table>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2015  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2016  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
@@ -25,10 +25,11 @@
  *		\brief      Page to setup the donation module
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -89,12 +90,12 @@ else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
 	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// So we go through a variable for a coherent display
 		$conf->global->DON_ADDON_MODEL = $value;
 	}
 
-	// On active le modele
+	// It enables the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
@@ -198,6 +199,7 @@ else if ($action == 'setart885') {
 
 $dir = "../../core/modules/dons/";
 $form=new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -228,9 +230,16 @@ print '<tr '.$bc[$var].'>';
 
 print '<td width="50%">';
 $label = $langs->trans("AccountAccounting");
-print '<label for="'.$langs->trans("AccountAccounting").'">' . $label . '</label></td>';
+print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
 print '<td>';
-print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
+if (! empty($conf->accounting->enabled))
+{
+	print $formaccountancy->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+}
+else
+{
+	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
@@ -312,7 +321,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 print '<br>';
 print load_fiche_titre($langs->trans("DonationsModels"));
 
-// Defini tableau def de modele
+// Defined the template definition table
 $type='donation';
 $def = array();
 $sql = "SELECT nom";
@@ -399,7 +408,7 @@ if (is_resource($handle))
                     print "</td>";
                 }
 
-                // Defaut
+                // Default
                 if ($conf->global->DON_ADDON_MODEL == "$name")
                 {
 					print "<td align=\"center\">";

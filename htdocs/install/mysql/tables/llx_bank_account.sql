@@ -51,9 +51,12 @@ create table llx_bank_account
   rappro				smallint DEFAULT 1,
   url					varchar(128),
   account_number		varchar(32),				-- bank accountancy number
-  accountancy_journal	varchar(3) DEFAULT NULL,	-- bank accountancy journal
+  accountancy_journal	varchar(16) DEFAULT NULL,	-- bank accountancy journal
   currency_code			varchar(3) NOT NULL,
   min_allowed			integer DEFAULT 0,
   min_desired			integer DEFAULT 0,
-  comment				text
+  comment				text,						-- TODO rename in note_private
+  note_public     		text,
+  model_pdf       		varchar(255),
+  import_key      		varchar(14)
 )ENGINE=innodb;

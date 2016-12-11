@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-
 Language_ar_AR=Arapça
 Language_ar_SA=Arapça
 Language_bn_BD=Bengalce
@@ -32,10 +31,11 @@ Language_es_MX=İspanyolca (Meksika)
 Language_es_PY=İspanyolca (Paraguay)
 Language_es_PE=İspanyolca (Peru)
 Language_es_PR=İspanyolca (Porto Riko)
+Language_es_VE=İspanyolca (Venezüella)
 Language_et_EE=Estonyaca
 Language_eu_ES=Baskça
 Language_fa_IR=Farsça
-Language_fi_FI=Finnish
+Language_fi_FI=Fince
 Language_fr_BE=Fransızca (Belçika)
 Language_fr_CA=Fransızca (Kanada)
 Language_fr_CH=Fransızca (İsviçre)

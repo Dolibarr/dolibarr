@@ -121,5 +121,5 @@ print '</td></tr>';
 
 print '</table>';
 
-$db->close();
 llxFooter();
+$db->close();

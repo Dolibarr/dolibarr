@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - productbatch
+Batch=Chg / Serie
+DetailBatchNumber=Chg / Serie Details
+printBatch=Chg / Serie: %s
+AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit Dispatching
+WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Lot/Seriennr eingeschaltet ist, wird der Modus für Lagerbestands-Erhöhungen / -Senkungen auf die letzte Auswahl festgelegt und kann nicht geändert werden. Andere Optionen können nach Wunsch eingestellt werden.

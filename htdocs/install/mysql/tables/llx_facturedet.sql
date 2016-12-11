@@ -26,15 +26,16 @@ create table llx_facturedet
 (
   rowid							integer    AUTO_INCREMENT PRIMARY KEY,
   fk_facture					integer    NOT NULL,
-  fk_parent_line				integer	 NULL,
+  fk_parent_line				integer	   NULL,
   fk_product					integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   label							varchar(255) DEFAULT NULL,
   description					text,
+  vat_src_code					varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx						double(6,3),						-- Vat rate (example 20%)
   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
-  localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
+  localtax1_type			 	varchar(10)	 NULL, 				 	-- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
-  localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
+  localtax2_type			 	varchar(10)	 NULL, 				 	-- localtax2 type
   qty							real,								-- Quantity (exemple 2)
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
@@ -43,26 +44,36 @@ create table llx_facturedet
   price							double(24,8),						-- Deprecated (Do not use)
   total_ht						double(24,8),						-- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva						double(24,8),						-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
-  total_localtax1				double(24,8) DEFAULT 0,			-- Total LocalTax1 for total quantity of line
-  total_localtax2				double(24,8) DEFAULT 0,			-- total LocalTax2 for total quantity of line
+  total_localtax1				double(24,8) DEFAULT 0,				-- Total LocalTax1 for total quantity of line
+  total_localtax2				double(24,8) DEFAULT 0,				-- Total LocalTax2 for total quantity of line
   total_ttc						double(24,8),						-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type					integer    DEFAULT 0,
-  date_start					datetime   DEFAULT NULL,			-- date debut si service
-  date_end						datetime   DEFAULT NULL,			-- date fin si service
-  info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
+  date_start					datetime   DEFAULT NULL,			-- date start if service
+  date_end						datetime   DEFAULT NULL,			-- date end if service
+  info_bits						integer    DEFAULT 0,				-- VAT NPR or not (for france only)
 
   buy_price_ht					double(24,8) DEFAULT 0,				-- buying price
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
-  fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
+  fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
+  
   special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
   rang							integer    DEFAULT 0,				-- position of line
+  fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines
   import_key					varchar(14),
 
-  situation_percent real,   -- % progression of lines invoicing
-  fk_prev_id        integer, -- id of the line in the previous situation,
-  fk_unit           integer DEFAULT NULL -- id of the unit code¡
+  situation_percent real,   										-- % progression of lines invoicing
+  fk_prev_id        integer, 										-- id of the line in the previous situation,
+  fk_unit           integer DEFAULT NULL, 							-- id of the unit code¡
+  fk_user_author	integer,                						-- user making creation
+  fk_user_modif     integer,                						-- user making last change
 
+  fk_multicurrency				integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva		double(24,8) DEFAULT 0,
+  multicurrency_total_ttc		double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

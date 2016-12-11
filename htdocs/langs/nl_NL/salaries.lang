@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Boekhoudkundige code voor salarissen betalingen
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=boekhoudkundige code voor financiële last
 Salary=Salaris
 Salaries=Salarissen
-Employee=Werknemer
 NewSalaryPayment=Nieuwe salarisbetaling
 SalaryPayment=Salarisbetaling
 SalariesPayments=Salarissen betalingen
 ShowSalaryPayment=Toon salarisbetaling
-THM=Gemiddelde uurprijs
-TJM=Gemiddelde dagprijs
+THM=Average hourly rate
+TJM=Average daily rate
 CurrentSalary=Huidige salaris
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
 TJMDescription=This value is currently as information only and is not used for any calculation

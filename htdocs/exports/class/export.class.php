@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+/* Copyright (C) 2005-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,11 +132,11 @@ class Export
     									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
     									if (! empty($perm[2]))
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
     									}
     									else
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
     									}
     									if ($perm[0]=='user' && $user->admin) $bool=true;
     									if (! $bool) break;
@@ -224,7 +225,7 @@ class Export
 			else $i++;
 
 			if (strpos($key, ' as ')===false) {
-				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
+				$newfield=$key.' as '.str_replace(array('.', '-','(',')'),'_',$key);
 			} else {
 				$newfield=$key;
 			}
@@ -233,19 +234,32 @@ class Export
 		}
 		$sql.=$this->array_export_sql_end[$indice];
 
-		// Add the filtering into sql if a filtering array is provided
+		// Add the WHERE part. Filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
 			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value)
 			{
+			    if (preg_match('/GROUP_CONCAT/i', $key)) continue;
 				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
+		
+		// Add the order
 		$sql.=$this->array_export_sql_order[$indice];
 
+		// Add the HAVING part.
+		if (is_array($array_filterValue) && !empty($array_filterValue))
+		{
+		    // Loop on each condition to add
+		    foreach ($array_filterValue as $key => $value)
+		    {
+		        if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') $sql.=" HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+		    }
+		}
+		
 		return $sql;
 	}
 
@@ -363,6 +377,9 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
+				// Must be a string text to allow to use comparison strings like "<= 999"
+			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				break;
 			case 'Status':
 				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
@@ -512,7 +529,7 @@ class Export
 			return -1;
 		}
 
-		// Creation de la classe d'export du model ExportXXX
+		// Creation of class to export using model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
@@ -586,14 +603,14 @@ class Export
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='';
 							}
 							// Operation ZEROIFNEG
 							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='0';
 							}
 						}

@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - ecm
-MenuECM=Документация
 ECMNbOfDocs=Кол-во документов в каталоге
-ECMNbOfDocsSmall=Кол-во док.
 ECMSectionManual=Руководство каталог
 ECMSectionsManual=Руководство дерево
 ECMSectionsAuto=Автоматическая дерево
 ECMNbOfSubDir=Количество подкаталогах
 ECMAreaDesc2=* Автоматическое каталоги заполняется автоматически при добавлении документов с карты элемента. <br> * Руководство каталоги могут быть использованы для сохранения документов, не связанных с определенного элемента.
 ECMSectionWasRemoved=Каталог <b>%s</b> была удалена.
-ECMDocumentsSection=Документ каталог
 ECMSearchByEntity=Поиск по статьям
 ECMDocsByContracts=Документы связаны с контрактами
 ECMDocsByInvoices=Документы связаны с клиентами счетов

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,17 +39,18 @@ $langs->load("bills");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '','');
 
-$search_ref = GETPOST('search_ref','int');
+$search_ref = GETPOST('search_ref','alpha');
 $search_account = GETPOST('search_account','int');
 $search_amount = GETPOST('search_amount','alpha');
+
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="dp";
 
@@ -60,8 +62,13 @@ $formother = new FormOther($db);
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
+
+/*
+ * Actions
+ */
+
 // If click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_ref='';
     $search_amount='';
@@ -70,13 +77,15 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $month='';
 }
 
+
+
 /*
  * View
  */
 
 llxHeader('',$langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.number as ref, bc.date_bordereau as dp,";
+$sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
@@ -85,7 +94,7 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql.=" AND bc.number=".$search_ref;
+if ($search_ref)			$sql.=" AND bc.ref=".$search_ref;
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
 if ($search_amount)			$sql.=" AND bc.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($month > 0)
@@ -101,30 +110,50 @@ else if ($year > 0)
 {
 	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
+$sql.= $db->order($sortfield,$sortorder);
 
-$sql.= " ORDER BY $sortfield $sortorder";
+$nbtotalofrecords = -1;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
-
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$params='';
+	$param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num);
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', '', '', $limit);
+	
+	$moreforfilter='';
+	
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$params,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"bc.amount","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"bc.statut","",$params,'align="right"',$sortfield,$sortorder);
+    print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"bc.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"bc.statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -142,11 +171,14 @@ if ($resql)
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print "</td></tr>\n";
+	print '<td></td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+    print "</tr>\n";
 
     if ($num > 0)
     {
@@ -158,7 +190,7 @@ if ($resql)
     		print "<tr ".$bc[$var].">";
     
     		// Num ref cheque
-    		print '<td width="80">';
+    		print '<td>';
     		$checkdepositstatic->id=$objp->rowid;
     		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
     		$checkdepositstatic->statut=$objp->statut;
@@ -170,7 +202,7 @@ if ($resql)
     
     		// Bank
     		print '<td>';
-    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
     		else print '&nbsp;';
     		print '</td>';
     
@@ -183,18 +215,22 @@ if ($resql)
     		// Statut
     		print '<td align="right">';
     		print $checkdepositstatic->LibStatut($objp->statut,5);
-    		print "</td></tr>\n";
+    		print '</td>';
+    		
+    		print '<td></td>';
+    		
+            print "</tr>\n";
     		$i++;
     	}
     }
     else
     {
-   		$var=!$var;
    		print "<tr ".$bc[$var].">";
-   		print '<td colspan="6">'.$langs->trans("None")."</td>";
+   		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }
 	print "</table>";
+	print "</div>";
 	print "</form>\n";
 }
 else

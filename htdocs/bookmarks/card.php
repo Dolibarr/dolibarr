@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 	}
 
 	if ($action == 'update') $bookmark->fetch($_POST["id"]);
-	$bookmark->fk_user=$userid;
+	// Check if null because user not admin can't set an user and send empty value here.
+	if(!empty($userid))
+		$bookmark->fk_user=$userid;
 	$bookmark->title=$title;
 	$bookmark->url=$url;
 	$bookmark->target=$target;
@@ -165,7 +167,7 @@ if ($action == 'create')
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	$form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
+	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -262,7 +264,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($action == 'edit' && $user->admin)
 	{
-		$form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
+		print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{

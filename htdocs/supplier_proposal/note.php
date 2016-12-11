@@ -87,11 +87,21 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 			
 			// Customer
-			if ( is_null($object->client) )
+			if ( is_null($object->thirdparty) )
 				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Supplier")."</td>";
-			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 			
+			// Payment term
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentConditionsShort');
+			print '</td>';
+		    print '</tr></table>';
+		    print '</td><td colspan="3">';
+	        $form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none', 1);
+		    print '</td>';
+		    print '</tr>';
 			print '<tr><td>'.$langs->trans('SupplierProposalDate').'</td><td colspan="3">';
 			print dol_print_date($object->date_livraison,'daytext');
 			print '</td>';

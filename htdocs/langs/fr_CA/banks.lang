@@ -1,3 +1,14 @@
 # Dolibarr language file - Source file is en_US - banks
 OnlyOpenedAccount=Uniquement comptes ouverts
 SocialContributionPayment=Règlement charge sociale
+DefaultRIB=RIB par défaut
+AllRIB=Tous les RIB
+LabelRIB=Nom du RIB
+NoBANRecord=Aucun RIB enregistré
+DeleteARib=Supprimé RIB enregistré
+ConfirmDeleteRib=Etes vous sur de vouloir supprimé ce RIB ?
+RejectCheck=Chèque renvoyé
+ConfirmRejectCheck=Etes-vous sûr que vous voulez marquer ce chèque comme rejeté ?
+RejectCheckDate=Date à laquelle le chèque a été retourné
+CheckRejected=Chèque renvoyé
+CheckRejectedAndInvoicesReopened=Chèques retournés et factures rouvertes

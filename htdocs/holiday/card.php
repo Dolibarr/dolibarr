@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ if ($action == 'create')
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
-    	setEventMessage($langs->trans('CantCreateCP'));
+    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
     	$action='request';
     }
 
@@ -84,58 +84,65 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
-    	// If no start date
+    	// If no type
 	    if ($type <= 0)
 	    {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	        $error++;
 	        $action='create';
 	    }
-	    
+
 	    // If no start date
 	    if (empty($date_debut))
 	    {
-	        header('Location: card.php?action=request&error=nodatedebut');
-	        exit;
+	        setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If no end date
 	    if (empty($date_fin))
 	    {
-	        header('Location: card.php?action=request&error=nodatefin');
-	        exit;
+	        setEventMessages($langs->trans("NoDateFin"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If start date after end date
 	    if ($date_debut > $date_fin)
 	    {
-	        header('Location: card.php?action=request&error=datefin');
-	        exit;
+	        setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // Check if there is already holiday for this period
 	    $verifCP = $cp->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
-	        header('Location: card.php?action=request&error=alreadyCP');
-	        exit;
+	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
-	    // If there is no Business Days within request 
+	    // If there is no Business Days within request
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 	    if($nbopenedday < 0.5)
 	    {
-	        header('Location: card.php?action=request&error=DureeHoliday');
-	        exit;
+	        setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // If no validator designated
 	    if ($valideur < 1)
 	    {
-	        header('Location: card.php?action=request&error=Valideur');
-	        exit;
+	        setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
+	        $error++;
 	    }
 
 	    $result = 0;
-	    
+
+	    $result = 0;
+
 	    if (! $error)
 	    {
     	    $cp->fk_user = $userid;
@@ -145,25 +152,21 @@ if ($action == 'create')
     	    $cp->fk_validator = $valideur;
     		$cp->halfday = $halfday;
     		$cp->fk_type = $type;
-    
+
     		$result = $cp->create($user);
 	    }
-	    
+
 	    // If no SQL error we redirect to the request card
-	    if ($result > 0)
+	    if (! $error && $result > 0)
 	    {
 			$db->commit();
 
-	    	header('Location: card.php?id='.$result);
+	    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
 	        exit;
 	    }
 	    else
 		{
 	    	$db->rollback();
-
-	        // Otherwise we display the request form with the SQL error message
-	        header('Location: card.php?action=request');
-	        exit;
 	    }
     }
 }
@@ -181,15 +184,15 @@ if ($action == 'update')
 	else if ($starthalfday == 'afternoon') $halfday=-1;
 	else if ($endhalfday == 'morning') $halfday=1;
 
-    // If no right to modify a request 
+    // If no right to modify a request
     if (! $user->rights->holiday->write)
     {
-        header('Location: card.php?action=request&error=CantUpdate');
+        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=CantUpdate');
         exit;
     }
 
     $cp = new Holiday($db);
-    $cp->fetch($_POST['holiday_id']);
+    $cp->fetch($id);
 
 	$canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
 
@@ -204,25 +207,25 @@ if ($action == 'update')
 
             // If no start date
             if (empty($_POST['date_debut_'])) {
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=nodatedebut');
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=nodatedebut');
                 exit;
             }
 
             // If no end date
             if (empty($_POST['date_fin_'])) {
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=nodatefin');
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=nodatefin');
                 exit;
             }
 
             // If start date after end date
             if ($date_debut > $date_fin) {
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=datefin');
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=datefin');
                 exit;
             }
 
             // If no validator designated
             if ($valideur < 1) {
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=Valideur');
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=Valideur');
                 exit;
             }
 
@@ -230,7 +233,7 @@ if ($action == 'update')
             $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
             if ($nbopenedday < 0.5)
             {
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=DureeHoliday');
                 exit;
             }
 
@@ -244,18 +247,18 @@ if ($action == 'update')
 			$verif = $cp->update($user->id);
             if ($verif > 0)
             {
-                header('Location: card.php?id='.$_POST['holiday_id']);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
             else
            {
                 // Otherwise we display the request form with the SQL error message
-                header('Location: card.php?id='.$_POST['holiday_id'].'&action=edit&error=SQL_Create&msg='.$cp->error);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit&error=SQL_Create&msg='.$cp->error);
                 exit;
             }
         }
     } else {
-        header('Location: card.php?id='.$_POST['holiday_id']);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
         exit;
     }
 }
@@ -278,7 +281,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($canedit)
 		{
-			$result=$cp->delete($id);
+			$result=$cp->delete($cp->id);
 		}
 		else
 		{
@@ -304,8 +307,10 @@ if ($action == 'confirm_send')
     $cp = new Holiday($db);
     $cp->fetch($id);
 
+    $canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
+
     // Si brouillon et créateur
-    if($cp->statut == 1 && $user->id == $cp->fk_user)
+    if($cp->statut == 1 && $canedit)
     {
         $cp->statut = 2;
 
@@ -321,7 +326,8 @@ if ($action == 'confirm_send')
 
             if (!$emailTo)
             {
-                header('Location: card.php?id='.$_GET['id']);
+                dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
 
@@ -360,7 +366,7 @@ if ($action == 'confirm_send')
             if ($cp->getConfCP('AlertValidatorSolde'))
             {
             	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
-                if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
+                if ($nbopenedday > $cp->getCPforUser($cp->fk_user, $cp->fk_type))
                 {
                     $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -370,7 +376,7 @@ if ($action == 'confirm_send')
             $message.= "\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')."\n";
-            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->rowid."\n\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->id."\n\n";
             $message.= "\n";
 
             $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -380,16 +386,16 @@ if ($action == 'confirm_send')
 
             if (!$result)
             {
-                header('Location: card.php?id='.$_GET['id'].'&error=mail&error_content='.$mail->error);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
-            header('Location: card.php?id='.$_GET['id']);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
             exit;
         }
         else
         {
             // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: card.php?id='.$_GET['id'].'&error=SQL_Create&msg='.$cp->error);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=SQL_Create&msg='.$cp->error);
             exit;
         }
     }
@@ -417,14 +423,14 @@ if ($action == 'confirm_valid')
             // Calculcate number of days consummed
             $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-            $soldeActuel = $cp->getCpforUser($cp->fk_user);
+            $soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde);
+            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $cp->fk_type);
 
             // Mise à jour du solde
-            $cp->updateSoldeCP($cp->fk_user, $newSolde);
+            $cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
 
             // To
             $destinataire = new User($db);
@@ -433,7 +439,8 @@ if ($action == 'confirm_valid')
 
             if (!$emailTo)
             {
-                header('Location: card.php?id='.$_GET['id']);
+                dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
 
@@ -455,7 +462,7 @@ if ($action == 'confirm_valid')
 
             $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
-            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->rowid."\n\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->id."\n\n";
             $message.= "\n";
 
             $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -464,15 +471,15 @@ if ($action == 'confirm_valid')
             $result=$mail->sendfile();
 
             if(!$result) {
-                header('Location: card.php?id='.$_GET['id'].'&error=mail&error_content='.$mail->error);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
 
-            header('Location: card.php?id='.$_GET['id']);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
             exit;
         } else {
             // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: card.php?id='.$_GET['id'].'&error=SQL_Create&msg='.$cp->error);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=SQL_Create&msg='.$cp->error);
             exit;
         }
 
@@ -485,7 +492,7 @@ if ($action == 'confirm_refuse')
     if (! empty($_POST['detail_refuse']))
     {
         $cp = new Holiday($db);
-        $cp->fetch($_GET['id']);
+        $cp->fetch($id);
 
         // Si statut en attente de validation et valideur = utilisateur
         if ($cp->statut == 2 && $user->id == $cp->fk_validator)
@@ -507,7 +514,7 @@ if ($action == 'confirm_refuse')
 
                 if (!$emailTo)
                 {
-                    header('Location: card.php?id='.$_GET['id']);
+                    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                     exit;
                 }
 
@@ -530,7 +537,7 @@ if ($action == 'confirm_refuse')
 
 	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
-	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->rowid."\n\n";
+	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->id."\n\n";
                 $message.= "\n";
 
                 $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -539,22 +546,22 @@ if ($action == 'confirm_refuse')
                 $result=$mail->sendfile();
 
                 if(!$result) {
-                    header('Location: card.php?id='.$_GET['id'].'&error=mail&error_content='.$mail->error);
+                    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=mail&error_content='.$mail->error);
                     exit;
                 }
 
-                header('Location: card.php?id='.$_GET['id']);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             } else {
                 // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-                header('Location: card.php?id='.$_GET['id'].'&error=SQL_Create&msg='.$cp->error);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=SQL_Create&msg='.$cp->error);
                 exit;
             }
 
         }
 
     } else {
-        header('Location: card.php?id='.$_GET['id'].'&error=NoMotifRefuse');
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=NoMotifRefuse');
         exit;
     }
 }
@@ -563,7 +570,7 @@ if ($action == 'confirm_refuse')
 if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
     $cp = new Holiday($db);
-    $cp->fetch($_GET['id']);
+    $cp->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
     if (($cp->statut == 2 || $cp->statut == 3) && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
@@ -582,14 +589,14 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         	// Calculcate number of days consummed
         	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-        	$soldeActuel = $cp->getCpforUser($cp->fk_user);
+        	$soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
         	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
         	// On ajoute la modification dans le LOG
-        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde);
+        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $cp->fk_type);
 
         	// Mise à jour du solde
-        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde);
+        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
 
         	if ($result1 < 0 || $result2 < 0)
         	{
@@ -616,13 +623,13 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
             if (!$emailTo)
             {
-                header('Location: card.php?id='.$_GET['id']);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
                 exit;
             }
 
             // From
             $expediteur = new User($db);
-            $expediteur->fetch($cp->fk_validator);
+            $expediteur->fetch($cp->fk_user_cancel);
             $emailFrom = $expediteur->email;
 
             // Subject
@@ -638,7 +645,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
-            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->rowid."\n\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$cp->id."\n\n";
             $message.= "\n";
 
             $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -648,17 +655,17 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
             if(!$result)
             {
-                header('Location: card.php?id='.$_GET['id'].'&error=mail&error_content='.$mail->error);
+                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
 
-            header('Location: card.php?id='.$_GET['id']);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id);
             exit;
         }
         else
         {
             // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: card.php?id='.$_GET['id'].'&error=SQL_Create&msg='.$cp->error);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&error=SQL_Create&msg='.$cp->error);
             exit;
         }
 
@@ -677,7 +684,7 @@ $cp = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {
@@ -721,7 +728,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
                     break;
             }
 
-	        setEventMessage($errors, 'errors');
+	        setEventMessages($errors, null, 'errors');
         }
 
 
@@ -789,11 +796,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // User
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
+        print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($userid,'useridbis',0,'',1);
+        	print $form->select_dolusers($userid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
@@ -804,7 +811,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
         print '<td>';
-        $typeleaves=$cp->getTypes(1,1);
+        $typeleaves=$cp->getTypes(1,-1);
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
@@ -813,6 +820,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
         print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '</tr>';
 
@@ -821,11 +829,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
-        if(!isset($_GET['datep'])) {
-            $form->select_date(-1,'date_debut_');
+        if (! GETPOST('date_debut_')) {
+            $form->select_date(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('datepmonth'), GETPOST('datepday'), GETPOST('datepyear'));
-            $form->select_date($tmpdate,'date_debut_');
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+            $form->select_date($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
@@ -837,11 +845,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
-        if(!isset($_GET['datep'])) {
-            $form->select_date(-1,'date_fin_');
+        if (! GETPOST('date_fin_')) {
+            $form->select_date(-1,'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
-            $form->select_date($tmpdate,'date_fin_');
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+            $form->select_date($tmpdate,'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
@@ -851,13 +859,8 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Approved by
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
-        $validator = new UserGroup($db);
-        $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
-        $valideurobjects = $validator->listUsersForGroup($excludefilter);
-        $valideurarray = array();
-        foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
         print '<td>';
-        print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
+        print $form->select_dolusers((GETPOST('valideur')>0?GETPOST('valideur'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
 
@@ -865,7 +868,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
-        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
+        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.GETPOST('description').'</textarea>';
         print '</td>';
         print '</tr>';
 
@@ -889,7 +892,7 @@ else
     {
         print '<div class="tabBar">';
         print $error;
-        print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+        print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
         print '</div>';
     }
     else
@@ -943,7 +946,7 @@ else
                         break;
                 }
 
-	            setEventMessage($errors, 'errors');
+	            setEventMessages($errors, null, 'errors');
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande
@@ -951,56 +954,57 @@ else
             {
                 if ($action == 'delete')
                 {
-                    if($user->rights->holiday->delete)
+                    if ($user->rights->holiday->delete)
                     {
-                        print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                     }
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
+                if ($action == 'sendToValidate' && $cp->statut == 1)
                 {
-                    print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
 
                 // Si validation de la demande
                 if ($action == 'valid')
                 {
-                    print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                 }
 
                 // Si refus de la demande
                 if ($action == 'refuse')
                 {
                     $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    print $form->formconfirm("card.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
                 }
 
                 // Si annulation de la demande
                 if ($action == 'cancel')
                 {
-                    print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                 }
 
                 $head=holiday_prepare_head($cp);
 
-                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
                 if ($action == 'edit' && $cp->statut == 1)
                 {
                     $edit = true;
-                    print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">'."\n";
+                    print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$cp->id.'">'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
-                    print '<input type="hidden" name="holiday_id" value="'.$id.'" />'."\n";
+                    print '<input type="hidden" name="id" value="'.$cp->id.'" />'."\n";
                 }
+
+                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
                 print '<table class="border" width="100%">';
                 print '<tbody>';
 
-                $linkback='';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 
                 print '<tr>';
-                print '<td width="25%">'.$langs->trans("Ref").'</td>';
+                print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
                 print '<td>';
                 print $form->showrefnav($cp, 'id', $linkback, 1, 'rowid', 'ref');
                 print '</td>';
@@ -1008,14 +1012,14 @@ else
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1);
+        		print $userRequest->getNomUrl(-1, 'leave');
         		print '</td></tr>';
 
 		        // Type
 		        print '<tr>';
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
-		        $typeleaves=$cp->getTypes(1,1);
+		        $typeleaves=$cp->getTypes(1,-1);
 		        print $typeleaves[$cp->fk_type]['label'];
 		        print '</td>';
 		        print '</tr>';
@@ -1118,27 +1122,20 @@ else
                 	$userCreate->fetch($cp->fk_user_create);
 	                print '<tr>';
 	                print '<td>'.$langs->trans('RequestByCP').'</td>';
-	                print '<td>'.$userCreate->getNomUrl(1).'</td>';
+	                print '<td>'.$userCreate->getNomUrl(-1).'</td>';
 	                print '</tr>';
                 }
 
                 if (!$edit) {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-                    print '<td>'.$valideur->getNomUrl(1).'</td>';
+                    print '<td>'.$valideur->getNomUrl(-1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-
-			        $validator = new UserGroup($db);
-			        $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
-			        $valideurobjects = $validator->listUsersForGroup($excludefilter);
-			        $valideurarray = array();
-			        foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-
                     print '<td>';
-        			print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
+        			print $form->select_dolusers($cp->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
                     print '</td>';
                     print '</tr>';
                 }
@@ -1147,19 +1144,19 @@ else
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
                 print '<td>'.dol_print_date($cp->date_create,'dayhour').'</td>';
                 print '</tr>';
-                if($cp->statut == 3) {
+                if ($cp->statut == 3) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
                     print '<td>'.dol_print_date($cp->date_valid,'dayhour').'</td>';
                     print '</tr>';
                 }
-                if($cp->statut == 4) {
+                if ($cp->statut == 4) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateCancelCP').'</td>';
                     print '<td>'.dol_print_date($cp->date_cancel,'dayhour').'</td>';
                     print '</tr>';
                 }
-                if($cp->statut == 5) {
+                if ($cp->statut == 5) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateRefusCP').'</td>';
                     print '<td>'.dol_print_date($cp->date_refuse,'dayhour').'</td>';
@@ -1168,19 +1165,20 @@ else
                 print '</tbody>';
                 print '</table>';
 
+                dol_fiche_end();
+
                 if ($action == 'edit' && $cp->statut == 1)
                 {
-                    print '<br><div align="center">';
+                    print '<div align="center">';
                     if ($canedit && $cp->statut == 1)
                     {
-                        print '<input type="submit" value="'.$langs->trans("UpdateButtonCP").'" class="button">';
+                        print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
                     }
                     print '</div>';
 
                     print '</form>';
                 }
 
-                dol_fiche_end();
 
                 if (! $edit)
                 {
@@ -1189,26 +1187,26 @@ else
                     // Boutons d'actions
                     if ($canedit && $cp->statut == 1)
                     {
-                        print '<a href="card.php?id='.$_GET['id'].'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
                     }
                     if ($canedit && $cp->statut == 1)
                     {
-                        print '<a href="card.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
                     if ($user->rights->holiday->delete && $cp->statut == 1)	// If draft
                     {
-                    	print '<a href="card.php?id='.$_GET['id'].'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
+                    	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
 
                     if ($user->id == $cp->fk_validator && $cp->statut == 2)
                     {
-                        print '<a href="card.php?id='.$_GET['id'].'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
-                        print '<a href="card.php?id='.$_GET['id'].'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
                     }
 
                     if (($user->id == $cp->fk_validator || $user->id == $cp->fk_user) && ($cp->statut == 2 || $cp->statut == 3))	// Status validated or approved
                     {
-                    	if (($cp->date_debut > dol_now()) || $user->admin) print '<a href="card.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+                    	if (($cp->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$cp->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
                     }
 

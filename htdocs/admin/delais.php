@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,17 @@ $modules=array(
 						'img' => 'action'
 				)
 		),
-		'propal' => array(
+		'projet' => array(
+				array(
+						'code' => 'MAIN_DELAY_PROJECT_TO_CLOSE',
+						'img' => 'project'
+				),
+				array(
+						'code' => 'MAIN_DELAY_TASKS_TODO',
+						'img' => 'task'
+				)
+		),
+        'propal' => array(
 				array(
 						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
 						'img' => 'propal'
@@ -158,7 +169,7 @@ if ($action == 'edit')
     		foreach($delays as $delay)
     		{
     			$var=!$var;
-    			$value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
+				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
     			print '<tr '.$bc[$var].'>';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
@@ -175,9 +186,9 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
 
@@ -205,7 +216,7 @@ else
     		foreach($delays as $delay)
     		{
     			$var=!$var;
-    			$value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
+				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
     			print '<tr '.$bc[$var].'>';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
@@ -222,7 +233,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 
@@ -255,24 +266,24 @@ $text=''; $options='height="60px"';
 print '<table>';
 print '<tr>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clear.png',$options);
+print img_weather($text,'weather-clear.png',$options);
 print '</td><td>= '.$level0.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-few-clouds.png',$options);
+print img_weather($text,'weather-few-clouds.png',$options);
 print '</td><td>&lt;= '.$level1.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clouds.png',$options);
+print img_weather($text,'weather-clouds.png',$options);
 print '</td><td>&lt;= '.$level2.'</td>';
 print '</tr>';
 
 print '<tr><td>';
-print img_picto_common($text,'weather/weather-many-clouds.png',$options);
+print img_weather($text,'weather-many-clouds.png',$options);
 print '</td><td>&lt;= '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-storm.png',$options);
+print img_weather($text,'weather-storm.png',$options);
 print '</td><td>&gt; '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';

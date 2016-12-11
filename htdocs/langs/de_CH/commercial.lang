@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - commercial
+CommercialArea=Vertriebs - Übersicht
+ActionOnCompany=Verknüpfte Firma
+TaskRDVWith=Treffen mit %s
+ThirdPartiesOfSaleRepresentative=Geschäftspartner mit Vertriebsmitarbeiter
+LastDoneTasks=%s zuletzt erledigte Aufgaben
+ActionAC_RDV=Treffen
+ActionAC_INT=Eingriff vor Ort
+ActionAC_CLO=Schliessen

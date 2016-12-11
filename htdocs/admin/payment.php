@@ -39,6 +39,8 @@ $label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
 $type='invoice';
 
+if (empty($conf->global->PAYMENT_ADDON)) $conf->global->PAYMENT_ADDON = 'mod_payment_cicada.php';
+
 
 /*
  * Actions
@@ -62,10 +64,43 @@ if ($action == 'updateMask')
     }
 }
 
-    if ($action == 'setmod')
+if ($action == 'setmod')
 {
     dolibarr_set_const($db, "PAYMENT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
+
+if ($action == 'setparams')
+{
+	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS');	// No alpha here, we want exact string
+
+	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$freetext,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if ($error)
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+	
+	/*
+	$freetext = GETPOST('INVOICE_AUTO_FILLJS');	// No alpha here, we want exact string
+	
+	$res = dolibarr_set_const($db, "INVOICE_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+	
+	if ($error)
+	{
+	    setEventMessages($langs->trans("Error"), null, 'errors');
+	}*/
+
+	if (! $error)
+	{
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	
+}
+
 
 /*
  * View
@@ -88,7 +123,7 @@ dol_fiche_head($head, 'payment', $langs->trans("Invoices"), 0, 'invoice');
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("PaymentsNumberingModule"));
+print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -210,6 +245,49 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+
+print "<br />";
+
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="setparams" />';
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+// Allow payments on different thirdparties bills but same parent company
+$var=! $var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PaymentOnDifferentThirdBills");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS,1);
+print '</td><td align="right">';
+print "</td></tr>\n";
+
+// Add js auto fill amount on paiement form
+/* always on now
+$var=! $var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("JSOnPaimentBill");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
+print '</td><td align="right">';
+print "</td></tr>\n";
+*/
+
+print '</table>';
+
+print '<center>';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '</center>';
+
+print '</form>';
 
 dol_fiche_end();
 

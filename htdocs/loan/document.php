@@ -66,7 +66,7 @@ $modulepart='loan';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -116,7 +116,7 @@ if ($object->id)
     }
 
     // Amount
-    print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+    print '<tr><td>'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	// Date start
     print "<tr><td>".$langs->trans("DateStart")."</td>";
@@ -157,6 +157,7 @@ if ($object->id)
 
     $modulepart = 'loan';
     $permission = $user->rights->loan->write;
+    $permtoedit = $user->rights->loan->write;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

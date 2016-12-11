@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
+ * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ $langs->load("banks");
 $langs->load("bills");
 $langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
@@ -72,8 +73,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
 	
-	$object->accountid=GETPOST("accountid","int");
-	$object->fk_user=GETPOST("fk_user","int");
+	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
 	$object->amount=price2num(GETPOST("amount"));
@@ -81,7 +82,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->datesp=$datesp;
 	$object->dateep=$dateep;
 	$object->note=GETPOST("note");
-	$object->type_payment=GETPOST("paymenttype");
+	$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
 
@@ -112,7 +113,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
 	if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
 	
@@ -186,7 +187,7 @@ if ($action == 'delete')
  *	View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("SalaryPayment"));
 
 $form = new Form($db);
 
@@ -250,7 +251,7 @@ if ($action == 'create')
 	// Employee
 	print '<tr><td>';
 	print fieldLabel('Employee','fk_user',1).'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	// Label
@@ -281,7 +282,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
-		print fieldLabel('Account','selectaccountid',1).'</td><td>';
+		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
@@ -335,9 +336,11 @@ if ($id)
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+    print "<tr>";
+	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 
 	// Employee
@@ -412,7 +415,7 @@ if ($id)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

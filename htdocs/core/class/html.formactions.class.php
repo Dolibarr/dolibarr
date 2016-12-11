@@ -52,8 +52,8 @@ class FormActions
      * 	@param	string	$selected		Preselected value (-1..100)
      * 	@param	int		$canedit		1=can edit, 0=read only
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-     *  @param	string	$showempty		Show an empty line if select is used
-     *  @param	string	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param	integer	$showempty		Show an empty line if select is used
+     *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
      * 	@return	void
      */
     function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
@@ -62,7 +62,7 @@ class FormActions
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
-            '0' => $langs->trans("ActionRunningNotStarted"),
+            '0' => $langs->trans("ActionsToDoShort"),
             '50' => $langs->trans("ActionRunningShort"),
             '100' => $langs->trans("ActionDoneShort")
         );
@@ -100,7 +100,7 @@ class FormActions
                     }
                     else if (defaultvalue == 0) {
 						percentage.val(0);
-						percentage.prop('disabled', true);
+						percentage.removeAttr('disabled'); /* Not disabled, we want to change it to higher value */
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
@@ -136,7 +136,7 @@ class FormActions
             if (empty($onlyselect))
             {
 	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
-    	        print '<span class="hideifna">%</span>';
+    	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
         }
         else
@@ -153,9 +153,10 @@ class FormActions
      *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *	@param	int		$socid			socid of user
      *  @param	int		$forceshowtitle	Show title even if there is no actions to show
+     *  @param  string  $morecss        More css on table
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0)
+    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0,$morecss='listactions')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -179,16 +180,22 @@ class FormActions
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
         	else $title=$langs->trans("Actions");
 
-        	print load_fiche_titre($title,'','');
+        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">';
+        	$buttontoaddnewevent.= $langs->trans("AddEvent");
+        	$buttontoaddnewevent.= '</a>';
+        	print load_fiche_titre($title, $buttontoaddnewevent, '');
 
-        	$total = 0;	$var=true;
-        	print '<table class="noborder" width="100%">';
+        	$page=0; $param=''; $sortfield='a.datep';
+        	
+        	$total = 0;	$var=true; 
+        	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
-        	print '<th class="liste_titre" align="right">'.$langs->trans('Status').'</th>';
+        	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Action'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre($langs->trans('By'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
         	print '</tr>';
         	print "\n";
 
@@ -198,11 +205,12 @@ class FormActions
         	{
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
-
+                
         		$var=!$var;
         		print '<tr '.$bc[$var].'>';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
+        		print '<td>'.$action->type.'</td>';
         		print '<td>'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
@@ -242,15 +250,16 @@ class FormActions
     /**
      *  Output html select list of type of event
      *
-     *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
-     *  @param  string		$htmlname       Nom champ formulaire
-     *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
-     *  @param	int		    $hideinfohelp	1=Do not show info help
-     *  @param  int		    $multiselect    1=Allow multiselect of action type for filter or search
-     * 	@return	void
+     *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+     *  @param  string		    $htmlname       Name of select field
+     *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
+     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+     *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
+     *  @param  int		        $multiselect    1=Allow multiselect of action type
+     *  @param  int             $nooutput       1=No output
+     * 	@return	string
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
+    function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
         global $langs,$user,$form,$conf;
 
@@ -270,18 +279,26 @@ class FormActions
 
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-		if ($multiselect==1) 
+       	$out='';
+       	
+		if (! empty($multiselect)) 
 		{
-	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, '', 0, 0);
-			
+	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
+			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else {
-			print $form->selectarray($htmlname, $arraylist, $selected);
+		else 
+		{
+			$out.=$form->selectarray($htmlname, $arraylist, $selected);
 		}
-        
 		
-        if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+        {
+            $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
+        }
+        
+        if ($nooutput) return $out;
+        else print $out;
+        return '';
     }
 
 }

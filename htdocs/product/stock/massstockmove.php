@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2015 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013-2016 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
@@ -95,7 +95,7 @@ if ($action == 'addline')
 	{
 		$error++;
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorWarehouseMustDiffers"),'errors');
+		setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
 	}
 	if (! $qty)
 	{
@@ -113,7 +113,7 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessage($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), 'errors');
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
 			}
 		}
 	}
@@ -161,7 +161,7 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"));
+		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
 	}
 
 	$db->begin();
@@ -185,7 +185,7 @@ if ($action == 'createmovements')
 			{
 				$result=$product->fetch($id_product);
 
-				$product->load_stock();	// Load array product->stock_warehouse
+				$product->load_stock('novirtual');	// Load array product->stock_warehouse
 
 				// Define value of products moved
 				$pricesrc=0;
@@ -209,7 +209,7 @@ if ($action == 'createmovements')
 					if ($result1 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 
 					// Add stock
@@ -225,7 +225,7 @@ if ($action == 'createmovements')
 					if ($result2 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 				}
 				else
@@ -260,7 +260,7 @@ if ($action == 'createmovements')
 					if ($result1 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 
 					// Add stock
@@ -279,7 +279,7 @@ if ($action == 'createmovements')
 					if ($result2 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 				}
 			}
@@ -296,14 +296,14 @@ if ($action == 'createmovements')
 		unset($_SESSION['massstockmove']);
 
 		$db->commit();
-		setEventMessage($langs->trans("StockMovementRecorded"),'mesgs');
+		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php');		// Redirect to avoid pb when using back
 		exit;
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -325,7 +325,7 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("MassStockMovement"));
+print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");
@@ -341,27 +341,29 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
+
+print '<div class="div-table-responsive">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
 $param='';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 if ($conf->productbatch->enabled)
 {
-	print getTitleFieldOfList($langs->trans('Batch'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+	print getTitleFieldOfList($langs->trans('Batch'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 }
-print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 print getTitleFieldOfList('',0);
 print '</tr>';
 
 
 print '<tr '.$bc[$var].'>';
 // Product
-print '<td>';
+print '<td class="titlefield">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
 if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
@@ -372,25 +374,25 @@ else
 {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
-print $form->select_produits($id_product,'productid',$filtertype,$limit);
+print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, 1, 2, '', 0, array(), 0, '1', 0, 'minwidth300imp maxwidth400', 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50onsmartphone" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw,'id_sw','',1);
+print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Out warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw,'id_tw','',1);
+print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Qty
-print '<td align="center"><input type="text" size="4" class="flat" name="qty" value="'.$qty.'"></td>';
+print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
 // Button to add line
 print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -428,6 +430,7 @@ foreach($listofdata as $key => $val)
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 
@@ -445,15 +448,15 @@ $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").
 
 print '<table class="border" width="100%">';
 	print '<tr>';
-	print '<td width="20%">'.$langs->trans("InventoryCode").'</td>';
-	print '<td colspan="5">';
+	print '<td class="titlefield">'.$langs->trans("InventoryCode").'</td>';
+	print '<td>';
 	print '<input type="text" name="codemove" size="10" value="'.dol_escape_htmltag($codemove).'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td width="20%">'.$langs->trans("LabelMovement").'</td>';
-	print '<td colspan="5">';
-	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
+	print '<td>'.$langs->trans("LabelMovement").'</td>';
+	print '<td>';
+	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
 	print '</tr>';
 print '</table><br>';

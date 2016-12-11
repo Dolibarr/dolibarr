@@ -44,7 +44,7 @@ class DoliDBPgsql extends DoliDB
     //! Collate used to force collate when creating database
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	const VERSIONMIN='8.4.0';	// Version min database
+	const VERSIONMIN='9.0.0';	// Version min database
 	/** @var resource Resultset of last query */
 	private $_results;
 
@@ -163,10 +163,13 @@ class DoliDBPgsql extends DoliDB
 		}
 		if ($line != "")
 		{
-			// group_concat support (PgSQL >= 9.1)
-			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
+			// group_concat support (PgSQL >= 9.0)
+			// Replace group_concat(x) or group_concat(x SEPARATOR ',') with string_agg(x, ',')
+		    $line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
-
+			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
+			//print $line."\n";
+					
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
@@ -858,10 +861,13 @@ class DoliDBPgsql extends DoliDB
 		$like = '';
 		if ($table) $like = " AND table_name LIKE '".$table."'";
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
-		while($row = $this->fetch_row($result))
-		{
-			$listtables[] = $row[0];
-		}
+        if ($result)
+        {
+    		while($row = $this->fetch_row($result))
+    		{
+    			$listtables[] = $row[0];
+    		}
+        }
 		return $listtables;
 	}
 
@@ -874,31 +880,34 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLInfoTable($table)
 	{
-		 $infotables=array();
+		$infotables=array();
 
-		 $sql="SELECT ";
-		 $sql.="	infcol.column_name as \"Column\",";
-		 $sql.="	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
-		 $sql.="		ELSE infcol.udt_name";
-		 $sql.="	END as \"Type\",";
-		 $sql.="	infcol.collation_name as \"Collation\",";
-		 $sql.="	infcol.is_nullable as \"Null\",";
-		 $sql.="	'' as \"Key\",";
-		 $sql.="	infcol.column_default as \"Default\",";
-		 $sql.="	'' as \"Extra\",";
-		 $sql.="	'' as \"Privileges\"";
-		 $sql.="	FROM information_schema.columns infcol";
-		 $sql.="	WHERE table_schema='public' ";
-		 $sql.="	AND table_name='".$table."'";
-		 $sql.="	ORDER BY ordinal_position;";
+		$sql="SELECT ";
+		$sql.="	infcol.column_name as \"Column\",";
+		$sql.="	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
+		$sql.="		ELSE infcol.udt_name";
+		$sql.="	END as \"Type\",";
+		$sql.="	infcol.collation_name as \"Collation\",";
+		$sql.="	infcol.is_nullable as \"Null\",";
+		$sql.="	'' as \"Key\",";
+		$sql.="	infcol.column_default as \"Default\",";
+		$sql.="	'' as \"Extra\",";
+		$sql.="	'' as \"Privileges\"";
+		$sql.="	FROM information_schema.columns infcol";
+		$sql.="	WHERE table_schema='public' ";
+		$sql.="	AND table_name='".$table."'";
+		$sql.="	ORDER BY ordinal_position;";
 
-		 dol_syslog($sql,LOG_DEBUG);
-		 $result = $this->query($sql);
-		 while($row = $this->fetch_row($result))
-		 {
-			$infotables[] = $row;
-		 }
-		return $infotables;
+		dol_syslog($sql,LOG_DEBUG);
+		$result = $this->query($sql);
+		if ($result)
+		{
+    		 while($row = $this->fetch_row($result))
+    		 {
+    			$infotables[] = $row;
+    		 }
+		}
+        return $infotables;
 	}
 
 
@@ -1093,7 +1102,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$table." DROP COLUMN ".$field_name;
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
@@ -1111,8 +1120,12 @@ class DoliDBPgsql extends DoliDB
 	function getDefaultCharacterSetDatabase()
 	{
 		$resql=$this->query('SHOW SERVER_ENCODING');
-		$liste=$this->fetch_array($resql);
-		return $liste['server_encoding'];
+		if ($resql)
+		{
+            $liste=$this->fetch_array($resql);
+		    return $liste['server_encoding'];
+		}
+		else return '';
 	}
 
 	/**
@@ -1127,7 +1140,7 @@ class DoliDBPgsql extends DoliDB
 		if ($resql)
 		{
 			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
+			while ($obj = $this->fetch_object($resql))
 			{
 				$liste[$i]['charset'] = $obj->server_encoding;
 				$liste[$i]['description'] = 'Default database charset';
@@ -1148,8 +1161,12 @@ class DoliDBPgsql extends DoliDB
 	function getDefaultCollationDatabase()
 	{
 		$resql=$this->query('SHOW LC_COLLATE');
-		$liste=$this->fetch_array($resql);
-		return $liste['lc_collate'];
+		if ($resql)
+		{
+		    $liste=$this->fetch_array($resql);
+			return $liste['lc_collate'];
+		}
+		else return '';
 	}
 
 	/**

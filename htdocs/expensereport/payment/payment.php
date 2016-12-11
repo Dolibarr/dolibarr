@@ -57,6 +57,9 @@ if ($action == 'add_payment')
 		exit;
 	}
 
+	$expensereport = new ExpenseReport($db);
+	$expensereport->fetch($chid);
+
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	if (! $_POST["fk_typepayment"] > 0)
@@ -85,8 +88,7 @@ if ($action == 'add_payment')
 		{
 			if (substr($key,0,7) == 'amount_')
 			{
-				$other_chid = substr($key,7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
 				$total += price2num($_POST[$key]);
 			}
 		}
@@ -191,8 +193,9 @@ if (GETPOST("action") == 'create')
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
-	$sql.= " WHERE p.fk_expensereport = ".$chid;
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
+	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -313,7 +316,5 @@ if (GETPOST("action") == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

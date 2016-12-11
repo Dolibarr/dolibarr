@@ -126,8 +126,19 @@ if (GETPOST('search_project') != '')
 }
 if (GETPOST('search_task') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
+    exit;
+}
+
+if (GETPOST('search_user') != '')
+{
+    header("Location: ".DOL_URL_ROOT.'/user/index.php?mode=search&sall='.urlencode(GETPOST('search_user')));
+    exit;
+}
+if (GETPOST('search_group') != '')
+{
+    header("Location: ".DOL_URL_ROOT.'/user/group/index.php?mode=search&sall='.urlencode(GETPOST('search_group')));
+    exit;
 }
 
 

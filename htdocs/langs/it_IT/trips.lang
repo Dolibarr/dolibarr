@@ -1,39 +1,35 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Nota spese
 ExpenseReports=Note spese
-Trip=Nota spese
+ShowExpenseReport=Show expense report
 Trips=Note spese
 TripsAndExpenses=Note spese
 TripsAndExpensesStatistics=Statistiche note spese
 TripCard=Scheda nota spese
 AddTrip=Crea nota spese
-ListOfTrips=List of expense reports
+ListOfTrips=Lista delle note spese
 ListOfFees=Elenco delle tariffe
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Nuova nota spese
 CompanyVisited=Società/Fondazione visitata
-Kilometers=Kilometri
 FeesKilometersOrAmout=Tariffa kilometrica o importo
 DeleteTrip=Elimina nota spese
-ConfirmDeleteTrip=Vuoi davvero eliminare questa nota spese?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Lista delle note spese
 ListToApprove=In attesa di approvazione
 ExpensesArea=Area note spese
-SearchATripAndExpense=Ricerca una nota spese
 ClassifyRefunded=Classifica come "Rimborsata"
 ExpenseReportWaitingForApproval=È stata inserita una nuova nota spese da approvare
 ExpenseReportWaitingForApprovalMessage=È stata inserita una nuova nota spese da approvare.\n- Utente: %s\n- Periodo: %s\nClicca qui per approvarla: %s
 TripId=ID nota spese
 AnyOtherInThisListCanValidate=Persona da informare per la convalida
 TripSociete=Informazioni azienda
-TripSalarie=Informazioni utente
 TripNDF=Informazioni nota spese
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Vuoi davvero eliminare questa riga?
 PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
 ExpenseReportLine=Riga di nota spese
 TF_OTHER=Altro
-TF_TRANSPORTATION=Trasporto
+TF_TRIP=Trasporto
 TF_LUNCH=Pranzo
 TF_METRO=Metro
 TF_TRAIN=Treno
@@ -45,18 +41,11 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Hai già inviata una nota spese per il periodo selezionato
-AucuneNDF=Nessuna nota spese trovata
 AucuneLigne=Non ci sono ancora note spese
-AddLine=Aggiungi una riga
-AddLineMini=Aggiungi
 
-Date_DEBUT=Data di inizio
-Date_FIN=Data di fine
 ModePaiement=Modalità di pagamento
-Note=Nota
-Project=Progetto
 
-VALIDATOR=User responsible for approval
+VALIDATOR=Utente responsabile per l'approvazione
 VALIDOR=Approvata da
 AUTHOR=Registrata da
 AUTHORPAIEMENT=Paid by
@@ -68,39 +57,33 @@ MOTIF_CANCEL=Motivo
 
 DATE_REFUS=Rifiutata in data
 DATE_SAVE=Convalidata in data
-DATE_VALIDE=Convalidata in data
 DATE_CANCEL=Eliminata in data
 DATE_PAIEMENT=Liquidata in data
 
-TO_PAID=Liquida
 BROUILLONNER=Riapri
-SendToValid=Sent on approval
-ModifyInfoGen=Modifica
 ValidateAndSubmit=Convalida e proponi per l'approvazione
 ValidatedWaitingApproval=Validated (waiting for approval)
 
-NOT_VALIDATOR=Non sei autorizzato ad approvare questa nota spese
 NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
 
-RefuseTrip=Rifiuta una nota spese
-ConfirmRefuseTrip=Vuoi davvero rifiutare questa nota spese?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Approva la nota spese
-ConfirmValideTrip=Vuoi davvero approvare questa nota spese?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Liquida una nota spese
-ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquidata"?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-CancelTrip=Elimina una nota spese
-ConfirmCancelTrip=Vuoi davvero eliminare questa nota spese?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Vuoi davvero riportare questa nota spese allo stato "bozza"?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Convalida la nota spese
-ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Note spese da approvare
 ExpenseReportsToPay=Expense reports to pay

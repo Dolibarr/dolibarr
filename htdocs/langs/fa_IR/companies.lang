@@ -1,33 +1,27 @@
 # Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=نام شرکت از٪ s از قبل وجود دارد. یکی دیگر را انتخاب کنید.
-ErrorPrefixAlreadyExists=پیشوند٪ s در حال حاضر وجود دارد. یکی دیگر را انتخاب کنید.
 ErrorSetACountryFirst=تنظیم این کشور برای اولین بار
 SelectThirdParty=انتخاب شخص ثالث
-DeleteThirdParty=حذف شخص ثالث
-ConfirmDeleteCompany=آیا مطمئن هستید که می خواهید این شرکت و تمام اطلاعات به ارث برده را حذف کنید؟
+ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
 DeleteContact=حذف یک تماس / آدرس
-ConfirmDeleteContact=آیا مطمئن هستید که می خواهید این مخاطب و تمام اطلاعات به ارث برده را حذف کنید؟
+ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
 MenuNewThirdParty=شخص ثالث جدید
-MenuNewCompany=شرکت جدید
 MenuNewCustomer=مشتری جدید
 MenuNewProspect=چشم انداز جدید
 MenuNewSupplier=منبع جدید
 MenuNewPrivateIndividual=فردی خصوصی جدید
-MenuSocGroup=گروه
 NewCompany=شرکت جدید (چشم انداز، مشتری، عرضه کننده کالا)
 NewThirdParty=شخص ثالث جدید (چشم انداز، مشتری، عرضه کننده کالا)
-NewSocGroup=گروه شرکت های جدید
-NewPrivateIndividual=فردی خصوصی جدید (چشم انداز، مشتری، عرضه کننده کالا)
 CreateDolibarrThirdPartySupplier=ایجاد یک حزب سوم (منبع)
+CreateThirdPartyOnly=Create thirdpary
+CreateThirdPartyAndContact=Create a third party + a child contact
 ProspectionArea=منطقه Prospection
-SocGroup=گروه شرکت های
 IdThirdParty=کد های شخص ثالث
 IdCompany=شرکت آیدی
 IdContact=تماس با شناسه
 Contacts=تماس / آدرس
 ThirdPartyContacts=تماس با ما شخص ثالث
 ThirdPartyContact=شخص ثالث تماس با ما / آدرس
-StatusContactValidated=وضعیت تماس / آدرس
 Company=شرکت
 CompanyName=نام شرکت
 AliasNames=Alias name (commercial, trademark, ...)
@@ -37,7 +31,6 @@ CountryIsInEEC=کشور است در داخل جامعه اقتصادی اروپ�
 ThirdPartyName=نام و نام خانوادگی شخص ثالث
 ThirdParty=شخص ثالث
 ThirdParties=احزاب سوم
-ThirdPartyAll=احزاب سوم (همه)
 ThirdPartyProspects=چشم انداز
 ThirdPartyProspectsStats=چشم انداز
 ThirdPartyCustomers=مشتریان
@@ -47,36 +40,33 @@ ThirdPartySuppliers=تامین کنندگان
 ThirdPartyType=نوع شخص ثالث
 Company/Fundation=شرکت / بنیاد
 Individual=فردی خصوصی
-ToCreateContactWithSameName=به طور خودکار ایجاد یک تماس فیزیکی با همان اطلاعات
+ToCreateContactWithSameName=Will create automatically a contact/address with same information than third party under the third party. In most cases, even if your third party is a physical people, creating a third party alone is enough.
 ParentCompany=شرکت مادر
-Subsidiary=جانبی
 Subsidiaries=شرکتهای تابعه
-NoSubsidiary=بدون تابعه
 ReportByCustomers=گزارش های مشتریان
 ReportByQuarter=گزارش های نرخ
 CivilityCode=کد تمدن
 RegisteredOffice=دفتر ثبت نام
-Name=نام
 Lastname=نام خانوادگی
 Firstname=نام
-PostOrFunction=ارسال / تابع
+PostOrFunction=Job position
 UserTitle=عنوان
-Surname=نام خانوادگی / شبه
 Address=نشانی
 State=ایالت / استان
+StateShort=State
 Region=منطقه
 Country=کشور
 CountryCode=کد کشور
 CountryId=شناسه کشور
 Phone=تلفن
-PhoneShort=Phone
+PhoneShort=تلفن
 Skype=اسکایپ
 Call=تماس
 Chat=انجمن
 PhonePro=تلفن پروفسور
 PhonePerso=شخصی سازی. تلفن
 PhoneMobile=تلفن همراه
-No_Email=آیا توده ایمیلها ارسال کنید
+No_Email=Refuse mass e-mailings
 Fax=فکس
 Zip=کد پستی
 Town=شهرستان
@@ -85,19 +75,20 @@ Poste= درجه
 DefaultLang=زبان پیش فرض
 VATIsUsed=مالیات بر ارزش افزوده استفاده شده است
 VATIsNotUsed=مالیات بر ارزش افزوده استفاده نمی شود
-CopyAddressFromSoc=آدرس با آدرس thirdparty را پر کنید
-NoEmailDefined=هیچ ایمیل تعریف شده وجود دارد
+CopyAddressFromSoc=Fill address with third party address
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
+PaymentBankAccount=Payment bank account
 ##### Local Taxes #####
+LocalTax1IsUsed=استفاده از مالیات دوم
 LocalTax1IsUsedES= RE استفاده شده است
 LocalTax1IsNotUsedES= RE استفاده نمی شود
+LocalTax2IsUsed=استفاده از مالیات سوم
 LocalTax2IsUsedES= IRPF استفاده شده است
 LocalTax2IsNotUsedES= IRPF استفاده نمی شود
 LocalTax1ES=RE
 LocalTax2ES=IRPF
 TypeLocaltax1ES=نوع RE
 TypeLocaltax2ES=IRPF نوع
-TypeES=نوع
-ThirdPartyEMail=از٪ s
 WrongCustomerCode=کد مشتری نامعتبر است
 WrongSupplierCode=کد تامین کننده نامعتبر است
 CustomerCodeModel=مدل کد مشتری
@@ -109,7 +100,7 @@ ProfId2Short=پروفسور شناسه (شماره) 2
 ProfId3Short=پروفسور شناسه (شماره) 3
 ProfId4Short=پروفسور شناسه (شماره) 4
 ProfId5Short=پروفسور شناسه (شماره) 5
-ProfId6Short=پروفسور شناسه (شماره) 5
+ProfId6Short=Prof. id 6
 ProfId1=ID حرفه ای 1
 ProfId2=ID حرفه ای 2
 ProfId3=ID حرفه ای 3
@@ -122,9 +113,9 @@ ProfId3AR=-
 ProfId4AR=-
 ProfId5AR=-
 ProfId6AR=-
-ProfId1AT=Prof Id 1 (USt.-IdNr)
-ProfId2AT=Prof Id 2 (USt.-Nr)
-ProfId3AT=Prof Id 3 (Handelsregister-Nr.)
+ProfId1AT=پروفسور شناسه 1 (USt.-IdNr)
+ProfId2AT=پروفسور کد 2 (USt.-شماره)
+ProfId3AT=پروفسور کد 3 (Handelsregister-شماره.)
 ProfId4AT=-
 ProfId5AT=-
 ProfId6AT=-
@@ -200,11 +191,17 @@ ProfId3IN=پروفسور کد 3 (TAX SRVC)
 ProfId4IN=پروفسور کد 4
 ProfId5IN=پروفسور کد 5
 ProfId6IN=-
+ProfId1LU=Id. prof. 1 (R.C.S. Luxembourg)
+ProfId2LU=Id. prof. 2 (Business permit)
+ProfId3LU=-
+ProfId4LU=-
+ProfId5LU=-
+ProfId6LU=-
 ProfId1MA=استاد آیدی. 1 (RC)
 ProfId2MA=استاد آیدی. 2 (Patente)
 ProfId3MA=استاد آیدی. 3 (IF)
 ProfId4MA=استاد آیدی. 4 (CNSS)
-ProfId5MA=-
+ProfId5MA=Id. prof. 5 (I.C.E.)
 ProfId6MA=-
 ProfId1MX=پروفسور شناسه 1 (RFC).
 ProfId2MX=پروفسور کد 2 (R..P. IMSS)
@@ -244,16 +241,12 @@ ProfId5RU=-
 ProfId6RU=-
 VATIntra=تعداد مالیات بر ارزش افزوده
 VATIntraShort=تعداد مالیات بر ارزش افزوده
-VATIntraVeryShort=مالیات بر ارزش افزوده
 VATIntraSyntaxIsValid=نحو معتبر است
-VATIntraValueIsValid=ارزش معتبر است
 ProspectCustomer=چشم انداز / مشتریان
 Prospect=چشم انداز
 CustomerCard=کارت به مشتری
 Customer=مشتریان
-CustomerDiscount=تخفیف به مشتری
 CustomerRelativeDiscount=تخفیف به مشتریان نسبی
-CustomerAbsoluteDiscount=تخفیف به مشتریان مطلق
 CustomerRelativeDiscountShort=تخفیف نسبی
 CustomerAbsoluteDiscountShort=تخفیف مطلق
 CompanyHasRelativeDiscount=این مشتری است تخفیف به طور پیش فرض <b>از٪ s٪٪</b>
@@ -263,66 +256,58 @@ CompanyHasCreditNote=این مشتری هنوز یادداشت های اعتبا
 CompanyHasNoAbsoluteDiscount=این مشتری است هیچ اعتباری تخفیف در دسترس
 CustomerAbsoluteDiscountAllUsers=تخفیف مطلق (اعطا شده توسط همه کاربران)
 CustomerAbsoluteDiscountMy=تخفیف مطلق (اعطا شده توسط خودتان)
-DefaultDiscount=پیش فرض تخفیف
-AvailableGlobalDiscounts=تخفیف مطلق در دسترس
 DiscountNone=هیچ یک
 Supplier=تامین کننده
-CompanyList=لیست شرکت
 AddContact=Create contact
 AddContactAddress=Create contact/address
 EditContact=ویرایش مخاطب
 EditContactAddress=ویرایش مخاطب / آدرس
 Contact=تماس با
+ContactId=Contact id
 ContactsAddresses=تماس / آدرس
+FromContactName=Name:
 NoContactDefinedForThirdParty=بدون تماس تعریف شده برای این حزب سوم
 NoContactDefined=بدون تماس تعریف
 DefaultContact=پیش فرض تماس با ما / آدرس
-AddCompany=Create company
 AddThirdParty=Create third party
 DeleteACompany=حذف یک شرکت
 PersonalInformations=اطلاعات شخصی
-AccountancyCode=کد حسابداری
+AccountancyCode=حساب حسابداری
 CustomerCode=کد مشتری
 SupplierCode=کد تامین کننده
-CustomerAccount=حساب کاربری مشتری
-SupplierAccount=حساب تامین کننده
+CustomerCodeShort=کد مشتری
+SupplierCodeShort=کد تامین کننده
 CustomerCodeDesc=کد مشتری، منحصر به فرد برای همه مشتریان
 SupplierCodeDesc=کد تامین کننده، منحصر به فرد برای همه تامین کنندگان
 RequiredIfCustomer=در صورتیکه شخص ثالث یک مشتری و یا چشم انداز است
 RequiredIfSupplier=در صورتیکه شخص ثالث تامین کنندگان است
 ValidityControledByModule=اعتبار کنترل های ماژول
 ThisIsModuleRules=این قوانین برای این ماژول است
-LastProspect=آخرین
 ProspectToContact=چشم انداز تماس
 CompanyDeleted=شرکت "٪ s" را حذف از پایگاه داده.
 ListOfContacts=لیست مخاطبین / آدرس
 ListOfContactsAddresses=لیست مخاطبین / آدرس
-ListOfProspectsContacts=لیست مخاطبین چشم انداز
-ListOfCustomersContacts=فهرست تماس مشتری
-ListOfSuppliersContacts=لیست مخاطبین با عرضه کننده کالا
-ListOfCompanies=فهرست شرکت
 ListOfThirdParties=فهرست اشخاص ثالث
-ShowCompany=نمایش شرکت
+ShowCompany=Show third party
 ShowContact=نمایش تماس
 ContactsAllShort=همه (بدون فیلتر)
 ContactType=تماس با نوع
 ContactForOrders=تماس با سفارش
+ContactForOrdersOrShipments=Order's or shipment's contact
 ContactForProposals=تماس پیشنهاد را
 ContactForContracts=تماس قرارداد را
 ContactForInvoices=تماس با فاکتور را
 NoContactForAnyOrder=این تماس یک تماس برای هر سفارش نمی
+NoContactForAnyOrderOrShipments=This contact is not a contact for any order or shipment
 NoContactForAnyProposal=این تماس یک تماس برای هر پیشنهاد تجاری
 NoContactForAnyContract=این تماس یک تماس برای هر قرارداد
 NoContactForAnyInvoice=این تماس یک تماس برای هر فاکتور نمی
 NewContact=تماس جدید
 NewContactAddress=تماس جدید / آدرس
-LastContacts=آخرین تماس
 MyContacts=مخاطبین من
-Phones=تلفن
 Capital=سرمایه
 CapitalOf=سرمایه از٪ s
 EditCompany=ویرایش شرکت
-EditDeliveryAddress=ویرایش آدرس های تحویل
 ThisUserIsNot=این کاربر، چشم انداز، مشتری و نه عرضه کننده کالا نمی
 VATIntraCheck=تصفیه
 VATIntraCheckDesc=لینک <b>از٪ s</b> اجازه می دهد تا به درخواست سرویس جستجوگر مالیات بر ارزش افزوده اروپا. دسترسی به اینترنت خارجی را از سرور مورد نیاز است برای این سرویس به کار می کنند.
@@ -331,14 +316,14 @@ VATIntraCheckableOnEUSite=ورود به Intracomunnautary مالیات بر ار
 VATIntraManualCheck=شما همچنین می توانید به صورت دستی از اروپا وب سایت بررسی <a href="%s" target="_blank">از٪ s</a>
 ErrorVATCheckMS_UNAVAILABLE=ورود امکان پذیر نیست. خدمات تصفیه توسط دولت عضو (٪ بازدید کنندگان) ارائه نشده است.
 NorProspectNorCustomer=و نه چشم انداز، و نه مشتری
-JuridicalStatus=وضعیت حقوقی
+JuridicalStatus=Legal form
 Staff=کارکنان
 ProspectLevelShort=پتانسیل
 ProspectLevel=بالقوه چشم انداز
 ContactPrivate=خصوصی
 ContactPublic=به اشتراک گذاشته شده
 ContactVisibility=دید
-ContactOthers=Other
+ContactOthers=دیگر
 OthersNotLinkedToThirdParty=دیگران، به شخص ثالث در ارتباط نیست
 ProspectStatus=وضعیت چشم انداز
 PL_NONE=هیچ یک
@@ -358,73 +343,60 @@ TE_PRIVATE=فردی خصوصی
 TE_OTHER=دیگر
 StatusProspect-1=آیا تماس بگیرید
 StatusProspect0=هرگز تماس
-StatusProspect1=برای تماس با
+StatusProspect1=To be contacted
 StatusProspect2=تماس با در فرآیند
 StatusProspect3=تماس با انجام
 ChangeDoNotContact=تغییر وضعیت به "آیا تماس بگیرید '
 ChangeNeverContacted=تغییر وضعیت به "هرگز تماس '
-ChangeToContact=تغییر وضعیت به "برای تماس با '
+ChangeToContact=Change status to 'To be contacted'
 ChangeContactInProcess=تغییر وضعیت به "تماس با در فرآیند '
 ChangeContactDone=تغییر وضعیت به "تماس با انجام"
 ProspectsByStatus=چشم انداز های وضعیت
-BillingContact=تماس با حسابداری
-NbOfAttachedFiles=تعداد فایل های پیوست شده
-AttachANewFile=ضمیمه کردن فایل جدید
-NoRIB=بدون BAN تعریف
 NoParentCompany=هیچ یک
-ExportImport=صادرات و واردات
 ExportCardToFormat=کارت صادرات به فرمت
 ContactNotLinkedToCompany=تماس با به هر شخص ثالث مرتبط نیست
 DolibarrLogin=ورود Dolibarr
 NoDolibarrAccess=بدون دسترسی Dolibarr
-ExportDataset_company_1=احزاب سوم (شرکت / پایه / مردم فیزیکی) و خواص
+ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ExportDataset_company_2=اطلاعات تماس و خواص
-ImportDataset_company_1=احزاب سوم (شرکت / پایه / مردم فیزیکی) و خواص
+ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ImportDataset_company_2=تماس / آدرس (از thirdparties یا نه) و ویژگی
 ImportDataset_company_3=جزئیات بانک
 ImportDataset_company_4=Third parties/Sales representatives (Affect sales representatives users to companies)
 PriceLevel=سطح قیمت
-DeliveriesAddress=آدرس تحویل
 DeliveryAddress=آدرس تحویل
-DeliveryAddressLabel=تحویل برچسب آدرس
-DeleteDeliveryAddress=حذف یک آدرس تحویل
-ConfirmDeleteDeliveryAddress=آیا مطمئن هستید که می خواهید این آدرس تحویل را حذف کنید؟
-NewDeliveryAddress=آدرس تحویل جدید
-AddDeliveryAddress=Create address
-AddAddress=Create address
-NoOtherDeliveryAddress=بدون آدرس های تحویل جایگزین تعریف
+AddAddress=اضافه کردن آدرس
 SupplierCategory=طبقه بندی کننده
-JuridicalStatus200=مستقل
+JuridicalStatus200=Independent
 DeleteFile=حذف فایل
 ConfirmDeleteFile=آیا مطمئن هستید که می خواهید این فایل را حذف کنید؟
-AllocateCommercial=واگذار شده به فروش نماینده
-SelectCountry=انتخاب کشور
-SelectCompany=انتخاب شخص ثالث
+AllocateCommercial=Assigned to sales representative
 Organization=سازمان
-AutomaticallyGenerated=تولید شده بصورت خودکار
 FiscalYearInformation=اطلاعات در سال مالی
 FiscalMonthStart=شروع ماه از سال مالی
-YouMustCreateContactFirst=شما باید ایمیل تماس برای شخص ثالث برای اولین بار ایجاد می شود قادر به اضافه کردن اطلاعیه ها ایمیل.
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=فهرست تامین کنندگان
 ListProspectsShort=فهرست چشم انداز
 ListCustomersShort=فهرست مشتریان
 ThirdPartiesArea=Third parties and contact area
-LastModifiedThirdParties=تاریخ و زمان آخرین٪ بازدید کنندگان اشخاص ثالث اصلاح شده
+LastModifiedThirdParties=Latest %s modified third parties
 UniqueThirdParties=مجموع اشخاص ثالث منحصر به فرد
 InActivity=باز
 ActivityCeased=بسته
-ActivityStateFilter=وضعیت فعالیت
-ProductsIntoElements=لیست محصولات را به٪ s
+ProductsIntoElements=List of products/services into %s
 CurrentOutstandingBill=لایحه برجسته کنونی
 OutstandingBill=حداکثر. برای لایحه برجسته
-OutstandingBillReached=رسیدم حداکثر. برای لایحه برجسته
+OutstandingBillReached=Max. for outstanding bill reached
 MonkeyNumRefModelDesc=numero بازگشت با فرمت syymm-NNNN برای کد مشتری و٪ syymm-NNNN برای کد منبع که در آن YY سال است٪، میلی متر در ماه است و NNNN دنباله بدون استراحت و بدون بازگشت به 0 است.
 LeopardNumRefModelDesc=کد آزاد است. این کد را می توان در هر زمان تغییر یافتهاست.
 ManagingDirectors=مدیر (بازدید کنندگان) نام (مدیر عامل شرکت، مدیر، رئيس جمهور ...)
-SearchThirdparty=Search third party
-SearchContact=Search contact
 MergeOriginThirdparty=Duplicate third party (third party you want to delete)
 MergeThirdparties=Merge third parties
-ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one ? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
 ThirdpartiesMergeSuccess=Thirdparties have been merged
+SaleRepresentativeLogin=Login of sales representative
+SaleRepresentativeFirstname=Firstname of sales representative
+SaleRepresentativeLastname=Lastname of sales representative
 ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please check the log. Changes have been reverted.
+NewCustomerSupplierCodeProposed=New customer or supplier code suggested on duplicate code

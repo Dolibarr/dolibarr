@@ -143,7 +143,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue);
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'date', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;
@@ -191,7 +191,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("MassBarcodeInit"));
 
-print load_fiche_titre($langs->trans("MassBarcodeInit"));
+print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';
@@ -298,7 +298,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		$disabled=1;
 		$titleno=$langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font><br>';
+		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
 	}
 	if (empty($nbno))
 	{

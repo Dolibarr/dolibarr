@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,10 @@ if (! file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
-require_once $conffile; if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+require_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+
+global $langs;
 
 $grant_query='';
 $step = 2;
@@ -66,7 +68,6 @@ $langs->load("install");
 $langs->load("other");
 $langs->load("errors");
 
-if ($dolibarr_main_db_type == "mysql") $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
 if ($dolibarr_main_db_type == "mssql") $choix=3;
@@ -483,8 +484,8 @@ $ret=0;
 if (! $ok && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- upgrade: end");
-pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule),$setuplang);
+dolibarr_install_syslog("--- upgrade: end ".((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule));
+pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule)?2:0,$setuplang);
 
 if ($db->connected) $db->close();
 

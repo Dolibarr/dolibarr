@@ -20,25 +20,19 @@ UserMargins=Περιθώρια χρήστη
 ProductService=Προϊόν ή Υπηρεσία
 AllProducts=Όλα τα προϊόντα και οι υπηρεσίες
 ChooseProduct/Service=Επιλέξτε προϊόν ή υπηρεσία
-StartDate=Ημερ. έναρξης
-EndDate=Ημερ. λήξης
-Launch=Έναρξη
-ForceBuyingPriceIfNull=Υποχρεωτική τιμή αγοράς, αν η τιμή είναι μηδενική
-ForceBuyingPriceIfNullDetails=Αν είναι "ON", το περιθώριο θα είναι μηδενικό στη γραμμή (τιμή αγοράς = τιμή πώλησης), αν ειναι ("OFF"), θα είναι ίση με την τιμή πώλησης (τιμή αγοράς = 0)
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Μέθοδος ποσοστού για της γενικές εκπτώσεις
 UseDiscountAsProduct=Ως προϊόν
 UseDiscountAsService=Ως υπηρεσία
 UseDiscountOnTotal=Στο υποσύνολο
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Καθορίζει αν η συνολική έκπτωση που θεωρείται ως ένα προϊόν, μια υπηρεσία, ή μόνον επί του υποσυνόλου για τον υπολογισμό του περιθωρίου κέρδους.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeBrute=Αρχικό περιθώριο
-MargeNette=Το καθαρό περιθώριο
 MargeType1=Margin on Best supplier price
 MargeType2=Margin on Weighted Average Price (WAP)
-MARGIN_TYPE_DETAILS=Αρχικό περιθώριο: τιμή πώλησης - τιμή αγοράς<br/>Το καθαρό περιθώριο: τιμή πώλησης - τιμή κόστους
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MargeType3=Περιθώριο στην τιμή κόστους
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Τιμή κόστους
-BuyingCost=Τιμή κόστους
 UnitCharges=Χρεώσεων
 Charges=Επιβαρύνσεις
 AgentContactType=Εμπορικός αντιπρόσωπος τύπο επαφής
@@ -46,3 +40,5 @@ AgentContactTypeDetails=Ορίστε τι τύπος επαφής (που συν
 rateMustBeNumeric=Βαθμολογήστε πρέπει να είναι μια αριθμητική τιμή
 markRateShouldBeLesserThan100=Το ποσοστό πρέπει να είναι χαμηλότερη από 100
 ShowMarginInfos=Δείτε πληροφορίες για τα περιθώρια
+CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

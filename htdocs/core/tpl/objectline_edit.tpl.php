@@ -99,7 +99,7 @@ $coldisplay=-1; // We remove first td
 		$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
 		$doleditor->Create();
 	} else {
-		print '<textarea id="desc" class="flat" name="desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
+		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
 	}
 	?>
 	</td>
@@ -111,15 +111,20 @@ $coldisplay=-1; // We remove first td
 	<?php
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
-		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx, $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
+		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
 	} else {
 		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	print '<td align="right"><input type="text" class="flat" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
+
+	if (!empty($conf->multicurrency->enabled)) {
+		$colspan++;
+		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="8" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
+	}
 
 	if ($inputalsopricewithtax)
 	{
@@ -225,6 +230,24 @@ $coldisplay=-1; // We remove first td
 	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);
 	echo ' '.$langs->trans('to').' ';
 	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
+	print '<script type="text/javascript">';
+	if (!$line->date_start) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+		}
+	}
+	if (!$line->date_end) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+		}
+	}
+	print '</script>'
 	?>
 	</td>
 </tr>
@@ -233,12 +256,34 @@ $coldisplay=-1; // We remove first td
 
 <script type="text/javascript">
 
-<?php
-if (! empty($conf->margin->enabled))
+jQuery(document).ready(function()
 {
-?>
-	jQuery(document).ready(function()
-	{
+	jQuery("#price_ht").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
+		} 
+	});
+	jQuery("#price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#multicurrency_subprice").val('');
+		} 
+	});
+	jQuery("#multicurrency_subprice").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		} 
+	});
+
+    <?php
+    if (! empty($conf->margin->enabled))
+    {
+    ?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -249,6 +294,14 @@ if (! empty($conf->margin->enabled))
 			jQuery("input[name='np_markRate']:first").val('');
 		});
 		jQuery("#price_ht").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#qty").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#remise_percent").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
@@ -293,127 +346,10 @@ if (! empty($conf->margin->enabled))
 			$('#buying_price').show();
 		}
 		}, 'json');
-
-		/* Add rules to reset price_ht from margin info */
-		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		{
-		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_marginRate");
-			});
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_marginRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_marginRate");
-			});*/
-		<?php
-		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-		{
-		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
-			});
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_markRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_markRate");
-			});*/
-		<?php
-		}
-	?>
-	});
-
-
-	/* If margin rate field empty, do nothing. */
-	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
-	function checkEditLine(e, npRate)
-	{
-		var buying_price = $("input[name='buying_price']:first");
-		var remise = $("input[name='remise_percent']:first");
-
-		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '' || (typeof rate.val()) == 'undefined' ) return true;
-
-		if (! $.isNumeric(rate.val().replace(' ','').replace(',','.')))
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("rateMustBeNumeric"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-
-		var price = 0;
-		remisejs=price2numjs(remise.val());
-
-		if (remisejs != 100)
-		{
-			bpjs=price2numjs(buying_price.val());
-			ratejs=price2numjs(rate.val());
-			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
-
-			if (npRate == "np_marginRate")
-				price = ((bpjs * (1 + (ratejs / 100))) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
-			{
-				if (ratejs != 100)
-				{
-					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
-				}
-				else price=$("input[name='price_ht']:first").val();
-			}
-		}
-		/* console.log("new price ht = "+price); */
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
-
-		return true;
-	}
-
-	/* Function similar to price2num in PHP */
-	function price2numjs(num)
-	{
-		if (num == '') return '';
-
-		<?php
-		$dec=','; $thousand=' ';
-		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
-		if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
-		print "var dec='".$dec."'; var thousand='".$thousand."';\n";	// Set var in javascript
-		?>
-
-		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
-		var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-		var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
-
-		var amount = num.toString();
-
-		// rounding for unit price
-		var rounding = main_rounding_unit;
-		var pos = amount.indexOf(dec);
-		var decpart = '';
-		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Remove 0 for decimal part
-		var nbdec = decpart.length;
-		if (nbdec > rounding) rounding = nbdec;
-	    // If rounding higher than max shown
-	    if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
-
-		if (thousand != ',' && thousand != '.') amount=amount.replace(',','.');
-		amount=amount.replace(' ','');			// To avoid spaces
-		amount=amount.replace(thousand,'');		// Replace of thousand before replace of dec to avoid pb if thousand is .
-		amount=amount.replace(dec,'.');
-
-		return parseFloat(amount).toFixed(rounding);
-	}
-
-<?php
-}
-?>
+    <?php
+    }
+    ?>
+});
 
 </script>
 <!-- END PHP TEMPLATE objectline_edit.tpl.php -->

@@ -65,7 +65,7 @@ class FormCompany
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
 		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
-		$sql.= " ORDER by id";
+		$sql.= " ORDER by position, id";
 		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -143,11 +143,6 @@ class FormCompany
 		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectlevel">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-		print '<tr><td>';
-
-		print '<select class="flat" name="'.$htmlname.'">';
-		if ($empty) print '<option value="">&nbsp;</option>';
 
 		dol_syslog(get_class($this).'::form_prospect_level',LOG_DEBUG);
 		$sql = "SELECT code, label";
@@ -157,29 +152,28 @@ class FormCompany
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
+			$options = array();
 
-				print '<option value="'.$obj->code.'"';
-				if ($selected == $obj->code) print ' selected';
-				print '>';
-				$level=$langs->trans($obj->code);
-				if ($level == $obj->code) $level=$langs->trans($obj->label);
-				print $level;
-				print '</option>';
-
-				$i++;
+			if ($empty) {
+				$options[''] = '';
 			}
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$level = $langs->trans($obj->code);
+
+				if ($level == $obj->code) {
+					$level = $langs->trans($obj->label);
+				}
+
+				$options[$obj->code] = $level;
+			}
+
+			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		print '</select>';
 
-		print '</td>';
-		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-		print '</tr></table></form>';
+		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '</form>';
 	}
 
 	/**
@@ -207,7 +201,7 @@ class FormCompany
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
-	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
@@ -235,7 +229,7 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat minwidth300" name="'.$htmlname.'">';
+			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -364,9 +358,10 @@ class FormCompany
 	 *
 	 *  @param  string	$selected   	Title preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
+	 *  @param  string  $morecss        Add more css on SELECT element      
 	 *  @return	string					String with HTML select
 	 */
-	function select_civility($selected='',$htmlname='civility_id')
+	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -380,7 +375,7 @@ class FormCompany
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out.= '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -564,16 +559,21 @@ class FormCompany
 				}
 			}
 
-			// Refresh contacts list on thirdparty list change
-			$htmloption='';
 
 			$events=array();
+			// Add an entry 'method' to say 'yes, we must execute url with param action = method';
+			// Add an entry 'url' to say which url to execute
+			// Add an entry htmlname to say which element we must change once url is called 
+			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines 
+			// To refresh contacts list on thirdparty list change
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
+					    console.log("Call runJsCodeForEvent'.$htmlname.'");
 						var obj = '.json_encode($events).';
 						$.each(obj, function(key,values) {
 							if (values.method.length) {
@@ -583,7 +583,7 @@ class FormCompany
 						/* Clean contact */
 						$("div#s2id_contactid>a>span").html(\'\');
 					});
-
+								    
 					// Function used to execute events when search_htmlname change
 					function runJsCodeForEvent'.$htmlname.'(obj) {
 						var id = $("#'.$htmlname.'").val();
@@ -609,6 +609,7 @@ class FormCompany
 											}
 										}
 									});
+						            /* console.log("Change select#"+htmlname+" with content "+response.value) */
 									$("select#" + htmlname).html(response.value);
 								}
 							}
@@ -619,8 +620,8 @@ class FormCompany
 			}
 
 			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
-			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" '.$htmloption.' />';
-			print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
+			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
+			print ajax_autocompleter(($socid?$socid:-1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		}
 		else
@@ -690,16 +691,18 @@ class FormCompany
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
-     *  @param  string		$sortorder		Sort criteria
+     *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
      *  @param  int			$showempty      1=Add en empty line
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='code', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0)
 	{
+	    global $user, $langs;
+	    
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
-			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+			print '<select class="flat valignmiddle" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
@@ -707,7 +710,9 @@ class FormCompany
 				if ($key == $selected) print ' selected';
 				print '>'.$value.'</option>';
 			}
-			print "</select>\n";
+			print "</select>";
+			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			print "\n";
 		}
 	}
 
@@ -720,9 +725,10 @@ class FormCompany
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
+	 *    @param    string      $morecss                More css
 	 *    @return	string
 	 */
-	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='')
+	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='',$morecss='')
 	{
 		global $conf;
 
@@ -736,7 +742,7 @@ class FormCompany
 			$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
 			$moreattrib.=' autocomplete="off"';
 		}
-		$out.= '<input id="'.$htmlname.'" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
+		$out.= '<input id="'.$htmlname.'" class="maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 
 		return $out;
 	}
@@ -748,9 +754,10 @@ class FormCompany
      *  @param  string	$htmlname       Name of HTML select
      *  @param  string	$preselected    Default value to show
      *  @param  string	$country_code   FR, IT, ...
+     *  @param  string  $morecss        More css
      *  @return	string					HTML string with prof id
      */
-    function get_input_id_prof($idprof,$htmlname,$preselected,$country_code)
+    function get_input_id_prof($idprof,$htmlname,$preselected,$country_code,$morecss='maxwidth100onsmartphone quatrevingtpercent')
     {
         global $conf,$langs;
 
@@ -784,8 +791,8 @@ class FormCompany
 
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
-
-        $out = '<input type="text" name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        
+        $out = '<input type="text" '.($morecss?'class="'.$morecss.'" ':'').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }

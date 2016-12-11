@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - commercial
+ListOfProspects=Lista de clientes potenciales
+ListOfCustomers=Lista de clientes
+StatusNotApplicable=No aplica
+StatusActionToDo=Por hacer
+LastProspectNeverContacted=Nunca contactado
+LastProspectToContact=Para contactar
+LastProspectContactInProcess=Contacto en proceso
+LastProspectContactDone=Contacto realizado
+ActionAC_CLO=Cerrar
+ActionAC_OTH=Otro
+StatusProsp=Estatus del cliente potencial

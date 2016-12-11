@@ -69,11 +69,11 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -112,7 +112,9 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->cree
  * View
  */
 
-llxHeader('', $langs->trans("Bill"), "Facture");
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('ContactsAddresses');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -144,7 +146,7 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Reference du facture
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 		print "</td></tr>";
 

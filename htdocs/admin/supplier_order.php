@@ -44,6 +44,7 @@ $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
 $label = GETPOST('label','alpha');
 $action=GETPOST('action', 'alpha');
+$scandir = GETPOST('scandir','alpha');
 
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();
@@ -168,11 +169,11 @@ else if ($action == 'addcat')
 else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
-	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL','alpha');
+	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED','alpha');
 	$doubleapproval = price2num($doubleapproval );
 
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
+    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED",$doubleapproval,'chaine',0,'',$conf->entity);
 
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -188,13 +189,30 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 	$newmodule->rights[$r][4] = 'commande';
 	$newmodule->rights[$r][5] = 'approve2';
 
-    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
     	$newmodule->insert_permissions(1);
     }
     else
     {
     	$newmodule->delete_permissions();
+    }
+}
+
+// Activate ask for payment bank
+else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
+{
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER",$value,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -392,7 +410,8 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
-                    print $module->description;
+		    if (method_exists($module,'info')) print $module->info($langs);
+	            else print $module->description;
                     print "</td>\n";
 
                     // Active
@@ -472,18 +491,50 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=false;
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-{
+//if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+//{
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("UseDoubleApproval").'<br>';
+	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
-	print '<input type="text" size="3" name="SUPPLIER_ORDER_DOUBLE_APPROVAL" value="'.$conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL.'">';
+	print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
 	$var=!$var;
+//}
+
+// Ask for payment bank during supplier order
+/* Kept as hidden for the moment
+if ($conf->banque->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp</td><td align="center">';
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
+    }
+    else
+    {
+        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
+    }
+    print '</td></tr>';
 }
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
+*/
 
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';

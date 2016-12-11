@@ -82,6 +82,5 @@ print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf-
 print '</td></tr>';
 print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

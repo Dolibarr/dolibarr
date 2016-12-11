@@ -66,10 +66,10 @@ class modProductBatch extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into productdluo/admin directory, to use to setup module.
-		$this->config_page_url = array();
+		$this->config_page_url = array("product_lot_extrafields.php@product");
 
 		// Dependencies
-		$this->depends = array("modProduct","modStock","modExpedition","modSupplier");		// List of modules id that must be enabled if this module is enabled. modExpedition is required to manage batch exit (by manual stock decrease on shipment), modSupplier to manage batch entry (after supplier order).
+		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of modules id that must be enabled if this module is enabled. modExpedition is required to manage batch exit (by manual stock decrease on shipment), modSupplier to manage batch entry (after supplier order).
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
@@ -95,10 +95,12 @@ class modProductBatch extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
 
-		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
-
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		$r=0;
 
@@ -118,8 +120,9 @@ class modProductBatch extends DolibarrModules
 
 		$sql = array();
 
-		if(! empty($conf->cashdesk->enabled)) {
-    		if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+		if (! empty($conf->cashdesk->enabled)) {
+    		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+    		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
     		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
     		}
 		}

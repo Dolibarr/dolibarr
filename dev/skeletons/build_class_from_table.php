@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -180,7 +180,7 @@ if (! $sourcecontent)
 }
 
 // Define output variables
-$outfile='out.'.$classmin.'.class.php';
+$outfile=$classmin.'.class.php';
 $targetcontent=$sourcecontent;
 
 // Substitute module name
@@ -259,7 +259,7 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= '".$prop['field'];
-		if ($i <= count($property)-$no_output_field) $varprop.=",";
+		if ($i < (count($property)-$no_output_field)) $varprop.=",";
 		$varprop.="';";
 		$varprop.="\n";
 	}
@@ -455,9 +455,9 @@ else $error++;
 //--------------------------------------------------------------------
 
 $skeletonfiles=array(
-    $path.'skeleton_script.php' => 'out.'.$classmin.'_script.php', 
-    $path.'skeleton_list.php' => 'out.'.$classmin.'_list.php', 
-    $path.'skeleton_card.php' => 'out.'.$classmin.'_card.php'
+    $path.'skeleton_script.php' => $classmin.'_script.php', 
+    $path.'skeleton_list.php' => $classmin.'_list.php', 
+    $path.'skeleton_card.php' => $classmin.'_card.php'
     );
     
 foreach ($skeletonfiles as $skeletonfile => $outfile)
@@ -587,11 +587,10 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print_liste_field_titre(\$arrayfields['t.".$prop['field']."']['label'],\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
+    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print_liste_field_titre(\$arrayfields['t.".$prop['field']."']['label'],\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$params,'',\$sortfield,\$sortorder);\n";
     	}
     }
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field2','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
+    $targetcontent=preg_replace('/LIST_OF_TD_TITLE_FIELDS/', $varprop, $targetcontent);
     
     // Substitute fields title search
     $varprop="\n";
@@ -603,8 +602,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_".$prop['field']."\" value=\"'.\$search_".$prop['field'].".'\" size=\"10\"></td>';\n";
     	}
     }
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field1\" value=\"'.\$search_field1.'\" size=\"10\"></td>';",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field2\" value=\"'.\$search_field2.'\" size=\"10\"></td>';",'/').'/', '', $targetcontent);
+    $targetcontent=preg_replace('/LIST_OF_TD_TITLE_SEARCH/', $varprop, $targetcontent);
     
     // Substitute where for <td>.fieldx.</td>
     $varprop="\n";
@@ -656,6 +654,10 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);
     
     
+    // LIST_OF_TD_FIELDS_LIST
+    
+    
+    
     // Build file
     $fp=fopen($outfile,"w");
     if ($fp)
@@ -670,5 +672,5 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 
-print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class (for .class.php file) or /yourmodule.\n";
+print "You can now move generated files to store them into directory /yourmodule/class (for .class.php file) or /yourmodule.\n";
 return $error;

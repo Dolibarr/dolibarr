@@ -19,7 +19,7 @@
 /**
  *	    \file       htdocs/compta/localtax/card.php
  *      \ingroup    tax
- *		\brief      Page of IRPF payments
+ *		\brief      Page of second or third tax payments (like IRPF for spain, ...)
  */
 
 require '../../main.inc.php';
@@ -30,17 +30,25 @@ $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
 
-$id=$_REQUEST["id"];
+$id=GETPOST("id",'int');
+$action=GETPOST("action","alpha");
+$refund=GETPOST("refund","int");
+if (empty($refund)) $refund=0;
+
 $lttype=GETPOST('localTaxType', 'int');
-$mesg = '';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+$localtax = new Localtax($db);
 
-/*
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('localtaxvatcard','globalcard'));
+
+
+/**
  * Actions
  */
 
@@ -50,9 +58,8 @@ if($_POST["cancel"] == $langs->trans("Cancel")){
 	exit;
 }
 
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $localtax = new Localtax($db);
 
     $db->begin();
 
@@ -77,16 +84,15 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     else
     {
         $db->rollback();
-        $mesg='<div class="error">'.$localtax->error.'</div>';
+        setEventMessages($localtax->error, $localtax->errors, 'errors');
         $_GET["action"]="create";
     }
 }
 
 //delete payment of localtax
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
-    $localtax = new Localtax($db);
-    $result=$localtax->fetch($_GET['id']);
+    $result=$localtax->fetch($id);
 
 	if ($localtax->rappro == 0)
 	{
@@ -99,10 +105,10 @@ if ($_GET["action"] == 'delete')
 			{
 				$accountline=new AccountLine($db);
 				$result=$accountline->fetch($localtax->fk_bank);
-				$result=$accountline->delete($user);
+				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 			}
 
-			if ($result > 0)
+			if ($result >= 0)
 			{
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php?localTaxType='.$localtax->ltt);
@@ -112,18 +118,19 @@ if ($_GET["action"] == 'delete')
 			{
 				$localtax->error=$accountline->error;
 				$db->rollback();
-				$mesg='<div class="error">'.$localtax->error.'</div>';
+				setEventMessages($localtax->error, $localtax->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        $mesg='<div class="error">'.$localtax->error.'</div>';
+	        setEventMessages($localtax->error, $localtax->errors, 'errors');
 	    }
 	}
 	else
 	{
-        $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
+        $mesg='Error try do delete a line linked to a conciliated bank transaction';
+        setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -148,26 +155,26 @@ if ($id)
 }
 
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
-    print "<form name='add' action=\"card.php\" method=\"post\">\n";
+    print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
+    
+    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
-    
-    if ($mesg) print $mesg;
+    dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
+    print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
+    print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
 	// Label
@@ -183,13 +190,22 @@ if ($_GET["action"] == 'create')
         print '</td></tr>';
 
 	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
+	    $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
 	    print "</td>\n";
 	    print "</tr>";
-	}
+	
+		// Number
+		print '<tr><td>'.$langs->trans('Numero');
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+    }
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="1"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
     print '</table>';
 
-	print "<br>";
+	dol_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -209,8 +225,6 @@ if ($_GET["action"] == 'create')
 
 if ($id)
 {
-    if ($mesg) print $mesg;
-
 	$h = 0;
 	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/card.php?id='.$vatpayment->id;
 	$head[$h][1] = $langs->trans('Card');
@@ -254,9 +268,14 @@ if ($id)
 		}
 	}
 
-	print '</table>';
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="3"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$vatpayment,$action);    // Note that $action and $object may have been modified by hook
+	
+    print '</table>';
 
-	print '</div>';
+	dol_fiche_end();
+	
 
 	/*
 	* Boutons d'actions
@@ -269,8 +288,6 @@ if ($id)
 	print "</div>";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();
 

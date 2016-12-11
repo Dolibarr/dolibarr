@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,8 @@ class CompanyBankAccount extends Account
 
     var $default_rib;
     var $frstrecur;
+    var $rum;
+    var $date_rum;
 
     var $datec;
     var $datem;
@@ -46,26 +49,24 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct(DoliDB $db)
     {
         $this->db = $db;
 
         $this->socid = 0;
-        $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
         $this->default_rib = 0;
-        return 1;
     }
 
 
     /**
      * Create bank information record
      *
-     * @param   Object   $user		User
+     * @param   User   $user		User
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create($user='')
+    function create(User $user = null)
     {
         $now=dol_now();
 
@@ -103,7 +104,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	Object user
      *	@return	int				<=0 if KO, >0 if OK
      */
-    function update($user='')
+    function update(User $user = null)
     {
     	global $conf;
 
@@ -111,6 +112,9 @@ class CompanyBankAccount extends Account
         {
             $this->create();
         }
+		
+		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
@@ -127,6 +131,8 @@ class CompanyBankAccount extends Account
 	    if ($conf->prelevement->enabled)
 	    {
     	    $sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+    	    $sql.= ",rum = '".$this->db->escape($this->rum)."'";
+            $sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 	    }
 	    if (trim($this->label) != '')
             $sql.= ",label = '".$this->db->escape($this->label)."'";
@@ -170,6 +176,8 @@ class CompanyBankAccount extends Account
             {
                 $obj = $this->db->fetch_object($resql);
 
+                $this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
+
                 $this->id			   = $obj->rowid;
                 $this->socid           = $obj->fk_soc;
                 $this->bank            = $obj->bank;
@@ -206,7 +214,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	User deleting
      *  @return int         	<0 if KO, >0 if OK
      */
-    function delete($user)
+    function delete(User $user = null)
     {
         global $conf;
 
@@ -224,79 +232,27 @@ class CompanyBankAccount extends Account
         }
     }
 
-    /**
-     * Return RIB
-     *
-     * @param   boolean     $displayriblabel     Prepend or Hide Label
-     * @return	string		RIB
-     */
-    function getRibLabel($displayriblabel = true)
-    {
-    	global $langs,$conf;
+	/**
+	 * Return RIB
+	 *
+	 * @param   boolean     $displayriblabel     Prepend or Hide Label
+	 * @return	string		RIB
+	 */
+	public function getRibLabel($displayriblabel = true)
+	{
+		$rib = '';
 
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
-            if ($this->label && $displayriblabel) $rib = $this->label." : ";
+		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic ) {
 
-    		// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+			if ($this->label && $displayriblabel) {
+				$rib = $this->label." : ";
 			}
-			$fieldlistsarray=explode(' ',$fieldlists);
 
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_banque.'&nbsp;';
-					}
-				}
+			$rib .= (string) $this;
+		}
 
-				if ($val == 'DeskCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_guichet.'&nbsp;';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 2)
-			        {
-			            $rib.=$this->code_banque.'&nbsp;';
-			        }
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					$rib.=$this->number.'&nbsp;';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($this->useDetailedBBAN() == 1)
-					{
-						$rib.=$this->cle_rib.'&nbsp;';
-					}
-				}
-			}
-    	}
-    	else
-    	{
-    		$rib='';
-    	}
-
-    	return $rib;
-    }
+		return $rib;
+	}
 
     /**
      * Set RIB as Default
@@ -352,5 +308,39 @@ class CompanyBankAccount extends Account
     		return -1;
     	}
     }
+    
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        $this->specimen        = 1;
+        $this->ref             = 'CBA';
+        $this->label           = 'CustomerCorp Bank account';
+        $this->bank            = 'CustomerCorp Bank';
+        $this->courant         = Account::TYPE_CURRENT;
+        $this->clos            = Account::STATUS_OPEN;
+        $this->code_banque     = '123';
+        $this->code_guichet    = '456';
+        $this->number          = 'CUST12345';
+        $this->cle_rib         = 50;
+        $this->bic             = 'CC12';
+        $this->iban            = 'FR999999999';
+        $this->domiciliation   = 'Bank address of customer corp';
+        $this->proprio         = 'Owner';
+        $this->owner_address   = 'Owner address';
+        $this->country_id      = 1;
+        
+        $this->rum             = 'UMR-CU1212-0007-5-1475405262';
+        $this->date_rum        =dol_now() - 10000;
+        $this->frstrecur       = 'FRST';
+        
+        $this->socid = 0;
+    }
+    
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -34,7 +34,7 @@
  */
 function product_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -45,30 +45,26 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("CustomerPrices");
-	$head[$h][2] = 'price';
-	$h++;
-
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+	if (! empty($object->status))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SuppliersPrices");
-		$head[$h][2] = 'suppliers';
-		$h++;
+    	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+    	$head[$h][1] = $langs->trans("SellingPrices");
+    	$head[$h][2] = 'price';
+    	$h++;
 	}
-
-	// Show category tab
-	/* No more required. Replaced with new multiselect component
-	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
+	
+	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$type = Categorie::TYPE_PRODUCT;
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}*/
+    	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	|| (! empty($conf->margin->enabled) && $user->rights->margin->liretous)
+    	)
+    	{
+    		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+    		$head[$h][1] = $langs->trans("BuyingPrices");
+    		$head[$h][2] = 'suppliers';
+    		$h++;
+    	}
+	}
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
@@ -93,7 +89,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'stats';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?showmessage=1&id=".$object->id;
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
 	$h++;
@@ -115,21 +111,34 @@ function product_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
-    /* Merged into the Join files tab
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
-	$h++;
-	*/
+    // Notes
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+        $nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+        if(!empty($object->note_public)) $nbNote++;
+        $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$h][2] = 'note';
+        $h++;
+    }
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-    $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
+        if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
+        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    }
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -143,6 +152,47 @@ function product_prepare_head($object)
 
 	return $head;
 }
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   ProductLot	$object		Object related to tabs
+ * @return  array		     		Array of tabs to show
+ */
+function productlot_prepare_head($object)
+{
+    global $db, $langs, $conf, $user;
+    $langs->load("products");
+    $langs->load("productbatch");
+    
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_card.php?id=".$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot');
+
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot', 'remove');
+
+    // Log
+    /*
+    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
+    */
+    
+    return $head;
+}
+
+
 
 /**
 *  Return array head with list of tabs to view object informations.
@@ -188,27 +238,61 @@ function product_admin_prepare_head()
 }
 
 
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function product_lot_admin_prepare_head()
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin');
+
+    $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin','remove');
+
+    return $head;
+}
+
+
+
 /**
  * Show stats for company
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	integer
+ * @return	integer					NB of lines shown into array
  */
 function show_stats_for_company($product,$socid)
 {
 	global $conf,$langs,$user,$db;
 
+	$nblines = 0;
+	
 	print '<tr>';
 	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Propals
 	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_propale($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
@@ -226,6 +310,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes clients
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -243,6 +328,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -260,6 +346,7 @@ function show_stats_for_company($product,$socid)
 	// Contrats
 	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_contrat($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
@@ -277,6 +364,7 @@ function show_stats_for_company($product,$socid)
 	// Factures clients
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -294,6 +382,7 @@ function show_stats_for_company($product,$socid)
 	// Factures fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -309,7 +398,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 
-	return 0;
+	return $nblines++;
 }
 
 
@@ -319,7 +408,7 @@ function show_stats_for_company($product,$socid)
  *	@param	int		$unit                Unit key (-3,0,3,98,99...)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
- * 	@see	load_measuring_units
+ * 	@see	formproduct->load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')
 {
@@ -328,41 +417,41 @@ function measuring_units_string($unit,$measuring_style='')
 	$measuring_units=array();
 	if ($measuring_style == 'weight')
 	{
-		$measuring_units[3] = $langs->trans("WeightUnitton");
-		$measuring_units[0] = $langs->trans("WeightUnitkg");
-		$measuring_units[-3] = $langs->trans("WeightUnitg");
-		$measuring_units[-6] = $langs->trans("WeightUnitmg");
-        $measuring_units[99] = $langs->trans("WeightUnitpound");
+		$measuring_units[3] = $langs->transnoentitiesnoconv("WeightUnitton");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
+        $measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{
-		$measuring_units[0] = $langs->trans("SizeUnitm");
-		$measuring_units[-1] = $langs->trans("SizeUnitdm");
-		$measuring_units[-2] = $langs->trans("SizeUnitcm");
-		$measuring_units[-3] = $langs->trans("SizeUnitmm");
-        $measuring_units[98] = $langs->trans("SizeUnitfoot");
-		$measuring_units[99] = $langs->trans("SizeUnitinch");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("SizeUnitm");
+		$measuring_units[-1] = $langs->transnoentitiesnoconv("SizeUnitdm");
+		$measuring_units[-2] = $langs->transnoentitiesnoconv("SizeUnitcm");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("SizeUnitmm");
+        $measuring_units[98] = $langs->transnoentitiesnoconv("SizeUnitfoot");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("SizeUnitinch");
 	}
 	else if ($measuring_style == 'surface')
 	{
-		$measuring_units[0] = $langs->trans("SurfaceUnitm2");
-		$measuring_units[-2] = $langs->trans("SurfaceUnitdm2");
-		$measuring_units[-4] = $langs->trans("SurfaceUnitcm2");
-		$measuring_units[-6] = $langs->trans("SurfaceUnitmm2");
-        $measuring_units[98] = $langs->trans("SurfaceUnitfoot2");
-		$measuring_units[99] = $langs->trans("SurfaceUnitinch2");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("SurfaceUnitm2");
+		$measuring_units[-2] = $langs->transnoentitiesnoconv("SurfaceUnitdm2");
+		$measuring_units[-4] = $langs->transnoentitiesnoconv("SurfaceUnitcm2");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("SurfaceUnitmm2");
+        $measuring_units[98] = $langs->transnoentitiesnoconv("SurfaceUnitfoot2");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("SurfaceUnitinch2");
 	}
 	else if ($measuring_style == 'volume')
 	{
-		$measuring_units[0] = $langs->trans("VolumeUnitm3");
-		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-        $measuring_units[88] = $langs->trans("VolumeUnitfoot3");
-        $measuring_units[89] = $langs->trans("VolumeUnitinch3");
-		$measuring_units[97] = $langs->trans("VolumeUnitounce");
-		$measuring_units[98] = $langs->trans("VolumeUnitlitre");
-        $measuring_units[99] = $langs->trans("VolumeUnitgallon");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("VolumeUnitm3");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("VolumeUnitdm3");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("VolumeUnitcm3");
+		$measuring_units[-9] = $langs->transnoentitiesnoconv("VolumeUnitmm3");
+        $measuring_units[88] = $langs->transnoentitiesnoconv("VolumeUnitfoot3");
+        $measuring_units[89] = $langs->transnoentitiesnoconv("VolumeUnitinch3");
+		$measuring_units[97] = $langs->transnoentitiesnoconv("VolumeUnitounce");
+		$measuring_units[98] = $langs->transnoentitiesnoconv("VolumeUnitlitre");
+        $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
 	}
 
 	return $measuring_units[$unit];

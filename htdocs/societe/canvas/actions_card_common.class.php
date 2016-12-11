@@ -23,8 +23,7 @@
  */
 
 /**
- *	\class      ActionsCardCommon
- *	\brief      Classe permettant la gestion des tiers par defaut
+ *	Classe permettant la gestion des tiers par defaut
  */
 abstract class ActionsCardCommon
 {
@@ -89,7 +88,8 @@ abstract class ActionsCardCommon
     }
 
     /**
-     *	Load data control
+     *  doActions of a canvas is not the doActions of the hook
+     *  @deprecated Use the doActions of hooks instead of this.
      *
      *	@param	int		$action	Action code
      *	@return	void
@@ -260,7 +260,6 @@ abstract class ActionsCardCommon
                                 return;
                             }
                         }
-                        exit;
                     }
                     else
                     {
@@ -438,12 +437,12 @@ abstract class ActionsCardCommon
             if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
 
             // TODO create a function
-            $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-            $this->tpl['select_customertype'].= '</select>';
+            $this->tpl['select_customertype'] = Form::selectarray('client', array(
+                0 => $langs->trans('NorProspectNorCustomer'),
+                1 => $langs->trans('Customer'),
+                2 => $langs->trans('Prospect'),
+                3 => $langs->trans('ProspectCustomer')
+            ), $this->object->client);
 
             // Customer
             $this->tpl['customercode'] = $this->object->code_client;
@@ -510,7 +509,7 @@ abstract class ActionsCardCommon
             $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
 
             // Select users
-            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id,'commercial_id',1);
+            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
             // Local Tax
             // TODO mettre dans une classe propre au pays

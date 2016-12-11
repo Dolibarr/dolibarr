@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Par
-CronAbout = Par Cron
-CronAboutPage = Cron par lapu
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,52 +7,45 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Plānotais darbu vadības iestatīšana
-URLToLaunchCronJobs=URL to check and launch cron jobs if required
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Komandrindas uzsākt cron darbavietas
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
+CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Plānotie darbi
-CronListActive=List of active/scheduled jobs
-CronListInactive=Saraksts ar invaliditāti darba vietas
+EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Pēdējo reizi palaists
 CronLastOutput=Pēdējo reizi palaist izejas
 CronLastResult=Pēdējais rezultātu kods
-CronListOfCronJobs=Saraksts ar plānotajiem darbiem
 CronCommand=Komanda
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch scheduled jobs
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Launch scheduled job
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=Darbs
 CronNone=Nav
-CronDtStart=Sākuma datums
-CronDtEnd=Beigu datums
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Nākošā izpilde
-CronDtLastLaunch=Pēdējā izpilde
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequency
 CronClass=Class
 CronMethod=Metode
 CronModule=Modulis
-CronAction=Darbība
-CronStatus=Statuss
-CronStatusActive=Ieslēgts
-CronStatusInactive=Bloķēts
 CronNoJobs=Nav reģistrētu darbu
 CronPriority=Prioritāte
-CronLabel=Apraksts
+CronLabel=Nosaukums
 CronNbRun=Nb. sākt
+CronMaxRun=Max nb. launch
 CronEach=Katru
 JobFinished=Darbs uzsākts un pabeigts
 #Page card
 CronAdd= Pievienot darbu
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Instances / Object, lai radītu
 CronArgs=Parametri
@@ -66,7 +56,6 @@ CronErrEndDateStartDt=Beigu datums nevar būt pirms sākuma datuma
 CronStatusActiveBtn=Ieslēgt
 CronStatusInactiveBtn=Izslēgt
 CronTaskInactive=Šis darbs ir izslēgts
-CronDtLastResult=Pēdējo rezultātu datums
 CronId=Id
 CronClassFile=Klases (filename.class.php)
 CronModuleHelp=Nosaukums Dolibarr moduļa direktoriju (arī strādāt ar ārējo Dolibarr moduli). <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / <u>produktu</u> / klase / product.class.php, moduļa vērtība ir <i>produkts</i>
@@ -78,12 +67,13 @@ CronCommandHelp=Sistēma komandrindas izpildīt.
 CronCreateJob=Create new Scheduled Job
 CronFrom=No
 # Info
-CronInfoPage=Informācija
 # Common
 CronType=Job type
 CronType_method=Zvanu metode ir Dolibarr klases
 CronType_command=Shell komandu
-CronMenu=Cron
 CronCannotLoadClass=Nevar ielādēt klases %s vai objektu %s
-UseMenuModuleToolsToAddCronJobs=Iet uz izvēlni &quot;Home - moduļi instrumenti - Darbs sarakstu&quot;, lai redzētu un rediģēt plānoto darbu.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

@@ -72,6 +72,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_year = '';
 }
 
+
 /*
  * View
  */
@@ -106,7 +107,9 @@ if ($id > 0 || ! empty($ref)) {
 		if ($reshook < 0)
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+				
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         print '<div class="fichecenter">';
         
@@ -201,6 +204,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '</div>';
 
 				$i = 0;
+                print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
@@ -249,8 +253,8 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td align="right">' . price($total_ht) . '</td>';
 				print '<td></td>';
 				print "</table>";
+				print '</div>';
 				print '</form>';
-				print '<br>';
 			} else {
 				dol_print_error($db);
 			}

@@ -46,13 +46,13 @@ $search_company=GETPOST('search_company','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
-$limit = $conf->liste_limit;
 
 $year=GETPOST("year");
 $month=GETPOST("month");
@@ -80,7 +80,7 @@ $childids[]=$user->id;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
+$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
 $sql.= " d.fk_statut,";
 $sql.= " u.lastname, u.firstname";							// Qui
@@ -91,7 +91,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id." OR d.fk_soc IS NULL) ";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if ($search_ref)		$sql.=" AND d.rowid=".$search_ref;
@@ -164,9 +164,11 @@ if ($resql)
     print '<td class="liste_titre" align="right">';
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print "</td></tr>\n";
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+    print "</tr>\n";
 
     $var=true;
     while ($i < min($num,$limit))
@@ -186,7 +188,7 @@ if ($resql)
         print '<td align="center">'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
         // User
         print '<td>';
-        $userstatic->id = $obj->rowid;
+        $userstatic->id = $obj->fk_user;
         $userstatic->lastname = $obj->lastname;
         $userstatic->firstname = $obj->firstname;
         print $userstatic->getNomUrl(1);

@@ -71,11 +71,17 @@ $date_end = dol_mktime(23, 59, 59, $_REQUEST["date_endmonth"], $_REQUEST["date_e
 $date_starty = dol_mktime(0, 0, 0, $_REQUEST["date_start_delymonth"], $_REQUEST["date_start_delyday"], $_REQUEST["date_start_delyyear"]); // Date for local PHP server
 $date_endy = dol_mktime(23, 59, 59, $_REQUEST["date_end_delymonth"], $_REQUEST["date_end_delyday"], $_REQUEST["date_end_delyyear"]);
 
-if ($action == 'create') {
-	if (is_array($selected) == false) {
-		$mesgs = array (
-				'<div class="error">' . $langs->trans('Error_OrderNotChecked') . '</div>'
-		);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('facture_fourn');
+
+if ($action == 'create') 
+{
+	if (! is_array($selected)) 
+	{
+		$error++;
+		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
 	} else {
 		$origin = GETPOST('origin');
 		$originid = GETPOST('originid');
@@ -87,11 +93,12 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('orderstoinvoicesupplier'));
 
+
 /*
  * Actions
  */
 
-if (($action == 'create' || $action == 'add') && empty($mesgs)) {
+if (($action == 'create' || $action == 'add') && ! $error) {
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
 	if (! empty($conf->projet->enabled))
@@ -159,6 +166,9 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 				// Auto calculation of date due if not filled by user
 			if (empty($object->date_echeance))
 				$object->date_echeance = $object->calculate_date_lim_reglement();
+
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
 				$object->linked_objects = $orders_id;
@@ -239,10 +249,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
-				if($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) {
-					
-					if($supplier_order->classifyBilled()<0) {
-							
+				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) 
+				{
+					if ($supplier_order->classifyBilled($user) < 0)
+					{
 						$db->rollback();
 						$action = 'create';
 						$_GET["origin"] = $_POST["origin"];
@@ -359,6 +369,12 @@ if ($action == 'create' && !$error) {
 			'colspan' => ' colspan="3"'
 	);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		$object=new FactureFournisseur($db);
+		print $object->showOptionals($extrafields,'edit');
+	}
 
 	// Modele PDF
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
@@ -500,7 +516,8 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		// print '<td class="liste_titre">';
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="' . $sref_client . '">';
-
+        print '</td>';
+        
 		// DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
@@ -512,8 +529,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '</td>';
 
 		// SEARCH BUTTON
-		print '</td><td align="right" class="liste_titre">';
+		print '<td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '"  value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+		print '</td>';
 
 		// ALL/NONE
 		print '<td class="liste_titre" align="center">';

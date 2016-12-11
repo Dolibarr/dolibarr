@@ -1,6 +1,6 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger  <http://tiaris.eu>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,6 @@
  *      \file       scripts/product/migrate_picture_path.php
  *		\ingroup    scripts
  *      \brief      Migrate pictures from old system prior to 3.7 to new path for 3.7+
- *
  */
 
 $sapi_type = php_sapi_name();
@@ -119,7 +118,7 @@ function migrate_product_photospath($product)
 		$handle=opendir($origin_osencoded);
         if (is_resource($handle))
         {
-        	while (($file = readdir($handle)) != false)
+        	while (($file = readdir($handle)) !== false)
     		{
      			if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file))
     			{
@@ -127,7 +126,7 @@ function migrate_product_photospath($product)
     				if (is_resource($thumbs))
         			{
 	     				dol_mkdir($destin.'/'.$file);
-	     				while (($thumb = readdir($thumbs)) != false)
+	     				while (($thumb = readdir($thumbs)) !== false)
 		    			{
 		    				dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
 		    			}

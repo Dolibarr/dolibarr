@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms setup
+SmsSetup=Konfiguracja SMS
 SmsDesc=Ta strona pozwala na zdefiniowanie globals opcje SMS funkcji
 SmsCard=SMS karty
 AllSms=Wszystko SMS campains
@@ -38,10 +38,7 @@ SmsStatusNotSent=Nie wysłał
 SmsSuccessfulySent=Sms poprawnie wysłany (z %s do %s)
 ErrorSmsRecipientIsEmpty=Liczba celem jest pusty
 WarningNoSmsAdded=Nie nowy numer telefonu, aby dodać do listy docelowej
-ConfirmValidSms=Czy potwierdza zatwierdzenie tej kampanii w?
-ConfirmResetMailing=Uwaga, jeśli popełnisz reinit programu SMS kampanii w <b>%s,</b> pozwolisz zrobić masę wysyłanie z niego po raz drugi. Czy naprawdę to, co wan zrobić?
-ConfirmDeleteMailing=Czy potwierdza usunięcie cele kampanii?
-NbOfRecipients=Liczba celów
+ConfirmValidSms=Do you confirm validation of this campain?
 NbOfUniqueSms=Nb dof unikatowe numery telefonów
 NbOfSms=Nbre numerów phon
 ThisIsATestMessage=To jest wiadomość testowa
@@ -49,5 +46,6 @@ SendSms=Wyślij SMS
 SmsInfoCharRemain=Nb z pozostałych znaków
 SmsInfoNumero= (W formacie międzynarodowym np.: +33899701761)
 DelayBeforeSending=Opóźnienie przed wysłaniem (minuty)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Żaden cel nie dostępne. Sprawdź konfigurację dostawcy SMS.
 

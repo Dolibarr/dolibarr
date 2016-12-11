@@ -21,15 +21,14 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup		Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief		Balance by month
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("main");

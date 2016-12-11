@@ -40,13 +40,17 @@ $id = GETPOST('id','int');
 
 // List of status
 static $tmpstatus2label=array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
+		'0'=>'CloseEtablishment',
+        '1'=>'OpenEtablishment'
 );
 $status2label=array('');
 foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
 
 $object = new Establishment($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+
 
 /*
  * Actions
@@ -62,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -75,7 +79,7 @@ else if ($action == 'add')
 		$object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), null, 'errors');
             $error++;
         }
 
@@ -124,19 +128,20 @@ else if ($action == 'update')
 
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
-			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('Name')), 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
 			$error ++;
 		}
 
-		if (empty($error)) {
+		if (empty($error)) 
+		{
 			$object->name 			= GETPOST('name', 'alpha');
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = $_POST["country_id"];
+			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
 
-			$result = $object->update();
+			$result = $object->update($user);
 
             if ($result > 0)
             {
@@ -373,7 +378,8 @@ else if ($id)
 			print '</tr>';
 
             // Status
-            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatus(4).'</td></tr>';
+            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+            print $object->getLibStatus(4).'</td></tr>';
 
             print "</table>";
 

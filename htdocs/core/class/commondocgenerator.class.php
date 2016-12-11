@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2004-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne		<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       	Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       	Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ abstract class CommonDocGenerator
 {
 	var $error='';
 	protected $db;
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -58,6 +59,8 @@ abstract class CommonDocGenerator
     {
         global $conf;
 
+        $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
+
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
@@ -74,7 +77,7 @@ abstract class CommonDocGenerator
         	'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
-        	'myuser_logo'=>$user->photo,
+        	'myuser_logo'=>$logotouse,
         	'myuser_job'=>$user->job,
             'myuser_web'=>''	// url not exist in $user object
         );
@@ -133,9 +136,8 @@ abstract class CommonDocGenerator
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
 			'mycompany_object'=>$mysoc->object,
-        	// Only private not exists for "mysoc"
             'mycompany_note_private'=>$mysoc->note_private,
-
+            //'mycompany_note_public'=>$mysoc->note_public,        // Only private not exists for "mysoc" but both for thirdparties
         );
     }
 
@@ -209,7 +211,7 @@ abstract class CommonDocGenerator
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
         		}
-        		else if($extrafields->attribute_type[$key] == 'select')
+        		else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
         		{
         			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
         		}
@@ -280,7 +282,7 @@ abstract class CommonDocGenerator
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select')
+			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
 			{
 				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
 			}
@@ -322,7 +324,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Object			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array_key		$array_key	        Name of the key for return array
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
@@ -364,13 +366,13 @@ abstract class CommonDocGenerator
 		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-		$array_key.'_total_vat_locale'=>price($object->total_tva, 0, $outputlangs),
+		$array_key.'_total_vat_locale'=>(! empty($object->total_vat)?price($object->total_vat, 0, $outputlangs):price($object->total_tva, 0, $outputlangs)),
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
 		$array_key.'_total_ht'=>price2num($object->total_ht),
-		$array_key.'_total_vat'=>price2num($object->total_tva),
+		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
@@ -389,7 +391,7 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		foreach ($object->lines as $line)
 		{
-		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility 
+		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
 			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
 			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
 			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
@@ -429,7 +431,7 @@ abstract class CommonDocGenerator
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
-                        'line_product_type'=>$line->product_type,
+			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
@@ -443,9 +445,9 @@ abstract class CommonDocGenerator
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 			'line_date_start'=>$line->date_start,
-			'line_date_start_rfc'=>dol_print_date($line->date_start,'rfc'),
+			'line_date_start_rfc'=>dol_print_date($line->date_start,'dayrfc'),
 			'line_date_end'=>$line->date_end,
-			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
+			'line_date_end_rfc'=>dol_print_date($line->date_end,'dayrfc')
 		);
 
 		// Retrieve extrafields
@@ -560,7 +562,7 @@ abstract class CommonDocGenerator
      *	@param  Object			$object				Object with extrafields (must have $object->array_options filled)
      *	@param  array			$array_to_fill      Substitution array
      *  @param  Extrafields		$extrafields        Extrafields object
-     *  @param  string			$array_key	        Name of the key for return array
+     *  @param  string			$array_key	        Prefix for name of the keys into returned array
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
@@ -576,17 +578,30 @@ abstract class CommonDocGenerator
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			else if($extrafields->attribute_type[$key] == 'select')
+			else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
 			{
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
 			}
 			else if($extrafields->attribute_type[$key] == 'date')
 			{
-				$object->array_options['options_'.$key] = (strlen($object->array_options['options_'.$key])>0?dol_print_date($object->array_options['options_'.$key],'day'):'');
+				if (strlen($object->array_options['options_'.$key])>0)
+				{
+					$object->array_options['options_'.$key] = dol_print_date($object->array_options['options_'.$key],'day');                                       // using company output language
+					$object->array_options['options_'.$key.'_locale'] = dol_print_date($object->array_options['options_'.$key],'day','tzserver',$outputlangs);     // using output language format
+					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($object->array_options['options_'.$key],'dayrfc');                             // international format
+				}
+				else
+				{
+					$object->array_options['options_'.$key] = '';
+					$object->array_options['options_'.$key.'_locale'] = '';
+					$object->array_options['options_'.$key.'_rfc'] = '';
+				}
 			}
 			else if($extrafields->attribute_type[$key] == 'datetime')
 			{
-				$object->array_options['options_'.$key] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');
+				$object->array_options['options_'.$key] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
+				$object->array_options['options_'.$key.'_locale'] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour','tzserver',$outputlangs):'');    // using output language format
+				$object->array_options['options_'.$key.'_rfc'] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhourrfc'):'');                             // international format
 			}
 			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}

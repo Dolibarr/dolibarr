@@ -49,6 +49,22 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
+$object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartymargins','globalcard'));
+
+
+/*
+ * Actions
+ */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+
 
 /*
  * View
@@ -57,8 +73,10 @@ if (! $sortfield) $sortfield="f.datef";
 $invoicestatic=new Facture($db);
 $form = new Form($db);
 
+$title=$langs->trans("ThirdParty").' - '.$langs->trans("Margins");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_url);
+llxHeader('',$title,$help_url);
 
 if ($socid > 0)
 {
@@ -73,18 +91,15 @@ if ($socid > 0)
 
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
     
-    // Alias names (commercial, trademark or alias names)
-    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
-    print $object->name_alias;
-    print "</td></tr>";
-
     if ($object->client)
     {
         print '<tr><td class="titlefield">';
@@ -142,7 +157,7 @@ if ($socid > 0)
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut > 0";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";
@@ -166,8 +181,8 @@ if ($socid > 0)
     	print '<tr class="liste_titre">';
     	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("SoldAmount"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("PurchasedAmount"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
     		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
@@ -211,8 +226,8 @@ if ($socid > 0)
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;
-    			$cumul_achat += $objp->buying_price;
     			$cumul_vente += $objp->selling_price;
+    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
     		}
     	}
 
@@ -229,6 +244,8 @@ if ($socid > 0)
     		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
     		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	}
+    	
+    	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
     	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";

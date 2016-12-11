@@ -30,23 +30,23 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-
+print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
 
 if ($langs->defaultlang != 'en_US')
 {
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
-    exit;
+    exit(1);
 }
 if (empty($conf->adherent->enabled))
 {
-	print "Error: Module member must be enabled to have significatn results.\n";
-	exit;
+	print "Error: Module member must be enabled to have significant results.\n";
+	exit(1);
 }
 if (! empty($conf->ldap->enabled))
 {
     print "Error: LDAP module should not be enabled.\n";
-    exit;
+    exit(1);
 }
 if (! empty($conf->google->enabled))
 {
@@ -59,6 +59,7 @@ if (empty($user->id))
     $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
 
 
 /**
@@ -183,6 +184,9 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
+        require_once dirname(__FILE__).'/RestAPIUserTest.php';
+        $suite->addTestSuite('RestAPIUserTest');
+ 
         require_once dirname(__FILE__).'/WebservicesProductsTest.php';
         $suite->addTestSuite('WebservicesProductsTest');
         require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';

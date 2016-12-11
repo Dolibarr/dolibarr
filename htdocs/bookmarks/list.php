@@ -92,8 +92,11 @@ if ($resql)
     $param = "";
     if ($optioncss != '') $param ='&optioncss='.$optioncss;
 
-    print "<table class=\"noborder\" width=\"100%\">";
-
+    $moreforfilter='';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
@@ -200,6 +203,8 @@ if ($resql)
         $i++;
     }
     print "</table>";
+    print '</div>';
+    
     $db->free($resql);
 }
 else
@@ -218,7 +223,7 @@ if ($user->rights->bookmark->creer)
 
 print '</div>';
 
-
+llxFooter();
 $db->close();
 
-llxFooter();
+

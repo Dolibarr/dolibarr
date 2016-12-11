@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -32,8 +32,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/generate-societe.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+//$path=preg_replace('/generate-societe.php/i','',$_SERVER["PHP_SELF"]);
+require (__DIR__. '/../../htdocs/master.inc.php');
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -90,30 +90,30 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     print "Company $s\n";
     $soc = new Societe($db);
     $soc->name = "Company num ".time()."$s";
-    $soc->town = $listoftown[rand(0, count($listoftown)-1)];
-    $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
-    $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
+    $soc->town = $listoftown[mt_rand(0, count($listoftown)-1)];
+    $soc->client = mt_rand(1,2);		// Une societe sur 2 est prospect, l'autre client
+    $soc->fournisseur = mt_rand(0,1);	// Une societe sur 2 est fournisseur
     $soc->code_client='CU'.time()."$s";
     $soc->code_fournisseur='SU'.time()."$s";
     $soc->tva_assuj=1;
     $soc->country_id=1;
     $soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
-    $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_percent=5;
+    $user_remise=mt_rand(1,3); if ($user_remise==3) $soc->remise_percent=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
     $soc->note_private = 'Company created by the script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
-        $rand = rand(1,4);
+        $rand = mt_rand(1,4);
         print "> Generates $rand contact(s)\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->lastname = "Lastname".$c;
-            $contact->firstname = $listoflastname[rand(0, count($listoflastname)-1)];
+            $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
 

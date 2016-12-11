@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
 	}
 	else
 	{
-		setEventMessage($payment->error, 'errors');
+		setEventMessages($payment->error, $payment->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -104,7 +104,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 	}
 	else
 	{
-		setEventMessage($payment->error);
+		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -199,7 +199,7 @@ $disable_delete = 0;
 $sql = 'SELECT er.rowid as did, er.paid, er.total_ttc, per.amount';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql.= ' WHERE per.fk_expensereport = er.rowid';
-$sql.= ' AND er.entity = '.$conf->entity;
+$sql.= ' AND er.entity IN ('.getEntity('expensereport', 1).')';
 $sql.= ' AND per.rowid = '.$id;
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);

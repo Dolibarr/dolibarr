@@ -64,6 +64,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+$hookmanager->initHooks(array('groupcard','globalcard'));
 
 /**
  *  Action remove group
@@ -80,7 +81,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -92,7 +93,7 @@ if ($action == 'add')
     if ($caneditperms)
     {
         if (! $_POST["nom"]) {
-            setEventMessage($langs->trans("NameNotDefined"), 'errors');
+            setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
             $action="create";       // Go back to create page
         } else {
 			$object->nom	= trim($_POST["nom"]);	// For backward compatibility
@@ -122,7 +123,7 @@ if ($action == 'add')
                 $db->rollback();
 
                 $langs->load("errors");
-                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->name), 'errors');
+                setEventMessages($langs->trans("ErrorGroupAlreadyExists",$object->name), null, 'errors');
                 $action="create";       // Go back to create page
             }
         }
@@ -130,7 +131,7 @@ if ($action == 'add')
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -156,14 +157,14 @@ if ($action == 'adduser' || $action =='removeuser')
             }
             else
             {
-                setEventMessage($edituser->error, 'errors');
+                setEventMessages($edituser->error, $edituser->errors, 'errors');
             }
         }
     }
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -193,19 +194,19 @@ if ($action == 'update')
 
         if ($ret >= 0 && ! count($object->errors))
         {
-	        setEventMessage($langs->trans("GroupModified"));
+	        setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
             $db->commit();
         }
         else
         {
-            setEventMessage($object->error);
+            setEventMessages($object->error, $object->errors, 'errors');
             $db->rollback();
         }
     }
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'));
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
 
@@ -235,7 +236,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td valign="top" class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
+	print '<td class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
 
 	// Multicompany
@@ -253,9 +254,9 @@ if ($action == 'create')
 		}
 	}
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Description").'</td><td>';
+    print "<tr>".'<td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+    $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
     $doleditor->Create();
     print "</td></tr>\n";
 
@@ -310,14 +311,14 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
 			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 
 			// Name
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
 			print '<td width="75%" class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
@@ -335,7 +336,7 @@ else
 			}
 
 			// Note
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
+			print '<tr><td width="25%" class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 
@@ -398,7 +399,7 @@ else
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 print '<td>';
-                print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
+                print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
                 print ' &nbsp; ';
                 // Multicompany
                 if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -449,7 +450,7 @@ else
 
             		print "<tr ".$bc[$var].">";
             		print '<td>';
-            		print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
+            		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
@@ -490,7 +491,7 @@ else
             }
             else
             {
-                print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
+                print '<tr><td colspan=2 class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             print "</table>";
             print "<br>";
@@ -530,7 +531,7 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
             print '<td class="valeur">';
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-            $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+            $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
             $doleditor->Create();
             print '</td>';
             print "</tr>\n";

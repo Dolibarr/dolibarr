@@ -1,5 +1,25 @@
 # Dolibarr language file - Source file is en_US - accountancy
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-TotalVente=Total turnover before tax
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier export
+ACCOUNTING_EXPORT_DATE=Format de date pour le fichier export
+ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
+Selectformat=Sélectionner le format de date pour le fichier
+ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
+AccountAccountingSuggest=Compte comptable suggéré
+ProductsBinding=Products bindings
+AccountBalance=Solde du compte
+CAHTF=Total achats fournisseur avant taxes
+ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour l'affichage des produits et services description dans les listes (valeur conseillée = 50 )
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour l'affichage des produits et services compte formulaire de description dans les listes (valeur conseillée = 50 )
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
+FinanceJournal=Journal des finances
+DescFinanceJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t
+TotalVente=Chiffre d'affaires total avant taxes
+MvtNotCorrectlyBalanced=Le mouvement n'est pas correctement équilibré. Crédit = %s. Débit = %s
+GeneralLedgerIsWritten=Les opérations sont écrites dans le grand livre général
+InitAccountancy=Compabilité initiale
+OptionModeProductSell=Mode de ventes
+OptionModeProductBuy=Mode d'achats
+OptionModeProductSellDesc=Voir tous les produits sans compte comptable défini pour les ventes.
+OptionModeProductBuyDesc=Voir tous les produits sans compte comptable défini pour les achats.
+Range=Gamme de compte comptable

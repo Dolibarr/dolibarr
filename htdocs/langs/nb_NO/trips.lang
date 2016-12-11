@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Reiseregning
 ExpenseReports=Reiseregninger
-Trip=Reiseregning
+ShowExpenseReport=Vis utgiftsrapport
 Trips=Reiseregninger
 TripsAndExpenses=Reiseregninger
 TripsAndExpensesStatistics=Reiseregninger - statistikk
@@ -9,31 +9,27 @@ TripCard=Skjema for reiseregninger
 AddTrip=Opprett reiseregning
 ListOfTrips=Liste over reiseregninger
 ListOfFees=Oversikt over avgifter
+TypeFees=Avgiftstyper
 ShowTrip=Vis utgiftsrapport
 NewTrip=Ny reiseregning
 CompanyVisited=Firma/organiasjon besøkt
-Kilometers=Kilometer
 FeesKilometersOrAmout=Beløp eller kilometer
 DeleteTrip=Slett reiseregning
-ConfirmDeleteTrip=Er du sikker på at du vil slette denne reiseregningen?
+ConfirmDeleteTrip=Er du sikker på at du vil slette denne utgiftsrapporten?
 ListTripsAndExpenses=Liste over reiseregninger
 ListToApprove=Venter på godkjenning
 ExpensesArea=Område for reiseregninger
-SearchATripAndExpense=Søk etter reiseregning
 ClassifyRefunded=Klassifisert 'refundert'
 ExpenseReportWaitingForApproval=En ny reiseregning er sendt inn for godkjenning
 ExpenseReportWaitingForApprovalMessage=En ny reiseregning er sendt inn og venter på godkjenning.\n- Bruker: %s\n- Periode: %s\nKlikk her for å godkjenne: %s
 TripId=Reiseregnings - ID
 AnyOtherInThisListCanValidate=Person som skal informeres for godkjenning
 TripSociete=Firmainformasjon
-TripSalarie=Brukerinformasjon
 TripNDF=Informasjon om reiseregning
-DeleteLine=Slett en linje i reiseregningen
-ConfirmDeleteLine=Er du sikker på at du vil slette denne linjen?
 PDFStandardExpenseReports=Standardmal for å generere PDF av reiseregning
 ExpenseReportLine=Linje i reiseregningen
 TF_OTHER=Annet
-TF_TRANSPORTATION=Transport
+TF_TRIP=Transport
 TF_LUNCH=Lunsj
 TF_METRO=Trikk/bybane
 TF_TRAIN=Tog
@@ -45,16 +41,9 @@ TF_HOTEL=Hotell
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Du har opprettet en annen reiseregning i overlappende tidsperiode
-AucuneNDF=Ingen reiseregning funnet etter disse kriteriene
 AucuneLigne=Ingen reiseregning er opprettet enda
-AddLine=Legg til linje
-AddLineMini=Legg til
 
-Date_DEBUT=Dato for periodestart
-Date_FIN=Dato for periodeslutt
 ModePaiement=Betalingsmåte
-Note=Notat
-Project=Prosjekt
 
 VALIDATOR=Bruker som er ansvarlig for godkjenning
 VALIDOR=Godkjent av
@@ -68,39 +57,33 @@ MOTIF_CANCEL=Grunn
 
 DATE_REFUS=Avvist dato
 DATE_SAVE=Godkjennelsesdato
-DATE_VALIDE=Godkjennelsesdato
 DATE_CANCEL=Kansellert dato
 DATE_PAIEMENT=Betalt dato
 
-TO_PAID=Betal
 BROUILLONNER=Gjenåpne
-SendToValid=Sendt til godkjenning
-ModifyInfoGen=Endre
 ValidateAndSubmit=Valider og send til godkjenning
 ValidatedWaitingApproval=Validert (venter på godkjenning)
 
-NOT_VALIDATOR=Du har ikke tillatelse til å godkjenne denne reiseregningen
 NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
 
-RefuseTrip=Avvis en reiseregning
-ConfirmRefuseTrip=Er du sikker på at du vil avvise denne reiseregningen
+ConfirmRefuseTrip=Er du sikker på at du vil avvise denne utgiftsrapporten?
 
 ValideTrip=Godkjenn reiseregning
-ConfirmValideTrip=Er du sikker på at du vil godkjenne denne reiseregningen
+ConfirmValideTrip=Er du sikker på at du vil godkjenne denne utgiftsrapporten?
 
 PaidTrip=Betal en reiseregning
-ConfirmPaidTrip=Er du sikker på at du vil endre status til "betalt" for denne reiseregningen?
+ConfirmPaidTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "betalt"?
 
-CancelTrip=Kanseller en reiseregning
-ConfirmCancelTrip=Er du sikker på at du vil kansellere denne reiseregningen?
+ConfirmCancelTrip=Er du sikker på at du vil kansellere denne utgiftsrapporten?
 
 BrouillonnerTrip=Endre reiseregning til "kladd"
-ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status til "Kladd" for denne reiseregningen?
+ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "utkast"?
 
 SaveTrip=Godkjenn reiseregning
-ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
+ConfirmSaveTrip=Er du sikker på at du vil validere denne utgiftsrapporten?
 
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport
 
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToApprove=Utgiftsrapporter for godkjenning
+ExpenseReportsToPay=Utgiftsrapport å betale

@@ -31,6 +31,7 @@ create table llx_facture_fourn_det
   pu_ttc            double(24,8), -- unit price with tax
   qty               real,         -- quantity of product/service
   remise_percent	real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
+  vat_src_code		varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx            double(6,3),  -- TVA taux product/service
   localtax1_tx      double(6,3)  DEFAULT 0,    -- localtax1 rate
   localtax1_type	varchar(10)	  NULL, 		-- localtax1 type
@@ -49,5 +50,12 @@ create table llx_facture_fourn_det
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
   rang						 integer      DEFAULT 0,
   import_key        varchar(14),
-  fk_unit         integer    DEFAULT NULL
+  fk_unit         integer    DEFAULT NULL,
+  
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

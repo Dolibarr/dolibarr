@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Informe de despeses
 ExpenseReports=Informes de despeses
-Trip=Informe de despeses
+ShowExpenseReport=Mostra l'informe de despeses
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses
 TripsAndExpensesStatistics=Estadístiques de l'informe de despeses
@@ -9,31 +9,27 @@ TripCard=Informe de despesa de targeta
 AddTrip=Crear informe de despeses
 ListOfTrips=Llistat de informes de despeses
 ListOfFees=Llistat notes de honoraris
+TypeFees=Tipus de despeses
 ShowTrip=Mostra l'informe de despeses
 NewTrip=Nou informe de despeses
-CompanyVisited=Empresa/institució visitada
-Kilometers=Quilòmetres
+CompanyVisited=Empresa/entitat visitada
 FeesKilometersOrAmout=Import o quilòmetres
 DeleteTrip=Eliminar informe de despeses
-ConfirmDeleteTrip=Esteu segur de voler eliminar aquest informe de despeses?
+ConfirmDeleteTrip=Estàs segur que vols eliminar aquest informe de despeses?
 ListTripsAndExpenses=Llistat d'informes de despeses
 ListToApprove=Pendent d'aprovació
 ExpensesArea=Àrea d'informes de despeses
-SearchATripAndExpense=Cerca un informe de despeses
 ClassifyRefunded=Classificar 'Retornat'
 ExpenseReportWaitingForApproval=S'ha generat un nou informe de vendes per aprovació
 ExpenseReportWaitingForApprovalMessage=S'ha presentat un nou informe de despeses i està esperant l'aprovació.\n- Usuari: %s\n- Període: %s\nClica aquí per validar: %s
 TripId=Id d'informe de despeses
 AnyOtherInThisListCanValidate=Persona a informar per a validar
 TripSociete=Informació de l'empresa
-TripSalarie=Informacions d'usuari
 TripNDF=Informacions de l'informe de despeses
-DeleteLine=Eliminar una línia de l'informe de despeses
-ConfirmDeleteLine=Esteu segur de voler eliminar aquesta línia ?
 PDFStandardExpenseReports=Plantilla estàndard per generar un document PDF per l'informe de despeses
 ExpenseReportLine=Línia de l'informe de despeses
-TF_OTHER=Altre
-TF_TRANSPORTATION=Transport
+TF_OTHER=Altres
+TF_TRIP=Transport
 TF_LUNCH=Dieta
 TF_METRO=Metro
 TF_TRAIN=Tren
@@ -45,16 +41,9 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Has declarat un altre informe de despeses en un altre rang de dates semblant
-AucuneNDF=No s'han trobat informes de despeses per aquests criteris
 AucuneLigne=Encara no hi ha informe de despeses declarat
-AddLine=Afegeix una línia
-AddLineMini=Afegir
 
-Date_DEBUT=Període d'inici
-Date_FIN=Període final
 ModePaiement=Tipus de pagament
-Note=Nota
-Project=Projecte
 
 VALIDATOR=Usuari responsable de l'aprovació
 VALIDOR=Aprovat per
@@ -68,39 +57,33 @@ MOTIF_CANCEL=Raó
 
 DATE_REFUS=Data de denegació
 DATE_SAVE=Data de validació
-DATE_VALIDE=Data de validació
 DATE_CANCEL=Data de cancelació
 DATE_PAIEMENT=Data de pagament
 
-TO_PAID=Pagar
 BROUILLONNER=Reobrir
-SendToValid=Enviar per aprovació
-ModifyInfoGen=Edita
 ValidateAndSubmit=Validar i sotmetre a aprovació
 ValidatedWaitingApproval=Validat (pendent d'aprovació)
 
-NOT_VALIDATOR=No estàs autoritzat per aprovar aquest informe de despeses
 NOT_AUTHOR=No ets l'autor d'aquest informe de despeses. L'operació s'ha cancelat.
 
-RefuseTrip=Denegar un informe de despeses
-ConfirmRefuseTrip=Esteu segur de voler denegar aquest informe de despeses ?
+ConfirmRefuseTrip=Estàs segur que vols denegar aquest informe de despeses?
 
 ValideTrip=Aprova l'informe de despeses
-ConfirmValideTrip=Esteu segur de voler aprovar aquest informe de despeses ?
+ConfirmValideTrip=Estàs segur que vols aprovar aquest informe de despeses?
 
 PaidTrip=Pagar un informe de despeses
-ConfirmPaidTrip=Esteu segur de voler canviar l'estat d'aquest informe de despeses a "Pagat" ?
+ConfirmPaidTrip=Estàs segur que vols canviar l'estatus d'aquest informe de despeses a "Pagat"?
 
-CancelTrip=Cancela un informe de despeses
-ConfirmCancelTrip=Esteu segur de voler cancelar aquest informe de despeses ?
+ConfirmCancelTrip=Estàs segur que vols cancel·lar aquest informe de despeses?
 
 BrouillonnerTrip=Tornar l'informe de despeses a l'estat "Esborrany"
-ConfirmBrouillonnerTrip=Esteu segur de voler moure aquest informe de despeses a l'estat "Esborrany" ?
+ConfirmBrouillonnerTrip=Estàs segur que vols moure aquest informe de despeses al estatus de "Esborrany"?
 
 SaveTrip=Valida l'informe de despeses
-ConfirmSaveTrip=Esteu segur de voler validar aquest informe de despeses?
+ConfirmSaveTrip=Estàs segur que vols validar aquest informe de despeses?
 
 NoTripsToExportCSV=No hi ha informe de despeses per exportar en aquest període
 ExpenseReportPayment=Informe de despeses pagades
 
+ExpenseReportsToApprove=Informes de despeses per aprovar
 ExpenseReportsToPay=Informes de despeses a pagar

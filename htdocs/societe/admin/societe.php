@@ -77,11 +77,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-		    setEventMessage($langs->trans("SetupSaved"));
+		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	    }
 	    else
 	    {
-		    setEventMessage($langs->trans("Error"), 'errors');
+		    setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			setEventMessage($langs->trans("SetupSaved"));
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("Error"), 'errors');
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessage($langs->trans("Error"), 'errors');
+	    setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -217,14 +217,28 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
+//Activate Ask For Preferred Shipping Method
+if ($action=="setaskforshippingmet") {
+	$setaskforshippingmet = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 //Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
@@ -771,6 +785,26 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';

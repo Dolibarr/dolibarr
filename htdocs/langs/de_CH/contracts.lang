@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - contracts
+ContractCard=Vertragskarte
+ShowContractOfService=Zeige Vertrag zu Leistung
+Closing=Schliessen
+CloseAContract=Schliessen eines Vertrages
+ConfirmCloseContract=Dies schliesst auch alle verbundenen Leistungen (aktiv oder nicht). Sind sie sicher, dass Sie den Vertrag  schliessen möchten?
+ConfirmCloseService=Möchten Sie dieses Service wirklich mit Datum <b>%s</b> schliessen?
+ListOfClosedServices=Liste der geschlossenen Services
+LastModifiedServices=%s zuletzt bearbeitete Leistungen
+DateEndPlanned=Geplantes Ende
+DateStartRealShort=Beginn eff.
+DateEndRealShort=Ende eff.
+CloseService=Leistung schliessen
+CloseRefusedBecauseOneServiceActive=Schliessen nicht möglich, es existieren noch aktive Leistungen
+CloseAllContracts=schliesse alle Vertragsleistungen
+ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Geschäftspartners) für die Verschiebung der Leistungen:
+NoteListOfYourExpiredServices=Diese Liste enthält nur Leistungen an Geschäftspartner, bei denen Sie als Vertreter angegeben sind.

@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Κωδικός Λογιστικής για τις πληρωμές των μισθών
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Κωδικός Λογιστικής για οικονομική επιβάρυνση
 Salary=Mισθός
 Salaries=Μισθοί
-Employee=Υπάλληλος
 NewSalaryPayment=Νέα μισθοδοσία
 SalaryPayment=Μισθός
 SalariesPayments=Πληρωμές μισθών
 ShowSalaryPayment=Εμφάνιση μισθοδοσίας
-THM=Η μέση ωριαία τιμή
-TJM=Η μέση ημερήσια τιμή
+THM=Average hourly rate
+TJM=Average daily rate
 CurrentSalary=Τρέχον μισθός
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+TJMDescription=Αυτή η τιμή εμφανίζεται μόνο σαν πληροφορία και δεν χρησιμοποιείται για κανένα υπολογισμό

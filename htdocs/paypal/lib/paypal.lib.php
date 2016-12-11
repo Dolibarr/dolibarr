@@ -209,7 +209,7 @@ function showPaypalPaymentUrl($type,$ref)
     $out='<br><br>';
     $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
     $url=getPaypalPaymentUrl(0,$type,$ref);
-    $out.='<input type="text" id="paypalurl" value="'.$url.'" size="60"><br>';
+    $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     return $out;
 }
 
@@ -228,6 +228,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 {
 	global $conf;
 
+	$ref=str_replace(' ','',$ref);
+	
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
@@ -249,8 +251,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'order' + order_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + order_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -267,8 +269,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'invoice' + invoice_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -285,8 +287,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'contactline' + contractline_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -303,8 +305,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'membersubscription' + member_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -702,8 +704,8 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	//curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
-    curl_setopt($ch, CURLOPT_SSLVERSION, 1); // Force TLSv1
+    // TLSv1 by default or change to TLSv1.2 in module configuration
+    curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->PAYPAL_SSLVERSION)?1:$conf->global->PAYPAL_SSLVERSION));
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);

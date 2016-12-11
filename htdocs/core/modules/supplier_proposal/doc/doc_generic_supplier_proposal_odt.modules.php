@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -148,9 +149,24 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir))
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH))
 		{
-			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=count($listoffiles);
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
 
 			if ($conf->global->MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
@@ -273,7 +289,9 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				    $format=$conf->global->MAIN_DOC_USE_TIMING;
+				    if ($format == '1') $format='%Y%m%d%H%M%S';
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
 				}
 				else
 				{
@@ -302,11 +320,11 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->client;
+					else $socobject = $object->thirdparty;
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 
 				// Make substitution
@@ -373,7 +391,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				foreach($tmparray as $key=>$value)
 				{
@@ -440,7 +458,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				}
 
 				// Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -460,7 +478,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						return -1;
 					}
 				}
-
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))

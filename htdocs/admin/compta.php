@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2016 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,7 +114,7 @@ print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du parametre ACCOUNTING_MODE
+// case of the parameter ACCOUNTING_MODE
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
@@ -166,6 +166,6 @@ print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
-$db->close();
 
 llxFooter();
+$db->close();

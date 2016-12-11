@@ -33,7 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
+$langs->load("other");
 $langs->load("users");
+$langs->load("companies");
+$langs->load("projects");
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -65,7 +68,8 @@ $entitytoicon = array(
     'shipment_line'=> 'sending',
     'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
-    'contract_line' => 'contract'
+    'contract_line' => 'contract',
+    'translation'  => 'generic'
 );
 
 // Translation code
@@ -105,7 +109,8 @@ $entitytolang = array(
 	'expensereport'=> 'ExpenseReport',
 	'expensereport_line'=> 'ExpenseReportLine',
     'contract'     => 'Contract',
-    'contract_line'=> 'ContractLine'
+    'contract_line'=> 'ContractLine',
+    'translation'  => 'Translation'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -177,7 +182,7 @@ if ($action=='selectfield')
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
 
-	    setEventMessage($warnings, 'warnings');
+	    setEventMessages($warnings, null, 'warnings');
     }
 
 }
@@ -243,12 +248,12 @@ if ($action == 'builddoc')
 	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
-		setEventMessage($objexport->error, 'errors');
+		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport=$objexport->sqlusedforexport;
 	}
 	else
 	{
-		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
+		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	    $sqlusedforexport=$objexport->sqlusedforexport;
     }
 }
@@ -259,8 +264,8 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
 	$file = $upload_dir . "/" . GETPOST('file');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 	header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport);
 	exit;
 }
@@ -307,15 +312,15 @@ if ($action == 'add_export_model')
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("ExportModelSaved",$objexport->model_name));
+			setEventMessages($langs->trans("ExportModelSaved",$objexport->model_name), null, 'mesgs');
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-				setEventMessage($langs->trans("ErrorExportDuplicateProfil"), 'errors');
+				setEventMessages($langs->trans("ErrorExportDuplicateProfil"), null, 'errors');
 			else
-				setEventMessage($objexport->error, 'errors');
+				setEventMessages($objexport->error, $objexport->errors, 'errors');
 		}
 	}
 	else
@@ -557,6 +562,8 @@ if ($step == 2 && $datatoexport)
 
         print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
+        //print $code.'-'.$label.'-'.$entity;
+        
         $tmparray=explode(':',$entityicon);
         if (count($tmparray) >=2)
         {
@@ -632,7 +639,14 @@ if ($step == 2 && $datatoexport)
 
 if ($step == 3 && $datatoexport)
 {
-	llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	/*
 	 * Affichage onglets
@@ -786,6 +800,13 @@ if ($step == 3 && $datatoexport)
 
 if ($step == 4 && $datatoexport)
 {
+    if (count($array_selected) < 1)     // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
     asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -1011,6 +1032,13 @@ if ($step == 4 && $datatoexport)
 
 if ($step == 5 && $datatoexport)
 {
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
 	asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -1142,6 +1170,7 @@ if ($step == 5 && $datatoexport)
 
     print '</div>';
 
+    
     print '<table width="100%">';
 
     if ($sqlusedforexport && $user->admin)
@@ -1152,17 +1181,18 @@ if ($step == 5 && $datatoexport)
     }
 	print '</table>';
 
-    print '<table width="100%"><tr><td width="50%">';
+	
+	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     if (! is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    $formfile->show_documents('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
+    print $formfile->showdocuments('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
 
-    print '</td><td width="50%">&nbsp;</td></tr>';
-    print '</table>';
-
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    print '</div></div></div>';
 }
 
 print '<br>';
@@ -1183,15 +1213,16 @@ exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 
  */
 function getablenamefromfield($code,$sqlmaxforexport)
 {
+	$alias=preg_replace('/\.(.*)$/i','',$code);         // Keep only 'Alias' and remove '.Fieldname'
+	$regexstring='/([a-zA-Z_]+) as '.preg_quote($alias).'[, \)]/i';
+    
 	$newsql=$sqlmaxforexport;
-	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);
-	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// We must keep the ' ' before WHERE
-	$alias=preg_replace('/\.(.*)$/i','',$code);
-	//print $newsql.' '.$alias;
-	$regexstring='/([a-zA-Z_]+) as '.$alias.'[, \)]/i';
+	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);  // Remove part before the FROM
+	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
+	
 	if (preg_match($regexstring,$newsql,$reg))
 	{
-		return $reg[1];
+		return $reg[1];   // The tablename
 	}
 	else return '';
 }

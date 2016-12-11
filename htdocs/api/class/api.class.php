@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +23,7 @@ use Luracast\Restler\Defaults;
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
- * Class for API
- *
+ * Class for API REST v1
  */
 class DolibarrApi
 {
@@ -54,6 +54,8 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
+        
+        $this->r->setAPIVersion(1);
     }
 
     /**
@@ -79,14 +81,58 @@ class DolibarrApi
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 
         // Remove $db object property for object
-		unset($object->db);
+        unset($object->db);
+        
+        // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+        unset($object->linkedObjects);
+        
+        unset($object->lignes); // should be ->lines
+        unset($object->oldline);
+        
+        unset($object->error);
+        unset($object->errors);
+        
+        unset($object->ref_previous);
+        unset($object->ref_next);
+        unset($object->ref_int);
+        
+        unset($object->projet);     // Should be fk_project
+        unset($object->project);    // Should be fk_project
+        unset($object->author);     // Should be fk_user_author
+        unset($object->timespent_old_duration);
+        unset($object->timespent_id);
+        unset($object->timespent_duration);
+        unset($object->timespent_date);
+        unset($object->timespent_datehour);
+        unset($object->timespent_withhour);
+        unset($object->timespent_fk_user);
+        unset($object->timespent_note);
+        
+        unset($object->statuts);
+        unset($object->statuts_short);
+        unset($object->statuts_logo);
+        unset($object->statuts_long);
+        
+        unset($object->element);
+        unset($object->fk_element);
+        unset($object->table_element);
+        unset($object->table_element_line);
+        unset($object->picto);
+        
+        // Remove the $oldcopy property because it is not supported by the JSON
+        // encoder. The following error is generated when trying to serialize
+        // it: "Error encoding/decoding JSON: Type is not supported"
+        // Note: Event if this property was correctly handled by the JSON
+        // encoder, it should be ignored because keeping it would let the API
+        // have a very strange behavior: calling PUT and then GET on the same
+        // resource would give different results:
+        // PUT /objects/{id} -> returns object with oldcopy = previous version of the object
+        // GET /objects/{id} -> returns object with oldcopy empty
+        unset($object->oldcopy);
 
         // If object has lines, remove $db property
         if(isset($object->lines) && count($object->lines) > 0)  {
@@ -98,13 +144,15 @@ class DolibarrApi
         }
 
         // If object has linked objects, remove $db property
+        /*
         if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
             foreach($object->linkedObjects as $type_object => $linked_object) {
                 foreach($linked_object as $object2clean) {
                     $this->_cleanObjectDatas($object2clean);
                 }
             }
-        }
+        }*/
+        
 		return $object;
     }
 
@@ -139,88 +187,60 @@ class DolibarrApi
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-}
-
-/**
- * API init
- *
- */
-class DolibarrApiInit extends DolibarrApi
-{
-
-	function __construct() {
-		global $db;
-		$this->db = $db;
-	}
-
+	
 	/**
-	 * Login
-	 *
-	 * Log user with username and password
-	 *
-	 * @param   string  $login			Username
-	 * @param   string  $password		User password
-	 * @param   int     $entity			User entity
-     * @return  array   Response status and user token
-     *
-	 * @throws RestException
+	 * Return if a $sqlfilters parameter is valid
+	 * 
+	 * @param  string   $sqlfilters     sqlfilter string
+	 * @return boolean                  True if valid, False if not valid 
 	 */
-	public function login($login, $password, $entity = 0) {
-
-		// Authentication mode
-		if (empty($dolibarr_main_authentication))
-			$dolibarr_main_authentication = 'http,dolibarr';
-		// Authentication mode: forceuser
-		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user))
-			$dolibarr_auto_user = 'auto';
-		// Set authmode
-		$authmode = explode(',', $dolibarr_main_authentication);
-
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
-		$login = checkLoginPassEntity($login, $password, $entity, $authmode);
-		if (empty($login))
-		{
-			throw new RestException(403, 'Access denied');
-		}
-
-		// Generate token for user
-		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
-
-		// We store API token into database
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql.= " SET api_key = '".$this->db->escape($token)."'";
-		$sql.= " WHERE login = '".$this->db->escape($login)."'";
-
-		dol_syslog(get_class($this)."::login", LOG_DEBUG);	// No log
-		$result = $this->db->query($sql);
-		if (!$result)
-		{
-			throw new RestException(500, 'Error when updating user :'.$this->db->error_msg);
-		}
-
-		//return token
-		return array(
-			'success' => array(
-				'code' => 200,
-				'token' => $token,
-				'message' => 'Welcome ' . $login
-			)
-		);
+	function _checkFilters($sqlfilters)
+	{
+	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	    $tmp=$sqlfilters;
+	    $ok=0;
+	    $i=0; $nb=count($tmp);
+	    $counter=0;
+	    while ($i < $nb)
+	    {
+	        if ($tmp[$i]=='(') $counter++;
+	        if ($tmp[$i]==')') $counter--;
+            if ($counter < 0)
+            {
+	           $error="Bad sqlfilters=".$sqlfilters;
+	           dol_syslog($error, LOG_WARNING);
+	           return false;
+            }
+            $i++;
+	    }
+	    return true;
 	}
-
+	
 	/**
-     * Get status (Dolibarr version)
-     *
-	 * @access protected
-	 * @class  DolibarrApiAccess {@requires admin}
+	 * Function to forge a SQL criteria
+	 * 
+	 * @param  array    $matches       Array of found string by regex search
+	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-	function status() {
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-		return array(
-			'success' => array(
-				'code' => 200,
-				'dolibarr_version' => DOL_VERSION
-			)
-		);
-    }
+	static function _forge_criteria_callback($matches)
+	{
+	    global $db;
+	    
+	    //dol_syslog("Convert matches ".$matches[1]);
+	    if (empty($matches[1])) return '';
+	    $tmp=explode(':',$matches[1]);
+        if (count($tmp) < 3) return '';
+        
+	    $tmpescaped=$tmp[2];
+	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
+	    {
+	        $tmpescaped = "'".$db->escape($regbis[1])."'";
+	    }
+	    else
+	    {
+	        $tmpescaped = $db->escape($tmpescaped);
+	    }
+	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+	}	
 }

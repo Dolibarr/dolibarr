@@ -73,12 +73,12 @@ if ($action == 'dolibarr2ldap')
 
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("GroupSynchronized"));
+		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
 		$db->commit();
 	}
 	else
 	{
-		setEventMessage($ldap->error);
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -100,14 +100,14 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), 0, 'group');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
 print $form->showrefnav($fgroup,'id','',$canreadperms);
 print '</td>';
 print '</tr>';
 
 // Name
-print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
 print '<td width="75%" class="valeur">'.$fgroup->name;
 if (!$fgroup->entity)
 {
@@ -116,7 +116,7 @@ if (!$fgroup->entity)
 print "</td></tr>\n";
 
 // Note
-print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
 print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
 print "</tr>\n";
 
@@ -177,7 +177,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{

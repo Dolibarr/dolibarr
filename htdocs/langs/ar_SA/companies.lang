@@ -1,43 +1,36 @@
 # Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=اسم الشركة ل ٪ موجود بالفعل. اختيار آخر.
-ErrorPrefixAlreadyExists=بادئة ٪ ق موجود بالفعل. اختيار آخر.
 ErrorSetACountryFirst=المجموعة الأولى في البلد
 SelectThirdParty=تحديد طرف ثالث
-DeleteThirdParty=حذف طرف ثالث
-ConfirmDeleteCompany=هل أنت متأكد من أنك تريد حذف هذه الشركة وجميع المعلومات الموروث؟
+ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
 DeleteContact=حذف اتصال
-ConfirmDeleteContact=هل أنت متأكد من أنك تريد حذف هذا الاتصال ، وجميع الموروث من المعلومات؟
+ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
 MenuNewThirdParty=طرف ثالث جديد
-MenuNewCompany=شركة جديدة
 MenuNewCustomer=عميل جديد
 MenuNewProspect=آفاق جديدة
 MenuNewSupplier=مورد جديد
 MenuNewPrivateIndividual=فرد جديد
-MenuSocGroup=المجموعات
 NewCompany=الشركة الجديدة (آفاق ، والعملاء ، والموردين)
 NewThirdParty=طرف ثالث جديد (آفاق ، والعملاء ، والموردين)
-NewSocGroup=مجموعة شركات جديدة
-NewPrivateIndividual=خاصة جديدة الفردية (آفاق ، والعملاء ، والموردين)
-CreateDolibarrThirdPartySupplier=Create a third party (supplier)
+CreateDolibarrThirdPartySupplier=إنشاء طرف ثالث (المورد)
+CreateThirdPartyOnly=Create thirdpary
+CreateThirdPartyAndContact=Create a third party + a child contact
 ProspectionArea=مجال التنقيب
-SocGroup=مجموعة شركات
 IdThirdParty=هوية الطرف الثالث
 IdCompany=رقم تعريف الشركة
 IdContact=رقم تعريف الاتصال
 Contacts=اتصالات
 ThirdPartyContacts=طرف ثالث اتصالات
 ThirdPartyContact=طرف ثالث اتصال
-StatusContactValidated=مركز الاتصال
 Company=شركة
 CompanyName=اسم الشركة
-AliasNames=Alias name (commercial, trademark, ...)
-AliasNameShort=Alias name
+AliasNames=الاسم المستعار (التجارية، العلامات التجارية، ...)
+AliasNameShort=الاسم المستعار
 Companies=الشركات
 CountryIsInEEC=البلد داخل المجموعة الاقتصادية الأوروبية
 ThirdPartyName=اسم طرف ثالث
 ThirdParty=طرف ثالث
 ThirdParties=أطراف ثالثة
-ThirdPartyAll=أطراف ثالثة (جميع)
 ThirdPartyProspects=آفاق
 ThirdPartyProspectsStats=آفاق
 ThirdPartyCustomers=العملاء
@@ -47,36 +40,33 @@ ThirdPartySuppliers=الموردين
 ThirdPartyType=طرف ثالث من نوع
 Company/Fundation=الشركة / المؤسسة
 Individual=فرد
-ToCreateContactWithSameName=سيخلق تلقائيا مادية نفس معلومات الاتصال
+ToCreateContactWithSameName=Will create automatically a contact/address with same information than third party under the third party. In most cases, even if your third party is a physical people, creating a third party alone is enough.
 ParentCompany=الشركة الأم
-Subsidiary=فرعي
 Subsidiaries=الشركات التابعة
-NoSubsidiary=لا فرعية
 ReportByCustomers=تقرير للعملاء
 ReportByQuarter=تقرير الربع
 CivilityCode=قانون الكياسة
 RegisteredOffice=المكتب المسجل
-Name=اسم
 Lastname=اللقب
 Firstname=Firstname
-PostOrFunction=وظيفة / وظيفة
+PostOrFunction=Job position
 UserTitle=العنوان
-Surname=لقب / مزيف
 Address=عنوان
 State=الولاية / المقاطعة
+StateShort=حالة
 Region=المنطقة
 Country=قطر
 CountryCode=رمز البلد
 CountryId=بلد معرف
 Phone=الهاتف
-PhoneShort=Phone
-Skype=Skype
-Call=Call
-Chat=Chat
+PhoneShort=الهاتف
+Skype=سكايب
+Call=مكالمة
+Chat=دردشة
 PhonePro=الأستاذ الهاتف
 PhonePerso=عدد الأفراد. الهاتف
 PhoneMobile=الجوال
-No_Email=Don't send mass e-mailings
+No_Email=Refuse mass e-mailings
 Fax=الفاكس
 Zip=الرمز البريدي
 Town=مدينة
@@ -85,19 +75,20 @@ Poste= موقف
 DefaultLang=اللغة افتراضيا
 VATIsUsed=وتستخدم ضريبة القيمة المضافة
 VATIsNotUsed=ضريبة القيمة المضافة لا يستخدم
-CopyAddressFromSoc=Fill address with thirdparty address
-NoEmailDefined=There is no email defined
+CopyAddressFromSoc=Fill address with third party address
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
+PaymentBankAccount=Payment bank account
 ##### Local Taxes #####
+LocalTax1IsUsed=استخدام الضرائب الثانية
 LocalTax1IsUsedES= يتم استخدام الطاقة المتجددة
 LocalTax1IsNotUsedES= لا يتم استخدام الطاقة المتجددة
+LocalTax2IsUsed=استخدام الضرائب الثالثة
 LocalTax2IsUsedES= يستخدم IRPF
 LocalTax2IsNotUsedES= IRPF لا يستخدم
 LocalTax1ES=تعاود
 LocalTax2ES=IRPF
-TypeLocaltax1ES=RE Type
-TypeLocaltax2ES=IRPF Type
-TypeES=Type
-ThirdPartyEMail=ق ٪
+TypeLocaltax1ES=نوع RE
+TypeLocaltax2ES=IRPF نوع
 WrongCustomerCode=رمز غير صالح العملاء
 WrongSupplierCode=رمز المورد غير صالحة
 CustomerCodeModel=العميل رمز النموذج
@@ -109,22 +100,22 @@ ProfId2Short=معرف الأستاذ 2
 ProfId3Short=الأستاذ معرف 3
 ProfId4Short=الأستاذ معرف 4
 ProfId5Short=البروفيسور رقم 5
-ProfId6Short=Prof. id 5
+ProfId6Short=البروفيسور معرف 6
 ProfId1=الهوية المهنية (1)
 ProfId2=الهوية المهنية (2)
 ProfId3=3 الهوية المهنية
 ProfId4=الهوية المهنية 4
 ProfId5=المهنية رقم 5
-ProfId6=Professional ID 6
+ProfId6=المهنية ID 6
 ProfId1AR=معرف البروفيسور 1 (CUIT / [كيل])
 ProfId2AR=البروفيسور رقم 2 (المتوحشون الايرادات)
 ProfId3AR=-
 ProfId4AR=-
 ProfId5AR=-
 ProfId6AR=-
-ProfId1AT=Prof Id 1 (USt.-IdNr)
-ProfId2AT=Prof Id 2 (USt.-Nr)
-ProfId3AT=Prof Id 3 (Handelsregister-Nr.)
+ProfId1AT=البروفيسور رقم 1 (USt.-IdNr)
+ProfId2AT=البروفيسور رقم 2 (USt.-العدد)
+ProfId3AT=البروفيسور رقم 3 (Handelsregister-العدد).
 ProfId4AT=-
 ProfId5AT=-
 ProfId6AT=-
@@ -142,7 +133,7 @@ ProfId5BE=-
 ProfId6BE=-
 ProfId1BR=-
 ProfId2BR=IE (Inscricao Estadual)
-ProfId3BR=IM (Inscricao Municipal)
+ProfId3BR=IM (Inscricao المحلي)
 ProfId4BR=CPF
 #ProfId5BR=CNAE
 #ProfId6BR=INSS
@@ -200,11 +191,17 @@ ProfId3IN=معرف البروفيسور 3
 ProfId4IN=معرف البروفيسور 4
 ProfId5IN=الأستاذ رقم 5
 ProfId6IN=-
+ProfId1LU=Id. prof. 1 (R.C.S. Luxembourg)
+ProfId2LU=Id. prof. 2 (Business permit)
+ProfId3LU=-
+ProfId4LU=-
+ProfId5LU=-
+ProfId6LU=-
 ProfId1MA=الرقم أ. 1 (RC)
 ProfId2MA=الرقم أ. 2 (Patente)
 ProfId3MA=الرقم أ. 3 (إذا)
 ProfId4MA=الرقم أ. 4 (CNSS)
-ProfId5MA=-
+ProfId5MA=Id. prof. 5 (I.C.E.)
 ProfId6MA=-
 ProfId1MX=الأستاذ رقم 1 (RFC).
 ProfId2MX=الأستاذ رقم 2 (ر. P. IMSS)
@@ -244,85 +241,73 @@ ProfId5RU=-
 ProfId6RU=-
 VATIntra=رقم الضريبة على القيمة المضافة
 VATIntraShort=رقم الضريبة على القيمة المضافة
-VATIntraVeryShort=ضريبة القيمة المضافة
 VATIntraSyntaxIsValid=تركيب صالحة
-VATIntraValueIsValid=قيمة صالحة
 ProspectCustomer=احتمال / العملاء
 Prospect=احتمال
 CustomerCard=بطاقة الزبون
 Customer=العميل
-CustomerDiscount=العميل الخصم
 CustomerRelativeDiscount=العميل الخصم النسبي
-CustomerAbsoluteDiscount=العميل الخصم المطلقة
 CustomerRelativeDiscountShort=الخصم النسبي
 CustomerAbsoluteDiscountShort=مطلق الخصم
 CompanyHasRelativeDiscount=هذا العميل قد خصم <b>٪ ق ٪ ٪</b>
 CompanyHasNoRelativeDiscount=هذا العميل ليس لديها النسبية خصم افتراضي
-CompanyHasAbsoluteDiscount=هذا الزبون لا يزال خصم القروض <b>ل٪ ق ق ٪</b>
-CompanyHasCreditNote=ولا يزال هذا العميل الائتمانية ويلاحظ السابقة أو ودائع <b>ل٪ ق ق ٪</b>
+CompanyHasAbsoluteDiscount=هذا الزبون لا يزال خصم القروض <b>ل%s ق ٪</b>
+CompanyHasCreditNote=ولا يزال هذا العميل الائتمانية ويلاحظ السابقة أو ودائع <b>ل%s ق ٪</b>
 CompanyHasNoAbsoluteDiscount=هذا العميل ليس الخصم الائتمان المتاح
 CustomerAbsoluteDiscountAllUsers=خصومات المطلقة (الممنوحة من جميع المستخدمين)
 CustomerAbsoluteDiscountMy=خصومات المطلقة) التي منحتها لنفسك)
-DefaultDiscount=خصم افتراضي
-AvailableGlobalDiscounts=مطلق الخصومات المتاحة
 DiscountNone=بلا
 Supplier=المورد
-CompanyList=شركات قائمة
-AddContact=Create contact
-AddContactAddress=Create contact/address
+AddContact=إنشاء اتصال
+AddContactAddress=إنشاء الاتصال / عنوان
 EditContact=تحرير الاتصال / عنوان
-EditContactAddress=Edit contact/address
+EditContactAddress=تحرير الاتصال / عنوان
 Contact=جهة اتصال
+ContactId=Contact id
 ContactsAddresses=اتصالات / عناوين
-NoContactDefinedForThirdParty=No contact defined for this third party
+FromContactName=Name:
+NoContactDefinedForThirdParty=أي اتصال محددة لهذا الطرف الثالث
 NoContactDefined=لا يوجد اتصال محددة لهذا الطرف الثالث
 DefaultContact=الاتصال الافتراضية
-AddCompany=Create company
-AddThirdParty=Create third party
+AddThirdParty=إنشاء طرف ثالث
 DeleteACompany=حذف شركة
 PersonalInformations=البيانات الشخصية
-AccountancyCode=قانون المحاسبة
+AccountancyCode=حساب محاسبي
 CustomerCode=رمز العميل
 SupplierCode=رمز المورد
-CustomerAccount=حساب الزبون
-SupplierAccount=مورد الحساب
+CustomerCodeShort=كود العميل
+SupplierCodeShort=كود المورد
 CustomerCodeDesc=شفرة الزبون ، فريدة من نوعها لجميع العملاء
 SupplierCodeDesc=رمز المورد ، وفريدة من نوعها لجميع الموردين
 RequiredIfCustomer=إذا كان الطرف الثالث هو عميل أو احتمال
 RequiredIfSupplier=إذا كان الطرف الثالث هو مورد
 ValidityControledByModule=صحة تسيطر عليها وحدة
 ThisIsModuleRules=هذه هي قواعد لهذه الوحدة
-LastProspect=أخير
 ProspectToContact=إمكانية الاتصال
 CompanyDeleted=شركة "٪ ل" حذفها من قاعدة البيانات.
 ListOfContacts=قائمة الاتصالات
-ListOfContactsAddresses=List of contacts/adresses
-ListOfProspectsContacts=قائمة آفاق الاتصالات
-ListOfCustomersContacts=قائمة عملاء الاتصالات
-ListOfSuppliersContacts=قائمة الموردين اتصالات
-ListOfCompanies=قائمة الشركات
+ListOfContactsAddresses=قائمة الأسماء / عناوين
 ListOfThirdParties=قائمة أطراف ثالثة
-ShowCompany=وتبين للشركة
+ShowCompany=Show third party
 ShowContact=وتظهر الاتصال
 ContactsAllShort=جميع (بدون فلتر)
 ContactType=نوع الاتصال
 ContactForOrders=أوامر اتصال
+ContactForOrdersOrShipments=Order's or shipment's contact
 ContactForProposals=مقترحات اتصال
 ContactForContracts=عقود اتصال
 ContactForInvoices=فواتير اتصال
 NoContactForAnyOrder=هذا الاتصال ليس من أجل أي اتصال
+NoContactForAnyOrderOrShipments=This contact is not a contact for any order or shipment
 NoContactForAnyProposal=هذا الاتصال ليست على اتصال في أي اقتراح التجارية
 NoContactForAnyContract=هذا الاتصال ليس أي عقد للاتصال
 NoContactForAnyInvoice=هذا الاتصال ليست على اتصال في أي فاتورة
 NewContact=اتصال جديد
-NewContactAddress=New contact/address
-LastContacts=آخر الاتصالات
+NewContactAddress=اسم جديد / عنوان
 MyContacts=اتصالاتي
-Phones=الهواتف
 Capital=رأس المال
 CapitalOf=ق ٪ من رأس المال
 EditCompany=تحرير الشركة
-EditDeliveryAddress=تحرير عنوان التسليم
 ThisUserIsNot=هذا المستخدم امر غير مطروح ، ولا مورد للعملاء
 VATIntraCheck=فحص
 VATIntraCheckDesc=الصلة <b>٪ ق</b> يسمح نسأل الأوروبي من ضريبة القيمة المضافة فاحص الخدمة. خارجي من خدمة الإنترنت ويلزم لهذه الخدمة في العمل.
@@ -331,14 +316,14 @@ VATIntraCheckableOnEUSite=فحص Intracomunnautary ضريبة القيمة ال�
 VATIntraManualCheck=You can also check manually from european web site <a href="%s" target=كما يمكنك التحقق يدويا من أوروبا موقع <a href="%s" target="_blank">ق ٪</a>
 ErrorVATCheckMS_UNAVAILABLE=وليس من الممكن التحقق. تأكد من خدمة لا تقدمها دولة عضو (في المائة).
 NorProspectNorCustomer=ولا آفاق ولا العملاء
-JuridicalStatus=المركز القانوني
+JuridicalStatus=Legal form
 Staff=الموظفون
 ProspectLevelShort=المحتملة
 ProspectLevel=آفاق محتملة
 ContactPrivate=القطاع الخاص
 ContactPublic=تقاسم
 ContactVisibility=الرؤية
-ContactOthers=Other
+ContactOthers=الآخر
 OthersNotLinkedToThirdParty=أخرى ، لا صلة لطرف ثالث
 ProspectStatus=آفاق الوضع
 PL_NONE=Aucun
@@ -358,73 +343,60 @@ TE_PRIVATE=فرد
 TE_OTHER=أخرى
 StatusProspect-1=لا اتصال
 StatusProspect0=اتصل أبدا
-StatusProspect1=للاتصال
+StatusProspect1=To be contacted
 StatusProspect2=في عملية الاتصال
 StatusProspect3=الاتصال به
 ChangeDoNotContact=لتغيير الوضع لا اتصال '
 ChangeNeverContacted=لتغيير الوضع 'اتصل أبدا'
-ChangeToContact=لتغيير الوضع 'للاتصال'
+ChangeToContact=Change status to 'To be contacted'
 ChangeContactInProcess=لتغيير الوضع 'في عملية'
 ChangeContactDone=لتغيير الوضع 'فعل'
 ProspectsByStatus=آفاق الوضع
-BillingContact=فواتير الاتصالات
-NbOfAttachedFiles=عدد الملفات المرفقة
-AttachANewFile=إرفاق ملف جديد
-NoRIB=لا يعرف الحظر
 NoParentCompany=بلا
-ExportImport=الاستيراد والتصدير
 ExportCardToFormat=تصدير بطاقة شكل
 ContactNotLinkedToCompany=اتصالات ليست مرتبطة بطرف ثالث
 DolibarrLogin=ادخل Dolibarr
 NoDolibarrAccess=لا Dolibarr الوصول
-ExportDataset_company_1=Third parties (Companies/foundations/physical people) and properties
+ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ExportDataset_company_2=الاتصالات والعقارات
-ImportDataset_company_1=Third parties (Companies/foundations/physical people) and properties
-ImportDataset_company_2=Contacts/Addresses (of thirdparties or not) and attributes
+ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
+ImportDataset_company_2=اتصالات / عناوين (من thirdparties أو لا) وسمات
 ImportDataset_company_3=التفاصيل المصرفية
-ImportDataset_company_4=Third parties/Sales representatives (Affect sales representatives users to companies)
+ImportDataset_company_4=الأطراف الثالث / مندوبي المبيعات (على مستخدمي مندوبي المبيعات للشركات)
 PriceLevel=مستوى الأسعار
-DeliveriesAddress=تقديم عناوين
 DeliveryAddress=عنوان التسليم
-DeliveryAddressLabel=تسليم بطاقة معالجة
-DeleteDeliveryAddress=حذف عنوان التسليم
-ConfirmDeleteDeliveryAddress=هل أنت متأكد من أنك تريد حذف هذا عنوان التسليم؟
-NewDeliveryAddress=تقديم معالجة جديدة
-AddDeliveryAddress=Create address
-AddAddress=Create address
-NoOtherDeliveryAddress=لا بديل عن تقديم معالجة محددة
+AddAddress=أضف معالجة
 SupplierCategory=المورد الفئة
-JuridicalStatus200=المستقلة
+JuridicalStatus200=Independent
 DeleteFile=حذف الملفات
 ConfirmDeleteFile=هل أنت متأكد من أنك تريد حذف هذا الملف؟
-AllocateCommercial=تخصص تجاري
-SelectCountry=اختر البلد
-SelectCompany=اختيار طرف ثالث
+AllocateCommercial=Assigned to sales representative
 Organization=المنظمة
-AutomaticallyGenerated=تلقائيا
 FiscalYearInformation=معلومات عن السنة المالية
 FiscalMonthStart=ابتداء من شهر من السنة المالية
-YouMustCreateContactFirst=يجب إنشاء رسائل البريد الإلكتروني لطرف ثالث الاتصالات الأولى أن تكون قادرة على رسائل البريد الإلكتروني إضافة الإخطارات.
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=قائمة الموردين
 ListProspectsShort=قائمة التوقعات
 ListCustomersShort=قائمة العملاء
-ThirdPartiesArea=Third parties and contact area
-LastModifiedThirdParties=%s آخر تعديل لأطراف ثالثة
+ThirdPartiesArea=أطراف ثالثة، ومنطقة الاتصال
+LastModifiedThirdParties=Latest %s modified third parties
 UniqueThirdParties=مجموع الأطراف الثالثة فريدة من نوعها
 InActivity=فتح
 ActivityCeased=مغلق
-ActivityStateFilter=نشاط المركز
-ProductsIntoElements=List of products into %s
-CurrentOutstandingBill=Current outstanding bill
-OutstandingBill=Max. for outstanding bill
-OutstandingBillReached=Reached max. for outstanding bill
+ProductsIntoElements=قائمة المنتجات / الخدمات إلى %s
+CurrentOutstandingBill=فاتورة المستحق حاليا
+OutstandingBill=ماكس. لمشروع قانون المتميز
+OutstandingBillReached=Max. for outstanding bill reached
 MonkeyNumRefModelDesc=عودة número مع الشكل nnnn - ٪ syymm الزبون ورمز وnnnn - ٪ syymm مورد للقانون حيث السنة هو السنة ، هو شهر ملم وnnnn هو تسلسل بلا كسر وعدم العودة إلى 0.
 LeopardNumRefModelDesc=العميل / المورد مدونة مجانية. هذا القانون يمكن تعديلها في أي وقت.
-ManagingDirectors=Manager(s) name (CEO, director, president...)
-SearchThirdparty=Search third party
-SearchContact=Search contact
-MergeOriginThirdparty=Duplicate third party (third party you want to delete)
-MergeThirdparties=Merge third parties
-ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one ? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
-ThirdpartiesMergeSuccess=Thirdparties have been merged
-ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please check the log. Changes have been reverted.
+ManagingDirectors=مدير (ق) اسم (CEO، مدير، رئيس ...)
+MergeOriginThirdparty=تكرار طرف ثالث (طرف ثالث كنت ترغب في حذف)
+MergeThirdparties=دمج أطراف ثالثة
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
+ThirdpartiesMergeSuccess=تم دمج Thirdparties
+SaleRepresentativeLogin=Login of sales representative
+SaleRepresentativeFirstname=Firstname of sales representative
+SaleRepresentativeLastname=Lastname of sales representative
+ErrorThirdpartiesMerge=كان هناك خطأ عند حذف thirdparties. يرجى التحقق من السجل. وقد عادت التغييرات.
+NewCustomerSupplierCodeProposed=New customer or supplier code suggested on duplicate code

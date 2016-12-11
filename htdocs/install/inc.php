@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
+ * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,13 +78,20 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
-if (! defined('DONOTLOADCONF') && file_exists($conffile))
+// Load conf file if it is already defined
+if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
 {
     $result=include_once $conffile;	// Load conf file
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For backward compatibility
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli' || $dolibarr_main_db_type=='mysql')) $dolibarr_main_db_port='3306'; // For backward compatibility
+
+        //Mysql driver support has been removed in favor of mysqli
+        if ($dolibarr_main_db_type == 'mysql') {
+            $dolibarr_main_db_type = 'mysqli';
+        }
+
+		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli')) $dolibarr_main_db_port='3306'; // For backward compatibility
 
 		// Clean parameters
 		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):DOL_DOCUMENT_ROOT . '/../documents';
@@ -126,7 +134,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
         $includeconferror='ErrorBadFormatForConfFile';
     }
 }
-$conf->global->MAIN_LOGTOHTML = 1;
+$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
@@ -143,7 +151,7 @@ define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
-if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_general_ci';
+if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;
 if (empty($conf->db->dolibarr_main_db_cryptkey))   	$conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
@@ -174,8 +182,14 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
     }
     exit;
 }
-$lockfile=DOL_DATA_ROOT.'/install.lock';
-if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
+
+$lockfile = DOL_DATA_ROOT . '/install.lock';
+if (constant('DOL_DATA_ROOT') === null) {
+	// We don't have a configuration file yet
+	// Try to detect any lockfile in the default documents path
+	$lockfile = '../../documents/install.lock';
+}
+if (@file_exists($lockfile))
 {
     print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
     if (! empty($dolibarr_main_url_root))
@@ -286,11 +300,13 @@ function conf($dolibarr_main_document_root)
     $conf->db->user = trim($dolibarr_main_db_user);
     $conf->db->pass = trim($dolibarr_main_db_pass);
 
+    // Mysql driver support has been removed in favor of mysqli
+    if ($conf->db->type == 'mysql') $conf->db->type = 'mysqli';
     if (empty($character_set_client)) $character_set_client="UTF-8";
     $conf->file->character_set_client=strtoupper($character_set_client);
-    if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysql'?'latin1':'');		// Old installation
+    if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysqli'?'utf8':'');
     $conf->db->character_set=$dolibarr_main_db_character_set;
-    if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysql'?'latin1_swedish_ci':'');  // Old installation
+    if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysqli'?'utf8_unicode_ci':'');
     $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
     if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
     $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
@@ -371,6 +387,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
+    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
     print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
@@ -412,7 +429,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 /**
  * Print HTML footer of install pages
  *
- * @param 	integer	$nonext				No button "Next step"
+ * @param 	integer	$nonext				1=No button "Next step", 2=Show button but disabled with a link to enable
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
  * @param	integer	$withpleasewait		Add also please wait tags
@@ -429,9 +446,15 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
     print '</td></tr></table>'."\n";
     print '</td></tr></table>'."\n";
 
-    if (! $nonext)
+    if (! $nonext || ($nonext == '2'))
     {
-        print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
+        print '<div class="nextbutton" id="nextbutton">';
+        if ($nonext == '2')
+		{
+			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';	
+		}
+        
+        print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ':'').'value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
         if ($withpleasewait) print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
@@ -475,3 +498,91 @@ function dolibarr_install_syslog($message, $level=LOG_DEBUG)
     dol_syslog($message,$level);
 }
 
+/**
+ * Automatically detect Dolibarr's main document root
+ *
+ * @return string
+ */
+function detect_dolibarr_main_document_root()
+{
+	// If PHP is in CGI mode, SCRIPT_FILENAME is PHP's path.
+	// Since that's not what we want, we suggest $_SERVER["DOCUMENT_ROOT"]
+	if ($_SERVER["SCRIPT_FILENAME"] == 'php' || preg_match('/[\\/]php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"]))
+	{
+		$dolibarr_main_document_root = $_SERVER["DOCUMENT_ROOT"];
+
+		if (!preg_match('/[\\/]dolibarr[\\/]htdocs$/i', $dolibarr_main_document_root)) {
+			$dolibarr_main_document_root .= "/dolibarr/htdocs";
+		}
+	} else {
+		// We assume /install to be under /htdocs, so we get the parent directory of the current directory
+		$dolibarr_main_document_root = dirname(dirname($_SERVER["SCRIPT_FILENAME"]));
+	}
+
+	return $dolibarr_main_document_root;
+}
+
+/**
+ * Automatically detect Dolibarr's main data root
+ *
+ * @param string $dolibarr_main_document_root Current main document root
+ * @return string
+ */
+function detect_dolibarr_main_data_root($dolibarr_main_document_root)
+{
+	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
+	$dolibarr_main_data_root .= "/documents";
+	return $dolibarr_main_data_root;
+}
+
+/**
+ * Automatically detect Dolibarr's main URL root
+ *
+ * @return string
+ */
+function detect_dolibarr_main_url_root()
+{
+	// If defined (Ie: Apache with Linux)
+	if (isset($_SERVER["SCRIPT_URI"])) {
+		$dolibarr_main_url_root = $_SERVER["SCRIPT_URI"];
+	} // If defined (Ie: Apache with Caudium)
+	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
+		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
+	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
+	else {
+		$proto = 'http';
+		if (!empty($_SERVER["HTTP_HOST"])) {
+			$serverport = $_SERVER["HTTP_HOST"];
+		} else {
+			$serverport = $_SERVER["SERVER_NAME"];
+		}
+		$dolibarr_main_url_root = $proto . "://" . $serverport . $_SERVER["SCRIPT_NAME"];
+	}
+	// Clean proposed URL
+	// We assume /install to be under /htdocs, so we get the parent path of the current URL
+	$dolibarr_main_url_root = dirname(dirname($dolibarr_main_url_root));
+
+	return $dolibarr_main_url_root;
+}
+
+/**
+ * Replaces automatic database login by actual value
+ *
+ * @param string $force_install_databaserootlogin Login
+ * @return string
+ */
+function parse_database_login($force_install_databaserootlogin)
+{
+	return preg_replace('/__SUPERUSERLOGIN__/', 'root', $force_install_databaserootlogin);
+}
+
+/**
+ * Replaces automatic database password by actual value
+ *
+ * @param string $force_install_databaserootpass Password
+ * @return string
+ */
+function parse_database_pass($force_install_databaserootpass)
+{
+	return preg_replace('/__SUPERUSERPASSWORD__/', '', $force_install_databaserootpass);
+}

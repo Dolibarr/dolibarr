@@ -52,7 +52,7 @@ class DolEditor
      *      @param 	string	$content		        Content of WYSIWIG field
      *      @param	int		$width					Width in pixel of edit area (auto by default)
      *      @param 	int		$height			        Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', ')
+     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly')
      *      @param  string	$toolbarlocation       	Where bar is stored :
      *                       		             	'In' each window has its own toolbar
      *                              		      	'Out:name' share toolbar into the div called 'name'
@@ -60,7 +60,7 @@ class DolEditor
 	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
-	 *      @param  int		$cols                   Size of cols for textarea tool (textarea number of cols or %)
+	 *      @param  string	$cols                   Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
@@ -81,7 +81,7 @@ class DolEditor
 
         // Check if extended editor is ok. If not we force textarea
         if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
-        //if ($conf->browser->phone) $this->tool = 'textarea';
+        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with jmobile
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
@@ -99,7 +99,7 @@ class DolEditor
         	$this->editor->Value	= $content;
         	$this->editor->Height   = $height;
         	if (! empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $shorttoolbarname;
+        	$this->editor->ToolbarSet = $shorttoolbarname;         // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
         	$this->editor->Config['AutoDetectLanguage'] = 'true';
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
         	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
@@ -108,7 +108,7 @@ class DolEditor
     		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
     		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
         	$modulepart='fckeditor';
-    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file=';
     		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
 
         	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
@@ -138,20 +138,27 @@ class DolEditor
 
     /**
      *	Output edit area inside the HTML stream.
-     *	Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
+     *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
      *
-     *  @param	int		$noprint    1=Return HTML string instead of printing it to output
-     *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @param	int		$noprint             1=Return HTML string instead of printing it to output
+     *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements.
      *  @return	void|string
      */
-    function Create($noprint=0,$morejs='')
+    function Create($noprint=0,$morejs='',$disallowAnyContent=true)
     {
     	global $conf,$langs;
 
-        $found=0;
+    	$fullpage=False;
+    	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
+    	{
+    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
+    	}
+
+    	$found=0;
 		$out='';
 
-        if ($this->tool == 'fckeditor')
+        if ($this->tool == 'fckeditor') // not used anymore
         {
             $found=1;
             $this->editor->Create();
@@ -164,7 +171,7 @@ class DolEditor
             $out.= $this->content;
             $out.= '</textarea>';
 
-            if ($this->tool == 'ckeditor')
+            if ($this->tool == 'ckeditor' && ! empty($conf->use_javascript_ajax))
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
@@ -176,6 +183,7 @@ class DolEditor
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
+            	$out.= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
@@ -186,7 +194,9 @@ class DolEditor
             						customConfig : ckeditorConfig,
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.(empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)?'false':'true').',
+            						allowedContent :'.($disallowAnyContent?'false':'true').',
+            						extraAllowedContent : \'\',
+            						fullPage : '.($fullpage?'true':'false').', 
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',

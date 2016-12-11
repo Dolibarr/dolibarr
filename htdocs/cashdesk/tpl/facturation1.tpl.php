@@ -48,7 +48,7 @@ $langs->load("cashdesk");
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
 			</td>
-			<td class="select_design">
+			<td class="select_design maxwidthonsmartphone">
             <?php /*
             $selected='';
             $htmlname='idprod';
@@ -60,7 +60,7 @@ $langs->load("cashdesk");
             */
             ?>
 
-				<select id="selProduit" name="selProduit" onchange="javascript: setSource('LISTE');">
+				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
 
@@ -80,7 +80,7 @@ $langs->load("cashdesk");
 
 							$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],7).' - '.dol_trunc($label,35,'middle');
+							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
 
@@ -119,7 +119,7 @@ $langs->load("cashdesk");
 				<td></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
-<?php print genkeypad("txtRemise", "frmQte");?>
+					<?php print genkeypad("txtRemise", "frmQte");?>
     			</td>
     			<!-- Affichage du total HT -->
     			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled /></td><td></td>
@@ -128,16 +128,17 @@ $langs->load("cashdesk");
                 <?php //var_dump($tab_tva); ?>
                 <select name="selTva" onchange="javascript: modif();" >
                     <?php
-                        $tva_tx = $obj_facturation->tva();
-                        $tab_tva_size=count($tab_tva);
-                        for($i=0;$i < $tab_tva_size;$i++) {
+                        $tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
 
-                            if ( $tva_tx == $tab_tva[$i]['taux'] )
+                        $tab_tva_size=count($tab_tva);      // $tab_tva contains list of possible vat array('rowid'=> , 'taux'=> ) 
+                        for ($i=0;$i < $tab_tva_size;$i++) 
+                        {
+                            if ($tva_tx == $tab_tva[$i]['rowid'])
                                 $selected = 'selected';
                             else
-                            $selected = '';
+                                $selected = '';
 
-                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
+                            echo '<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ";
                         }
                     ?>
                 </select>
@@ -202,7 +203,7 @@ $langs->load("cashdesk");
 			?>
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
-			print $langs->trans("DateEcheance").' :';
+			print $langs->trans("DateDue").' :';
 			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
 			print '</div>';
 			?>

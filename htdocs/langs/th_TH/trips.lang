@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=รายงานค่าใช้จ่าย
 ExpenseReports=รายงานค่าใช้จ่าย
-Trip=รายงานค่าใช้จ่าย
+ShowExpenseReport=แสดงรายงานค่าใช้จ่าย
 Trips=รายงานค่าใช้จ่าย
 TripsAndExpenses=รายงานค่าใช้จ่าย
 TripsAndExpensesStatistics=รายงานค่าใช้จ่ายสถิติ
@@ -9,31 +9,27 @@ TripCard=บัตรรายงานค่าใช้จ่าย
 AddTrip=สร้างรายงานค่าใช้จ่าย
 ListOfTrips=รายชื่อของรายงานค่าใช้จ่าย
 ListOfFees=รายการค่าใช้จ่าย
+TypeFees=Types of fees
 ShowTrip=แสดงรายงานค่าใช้จ่าย
 NewTrip=รายงานค่าใช้จ่ายใหม่
 CompanyVisited=บริษัท / มูลนิธิเข้าเยี่ยมชม
-Kilometers=กิโลเมตร
 FeesKilometersOrAmout=จำนวนเงินหรือกิโลเมตร
 DeleteTrip=ลบรายงานค่าใช้จ่าย
-ConfirmDeleteTrip=คุณแน่ใจหรือว่าต้องการลบรายงานค่าใช้จ่ายนี้หรือไม่?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=รายชื่อของรายงานค่าใช้จ่าย
 ListToApprove=รอการอนุมัติ
 ExpensesArea=ค่าใช้จ่ายในพื้นที่รายงาน
-SearchATripAndExpense=ค้นหารายงานค่าใช้จ่าย
 ClassifyRefunded=จำแนก 'คืนเงิน'
 ExpenseReportWaitingForApproval=รายงานค่าใช้จ่ายใหม่ได้รับการส่งเพื่อขออนุมัติ
 ExpenseReportWaitingForApprovalMessage=รายงานค่าใช้จ่ายใหม่ได้รับการส่งและกำลังรอการอนุมัติ - ผู้ใช้:% s - ระยะเวลา:% s คลิกที่นี่เพื่อตรวจสอบ:% s
 TripId=รายงานค่าใช้จ่าย Id
 AnyOtherInThisListCanValidate=คนที่จะแจ้งให้สำหรับการตรวจสอบ
 TripSociete=ข้อมูล บริษัท
-TripSalarie=ผู้ใช้ข้อมูล
 TripNDF=ข้อมูลรายงานค่าใช้จ่าย
-DeleteLine=ลบเส้นของการรายงานค่าใช้จ่าย
-ConfirmDeleteLine=คุณแน่ใจหรือว่าต้องการลบบรรทัดนี้หรือไม่?
 PDFStandardExpenseReports=แม่แบบมาตรฐานในการสร้างเอกสาร PDF สำหรับรายงานค่าใช้จ่าย
 ExpenseReportLine=รายงานค่าใช้จ่ายสาย
 TF_OTHER=อื่น ๆ
-TF_TRANSPORTATION=การขนส่ง
+TF_TRIP=การขนส่ง
 TF_LUNCH=อาหารกลางวัน
 TF_METRO=รถไฟฟ้าใต้ดิน
 TF_TRAIN=รถไฟ
@@ -45,16 +41,9 @@ TF_HOTEL=โรงแรม
 TF_TAXI=แท็กซี่
 
 ErrorDoubleDeclaration=คุณได้ประกาศรายงานค่าใช้จ่ายอื่นเข้ามาในช่วงวันที่ที่คล้ายกัน
-AucuneNDF=ไม่มีรายงานค่าใช้จ่ายพบว่าเกณฑ์นี้
 AucuneLigne=มีรายงานค่าใช้จ่ายไม่มีการประกาศความเป็นส่วนตัว
-AddLine=เพิ่มบรรทัด
-AddLineMini=เพิ่ม
 
-Date_DEBUT=ระยะเวลาเริ่มต้นวันที่
-Date_FIN=ระยะเวลาสิ้นสุดวันที่
 ModePaiement=โหมดการชำระเงิน
-Note=บันทึก
-Project=โครงการ
 
 VALIDATOR=ผู้รับผิดชอบในการอนุมัติ
 VALIDOR=อนุมัติโดย
@@ -68,39 +57,33 @@ MOTIF_CANCEL=เหตุผล
 
 DATE_REFUS=ปฏิเสธวัน
 DATE_SAVE=วันที่ตรวจสอบ
-DATE_VALIDE=วันที่ตรวจสอบ
 DATE_CANCEL=วันที่ยกเลิก
 DATE_PAIEMENT=วันที่ชำระเงิน
 
-TO_PAID=จ่ายเงิน
 BROUILLONNER=เปิดใหม่
-SendToValid=ส่งความเห็นชอบ
-ModifyInfoGen=แก้ไข
 ValidateAndSubmit=ตรวจสอบและส่งเพื่อขออนุมัติ
 ValidatedWaitingApproval=การตรวจสอบ (รอการอนุมัติ)
 
-NOT_VALIDATOR=คุณยังไม่ได้รับอนุญาตให้อนุมัติรายงานค่าใช้จ่ายนี้
 NOT_AUTHOR=คุณไม่ได้เป็นผู้เขียนรายงานค่าใช้จ่ายนี้ การดำเนินงานที่ยกเลิก
 
-RefuseTrip=ปฏิเสธรายงานค่าใช้จ่าย
-ConfirmRefuseTrip=คุณแน่ใจหรือว่าต้องการที่จะปฏิเสธรายงานค่าใช้จ่ายนี้หรือไม่?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=อนุมัติรายงานค่าใช้จ่าย
-ConfirmValideTrip=คุณแน่ใจหรือว่าต้องการที่จะอนุมัติรายงานค่าใช้จ่ายนี้หรือไม่?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=จ่ายรายงานค่าใช้จ่าย
-ConfirmPaidTrip=คุณแน่ใจหรือว่าต้องการที่จะเปลี่ยนสถานะของรายงานค่าใช้จ่ายนี้เพื่อ "ชำระเงิน"?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-CancelTrip=ยกเลิกรายงานค่าใช้จ่าย
-ConfirmCancelTrip=คุณแน่ใจหรือว่าต้องการที่จะยกเลิกการรายงานค่าใช้จ่ายนี้หรือไม่?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=ย้ายกลับไปรายงานค่าใช้จ่ายสถานะ "ร่าง"
-ConfirmBrouillonnerTrip=คุณแน่ใจหรือว่าต้องการที่จะย้ายรายงานค่าใช้จ่ายนี้สถานะ "ร่าง"?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=ตรวจสอบรายงานค่าใช้จ่าย
-ConfirmSaveTrip=คุณแน่ใจหรือว่าต้องการตรวจสอบรายงานค่าใช้จ่ายนี้หรือไม่?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=ไม่มีรายงานค่าใช้จ่ายในการส่งออกในช่วงเวลานี้
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

@@ -138,7 +138,7 @@ CountryLS=Lesotho
 CountryLR=Liberia
 CountryLY=Libyan
 CountryLI=Liechtenstein
-CountryLT=Lituania
+CountryLT=Lithuania
 CountryLU=Luxembourg
 CountryMO=Macao
 CountryMK=Macedonia, the former Yugoslav of
@@ -303,7 +303,7 @@ DemandReasonTypeSRC_COMM=Commercial contact
 DemandReasonTypeSRC_SHOP=Shop contact
 DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
-DemandReasonTypeSRC_EMPLOYEE=Employee
+DemandReasonTypeSRC_EMPLOYEE=Langilea
 DemandReasonTypeSRC_SPONSORING=Sponsorship
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0

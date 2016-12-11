@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - interventions
+InterventionsArea=Interventieruimte
+DraftFichinter=Concept interventie
+InterventionStatistics=Statistieken van de interventies
+NbOfinterventions=Nr van de interventiekaarten
+NumberOfInterventionsByMonth=Nr van de interventiekaarten per maand (datum van goedkeuring)
+InterId=Interventie id
+InterRef=Interventie ref.
+InterDateCreation=Datum aanmaak interventie
+InterDuration=Duur interventie
+InterStatus=Status interventie
+InterNote=Nota interventie
+InterLineId=Lijn id interventie
+InterLineDate=Lijn datum interventie
+InterLineDuration=Lijn duur interventie
+InterLineDesc=Lijn omschrijving interventie

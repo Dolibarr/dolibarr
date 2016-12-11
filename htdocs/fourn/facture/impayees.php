@@ -214,10 +214,12 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 		print '</td><td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
-		print '</td><td class="liste_titre" colspan="2" align="right">';
-		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-		print "</td></tr>\n";
+		print '</td>';
+        print '<td class="liste_titre" align="right">';
+        $searchpitco=$form->showFilterAndCheckAddButtons(0);
+        print $searchpitco;
+        print '</td>';
+		print "</tr>\n";
 
 		if ($num > 0)
 		{
@@ -299,5 +301,5 @@ if ($user->rights->fournisseur->facture->lire)
 }
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();

@@ -201,8 +201,13 @@ if ($action == 'valide')
 
 print '<table class="border" width="100%">';
 
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
+
+
 // Ref
-print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->ref.'</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+print '</td></tr>';
 
 // Date payment
 print '<tr><td>'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
@@ -226,6 +231,7 @@ print '<tr><td class="tdtop">'.$form->editfieldkey("Note",'note',$object->note,$
 print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea');
 print '</td></tr>';
 
+$disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
@@ -233,6 +239,11 @@ if (! empty($conf->banque->enabled))
     {
     	$bankline=new AccountLine($db);
     	$bankline->fetch($object->bank_line);
+        if ($bankline->rappro)
+        {
+            $disable_delete = 1;
+            $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+        }
 
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
@@ -274,7 +285,6 @@ print '</table>';
  * List of invoices
  */
 
-$disable_delete = 0;
 $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
@@ -344,6 +354,7 @@ if ($resql)
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
 			{
 				$disable_delete = 1;
+				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
 			$total = $total + $objp->amount;
 			$i++;
@@ -389,7 +400,7 @@ if ($user->societe_id == 0 && $action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

@@ -302,7 +302,7 @@ class FormOther
     /**
      * Return select list for categories (to use in form search selectors)
      *
-     * @param	int		$type			Type of categories (0=product, 1=supplier, 2=customer, 3=member, 4=contact)
+     * @param	int		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
      * @param   integer	$selected     	Preselected value
      * @param   string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
@@ -315,6 +315,12 @@ class FormOther
         global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+        // For backward compatibility
+        if (is_numeric($type))
+        {
+            dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
+        }
+        
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
@@ -403,7 +409,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-        $sql_usr.= " ORDER BY lastname ASC";
+	$sql_usr.= " ORDER BY u.statut DESC, lastname ASC";
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -573,7 +579,7 @@ class FormOther
                     {
                         print "&nbsp;&nbsp;&nbsp;";
                     }
-                    print $lines[$i]->label."</option>\n";
+                    print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
                     $inc++;
                 }
 
@@ -595,10 +601,21 @@ class FormOther
      */
     static function showColor($color, $textifnotdefined='')
     {
+    	$textcolor='FFF';
+    	if ($color)
+    	{
+        	$hex=$color;
+        	$r = hexdec($hex[0].$hex[1]);
+        	$g = hexdec($hex[2].$hex[3]);
+        	$b = hexdec($hex[4].$hex[5]);
+        	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+            if ($bright > 0.6) $textcolor='000';     	   
+    	}
+    	
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+    	
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
 
@@ -794,6 +811,7 @@ class FormOther
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
+            $select_week .= '</option>';
         }
         $select_week .= '</select>';
         return $select_week;
@@ -833,6 +851,7 @@ class FormOther
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
+            $select_month .= '</option>';
         }
         $select_month .= '</select>';
         return $select_month;
@@ -929,14 +948,11 @@ class FormOther
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setaddress">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $form->select_address($selected, $socid, $htmlname, 1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             $langs->load("companies");
             print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-            print '</td></tr></table></form>';
+            print '</form>';
         }
         else
         {
@@ -956,16 +972,15 @@ class FormOther
 
 
 
-
     /**
-     * 	Show a HTML Tab with boxes of a particular area including personalized choices of user.
+     * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
-     * 	@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
+     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
      */
-    static function printBoxesArea($user,$areacode)
+    static function getBoxesArea($user,$areacode)
     {
         global $conf,$langs,$db;
 
@@ -973,14 +988,19 @@ class FormOther
 
         $confuserzone='MAIN_BOXES_'.$areacode;
 
+        // $boxactivated will be array of boxes enabled into global setup
+        // $boxidactivatedforuser will be array of boxes choosed by user
+        
+        $selectboxlist='';
         $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
+        
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-
-        $selectboxlist='';
+        
+        // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
@@ -1002,20 +1022,21 @@ class FormOther
         	//var_dump($boxidactivatedforuser);
 
         	// Class Form must have been already loaded
-			$selectboxlist.='<form name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
+            //$selectboxlist.=ajax_combobox("boxcombo");
         }
 
         // Javascript code for dynamic actions
         if (! empty($conf->use_javascript_ajax))
         {
-	        print '<script type="text/javascript" language="javascript">
+	        $selectboxlist.='<script type="text/javascript" language="javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1054,8 +1075,8 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-	        	if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
-	        	print  '
+	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
+	        	$selectboxlist.='
 
 	        	jQuery("#left, #right").sortable({
 		        	/* placeholder: \'ui-state-highlight\', */
@@ -1080,12 +1101,11 @@ class FormOther
 
         	});'."\n";
 
-	        print '</script>'."\n";
+	        $selectboxlist.='</script>'."\n";
         }
 
+        // Define boxlista and boxlistb
         $nbboxactivated=count($boxidactivatedforuser);
-
-        print load_fiche_titre(($nbboxactivated?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
 
         if ($nbboxactivated)
         {
@@ -1094,13 +1114,13 @@ class FormOther
 
         	$emptybox=new ModeleBoxes($db);
 
-            print '<table width="100%" class="notopnoleftnoright">';
-            print '<tr><td class="notopnoleftnoright">'."\n";
+            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
+            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
-            print '<div class="fichehalfleft">';
+            //$boxlist.='<div class="fichehalfleft">';
 
-            print "\n<!-- Box left container -->\n";
-            print '<div id="left" class="connectedSortable">'."\n";
+            $boxlista.="\n<!-- Box left container -->\n";
+            $boxlista.='<div id="left" class="connectedSortable">'."\n";
 
             // Define $box_max_lines
             $box_max_lines=5;
@@ -1116,9 +1136,9 @@ class FormOther
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                    // Affichage boite key
+                    // Show box
                     $box->loadBox($box_max_lines);
-                    $box->showBox();
+                    $boxlista.= $box->outputBox();
                 }
             }
 
@@ -1127,15 +1147,15 @@ class FormOther
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$emptybox->showBox(array(),array());
+            	$boxlista.= $emptybox->outputBox(array(),array());
             }
-            print "</div>\n";
-            print "<!-- End box left container -->\n";
+            $boxlista.= "</div>\n";
+            $boxlista.= "<!-- End box left container -->\n";
 
-            print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-            print "\n<!-- Box right container -->\n";
-            print '<div id="right" class="connectedSortable">'."\n";
+            $boxlistb.= "\n<!-- Box right container -->\n";
+            $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
             $ii=0;
             foreach ($boxactivated as $key => $box)
@@ -1147,9 +1167,9 @@ class FormOther
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                    // Affichage boite key
+                    // Show box
                     $box->loadBox($box_max_lines);
-                    $box->showBox();
+                    $boxlistb.= $box->outputBox();
                 }
             }
 
@@ -1158,19 +1178,19 @@ class FormOther
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$emptybox->showBox(array(),array());
+            	$boxlistb.= $emptybox->outputBox(array(),array());
             }
-            print "</div>\n";
-            print "<!-- End box right container -->\n";
+            $boxlistb.= "</div>\n";
+            $boxlistb.= "<!-- End box right container -->\n";
 
-            print '</div></div>';
-            print "\n";
+            //$boxlist.= '</div></div>';
+            //$boxlist.= "\n";
 
-            print "</td></tr>";
-            print "</table>";
+            //$boxlist.= "</td></tr>";
+            //$boxlist.= "</table>";
         }
 
-        return count($boxactivated);
+        return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
     }
 
 

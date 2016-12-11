@@ -34,11 +34,17 @@ create table llx_product_price
   tva_tx			double(6,3) NOT NULL,
   recuperableonly	integer NOT NULL DEFAULT '0',  
   localtax1_tx		double(6,3) DEFAULT 0,
+  localtax1_type    varchar(10)  NOT NULL DEFAULT '0',
   localtax2_tx		double(6,3) DEFAULT 0,
+  localtax2_type    varchar(10)  NOT NULL DEFAULT '0',
   fk_user_author	integer,
   tosell			tinyint DEFAULT 1,
   price_by_qty		integer NOT NULL DEFAULT 0,
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
-  import_key 		varchar(14)
+  import_key 		varchar(14),
+  
+  fk_multicurrency		integer,
+  multicurrency_code	varchar(255),
+  multicurrency_price	double(24,8) DEFAULT NULL
 )ENGINE=innodb;
 

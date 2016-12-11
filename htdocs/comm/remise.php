@@ -30,6 +30,8 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
+$id=GETPOST("id",'int');
+
 $socid = GETPOST('id','int');
 // Security check
 if ($user->societe_id > 0)
@@ -53,8 +55,8 @@ if (GETPOST('cancel') && ! empty($backtopage))
 if (GETPOST("action") == 'setremise')
 {
 	$object = new Societe($db);
-	$object->fetch($_GET["id"]);
-	$result=$object->set_remise_client($_POST["remise"],$_POST["note"],$user);
+	$object->fetch($id);
+	$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
 
 	if ($result > 0)
 	{
@@ -98,8 +100,8 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
-	
-	
+
+
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
@@ -108,9 +110,9 @@ if ($socid > 0)
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -136,9 +138,9 @@ if ($socid > 0)
 	print "</table>";
 
 	print '</div>';
-	
+
 	dol_fiche_end();
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
     if (! empty($backtopage))
@@ -159,7 +161,8 @@ if ($socid > 0)
 	$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 	$sql.= " u.login, u.rowid as user_id";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE rc.fk_soc =". $object->id;
+	$sql.= " WHERE rc.fk_soc = " . $object->id;
+	$sql.= " AND rc.entity = " . $conf->entity;
 	$sql.= " AND u.rowid = rc.fk_user_author";
 	$sql.= " ORDER BY rc.datec DESC";
 
@@ -199,6 +202,5 @@ if ($socid > 0)
 
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -374,7 +373,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$product->load_stock();
 
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos/";
+            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->ref . "/";
             	$dir = $dir . '/'. $pdir;
 
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
@@ -411,7 +410,8 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 	            	'localtax1_tx' => $product->localtax1_tx,
 	            	'localtax2_tx' => $product->localtax2_tx,
 
-	            	'stock_real' => $product->stock_reel,
+            	    'stock_real' => $product->stock_reel,
+            	    'stock_virtual' => $product->stock_theorique,
 	            	'stock_alert' => $product->seuil_stock_alerte,
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
@@ -572,7 +572,7 @@ function createProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
@@ -741,7 +741,7 @@ function updateProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)

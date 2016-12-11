@@ -155,7 +155,7 @@ $filter='s.client in (1,2,3)';
 print $form->select_company($id,'memberid',$filter,1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_dolusers($userid,'userid',1);
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -170,13 +170,13 @@ $data = $stats->getAllByYear();
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("NbOfSubscriptions").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=false;
+$var=true;
 foreach ($data as $val)
 {
     $year = $val['year'];

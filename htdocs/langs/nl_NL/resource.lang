@@ -1,7 +1,6 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resources
 MenuResourceAdd=Nieuwe resource
-MenuResourcePlanning=Resource planning
 DeleteResource=Verwijder resource
 ConfirmDeleteResourceElement=Bevestig het verwijderen van de resource voor dit element
 NoResourceInDatabase=Geen resource in de database
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Resource beschrijving
 
 ResourcesLinkedToElement=Resources gekoppeld aan element
 
-ShowResourcePlanning=Toon resource planning
-GotoDate=Ga naar datum
+ShowResource=Show resource
 
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource met succes gecreeerd 
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Resource lijn succesvol verwijderd
 RessourceLineSuccessfullyUpdated=Resource lijn succesvol bijgewerkt
 ResourceLinkedWithSuccess=Resource met succes gekoppeld
 
-TitleResourceCard=Resource kaart
 ConfirmDeleteResource=Bevestig verwijderen van deze resource
 RessourceSuccessfullyDeleted=Resource met succes verwijderd
 DictionaryResourceType=Type resources

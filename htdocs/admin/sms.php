@@ -124,10 +124,12 @@ if ($action == 'send' && ! $_POST['cancel'])
 		if ($result)
 		{
 			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
+			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		}
 		else
 		{
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
+			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
 		$action='';

@@ -9,16 +9,14 @@ of the module.
 
 For example on Linux OS: Get the module from the command 
 mkdir ~/git; cd ~/git
-git clone https://git.doliforge.org/p/newmodule/newmodule.git
+git clone https://git.framasoft.org/p/newmodule/newmodule.git
 Then create the symbolic link
 ln -fs ~/git/newmodule/htdocs /path_to_dolibarr/htdocs/custom/newmodule 
 
 WARNING !!!
-You must also enable the custom directory into dolibarr conf/conf.php file by adding the following 
+Check also that the custom directory into dolibarr conf/conf.php file by adding the following 
 two lines, so dolibarr will also scan this directories to find external external modules:
 
 $dolibarr_main_url_root_alt='/custom';
 $dolibarr_main_document_root_alt='/path_to_dolibarr/htdocs/custom/';
-
-(This is not enabled by default because enabling external module may slow down application)
 

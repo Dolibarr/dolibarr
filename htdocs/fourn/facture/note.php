@@ -67,7 +67,9 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 
 $form = new Form($db);
 
-llxHeader();
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Notes');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 if ($object->id > 0)
 {
@@ -83,7 +85,7 @@ if ($object->id > 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="20%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td class="titlefield nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 	print '</td>';
 	print "</tr>\n";
@@ -167,7 +169,6 @@ if ($object->id > 0)
 
 	print '<br>';
 
-	$colwidth=20;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

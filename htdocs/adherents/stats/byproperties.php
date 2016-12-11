@@ -54,7 +54,7 @@ $langs->load("companies");
 
 $memberstatic=new Adherent($db);
 
-llxHeader('','','','',0,0,array('http://www.google.com/jsapi'));
+llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('https://www.google.com/jsapi'));
 
 $title=$langs->trans("MembersStatisticsByProperties");
 
@@ -116,10 +116,10 @@ else
 }
 
 // Print array
-print '<table class="noborder" width="100%">';
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
-print '<td align="center">'.$langs->trans("Nature").'</td>';
-print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';
+print '<td>'.$langs->trans("Nature").'</td>';
+print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
 print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
 print '</tr>';
 
@@ -133,9 +133,9 @@ foreach ($data as $val)
 	$year = $val['year'];
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print '<td align="center">'.$memberstatic->getmorphylib($val['label']).'</td>';
+	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

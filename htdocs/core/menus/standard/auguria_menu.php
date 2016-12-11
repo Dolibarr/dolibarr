@@ -108,48 +108,6 @@ class MenuManager
     	$menuArbo = new Menubase($this->db,'auguria');
     	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
 
-    	// Modules system tools
-    	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
-    		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
-    	{
-    		if (empty($user->societe_id))
-    		{
-    			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($leftmenu=="modulesadmintools" && $user->admin))
-    			{
-    				$langs->load("products");
-    				$array_menu_product=array(
-			    			'url'=>"/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",
-			    			'titre'=>$langs->trans("ProductVatMassChange"),
-			    			'enabled'=>($user->admin?true:false),
-			    			'perms'=>($user->admin?true:false),
-			    			'fk_mainmenu'=>'home',
-			    			'fk_leftmenu'=>'modulesadmintools',
-			    			'fk_menu'=>-1,
-			    			'mainmenu'=>'home',
-			    			'leftmenu'=>'modulesadmintools_massvat',
-			    			'type'=>'left',
-			    			'position'=>20
-			    	);
-			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
-    			}
-    			// Main menu title
-    			$array_menu_product=array(
-		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
-		    		'titre'=>$langs->trans("ModulesSystemTools"),
-		    		'enabled'=>($user->admin?true:false),
-		    		'perms'=>($user->admin?true:false),
-		    		'fk_mainmenu'=>'home',
-		    		'fk_menu'=>-1,
-		    		'mainmenu'=>'home',
-		    		'leftmenu'=>'modulesadmintools',
-		    		'type'=>'left',
-		    		'position'=>20
-				);
-    			array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
-    		}
-    	}
-
     	$this->tabMenu=$tabMenu;
     }
 
@@ -176,18 +134,18 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
         if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
 		
 		if ($mode == 'topnb')
 		{
-		    print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
 		    
         if ($mode == 'jmobile')
         {
-        	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+        	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
 
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -219,7 +177,11 @@ class MenuManager
 						// We add sub entry
 						print str_pad('',1).'<li data-role="list-dividerxxx" class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
+					    if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation 
+        				{
+        				    if ($val['mainmenu'] == 'cashdesk') print $langs->trans("Access");
+        				    else print $langs->trans("Dashboard");	
+        				}
 						else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
 						print '</a>';
 						print '</li>'."\n";

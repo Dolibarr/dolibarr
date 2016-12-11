@@ -143,13 +143,16 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
         $listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
-        foreach ($listofsqldir as $dir) {
+        foreach ($listofsqldir as $dir) 
+        {
             print 'Process dir '.$dir."\n";
             $filesarray = scandir($dir);
-            foreach($filesarray as $key => $file) {
+        
+            foreach($filesarray as $key => $file) 
+            {
                 if (! preg_match('/\.sql$/',$file))
                     continue;
-
+                    
                 print 'Check sql file '.$file."\n";
                 $filecontent=file_get_contents($dir.'/'.$file);
 
@@ -159,11 +162,32 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
                 $result=strpos($filecontent,'int(');
                 print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
+                $this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
                 $result=strpos($filecontent,'ON DELETE CASCADE');
                 print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+                
+                if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
+                {
+                    // Test for migration files only
+
+                }
+                else
+                {
+                    if (preg_match('/\.key\.sql$/',$file))
+                    {                
+                        // Test for files key files only
+                    
+                    }
+                    else
+                    {
+                        // Test for files non key files only
+                        $result=(strpos($filecontent,'KEY ') && strpos($filecontent,'PRIMARY KEY ') == 0);
+                        print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
+                        $this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
+                    }
+                }
             }
         }
 

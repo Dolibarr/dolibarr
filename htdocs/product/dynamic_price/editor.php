@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file	   htdocs/product/expression/editor.php
+ *  \file	   htdocs/product/dynamic_price/editor.php
  *  \ingroup	product
  *  \brief	  Page for editing expression
  */
@@ -73,9 +73,9 @@ if ($action == 'add')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
+            $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessage($priceparser->translatedError(), 'errors');
+				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
 			else
 			{
@@ -85,21 +85,21 @@ if ($action == 'add')
 				if ($result > 0) //created successfully, set the eid to newly created entry
 				{
 					$eid = $price_expression->id;
-					setEventMessage($langs->trans("RecordSaved"));
+					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
 				else
 				{
-					setEventMessage("add: ".$price_expression->error, 'errors');
+					setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
 			}
 		}
 		else if ($result < 0)
 		{
-			setEventMessage("add find: ".$price_expression->error, 'errors');
+			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorRecordAlreadyExists"), 'errors');
+			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
 }
@@ -113,9 +113,9 @@ if ($action == 'update')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
+            $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessage($priceparser->translatedError(), 'errors');
+				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
 			else
 			{
@@ -125,21 +125,21 @@ if ($action == 'update')
 				$result = $price_expression->update($user);
 				if ($result < 0)
 				{
-					setEventMessage("update: ".$price_expression->error, 'errors');
+					setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
 				else
 				{
-					setEventMessage($langs->trans("RecordSaved"));
+					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
 			}
 		}
 		else if ($result < 0)
 		{
-			setEventMessage("update find: ".$price_expression->error, 'errors');
+			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorRecordAlreadyExists"), 'errors');
+			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
 }
@@ -151,7 +151,7 @@ if ($action == 'delete')
 		$result = $price_expression->delete($eid, $user);
 		if ($result < 0)
 		{
-			setEventMessage("delete: ".$price_expression->error, 'errors');
+			setEventMessages("delete: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
 		$eid = 0;
 	}
@@ -199,7 +199,7 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 //Price expression editor
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,4,80);
+$doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,ROWS_4,'90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';
@@ -231,7 +231,7 @@ print '<script type="text/javascript">
 		window.location = "'.str_replace('dynamic_price/editor.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price' : '').'";
 	}
 	function on_change() {
-		window.location = "'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid=" + $("#expression_selection").attr("value");
+		window.location = "'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid=" + $("#expression_selection").val();
 	}
 </script>';
 

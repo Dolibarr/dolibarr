@@ -1,7 +1,3 @@
 Module62000Name=Incoterm
-Module62000Desc=Add features to manage Incoterm
+Module62000Desc=Afegir funcions per gestionar Incoterm
 IncotermLabel=Incoterms
-IncotermSetupTitle1=Funció
-IncotermSetupTitle2=Estat
-IncotermSetup=Configuració del mòdul Incoterm
-IncotermFunctionDesc=Activa funcionalitats Incoterm (tercer, Pressupostos, Comandes, Factura a client, Enviament, Comandes a proveïdor)

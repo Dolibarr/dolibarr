@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - propal
+ProposalsOpened=Openstaande offertes
+CreateEmptyPropal=Creëer een lege offerte uit de lijst van producten / diensten
+TypeContact_propal_internal_SALESREPFOLL=Vertegenwoordiger die de offerte opvolgt
+TypeContact_propal_external_BILLING=Contactpersoon afnemersfactuur
+ProposalCustomerSignature=Stempel, datum en handtekening met vermelding "Voor Akkoord"

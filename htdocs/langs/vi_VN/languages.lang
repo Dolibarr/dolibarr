@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-
 Language_ar_AR=Ả Rập
 Language_ar_SA=Ả Rập
 Language_bn_BD=Bengali
@@ -32,6 +31,7 @@ Language_es_MX=Tây Ban Nha (Mexico)
 Language_es_PY=Tây Ban Nha (Paraguay)
 Language_es_PE=Tây Ban Nha (Peru)
 Language_es_PR=Tây Ban Nha (Puerto Rico)
+Language_es_VE=Spanish (Venezuela)
 Language_et_EE=Estonia
 Language_eu_ES=Basque
 Language_fa_IR=Ba Tư
@@ -52,7 +52,7 @@ Language_ja_JP=Nhật Bản
 Language_ka_GE=Georgian
 Language_kn_IN=Kannada
 Language_ko_KR=Hàn Quốc
-Language_lo_LA=Lao
+Language_lo_LA=Lào
 Language_lt_LT=Lithuania
 Language_lv_LV=Latvia
 Language_mk_MK=Macedonian

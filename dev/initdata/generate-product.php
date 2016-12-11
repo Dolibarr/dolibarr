@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -32,8 +32,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/generate-produit.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+//$path=preg_replace('/generate-produit.php/i','',$_SERVER["PHP_SELF"]);
+require (__DIR__. '/../../htdocs/master.inc.php');
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -85,12 +85,12 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
     print "Product ".$s;
     $produit = new Product($db);
-    $produit->type = rand(0,1);
+    $produit->type = mt_rand(0,1);
     $produit->status = 1;
     $produit->ref = ($produit->type?'S':'P').time().$s;
     $produit->label = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
-    $produit->price = rand(1,1000);
+    $produit->price = mt_rand(1,1000);
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";

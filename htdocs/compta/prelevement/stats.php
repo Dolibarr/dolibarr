@@ -73,7 +73,7 @@ if ($resql)
  */
 
 print '<br>';
-print load_fiche_titre($langs->trans("WithdrawStatistics"));
+print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
 
 $ligne=new LignePrelevement($db,$user);
 
@@ -138,12 +138,11 @@ else
 
 
 /*
- *
- * Stats sur les rejets
- *
+ * Stats on errors
  */
+
 print '<br>';
-print load_fiche_titre($langs->trans("WithdrawRejectStatistics"));
+print load_fiche_titre($langs->trans("WithdrawRejectStatistics"), '', '');
 
 
 // Define total and nbtotal

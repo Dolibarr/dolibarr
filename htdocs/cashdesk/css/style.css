@@ -20,7 +20,6 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: center;
-	font: 0.7em verdana, arial, helvetica;
 }
 
 p {
@@ -46,6 +45,15 @@ p {
 .contenu {
 	width: 100%;
 	text-align: center;
+	padding-top: 20px;
+}
+
+.logo {
+    text-align: center;
+}
+.logopos {
+	padding-top: 20px;
+	max-height: 40px;	
 }
 
 /* ------------------- Header ------------------- */
@@ -61,7 +69,7 @@ p {
 
 /* ------------------- Menu ------------------- */
 .menu_principal {
-    margin: 0 20px 20px 15px;
+    margin: 0;
     font-size: 14px;
 	height: 84px;
 	background: #CCCCCC;
@@ -80,40 +88,12 @@ p {
 .menu {
 	margin: 0;
     list-style-type: none;
-    padding: 10px 0 0;
+    padding: 8px 0 0;
 }
 
 .menu li {
 	float: left;
 	padding-right: 10px;
-}
-
-.menu_choix1,.menu_choix2 {
-	font-size: 1.4em;
-	text-align: left;
-}
-
-.menu_choix1 a,.menu_choix2 a {
-	display: block;
-	color: #fff;
-	text-decoration: none;
-	padding-top: 18px;
-	padding-left: 54px;
-	font-size: 14px;
-	height: 48px;
-	background: url('../img/new.png') top left no-repeat;
-}
-
-.menu_choix1 a {
-	background: url('../img/new.png') top left no-repeat;
-}
-
-.menu_choix2 a {
-	background: url('../img/gescom.png') top left no-repeat;
-}
-
-.menu_choix1 a:hover,.menu_choix2 a:hover {
-	color: #6d3f6d;
 }
 
 .menu_choix0 {
@@ -337,7 +317,7 @@ p.titre {
 /* -------------- Boutons --------------------- */
 .bouton_ajout_article {
 	margin-top: 10px;
-	width: 100%;
+	width: 60%;
 	height: 40px;
 }
 

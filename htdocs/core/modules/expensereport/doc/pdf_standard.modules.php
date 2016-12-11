@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +68,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		$langs->load("main");
 		$langs->load("trips");
-		$langs->load("project");
-		$langs->load("trips");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->name = "";
@@ -91,8 +91,8 @@ class pdf_standard extends ModeleExpenseReport
 		$this->option_condreg = 1;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 1;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // Support credit notes
+		$this->option_escompte = 0;                // Affiche si il y a eu escompte
+		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
@@ -104,14 +104,20 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Define position of columns
 		$this->posxpiece=$this->marge_gauche+1;
-		$this->posxdesc=20;
-		$this->posxdate=85;
-		$this->posxtype=105;
-		$this->posxprojet=125;
-		$this->posxtva=145;
-		$this->posxup=162;
-		$this->posxqty=176;
-		$this->postotalttc=186;
+		$this->posxcomment=$this->marge_gauche+10;
+		$this->posxdate=88;
+		$this->posxtype=107;
+		$this->posxprojet=120;
+		$this->posxtva=136;
+		$this->posxup=152;
+		$this->posxqty=168;
+		$this->postotalttc=178;
+        if (empty($conf->projet->enabled)) {
+            $this->posxtva-=20;
+            $this->posxup-=20;
+            $this->posxqty-=20;
+            $this->postotalttc-=20;
+        }
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxdate-=20;
@@ -127,7 +133,6 @@ class pdf_standard extends ModeleExpenseReport
 		$this->localtax1=array();
 		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
-		$this->atleastonediscount=0;
 	}
 
 
@@ -153,7 +158,7 @@ class pdf_standard extends ModeleExpenseReport
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("trips");
-		$outputlangs->load("project");
+		$outputlangs->load("projects");
 
 		$nblignes = count($object->lines);
 
@@ -199,7 +204,7 @@ class pdf_standard extends ModeleExpenseReport
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-				$heightforinfotot = 50;	// Height reserved to output the info and total part
+				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
@@ -230,15 +235,6 @@ class pdf_standard extends ModeleExpenseReport
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
-				// Positionne $this->atleastonediscount si on a au moins une remise
-				for ($i = 0 ; $i < $nblignes ; $i++)
-				{
-					if ($object->lines[$i]->remise_percent)
-					{
-						$this->atleastonediscount++;
-					}
-				}
-
 				// New page
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -249,9 +245,9 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 95;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?95:10);
-				$tab_height = 110;
-				$tab_height_newpage = 110;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?65:10);
+				$tab_height = 130;
+				$tab_height_newpage = 150;
 
 				// Show notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
@@ -297,7 +293,7 @@ class pdf_standard extends ModeleExpenseReport
 					$piece_comptable = $i +1;
 
 					$curY = $nexY;
-					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetFont('','', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
@@ -305,18 +301,19 @@ class pdf_standard extends ModeleExpenseReport
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-					$curX = $this->posxdesc-1;
+					$curX = $this->posxcomment-1;
 
 					$showpricebeforepagebreak=1;
 
+					$pdf->SetFont('','', $default_font_size - 1);
+					
 					// Accountancy piece
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-1, 3, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
-
+					$pdf->SetXY($this->posxpiece, $curY);
+					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
+					
 					// Comments
-					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxcomment, $curY);
-					$pdf->writeHTMLCell($this->posxdate-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $object->lines[$i]->comments, 0, 1);
+					$pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
 
 					//nexY
 					$nexY = $pdf->GetY();
@@ -326,65 +323,55 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// Date
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxdate, $curY);
-					$pdf->MultiCell($this->posxtype-$this->posxdate-1, 3,dol_print_date($object->lines[$i]->date,"day",false,$outpulangs), 0, 'C');
+					$pdf->SetXY($this->posxdate -1, $curY);
+					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
 					// Type
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxprojet-$this->posxtype-1, 3,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
+					$pdf->SetXY($this->posxtype -1, $curY);
+					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
 
-					// Project
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxprojet, $curY);
-					$pdf->MultiCell($this->posxtva-$this->posxprojet-1, 3,$object->lines[$i]->projet_ref, 0, 'C');
+                    // Project
+					if (! empty($conf->projet->enabled)) 
+					{
+                        $pdf->SetFont('','', $default_font_size - 1);
+                        $pdf->SetXY($this->posxprojet, $curY);
+                        $pdf->MultiCell($this->posxtva-$this->posxprojet-0.8, 4, $object->lines[$i]->projet_ref, 0, 'C');
+                    }
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,$vat_rate, 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 4,$vat_rate, 0, 'C');
 					}
 
 					// Unit price
-					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3,price($object->lines[$i]->value_unit), 0, 'R');
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 4,price($object->lines[$i]->value_unit), 0, 'R');
 
 					// Quantity
-					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->postotalttc-$this->posxqty, 3,$object->lines[$i]->qty, 0, 'C');
+					$pdf->MultiCell($this->postotalttc-$this->posxqty-0.8, 4,$object->lines[$i]->qty, 0, 'R');
 
 					// Total with all taxes
-					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->postotalttc-1, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R');
-
-					$nexY+=5;
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 4, price($object->lines[$i]->total_ttc), 0, 'R');
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lines[$i+1]->desc;
+						$follow_comment = $object->lines[$i+1]->comments;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
-						// Et si on affiche dates de validite, on ajoute encore une ligne
-						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
-						{
-							$nblineFollowDesc += 4;
-						}
+						$nblineFollowComment = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output)*4;
 					}
 					else	// If it's last line
 					{
-						$nblineFollowDesc = 0;
+						$nblineFollowComment = 0;
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=4;    // Passe espace entre les lignes
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -436,6 +423,8 @@ class pdf_standard extends ModeleExpenseReport
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
+				$pdf->SetFont('','', 10);
+				
             	// Show total area box
 				$posy=$bottomlasttab+5;//$nexY+95;
 				$pdf->SetXY(100, $posy);
@@ -446,6 +435,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 				{
+				    // TODO Show vat amout per tax level
 					$posy+=5;
 					$pdf->SetXY(100, $posy);
 					$pdf->SetTextColor(0,0,60);
@@ -492,8 +482,6 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error=$langs->trans("ErrorConstantNotDefined","EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -523,9 +511,9 @@ class pdf_standard extends ModeleExpenseReport
 		*/
 
 	    // Draft watermark
-		if ($object->fk_statut==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
+		if ($object->fk_statut == 0 && ! empty($conf->global->EXPENSEREPORT_DRAFT_WATERMARK))
 		{
- 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_FREE_TEXT);
+ 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -562,7 +550,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->SetFont('','B', $default_font_size + 4);
 		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'L');
+		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('','', $default_font_size -1);
 
@@ -570,166 +558,175 @@ class pdf_standard extends ModeleExpenseReport
    		$posy+=8;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
 
    		// Date start period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outputlangs):''), '', 'R');
 
    		// Date end period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outputlangs):''), '', 'R');
 
    		// Status Expense Report
    		$posy+=6;
    		$pdf->SetXY($posx,$posy);
-   		$pdf->SetFont('','B',18);
+   		$pdf->SetFont('','B', $default_font_size + 2);
    		$pdf->SetTextColor(111,81,124);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $object->getLibStatut(0), '', 'R');
+		
+		if ($showaddress)
+		{
+			// Sender properties
+			$carac_emetteur = '';
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
+			$carac_emetteur .= "\n";
+			// Phone
+			if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
+			// Fax
+			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+			// EMail
+			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
+			// Web
+			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-   		// Sender properties
-   		$carac_emetteur = '';
-   		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
-   		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
-   		$carac_emetteur .= "\n";
-   		// Phone
-   		if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
-   		// Fax
-   		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-   		// EMail
-   		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
-   		// Web
-   		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
+			// Show sender
+			$posy=50;
+			$posx=$this->marge_gauche;
+			$hautcadre=40;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
-   		// Show sender
-   		$posy=50;
-   		$posx=$this->marge_gauche;
-   		$hautcadre=40;
-   		if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+			// Show sender frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("TripSociete")." :",'','L');
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(224,224,224);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
 
-   		// Show sender frame
-   		$pdf->SetTextColor(0,0,0);
-   		$pdf->SetFont('','B', $default_font_size - 2);
-   		$pdf->SetXY($posx,$posy-5);
-   		$pdf->MultiCell(66,5, $outputlangs->transnoentities("TripSociete")." :",'','L');
-   		$pdf->SetXY($posx,$posy);
-   		$pdf->SetFillColor(224,224,224);
-   		$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-   		$pdf->SetTextColor(0,0,60);
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
-   		// Show sender name
-   		$pdf->SetXY($posx+2,$posy+3);
-   		$pdf->SetFont('','B', $default_font_size);
-   		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
-   		// Show sender information
-   		$pdf->SetXY($posx+2,$posy+8);
-   		$pdf->SetFont('','', $default_font_size - 1);
-   		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			// Show recipient
+			$posy=50;
+			$posx=100;
 
-   		// Show recipient
-   		$posy=50;
-   		$posx=100;
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','B',8);
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
+			$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
 
-   		// Show recipient frame
-   		$pdf->SetTextColor(0,0,0);
-   		$pdf->SetFont('','B',8);
-   		$pdf->SetXY($posx,$posy-5);
-   		$pdf->MultiCell(80,5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
-   		$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
+			// Informations for trip (dates and users workflow)
+			if ($object->fk_user_author > 0)
+			{
+				$userfee=new User($this->db);
+				$userfee->fetch($object->fk_user_author); $posy+=3;
+				$pdf->SetXY($posx+2,$posy);
+				$pdf->SetFont('','',10);
+				$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
+				$posy+=5;
+				$pdf->SetXY($posx+2,$posy);
+				$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create,"day",false,$outputlangs),0,'L');
+			}
 
-   		// Informations for trip (dates and users workflow)
-   		if ($object->fk_user_author > 0)
-   		{
-	   		$userfee=new User($this->db);
-	   		$userfee->fetch($object->fk_user_author); $posy+=3;
-	   		$pdf->SetXY($posx+2,$posy);
-	   		$pdf->SetFont('','',10);
-	   		$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
-	   		$posy+=5;
-	   		$pdf->SetXY($posx+2,$posy);
-	   		$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create,"day",false,$outpulangs),0,'L');
-   		}
+			if ($object->fk_statut==99)
+			{
+				if ($object->fk_user_refuse > 0)
+				{
+					$userfee=new User($this->db);
+					$userfee->fetch($object->fk_user_refuse); $posy+=6;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("REFUSEUR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_REFUS")." : ".$outputlangs->convToOutputCharset($object->detail_refuse),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outputlangs),0,'L');
+				}
+			}
+			else if($object->fk_statut==4)
+			{
+				if ($object->fk_user_cancel > 0)
+				{
+					$userfee=new User($this->db);
+					$userfee->fetch($object->fk_user_cancel); $posy+=6;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("CANCEL_USER")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_CANCEL")." : ".$outputlangs->convToOutputCharset($object->detail_cancel),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel,"day",false,$outputlangs),0,'L');
+				}
+			}
+			else
+			{
+				if ($object->fk_user_approve > 0)
+				{
+					$userfee=new User($this->db);
+					$userfee->fetch($object->fk_user_approve); $posy+=6;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("VALIDOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateApprove")." : ".dol_print_date($object->date_approve,"day",false,$outputlangs),0,'L');
+				}
+			}
 
-   		if ($object->fk_statut==99)
-   		{
-   			if ($object->fk_user_refuse > 0)
-   			{
-	   			$userfee=new User($this->db);
-	   			$userfee->fetch($object->fk_user_refuse); $posy+=6;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("REFUSEUR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_REFUS")." : ".$outputlangs->convToOutputCharset($object->detail_refuse),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outpulangs),0,'L');
-   			}
-   		}
-   		else if($object->fk_statut==4)
-   		{
-   			if ($object->fk_user_cancel > 0)
-   			{
-	   			$userfee=new User($this->db);
-	   			$userfee->fetch($object->fk_user_cancel); $posy+=6;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("CANCEL_USER")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_CANCEL")." : ".$outputlangs->convToOutputCharset($object->detail_cancel),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel,"day",false,$outpulangs),0,'L');
-   			}
-   		}
-   		else
-   		{
-   			if ($object->fk_user_approve > 0)
-   			{
-	   			$userfee=new User($this->db);
-	   			$userfee->fetch($object->fk_user_approve); $posy+=6;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("VALIDOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateApprove")." : ".dol_print_date($object->date_approve,"day",false,$outpulangs),0,'L');
-   			}
-   		}
-
-   		if($object->fk_statut==6)
-   		{
-   			if ($object->fk_user_paid > 0)
-   			{
-	   			$userfee=new User($this->db);
-	   			$userfee->fetch($object->fk_user_paid); $posy+=6;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHORPAIEMENT")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
-	   			$posy+=5;
-	   			$pdf->SetXY($posx+2,$posy);
-	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_PAIEMENT")." : ".dol_print_date($object->date_paiement,"day",false,$outpulangs),0,'L');
-   			}
-   		}
+			if($object->fk_statut==6)
+			{
+				if ($object->fk_user_paid > 0)
+				{
+					$userfee=new User($this->db);
+					$userfee->fetch($object->fk_user_paid); $posy+=6;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHORPAIEMENT")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
+					$posy+=5;
+					$pdf->SetXY($posx+2,$posy);
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_PAIEMENT")." : ".dol_print_date($object->date_paiement,"day",false,$outputlangs),0,'L');
+				}
+			}
+		}
 
    	}
 
 	/**
-	 *   Affiche la grille des lignes de factures
+	 *   Show table for lines
 	 *
 	 *   @param     PDF			$pdf     		Object PDF
 	 *   @param		int			$tab_top		Tab top
 	 *   @param		int			$tab_height		Tab height
 	 *   @param		int			$nexY			next y
 	 *   @param		Translate	$outputlangs	Output langs
+	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf;
+		
+		// Force to disable hidetop and hidebottom
+		$hidebottom=0;
+		if ($hidetop) $hidetop=-1;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -745,56 +742,89 @@ class pdf_standard extends ModeleExpenseReport
 		// Rect prend une longueur en 3eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 		// line prend une position y en 3eme param
-		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
+		if (empty($hidetop))
+		{
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
+		}
 
 		$pdf->SetFont('','',8);
 
 		// Accountancy piece
-		$pdf->SetXY($this->posxpiece-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdesc-$this->posxpiece-1,1,'','','R');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxpiece-1, $tab_top+1);
+			$pdf->MultiCell($this->posxcomment-$this->posxpiece-1,1,'','','R');
+		}
 
 		// Comments
-		$pdf->line($this->posxdesc-1, $tab_top, $this->posxdesc-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdate-$this->posxdesc-1,1,$outputlangs->transnoentities("Description"),'','L');
+		$pdf->line($this->posxcomment-1, $tab_top, $this->posxcomment-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxcomment-1, $tab_top+1);
+			$pdf->MultiCell($this->posxdate-$this->posxcomment-1,1,$outputlangs->transnoentities("Description"),'','L');
+		}
 
 		// Date
 		$pdf->line($this->posxdate-1, $tab_top, $this->posxdate-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxdate-1, $tab_top+1);
-		$pdf->MultiCell($this->posxtype-$this->posxdate-1,2, $outputlangs->transnoentities("Date"),'','C');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxdate-1, $tab_top+1);
+			$pdf->MultiCell($this->posxtype-$this->posxdate-1,2, $outputlangs->transnoentities("Date"),'','C');
+		}
 
 		// Type
 		$pdf->line($this->posxtype-1, $tab_top, $this->posxtype-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxtype-1, $tab_top+1);
-		$pdf->MultiCell($this->posxprojet-$this->posxtype-1,2, $outputlangs->transnoentities("Type"),'','C');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxtype-1, $tab_top+1);
+			$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
+		}
 
-		// Project
-		$pdf->line($this->posxprojet-1, $tab_top, $this->posxprojet-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxprojet-1, $tab_top+1);
-		$pdf->MultiCell($this->posxtva-$this->posxprojet-1,2, $outputlangs->transnoentities("Project"),'','C');
+        if (!empty($conf->projet->enabled)) 
+        {
+            // Project
+            $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
+    		if (empty($hidetop))
+    		{
+                $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
+                $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
+    		}
+        }
 
 		// VAT
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY($this->posxtva-1, $tab_top+1);
-			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxtva-1, $tab_top+1);
+				$pdf->MultiCell($this->posxup-$this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
+			}
 		}
 
-		// Unit price
+        // Unit price
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceU"),'','C');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxup-1, $tab_top+1);
+			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceU"),'','C');
+		}
 
 		// Quantity
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell($this->postotalttc-$this->posxqty,2, $outputlangs->transnoentities("Qty"),'','R');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxqty-1, $tab_top+1);
+			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1,2, $outputlangs->transnoentities("Qty"),'','R');
+		}
 
 		// Total with all taxes
 		$pdf->line($this->postotalttc, $tab_top, $this->postotalttc, $tab_top + $tab_height);
-		$pdf->SetXY($this->postotalttc-1, $tab_top+1);
-		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 2, $outputlangs->transnoentities("TotalTTC"),'','R');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->postotalttc-1, $tab_top+1);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 2, $outputlangs->transnoentities("TotalTTC"),'','R');
+		}
 
 		$pdf->SetTextColor(0,0,0);
 	}
@@ -810,7 +840,8 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'EXPENSEREPORT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

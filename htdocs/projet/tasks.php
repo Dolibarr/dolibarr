@@ -37,6 +37,7 @@ $langs->load("projects");
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+$taskref = GETPOST('taskref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel');
 
@@ -61,7 +62,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->tab
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
@@ -88,7 +89,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 	if (! $cancel)
 	{
-		if (empty($label))
+		if (empty($taskref))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+			$action='create';
+			$error++;
+		}
+	    if (empty($label))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action='create';
@@ -112,7 +119,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task = new Task($db);
 
 			$task->fk_project = $projectid;
-			$task->ref = GETPOST('ref','alpha');
+			$task->ref = $taskref;
 			$task->label = $label;
 			$task->description = $description;
 			$task->planned_workload = $planned_workload;
@@ -121,7 +128,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
-
+			
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task,$task);
 
@@ -146,7 +153,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else if (empty($projectid))
 			{
-				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 			$id = $projectid;
@@ -162,7 +169,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 		else if (empty($id))
 		{
 			// We go back on task list
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
 			exit;
 		}
 	}
@@ -204,59 +211,106 @@ if ($id > 0 || ! empty($ref))
 
 	$param=($mode=='mine'?'&mode=mine':'');
 
-	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+    // Project card
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    $morehtmlref='<div class="refidno">';
+    // Title
+    $morehtmlref.=$object->title;
+    // Thirdparty
+    if ($object->thirdparty->id > 0) 
+    {
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    }
+    $morehtmlref.='</div>';
+    
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    }
+    
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	// Ref
-	print '<tr><td width="30%">';
-	print $langs->trans("Ref");
-	print '</td><td>';
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-		$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-		$object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
-	print '</td></tr>';
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+    print '<table class="border" width="100%">';
 
-	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td>';
-	print '</tr>';
+    // Visibility
+    print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
 
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
+	/*if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+        // Opportunity status
+        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+        if ($code) print $langs->trans("OppStatus".$code);
+        print '</td></tr>';
 
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+        // Opportunity percent
+        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,'',$langs,1,0).' %';
+        print '</td></tr>';
 
-	// Date start
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'day');
-	print '</td></tr>';
+        // Opportunity Amount
+        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
+        print '</td></tr>';
+    }*/
 
-	// Date end
-	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'day');
-	print '</td></tr>';
+    // Date start - end
+    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+    print dol_print_date($object->date_start,'day');
+    $end=dol_print_date($object->date_end,'day');
+    if ($end) print ' - '.$end;
+    print '</td></tr>';
+    
+    // Budget
+    print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+    if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
+    print '</td></tr>';
 
-	// Other options
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
-	{
-		print $object->showOptionals($extrafields_project);
-	}
+    // Other attributes
+    $cols = 2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    
+    print '</table>';
+    
+    print '</div>';
+    print '<div class="fichehalfright">';
+    print '<div class="ficheaddleft">';
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border" width="100%">';
+    
+    // Description
+    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+    print nl2br($object->description);
+    print '</td></tr>';
 
-	print '</table>';
+    // Categories
+    if($conf->categorie->enabled) {
+        print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+        print $form->showCategories($object->id,'project',1);
+        print "</td></tr>";
+    }
+    
+    print '</table>';
+    
+    print '</div>';
+    print '</div>';
+    print '</div>';
+    
+    print '<div class="clearboth"></div>';
+
 
 	dol_fiche_end();
 }
@@ -274,7 +328,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+	
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
@@ -285,17 +339,19 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	{
 		require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
 		$modTask = new $obj;
-		$defaultref = $modTask->getNextValue($soc,$object);
+		$defaultref = $modTask->getNextValue($object->thirdparty,null);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 	// Ref
-	print '<input type="hidden" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>'.($_POST["ref"]?$_POST["ref"]:$defaultref).'</td></tr>';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
+	print ($_POST["ref"]?$_POST["ref"]:$defaultref);
+	print '<input type="hidden" name="taskref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
+	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" size="25" name="label" class="flat" value="'.$label.'">';
+	print '<input type="text" name="label" class="flat minwidth300" value="'.$label.'">';
 	print '</td></tr>';
 
 	// List of projects
@@ -307,7 +363,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
 	if (count($contactsofproject))
 	{
-		print $form->select_dolusers($user->id,'userid',0,'',0,'',$contactsofproject);
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{
@@ -391,25 +447,12 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</div>';
 
-	print '<br>';
 
-
-	// Link to switch in "my task" / "all task"
-	print '<table width="100%"><tr><td align="right">';
-	if ($mode == 'mine')
-	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
-		//print ' - ';
-		//print $langs->trans("ShowMyTaskOnly");
-	}
-	else
-	{
-		//print $langs->trans("DoNotShowMyTaskOnly");
-		//print ' - ';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
-	}
-	print '</td></tr></table>';
-
+	$title=$langs->trans("ListOfTasks");
+	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$object->id.'&withproject=1">'.$langs->trans("GoToListOfTimeConsumed").'</a>';
+	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
+	print load_fiche_titre($title,$linktotasks,'title_generic.png');
+	
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
@@ -431,20 +474,33 @@ else if ($id > 0 || ! empty($ref))
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
+	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
+
 	if (count($tasksarray) > 0)
 	{
-		// Show all lines in taskarray (recursive function to go down on tree)
+    	// Link to switch in "my task" / "all task"
+    	print '<tr class="liste_titre nodrag nodrop"><td colspan="9">';
+    	if ($mode == 'mine')
+    	{
+    	    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+    	}
+    	else
+    	{
+    	    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
+    	}
+    	print '</td></tr>';
+	
+	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j=0; $level=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $id, 1);
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id);
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
 

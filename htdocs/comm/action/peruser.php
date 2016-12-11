@@ -55,7 +55,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page","int");
 if ($page == -1) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
@@ -76,7 +76,7 @@ if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no per
 
 //$action=GETPOST('action','alpha');
 $action='show_peruser'; //We use 'show_week' mode
-//$year=GETPOST("year");
+$resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
@@ -85,8 +85,17 @@ $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
-$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':'');
-
+// Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
+if (GETPOST('actioncode','array')) 
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else 
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 if ($dateselect > 0)
 {
@@ -111,7 +120,6 @@ if ($begin_d < 1 || $begin_d > 7) $begin_d = 1;
 if ($end_d < 1 || $end_d > 7) $end_d = 7;
 if ($end_d < $begin_d) $end_d = $begin_d + 1;
 
-if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
@@ -193,6 +201,7 @@ if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
+if ($resourceid > 0) $param.="&resourceid=".$resourceid;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
 if ($filtert) $param.="&filtert=".$filtert;
@@ -233,10 +242,10 @@ $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
 $tmpday = $first_day;
 
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>\n";
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
 $nav.=" </span>\n";
-$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $picto='calendarweek';
 
@@ -246,6 +255,7 @@ $nav.='<input type="hidden" name="action" value="' . $action . '">';
 $nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
 $nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
 $nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
+$nav.='<input type="hidden" name="resourceid" value="' . $resourceid . '">';
 $nav.='<input type="hidden" name="status" value="' . $status . '">';
 $nav.='<input type="hidden" name="socid" value="' . $socid . '">';
 $nav.='<input type="hidden" name="projectid" value="' . $projectid . '">';
@@ -278,7 +288,7 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup);
+print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
 dol_fiche_end();
 
 $showextcals=$listofextcals;
@@ -355,12 +365,37 @@ $sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype,';
 $sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+// We must filter on resource table
+if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
-if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
+// Condition on actioncode
+if (! empty($actioncode))
+{
+    if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND ca.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        else
+        {
+            if ($actioncode == 'AC_OTH') $sql.= " AND ca.type != 'systemauto'";
+            if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        }
+    }
+    else
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND ca.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
+        else
+        {
+            $sql.=" AND ca.code IN ('".implode("','", explode(',',$actioncode))."')";
+        }
+    }
+}
+if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= ' AND a.fk_soc = '.$socid;
@@ -411,7 +446,7 @@ if ($filtert > 0 || $usergroup > 0)
 $sql.= ' ORDER BY fk_user_action, datep'; //fk_user_action
 //print $sql;
 
-dol_syslog("comm/action/index.php", LOG_DEBUG);
+dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -555,7 +590,8 @@ echo '</form>';
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
 
-echo '<table width="100%" class="nocellnopadd cal_month">';
+echo '<div class="div-table-responsive">';
+echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
@@ -625,7 +661,7 @@ else
 	$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+	$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user',1).")";
 	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
 	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
 	//print $sql;
@@ -677,7 +713,7 @@ else
 // Load array of colors by type
 $colorsbytype=array();
 $labelbytype=array();
-$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 $resql=$db->query($sql);
 while ($obj = $db->fetch_object($resql))
 {
@@ -694,7 +730,9 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+	print $username->getNomUrl(-1,'',0,0,24,1,'');
+	print '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
@@ -729,7 +767,7 @@ foreach ($usernames as $username)
 }
 
 echo "</table>\n";
-
+echo '</div>';
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {

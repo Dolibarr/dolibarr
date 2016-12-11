@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load("orders");
+$langs->load("bills");
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -122,7 +123,7 @@ if ($resql)
     foreach ($listofstatus as $status)
     {
         $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'data'=>(isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
-        if ($status==3 && $bool==false) $bool=true;
+        if ($status==3 && ! $bool) $bool=true;
         else $bool=false;
     }
     if ($conf->use_javascript_ajax)
@@ -146,7 +147,7 @@ if ($resql)
             print '</a>';
             print '</td>';
             print "</tr>\n";
-            if ($status==3 && $bool==false) $bool=true;
+            if ($status==3 && ! $bool) $bool=true;
             else $bool=false;
         }
     }
@@ -214,6 +215,11 @@ if (! empty($conf->commande->enabled))
                 print '</td></tr>';
 				$i++;
 			}
+		}
+		else
+		{
+			$var=!$var;
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 	}

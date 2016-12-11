@@ -1,21 +1,20 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum / Wiki wsparcia
-EMailSupport=E-maile wsparcia
+CommunitySupport=Wsparcie Forum/Wiki
+EMailSupport=Wsparcie email
 RemoteControlSupport=Online w czasie rzeczywistym / zdalne wsparcie
 OtherSupport=Inne wsparcie
 ToSeeListOfAvailableRessources=Aby skontaktować / patrz dostępne zasoby:
-ClickHere=Kliknij tutaj
 HelpCenter=Centrum pomocy
-DolibarrHelpCenter=Dolibarr Centrum pomocy i obsługi technicznej
+DolibarrHelpCenter=Centrum pomocy i obsługi technicznej
 ToGoBackToDolibarr=W innym przypadku, kliknij <a href="%s">tutaj, aby używać Dolibarr</a>
 TypeOfSupport=Źródła wsparcia
 TypeSupportCommunauty=Wspólnoty (bezpłatny)
-TypeSupportCommercial=Komercyjne
+TypeSupportCommercial=Komercyjny
 TypeOfHelp=Typ
-NeedHelpCenter=Potrzebujesz pomocy lub wsparcia?
+NeedHelpCenter=Need help or support?
 Efficiency=Efektywność
-TypeHelpOnly=Pomoc tylko
-TypeHelpDev=Pomoc + Rozwoju
+TypeHelpOnly=Tylko pomoc
+TypeHelpDev=Pomoc+Rozwoj
 TypeHelpDevForm=Pomoc + Rozwoju + Formacja
 ToGetHelpGoOnSparkAngels1=Niektóre firmy mogą zapewnić szybki (niekiedy natychmiastową) i bardziej wydajnych sieci wsparcia poprzez podjęcie kontroli nad komputerem. Takie pomocników można znaleźć na stronie <b>internetowej %s:</b>
 ToGetHelpGoOnSparkAngels3=Można też przejść do listy wszystkich dostępnych dla autokarów Dolibarr, w tym kliknąć przycisk
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Czasami nie ma firmy dostępne w tej chwili można dok
 BackToHelpCenter=W innym przypadku, kliknij tutaj, aby przejść <a href="%s">wstecz na stronie głównej Centrum pomocy.</a>
 LinkToGoldMember=Możesz połączyć jedno z trenera wybranej przez Dolibarr dla danego języka ( %s), klikając jego Widget (status i maksymalną cenę są automatycznie uaktualniane):
 PossibleLanguages=Obsługiwane języki
-MakeADonation=Pomoc Dolibarr projektu, dokonać wpłaty
 SubscribeToFoundation=Pomoc projekt Dolibarr, zapisz się na fundamencie
 SeeOfficalSupport=Do oficjalnego wsparcia Dolibarr w Twoim języku: <br> <a href="%s" target="_blank"><b>% S</b></a>

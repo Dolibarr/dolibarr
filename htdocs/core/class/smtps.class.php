@@ -3,6 +3,7 @@
  * Copyright (C)           Walter Torres        <walter@torres.ws> [with a *lot* of help!]
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
+ * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,18 +384,43 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
-	 * @return mixed  $_retVal   Boolean indicating success or failure of authentication
+	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
 	function _server_authenticate()
 	{
+		global $conf;
+		
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
 		$host=$this->getHost();
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+		{
+		    $host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		    $host='tls://'.$host;
+		}
 		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
 		{
+			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+			{
+				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
+				{
+					$this->_setErr(131, 'STARTTLS connection is not supported.');
+					return $_retVal;
+				}
+				if (!stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
+				{
+					$this->_setErr(132, 'STARTTLS connection failed.');
+					return $_retVal;
+				}
+				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
+				{
+					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
+					return $_retVal;
+				}				
+			}
 			// Send Authentication to Server
 			// Check for errors along the way
 			$this->socket_send_str('AUTH LOGIN', '334');
@@ -420,7 +446,7 @@ class SMTPs
 	 *
 	 * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
 	 * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-	 * @return mixed   void
+	 * @return boolean|null   void
 	 *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
@@ -463,14 +489,20 @@ class SMTPs
 				// and send it out "single file"
 				foreach ( $this->get_RCPT_list() as $_address )
 				{
-					/*
+				    /* Note:
+				     * BCC email addresses must be listed in the RCPT TO command list,
+                     * but the BCC header should not be printed under the DATA command.
+				     * http://stackoverflow.com/questions/2750211/sending-bcc-emails-using-a-smtp-server
+				     */
+
+    				/*
 					 * TODO
-					* After each 'RCPT TO:' is sent, we need to make sure it was kosher,
-					* if not, the whole message will fail
-					* If any email address fails, we will need to RESET the connection,
-					* mark the last address as "bad" and start the address loop over again.
-					* If any address fails, the entire message fails.
-					*/
+					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
+					 * if not, the whole message will fail
+					 * If any email address fails, we will need to RESET the connection,
+					 * mark the last address as "bad" and start the address loop over again.
+					 * If any address fails, the entire message fails.
+					 */
 					$this->socket_send_str('RCPT TO: <' . $_address . '>', '250');
 				}
 
@@ -520,7 +552,7 @@ class SMTPs
 	 * defined.
 	 *
 	 * @param mixed $_strConfigPath path to config file or VOID
-	 * @return void
+	 * @return boolean
 	 */
 	function setConfig($_strConfigPath = null)
 	{
@@ -594,7 +626,7 @@ class SMTPs
 	 * Path to the sendmail execuable
 	 *
 	 * @param string $_path Path to the sendmail execuable
-	 * @return void
+	 * @return boolean
 	 *
 	 */
 	function setMailPath($_path)
@@ -817,7 +849,36 @@ class SMTPs
 		return $_retValue;
 	}
 
-
+	/**
+	 * Reply-To Address from which mail will be the reply-to
+	 *
+	 * @param 	string 	$_strReplyTo 	Address from which mail will be the reply-to
+	 * @return 	void
+	 */
+	function setReplyTo($_strReplyTo)
+	{
+	    if ( $_strReplyTo )
+	        $this->_msgReplyTo = $this->_strip_email($_strReplyTo);
+	}
+	
+	/**
+	 * Retrieves the Address from which mail will be the reply-to
+	 *
+	 * @param  	boolean $_part		To "strip" 'Real name' from address
+	 * @return 	string 				Address from which mail will be the reply-to
+	 */
+	function getReplyTo($_part = true)
+	{
+	    $_retValue = '';
+	
+	    if ( $_part === true )
+	        $_retValue = $this->_msgReplyTo;
+	    else
+	        $_retValue = $this->_msgReplyTo[$_part];
+	
+	    return $_retValue;
+	}
+	
 	/**
 	 * Inserts given addresses into structured format.
 	 * This method takes a list of given addresses, via an array
@@ -970,8 +1031,8 @@ class SMTPs
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
-	 * @param 		mixed 	$_which 	Which collection of adresses to return
-	 * @return 		array 				Array of emaill address
+	 * @param 		string 	       $_which 	    Which collection of addresses to return ('to', 'cc', 'bcc')
+	 * @return 		string|false 				Array of emaill address
 	 */
 	function get_email_list($_which = null)
 	{
@@ -1021,7 +1082,7 @@ class SMTPs
 	/**
 	 * TO Address[es] inwhich to send mail to
 	 *
-	 * @param 	mixed 	$_addrTo 	TO Address[es] inwhich to send mail to
+	 * @param 	string 	$_addrTo 	TO Address[es] inwhich to send mail to
 	 * @return 	void
 	 */
 	function setTO($_addrTo)
@@ -1119,9 +1180,17 @@ class SMTPs
 		if ( $this->getCC() )
 		$_header .= 'Cc: ' . $this->getCC()  . "\r\n";
 
+		/* Note:
+		 * BCC email addresses must be listed in the RCPT TO command list,
+		 * but the BCC header should not be printed under the DATA command.
+		 * So it is included into the function sendMsg() but not here.
+		 * http://stackoverflow.com/questions/2750211/sending-bcc-emails-using-a-smtp-server
+		 */
+		/*
 		if ( $this->getBCC() )
 		$_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
-
+        */
+		
 		$host=$this->getHost();
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
@@ -1159,7 +1228,8 @@ class SMTPs
 		$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
 		$_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
-
+		if ( $this->getReplyTo() )
+        $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
 
 		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)'                   . "\r\n"
 		.  'Mime-Version: 1.0'                            . "\r\n";
@@ -1405,7 +1475,7 @@ class SMTPs
 	 *   - [2] Private
 	 *   - [3] Company Confidential
 	 *
-	 * @param 	string	$_value		Message Sensitivity
+	 * @param 	integer	$_value		Message Sensitivity
 	 * @return 	void
 	 */
 	function setSensitivity($_value = 0)
@@ -1440,7 +1510,7 @@ class SMTPs
 	 *  - [4] 'Low'
 	 *  - [5] 'Lowest'
 	 *
-	 * @param 	string 	$_value 	Message Priority
+	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
 	function setPriority ( $_value = 3 )
@@ -1460,7 +1530,7 @@ class SMTPs
 	 *  - [4] 'Low'
 	 *  - [5] 'Lowest'
 	 *
-	 * @return void
+	 * @return string
 	 */
 	function getPriority()
 	{
@@ -1483,7 +1553,7 @@ class SMTPs
 	/**
 	 * Gets flag which determines whether to calculate message MD5 checksum.
 	 *
-	 * @return 	string 				Message Priority
+	 * @return 	boolean 				Message Priority
 	 */
 	function getMD5flag()
 	{
@@ -1507,7 +1577,7 @@ class SMTPs
 	/**
 	 * Retrieves the Message X-Header Content
 	 *
-	 * @return string $_msgContent Message X-Header Content
+	 * @return string[] $_msgContent Message X-Header Content
 	 */
 	function getXheader()
 	{
@@ -1556,14 +1626,17 @@ class SMTPs
 		$_retVal = true;
 
 		$server_response = '';
+        // avoid infinite loop
+        $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' )
+		while ( substr($server_response,3,1) != ' ' && $limit<100)
 		{
 			if( !( $server_response = fgets($socket, 256) ) )
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 			}
+            $limit++;
 		}
 
 		if( !( substr($server_response, 0, 3) == $response ) )
@@ -1581,7 +1654,7 @@ class SMTPs
 	 * @param	string		$_strSend		String to send
 	 * @param 	string		$_returnCode	Return code
 	 * @param 	string		$CRLF			CRLF
-	 * @return 	boolean						True or false
+	 * @return 	boolean|null						True or false
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{

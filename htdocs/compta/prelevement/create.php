@@ -65,11 +65,13 @@ if ($action == 'create')
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
     if ($result < 0)
     {
-        $mesg='<div class="error">'.$bprev->error.'</div>';
+    	setEventMessages($bprev->error, $bprev->errors, 'errors');
     }
     if ($result == 0)
     {
-        $mesg='<div class="error">'.$langs->trans("NoInvoiceCouldBeWithdrawed").'</div>';
+    	$mesg='';
+        $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
+        setEventMessages($mesg, null, 'errors');
         foreach($bprev->invoice_in_error as $key => $val)
         {
         	$mesg.=$val."<br>\n";
@@ -120,7 +122,7 @@ if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 }
 print '<table class="border" width="100%">';
 
-print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print $nb;
 print '</td></tr>';
@@ -233,7 +235,7 @@ if ($resql)
             $i++;
         }
     }
-    else print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+    else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     print "</table>";
     print "<br>\n";
 }
@@ -299,7 +301,5 @@ else
     dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

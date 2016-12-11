@@ -25,6 +25,7 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
+
 /**
  * Class to manage the box to show last task
  */
@@ -36,6 +37,7 @@ class box_task extends ModeleBoxes
     //var $depends = array("projet");
     var $db;
     var $param;
+    var $enabled = 0;		// Disabled because bugged.
 
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -79,8 +81,8 @@ class box_task extends ModeleBoxes
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
-
-			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
+			// FIXME fk_statut on a task is not be used. We use the percent. This means this box is useless.
+			$sql = "SELECT pt.fk_statut, count(DISTINCT pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
 			$sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
 			$sql.= " AND pt.rowid = ptt.fk_task";
@@ -89,11 +91,11 @@ class box_task extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-			if ($result) 
+			if ($result)
 			{
 				$num = $db->num_rows($result);
 				$i = 0;
-                while ($i < $num) 
+                while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
@@ -104,7 +106,7 @@ class box_task extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
-                        'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
+                        'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
 					$totalnb += $objp->nb;
 					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
@@ -135,10 +137,11 @@ class box_task extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
+	function showBox($head = null, $contents = null, $nooutput=0)
 	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

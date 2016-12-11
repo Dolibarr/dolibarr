@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,10 +76,10 @@ class modAdherent extends DolibarrModules
         $this->const = array();
         $r=0;
         
-        $this->const[$r][0] = "MAIN_SEARCHFORM_ADHERENT";
-        $this->const[$r][1] = "yesno";
-        $this->const[$r][2] = "1";
-        $this->const[$r][3] = "Show form for quick member search";
+        $this->const[$r][0] = "ADHERENT_ADDON_PDF";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "standard";
+        $this->const[$r][3] = 'Name of PDF model of member';
         $this->const[$r][4] = 0;
         $r++;
         
@@ -163,7 +163,7 @@ class modAdherent extends DolibarrModules
         $this->const[$r][0] = "ADHERENT_BANK_USE_AUTO";
         $this->const[$r][1] = "yesno";
         $this->const[$r][2] = "";
-        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte banquaire";
+        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte bancaire";
         $this->const[$r][4] = 0;
         $r++;
         
@@ -177,7 +177,7 @@ class modAdherent extends DolibarrModules
         $this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
-        $this->const[$r][3] = "ID de la catégorie banquaire des cotisations";
+        $this->const[$r][3] = "ID de la catégorie bancaire des cotisations";
         $this->const[$r][4] = 0;
         $r++;
         
@@ -216,7 +216,7 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][0] = 71;
         $this->rights[$r][1] = 'Read members\' card';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'lire';
 
         $r++;
@@ -251,7 +251,7 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][0] = 78;
         $this->rights[$r][1] = 'Read subscriptions';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'cotisation';
         $this->rights[$r][5] = 'lire';
 
@@ -263,6 +263,12 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][4] = 'cotisation';
         $this->rights[$r][5] = 'creer';
 
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        
+        
         // Exports
         //--------
         $r=0;
@@ -278,28 +284,20 @@ class modAdherent extends DolibarrModules
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='MembersAndSubscriptions';
         $this->export_permission[$r]=array(array("adherent","export"));
-        $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
-        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.dateadh'=>'Date','c.cotisation'=>'Numeric');
-        $this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
-
-		// Add extra fields
-		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity = ".$conf->entity;
-		$resql=$this->db->query($sql);
-		while ($obj=$this->db->fetch_object($resql))
-		{
-			$fieldname='extra.'.$obj->name;
-			$fieldlabel=ucfirst($obj->label);
-			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			$this->export_entities_array[$r][$fieldname]='member';
-		}
+        $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.subscription'=>'Amount');
+        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.subscription'=>'Numeric');
+        $this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.subscription'=>'subscription');
+        // Add extra fields
+        $keyforselect='adherent'; $keyforelement='member'; $keyforaliasextra='extra';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent_type as ta, '.MAIN_DB_PREFIX.'adherent as a)';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as extra ON a.rowid = extra.fk_object';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'subscription as c ON c.fk_adherent = a.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.state_id = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON a.country = co.rowid';
-        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
+        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('adherent', 1).') ';
         $this->export_dependencies_array[$r]=array('subscription'=>'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
         // Imports
@@ -334,4 +332,47 @@ class modAdherent extends DolibarrModules
 		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
         $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m-%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
     }
+    
+    
+    /**
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+        global $conf,$langs;
+    
+        // Permissions
+        $this->remove($options);
+    
+        //ODT template
+        /*
+        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
+        $dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+        $dest=$dirodt.'/template_order.odt';
+    
+        if (file_exists($src) && ! file_exists($dest))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            dol_mkdir($dirodt);
+            $result=dol_copy($src,$dest,0,0);
+            if ($result < 0)
+            {
+                $langs->load("errors");
+                $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+                return 0;
+            }
+        }*/
+    
+        $sql = array(
+            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type='member' AND entity = ".$conf->entity,
+            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','member',".$conf->entity.")"
+        );
+    
+        return $this->_init($sql,$options);
+    }    
 }

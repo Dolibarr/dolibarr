@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Trošak
 ExpenseReports=Troškovi
-Trip=Trošak
+ShowExpenseReport=Prikaži trošak
 Trips=Troškovi
 TripsAndExpenses=Troškovi
 TripsAndExpensesStatistics=Statistike troškova
@@ -9,31 +9,27 @@ TripCard=Kartica troška
 AddTrip=Kreiraj trošak
 ListOfTrips=Lista troškova
 ListOfFees=Lista honorara
+TypeFees=Types of fees
 ShowTrip=Prikaži trošak
 NewTrip=Novi trošak
 CompanyVisited=Kompanija/fundacija koja je posećena
-Kilometers=Kilometara
 FeesKilometersOrAmout=Broj kilometara
 DeleteTrip=Obriši trošak
-ConfirmDeleteTrip=Da li ste sigurni da želite da obrišete trošak
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Lista troškova
 ListToApprove=Čeka na odobrenje
 ExpensesArea=Oblast troškova
-SearchATripAndExpense=Potraži trošak
 ClassifyRefunded=Označi kao "Refundirano"
 ExpenseReportWaitingForApproval=Novi trošak je poslat na odobrenje
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForApprovalMessage=Napravljen je novi zahtev koji čeka na odobrenje.\n- Korisnik %s\n- Period: %s\nKliknite ovde da potvrdite: %s
 TripId=ID troška
 AnyOtherInThisListCanValidate=Osoba koju treba obavestiti za odobrenje.
 TripSociete=Informacije kompanije
-TripSalarie=Informacije korisnika
 TripNDF=Informacije o trošku
-DeleteLine=Obriši liniju troška
-ConfirmDeleteLine=Da li ste sigurni da želite da obrišete ovu liniju ?
 PDFStandardExpenseReports=Standardni template za generisanje PDF dokumenta o trošku
 ExpenseReportLine=Linija troška
 TF_OTHER=Ostalo
-TF_TRANSPORTATION=Prevoz
+TF_TRIP=Prevoz
 TF_LUNCH=Ručak
 TF_METRO=Metro
 TF_TRAIN=Voz
@@ -45,16 +41,9 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Prijavili ste još jedan trošak u sličnom vremenskom periodu.
-AucuneNDF=Nema troškova sa ovim kriterijumima
 AucuneLigne=Nema prijavljenih troškova.
-AddLine=Dodaj liniju
-AddLineMini=Dodaj
 
-Date_DEBUT=Pošetak
-Date_FIN=Kraj
 ModePaiement=Način plaćanja
-Note=Beleška
-Project=Projekat
 
 VALIDATOR=Korisnik odgovoran za odobrenje
 VALIDOR=Odobrio
@@ -68,39 +57,33 @@ MOTIF_CANCEL=Razlog
 
 DATE_REFUS=Datum odbijanja
 DATE_SAVE=Datum odobrenja
-DATE_VALIDE=Datum odobrenja
 DATE_CANCEL=Datum otkazivanja
 DATE_PAIEMENT=Datum isplate
 
-TO_PAID=Plata
 BROUILLONNER=Ponovo Otvoreno
-SendToValid=Poslato na odobrenje
-ModifyInfoGen=Izmeni
 ValidateAndSubmit=Potvrdi i pošalji na odobrenje
 ValidatedWaitingApproval=Potvrđeno (čeka odobrenje)
 
-NOT_VALIDATOR=Nemate prava da odobrite ovaj trošak
 NOT_AUTHOR=Vi niste autor ovog troška. Operacija je otkazana.
 
-RefuseTrip=Odbij trošak
-ConfirmRefuseTrip=Da li ste sigurni da želite da odbijete ovaj trošak ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Odobri trošak
-ConfirmValideTrip=Da li ste sigurni da želite da odobrite ovaj trošak ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Isplati trošak
-ConfirmPaidTrip=Da li ste sigurni da želite da izmenite status ovog troška u "Isplaćen" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-CancelTrip=Otkaži trošak
-ConfirmCancelTrip=Da li ste sigurni da želite da otkažete ovaj trošak ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Vrati trošak u status "Draft"
-ConfirmBrouillonnerTrip=Da li ste sigurni da želite da vratite ovaj trošak u status "Draft" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Odobri trošak
-ConfirmSaveTrip=Da li ste sigurni da želite da odobrite ovaj trošak ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Nema troškova za ovaj period.
 ExpenseReportPayment=Isplata troška
 
+ExpenseReportsToApprove=Izveštaj trškova za odobrenje
 ExpenseReportsToPay=Troškovi zaisplatu

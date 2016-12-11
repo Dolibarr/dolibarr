@@ -1,2 +1,8 @@
 # Dolibarr language file - Source file is en_US - bills
+BillStatusDraft=Borrador (debe ser validado)
+BillShortStatusValidated=Validado
+BillShortStatusClosedUnpaid=Cerrado
 RelatedCommercialProposals=Cotizaciones asociadas
+Billed=Pagado
+PaymentConditionShortRECEP=Inmediato
+PaymentConditionRECEP=Inmediato

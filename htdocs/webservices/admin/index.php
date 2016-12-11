@@ -46,12 +46,12 @@ if ($actionsave)
     if ($i >= 1)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-        setEventMessage($langs->trans("Error"), 'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -109,7 +109,8 @@ $webservices = array(
 		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
 		'actioncomm'		=> '!empty($conf->agenda->enabled)',
 		'category'			=> '!empty($conf->categorie->enabled)',
-		'other'				=> ''
+		'project'			=> '!empty($conf->projet->enabled)',
+        'other'				=> ''
 );
 
 

@@ -1,7 +1,3 @@
-Module62000Name=Incoterm
-Module62000Desc=Add features to manage Incoterm
+Module62000Name=Międzynarodowe Reguły Handlu
+Module62000Desc=Dodaj funkcje do zarządzania Międzynarodowymi Regułami Handlu
 IncotermLabel=Formuły handlowe
-IncotermSetupTitle1=Funkcja
-IncotermSetupTitle2=Status
-IncotermSetup=Konfiguracja modułu formuły handlowej
-IncotermFunctionDesc=Aktywuj funkcje formuły handlowe (oferta handlowa, zamówienie klienta, faktury klienta, wysyłka, zamówienie dla dostawcy)

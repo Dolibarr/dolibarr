@@ -58,7 +58,7 @@ class modComptabilite extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-        $this->picto='';
+        $this->picto='accounting';
 
 		// Config pages
 		$this->config_page_url = array("compta.php");
@@ -91,9 +91,15 @@ class modComptabilite extends DolibarrModules
 		$this->rights[$r][0] = 95;
 		$this->rights[$r][1] = 'Lire CA, bilans, resultats';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'resultat';
 		$this->rights[$r][5] = 'lire';
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 
 

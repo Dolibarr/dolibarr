@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -166,8 +166,8 @@ else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
 		$conf->global->COMMANDE_ADDON_PDF = $value;
 	}
 
@@ -181,8 +181,8 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmod')
 {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Check if numbering module chosen can be activated 
+	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
@@ -273,11 +273,11 @@ else if ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
  * View
  */
 
+$form=new Form($db);
+
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader("",$langs->trans("OrdersSetup"));
-
-$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
@@ -494,7 +494,7 @@ foreach ($dirmodels as $reldir)
 	                                print "</td>";
 	                            }
 
-	                            // Defaut
+	                            // Default
 	                            print '<td align="center">';
 	                            if ($conf->global->COMMANDE_ADDON_PDF == $name)
 	                            {
@@ -554,7 +554,6 @@ print "<br>";
 
 /*
  * Other options
- *
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
@@ -602,6 +601,8 @@ print "</td></tr>\n";
 print '</form>';
 
 // Shippable Icon in List
+/* Kept as hidden feature for the moment, result seems bugged. 
+Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
@@ -617,6 +618,8 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 print '</a></td>';
 print '</tr>';
 
+/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
+/*
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
@@ -676,6 +679,7 @@ else
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
+*/
 
 print '</table>';
 print '<br>';

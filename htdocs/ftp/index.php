@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\author		Laurent Destailleur
  */
 
 require('../main.inc.php');
@@ -108,15 +107,15 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
-				setEventMessage($langs->trans($resupload), 'errors');
+				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
 	}
@@ -124,7 +123,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 	}
 }
 
@@ -143,8 +142,7 @@ if ($action == 'add' && $user->rights->ftp->setup)
 	}
 	else
 	{
-		//TODO: Translate
-		setEventMessage('Error '.$langs->trans($ecmdir->error));
+		setEventMessages($langs->trans("ErrorFailToCreateDir"), null, 'errors');
 		$action = "create";
 	}
 }
@@ -176,12 +174,12 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved",$file));
+			setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-			setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -226,12 +224,12 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$result=@ftp_delete($conn_id, $newremotefileiso);
 				if ($result)
 				{
-					setEventMessage($langs->trans("FileWasRemoved",$file));
+					setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 				}
 				else
 				{
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-					setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+					setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 				}
 
 				//ftp_close($conn_id);	Close later
@@ -270,11 +268,11 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("DirWasRemoved",$file));
+			setEventMessages($langs->trans("DirWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("FTPFailedToRemoveDir",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveDir",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -419,7 +417,6 @@ else
 		if ($action == 'delete_section')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-			
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
@@ -459,7 +456,7 @@ else
 
 
 		// Construit liste des repertoires
-		print '<table width="100%" class="nobordernopadding">'."\n";
+		print '<table width="100%" class="noborder">'."\n";
 
 		print '<tr class="liste_titre">'."\n";
 		print '<td class="liste_titre" align="left">'.$langs->trans("Content").'</td>'."\n";
@@ -647,8 +644,21 @@ else
 	}
 	else
 	{
-	    $s_ftp_server='FTP_SERVER_1';
-	    if (empty($s_ftp_server))
+		$foundsetup=false;
+		$MAXFTP=20;
+		$i=1;
+		while ($i <= $MAXFTP)
+		{
+			$paramkey='FTP_NAME_'.$i;
+			//print $paramkey;
+			if (! empty($conf->global->$paramkey))
+			{
+				$foundsetup=true;
+				break;
+			}
+			$i++;
+		}		
+	    if (! $foundsetup)
 	    {
             print $langs->trans("SetupOfFTPClientModuleNotComplete");
 	    }

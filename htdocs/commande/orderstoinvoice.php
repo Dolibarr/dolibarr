@@ -70,9 +70,14 @@ $date_end = dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endda
 $date_starty = dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
 $date_endy = dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date_end_delyday"],$_REQUEST["date_end_delyyear"]);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('facture');
+
 if ($action == 'create')
 {
-	if (is_array($selected) == false)
+	if (! is_array($selected))
 	{
 		$error++;
 		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
@@ -174,6 +179,9 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
 
+				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				if ($ret < 0) $error++;
+
 				if ($_POST['origin'] && $_POST['originid'])
 				{
 					$object->origin    = $_POST['origin'];
@@ -220,7 +228,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							{
 								if ($closeOrders)
 								{
-									$objectsrc->classifyBilled();
+									$objectsrc->classifyBilled($user);
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
@@ -300,7 +308,8 @@ if (($action == 'create' || $action == 'add') && !$error)
 												$lines[$i]->rowid,
 												$fk_parent_line,
 												$lines[$i]->fk_fournprice,
-												$lines[$i]->pa_ht
+												$lines[$i]->pa_ht,
+												$lines[$i]->label
 										);
 										if ($result > 0)
 										{
@@ -396,9 +405,9 @@ if ($action == 'create' && !$error)
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
-	
+
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -463,6 +472,12 @@ if ($action == 'create' && !$error)
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		$object=new Facture($db);
+		print $object->showOptionals($extrafields,'edit');
+	}
+
 	// Modele PDF
 	print '<tr><td>'.$langs->trans('Model').'</td>';
 	print '<td>';
@@ -501,15 +516,15 @@ if ($action == 'create' && !$error)
 	}
 
 	dol_fiche_end();
-	
+
 	// Button "Create Draft"
 	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
 	print "</table>\n";
-	
-	
+
+
 }
 
 // Mode liste
@@ -603,10 +618,11 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		//REF
 		print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
 		print '</td>';
-		//print '<td class="liste_titre">';
+
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-
+        print '</td>';
+        
 		//DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
@@ -618,15 +634,16 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</td>';
 
 		//SEARCH BUTTON
-		print '</td><td align="right" class="liste_titre">';
+		print '<td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-
+        print '</td>';
+        
 		//ALL/NONE
-		print '<td class="liste_titre" align="center">';
+		print '<td align="center" class="liste_titre">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 		print '</td>';
 
-		print '</td></tr>';
+		print '</tr>';
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
@@ -648,7 +665,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
-			print $generic_commande->getNomUrl(1,$objp->fk_statut);
+			print $generic_commande->getNomUrl(1,0);
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';
@@ -696,7 +713,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		/*
 		 * Boutons actions
 		*/
-		print '<br><div class="center"><input type="checkbox" checked name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		print '<br><div class="center"><input type="checkbox" '.(empty($conf->global->INVOICE_CLOSE_ORDERS_OFF_BY_DEFAULT_FORMASSINVOICE)?' checked="checked"':'').' name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '<div align="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<input type="hidden" name="action" value="create">';

@@ -2,7 +2,8 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011-2015 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>ù
+ * Copyright (C) 2015      Claudio Aschieri     <c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 
 $langs->load("admin");
 $langs->load("sendings");
@@ -36,21 +38,34 @@ if (!$user->admin)
 
 $action=GETPOST('action','alpha');
 
+
+/*
+ * Actions
+ */
+
 // Shipment note
+if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+{
+    // This option should always be set to on when module is on.
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
+}
+/*
 if ($action == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
     header("Location: confexped.php");
     exit;
 }
-else if ($action == 'disable_sending')
+if ($action == 'disable_sending')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
     header("Location: confexped.php");
     exit;
 }
+*/
+
 // Delivery note
-else if ($action == 'activate_delivery')
+if ($action == 'activate_delivery')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
     dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
@@ -66,39 +81,20 @@ else if ($action == 'disable_delivery')
 
 
 /*
- * Affiche page
+ * View
  */
+
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $form=new Form($db);
 
-llxHeader("","");
+llxHeader("",$langs->trans("SendingsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
+$head = expedition_admin_prepare_head();
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
-$head[$h][1] = $langs->trans("Setup");
-$hselected=$h;
-$h++;
-
-if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
-	$head[$h][1] = $langs->trans("Shipment");
-	$h++;
-}
-
-if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-	$head[$h][1] = $langs->trans("Receivings");
-	$h++;
-}
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'general', $langs->trans("Sendings"), 0, 'sending');
 
 /*
  * Formulaire parametres divers
@@ -120,23 +116,25 @@ print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
-
-if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+print $langs->trans("Required");
+/*if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else
 {
 	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-}
-
+}*/
 print "</td>";
 print '</tr>';
 
 // Bon de livraison activation/desactivation
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
+print '<td>';
+print $langs->trans("DeliveriesOrderAbility");
+print '<br>'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1);
+print '</td>';
 print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
@@ -156,8 +154,5 @@ print '</table>';
 
 print '</div>';
 
-print info_admin($langs->trans("NoNeedForDeliveryReceipts"));
-
-$db->close();
-
 llxFooter();
+$db->close();

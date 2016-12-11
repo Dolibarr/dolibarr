@@ -29,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 $langs->load("categories");
@@ -79,7 +80,7 @@ if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->
 
 if ($action == 'addthumb' && $_GET["file"])
 {
-    $object->add_thumb($upload_dir."/".$_GET["file"]);
+    $object->addThumbs($upload_dir."/".$_GET["file"]);
 }
 
 
@@ -90,15 +91,18 @@ if ($action == 'addthumb' && $_GET["file"])
 llxHeader("","",$langs->trans("Categories"));
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if ($object->id)
 {
-	$title=$langs->trans("ProductsCategoryShort");
 	if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 	elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
 	elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
 	elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
+	elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
+	elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+    else                                        $title=$langs->trans("Category");
 
 	$head = categories_prepare_head($object,$type);
 	dol_fiche_head($head, 'photos', $title, 0, 'category');
@@ -116,8 +120,8 @@ if ($object->id)
 	print '<table class="border" width="100%">';
 
 	// Path of category
-	print '<tr><td width="20%" class="notopnoleft">';
-	$ways = $object->print_all_ways();
+	print '<tr><td class="titlefield notopnoleft">';
+	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 	print $langs->trans("Ref").'</td><td>';
 	print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	foreach ($ways as $way)
@@ -127,54 +131,16 @@ if ($object->id)
 	print '</td></tr>';
 
 	// Description
-	print '<tr><td width="20%" class="notopnoleft">';
+	print '<tr><td class="notopnoleft">';
 	print $langs->trans("Description").'</td><td>';
 	print dol_htmlentitiesbr($object->description);
 	print '</td></tr>';
 
-	// Visibility
-	/*		if ($type == 0 && ! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
-	 {
-	if ($object->socid)
-	{
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("AssignedToTheCustomer").'</td><td>';
-	print $soc->getNomUrl(1);
+	// Color
+	print '<tr><td class="notopnoleft">';
+	print $langs->trans("Color").'</td><td>';
+	print $formother->showColor($object->color);
 	print '</td></tr>';
-
-	$catsMeres = $object->get_meres ();
-
-	if ($catsMeres < 0)
-	{
-	dol_print_error();
-	}
-	else if (count($catsMeres) > 0)
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	*/
 
 	print "</table>\n";
 

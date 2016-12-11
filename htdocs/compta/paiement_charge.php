@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid=GETPOST("id");
-$action=GETPOST('action');
+$chid=GETPOST("id", 'int');
+$action=GETPOST('action', 'alpha');
 $amounts = array();
 
 // Security check
@@ -44,13 +45,13 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'add_payment')
+if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
 	$error=0;
 
 	if ($_POST["cancel"])
 	{
-		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+		$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -108,7 +109,7 @@ if ($action == 'add_payment')
 
     		if (! $error)
     		{
-    		    $paymentid = $paiement->create($user);
+    		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib')=='on'?1:0));
                 if ($paymentid < 0)
                 {
                     $errmsg=$paiement->error;
@@ -129,7 +130,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+                $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
             }
@@ -154,11 +155,13 @@ $form=new Form($db);
 
 
 // Formulaire de creation d'un paiement de charge
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
+    $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;
+    $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
 
 	$total = $charge->amount;
 
@@ -178,16 +181,16 @@ if ($_GET["action"] == 'create')
 
 	dol_fiche_head('', '');
 
-	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
+	print '<table class="border" width="100%">';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("SocialContribution")."</td>";
+	print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("SocialContribution")."</td></tr>";
 
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dol_print_date($charge->periode,'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount")."</td><td colspan=\"2\">".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_libelle."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->lib."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -199,28 +202,28 @@ if ($_GET["action"] == 'create')
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	print '<tr class="liste_titre">';
-	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
+	print "<td colspan=\"2\">".$langs->trans("Payment").'</td>';
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 	$form->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
-	print '<td colspan="2">';
+	print '<td>';
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
@@ -228,11 +231,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
+	print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td valign="top">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';
@@ -314,8 +317,9 @@ if ($_GET["action"] == 'create')
 
 	print "</table>";
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	// Bouton Save payment
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -323,7 +327,5 @@ if ($_GET["action"] == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 	{
 		$producttmp->fetch(GETPOST('productid'));
 		$forbarcode=$producttmp->barcode;
-		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
+		$fk_barcode_type=$producttmp->barcode_type;
 
 		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 
@@ -85,7 +85,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -145,7 +145,9 @@ if ($action == 'builddoc')
 		// Load barcode class for generating barcode image
 		$classname = "mod".ucfirst($generator);
 		$module = new $classname($db);
-		if ($generator != 'tcpdfbarcode') {
+		if ($generator != 'tcpdfbarcode') 
+		{
+		    // May be phpbarcode
 			$template = 'standardlabel';
 			$is2d = false;
 			if ($module->encodingIsSupported($encoding))
@@ -153,12 +155,12 @@ if ($action == 'builddoc')
 				$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 				dol_delete_file($barcodeimage);
 				// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-				$result=$module->writeBarCode($code,$encoding,'Y',4);
-
+				$result=$module->writeBarCode($code,$encoding,'Y',4,1);
 				if ($result <= 0 || ! dol_is_file($barcodeimage))
 				{
 					$error++;
 					setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
+					setEventMessages($module->error, null, 'errors');
 				}
 			}
 			else
@@ -207,7 +209,7 @@ if ($action == 'builddoc')
 
 			for ($i=0; $i < $numberofsticker; $i++)
 			{
-				$arrayofmembers[]=array(
+				$arrayofrecords[]=array(
 					'textleft'=>$textleft,
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
@@ -226,7 +228,7 @@ if ($action == 'builddoc')
 		// Build and output PDF
 		if ($mode == 'label')
 		{
-			if (! count($arrayofmembers))
+			if (! count($arrayofrecords))
 			{
 				$mesg=$langs->trans("ErrorRecordNotFound");
 			}
@@ -234,7 +236,7 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs, $diroutput, $template);
+			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, 'tmp_barcode_sheet.pdf');
 		}
 
 		if ($result <= 0)
@@ -283,10 +285,13 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-// List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+// List of possible labels (defined into $_Avery_Labels variable set into core/lib/format_cards.lib.php)
 $arrayoflabels=array();
 foreach(array_keys($_Avery_Labels) as $codecards)
 {
+    $labeltoshow=$_Avery_Labels[$codecards]['name'];
+    //$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
+	$arrayoflabels[$codecards]=$labeltoshow;
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
@@ -379,7 +384,7 @@ print '</div>';
 print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
 print '<br>';
 print '<div class="showforthirdpartyselector">';
-print $form->select_company(GETPOST('socid'), 'socid', '', 1, 0, 0, array(), 0, 'minwidth300');
+print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 
@@ -387,11 +392,11 @@ print '<br>';
 
 if ($producttmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForProduct",$producttmp->getNomUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForProduct",'').' '.$producttmp->getNomUrl(1).'<br>';
 }
 if ($thirdpartytmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForThirdparty",$thirdpartytmp->getNomUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForThirdparty",'').' '.$thirdpartytmp->getNomUrl(1).'<br>';
 }
 
 print '<div class="tagtable">';

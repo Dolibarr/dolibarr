@@ -42,7 +42,7 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='invoice';
 
 
@@ -262,23 +262,6 @@ if ($action == 'setforcedate')
     }
 }
 
-if ($action == 'set_FAC_AUTO_FILLJS')
-{
-	$freetext = GETPOST('FAC_AUTO_FILLJS');	// No alpha here, we want exact string
-
-	$res = dolibarr_set_const($db, "FAC_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
 
 
 /*
@@ -380,7 +363,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -566,7 +549,7 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -578,7 +561,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"),'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -655,7 +638,7 @@ if (! empty($conf->banque->enabled))
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
     $sql.= " WHERE clos = 0";
     $sql.= " AND courant = 1";
-    $sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND entity IN (".getEntity('bank', 1).")";
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -700,7 +683,7 @@ $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
-$sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND entity IN (".getEntity('bank', 1).")";
 $var=True;
 $resql=$db->query($sql);
 if ($resql)
@@ -745,20 +728,6 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print "</td></tr>\n";
-print '</form>';
-
-// Add js auto fill amount on paiement form
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("JSOnPaimentBill");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

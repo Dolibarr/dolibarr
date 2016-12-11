@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/index.php
- *      \ingroup    tax
+ *		\file       htdocs/compta/tva/index.php
+ *		\ingroup    tax
  *		\brief      Index page of VAT reports
  */
 require '../../main.inc.php';
@@ -56,7 +56,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
 /**
- * pt
+ * print function
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
@@ -113,26 +113,19 @@ llxHeader();
 $tva = new Tva($db);
 
 
-$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
-$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
+$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
+$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
-print load_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print $conf->dol_optimize_smallscreen;
+print load_fiche_titre($langs->trans("VAT"), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
 print '<br>';
 
-print '<table width="100%" class="notopnoleftnoright">';
-print '<tr><td class="notopnoleft" width="50%">';
-print load_fiche_titre($langs->trans("VATSummary"));
-// The report mode is the one defined by defaut in tax module setup
-//print $modetax;
-//print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-print '</td><td>';
-print load_fiche_titre($langs->trans("VATPaid"));
-print '</td></tr>';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<tr><td class="notopnoleft" width="50%" valign="top">';
+print load_fiche_titre($langs->trans("VATSummary"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -160,9 +153,11 @@ for ($m = 1 ; $m < 13 ; $m++ )
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
+    $parameters["type"] = 'vat';
+    
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
-    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1)
     {
@@ -220,18 +215,12 @@ print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("To
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
-/*}
- else
- {
- print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
- print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
- }*/
-
 print '</table>';
 
 
-print '</td>';
-print '<td class="notopnoleftnoright" valign="top" width="50%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 /*
  * Payed
@@ -247,12 +236,7 @@ $sql.= " GROUP BY dm ORDER BY dm ASC";
 pt($db, $sql,$langs->trans("Year")." $y");
 
 
-print "</td></tr></table>";
-
-print '</td></tr>';
-print '</table>';
-
-
-$db->close();
+print '</div></div>';
 
 llxFooter();
+$db->close();

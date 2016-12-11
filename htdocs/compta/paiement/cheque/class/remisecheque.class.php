@@ -2,7 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ class RemiseCheque extends CommonObject
 	public $account_label;
 	public $author_id;
 	public $nbcheque;
-	public $number;
+	public $ref;
 
 	/**
 	 *	Constructor
@@ -72,14 +72,14 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque, bc.ref_ext";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext";
 		$sql.= ", bc.date_bordereau as date_bordereau";
 		$sql.= ", ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
 		$sql.= " WHERE bc.entity = ".$conf->entity;
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
-		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
+		if ($ref) $sql.= " AND bc.ref = '".$this->db->escape($ref)."'";
 
 		dol_syslog("RemiseCheque::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -99,13 +99,12 @@ class RemiseCheque extends CommonObject
 
 				if ($this->statut == 0)
 				{
-					$this->number         = "(PROV".$this->id.")";
+					$this->ref         = "(PROV".$this->id.")";
 				}
 				else
 				{
-					$this->number         = $obj->number;
+					$this->ref         = $obj->ref;
 				}
-				$this->ref            = $this->number;
 
 			}
 			$this->db->free($resql);
@@ -124,7 +123,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	User	$user 			User making creation
 	 *	@param  int		$account_id 	Bank account for cheque receipt
-	 *  @param  int		$limit          Limit number of cheque to this
+	 *  @param  int		$limit          Limit ref of cheque to this
 	 *  @param	array	$toRemise		array with cheques to remise
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -146,7 +145,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", fk_bank_account";
 		$sql.= ", statut";
 		$sql.= ", amount";
-		$sql.= ", number";
+		$sql.= ", ref";
 		$sql.= ", entity";
 		$sql.= ", nbcheque";
 		$sql.= ", ref_ext";
@@ -177,7 +176,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id > 0 && $this->errno == 0)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-				$sql.= " SET number='(PROV".$this->id.")'";
+				$sql.= " SET ref='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid='".$this->id."';";
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
@@ -345,13 +344,13 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-
-		$numref=$this->getNextNumber();
+		
+		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql.= " SET statut = 1, number = '".$numref."'";
+			$sql.= " SET statut = 1, ref = '".$numref."'";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND statut = 0";
@@ -364,7 +363,7 @@ class RemiseCheque extends CommonObject
 
 				if ($num == 1)
 				{
-				    $this->number = $numref;
+				    $this->ref = $numref;
 					$this->statut = 1;
 				}
 				else
@@ -394,45 +393,91 @@ class RemiseCheque extends CommonObject
 		}
 	}
 
-
 	/**
-	 * Old module for cheque receipt numbering
+	 *      Return next reference of cheque receipts not already used (or last reference)
+	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
-	 * @return 	int		Next number of cheque
+	 *      @param     string		$mode		'next' for next value or 'last' for last value
+	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumber()
+	function getNextNumRef($mode='next')
 	{
-		global $conf;
+		global $conf, $db, $langs, $mysoc;
+		$langs->load("bills");
 
-		$num=0;
+		// Clean parameters (if not defined or using deprecated value)
+		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		else if ($conf->global->CHEQUERECEIPTS_ADDON=='thyme') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_thyme';
+		else if ($conf->global->CHEQUERECEIPTS_ADDON=='mint') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
 
-		// We use +0 to convert varchar to number for mysql, use ::integer for postgres.
-		// We must found a generic solution (Use a $db->toint function ?)
-		$sql = "SELECT ";
-		if ($this->db->type == 'pgsql') $sql.="MAX(number::integer)";
-		else $sql.="MAX(number+0)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND number not like '(%'";
-
-		dol_syslog("Remisecheque::getNextNumber", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if (! empty($conf->global->CHEQUERECEIPTS_ADDON))
 		{
-			$row = $this->db->fetch_row($resql);
-			$num = $row[0];
-			$this->db->free($resql);
+			$mybool=false;
+
+			$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
+			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/cheque/");
+
+				// Load file with numbering class (if found)
+				if (is_file($dir.$file) && is_readable($dir.$file))
+				{
+					$mybool |= include_once $dir . $file;
+				}
+			}
+
+			// For compatibility
+			if (! $mybool)
+			{
+				$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
+				$classname = "mod_chequereceipt_".$conf->global->CHEQUERECEIPTS_ADDON;
+				$classname = preg_replace('/\-.*$/','',$classname);
+				// Include file with class
+				foreach ($conf->file->dol_document_root as $dirroot)
+				{
+					$dir = $dirroot."/core/modules/cheque/";
+
+					// Load file with numbering class (if found)
+					if (is_file($dir.$file) && is_readable($dir.$file)) {
+						$mybool |= include_once $dir . $file;
+					}
+				}
+			}
+
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			$numref = "";
+			$numref = $obj->getNextValue($mysoc,$this);
+
+			/**
+			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
+			 * set up mask.
+			 */
+			if ($mode != 'last' && !$numref) {
+				dol_print_error($db,"ChequeReceipts::getNextNumRef ".$obj->error);
+				return "";
+			}
+
+			return $numref;
 		}
 		else
 		{
-			$this->errno = -1034;
-			dol_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)", LOG_ERR);
+			$langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			return "";
 		}
-
-		$num++;
-
-		return $num;
 	}
+
 
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
@@ -502,7 +547,7 @@ class RemiseCheque extends CommonObject
 
 		dol_syslog("RemiseCheque::generatePdf model=".$model." id=".$this->id, LOG_DEBUG);
 
-		$dir=DOL_DOCUMENT_ROOT ."/core/modules/cheque/pdf/";
+		$dir=DOL_DOCUMENT_ROOT ."/core/modules/cheque/doc/";
 
 		// Charge le modele
 		$file = "pdf_".$model.".class.php";
@@ -540,7 +585,7 @@ class RemiseCheque extends CommonObject
 				}
 			}
 			$docmodel->nbcheque = $this->nbcheque;
-			$docmodel->number = $this->number;
+			$docmodel->ref = $this->ref;
 			$docmodel->amount = $this->amount;
 			$docmodel->date   = $this->date_bordereau;
 
@@ -552,7 +597,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charseSupprimert_output=$outputlangs->charset_output;
-			$result=$docmodel->write_file($this, $conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
+			$result=$docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
 			if ($result > 0)
 			{
 				//$outputlangs->charset_output=$sav_charset_output;
@@ -838,18 +883,18 @@ class RemiseCheque extends CommonObject
     }
 
 	/**
-	 *      Set the number of bordereau
+	 *      Set the ref of bordereau
 	 *
 	 *      @param	User		$user           Object user
-	 *      @param  int   $number         number of bordereau
+	 *      @param  int   $ref         ref of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
-	function set_number($user, $number)
+	function set_number($user, $ref)
 	{
 		if ($user->rights->banque->cheque)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql.= " SET number = '".$number."'" ;
+			$sql.= " SET ref = '".$ref."'" ;
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
@@ -868,6 +913,29 @@ class RemiseCheque extends CommonObject
 		{
 			return -2;
 		}
+	}
+
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
+	 *  @return	void
+	 */
+	function initAsSpecimen($option='')
+	{
+		global $user,$langs,$conf;
+
+		$now=dol_now();
+		$arraynow=dol_getdate($now);
+		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
+
+		// Initialize parameters
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$this->date_bordereau = $nownotime;
 	}
 
 	/**

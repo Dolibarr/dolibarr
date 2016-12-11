@@ -70,11 +70,14 @@ if (empty($reshook)) {
 
         $result = $ldap->update($dn, $info, $user, $olddn);
 
-        if ($result >= 0) {
-            setEventMessage($langs->trans("UserSynchronized"));
+        if ($result >= 0) 
+        {
+            setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
             $db->commit();
-        } else {
-            setEventMessage($ldap->error, 'errors');
+        } 
+        else 
+        {
+            setEventMessages($ldap->error, $ldap->errors, 'errors');
             $db->rollback();
         }
     }
@@ -178,12 +181,12 @@ if ($result > 0)
     $info=$object->_load_ldap_info();
     $dn=$object->_load_ldap_dn($info,1);
     $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records=$ldap->getAttribute($dn,$search);
+    $records = $ldap->getAttribute($dn,$search);
 
     //print_r($records);
 
     // Affichage arbre
-    if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     {
         if (! is_array($records))
         {
@@ -209,9 +212,5 @@ else
 
 print '</table>';
 
-
-
-
-$db->close();
-
 llxFooter();
+$db->close();

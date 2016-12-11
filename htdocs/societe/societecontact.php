@@ -2,9 +2,9 @@
 /* Copyright (C) 2005     	Patrick Rouillon    <patrick@rouillon.net>
  * Copyright (C) 2005-2011	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012	Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Charles-Fr Benke	<charles.fr@benke.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,9 @@ if ($id > 0 || ! empty($ref))
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
             
     	print '<div class="fichecenter">';
     
@@ -211,7 +213,7 @@ if ($id > 0 || ! empty($ref))
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql.= " d.datefin,";
 			$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql.= " t.libelle as type, t.cotisation";
+			$sql.= " t.libelle as type, t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE d.fk_soc=".$id;
@@ -290,7 +292,7 @@ if ($id > 0 || ! empty($ref))
 
 						// Statut
 						print '<td class="nowrap">';
-						print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+						print $memberstatic->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 						print "</td>";
 
 						// End of subscription date
@@ -306,7 +308,7 @@ if ($id > 0 || ! empty($ref))
 						else
 						{
 							print '<td align="left" class="nowrap">';
-							if ($objp->cotisation == 'yes')
+							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();
@@ -333,5 +335,5 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 llxFooter();
+$db->close();

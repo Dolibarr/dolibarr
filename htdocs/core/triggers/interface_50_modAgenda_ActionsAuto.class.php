@@ -43,13 +43,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
-	 * Following properties must be filled:
+	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
 	 *      $object->sendtoid (id of contact)
 	 *      $object->socid
-	 *      Optionnal:
+	 *      $object->fk_project
 	 *      $object->fk_element
 	 *      $object->elementtype
 	 *
@@ -79,6 +79,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Actions
 		if ($action == 'COMPANY_CREATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("companies");
 
@@ -93,6 +94,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'COMPANY_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -105,6 +107,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'CONTRACT_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("contracts");
 
@@ -117,8 +120,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
-        	$langs->load("propal");
+            $langs->load("propal");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -129,6 +133,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'PROPAL_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("propal");
 
@@ -145,6 +150,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("propal");
 
@@ -157,6 +163,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLASSIFY_BILLED')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("propal");
 
@@ -169,6 +176,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("propal");
 
@@ -181,6 +189,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -192,6 +201,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLOSE')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -204,6 +214,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLASSIFY_BILLED')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -216,6 +227,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CANCEL')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -228,6 +240,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -244,6 +257,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -256,6 +270,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_UNVALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -268,6 +283,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'BILL_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -284,6 +300,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_PAYED')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -297,6 +314,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_CANCEL')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -309,7 +327,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_CREATE')
         {
-        	$langs->load("other");
+            $langs->load("agenda");
+            $langs->load("other");
             $langs->load("interventions");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -323,6 +342,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("interventions");
 
@@ -337,7 +357,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_MODIFY')
         {
-        	$langs->load("other");
+            $langs->load("agenda");
+            $langs->load("other");
             $langs->load("interventions");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -351,7 +372,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_SENTBYMAIL')
         {
-        	$langs->load("other");
+            $langs->load("agenda");
+            $langs->load("other");
             $langs->load("interventions");
 
             $object->actiontypecode='AC_OTH_AUTO';
@@ -363,6 +385,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("interventions");
 
@@ -375,6 +398,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 	    elseif ($action == 'FICHINTER_CLASSIFY_UNBILLED')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("interventions");
 
@@ -387,6 +411,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'FICHINTER_DELETE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("interventions");
 
@@ -401,7 +426,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'SHIPPING_VALIDATE')
         {
-        	$langs->load("other");
+            $langs->load("agenda");
+            $langs->load("other");
         	$langs->load("sendings");
 
         	$object->actiontypecode='AC_OTH_AUTO';
@@ -417,6 +443,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'SHIPPING_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("sendings");
 
@@ -431,8 +458,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
 		}
+		elseif ($action == 'ORDER_SUPPLIER_CREATE')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
         	$langs->load("orders");
 
@@ -445,7 +486,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
 		{
-            $langs->load("other");
+            $langs->load("agenda");
+		    $langs->load("other");
 			$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -457,7 +499,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
 		{
-            $langs->load("other");
+            $langs->load("agenda");
+		    $langs->load("other");
 			$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -467,8 +510,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-        elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
+		elseif ($action == 'ORDER_SUPPLIER_SUBMIT')
         {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_RECEIVE')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
+        {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
             $langs->load("orders");
@@ -484,8 +554,26 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
         }
+		elseif ($action == 'ORDER_SUPPLIER_CLASSIFY_BILLED')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("orders");
+
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
+
+            $object->sendtoid=0;
+        }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -498,6 +586,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_SUPPLIER_UNVALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -510,6 +599,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
             $langs->load("orders");
@@ -527,6 +617,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'BILL_SUPPLIER_PAYED')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -539,6 +630,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_SUPPLIER_CANCELED')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("bills");
 
@@ -553,6 +645,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Members
         elseif ($action == 'MEMBER_VALIDATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("members");
 
@@ -567,6 +660,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("members");
 
@@ -583,6 +677,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("members");
 
@@ -597,6 +692,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_DELETE')
         {
+            $langs->load("agenda");
             $langs->load("other");
             $langs->load("members");
 
@@ -613,7 +709,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Projects
         elseif ($action == 'PROJECT_CREATE')
         {
-        	$langs->load("other");
+            $langs->load("agenda");
+            $langs->load("other");
         	$langs->load("projects");
 
         	$object->actiontypecode='AC_OTH_AUTO';
@@ -624,10 +721,39 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-
+        elseif($action == 'PROJECT_CREATE') {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+        
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
+        elseif($action == 'PROJECT_MODIFY') {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
 		// Project tasks
 		elseif($action == 'TASK_CREATE') {
-			$langs->load("other");
+            $langs->load("agenda");
+		    $langs->load("other");
 			$langs->load("projects");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -641,7 +767,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 
 		elseif($action == 'TASK_MODIFY') {
-			$langs->load("other");
+            $langs->load("agenda");
+		    $langs->load("other");
 			$langs->load("projects");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -654,7 +781,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 
 		elseif($action == 'TASK_DELETE') {
-			$langs->load("other");
+            $langs->load("agenda");
+		    $langs->load("other");
 			$langs->load("projects");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -678,12 +806,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Add entry in event table
 		$now=dol_now();
 
-		if (isset($_SESSION['listofnames']))
+		if (isset($_SESSION['listofnames-'.$object->trackid]))
 		{
-			$attachs=$_SESSION['listofnames'];
+			$attachs=$_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action,'SENTBYMAIL'))
 			{
-				 $object->actionmsg.="\n".$langs->transnoentities("AttachedFiles").': '.$attachs;
+                $object->actionmsg=dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
 			}
 		}
 
@@ -698,9 +826,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode;		// code of parent table llx_c_actioncomm (will be deprecated)
-		$actioncomm->code='AC_'.$action;
+		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;
+		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
+		$actioncomm->fk_project  = isset($object->fk_project)?$object->fk_project:0;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
@@ -712,15 +841,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-		//$actioncomm->userdone    = $user;	    // User doing action (not used anymore)
-		//$actioncomm->userdoneid  = $user->id;	// User doing action (not used anymore)
+        // Fields when action is en email (content should be added into note)
+		$actioncomm->email_msgid = $object->email_msgid;
+		$actioncomm->email_from  = $object->email_from;
+		$actioncomm->email_sender= $object->email_sender;
+		$actioncomm->email_to    = $object->email_to;
+		$actioncomm->email_tocc  = $object->email_tocc;
+		$actioncomm->email_tobcc = $object->email_tobcc;
+		$actioncomm->email_subject = $object->email_subject;
+		$actioncomm->errors_to   = $object->errors_to;
 
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;
 
-		$ret=$actioncomm->add($user);       // User qui saisit l'action
+		$ret=$actioncomm->create($user);       // User creating action
 		
-		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse vallue of first action.
+		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		
 		if ($ret > 0)
 		{
@@ -736,8 +872,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
             dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);
             return -1;
 		}
-
-		return 0;
     }
 
 }

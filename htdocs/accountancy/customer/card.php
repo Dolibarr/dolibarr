@@ -18,16 +18,15 @@
  */
 
 /**
- * \file		htdocs/accountancy/customer/card.php
- * \ingroup		Accountancy
- * \brief		Card customer ventilation
+ * \file htdocs/accountancy/customer/card.php
+ * \ingroup Accountancy
+ * \brief Card customer ventilation
  */
-
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("bills");
@@ -40,27 +39,35 @@ $id = GETPOST('id');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-
+	
+	
+	
 /*
  * Actions
  */
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
-	if (! GETPOST('cancel', 'alpha'))
-	{
+
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (! GETPOST('cancel', 'alpha')) {
+	    if ($codeventil < 0) $codeventil = 0;
+	    
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
-
-		dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
+		
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	} else {
 		header("Location: ./lines.php");
 		exit();
 	}
 }
+
 
 /*
  * View
@@ -88,38 +95,36 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
-	}
-
+	$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")"; // We don't share object for accountancy
+	
 	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
-
+	
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
-
+		
 		if ($num_lines) {
-
+			
 			$objp = $db->fetch_object($result);
-
+			
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
-
-			print load_fiche_titre($langs->trans('CustomersVentilation'),'','title_setup');
-
-            dol_fiche_head();
-
+			
+			print load_fiche_titre($langs->trans('CustomersVentilation'), '', 'title_setup');
+			
+			dol_fiche_head();
+			
 			print '<table class="border" width="100%">';
-
+			
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';
 			$facture_static->ref = $objp->facnumber;
 			$facture_static->id = $objp->facid;
 			print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 			print '</tr>';
-
+			
 			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
 			print '<td>' . nl2br($objp->description) . '</td></tr>';
 			print '<tr><td width="20%">' . $langs->trans("Account") . '</td><td>';
@@ -127,14 +132,14 @@ if (! empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 			
-            dol_fiche_end();
-
+			dol_fiche_end();
+			
 			print '<div class="center">';
 			print '<input class="button" type="submit" value="' . $langs->trans("Save") . '">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 			print '</div>';
-
+			
 			print '</form>';
 		} else {
 			print "Error";

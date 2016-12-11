@@ -34,7 +34,7 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
@@ -51,10 +51,10 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
-*	View
-*/
+ * View
+ */
 
-llxHeader('','Contacts');
+llxHeader('',$langs->trans("Contacts"));
 
 if ($type == "c" || $type == "p")
 {
@@ -68,8 +68,7 @@ if ($type == "f")
 }
 
 /*
- * Mode liste
- *
+ * List mode
  */
 
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";

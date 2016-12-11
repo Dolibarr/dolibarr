@@ -45,7 +45,7 @@ $backtourl = GETPOST('backtourl', 'alpha');
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/google_oauthcallback.php');
 
 
 /**
@@ -123,7 +123,7 @@ if (! empty($_GET['code']))     // We are coming from Google oauth page
         //var_dump($apiService);      // OAuth\OAuth2\Service\Google
         $token = $apiService->requestAccessToken($_GET['code'], $state);
         
-        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
+        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
     } catch (Exception $e) {
         print $e->getMessage();
     }

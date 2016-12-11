@@ -35,6 +35,7 @@ $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref);
+	$object->getrights();
 }
 
 // Security check
@@ -76,7 +77,6 @@ $object->info($id); // This overwrite ->ref with login instead of id
 
 
 print '<div class="fichecenter">';
-
 print '<div class="underbanner clearboth"></div>';
 
 print '<br>';

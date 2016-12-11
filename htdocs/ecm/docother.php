@@ -167,6 +167,5 @@ if ($mesg) { print $mesg."<br>"; }
 print $langs->trans("FeatureNotYetAvailable");
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();

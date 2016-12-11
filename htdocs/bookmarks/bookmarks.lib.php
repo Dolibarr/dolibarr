@@ -50,8 +50,7 @@ function printBookmarksList($aDb, $aLangs)
 	$ret.= '</td><td align="right">';
 	if ($user->rights->bookmark->creer)
 	{
-		$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-		//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
+		$ret.= '<a class="vsmenu addbookmarkpicto" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
 		$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
 		$ret.= '</a>';
 	}
@@ -73,7 +72,7 @@ function printBookmarksList($aDb, $aLangs)
 			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 			{
 				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
-				$ret.=' '.img_object('','bookmark').' ';
+				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $ret.=' '.img_object('','bookmark').' ';
 				$ret.= dol_trunc($obj->title, 20).'</a><br></div>';
 				$i++;
 			}

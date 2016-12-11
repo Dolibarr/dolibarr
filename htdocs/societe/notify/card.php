@@ -51,70 +51,83 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="c.lastname";
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="n.daten";
 
 $now=dol_now();
+
+$object = new Societe($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartynotification','globalcard'));
+
 
 
 /*
  * Actions
  */
 
-// Add a notification
-if ($action == 'add')
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
     $error=0;
 
-    if (empty($contactid))
+    // Add a notification
+    if ($action == 'add')
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
-        $error++;
-    }
-    if ($actionid <= 0)
-    {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
-        $error++;
-    }
-
-    if (! $error)
-    {
-        $db->begin();
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-        $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
-        if ($db->query($sql))
+        if (empty($contactid))
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-            $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
-
-            if (! $db->query($sql))
-            {
-                $error++;
-                dol_print_error($db);
-            }
+    	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), null, 'errors');
+            $error++;
         }
-        else
+        if ($actionid <= 0)
         {
-            dol_print_error($db);
+    	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
+            $error++;
         }
-
+    
         if (! $error)
         {
-            $db->commit();
-        }
-        else
-        {
-            $db->rollback();
+            $db->begin();
+            
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+            $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
+            if ($db->query($sql))
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
+                $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
+    
+                if (! $db->query($sql))
+                {
+                    $error++;
+                    dol_print_error($db);
+                }
+            }
+            else
+            {
+                dol_print_error($db);
+            }
+    
+            if (! $error)
+            {
+                $db->commit();
+            }
+            else
+            {
+                $db->rollback();
+            }
         }
     }
-}
-
-// Remove a notification
-if ($action == 'delete')
-{
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
-    $db->query($sql);
+    
+    // Remove a notification
+    if ($action == 'delete')
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST('actid', 'int');
+        $db->query($sql);
+    }
 }
 
 
@@ -142,27 +155,24 @@ if ($result > 0)
 
     dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
     // Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
     if ($object->client)
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
         if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -171,14 +181,14 @@ if ($result > 0)
 
     if ($object->fournisseur)
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
 
-    print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
     $notify=new Notify($db);
     $tmparray = $notify->getNotificationsArray('', $object->id);
@@ -186,16 +196,20 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    // Help
-    print '<br>'.$langs->trans("NotificationsDesc");
-
     print '</div>';
     
     dol_fiche_end();
 
     print "\n";
 
-    print '<br>';
+    // Help
+    print '<br>'.$langs->trans("NotificationsDesc");
+    print '<br>'.$langs->trans("NotificationsDescUser");
+    print '<br>'.$langs->trans("NotificationsDescContact");
+    print '<br>'.$langs->trans("NotificationsDescGlobal");
+    
+    print '<br><br><br>'."\n";
+    
     
     // Add notification form
     print load_fiche_titre($langs->trans("AddNewNotification"),'','');
@@ -209,9 +223,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -230,11 +244,11 @@ if ($result > 0)
  			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']]=$label;
         }
-        print '<tr '.$bc[$var].'><td>';
-        print $form->selectarray("contactid",$listofemails);
+        print '<tr '.$bc[$var].'><td class="maxwidthonsmartphone">';
+        print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
-        print '<td>';
-        print $form->selectarray("actionid",$actions,'',1);
+        print '<td class="maxwidthonsmartphone">';
+        print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
@@ -245,7 +259,7 @@ if ($result > 0)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="4">';
+        print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
     }
@@ -256,22 +270,7 @@ if ($result > 0)
     print '</form>';
     print '<br>';
 
-    // List of active notifications
-    print load_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');
-    $var=true;
-
-    // Line with titles
-    print '<table width="100%" class="noborder">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
-    print_liste_field_titre('','','');
-    print '</tr>';
-
-	$langs->load("errors");
-	$langs->load("other");
-
+    
     // List of notifications enabled for contacts
     $sql = "SELECT n.rowid, n.type,";
     $sql.= " a.code, a.label,";
@@ -282,11 +281,35 @@ if ($result > 0)
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND c.rowid = n.fk_contact";
     $sql.= " AND c.fk_soc = ".$object->id;
-
+    
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+    
+    // List of active notifications
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
+    $var=true;
+
+    // Line with titles
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre('','','');
+    print '</tr>';
+
+	$langs->load("errors");
+	$langs->load("other");
+
+    if ($num)
+    {
         $i = 0;
 
         $contactstatic=new Contact($db);
@@ -327,10 +350,6 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
-        dol_print_error($db);
     }
 
     // List of notifications enabled for fixed email
@@ -384,22 +403,10 @@ if ($result > 0)
     }
 
     print '</table>';
-    print '<br>';
+    
+    
+    print '<br><br>'."\n";
 
-
-    // List of notifications done
-    print load_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
-    $var=true;
-
-    // Line with titles
-    print '<table width="100%" class="noborder">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.daten",'',$param,'align="right"',$sortfield,$sortorder);
-    print '</tr>';
 
     // List
     $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
@@ -410,11 +417,34 @@ if ($result > 0)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND n.fk_soc = ".$object->id;
+    $sql.= $db->order($sortfield, $sortorder);
 
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+    
+    // List of notifications done
+    print load_fiche_titre($langs->trans("ListOfNotificationsDone").' ('.$num.')','','');
+    $var=true;
+
+    // Line with titles
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
+    print '</tr>';
+
+    if ($num > 0)
+    {
         $i = 0;
 
         $contactstatic=new Contact($db);
@@ -462,10 +492,6 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
-        dol_print_error($db);
     }
 
     print '</table>';

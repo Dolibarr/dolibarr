@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.php';
 
 $langs->load("trips");
+$langs->load("companies");
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -217,14 +218,14 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 /*
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 $filter='';
-print $form->select_company($socid,'socid',$filter,1,1);
+print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include='';
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include='hierarchy';
-print $form->select_dolusers($userid,'userid',1,'',0,$include);
+print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
@@ -240,9 +241,9 @@ print '<br><br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("Number").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("Number").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;

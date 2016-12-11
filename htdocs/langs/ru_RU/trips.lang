@@ -1,39 +1,35 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Отчёт о затратах
 ExpenseReports=Отчёты о затратах
-Trip=Отчёт о затратах
+ShowExpenseReport=Show expense report
 Trips=Отчёты о затратах
 TripsAndExpenses=Отчёты о затратах
 TripsAndExpensesStatistics=Статистика отчётов о затратах
 TripCard=Карточка отчётов о затратах
 AddTrip=Создать отчёт о затратах
-ListOfTrips=List of expense reports
+ListOfTrips=Список отчётов о затратах
 ListOfFees=Список сборов
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Новый отчёт о затртатах
 CompanyVisited=Посещенная организация
-Kilometers=Километры
 FeesKilometersOrAmout=Сумма или километры
 DeleteTrip=Удалить отчёт о затратах
-ConfirmDeleteTrip=Вы точно хотите удалить этот отчёт о затратах?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Список отчётов о затратах
 ListToApprove=Ждёт утверждения
 ExpensesArea=Поле отчётов о затратах
-SearchATripAndExpense=Поиск отчёта о затратах
 ClassifyRefunded=Classify 'Refunded'
 ExpenseReportWaitingForApproval=Новый отчёт о затратах направлен на утверждение
 ExpenseReportWaitingForApprovalMessage=Новый отчёт отчёт о затратах отправлен и ждёт утверждения. \nОт пользователя %s\nЗа период %s\nНажмите для проверки: %s
 TripId=ID отчёта о затратах
 AnyOtherInThisListCanValidate=Кого уведомлять для подтверждения.
 TripSociete=Информация о компании
-TripSalarie=Информация о пользователе
 TripNDF=Информация о отчёте о затратах
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Вы точно хотите удалить эту строку?
 PDFStandardExpenseReports=Шаблон отчёта о затратах для создания документа в формате PDF
 ExpenseReportLine=Строка отчёта о затратах
 TF_OTHER=Другое
-TF_TRANSPORTATION=Транспортировка
+TF_TRIP=Транспортировка
 TF_LUNCH=Обед
 TF_METRO=Метро
 TF_TRAIN=Поезд
@@ -45,16 +41,9 @@ TF_HOTEL=Hotel
 TF_TAXI=Такси
 
 ErrorDoubleDeclaration=Вы должны задекларировать другой отчёт о затратах в этом временном диапазоне. 
-AucuneNDF=Нет отчётов о затратах по этому критерию
 AucuneLigne=Нет задекларированных отчётов о затратах
-AddLine=Добавить строку
-AddLineMini=Добавить
 
-Date_DEBUT=Дата начала периода
-Date_FIN=Дата конца периода
 ModePaiement=Режим оплаты
-Note=Примечание
-Project=Проект
 
 VALIDATOR=User responsible for approval
 VALIDOR=Утверждено
@@ -68,39 +57,33 @@ MOTIF_CANCEL=Причина
 
 DATE_REFUS=Дата отклонения
 DATE_SAVE=Дата проверки
-DATE_VALIDE=Дата проверки
 DATE_CANCEL=Дата отмены
 DATE_PAIEMENT=Дата платежа
 
-TO_PAID=Оплатить
 BROUILLONNER=Открыть заново
-SendToValid=Sent on approval
-ModifyInfoGen=Редактировать
 ValidateAndSubmit=Проверить и отправить запрос на утверждение
 ValidatedWaitingApproval=Validated (waiting for approval)
 
-NOT_VALIDATOR=Вы не можете утвердить этот отчёт о затратах
 NOT_AUTHOR=Вы не автор этого отчёта о затратах. Операция отменена.
 
-RefuseTrip=Отклонить отчёт о затратах
-ConfirmRefuseTrip=Вы точно хотите отклонить этот отчёт о затратах?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Одобрить отчёт о затратах
-ConfirmValideTrip=Вы точно хотите одобрить отчёт о затратах?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Оплатить отчёт о затратах
-ConfirmPaidTrip=Вы точно хотите изменит статус этого отчёта о затратах на "Оплачен"?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-CancelTrip=Отменить отчёт о затратах
-ConfirmCancelTrip=Вы точно хотите отменить отчёт о затратах?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Вы точно хотите изменить статус этого отчёта о затратах на "Черновик"?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Проверить отчёт о завтратах
-ConfirmSaveTrip=Вы точно хотите проверить данный отчёт о затратах?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Нет отчёта о затратах за этот период.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

@@ -238,11 +238,10 @@ if ($action == 'add')
             $adh->pass        = $_POST["pass1"];
         }
         $adh->photo       = $_POST["photo"];
-        $adh->note        = $_POST["note"];
         $adh->country_id  = $_POST["country_id"];
         $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
-        $adh->note        = $_POST["comment"];
+        $adh->note_private= $_POST["note_private"];
         $adh->morphy      = $_POST["morphy"];
         $adh->birth       = $birthday;
 
@@ -460,7 +459,7 @@ print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
+print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
 print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectcountry_id','state_id'), 6, 1);
@@ -520,7 +519,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 // Comments
 print '<tr>';
 print '<td valign="top">'.$langs->trans("Comments").'</td>';
-print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.dol_escape_htmltag(GETPOST('comment')).'</textarea></td>';
+print '<td valign="top"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example

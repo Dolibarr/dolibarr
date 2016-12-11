@@ -51,7 +51,7 @@ class modOpenSurvey extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to group modules in module setup page
-		$this->family = "projects";
+		$this->family = "portal";
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
@@ -119,23 +119,9 @@ class modOpenSurvey extends DolibarrModules
 		$r++;
 
 
-		// Main menu entries
-		$this->menus = array();			// List of menus to add
-		$r=0;
-		/*
-		$this->menu[$r]=array(	'fk_menu'=>0,		    						// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'top',
-								'titre'=>'Surveys',
-								'mainmenu'=>'opensurvey',
-								'url'=>'/opensurvey/index.php',
-								'langs'=>'opensurvey',
-								'position'=>200,
-                				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->opensurvey->read',
-								'target'=>'',
-								'user'=>0);
-		$r++;*/
-
+		// Menus
+		//-------
+        $r=0;
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',
 								'titre'=>'Survey',
@@ -145,7 +131,7 @@ class modOpenSurvey extends DolibarrModules
 								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',
+								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
 		$r++;
@@ -173,7 +159,7 @@ class modOpenSurvey extends DolibarrModules
 								'langs'=>'opensurvey',
 								'position'=>220,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',
+								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
 		$r++;

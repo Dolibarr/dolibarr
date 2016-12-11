@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -32,8 +32,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/generate-commande.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+//$path=preg_replace('/generate-commande.php/i','',$_SERVER["PHP_SELF"]);
+require (__DIR__. '/../../htdocs/master.inc.php');
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -165,7 +165,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $com = new Commande($db);
 
     $com->socid         = 4;
-    $com->date_commande  = $dates[rand(1, count($dates)-1)];
+    $com->date_commande  = $dates[mt_rand(1, count($dates)-1)];
     $com->note           = 'A comment';
     $com->source         = 1;
     $com->fk_project     = 0;
@@ -179,14 +179,14 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 		$result=$com->valid($user);
 		if ($result > 0)
 		{
-            $nbp = rand(2, 5);
+            $nbp = mt_rand(2, 5);
             $xnbp = 0;
             while ($xnbp < $nbp)
             {
-                $prodid = rand(1, $num_prods);
+                $prodid = mt_rand(1, $num_prods);
                 $product=new Product($db);
                 $result=$product->fetch($prodids[$prodid]);
-                $result=$com->addline($product->description, $product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
+                $result=$com->addline($product->description, $product->price, mt_rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
                 if ($result < 0)
                 {
                     dol_print_error($db,$propal->error);

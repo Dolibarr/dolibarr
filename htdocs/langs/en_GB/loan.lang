@@ -1,0 +1,50 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Loan
+Loans=Loans
+NewLoan=New Loan
+ShowLoan=Show Loan
+PaymentLoan=Loan repayment\n
+LoanPayment=Loan repayment\n
+ShowLoanPayment=Show Loan Repayment\n
+LoanCapital=Capital
+Insurance=Insurance
+Interest=Interest
+Nbterms=Number of terms
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Confirm deleting this loan
+LoanDeleted=Loan Deleted Successfully
+ConfirmPayLoan=Confirm Loan Classification - Paid
+LoanPaid=Loan Repaid
+# Calc
+LoanCalc=Bank Loan Calculator
+PurchaseFinanceInfo=Purchase & Financing Information
+SalePriceOfAsset=Sale Price of Asset
+PercentageDown=Percentage Deposit
+LengthOfMortgage=Duration of loan
+AnnualInterestRate=Annual Interest Rate
+ExplainCalculations=Explain Calculations
+ShowMeCalculationsAndAmortization=Show me the calculations and amortisation
+MortgagePaymentInformation=Mortgage Repayment Information
+DownPayment=Initial Deposit
+DownPaymentDesc=The <b>Initial Deposit</b> = The price of the home multiplied by the deposit percentage divided by 100 (for 5% deposit becomes 5/100 or 0.05)\n
+InterestRateDesc=The <b>interest rate</b> = The annual interest rate divided by 100\n
+MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
+MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
+MonthTermDesc=The <b>monthly term</b> of the loan in months = The duration of the loan in years multiplied by 12\n
+MonthlyPaymentDesc=The monthly payment is calculated using the following formula\n
+AmortizationPaymentDesc=The <a href="#amortization">amortisation</a> calculates how much of your monthly repayment goes towards the bank's interest, and how much goes into paying off the principal of your loan.\n
+AmountFinanced=Amount Financed
+AmortizationMonthlyPaymentOverYears=Amortisation For Monthly Payment: <b>%s</b> over %s years\n
+Totalsforyear=Totals for year
+MonthlyPayment=Monthly Repayment\n
+LoanCalcDesc=This <b>mortgage calculator</b> can be used to calculate the monthly repayments of a loan, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is offered as an initial deposit. Also taken into consideration are any local property taxes, and their effect on the total monthly mortgage repayment.<br>\n
+GoToInterest=%s will go towards INTEREST
+GoToPrincipal=%s will go towards PRINCIPAL
+YouWillSpend=You will spend %s in year %s
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default

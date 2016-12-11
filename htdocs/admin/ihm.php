@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ $langs->load("products");
 $langs->load("members");
 $langs->load("projects");
 $langs->load("hrm");
+$langs->load("agenda");
 
 if (! $user->admin) accessforbidden();
 
@@ -48,13 +50,15 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
 $searchform=array();
+/* deprecated
 if (empty($conf->use_javascript_ajax))
 {
-    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
-    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
-    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
-    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
+    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
+    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
+    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
+    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
 }
+*/
 
 
 /*
@@ -73,37 +77,35 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
-	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
 	
-    $val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'),'chaine',0,'',$conf->entity);
+    
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', join(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
 
-	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
 
-	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array())),'chaine',0,'',$conf->entity);
+    
+    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
-	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', join(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
 	
-	/*
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",			$_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",	$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",			$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PROJECT",			$_POST["MAIN_SEARCHFORM_PROJECT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_EMPLOYEE",			$_POST["MAIN_SEARCHFORM_EMPLOYEE"],'chaine',0,'',$conf->entity);
-    */
-    
     dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
@@ -157,7 +159,6 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print load_fiche_titre($langs->trans("Language"),'','');
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -172,7 +173,7 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Multilangual GUI
+	// Multilingual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
@@ -186,7 +187,7 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // Liste des zone de recherche permanantes supportees
+    // List of permanent supported search box
     if (! empty($searchform))
     {
         print '<table summary="search" class="noborder" width="100%">';
@@ -225,7 +226,7 @@ if ($action == 'edit')	// Edit
 
 	// Max size of short lists on customer card
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '"></td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	
@@ -408,7 +409,7 @@ else	// Show
 	print "</tr>";
 	
 	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 

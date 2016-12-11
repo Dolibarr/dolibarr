@@ -35,9 +35,11 @@ class CActionComm
 
     var $code;
     var $type;
-    var $libelle;
+    var $libelle;       // deprecated
+    var $label;
     var $active;
     var $color;
+    var $picto;
 
     var $type_actions=array();
 
@@ -60,7 +62,7 @@ class CActionComm
      */
     function fetch($id)
     {
-        $sql = "SELECT id, code, type, libelle, color, active";
+        $sql = "SELECT id, code, type, libelle as label, color, active, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
@@ -76,7 +78,8 @@ class CActionComm
                 $this->id      = $obj->id;
                 $this->code    = $obj->code;
                 $this->type    = $obj->type;
-                $this->libelle = $obj->libelle;
+                $this->libelle = $obj->label;   // deprecated
+                $this->label   = $obj->label;
                 $this->active  = $obj->active;
                 $this->color   = $obj->color;
 
@@ -99,13 +102,14 @@ class CActionComm
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
-     *  @param	string|int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
+     *  @param	string|int	$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
      *  @param	string		$idorcode		'id' or 'code'
-     *  @param	string		$excludetype	Type to exclude
-     *  @param	int		$onlyautoornot	Group list by auto events or not
-     *  @return mixed      					Array of all event types if OK, <0 if KO
+     *  @param	string		$excludetype	Type to exclude ('system' or 'systemauto')
+     *  @param	int		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+     *  @param  string      $morefilter     Add more SQL filter
+     *  @return mixed      					Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
+    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='')
     {
         global $langs,$conf;
         $langs->load("commercial");
@@ -113,11 +117,13 @@ class CActionComm
         $repid = array();
         $repcode = array();
 
-        $sql = "SELECT id, code, libelle, module, type, color";
+        $sql = "SELECT id, code, libelle as label, module, type, color, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-        if ($active != '') $sql.=" WHERE active=".$active;
-        if (! empty($excludetype)) $sql.=($active != ''?" AND":" WHERE")." type <> '".$excludetype."'";
-        $sql.= " ORDER BY module, position";
+        $sql.= " WHERE 1=1";
+        if ($active != '') $sql.=" AND active=".$active;
+        if (! empty($excludetype)) $sql.=" AND type <> '".$excludetype."'";
+        if ($morefilter) $sql.=" AND ".$morefilter;
+        $sql.= " ORDER BY module, position, type";
 
         dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -134,7 +140,7 @@ class CActionComm
                     $qualified=1;
 
                     // $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
-                    if ($qualified && $onlyautoornot && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+                    if ($qualified && $onlyautoornot > 0 && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 
                     if ($qualified && $obj->module)
                     {
@@ -149,12 +155,19 @@ class CActionComm
                     if ($qualified)
                     {
                     	$code=$obj->code;
-                    	if ($onlyautoornot && $code == 'AC_OTH') $code='AC_MANUAL';
-                    	if ($onlyautoornot && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
+                    	if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
+                    	if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
                     	$transcode=$langs->trans("Action".$code);
-                        $repid[$obj->id] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
-                        $repcode[$obj->code] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
-                        if ($onlyautoornot && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
+                        $label = ($transcode!="Action".$code?$transcode:$langs->trans($obj->label));
+                        if ($onlyautoornot == -1 && ! empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! preg_match('/auto/i', $code))
+                        {
+                            $label='&nbsp; '.$label;
+                            $repid[-99]=$langs->trans("ActionAC_MANUAL");
+                            $repcode['AC_NON_AUTO']=$langs->trans("ActionAC_MANUAL");
+                        }
+                    	$repid[$obj->id] = $label;
+                        $repcode[$obj->code] = $label;
+                        if ($onlyautoornot > 0 && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
                     }
                     $i++;
                 }

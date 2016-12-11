@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@ $langs->load('users');
 
 $cp = new Holiday($db);
 
-llxHeader(array(),$langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
+$alltypeleaves=$cp->getTypes(1,-1);    // To have labels
+
+llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
 // Recent changes are more important than old changes
 $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs
@@ -58,11 +60,22 @@ $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEE
 print load_fiche_titre($langs->trans('LogCP'), '<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'">&lt;</a><li class="pagination"><a href="">'.$langs->trans("Year").' '.$year.'</a></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'">&gt;</a></li></lu></div>', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
-if ($cp->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+$lastUpdate = $cp->getConfCP('lastUpdate');
+if ($lastUpdate)
+{
+    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+    print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+}
 else print $langs->trans('None');
 print "</div><br>\n";
 
-print '<table class="noborder" width="100%">';
+$moreforfilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+
 print '<tbody>';
 print '<tr class="liste_titre">';
 
@@ -91,26 +104,29 @@ foreach($cp->logs as $logs_CP)
    	print '<tr '.$bc[$var].'>';
    	print '<td>'.$logs_CP['rowid'].'</td>';
    	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	print '<td>'.$user_action->getNomUrl(1).'</td>';
-   	print '<td>'.$user_update->getNomUrl(1).'</td>';
+   	print '<td>'.$user_action->getNomUrl(-1).'</td>';
+   	print '<td>'.$user_update->getNomUrl(-1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
-   	print '<td>'.$logs_CP['fk_type'].'</td>';
+   	print '<td>';
+	$label=$alltypeleaves[$logs_CP['fk_type']]['label'];
+	print $label?$label:$logs_CP['fk_type'];
+   	print '</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
 
 }
 
-if($log_holiday == '2')
+if ($log_holiday == '2')
 {
-    print '<tr>';
-    print '<td colspan="7" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('NoResults').'</td>';
+    print '<tr '.$bc[false].'>';
+    print '<td colspan="8" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }
 
 print '</tbody>'."\n";
 print '</table>'."\n";
-
+print '</div>';
 
 llxFooter();
 

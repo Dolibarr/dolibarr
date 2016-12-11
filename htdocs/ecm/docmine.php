@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,8 +114,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
     $langs->load("other");
     $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
     $ret=dol_delete_file($file);
-    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 
     $result=$ecmdir->changeNbOfFiles('-');
 }
@@ -222,7 +222,7 @@ if ($action == 'edit')
 }
 
 print '<table class="border" width="100%">';
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 $s='';
 $tmpecmdir=new EcmDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
@@ -233,7 +233,7 @@ while ($tmpecmdir && $result > 0)
 	$tmpecmdir->ref=$tmpecmdir->label;
 	if ($i == 0 && $action == 'edit')
 	{
-		$s='<input type="text" name="label" size="40" maxlength="32" value="'.$tmpecmdir->label.'">';
+		$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
 	}
 	else $s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
@@ -251,7 +251,7 @@ while ($tmpecmdir && $result > 0)
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print '</td></tr>';
-print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 if ($action == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
@@ -272,7 +272,13 @@ print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
-print count($filearray);
+$nbofiles=count($filearray);
+print $nbofiles;
+// Test if nb is same than in cache
+if ($nbofiles != $ecmdir->cachenbofdoc)
+{
+    $ecmdir->changeNbOfFiles((string) $nbofiles);
+}
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
@@ -364,6 +370,5 @@ if ($user->rights->ecm->read)
 */
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();

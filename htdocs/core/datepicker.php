@@ -56,7 +56,7 @@ print '<html>'."\n";
 print '<head>'."\n";
 if (GETPOST('mode') && GETPOST('mode') == 'test')
 {
-	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
+	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php"></script>'."\n";
 }
 else
 {

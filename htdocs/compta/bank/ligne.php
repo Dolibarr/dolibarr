@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,13 +83,13 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
 
 if ($user->rights->banque->modifier && $action == 'class')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$_POST["cat1"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST('cat1', 'int');
     if (! $db->query($sql))
     {
         dol_print_error($db);
     }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$_POST["cat1"].")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".GETPOST('cat1', 'int').")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -102,7 +103,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	$ac = new Account($db);
 	$ac->fetch($id);
 
-	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
+	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -205,24 +206,13 @@ $form = new Form($db);
 
 llxHeader();
 
-// The list of categories is initialized
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " ORDER BY label";
-$result = $db->query($sql);
-if ($result)
-{
-    $var=True;
-    $num = $db->num_rows($result);
-    $i = 0;
-    $options = "<option value=\"0\" selected>&nbsp;</option>";
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
-        $i++;
-    }
-    $db->free($result);
+// Load bank groups
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
+
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
 }
 
 $var=false;
@@ -281,11 +271,11 @@ if ($result)
 
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/search.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
-        print '<td colspan="4">';
+        print '<tr><td class="titlefield">'.$langs->trans("Ref")."</td>";
+        print '<td>';
         print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
         print '</td>';
         print '</tr>';
@@ -295,7 +285,7 @@ if ($result)
 
         // Bank account
         print "<tr><td>".$langs->trans("Account")."</td>";
-        print '<td colspan="4">';
+        print '<td>';
         print $acct->getNomUrl(1,'transactions');
         print '</td>';
         print '</tr>';
@@ -304,7 +294,7 @@ if ($result)
         if (count($links))
         {
             print "<tr><td>".$langs->trans("Links")."</td>";
-            print '<td colspan="4">';
+            print '<td>';
             foreach($links as $key=>$val)
             {
                 if ($key) print '<br>';
@@ -322,12 +312,15 @@ if ($result)
                 }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowCompany'),'company').' ';
-                    print $links[$key]['label'];
+                    //print img_object($langs->trans('ShowCompany'),'company').' ';
+                    $societe=new Societe($db);
+                    $societe->fetch($links[$key]['url_id']);
+                    //print $links[$key]['label'];
+                    print $societe->getNomUrl(1);
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowSocialContribution'),'bill').' ';
                     print $langs->trans("SocialContribution").($links[$key]['label']?' - '.$links[$key]['label']:'');
                     print '</a>';
@@ -396,8 +389,6 @@ if ($result)
             print '</td></tr>';
         }
 
-        $rowspan=0;
-
         //$user->rights->banque->modifier=false;
         //$user->rights->banque->consolidate=true;
 
@@ -406,7 +397,7 @@ if ($result)
         print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             $form->select_types_paiements($objp->fk_type,"value",'',2);
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
             if ($objp->receiptid)
@@ -418,13 +409,10 @@ if ($result)
 
             }
             print '</td>';
-            $rowspan=7;
-            print '<td align="center" rowspan="'.$rowspan.'" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-            print '</td>';
         }
         else
         {
-            print '<td colspan="4">'.$objp->fk_type.' '.$objp->num_chq.'</td>';
+            print '<td>'.$objp->fk_type.' '.$objp->num_chq.'</td>';
         }
         print "</tr>";
 
@@ -432,13 +420,13 @@ if ($result)
         print "<tr><td>".$langs->trans("Bank")."</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
             print '</td>';
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">'.$objp->banque.'</td>';
+            print '<td>'.$objp->banque.'</td>';
         }
         print "</tr>";
 
@@ -446,13 +434,13 @@ if ($result)
         print "<tr><td>".$langs->trans("CheckTransmitter")."</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
             print '</td>';
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">'.$objp->emetteur.'</td>';
+            print '<td>'.$objp->emetteur.'</td>';
         }
         print "</tr>";
 
@@ -460,13 +448,13 @@ if ($result)
         print '<tr><td>'.$langs->trans("DateOperation").'</td>';
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
             print '</td>';
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">';
+            print '<td>';
             print dol_print_date($db->jdate($objp->do),"day");
             print '</td>';
         }
@@ -476,7 +464,7 @@ if ($result)
         print "<tr><td>".$langs->trans("DateValue")."</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
             if (! $objp->rappro)
             {
@@ -490,7 +478,7 @@ if ($result)
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">';
+            print '<td>';
             print dol_print_date($db->jdate($objp->dv),"day");
             print '</td>';
         }
@@ -500,7 +488,7 @@ if ($result)
         print "<tr><td>".$langs->trans("Label")."</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print '<td colspan="3">';
+            print '<td>';
             print '<input name="label" class="flat" '.($objp->rappro?' disabled':'').' value="';
             if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
             {
@@ -516,7 +504,7 @@ if ($result)
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">';
+            print '<td>';
             if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
@@ -534,19 +522,22 @@ if ($result)
         print "<tr><td>".$langs->trans("Amount")."</td>";
         if ($user->rights->banque->modifier)
         {
-            print '<td colspan="3">';
-            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->currency);
+            print '<td>';
+            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
             print '</td>';
         }
         else
         {
-            print '<td colspan="'.($rowspan?'3':'4').'">';
+            print '<td>';
             print price($objp->amount);
             print '</td>';
         }
         print "</tr>";
 
         print "</table>";
+
+        print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+
         print "</form>";
 
         // Releve rappro
@@ -561,10 +552,10 @@ if ($result)
 
             print '<table class="border" width="100%">';
 
-            print '<tr><td width="20%">'.$langs->trans("Conciliation")."</td>";
+            print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
             if ($user->rights->banque->consolidate)
             {
-                print '<td colspan="3">';
+                print '<td>';
                 if ($objp->rappro)
                 {
                     print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro?' disabled':'').'>';
@@ -575,28 +566,31 @@ if ($result)
                     print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro?' disabled':'').'>';
                 }
                 if ($objp->num_releve) print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
-                print '</td><td align="center" rowspan="2" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+                print '</td>';
             }
             else
             {
-                print '<td colspan="4">'.$objp->num_releve.'&nbsp;</td>';
+                print '<td>'.$objp->num_releve.'&nbsp;</td>';
             }
             print '</tr>';
 
             print "<tr><td>".$langs->trans("BankLineConciliated")."</td>";
             if ($user->rights->banque->consolidate)
             {
-                print '<td colspan="3">';
+                print '<td>';
                 print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"])?($_POST["reconciled"]?' checked="checked"':''):($objp->rappro?' checked="checked"':'')).'">';
                 print '</td>';
             }
             else
             {
-                print '<td colspan="4">'.yn($objp->rappro).'</td>';
+                print '<td>'.yn($objp->rappro).'</td>';
             }
             print '</tr>';
+            print '</table>';
 
-            print '</table></form>';
+			print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+
+			print '</form>';
         }
 
     }
@@ -620,7 +614,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
 if ($user->rights->banque->modifier)
 {
-    print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
+    print Form::selectarray('cat1', $options, '', 1).' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 }
 print '</tr>';

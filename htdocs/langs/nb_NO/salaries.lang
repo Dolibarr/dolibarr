@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskapskode for lønnsutbetalinger
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskode for finansiell belastning
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard regnskapskonto for lønnsutbetalinger
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard regnskapskonto for personalutgifter
 Salary=Lønn
 Salaries=Lønn
-Employee=Ansatt
 NewSalaryPayment=Ny lønnsutbetaling
 SalaryPayment=Lønnsutbetaling
 SalariesPayments=Lønnsutbetalinger
 ShowSalaryPayment=Vis lønnsutbetaling
 THM=Gjennomsnittlig timepris
-TJM=Gjennomsnittlig dagskost
+TJM=Gjennomsnittlig dagspris
 CurrentSalary=Nåværende lønn
 THMDescription=Denne verdien kan brukes til å kalkulere tidsforbruket på et prosjekt hvis prosjekt-modulen er i bruk
 TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke brukt i noen kalkulasjoner

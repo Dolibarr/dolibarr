@@ -4,7 +4,6 @@ EMailSupport=Email podrška
 RemoteControlSupport=Online uživo / daljinska podrška
 OtherSupport=Druge podrške
 ToSeeListOfAvailableRessources=Za kontaktirati/vidjeti dosupne resurse:
-ClickHere=Klikni ovdje
 HelpCenter=Centar za pomoć
 DolibarrHelpCenter=Dolibarr pomoć u centri za podršku
 ToGoBackToDolibarr=U suprotnom, klikni <a href="%s">ovdje za korištenje Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Izvorna podrška
 TypeSupportCommunauty=Zajednica (besplatno)
 TypeSupportCommercial=Poslovno
 TypeOfHelp=Tip
-NeedHelpCenter=Trebate pomoć ili podršku?
+NeedHelpCenter=Need help or support?
 Efficiency=Efikasnost
 TypeHelpOnly=Samo pomoć
 TypeHelpDev=Pomoć + razvoj
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Ponekad, nema dostupnih kompanija kada tražite, zato 
 BackToHelpCenter=U suprotnom, kliknite ovdje <a href="%s">da idete nazad na centralnu početnu stranicu</a>.
 LinkToGoldMember=Možete pozvati jednog od unaprijed izabranih Dolibarr trenera za vas jezik (%s) klikom na Widget (statusi i maksimalne cijene su automatski ažurirani)
 PossibleLanguages=Podržani jezici
-MakeADonation=Pomozite Dolibarr projektu, donirajte
 SubscribeToFoundation=Pomozite dolibar projekti, pretplatite se fondaciji
 SeeOfficalSupport=Za oficijelnu Dolibarr podršku za vaš jezik: <br><b><a href="%s" target="_blank">%s</a></b>

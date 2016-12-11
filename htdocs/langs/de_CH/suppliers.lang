@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - suppliers
+ConfirmCancelThisOrder=Möchten Sie diese Bestellung wirklich verwerfen <b>%s</b> ?
+SupplierReputation=Lieferantenbewertung
+DoNotOrderThisProductToThisSupplier=Nicht bestellen
+NotTheGoodQualitySupplier=Falsche Menge
+ReputationForThisProduct=Bewertung

@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=کد امنیتی
-Calendar=تقویم
+NumberingShort=N°
 Tools=ابزار
-ToolsDesc=این منطقه به گروه ابزار دیگر در دسترس را به دیگر نوشته های منو نمی اختصاص یافته است. <br><br> این ابزار را می توانید از منوی سمت رسیده است.
+ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=جشن تولد
-BirthdayDate=جشن تولد
+BirthdayDate=Birthday date
 DateToBirth=تاریخ تولد
-BirthdayAlertOn= تولد هشدار فعال
-BirthdayAlertOff= تولد غیر فعال هشدار
+BirthdayAlertOn=تولد هشدار فعال
+BirthdayAlertOff=تولد غیر فعال هشدار
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_VALIDATE=مداخله اعتبار
 Notify_FICHINTER_SENTBYMAIL=مداخله با پست
-Notify_BILL_VALIDATE=صورت حساب به مشتری اعتبار
-Notify_BILL_UNVALIDATE=صورت حساب به مشتری unvalidated
+Notify_ORDER_VALIDATE=سفارش مشتری معتبر
+Notify_ORDER_SENTBYMAIL=سفارش مشتری با پست
+Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده با پست
 Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=منظور تامین کننده تایید
 Notify_ORDER_SUPPLIER_REFUSE=منظور تامین کننده خودداری کرد
-Notify_ORDER_VALIDATE=سفارش مشتری معتبر
 Notify_PROPAL_VALIDATE=پیشنهاد به مشتری اعتبار
 Notify_PROPAL_CLOSE_SIGNED=propal با مشتری بسته امضا
 Notify_PROPAL_CLOSE_REFUSED=propal با مشتری بسته خودداری کرد
+Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری با پست
 Notify_WITHDRAW_TRANSMIT=خروج خطوط انتقال
 Notify_WITHDRAW_CREDIT=خروج اعتباری
 Notify_WITHDRAW_EMIT=انجام خروج
-Notify_ORDER_SENTBYMAIL=سفارش مشتری با پست
 Notify_COMPANY_CREATE=شخص ثالث ایجاد شده
 Notify_COMPANY_SENTBYMAIL=ایمیل های فرستاده شده از کارت شخص ثالث
-Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری با پست
+Notify_BILL_VALIDATE=صورت حساب به مشتری اعتبار
+Notify_BILL_UNVALIDATE=صورت حساب به مشتری unvalidated
 Notify_BILL_PAYED=صورت حساب به مشتری غیر انتفایی
 Notify_BILL_CANCEL=صورت حساب به مشتری لغو
 Notify_BILL_SENTBYMAIL=صورت حساب به مشتری با پست
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
-Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده با پست
 Notify_BILL_SUPPLIER_VALIDATE=فاکتور تامین کننده معتبر
 Notify_BILL_SUPPLIER_PAYED=فاکتور تامین کننده غیر انتفایی
 Notify_BILL_SUPPLIER_SENTBYMAIL=فاکتور تامین کننده با پست
@@ -42,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=حمل و نقل با پست
 Notify_MEMBER_VALIDATE=کاربران معتبر
 Notify_MEMBER_MODIFY=کاربران اصلاح شده
 Notify_MEMBER_SUBSCRIPTION=مشترک اعضا
-Notify_MEMBER_RESILIATE=کاربران resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=کاربران حذف
 Notify_PROJECT_CREATE=ایجاد پروژه
 Notify_TASK_CREATE=وظیفه ایجاد
@@ -54,51 +54,45 @@ TotalSizeOfAttachedFiles=اندازه کل فایل های پیوست / اسنا
 MaxSize=حداکثر اندازه
 AttachANewFile=ضمیمه کردن فایل جدید / سند
 LinkedObject=شی مرتبط
-Miscellaneous=متفرقه
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=این یک پست تست است. دو خط با بازگشت نورد جدا شده است. __SIGNATURE__
 PredefinedMailTestHtml=این ایمیل <b>آزمون</b> (آزمون کلمه باید در پررنگ باشد) است. <br> دو خط با بازگشت نورد جدا شده است. <br><br> __SIGNATURE__
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ شما در اینجا خواهید دید فاکتور __ FACREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ ما می خواهیم به شما هشدار می دهند که فاکتور __ FACREF__ به نظر می رسد که غیر انتفایی نیست. پس این فاکتور در پیوست است دوباره، به عنوان یک یادآوری. __PERSONALIZED__Sincerely __ SIGNATURE__
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__\n\nYou will find here the invoice __REF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe would like to warn you that the invoice  __REF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__ شما در اینجا خواهید دید پیشنهاد تجاری __ PROPREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__CONTACTCIVNAME__\n\nYou will find here the price request __ASKREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=__CONTACTCIVNAME__ شما در اینجا خواهید دید که منظور __ ORDERREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ شما در اینجا خواهید دید منظور ما __ ORDERREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ شما در اینجا خواهید دید فاکتور __ FACREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__\n\nYou will find here the invoice __REF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendShipping=__CONTACTCIVNAME__ شما در اینجا خواهید دید حمل و نقل __ SHIPPINGREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ شما در اینجا را پیدا خواهد کرد از مداخله __ FICHINTERREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentThirdparty=__CONTACTCIVNAME__ __ PERSONALIZED__ __ SIGNATURE__
-DemoDesc=Dolibarr ERP / CRM جمع و جور ساخته چند ماژول کاربردی است. نسخه ی نمایشی است که شامل همه ماژول ها هیچ معنی نیست که این هرگز رخ می دهد. بنابراین، چند پروفایل های دمو در دسترس هستند.
-ChooseYourDemoProfil=را انتخاب کنید مشخصات آزمایشی که مطابقت دارند فعالیت های خود را ...
+DemoDesc=Dolibarr is a compact ERP/CRM supporting several functional modules. A demo showcasing all modules makes no sense as this scenario never occurs. So, several demo profiles are available.
+ChooseYourDemoProfil=Choose the demo profile that best suits your needs...
 DemoFundation=مدیریت اعضای پایه
 DemoFundation2=مدیریت اعضا و حساب بانکی از یک پایه
 DemoCompanyServiceOnly=مدیریت تنها یک سرویس فروش فعالیت های آزاد
 DemoCompanyShopWithCashDesk=مدیریت یک فروشگاه با یک میز نقدی
 DemoCompanyProductAndStocks=مدیریت یک شرکت کوچک یا متوسط ​​فروش محصولات
 DemoCompanyAll=مدیریت یک شرکت کوچک یا متوسط ​​با فعالیت های متعدد (تمام ماژول های اصلی)
-GoToDemo=برو به نسخه ی نمایشی
 CreatedBy=ایجاد شده توسط٪ s
 ModifiedBy=اصلاح شده توسط٪ s
 ValidatedBy=تایید شده توسط٪ s
-CanceledBy=لغو شده توسط٪ s
 ClosedBy=بسته شده توسط٪ s
 CreatedById=User id who created
-ModifiedById=User id who made last change
+ModifiedById=User id who made latest change
 ValidatedById=User id who validated
 CanceledById=User id who canceled
 ClosedById=User id who closed
 CreatedByLogin=User login who created
-ModifiedByLogin=User login who made last change
+ModifiedByLogin=User login who made latest change
 ValidatedByLogin=User login who validated
 CanceledByLogin=User login who canceled
 ClosedByLogin=User login who closed
 FileWasRemoved=فایل٪ s حذف شد
 DirWasRemoved=شاخه٪ s حذف شد
-FeatureNotYetAvailableShort=موجود در نسخه های بعدی
-FeatureNotYetAvailable=ویژگی هنوز در این نسخه در دسترس نیست
-FeatureExperimental=از ویژگی های تجربی. در این نسخه پایدار نیست
-FeatureDevelopment=از ویژگی های توسعه. در این نسخه پایدار نیست
-FeaturesSupported=ویژگی های پشتیبانی
+FeatureNotYetAvailable=Feature not yet available in the current version
+FeaturesSupported=Supported features
 Width=عرض
 Height=ارتفاع
 Depth=عمق
@@ -109,8 +103,7 @@ Right=راست
 CalculatedWeight=وزن محاسبه شده
 CalculatedVolume=حجم محاسبه شده
 Weight=وزن
-TotalWeight=وزن مجموع
-WeightUnitton=تن
+WeightUnitton=tonne
 WeightUnitkg=کیلوگرم
 WeightUnitg=گرم
 WeightUnitmg=میلی گرم
@@ -121,24 +114,22 @@ LengthUnitdm=دیابت
 LengthUnitcm=سانتی متر
 LengthUnitmm=میلیمتر
 Surface=منطقه
-SurfaceUnitm2=M2
-SurfaceUnitdm2=DM2
-SurfaceUnitcm2=CM2
-SurfaceUnitmm2=mm2 در
-SurfaceUnitfoot2=FT2
-SurfaceUnitinch2=IN2
+SurfaceUnitm2=m²
+SurfaceUnitdm2=dm²
+SurfaceUnitcm2=cm²
+SurfaceUnitmm2=mm²
+SurfaceUnitfoot2=ft²
+SurfaceUnitinch2=in²
 Volume=حجم
-TotalVolume=حجم کل
-VolumeUnitm3=M3
-VolumeUnitdm3=DM3
-VolumeUnitcm3=cm3 را
-VolumeUnitmm3=MM3
-VolumeUnitfoot3=FT3
-VolumeUnitinch3=IN3
+VolumeUnitm3=m³
+VolumeUnitdm3=dm³ (L)
+VolumeUnitcm3=cm³ (ml)
+VolumeUnitmm3=mm³ (µl)
+VolumeUnitfoot3=ft³
+VolumeUnitinch3=in³
 VolumeUnitounce=اونس
 VolumeUnitlitre=لیتر
 VolumeUnitgallon=گالن
-Size=اندازه
 SizeUnitm=متر
 SizeUnitdm=دیابت
 SizeUnitcm=سانتی متر
@@ -147,25 +138,27 @@ SizeUnitinch=اینچ
 SizeUnitfoot=پا
 SizeUnitpoint=نقطه
 BugTracker=اشکالات
-SendNewPasswordDesc=این فرم به شما اجازه درخواست رمز عبور جدید. از آن خواهد شد به آدرس الکترونیک شما ارسال می کند. <br> تغییر تنها پس از کلیک کردن بر روی لینک تایید در داخل این ایمیل موثر خواهد بود. <br> نرم افزار ایمیل خوان خود را چک کنید.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br />Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
 BackToLoginPage=بازگشت به صفحه ورود
-AuthenticationDoesNotAllowSendNewPassword=نحوه <b>تایید٪ s است.</b> <br> در این حالت، Dolibarr نمی توانند بفهمند و نه رمز عبور خود را تغییر دهید. <br> تماس با مدیر سیستم شما اگر می خواهید رمز عبور خود را تغییر دهید.
-EnableGDLibraryDesc=نصب و یا فعال کتابخانه GD با PHP خود را برای استفاده از این گزینه.
-EnablePhpAVModuleDesc=شما نیاز به نصب یک ماژول سازگار با آنتی ویروس خود را. (ClamAV درحال: PHP4-clamavlib OU PHP5-clamavlib)
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br />In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>پروفسور کد از٪ s</b> اطلاعات بسته به کشور های شخص ثالث است. <br> به عنوان مثال، برای <b>کشور٪، این کد٪ بازدید کنندگان</b> است.
 DolibarrDemo=Dolibarr ERP / CRM نسخه ی نمایشی
 StatsByNumberOfUnits=آمار در تعدادی از محصولات / خدمات واحد
 StatsByNumberOfEntities=آمار در تعداد اشخاص مراجعه کننده
-NumberOfProposals=تعدادی از پیشنهادات در گذشته 12 ماه
-NumberOfCustomerOrders=تعداد سفارش مشتری در گذشته 12 ماه
-NumberOfCustomerInvoices=تعداد فاکتورها مشتری در گذشته 12 ماه
-NumberOfSupplierOrders=تعداد سفارشات کالا در گذشته 12 ماه
-NumberOfSupplierInvoices=تعداد فاکتورها منبع در گذشته 12 ماه
-NumberOfUnitsProposals=تعداد واحد در طرح در گذشته 12 ماه
-NumberOfUnitsCustomerOrders=تعداد واحد در سفارش مشتری در گذشته 12 ماه
-NumberOfUnitsCustomerInvoices=تعداد واحد در صورت حساب مشتری در گذشته 12 ماه
-NumberOfUnitsSupplierOrders=تعداد واحد در سفارشات کالا در گذشته 12 ماه
-NumberOfUnitsSupplierInvoices=تعداد واحد در فاکتورها منبع در گذشته 12 ماه
+NumberOfProposals=Number of proposals in past 12 months
+NumberOfCustomerOrders=Number of customer orders in past 12 months
+NumberOfCustomerInvoices=Number of customer invoices in past 12 months
+NumberOfSupplierProposals=Number of supplier proposals in past 12 months
+NumberOfSupplierOrders=Number of supplier orders in past 12 months
+NumberOfSupplierInvoices=Number of supplier invoices in past 12 months
+NumberOfUnitsProposals=Number of units on proposals in past 12 months
+NumberOfUnitsCustomerOrders=Number of units on customer orders in past 12 months
+NumberOfUnitsCustomerInvoices=Number of units on customer invoices in past 12 months
+NumberOfUnitsSupplierProposals=Number of units on supplier proposals in past 12 months
+NumberOfUnitsSupplierOrders=Number of units on supplier orders in past 12 months
+NumberOfUnitsSupplierInvoices=Number of units on supplier invoices in past 12 months
+EMailTextInterventionAddedContact=A newintervention %s has been assigned to you.
 EMailTextInterventionValidated=مداخله٪ s را دارای اعتبار بوده است.
 EMailTextInvoiceValidated=صورتحساب٪ s را دارای اعتبار بوده است.
 EMailTextProposalValidated=این پیشنهاد از٪ s دارای اعتبار بوده است.
@@ -188,7 +181,6 @@ ImageEditor=ویرایشگر تصویر
 YouReceiveMailBecauseOfNotification=شما این پیام را دریافت خواهید کرد چرا که ایمیل شما به لیست از اهداف به حوادث خاص به٪ نرم افزار از٪ s را مطلع اضافه شده است.
 YouReceiveMailBecauseOfNotification2=این رویداد به شرح زیر است:
 ThisIsListOfModules=این یک لیست از ماژول های از پیش انتخاب شده توسط این مشخصات نسخه ی نمایشی (فقط ماژول های متداول در این نسخه ی نمایشی قابل مشاهده هستند) است. ویرایش این را به یک نسخه ی نمایشی شخصی تر و با کلیک بر روی "شروع".
-ClickHere=اینجا را کلیک کنید
 UseAdvancedPerms=استفاده از مجوز های پیشرفته ی برخی از ماژول
 FileFormat=فرمت فایل
 SelectAColor=یک رنگ را انتخاب کنید
@@ -205,38 +197,18 @@ YouMustClickToChange=با این حال شما باید اول بر روی لی�
 ForgetIfNothing=اگر شما این تغییر را درخواست نکرده، فقط این ایمیل را فراموش کرده ام. اعتبار نامه های شما امن نگهداری می شود.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
+Chart=Chart
 
-##### Calendar common #####
-AddCalendarEntry=اضافه کردن ورودی در تقویم از٪ s
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-ContractCanceledInDolibarr=Contract %s canceled
-ContractClosedInDolibarr=Contract %s closed
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-PaymentDoneInDolibarr=Payment %s done
-CustomerPaymentDoneInDolibarr=Customer payment %s done
-SupplierPaymentDoneInDolibarr=Supplier payment %s done
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=صادرات
 ExportsArea=منطقه صادرات
 AvailableFormats=فرمت های موجود
-LibraryUsed=Librairy استفاده
-LibraryVersion=نسخه
+LibraryUsed=کتابخانه استفاده می شود
+LibraryVersion=Library version
 ExportableDatas=داده های صادراتی
 NoExportableData=بدون داده های صادراتی (بدون ماژول ها با داده های صادراتی بارگذاری می شود، و یا مجوز از دست رفته)
-ToExport=صادرات
-NewExport=صادرات جدید
 ##### External sites #####
-ExternalSites=سایت های خارجی
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=عنوان
+WEBSITE_DESCRIPTION=توصیف
+WEBSITE_KEYWORDS=Keywords

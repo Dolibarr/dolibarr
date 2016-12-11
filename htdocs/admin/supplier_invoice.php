@@ -43,6 +43,7 @@ accessforbidden();
 $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
 $action=GETPOST('action', 'alpha');
+$scandir = GETPOST('scandir','alpha');
 
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();
@@ -135,19 +136,23 @@ else if ($action == 'del')
 // Set default model
 else if ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $value;
-	}
+    if (dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->INVOICE_SUPPLIER_ADDON_PDF = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+}
+else if ($action == 'unsetdoc')
+{
+    dolibarr_del_const($db, "INVOICE_SUPPLIER_ADDON_PDF", $conf->entity);
 }
 
 if ($action == 'setmod')
@@ -365,7 +370,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-		if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -381,23 +386,26 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
-                    print $module->description;
+                    if (method_exists($module,'info')) print $module->info($langs);
+	                else print $module->description;
+
                     print "</td>\n";
 
                     // Active
                     if (in_array($name, $def))
                     {
                         print '<td align="center">'."\n";
-                        if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
-                        {
+                        //if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
+                        //{
+                            // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
                             print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">';
                             print img_picto($langs->trans("Enabled"),'switch_on');
                             print '</a>';
-                        }
+                        /*}
                         else
                         {
                             print img_picto($langs->trans("Enabled"),'switch_on');
-                        }
+                        }*/
                         print "</td>";
                     }
                     else
@@ -411,7 +419,9 @@ foreach ($dirmodels as $reldir)
                     print '<td align="center">';
                     if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$name")
                     {
-                        print img_picto($langs->trans("Default"),'on');
+                        //print img_picto($langs->trans("Default"),'on');
+                        // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
                     }
                     else
                     {

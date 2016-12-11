@@ -190,7 +190,7 @@ foreach($listofstatus as $status)
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
     }
-    if ($status==4 && $bool==false) $bool=true;
+    if ($status==4 && ! $bool) $bool=true;
     else $bool=false;
 }
 if (! empty($conf->use_javascript_ajax))
@@ -210,7 +210,7 @@ foreach($listofstatus as $status)
     	print '<tr '.$bc[$var].'>';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
-    	if ($status==4 && $bool==false) $bool=true;
+    	if ($status==4 && ! $bool) $bool=true;
     	else $bool=false;
         print "</tr>\n";
     }
@@ -273,7 +273,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		}
 		else
 		{
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoContracts").'</td></tr>';
+			print '<tr '.$bc[$var].' class><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -344,7 +344,7 @@ if ($result)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),'dayhour').'</td>';
 		//print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
 		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,0):'').'</td>';

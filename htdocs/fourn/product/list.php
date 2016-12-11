@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/fourn/product/list.php
  *		\ingroup    produit
- *		\brief      Page liste des produits ou services
+ *		\brief      Page to list supplier products and services
  */
 
 require '../../main.inc.php';
@@ -49,7 +49,7 @@ if ($page < 0) {
     $page = 0 ;
 }
 
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (! $sortfield) $sortfield = 'p.ref';
@@ -109,7 +109,7 @@ if ($sref)
 }
 if ($snom)
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('p.label', $snom);
 }
 if($catid)
 {
@@ -120,7 +120,7 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 // Count total nb of records without orderby and limit
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -249,7 +249,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

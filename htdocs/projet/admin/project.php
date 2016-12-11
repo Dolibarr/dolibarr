@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2011-2013	Philippe Grand		<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
@@ -71,11 +71,11 @@ else if ($action == 'updateMask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -90,11 +90,11 @@ if ($action == 'updateMaskTask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -132,13 +132,13 @@ else if ($action == 'specimen')
 		}
 		else
 		{
-			setEventMessage($obj->error, 'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -177,13 +177,13 @@ else if ($action == 'specimentask')
 		}
 		else
 		{
-			setEventMessage($obj->error, 'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -208,12 +208,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -373,7 +373,7 @@ print '<br>';
  * Projects Numbering model
  */
 
-print load_fiche_titre($langs->trans("ProjectsNumberingModules"));
+print load_fiche_titre($langs->trans("ProjectsNumberingModules"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -477,7 +477,7 @@ print '</table><br>';
 if (empty($conf->global->PROJECT_HIDE_TASKS))
 {
 	// Task numbering module
-	print load_fiche_titre($langs->trans("TasksNumberingModules"));
+	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -508,7 +508,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 						$file = $reg[1];
 						$classname = substr($file,4);
 
-						require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$file.'.php';
+						require_once $dir.$file.'.php';
 
 						$module = new $file;
 
@@ -583,7 +583,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("ProjectsModelModule"));
+print load_fiche_titre($langs->trans("ProjectsModelModule"), '', '');
 
 // Defini tableau def de modele
 $type='project';
@@ -742,7 +742,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	 * Modeles documents for Task
 	 */
 
-	print load_fiche_titre($langs->trans("TaskModelModule"));
+	print load_fiche_titre($langs->trans("TaskModelModule"), '', '');
 
 	// Defini tableau def de modele
 	$type='project_task';
@@ -894,7 +894,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 }
 
 
-print load_fiche_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"), '', '');
 
 // Other options
 $form=new Form($db);
@@ -933,8 +933,22 @@ else
 	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
-print '</tr></table></form>';
+print '</tr>';
 
-$db->close();
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
+
+print '<td align="center" width="300">';
+echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '</tr>';
+
+print '</table></form>';
+
+
+
 
 llxFooter();
+$db->close();

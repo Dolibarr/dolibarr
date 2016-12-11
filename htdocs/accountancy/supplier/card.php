@@ -22,16 +22,15 @@
  *
  */
 /**
- * \file		htdocs/accountancy/supplier/card.php
- * \ingroup		Accountancy
- * \brief		Card supplier ventilation
+ * \file htdocs/accountancy/supplier/card.php
+ * \ingroup Accountancy
+ * \brief Card supplier ventilation
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("bills");
@@ -45,23 +44,34 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
-	if (! GETPOST('cancel', 'alpha'))
-	{
+	
+/*
+ * Actions
+ */
+
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (! GETPOST('cancel', 'alpha')) {
+	    if ($codeventil < 0) $codeventil = 0;
+	    
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
 		
-		dol_syslog('accountancy/supplier/card.php:: $sql=' . $sql);
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	} else {
 		header("Location: ./lines.php");
 		exit();
 	}
 }
+
+
 
 /*
  * View
@@ -72,9 +82,7 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
-/*
- * Create
- */
+// Create
 $form = new Form($db);
 $facturefournisseur_static = new FactureFournisseur($db);
 $formventilation = new FormVentilation($db);
@@ -88,13 +96,11 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
-	}
+	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
 	
 	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
-
+	
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
@@ -106,9 +112,9 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print load_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
-
-            dol_fiche_head();
+			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
+			
+			dol_fiche_head();
 			
 			print '<table class="border" width="100%">';
 			
@@ -127,15 +133,15 @@ if (! empty($id)) {
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
 			print '</table>';
-
-            dol_fiche_end();
-
+			
+			dol_fiche_end();
+			
 			print '<div class="center">';
 			print '<input class="button" type="submit" value="' . $langs->trans("Save") . '">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 			print '</div>';
-
+			
 			print '</form>';
 		} else {
 			print "Error";

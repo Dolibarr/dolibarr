@@ -604,6 +604,6 @@ print "</tr>\n";
 print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
+llxFooter();
 $db->close();
 
-llxFooter();

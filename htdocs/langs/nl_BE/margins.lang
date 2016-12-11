@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - margins
+ForceBuyingPriceIfNull=Gebruik de koop/kost prijs als verkoopsprijs indien niet gedefinieerd
+ForceBuyingPriceIfNullDetails=Indien koop/kost prijs niet gedefinieerd is, en deze optie is "ON", dan zal de marge nul zijn op deze lijn (koop/kost prijs = verkoopsprijs), anderzijds ("OFF"), marge zal gelijk zijn aan het gesuggereerde voorstel.
+MargeType3=Marge op kostprijs
+MarginTypeDesc=* Marge op de beste koop prijs = Verkoopsprijs - Beste gedefinieerde leveranciersprijs op productkaart<br>* Marge op de gewogen gemiddelde prijs (WAP) = Verkoopsprijs - Gewogen gemiddelde prijs van het product (WAP) of de beste leveranciersprijs indien WAP nog niet gedefinieerd werd<br>* Marge op kost prijs = Verkoopsprijs - kost prijs gedefinieerd op product kaart of WAP indien kost prijs niet gedefinieerd was, of beste leveranciersprijs indien WAP nog niet gedefinieerd is

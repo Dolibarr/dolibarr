@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -92,6 +92,12 @@ else {
 $hselected='report';
 
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 
 
 /*
@@ -472,11 +478,13 @@ $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
 $parameters["mode"] = $modecompta;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addReportInfo',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 
 /*
  * Salaries
  */
+
 if (! empty($conf->salaries->enabled))
 {
     if ($modecompta == 'CREANCES-DETTES') {
@@ -521,6 +529,58 @@ if (! empty($conf->salaries->enabled))
     }
 }
 
+if (! empty($conf->expensereport->enabled))
+{
+	$langs->load('trips');
+	if ($modecompta == 'CREANCES-DETTES') {
+		$sql = "SELECT date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
+		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " AND p.fk_statut>=5";
+
+		$column='p.date_valid';
+
+	} else {
+		$sql = "SELECT date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " AND p.fk_statut>=5";
+
+		$column='pe.datep';
+	}
+
+	$sql.= " GROUP BY dm";
+
+	dol_syslog("get expense report outcome");
+	$result=$db->query($sql);
+	$subtotal_ht = 0;
+	$subtotal_ttc = 0;
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		if ($num)
+		{
+			while ($obj = $db->fetch_object($result))
+			{
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+				$decaiss[$obj->dm] += $obj->amount_ht;
+				
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
+				$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
+
+			}
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
 /*
  * Donation get dunning paiement
  */
@@ -528,15 +588,23 @@ if (! empty($conf->don->enabled))
 {
     $subtotal_ht = 0;
     $subtotal_ttc = 0;
-    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
-    $sql.= " WHERE p.entity = ".$conf->entity;
-	if ($modecompta == 'CREANCES-DETTES')
-	   $sql.= " AND fk_statut in (1,2)";
-	else
-	   $sql.= " AND fk_statut=2";
-    $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
     
+    if ($modecompta == 'CREANCES-DETTES') {
+        $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " AND fk_statut in (1,2)";
+    }
+    else {
+        $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+		$sql.= " WHERE p.entity = ".getEntity('donation',1);
+   	    $sql.= " AND fk_statut >= 2";
+    }
+    $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
+
     dol_syslog("get donation payments");
     $result=$db->query($sql);
     if ($result)

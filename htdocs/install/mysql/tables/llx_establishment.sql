@@ -19,7 +19,7 @@
 -- Structure de la table llx_establishment
 --
 
-CREATE TABLE IF NOT EXISTS llx_establishment (
+CREATE TABLE llx_establishment (
   rowid 			integer NOT NULL auto_increment PRIMARY KEY,
   entity 			integer NOT NULL DEFAULT 1,
   name				varchar(50),
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   profid3			varchar(20),
   phone				varchar(20),
   fk_user_author 	integer NOT NULL,
-  fk_user_mod		integer NOT NULL,
+  fk_user_mod		integer,
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
   status            tinyint DEFAULT 1

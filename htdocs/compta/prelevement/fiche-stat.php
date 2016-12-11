@@ -91,7 +91,7 @@ if ($prev_id)
 
 		print '<table class="border" width="100%"><tr><td width="20%">';
 		print $langs->trans("WithdrawalFile").'</td><td>';
-		$relativepath = 'receipts/'.$bon->ref;
+		$relativepath = 'receipts/'.$bon->ref.'.xml';
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
 
@@ -141,7 +141,7 @@ if ($prev_id)
 			print price($row[0]);
 
 			print '</td><td align="right">';
-			print round($row[0]/$bon->amount*100,2)." %";
+			if ($bon->amount) print round($row[0]/$bon->amount*100,2)." %";
 			print '</td>';
 
 			print "</tr>\n";
@@ -159,6 +159,5 @@ if ($prev_id)
 	}
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

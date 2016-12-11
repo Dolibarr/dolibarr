@@ -30,11 +30,13 @@
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- *
+ * $object_rights->creer initialized from = $object->getRights()
+ * $disableedit, $disablemove, $disableremove
+ * 
  * $type, $text, $description, $line
  */
 
-global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins, $outputalsopricetotalwithtax;
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -43,8 +45,8 @@ if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 if (empty($usemargins)) $usemargins=0;
-
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -90,12 +92,14 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	else
 	{
-		if ($line->fk_product > 0)
+		$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE?'dayhour':'day';
+		
+	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			
 			// Show range
-			echo get_date_range($line->date_start, $line->date_end);
+			echo get_date_range($line->date_start, $line->date_end, $format);
 
 			// Add description in form
 			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -119,18 +123,24 @@ if (empty($usemargins)) $usemargins=0;
 			}
 
 			// Show range
-			echo get_date_range($line->date_start,$line->date_end);
+			echo get_date_range($line->date_start,$line->date_end, $format);
 		}
 	}
 	?>
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
 		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } ?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<?php } 
+	// VAT Rate
+	?>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''),'%',$line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
-
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
+	<?php } ?>
+	
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
@@ -190,11 +200,19 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
 	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+		<?php } ?>
 	<?php } ?>
+        <?php if ($outputalsopricetotalwithtax) { ?>
+        <td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
+        <?php } ?>
 
-	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
+
+	<?php 
+	if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
-		<?php if (($line->info_bits & 2) == 2) { ?>
+		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php echo img_edit(); ?>
@@ -204,7 +222,7 @@ if (empty($usemargins)) $usemargins=0;
 
 	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
 		<?php
-		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
@@ -212,7 +230,8 @@ if (empty($usemargins)) $usemargins=0;
 		?>
 	</td>
 
-	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
+	<?php 
+	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -226,7 +245,7 @@ if (empty($usemargins)) $usemargins=0;
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo (empty($conf->browser->phone)?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td align="center"<?php echo ((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>

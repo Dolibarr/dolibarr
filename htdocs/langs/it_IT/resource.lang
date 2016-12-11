@@ -1,15 +1,14 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Risorse
 MenuResourceAdd=Nuova risorsa
-MenuResourcePlanning=Pianificazione delle risorse
 DeleteResource=Elimina risorsa
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
+ConfirmDeleteResourceElement=Conferma l'eliminazione della risorsa da questo elemento
 NoResourceInDatabase=Nessuna risorsa nel database
 NoResourceLinked=Nessuna risorsa collegata
 
 ResourcePageIndex=Elenco delle risorse
 ResourceSingular=Risorsa
-ResourceCard=Resource card
+ResourceCard=Scheda risorsa
 AddResource=Crea una risorsa
 ResourceFormLabel_ref=Nome della risorsa
 ResourceType=Tipo di risorsa
@@ -17,18 +16,16 @@ ResourceFormLabel_description=Descrizione della risorsa
 
 ResourcesLinkedToElement=Risorse collegate all'elemento
 
-ShowResourcePlanning=Visualizza pianificazione delle risorse
-GotoDate=Go to date
+ShowResource=Mostra risorsa
 
 ResourceElementPage=Risorse dell'elemento
-ResourceCreatedWithSuccess=Resource successfully created
+ResourceCreatedWithSuccess=Risorsa creata con successo
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceLinkedWithSuccess=Risorsa collegata con successo
 
-TitleResourceCard=Resource card
 ConfirmDeleteResource=Conferma l'eliminazione di questa risorsa
 RessourceSuccessfullyDeleted=Risorsa eliminata con successo
 DictionaryResourceType=Tipo di risorse
 
-SelectResource=Seleziona risorse
+SelectResource=Seleziona risorsa

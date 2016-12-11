@@ -89,6 +89,5 @@ print "<tr ".$bc[$var]."><td>".$langs->trans("BankBalance")."</td><td align=\"ri
 
 print "</table>";
 
-$db->close();
-
 llxFooter();
+$db->close();

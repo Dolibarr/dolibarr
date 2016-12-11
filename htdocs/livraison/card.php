@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2015			  Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+	
 
 $langs->load("sendings");
 $langs->load("bills");
@@ -55,15 +62,17 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
 $object = new Livraison($db);
+$extrafields = new ExtraFields($db);
+$extrafieldsline = new ExtraFields($db);
 
-// Load object
-if ($id > 0 || ! empty($ref)) {
-	$ret = $object->fetch($id, $ref);
-	if ($ret > 0)
-		$ret = $object->fetch_thirdparty();
-	if ($ret < 0)
-		dol_print_error('', $object->error);
-}
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
+// Load object. Make an object->fetch
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('deliverycard','globalcard'));
@@ -113,7 +122,7 @@ if ($action == 'add')
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"]=$_POST["commande_id"];
@@ -181,6 +190,64 @@ elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
+// Update extrafields
+if ($action == 'update_extras')
+{
+	// Fill array 'array_options' with data from update form
+	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	if ($ret < 0) $error++;
+
+	if (! $error)
+	{
+		// Actions on extra fields (by external module or standard code)
+		// TODO le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('livraisondao'));
+		$parameters = array('id' => $object->id);
+		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook)) {
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		} else if ($reshook < 0)
+			$error++;
+	}
+
+	if ($error)
+		$action = 'edit_extras';
+}
+
+// Extrafields line
+if ($action == 'update_extras_line')
+{
+	$array_options=array();
+	$num=count($object->lines);
+	
+	for ($i = 0; $i < $num; $i++)
+	{
+		// Extrafields
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_" . $key]);
+			}
+		}
+		
+		$ret = $object->update_line($object->lines[$i]->id,$array_options[$i]);	// extrafields update
+		if ($ret < 0)
+		{
+			$mesg='<div class="error">'.$object->error.'</div>';
+			$error++;
+		}
+	}
+
+}
+
+
 /*
  * Build document
  */
@@ -193,7 +260,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -216,8 +283,8 @@ elseif ($action == 'remove_file')
 	$upload_dir =	$conf->expedition->dir_output . "/receipt";
 	$file =	$upload_dir	. '/' .	GETPOST('file');
 	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
 
 
@@ -235,216 +302,10 @@ $formfile = new FormFile($db);
  * Mode creation
  *
  *********************************************************************/
-if ($action == 'create')
+if ($action == 'create')    // Seems to no be used
 {
 
-	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
-
-	if ($mesg)
-	{
-		print $mesg.'<br>';
-	}
-
-	$commande = new Commande($db);
-	$commande->livraison_array();
-
-	if ($commande->fetch(GETPOST("commande_id")))
-	{
-		$soc = new Societe($db);
-		$soc->fetch($commande->socid);
-		$author = new User($db);
-		$author->fetch($commande->user_author_id);
-
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			$entrepot = new Entrepot($db);
-		}
-
-		/*
-		 *   Commande
-		 */
-		print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
-		}
-		print '<table class="border" width="100%">';
-		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->name.'</a></b></td>';
-
-		print '<td width="50%" colspan="2">';
-
-		print "</td></tr>";
-
-		print "<tr><td>".$langs->trans("Date")."</td>";
-		print "<td>".dol_print_date($commande->date,'dayhourtext')."</td>\n";
-
-		print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
-		print "</td></tr>\n";
-
-		print '<tr>';
-
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			print '<td>'.$langs->trans("Warehouse").'</td>';
-			print '<td>';
-			$ents = $entrepot->list_array();
-			print '<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-			print '</td>';
-		}
-
-		print "<td>".$langs->trans("Author")."</td><td>".$author->getFullName($langs)."</td>\n";
-
-		if ($commande->note)
-		{
-			print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
-		}
-		print "</table>";
-
-		/*
-		 * Lignes de commandes
-		 */
-		print '<br><table class="noborder" width="100%">';
-
-		$commande->fetch_lines(1);
-		$lines = $commande->lines;
-
-		// Lecture des livraisons deja effectuees
-		$commande->livraison_array();
-
-		$num = count($commande->lines);
-		$i = 0;
-
-		if ($num)
-		{
-			print '<tr class="liste_titre">';
-			print '<td width="54%">'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-			print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
-			if (! empty($conf->stock->enabled))
-			{
-				print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
-			}
-			print "</tr>\n";
-		}
-		$var=true;
-		while ($i < $num)
-		{
-			$product = new Product($db);
-
-			$line = $commande->lines[$i];
-			$var=!$var;
-			print "<tr ".$bc[$var].">\n";
-			if ($line->fk_product > 0)
-			{
-				$product->fetch($line->fk_product);
-				$product->load_stock();
-
-				// Define output language
-				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-				{
-					$commande->fetch_thirdparty();
-					$outputlangs = $langs;
-					$newlang='';
-					if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if (empty($newlang)) $newlang=$commande->client->default_lang;
-					if (! empty($newlang))
-					{
-						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-
-					$label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $product->label;
-				}
-				else
-					$label = (! empty($line->label)?$line->label:$product->label);
-
-				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$label;
-				if ($line->description) print nl2br($line->description);
-				print '</td>';
-			}
-			else
-			{
-				print "<td>";
-				if ($line->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
-
-				if (! empty($line->label)) {
-					$text.= ' <strong>'.$line->label.'</strong>';
-					print $form->textwithtooltip($text,$line->description,3,'','',$i);
-				} else {
-					print $text.' '.nl2br($line->description);
-				}
-
-				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
-				print "</td>\n";
-			}
-
-			print '<td align="center">'.$line->qty.'</td>';
-			/*
-			 *
-			 */
-			print '<td align="center">';
-			$quantite_livree = $commande->livraisons[$line->id];
-			print $quantite_livree;
-			print '</td>';
-
-			$quantite_commandee = $line->qty;
-			$quantite_a_livrer = $quantite_commandee - $quantite_livree;
-
-			if (! empty($conf->stock->enabled))
-			{
-				$stock = $product->stock_warehouse[$_GET["entrepot_id"]]->real;
-				$stock+=0;  // Convertit en numerique
-
-				// Quantite a livrer
-				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';
-				print '</td>';
-
-				// Stock
-				if ($stock < $quantite_a_livrer)
-				{
-					print '<td align="center">'.$stock.' '.img_warning().'</td>';
-				}
-				else
-				{
-					print '<td align="center">'.$stock.'</td>';
-				}
-			}
-			else
-			{
-				// Quantite a livrer
-				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
-				print '</td>';
-			}
-
-			print "</tr>\n";
-
-			$i++;
-			$var=!$var;
-		}
-
-		/*
-		 *
-		 */
-
-		print '<tr><td align="center" colspan="4"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-		print "</table>";
-		print '</form>';
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+	
 }
 else
 /* *************************************************************************** */
@@ -455,13 +316,8 @@ else
 {
 	if ($object->id > 0)
 	{
-		// Origin of a 'livraison' (delivery) is ALWAYS 'expedition' (shipment).
+		// Origin of a 'livraison' (delivery receipt) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)
-		// TODO REGIS:
-		// Je ne suis pas d'accord, beaucoup entreprises n'utilisent pas les bons d'expéditions car ces derniers sont gérés par le transporteur,
-		// donc les bons de livraisons peuvent avoir une origine différente de 'expedition'
-		// les bons de livraisons et d'expéditions devraient être considérés comme des objets à part entière, voir des modules différents comme une propal ou autres.
-
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($object->origin_id);
 		$typeobject = $expedition->origin;	// example: commande
@@ -476,8 +332,17 @@ else
 			$soc->fetch($object->socid);
 
 			$head=delivery_prepare_head($object);
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
+			
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update_extras_line">';
+			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+				
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
+				
 			/*
 			 * Confirmation de la suppression
 			 *
@@ -502,9 +367,74 @@ else
 			/*
 			 *   Livraison
 			 */
-			print '<table class="border" width="100%">';
+			
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && ! empty($conf->commande->enabled))
+			{
+			    $objectsrc=new Commande($db);
+			    $objectsrc->fetch($expedition->origin_id);
+			}
+			if ($typeobject == 'propal' && $expedition->origin_id > 0 && ! empty($conf->propal->enabled))
+			{
+			    $objectsrc=new Propal($db);
+			    $objectsrc->fetch($expedition->origin_id);
+			}
 
+			// Shipment card
+			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+			
+			$morehtmlref='<div class="refidno">';
+			// Ref customer shipment
+			$morehtmlref.=$form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
+			$morehtmlref.=$form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+			$morehtmlref.='<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
+			// Thirdparty
+			$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $expedition->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled)) {
+			    $langs->load("projects");
+			    $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+			    if (0) {    // Do not change on shipment
+			        if ($action != 'classify') {
+			            $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $expedition->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			        }
+			        if ($action == 'classify') {
+			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
+			            $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $expedition->id . '">';
+			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+			            $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			            $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+			            $morehtmlref .= '</form>';
+			        } else {
+			            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+			        }
+			    } else {
+			        $morehtmlref .= ' : ';
+			        if (! empty($objectsrc->fk_project)) {
+			            $proj = new Project($db);
+			            $proj->fetch($objectsrc->fk_project);
+			            $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+			            $morehtmlref .= $proj->ref;
+			            $morehtmlref .= '</a>';
+			        } else {
+			            $morehtmlref .= '';
+			        }
+			    }
+			}
+			$morehtmlref.='</div>';
+			
+			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br>';
+			
+			dol_banner_tab($expedition, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			 
+			 
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
+				
+		    print '<table class="border" width="100%">';
+				
 			// Shipment
+			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
@@ -520,17 +450,20 @@ else
 
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">'.$object->ref.'</td></tr>';
+    		print '<td colspan="3">';
+    		print $object->ref;
+    		print '</td></tr>';
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
 			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
-
+            */
+			
 			// Document origine
 			if ($typeobject == 'commande' && $expedition->origin_id && ! empty($conf->commande->enabled))
 			{
-				print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
@@ -542,21 +475,16 @@ else
 			{
 				$propal=new Propal($db);
 				$propal->fetch($expedition->origin_id);
-				print '<tr><td>'.$langs->trans("RefProposal").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
 				print $propal->getNomUrl(1,'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}
 
-			// Ref client
-			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-			print '</tr>';
-
 			// Date
-			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_creation,'daytext')."</td>\n";
+			print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
+			print '<td colspan="3">'.dol_print_date($object->date_creation,'dayhour')."</td>\n";
 			print '</tr>';
 
 			// Date delivery real / Received
@@ -573,13 +501,13 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';
@@ -607,27 +535,24 @@ else
 		        print '</td></tr>';
 			}
 
+			/* A delivery note should be just more properties of a shipment, so notes are on shipment  
 			// Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_public);
-            /*$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
 
 			// Note Private
             print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_private);
-            /*$doleditor = new DolEditor('note_pprivate', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
-
+            */
 
 			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td>';
+			/*print '<tr><td>'.$langs->trans("Status").'</td>';
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
-			print '</tr>';
+			print '</tr>';*/
 
 			if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 			{
@@ -638,9 +563,15 @@ else
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
 				print '</tr>';
 			}
+			
+			// Other attributes
+			$cols = 2;
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table><br>\n";
 
+			print '</div>';
+				
 			/*
 			 * Lignes produits
 			 */
@@ -677,7 +608,7 @@ else
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);
@@ -727,14 +658,30 @@ else
 				print '<td align="center">'.$object->lines[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
+				
+				//Display lines extrafields
+				if (is_array($extralabelslines) && count($extralabelslines)>0) {
+					$colspan=2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$line = new LivraisonLigne($db);
+					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
+					print '<tr '.$bc[$var].'>';
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
+					print '</tr>';
+				}
 
 				$i++;
 			}
 
 			print "</table>\n";
+			
+            dol_fiche_end();
 
-			print "\n</div>\n";
-
+			//if ($object->statut == 0)	// only if draft
+			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+            
+			print '</form>';
+            
 
 			/*
 			 *    Boutons actions
@@ -782,7 +729,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			print $formfile->showdocuments('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)
@@ -792,12 +739,9 @@ else
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-				// Linked object block
-				$somethingshown = $form->showLinkedObjectBlock($shipment);
-
-				// Show links to link elements
-				//$linktoelem = $form->showLinkToObjectBlock($shipment);
-				//if ($linktoelem) print '<br>'.$linktoelem;
+    			// Show links to link elements
+    			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+    			$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 
@@ -806,13 +750,6 @@ else
 			// Rien a droite
 
 			print '</td></tr></table>';
-
-			if ($expedition->origin_id)
-			{
-				print '<br>';
-				//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
-				show_list_sending_receive($expedition->origin,$expedition->origin_id);
-			}
 		}
 		else
 		{

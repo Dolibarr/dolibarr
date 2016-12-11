@@ -6,14 +6,14 @@ require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
 $form = new Form($db);
 $formresources = new FormResource($db);
 
-$out .= '<div class="tagtable centpercent border allwidth nohover">';
+$out  = '<div class="tagtable centpercent border allwidth nohover">';
 
 $out .= '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
 $out .= '<input type="hidden" name="element_id" value="'.$element_id.'">';
-$out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'resource' : $resource_type).'">';
+$out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'dolresource' : $resource_type).'">';
 
 
 // Place

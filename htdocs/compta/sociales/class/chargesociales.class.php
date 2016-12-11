@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +25,17 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      ChargeSociales
- *		\brief      Classe permettant la gestion des paiements des charges
- *                  La tva collectee n'est calculee que sur les factures payees.
+/** 
+ *	Classe permettant la gestion des paiements des charges
+ *  La tva collectee n'est calculee que sur les factures payees.
  */
 class ChargeSociales extends CommonObject
 {
     public $element='chargesociales';
     public $table='chargesociales';
     public $table_element='chargesociales';
-
+    public $picto = 'bill';
+    
     /**
      * {@inheritdoc}
      */
@@ -49,6 +51,7 @@ class ChargeSociales extends CommonObject
     var $date_creation;
     var $date_modification;
     var $date_validation;
+    var $fk_account;
 
 
     /**
@@ -71,13 +74,16 @@ class ChargeSociales extends CommonObject
      */
     function fetch($id, $ref='')
     {
-        $sql = "SELECT cs.rowid, cs.date_ech,";
-        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
-        $sql.= " c.libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
-        $sql.= " WHERE cs.fk_type = c.id";
-        if ($ref) $sql.= " AND cs.rowid = ".$ref;
-        else $sql.= " AND cs.rowid = ".$id;
+        $sql = "SELECT cs.rowid, cs.date_ech";
+        $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode, cs.import_key";
+        $sql.= ", cs.fk_account, cs.fk_mode_reglement";
+        $sql.= ", c.libelle";
+        $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
+        if ($ref) $sql.= " WHERE cs.rowid = ".$ref;
+        else $sql.= " WHERE cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -93,10 +99,15 @@ class ChargeSociales extends CommonObject
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
                 $this->type_libelle   = $obj->libelle;
+                $this->fk_account = $obj->fk_account;
+                $this->mode_reglement_id = $obj->fk_mode_reglement;
+                $this->mode_reglement_code = $obj->mode_reglement_code;
+                $this->mode_reglement = $obj->mode_reglement_libelle;
                 $this->amount         = $obj->amount;
                 $this->paye           = $obj->paye;
                 $this->periode        = $this->db->jdate($obj->periode);
-
+                $this->import_key     = $this->import_key;
+                
                 $this->db->free($resql);
 
                 return 1;
@@ -142,6 +153,8 @@ class ChargeSociales extends CommonObject
     {
     	global $conf;
 
+        $now=dol_now();
+
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
@@ -151,14 +164,18 @@ class ChargeSociales extends CommonObject
 			 return -2;
 		}
 
-
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount, entity)";
-        $sql.= " VALUES (".$this->type.",'".$this->db->escape($this->lib)."',";
-        $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
-        $sql.= " '".price2num($newamount)."',";
-        $sql.= " ".$conf->entity;
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity, fk_user_author, date_creation)";
+        $sql.= " VALUES (".$this->type;
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+        $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
+        $sql.= ", '".$this->db->escape($this->lib)."'";
+        $sql.= ", '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."'";
+        $sql.= ", '".price2num($newamount)."'";
+        $sql.= ", ".$conf->entity;
+        $sql.= ", ".$user->id;
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -215,7 +232,7 @@ class ChargeSociales extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -227,7 +244,7 @@ class ChargeSociales extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -262,10 +279,11 @@ class ChargeSociales extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
-        $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."',";
-        $sql.= " amount='".price2num($this->amount,'MT')."'";
+        $sql.= " SET libelle='".$this->db->escape($this->lib)."'";
+        $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
+        $sql.= ", periode='".$this->db->idate($this->periode)."'";
+        $sql.= ", amount='".price2num($this->amount,'MT')."'";
+        $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -339,11 +357,26 @@ class ChargeSociales extends CommonObject
         if ($return) return 1;
         else return -1;
     }
-
+    /**
+     *    Remove tag payed on social contribution
+     *
+     *    @param	User	$user       Object user making change
+     *    @return	int					<0 if KO, >0 if OK
+     */
+    function set_unpaid($user)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
+        $sql.= " paye = 0";
+        $sql.= " WHERE rowid = ".$this->id;
+        $return = $this->db->query($sql);
+        if ($return) return 1;
+        else return -1;
+    }
+    
     /**
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
-     *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
@@ -356,7 +389,7 @@ class ChargeSociales extends CommonObject
      *  Renvoi le libelle d'un statut donne
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
@@ -400,7 +433,13 @@ class ChargeSociales extends CommonObject
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
-
+        if ($mode == 6)
+        {
+            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+        }
+        
         return "Error, mode/status not found";
     }
 
@@ -421,7 +460,7 @@ class ChargeSociales extends CommonObject
         if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowSocialContribution").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'bill', 'class="classfortooltip"').$linkend.' ');
@@ -470,8 +509,9 @@ class ChargeSociales extends CommonObject
      */
     function info($id)
     {
-        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
+        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
+        $sql.= " fk_user_author, fk_user_modif, fk_user_valid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
         dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -487,7 +527,13 @@ class ChargeSociales extends CommonObject
                 if ($obj->fk_user_author) {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
+                    $this->user_creation = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
                 }
 
                 if ($obj->fk_user_valid) {
@@ -497,9 +543,9 @@ class ChargeSociales extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
+                if (! empty($obj->fk_user_modif))	$this->date_modification = $this->db->jdate($obj->datem);
                 $this->date_validation   = $this->db->jdate($obj->datev);
-
+                $this->import_key        = $obj->import_key;
             }
 
             $this->db->free($result);

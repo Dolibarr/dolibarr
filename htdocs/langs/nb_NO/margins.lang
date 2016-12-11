@@ -20,25 +20,19 @@ UserMargins=Brukermarginer
 ProductService=Vare eller tjeneste
 AllProducts=Alle varer og tjenester
 ChooseProduct/Service=Velg vare eller tjenester
-StartDate=Startdato
-EndDate=Sluttdato
-Launch=Start
-ForceBuyingPriceIfNull=Tving innkjøpspris hvis 0
-ForceBuyingPriceIfNullDetails=hvis "PÅ", vil marginen være null på linjen (innkjøpspris=utsalgspris), ellers ("AV"). Margin vil bli lik utsalgspris (innkjøpspris = 0)
+ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
+ForceBuyingPriceIfNullDetails=Hvis innkjøps-/kostpris ikke er definert, og denne opsjonen er "PÅ", vil margin bli satt til null på linjen (innkjøps-/kostpris = utsalgspris). Ellers ("AV") vil margin bli satt til foreslått standard.
 MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
 UseDiscountAsProduct=Som vare
 UseDiscountAsService=Som tjeneste
 UseDiscountOnTotal=Subtota
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defineres om en global rabatt skal gjelde for et vare, en tjeneste, eller bare som en subtotal for margin-kalkulasjon
 MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
-MargeBrute=Bruttomargin
-MargeNette=Nettomargin
 MargeType1=Margin på beste leverandørpris
 MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
-MARGIN_TYPE_DETAILS=Brutto margin = Utsalgspris - Innkjøpspris<br/>Nettomargin = Utsalgspris - Kostpris
-MarginTypeDesc=Nargin på beste innkjøpspris: Utsalgspris - Beste leverandørpris definert på varekortet<br/>Margin på gjennomsnittspris (WAP): Utsalgspris - Gjennomsnittspris
+MargeType3=Marginer på kostpris
+MarginTypeDesc=* Margin på beste kjøpskurs = Salgspris - Beste leverandørpris definert på varekortet<br> * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - Vektet gjennomsnittspris (WAP) eller beste leverandør pris hvis WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris definert på varekortet, eller WAP hvis kostpris ikke er definert, eller beste leverandør pris hvis WAP ikke er definert
 CostPrice=Kostpris
-BuyingCost=Kostpris
 UnitCharges=Enhets-avgifter
 Charges=Avgifter
 AgentContactType=Kommersiell agent kontakttype
@@ -46,3 +40,5 @@ AgentContactTypeDetails=Definer hvilken kontakttype (lenket til fakturaer) som s
 rateMustBeNumeric=Sats må ha en numerisk verdi
 markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
 ShowMarginInfos=Vis info om marginer
+CheckMargins=Margindetaljer
+MarginPerSaleRepresentativeWarning=Rapporten margin pr. bruker: bruk lenken mellom tredjeparter og salgsrepresentanter til å beregne margin for hver bruker. Fordi noen tredjeparter ikke kan være knyttet til en eventuell salgsrepresentant og noen tredjeparter kan knyttes til flere brukere, kan det hende at noen marginer ikke vises i rapporten eller vises på flere forskjellige linjer.

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton   <mv@seeschloss.org>
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -53,6 +53,8 @@ elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCateg
 elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
 elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
+elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesArea");
+elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesArea");
 else                                        $title=$langs->trans("CategoriesArea");
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
@@ -79,7 +81,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
 print '<tr '.$bc[0].'><td>';
@@ -117,9 +119,14 @@ if ($catname || $id > 0)
 		$categstatic->ref=$cat->label;
 		$categstatic->label=$cat->label;
 		$categstatic->type=$cat->type;
+		$categstatic->color=$cat->color;
+		print '<span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>';
 		print $categstatic->getNomUrl(1,'');
+		print '</span>';
 		print "</td>\n";
-		print "\t\t<td>".$cat->description."</td>\n";
+		print "\t\t<td>";
+		print $cat->description;
+		print "</td>\n";
 		print "\t</tr>\n";
 	}
 	print "</table>";
@@ -146,6 +153,7 @@ foreach($fulltree as $key => $val)
 {
 	$categstatic->id=$val['id'];
 	$categstatic->ref=$val['label'];
+	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
 	$li=$categstatic->getNomUrl(1,'',60);
 	$desc=dol_htmlcleanlastbr($val['description']);
@@ -153,8 +161,8 @@ foreach($fulltree as $key => $val)
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
+	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
+	'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
@@ -165,7 +173,7 @@ print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 

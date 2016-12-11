@@ -1,44 +1,38 @@
 # Dolibarr language file - Source file is en_US - marges
 
-Margin=Margines
+Margin=Marża
 Margins=Marże
-TotalMargin=Razem Margines
-MarginOnProducts=Margin / Produkty
-MarginOnServices=Margin / Usługi
+TotalMargin=Marża Total
+MarginOnProducts=Marża / Produkty
+MarginOnServices=Marża / Usługi
 MarginRate=Stopa marży
 MarkRate=Stawka Mark
 DisplayMarginRates=Stawki marży wyświetlacz
 DisplayMarkRates=Stawki znaków wyświetlanych
 InputPrice=Cena wejściowa
-margin=Zarządzanie marże
-margesSetup=Marże ustawień zarządzania
-MarginDetails=Szczegóły marginesów
-ProductMargins=Marginesy produktu
-CustomerMargins=Marginesy klientów
+margin=Zarządzanie zyskiem z marż
+margesSetup=Ustawienie zarządzania zyskiem z marż
+MarginDetails=Szczegóły marży
+ProductMargins=Marża produktu
+CustomerMargins=Marża klienta
 SalesRepresentativeMargins=Sprzedaż marże reprezentatywne
 UserMargins=Marginesy użytkownika
 ProductService=Produkt lub usługa
 AllProducts=Wszystkie produkty i usługi
 ChooseProduct/Service=Wybierz produkt lub usługę
-StartDate=Data rozpoczęcia
-EndDate=Data zakończenia
-Launch=Start
-ForceBuyingPriceIfNull=Siła cena skupu, jeżeli wartość null
-ForceBuyingPriceIfNullDetails=jeśli "ON", marża będzie zero na linii (zakup cenę = cena sprzedaży), w przeciwnym razie ("OFF"), Marge będzie równa cena sprzedaży (cena zakupu = 0)
-MARGIN_METHODE_FOR_DISCOUNT=Metoda marży dla globalnych zniżki
+ForceBuyingPriceIfNull=Wymuszaj cenę zakupu/cenę fabryczną jako cenę sprzedaży jeżeli ta nie jest zdefiniowana
+ForceBuyingPriceIfNullDetails=Jeżeli cena zakupu/koszt nie jest zdefiniowana, a ta opcja jest "ON", marża będzie równa 0 (cena zakupu/koszt = cena sprzedaży), w przeciwnym razie ("OFF"), marża będzie równa sugerowanej domyślnie.
+MARGIN_METHODE_FOR_DISCOUNT=Sposób na marżę dla globalnych rabatów
 UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako usługa
 UseDiscountOnTotal=Na podsumy
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
-MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeBrute=Raw marża
-MargeNette=Rentowność netto
-MargeType1=Margin on Best supplier price
-MargeType2=Margin on Weighted Average Price (WAP)
-MARGIN_TYPE_DETAILS=Raw margin: Cena sprzedaży - cena zakupu <br/> Rentowność netto: Cena sprzedaży - cena kosztów
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
+MargeType1=Marża na najlepszej cenie dostawcy
+MargeType2=Marża na średniej cenie ważonej
+MargeType3=Marża na cenie fabrycznej
+MarginTypeDesc=* Marża na najlepszej cenie zakupu = Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu<br>* Marża na średnio ważonej cenie (WAP) = Cena sprzedaży - Średnio ważona cena (WAP) lub najlepsza cena dostawcy jeżeli WAP nie jest zdefiniowana<br>* Marża na cenie fabrycznej = Cena sprzedaży -  Cena fabryczna zdefiniowana na karcie produktu lub WAP jeżeli cena fabryczna nie jest zdefiniowana, lub najlepsza cena dostawcy jeżeli WAP nie jest jeszcze zdefiniowana
 CostPrice=Cena fabryczna
-BuyingCost=Cena fabryczna
 UnitCharges=Koszty jednostkowe
 Charges=Opłaty
 AgentContactType=Przedstawiciel handlowy typ kontaktu
@@ -46,3 +40,5 @@ AgentContactTypeDetails=Zdefiniować, jaki rodzaj (związane na fakturach) konta
 rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę
+CheckMargins=Szczegóły marż
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

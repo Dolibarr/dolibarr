@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /**
  *  \file       htdocs/compta/recap-compta.php
  *	\ingroup    compta
- *  \brief      Page de fiche recap compta
+ *  \brief      Page de fiche recap customer
  */
 
 require '../main.inc.php';
@@ -61,10 +61,11 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-
+	dol_fiche_end();
+	
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		// Factures
+		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
 		print '<table class="noborder" width="100%">';
@@ -226,10 +227,7 @@ if ($socid > 0)
 		}
 		
 		print "</table>";
-		print "<br>";
 	}
-
-	print '</div>';
 }
 else
 {

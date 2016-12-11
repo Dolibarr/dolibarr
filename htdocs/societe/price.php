@@ -42,6 +42,7 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action = GETPOST('action', 'alpha');
+$search_prod = GETPOST('search_prod');
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -49,69 +50,87 @@ if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+$object = new Societe($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
+
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$update_child_soc = GETPOST('updatechildprice');
-
-	// add price by customer
-	$prodcustprice->fk_soc = $socid;
-	$prodcustprice->fk_product = GETPOST('prodid', 'int');
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	$result = $prodcustprice->create($user, 0, $update_child_soc);
-
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
-	}
-
-	$action = '';
-}
-
-if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	// Delete price by customer
-	$prodcustprice->id = GETPOST('lineid');
-	$result = $prodcustprice->delete($user);
-
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'mesgs');
-	} else {
-		setEventMessage($langs->trans('Delete'), 'errors');
-	}
-	$action = '';
-}
-
-if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
-	$prodcustprice->fetch(GETPOST('lineid', 'int'));
-
-	$update_child_soc = GETPOST('updatechildprice');
-
-	// update price by customer
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	$result = $prodcustprice->update($user, 0, $update_child_soc);
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
-	}
-
-	$action = '';
+if (empty($reshook))
+{
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    {
+        $search_prod = '';
+    }
+    
+    if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    
+    	$update_child_soc = GETPOST('updatechildprice');
+    
+    	// add price by customer
+    	$prodcustprice->fk_soc = $socid;
+    	$prodcustprice->fk_product = GETPOST('prodid', 'int');
+    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+    	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+    	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+    
+    	$result = $prodcustprice->create($user, 0, $update_child_soc);
+    
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+    	} else {
+    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+    	}
+    
+    	$action = '';
+    }
+    
+    if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    	// Delete price by customer
+    	$prodcustprice->id = GETPOST('lineid');
+    	$result = $prodcustprice->delete($user);
+    
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'mesgs');
+    	} else {
+    		setEventMessages($langs->trans('Delete'), null, 'errors');
+    	}
+    	$action = '';
+    }
+    
+    if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    
+    	$prodcustprice->fetch(GETPOST('lineid', 'int'));
+    
+    	$update_child_soc = GETPOST('updatechildprice');
+    
+    	// update price by customer
+    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+    	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+    	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+    
+    	$result = $prodcustprice->update($user, 0, $update_child_soc);
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+    	} else {
+    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+    	}
+    
+    	$action = '';
+    }
 }
 
 
@@ -132,17 +151,14 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
 
-dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
-
-// Alias names (commercial, trademark or alias names)
-print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-print $object->name_alias;
-print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
@@ -181,11 +197,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
+    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 	$page = GETPOST("page", 'int');
 	if ($page == - 1) {
 		$page = 0;
 	}
-	$offset = $conf->liste_limit * $page;
+	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 	if (! $sortorder)
@@ -198,9 +215,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		't.fk_soc' => $object->id
 	);
 
-	$search_soc = GETPOST('search_soc');
-	if (! empty($search_soc)) {
-		$filter ['soc.nom'] = $search_soc;
+	if (! empty($search_prod)) {
+		$filter ['prod.ref'] = $search_prod;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -283,8 +299,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+		if ($result < 0) 
+		{
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
@@ -362,14 +379,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		);
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
 
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+		if ($result < 0) 
+		{
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&prodid=' . GETPOST('prodid', 'int');
@@ -400,7 +418,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print "<tr $bc[$var]>";
+				print '<tr'. $bc[$var].'>';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -422,7 +440,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '</td>';
 			}
 			print "</table>";
-		} else {
+		} 
+		else 
+		{
 			print $langs->trans('None');
 		}
 
@@ -449,7 +469,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	    
 	    
         // Count total nb of records
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
@@ -458,10 +478,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         $result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
         if ($result < 0)
         {
-            setEventMessage($prodcustprice->error, 'errors');
+            setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
         }
         
-        $option = '&search_soc=' . $search_soc . '&id=' . $object->id;
+        $option = '&search_prod=' . $search_prod . '&id=' . $object->id;
         
         print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
         
@@ -483,18 +503,21 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<td>&nbsp;</td>';
         print '</tr>';
         
-        if (count($prodcustprice->lines) > 0)
+        if (count($prodcustprice->lines) > 0 || $search_prod)
         {
-            
             print '<tr class="liste_titre">';
-            print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+			print '<td><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            print $searchpitco;
             print '</td>';
             print '</tr>';
-            
+        }
+        
+        if (count($prodcustprice->lines) > 0)
+        {
             $var = False;
             
             foreach ($prodcustprice->lines as $line)
@@ -521,7 +544,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print $userstatic->getLoginUrl(1);
                 print '</td>';
                 
-                // Todo Edit or delete button
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
@@ -542,9 +564,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 
                 print "</tr>\n";
             }
-        } else
+        }
+        else
         {
-            print '<tr ' . $bc[false] . '><td colspan="10">' . $langs->trans('NoPriceSpecificToCustomer') . '</td></tr>';
+            $colspan=9;
+            if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;            
+            print '<tr ' . $bc[false] . '><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
         }
         
         print "</table>";

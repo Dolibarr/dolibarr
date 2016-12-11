@@ -50,7 +50,9 @@ $result = restrictedArea($user, 'facture', $id);
 
 $now=dol_now();
 
-llxHeader('',$langs->trans("Bill"),'Facture');
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Preview');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -83,7 +85,7 @@ if ($id > 0 || ! empty($ref))
     	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
     
     	// Ref
-    	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
+    	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td colspan="5">';
     	$morehtmlref = '';
     	$discount = new DiscountAbsolute($db);
     	$result = $discount->fetch(0, $object->id);
@@ -186,7 +188,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount, 1);
             }
         }
         else
@@ -218,7 +220,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer, '', 1);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote)
@@ -238,7 +240,7 @@ if ($id > 0 || ! empty($ref))
         print '</tr>';
 
         // Dates
-        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<tr><td>'.$langs->trans("DateInvoice").'</td>';
         print '<td>'.dol_print_date($object->date,"daytext").'</td>';
 
         // Right part with $rowspan lines

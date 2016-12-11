@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - boxes
+BoxLastRssInfos=RSS-Information
+BoxLastProducts=%s neueste Produkte/Leistungen
+BoxProductsAlertStock=Lagerbestandeswarnungen für Produkte
+BoxLastProductsInContract=%s zuletzt in Verträgen verwendete Produkte/Leistungen
+BoxOldestUnpaidCustomerBills=Älteste offene Kundenrechnungen
+BoxOldestUnpaidSupplierBills=Älteste offene Lieferantenrechnungen
+BoxLastCustomers=Zuletzt bearbeitete Kunden
+BoxLastSuppliers=Zuletzt bearbeitete Lieferanten
+BoxLastActions=Neueste Aktionen
+BoxFicheInter=Neueste Arbeitseinsätze
+BoxTitleLastRssInfos=%s neueste News von %s
+BoxTitleLastProducts=%s zuletzt bearbeitete Produkte/Leistungen
+BoxTitleLastCustomersOrProspects=%s neueste Kunden oder Leads
+BoxTitleLastFicheInter=%s zuletzt bearbietet Eingriffe
+BoxTitleLastModifiedContacts=%s zuletzt bearbeitete Kontakte/Adressen
+BoxLastExpiredServices=%s älteste Kontakte mit aktiven abgelaufenen Leistungen
+BoxTitleLastActionsToDo=%s neueste Aktionen zu erledigen
+BoxTitleLastModifiedDonations=%s zuletzt geänderte Spenden
+BoxTitleLastModifiedExpenses=%s zuletzt bearbeitete Spesenabrechnungen
+BoxGoodCustomers=Guter Kunde
+LastRefreshDate=Datum der letzten Aktualisierung
+NoRecordedInterventions=Keine verzeichneten Einsätze
+LastXMonthRolling=%s letzte Monate gleitend

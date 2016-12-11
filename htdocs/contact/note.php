@@ -83,6 +83,10 @@ if ($id > 0)
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
     
+    $cssclass='titlefield';
+    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+    
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
@@ -98,19 +102,19 @@ if ($id > 0)
     		$objsoc = new Societe($db);
     		$objsoc->fetch($object->socid);
 
-    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    		print '<tr><td class="'.$cssclass.'">'.$langs->trans("ThirdParty").'</td><td>'.$objsoc->getNomUrl(1).'</td></tr>';
     	}
 
     	else
     	{
-    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+    		print '<tr><td class="'.$cssclass.'">'.$langs->trans("ThirdParty").'</td><td>';
     		print $langs->trans("ContactNotLinkedToCompany");
     		print '</td></tr>';
     	}
     }
 
     // Civility
-    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
     print $object->getCivilityLabel();
     print '</td></tr>';
 
@@ -120,7 +124,7 @@ if ($id > 0)
     {
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-    	print '<td class="titlefield">'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
+    	print '<td>'.$langs->trans("DateToBirth").'</td><td>'.dol_print_date($object->birthday,"day");
 
     	print ' &nbsp; ';
     	//var_dump($birthdatearray);
@@ -138,17 +142,16 @@ if ($id > 0)
     }
     else
     {
-    	print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
+    	print '<td>'.$langs->trans("DateToBirth").'</td><td>'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";
 
     print "</table>";
 
-    print '<div>';
+    //print '<div>';
     
-    print '<br>';
+    //print '<br>';
 
-    $cssclass='titlefield';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 
