@@ -111,7 +111,7 @@ if (empty($reshook))
 {
 	if ($cancel) 
 	{
-		if ($action != 'addlink')
+		if ($action != 'addlink' && $action != 'updateline')
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
 			header("Location: ".$urltogo);
