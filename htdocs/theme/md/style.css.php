@@ -595,7 +595,8 @@ div.myavailability {
 }
 .div-table-responsive {
     overflow-x: auto;
-    min-height: 0.01%;
+    /*min-height: 0.01%;*/
+    min-height: 350px;
 }
 
 
