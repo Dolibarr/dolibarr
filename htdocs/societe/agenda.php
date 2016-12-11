@@ -97,7 +97,6 @@ if ($socid)
 
 	$langs->load("companies");
 
-
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
@@ -111,27 +110,41 @@ if ($socid)
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
-    $object->info($socid);
-	print dol_print_object_info($object, 1);
-	
+	print '<table class="border" width="100%">';
+
+    if ($object->client)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
+
+    if ($object->fournisseur)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
+
+	print '</table>';
 	print '</div>';
 
 	dol_fiche_end();
 
-
-	
 	// Actions buttons
-	
     $objthirdparty=$object;
     $objcon=new stdClass();
-	
+
     $out='';
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
@@ -144,7 +157,6 @@ if ($socid)
     	//$out.="</a>";
 	}
 
-	
 	print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
