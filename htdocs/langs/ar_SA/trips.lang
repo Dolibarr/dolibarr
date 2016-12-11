@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=تقرير حساب
 ExpenseReports=تقارير المصاريف
+ShowExpenseReport=عرض تقرير حساب
 Trips=تقارير المصاريف
 TripsAndExpenses=تقارير النفقات
 TripsAndExpensesStatistics=إحصاءات تقارير المصاريف
@@ -8,12 +9,13 @@ TripCard=حساب بطاقة تقرير
 AddTrip=إنشاء تقرير حساب
 ListOfTrips=قائمة التقارير حساب
 ListOfFees=قائمة الرسوم
+TypeFees=Types of fees
 ShowTrip=عرض تقرير حساب
 NewTrip=تقرير حساب جديد
 CompanyVisited=الشركة / المؤسسة زارت
 FeesKilometersOrAmout=كم المبلغ أو
 DeleteTrip=حذف تقرير حساب
-ConfirmDeleteTrip=هل أنت متأكد أنك تريد حذف هذا التقرير حساب؟
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=قائمة التقارير حساب
 ListToApprove=تنتظر الموافقة
 ExpensesArea=منطقة تقارير المصاريف
@@ -27,7 +29,7 @@ TripNDF=المعلومات تقرير حساب
 PDFStandardExpenseReports=قالب قياسي لتوليد وثيقة PDF لتقرير حساب
 ExpenseReportLine=خط تقرير حساب
 TF_OTHER=أخرى
-TF_TRIP=Transportation
+TF_TRIP=وسائل النقل
 TF_LUNCH=غداء
 TF_METRO=مترو
 TF_TRAIN=قطار
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=التحقق من صحة (في انتظار الموا�
 
 NOT_AUTHOR=أنت لست صاحب هذا التقرير حساب. إلغاء العملية.
 
-ConfirmRefuseTrip=هل أنت متأكد أنك تريد أن تنكر هذا التقرير حساب؟
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=الموافقة على تقرير النفقات
-ConfirmValideTrip=هل أنت متأكد أنك تريد قبول هذا التقرير حساب؟
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=دفع تقرير مصروفات
-ConfirmPaidTrip=هل أنت متأكد أنك تريد تغيير وضع هذا التقرير لحساب "مدفوع"؟
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=هل أنت متأكد أنك تريد إلغاء هذا التقرير حساب؟
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=الرجوع تقرير نفقة لوضع "مسودة"
-ConfirmBrouillonnerTrip=هل أنت متأكد أنك تريد نقل هذا التقرير حساب لوضع "مسودة"؟
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=التحقق من صحة التقرير حساب
-ConfirmSaveTrip=هل أنت متأكد أنك تريد التحقق من صحة هذا التقرير حساب؟
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=أي تقرير نفقة لتصدير لهذه الفترة.
 ExpenseReportPayment=دفع تقرير حساب

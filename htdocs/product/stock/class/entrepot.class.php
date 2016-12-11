@@ -50,18 +50,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
-	const STATUS_OPEN_INTERNAL = 2;
-	
-	/**
-	 * Warehouse open and operations for customer shipping and internal stock transfers/corrections allowed (not for supplier dispatch).
-	 */
-	const STATUS_OPEN_SHIPPING = 3;
-	
-	/**
-	 * Warehouse open and operations for supplier dispatch internal stock transfers/corrections allowed (not for customer shipping).
-	 */
-	const STATUS_OPEN_DISPATCH = 4;
-	
+	const STATUS_OPEN_INTERNAL = 2;	
 
 	var $libelle;
 	var $description;
@@ -91,8 +80,6 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
-			$this->statuts[self::STATUS_OPEN_SHIPPING] = 'OpenShipping';
-			$this->statuts[self::STATUS_OPEN_DISPATCH] = 'OpenDispatch';
 		}
 		else
 		{
@@ -173,11 +160,15 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
+	    if (empty($id)) $id = $this->id;
+	    
 		// Check if new parent is already a child of current warehouse
-		if(!empty($this->fk_parent)) {
+		if(!empty($this->fk_parent)) 
+		{
 			$TChildWarehouses = array($id);
 			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
-			if(in_array($this->fk_parent, $TChildWarehouses)) {
+			if(in_array($this->fk_parent, $TChildWarehouses)) 
+			{
 				$this->error = 'ErrorCannotAddThisParentWarehouse';
 				return -2;
 			}
@@ -189,13 +180,13 @@ class Entrepot extends CommonObject
 		$this->lieu=trim($this->lieu);
 
 		$this->address=trim($this->address);
-	        $this->zip=trim($this->zip);
-        	$this->town=trim($this->town);
-		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
+		$this->zip=trim($this->zip);
+		$this->town=trim($this->town);
+		$this->country_id=($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
-		$sql .= ", fk_parent = '" . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL') ."'";
+		$sql .= ", fk_parent = " . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL');
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
@@ -574,7 +565,7 @@ class Entrepot extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='',$showfullpath=0, $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
 		$langs->load("stocks");
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips

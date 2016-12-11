@@ -339,7 +339,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	{
 		require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
 		$modTask = new $obj;
-		$defaultref = $modTask->getNextValue($soc,$object);
+		$defaultref = $modTask->getNextValue($object->thirdparty,null);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -351,7 +351,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" size="25" name="label" class="flat" value="'.$label.'">';
+	print '<input type="text" name="label" class="flat minwidth300" value="'.$label.'">';
 	print '</td></tr>';
 
 	// List of projects

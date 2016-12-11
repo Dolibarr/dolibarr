@@ -45,7 +45,7 @@ class AdherentType extends CommonObject
 	 */
 	public $cotisation;
 	/**
-	 * @var bool Subsription required
+	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */
 	public $subscription;

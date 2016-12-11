@@ -143,7 +143,7 @@ class Members extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve member list : '.$member->error);
+            throw new RestException(503, 'Error when retrieve member list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No member found');
@@ -200,6 +200,7 @@ class Members extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             // Process the status separately because it must be updated using
             // the validate() and resiliate() methods of the class Adherent.
             if ($field == 'statut') {
@@ -288,9 +289,6 @@ class Members extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 

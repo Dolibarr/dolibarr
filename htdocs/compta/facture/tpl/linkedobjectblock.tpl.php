@@ -47,8 +47,17 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
     	<td align="right"><?php
     		if ($user->rights->facture->lire) {
-    			$total = $total + $objectlink->total_ht;
-    			echo price($objectlink->total_ht);
+    			$sign = 1;
+    			if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = -1;
+    			if ($objectlink->statut != 3)		// If not abandonned
+    			{
+    				$total = $total + $sign * $objectlink->total_ht;
+    				echo price($objectlink->total_ht);
+    			}
+    			else 
+    			{
+    				echo '<strike>'.price($objectlink->total_ht).'</strike>';
+    			}
     		} ?></td>
     	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>

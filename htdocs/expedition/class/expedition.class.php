@@ -850,14 +850,14 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Add a expedition line.
+	 * Add an expedition line.
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	function addline($entrepot_id, $id, $qty,$array_options=0)
@@ -892,7 +892,7 @@ class Expedition extends CommonObject
 				$result=$product->fetch($fk_product);
 
 				if ($entrepot_id > 0) {
-					$product->load_stock();
+					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
 				else
@@ -909,6 +909,13 @@ class Expedition extends CommonObject
 			}
 		}
 
+		// If product need a batch number, we should not have called this function but addline_batch instead.
+		if (! empty($conf->productbatch->enabled) && ! empty($orderline->fk_product) && ! empty($orderline->product_tobatch))
+		{
+		    $this->error='ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
+		    return -4;
+		}
+		
 		// extrafields
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 			$line->array_options = $array_options;

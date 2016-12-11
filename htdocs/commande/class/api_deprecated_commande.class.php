@@ -115,6 +115,7 @@ class CommandeApi extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
 
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
@@ -138,7 +139,7 @@ class CommandeApi extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -167,13 +168,13 @@ class CommandeApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($commande_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve commande list');
+            throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No commande found');
@@ -432,6 +433,7 @@ class CommandeApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->commande->$field = $value;
         }
 

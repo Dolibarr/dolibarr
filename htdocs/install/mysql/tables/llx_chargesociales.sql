@@ -26,6 +26,9 @@ create table llx_chargesociales
   tms                   timestamp,
   date_creation         datetime,						-- date de creation 
   date_valid            datetime,						-- date de validation
+  fk_user_author		integer,						-- user making creation
+  fk_user_modif         integer,                        -- user making last change
+  fk_user_valid			integer,						-- user validating
   fk_type    integer NOT NULL,
   fk_account integer,                       -- bank account
   fk_mode_reglement integer,                -- mode de reglement

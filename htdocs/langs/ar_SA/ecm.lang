@@ -32,13 +32,13 @@ ECMDocsByProducts=الوثائق المرتبطة بالمنتجات
 ECMDocsByProjects=المستندات المرتبطة بالمشاريع
 ECMDocsByUsers=وثائق مرتبطة المستخدمين
 ECMDocsByInterventions=وثائق مرتبطة بالتدخلات
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=لا الدليل
 ShowECMSection=وتظهر الدليل
 DeleteSection=إزالة الدليل
-ConfirmDeleteSection=يمكنك التأكد من أنك تريد حذف الدليل <b>٪ ق؟</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=دليل النسبي للملفات
 CannotRemoveDirectoryContainsFiles=لا يمكن إزالتها لأنه يحتوي على بعض الملفات
 ECMFileManager=مدير الملفات
 ECMSelectASection=اختر دليل على ترك شجرة...
 DirNotSynchronizedSyncFirst=ويبدو أن هذا الدليل ليتم إنشاؤها أو تعديلها خارج وحدة ECM. يجب عليك النقر على زر "تحديث" لأول مرة لمزامنة القرص وقاعدة بيانات للحصول على محتويات هذا الدليل.
-

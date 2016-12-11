@@ -100,7 +100,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[1][0] = 771;
 		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[3][0] = 772;
@@ -115,12 +115,6 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[4][3] = 0;
 		$this->rights[4][4] = 'supprimer';
 
-		$this->rights[2][0] = 774;
-		$this->rights[2][1] = 'Read all expense reports';
-		$this->rights[2][2] = 'r';
-		$this->rights[2][3] = 1;
-		$this->rights[2][4] = 'readall';
-
 		$this->rights[6][0] = 775;
 		$this->rights[6][1] = 'Approve expense reports';
 		$this->rights[6][2] = 'w';
@@ -133,20 +127,17 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[7][3] = 0;
 		$this->rights[7][4] = 'to_paid';
 
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
-		{
-			$this->rights[8][0] = 777;
-			$this->rights[8][1] = 'Synchroniser les NDF avec un compte courant';
-			$this->rights[8][2] = 'w';
-			$this->rights[8][3] = 0;
-			$this->rights[8][4] = 'synchro';
+		$this->rights[2][0] = 777;
+		$this->rights[2][1] = 'Read expense reports of everybody';
+		$this->rights[2][2] = 'r';
+		$this->rights[2][3] = 1;
+		$this->rights[2][4] = 'readall';
 
-			$this->rights[9][0] = 778;
-			$this->rights[9][1] = 'Exporter les NDF au format CSV';
-			$this->rights[9][2] = 'r';
-			$this->rights[9][3] = 0;
-			$this->rights[9][4] = 'export_csv';
-		}
+		$this->rights[2][0] = 778;
+		$this->rights[2][1] = 'Create expense reports for everybody';
+		$this->rights[2][2] = 'w';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'writeall_advance';
 
 		$this->rights[5][0] = 779;
 		$this->rights[5][1] = 'Export expense reports';

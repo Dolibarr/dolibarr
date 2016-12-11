@@ -377,6 +377,9 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
+				// Must be a string text to allow to use comparison strings like "<= 999"
+			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				break;
 			case 'Status':
 				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';

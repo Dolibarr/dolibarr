@@ -892,13 +892,13 @@ else
 
             // Note Public
             print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
             print $doleditor->Create(1);
             print '</td></tr>';
 
             // Note Private
             print '<tr><td class="tdtop"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
-            $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
             print $doleditor->Create(1);
             print '</td></tr>';
 
@@ -1183,10 +1183,10 @@ else
         print '</td></tr>';
 
         print '<tr><td>';
-        print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
+        print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("VCard"),'vcard.png').' ';
-		print $langs->trans("VCard");
+		print img_picto($langs->trans("Download"),'vcard.png').' ';
+		print $langs->trans("Download");
 		print '</a>';
         print '</td></tr>';
 

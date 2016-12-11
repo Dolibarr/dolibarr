@@ -63,7 +63,10 @@ $month=GETPOST('remonth')?GETPOST('remonth','int'):(GETPOST("month")?GETPOST("mo
 $day=GETPOST('reday')?GETPOST('reday','int'):(GETPOST("day")?GETPOST("day","int"):date("d"));
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
-$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_task_ref=GETPOST('search_task_ref', 'alpha');
+$search_task_label=GETPOST('search_task_label', 'alpha');
+$search_project_ref=GETPOST('search_project_ref', 'alpha');
+$search_thirdparty=GETPOST('search_thirdparty', 'alpha');
 
 $startdayarray=dol_get_first_day_week($day, $month, $year);
 
@@ -98,7 +101,10 @@ $object=new Task($db);
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $action = '';
+    $search_task_ref = '';
+    $search_task_label = '';
     $search_project_ref = '';
+    $search_thirdparty = '';
 }
 if (GETPOST("button_search_x") || GETPOST("button_search.x") || GETPOST("button_search"))
 {
@@ -290,6 +296,9 @@ if ($id)
 
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
+if ($search_task_ref) $morewherefilter.=natural_search("t.ref", $search_task_ref);
+if ($search_task_label) $morewherefilter.=natural_search("t.label", $search_task_label);
+if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
@@ -342,8 +351,8 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print '<br>';
-print "\n";
+
+dol_fiche_end();
 
 // Filter on user
 /*	dol_fiche_head('');
@@ -377,18 +386,19 @@ print "\n";
 
 print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="float">';
+print '<div class="float valignmiddle">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.$langs->trans("AssignTask").'">';
 //print '</form>';
 print '</div>';
 
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("RefTask").'</td>';
@@ -414,10 +424,10 @@ print '<td class="liste_total"></td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
+print '<td class="liste_total"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<td class="liste_total"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_total"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_total"></td>';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_total"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_total"></td>';
 print '<td class="liste_total"></td>';
 print '<td class="liste_total"></td>';
@@ -465,11 +475,10 @@ else
 	print '<tr><td colspan="11">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
+print '</div>';
 
 print '<input type="hidden" name="timestamp" value="1425423513"/>'."\n";
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
-
-dol_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';

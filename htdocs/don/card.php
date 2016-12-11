@@ -305,9 +305,6 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-    $nbrows=11;
-    if (! empty($conf->projet->enabled)) $nbrows++;
-
     // Date
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
@@ -346,7 +343,7 @@ if ($action == 'create')
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -356,7 +353,7 @@ if ($action == 'create')
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -428,11 +425,8 @@ if (! empty($id) && $action == 'edit')
 	print '</td>';
 	print '</tr>';
 
-    $nbrows=12;
-    if (! empty($conf->projet->enabled)) $nbrows++;
-
 	// Date
-	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($object->date,'','','','',"update");
 	print '</td>';
 
@@ -454,10 +448,10 @@ if (! empty($id) && $action == 'edit')
 	print "</tr>\n";
 
 	$langs->load("companies");
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$object->societe.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$object->societe.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.$object->address.'</textarea></td></tr>';
 
     // Zip / Town
@@ -468,7 +462,7 @@ if (! empty($id) && $action == 'edit')
 	print '</tr>';
 
 	// Country
-	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
@@ -593,9 +587,6 @@ if (! empty($id) && $action != 'edit')
 
     print '<table class="border" width="100%">';
 
-    $nbrows=12;
-    if (! empty($conf->projet->enabled)) $nbrows++;
-
 	// Ref
 	/*
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
@@ -604,7 +595,7 @@ if (! empty($id) && $action != 'edit')
 	print '</tr>';
     */
 	// Date
-	print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td colspan="2">';
 	print dol_print_date($object->date,"day");
 	print "</td>";
 
@@ -668,13 +659,13 @@ if (! empty($id) && $action != 'edit')
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-	
+
 	print '</table>';
-	
+
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
-	
+
 	/*
 	 * Payments
 	 */
@@ -737,16 +728,13 @@ if (! empty($id) && $action != 'edit')
 		dol_print_error($db);
 	}
 
-	
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div>';
-	
-	
+
     dol_fiche_end();
-    
 
 	$remaintopay = $object->amount - $totalpaid;
 
@@ -821,7 +809,7 @@ if (! empty($id) && $action != 'edit')
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 	print '</div></div></div>';
 }
 

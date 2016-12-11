@@ -120,7 +120,7 @@ if ($action == 'order' && isset($_POST['valid']))
                 $qty = GETPOST('tobuy'.$i, 'int');
                 //$desc = GETPOST('desc'.$i, 'alpha');
                 $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice FROM ';
+                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
                 $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
                 $sql .= ' WHERE rowid = ' . $supplierpriceid;
                 $resql = $db->query($sql);
@@ -152,6 +152,7 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $tva = $line->tva_tx / 100;
 	                    $line->total_tva = $line->total_ht * $tva;
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
+						$line->remise_percent = $obj->remise_percent;
 	                    $line->ref_fourn = $obj->ref_fourn;
 	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
                 	}
@@ -334,7 +335,7 @@ if ($usevirtualstock)
 	$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
 	$sqlCommandesCli.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 	$sqlCommandesCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
-	$sqlCommandesCli.= " WHERE c.entity IN (".getEntity('order', 1).")";
+	$sqlCommandesCli.= " WHERE c.entity IN (".getEntity('commande', 1).")";
 	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesCli.= " AND c.fk_statut IN (1,2))";
 
@@ -351,14 +352,14 @@ if ($usevirtualstock)
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
-	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('supplier_order', 1).")";
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
 
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
 	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
-	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('supplier_order', 1).")";
 	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
 	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
 
@@ -551,7 +552,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock();
+		$prod->load_stock('warehouseopen, warehouseinternal');
 
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))

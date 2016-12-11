@@ -252,7 +252,7 @@ print '</td></tr>';
 print '<tr><td class="tdtop">'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
+	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,'90%');
 	$doleditor->Create(0,'');
 }
 else

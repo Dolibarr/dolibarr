@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 <?php 
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore?'':' liste_titre_add'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2; }
@@ -184,7 +184,15 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			if ($conf->global->ENTREPOT_EXTRA_STATUS)
+			{
+				// hide products in closed warehouse, but show products for internal transfer
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, 'warehouseopen,warehouseinternal');
+			}
+			else
+			{
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			}
 		}
 		else
 		{
@@ -690,6 +698,7 @@ function setforfree() {
 	jQuery("#prod_entry_mode_free").prop('checked',true);
 	jQuery("#prod_entry_mode_predef").prop('checked',false);
 	jQuery("#price_ht").show();
+	jQuery("#multicurrency_price_ht").show();
 	jQuery("#price_ttc").show();	// May no exists
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
@@ -709,6 +718,7 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_free").prop('checked',false);
 	jQuery("#prod_entry_mode_predef").prop('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();

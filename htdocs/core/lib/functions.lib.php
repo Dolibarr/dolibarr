@@ -102,7 +102,14 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 /**
  * 	Get list of entity id to use
  *
- * 	@param	string	$element	Current element ('actioncomm', ...)
+ * 	@param	string	$element	Current element 
+ *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource', 
+ *                              'product', 'productprice', 'stock',
+ *                              'propal', 'facture', 'facture_fourn',
+ *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',  
+ *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
+ *                              'email_template', 'event',  
  * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
  * 	@return	mixed				Entity id(s) to use
  */
@@ -110,6 +117,11 @@ function getEntity($element=false, $shared=0)
 {
 	global $conf, $mc;
 
+	// For backward compatibilty
+	if ($element == 'actioncomm') $element='agenda';
+	if ($element == 'fichinter')  $element='intervention';
+	if ($element == 'categorie')  $element='category';
+	
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared);
@@ -619,17 +631,18 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				Do not clean b tags
+ *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
  *  @return     string     				 		Escaped string
  *
  *  @see		dol_string_nohtmltag
  */
-function dol_escape_htmltag($stringtoescape,$keepb=0)
+function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
 	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
-	if ($keepb) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	else $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
+	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
 	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
@@ -772,7 +785,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs, $hookmanager;
+	global $conf, $langs, $hookmanager;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
@@ -897,9 +910,13 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
-	$parameters=array('tabname' => $active);
-	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
-
+	$parameters=array('tabname' => $active, 'out' => $out);
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
+	if ($reshook > 0)
+	{
+		$out = $hookmanager->resPrint;
+	}
+	
 	return $out;
 }
 
@@ -940,8 +957,8 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
+ *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
 function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlstatus='', $onlybanner=0, $morehtmlright='')
@@ -1038,9 +1055,16 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
 		$morehtmlstatus.=$tmptxt;
 	}
-	elseif ($object->element == 'facturerec') 
+	elseif ($object->element == 'chargesociales')
 	{
-	    $morehtmlstatus.='<!-- No status for recurring invoice -->';
+	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
+		$morehtmlstatus.=$tmptxt;
+	}
+	elseif ($object->element == 'contrat') 
+	{
+        if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
+        else $morehtmlstatus.=$object->getLibStatut(4);
 	}
 	else { // Generic case
 	    $tmptxt=$object->getLibStatut(6);
@@ -1192,6 +1216,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
+ *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
@@ -2562,7 +2587,7 @@ function img_warning($titlealt = 'default', $morealt = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
 }
 
 /**
@@ -3140,7 +3165,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $center          	Strin gin the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
@@ -3151,7 +3176,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 	
@@ -3181,7 +3206,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
+	if (!empty($titre) && $savtotalnboflines >= 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center
@@ -3471,7 +3496,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
  *	@param	string	$rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
- *									'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
+ *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
  *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails.
  *
@@ -3521,7 +3546,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 		$nbofdectoround='';
 		if ($rounding == 'MU')     $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
-		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
+		elseif ($rounding == 'MS') $nbofdectoround=empty($conf->global->MAIN_MAX_DECIMALS_STOCK)?5:$conf->global->MAIN_MAX_DECIMALS_STOCK;
 		elseif (is_numeric($rounding))  $nbofdectoround=$rounding; 	// For admin info page
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
@@ -3999,7 +4024,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 	global $db,$mysoc;
 
 	if (! class_exists('Product')) {
-		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 	}
 
 	$ret=0;
@@ -4156,7 +4181,7 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if ($idprodfournprice > 0)
 	{
 		if (! class_exists('ProductFournisseur'))
-			require DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
@@ -4164,7 +4189,7 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	elseif ($idprod > 0)
 	{
 		if (! class_exists('Product'))
-			require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;
@@ -4391,7 +4416,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	integer	$removelinefeed		1=Replace also all lines feeds by a space, 0=Only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -4400,6 +4425,7 @@ function picto_required()
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
 	$pattern = "/<[^<>]+>/";
+	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
 	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
 	$temp = preg_replace($pattern,"",$temp);
 
@@ -4421,7 +4447,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  *
  * @param 	string	$text		Input text
  * @return	string				Output text
- * @see dol_nboflines_bis
+ * @see dol_nboflines_bis, dol_string_nohtmltag, dol_escape_htmltag
  */
 function dolGetFirstLineOfText($text)
 {
@@ -5335,8 +5361,9 @@ function picto_from_langcode($codelang)
 }
 
 /**
- *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
- *  Such values are declared into $conf->modules_parts['tab'].
+ *  Complete or removed entries into a head array (used to build tabs). 
+ *  For example, with value added by external modules. Such values are declared into $conf->modules_parts['tab'].
+ *  Or by change using hook completeTabsHead
  *
  *  @param	Conf			$conf           Object conf
  *  @param  Translate		$langs          Object langs
@@ -5363,6 +5390,8 @@ function picto_from_langcode($codelang)
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
+	global $hookmanager;
+	
 	if (isset($conf->modules_parts['tabs'][$type]) && is_array($conf->modules_parts['tabs'][$type]))
 	{
 		foreach ($conf->modules_parts['tabs'][$type] as $value)
@@ -5428,6 +5457,17 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 			}
 		}
 	}
+	
+	// No need to make a return $head. Var is modified as a reference
+	if (! empty($hookmanager))
+	{
+		$parameters=array('object' => $object, 'mode' => $mode, 'head'=>$head);
+		$reshook=$hookmanager->executeHooks('completeTabsHead',$parameters);
+		if ($reshook > 0)
+		{
+			$head = $hookmanager->resArray;
+		}
+	}
 }
 
 /**
@@ -5468,11 +5508,14 @@ function printCommonFooter($zone='private')
     	           });'."\n";
     	print '});'."\n";
     	
-    	print '<!-- Set handler to switch left menu page -->'."\n";
-    	print 'jQuery(".menuhider").click(function() {';
-    	print "  $('.side-nav').toggle();";
-    	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
-    	print '});'."\n";
+    	if (empty($conf->dol_use_jmobile))
+    	{
+        	print '<!-- Set handler to switch left menu page -->'."\n";
+        	print 'jQuery(".menuhider").click(function() {';
+        	print "  $('.side-nav').toggle();";
+        	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
+        	print '});'."\n";
+    	}
     	
     	print '</script>'."\n";
 	}

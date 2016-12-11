@@ -242,8 +242,8 @@ if (! empty($moreforfilter))
 <br>
 
 
-
-<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for short result tables<br>
+<!-- 
+<br><hr><br>Example 1b : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for short result tables<br>
 
 
 
@@ -278,9 +278,6 @@ $(document).ready(function(){
 			}
 		},
 		"aaSorting": [[0,'desc']],
-
-
-
 /* To use in ajax mode
 			"bProcessing": true,
 		"stateSave": true,
@@ -292,126 +289,12 @@ $(document).ready(function(){
 */
     })
 });
-
-
-/*
-// counts total number of td in a head so that we can use it for label extraction
-var head_col_count =  $('xxxthead td').size();
-// loop which replaces td
-for ( i=0; i <= head_col_count; i++ )  {
-	// head column label extraction
-	var head_col_label = $('xxxthead td:nth-child('+ i +')').text();
-	// replaces td with <div class="column" data-label="label">
-	$('xxxtr td:nth-child('+ i +')').replaceWith(
-		function(){
-			return $('<div class="column" data-label="'+ head_col_label +'">').append($(this).contents());
-		}
-	);
-}
-// replaces table with <div class="table">
-$('xxxtable').replaceWith(
-	function(){
-		return $('<div class="table">').append($(this).contents());
-	}
-);
-// replaces thead with <div class="table-head">
-$('xxxthead').replaceWith(
-	function(){
-		return $('<div class="table-head">').append($(this).contents());
-	}
-);
-// replaces tr with <div class="row">
-$('xxxtr').replaceWith(
-	function(){
-		return $('<div class="row">').append($(this).contents());
-	}
-);
-// replaces th with <div class="column">
-$('xxxth').replaceWith(
-	function(){
-		return $('<div class="column">').append($(this).contents());
-	}
-);
-*/
 </script>
 
-<table id="idtableexample2" class="centpercent">
-	<thead>
-    <tr class="liste_titre">
-        <th>Column A</th>
-        <th><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a title of Column B</label></th>
-		<?php
-		print getTitleFieldOfList($langs->trans('Column C'),1,$_SERVER["PHP_SELF"],'','','','align="center" class="tagtd"',$sortfield,$sortorder);
-		?>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>line1</td>
-        <td>dfsdf</td>
-		<td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line2</td>
-        <td>dfsdf</td>
-        <td align="center" class="nowrap"> xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx </td>
-    </tr>
-    <tr>
-        <td>line3</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line4</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line5</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line6</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line7</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line8</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line9</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line10</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line11</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    <tr>
-        <td>line12</td>
-        <td>dfsdf</td>
-        <td align="center"> xxx </td>
-    </tr>
-    </tbody>
-</table>
-<br>
+ -->
 
 
-<br><hr><br>Example 3 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this for tables that need to have a different form for each line, but AVOID IT if possible (drag and drop of lines does not work for this case, also height of title can't be forced to a minimum)<br><br>
+<br><hr><br>Example 2 : Table using tags: div.tagtable+(div|form).tagtr+div[.tagtd] => Use this for tables that need to have a different form for each line, but AVOID IT if possible (drag and drop of lines does not work for this case, also height of title can't be forced to a minimum)<br><br>
 
 
 <?php
@@ -419,7 +302,7 @@ $('xxxth').replaceWith(
 	$tagidfortablednd='tablelines';
 	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
-<div class="tagtable centpercent" id="tablelines">
+<div class="tagtable centpercent liste_titre_bydiv" id="tablelines">
     <div class="tagtr liste_titre">
         <div class="tagtd">Title A<input type="hidden" name="cartitem" value="3"></div>
         <div class="tagtd">title B</div>

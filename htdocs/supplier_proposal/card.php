@@ -1649,6 +1649,7 @@ if ($action == 'create')
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form
@@ -1674,7 +1675,7 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-
+    print '</div>';
 	print "</form>\n";
 
 	dol_fiche_end();
@@ -1774,7 +1775,7 @@ if ($action == 'create')
 				}
 
 				// Delete
-				if ($user->rights->supplier_proposal->supprimer) {
+				if (($object->statut == 0 && $user->rights->supplier_proposal->creer) || $user->rights->supplier_proposal->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete"';
 					print '>' . $langs->trans('Delete') . '</a></div>';
 				}

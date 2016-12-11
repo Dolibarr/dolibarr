@@ -587,11 +587,21 @@ div.myavailability {
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
-.table-responsive {
+/*.table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+}*/
+/* Style used for most tables */ 
+.div-table-responsive {
+    overflow-x: auto;
+    min-height: 0.01%;
+}
+/* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
+div.fiche>form>div.div-table-responsive {
+    overflow-x: auto;
+    min-height: 350px;
 }
 
 
@@ -617,6 +627,7 @@ div.myavailability {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
@@ -631,6 +642,8 @@ div.myavailability {
 .titlefieldcreate { width: 20%; }
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.imgmaxwidth180 { max-width: 180px; }
+	
 
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
@@ -660,6 +673,13 @@ div.myavailability {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+    .tdoverflowonsmartphone {
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 	div.titre {
 		line-height: 2em;
 	}
@@ -1026,6 +1046,9 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+img.fitcontain {
+    object-fit: contain;
+}
 div.photoref {
 	display:table-cell;
 	vertical-align:middle;
@@ -1039,6 +1062,7 @@ img.photorefnoborder {
     object-fit: contain;
     border: 1px solid #CCC;
 }
+
 .underrefbanner {
 }
 .underbanner {
@@ -1461,7 +1485,7 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo {
+#img_logo, .img-logo {
 	max-width: 200px;
 	max-height: 100px;
 }
@@ -2294,6 +2318,7 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
 /* Main boxes */
 
 table.liste, table.noborder, table.formdoc, div.noborder {
@@ -2306,36 +2331,16 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
-/*	border-right-width: 1px;
-	border-right-color: #BBB;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #BBB;
-	border-left-style: solid;
-*/
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 	
 	margin: 0px 0px 8px 0px;
-    /*
-	-moz-box-shadow: 2px 2px 4px #CCC;
-	-webkit-box-shadow: 2px 2px 4px #CCC;
-	box-shadow: 2px 2px 4px #CCC;
-    */
-	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
 	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-/*
-#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
-    border-top-width: 1px;
-    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-    border-top-style: solid;
-}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2347,6 +2352,10 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+table.paddingtopbottomonly tr td {
+	padding-top: 1px;
+	padding-bottom: 2px;
 }
 
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
@@ -2765,6 +2774,11 @@ div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
+div .tdtop {
+    vertical-align: top !important;
+	padding-top: 5px !important;
+	padding-bottom: 0px;
+}
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
@@ -2941,14 +2955,14 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #302010;
+  color: #303035;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFBF9A;
-  -moz-border-radius:3px;
-  -webkit-border-radius: 3px;
-  border-radius:3px;
-  background: #EFCFAA;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #E0EAE4;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -4444,7 +4458,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-	.imgopensurveywizard { width:95%; height: auto; }
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 	
 	#tooltip {
 		position: absolute;

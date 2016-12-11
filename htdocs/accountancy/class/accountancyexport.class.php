@@ -402,7 +402,7 @@ class AccountancyExport
 			print length_accountg($line->numero_compte) . $this->separator;
 			print substr(length_accountg($line->numero_compte),0,2) . $this->separator;
 			print '"'.dol_trunc($line->label_compte,40,'right','UTF-8',1).'"' . $this->separator;
-			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1)."'".$this->separator;
+			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
 			print price2num($line->montant).$this->separator;
 			print $line->sens.$this->separator;
 			print $date . $this->separator;

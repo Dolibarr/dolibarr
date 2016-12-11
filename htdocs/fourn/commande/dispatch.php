@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -65,16 +65,16 @@ $projectid = 0;
 if ($_GET["projectid"])
 	$projectid = GETPOST("projectid", 'int');
 
-$commande = new CommandeFournisseur($db);
+$object = new CommandeFournisseur($db);
 
 if ($id > 0 || ! empty($ref)) {
-	$result = $commande->fetch($id, $ref);
+	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
-		setEventMessages($commande->error, $commande->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	$result = $commande->fetch_thirdparty();
+	$result = $object->fetch_thirdparty();
 	if ($result < 0) {
-		setEventMessages($commande->error, $commande->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -94,9 +94,9 @@ if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED
 		$error ++;
 		$action = '';
 	} else {
-		$result = $commande->calcAndSetStatusDispatch($user);
+		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
-			setEventMessages($commande->error, $commande->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
@@ -114,9 +114,9 @@ if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANC
 		$error ++;
 		$action = '';
 	} else {
-		$result = $commande->calcAndSetStatusDispatch($user);
+		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
-			setEventMessages($commande->error, $commande->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
@@ -134,9 +134,9 @@ if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_
 		$error ++;
 		$action = '';
 	} else {
-		$result = $commande->calcAndSetStatusDispatch($user);
+		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
-			setEventMessages($commande->error, $commande->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
@@ -174,9 +174,9 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 
 				if (! $error) {
-					$result = $commande->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0) {
-						setEventMessages($commande->error, $commande->errors, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -218,9 +218,9 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 
 				if (! $error) {
-					$result = $commande->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0) {
-						setEventMessages($commande->error, $commande->errors, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -229,9 +229,9 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	}
 
 	if (! $error) {
-		$result = $commande->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0);
+		$result = $object->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0);
 		if ($result < 0) {
-			setEventMessages($commande->error, $commande->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 		}
 	}
@@ -240,11 +240,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 		global $conf, $langs, $user;
 		// Call trigger
 
-		$result = $commande->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
+		$result = $object->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
 		// End call triggers
 
 		if ($result < 0) {
-			setEventMessages($commande->error, $commande->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 		}
 	}
@@ -275,25 +275,75 @@ llxHeader('', $langs->trans("Order"), $help_url, '', 0, 0, array('/fourn/js/lib_
 
 if ($id > 0 || ! empty($ref)) {
 	$soc = new Societe($db);
-	$soc->fetch($commande->socid);
+	$soc->fetch($object->socid);
 
 	$author = new User($db);
-	$author->fetch($commande->user_author_id);
+	$author->fetch($object->user_author_id);
 
-	$head = ordersupplier_prepare_head($commande);
+	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'dispatch', $title, 0, 'order');
 
-	/*
-	 *	Commande
-	 */
-	print '<table class="border" width="100%">';
+	
+	// Supplier order card
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+	// Ref supplier
+	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    if ($user->rights->fournisseur->commande->creer)
+	    {
+	        if ($action != 'classify')
+	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.=' : ';
+	        	if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	$morehtmlref.='</div>';
+	
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
+	
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	
+	print '<table class="border" width="100%">';
+/*
 	// Ref
 	print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td>';
 	print '<td colspan="2">';
-	print $form->showrefnav($commande, 'ref', '', 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', '', 1, 'ref', 'ref');
 	print '</td>';
 	print '</tr>';
 
@@ -306,29 +356,31 @@ if ($id > 0 || ! empty($ref)) {
 	print '<tr>';
 	print '<td>' . $langs->trans("Status") . '</td>';
 	print '<td colspan="2">';
-	print $commande->getLibStatut(4);
+	print $object->getLibStatut(4);
 	print "</td></tr>";
-
+*/
 	// Date
-	if ($commande->methode_commande_id > 0) {
-		print '<tr><td>' . $langs->trans("Date") . '</td><td colspan="2">';
-		if ($commande->date_commande) {
-			print dol_print_date($commande->date_commande, "dayhourtext") . "\n";
+	if ($object->methode_commande_id > 0) {
+		print '<tr><td class="titlefield">' . $langs->trans("Date") . '</td><td>';
+		if ($object->date_commande) {
+			print dol_print_date($object->date_commande, "dayhourtext") . "\n";
 		}
 		print "</td></tr>";
 
-		if ($commande->methode_commande) {
-			print '<tr><td>' . $langs->trans("Method") . '</td><td colspan="2">' . $commande->methode_commande . '</td></tr>';
+		if ($object->methode_commande) {
+			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->methode_commande . '</td></tr>';
 		}
 	}
 
 	// Auteur
 	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
-	print '<td colspan="2">' . $author->getNomUrl(1) . '</td>';
+	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
 	print "</table>";
 
+	print '</div>';
+	
 	// if ($mesg) print $mesg;
 	print '<br>';
 
@@ -336,20 +388,20 @@ if ($id > 0 || ! empty($ref)) {
 	if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 		$disabled = 0;
 
-		/*
-	 * Lignes de commandes
-	 */
-	if ($commande->statut <= 2 || $commande->statut >= 6) {
+	// Line of orders
+	if ($object->statut <= 2 || $object->statut >= 6) {
 		print $langs->trans("OrderStatusNotReadyToDispatch");
 	}
 
-	if ($commande->statut == 3 || $commande->statut == 4 || $commande->statut == 5) {
+	if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
-		print '<form method="POST" action="dispatch.php?id=' . $commande->id . '">';
+		print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="dispatch">';
+		
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		// Set $products_dispatched with qty dispatched for each product id
@@ -357,7 +409,7 @@ if ($id > 0 || ! empty($ref)) {
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
-		$sql .= " WHERE cfd.fk_commande = " . $commande->id;
+		$sql .= " WHERE cfd.fk_commande = " . $object->id;
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
 		$resql = $db->query($sql);
@@ -369,7 +421,7 @@ if ($id > 0 || ! empty($ref)) {
 				while ( $i < $num ) {
 					$objd = $db->fetch_object($resql);
 					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
-					$i ++;
+					$i++;
 				}
 			}
 			$db->free($resql);
@@ -379,7 +431,7 @@ if ($id > 0 || ! empty($ref)) {
 		$sql .= " p.ref, p.label, p.tobatch";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON l.fk_product=p.rowid";
-		$sql .= " WHERE l.fk_commande = " . $commande->id;
+		$sql .= " WHERE l.fk_commande = " . $object->id;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 			$sql .= " AND l.product_type = 0";
 		$sql .= " GROUP BY p.ref, p.label, p.tobatch, l.rowid, l.fk_product, l.subprice, l.remise_percent"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
@@ -414,8 +466,9 @@ if ($id > 0 || ! empty($ref)) {
 				}
 			}
 
-			$nbfreeproduct = 0;
-			$nbproduct = 0;
+			$nbfreeproduct = 0;		// Nb of lins of free products/services
+			$nbproduct = 0;			// Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
+									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$var = false;
 			while ( $i < $num ) {
@@ -423,14 +476,14 @@ if ($id > 0 || ! empty($ref)) {
 
 				// On n'affiche pas les produits personnalises
 				if (! $objp->fk_product > 0) {
-					$nbfreeproduct ++;
+					$nbfreeproduct++;
 				} else {
 					$remaintodispatch = price2num($objp->qty - (( float ) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
 					if ($remaintodispatch < 0)
 						$remaintodispatch = 0;
 
 					if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
-						$nbproduct ++;
+						$nbproduct++;
 
 						$var = ! $var;
 
@@ -470,7 +523,7 @@ if ($id > 0 || ! empty($ref)) {
 						if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP))
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
-							// Qty ordered
+						// Qty ordered
 						print '<td align="right">' . $objp->qty . '</td>';
 
 						// Already dispatched
@@ -538,7 +591,7 @@ if ($id > 0 || ! empty($ref)) {
 						print "</tr>\n";
 					}
 				}
-				$i ++;
+				$i++;
 			}
 			$db->free($resql);
 		} else {
@@ -546,30 +599,35 @@ if ($id > 0 || ! empty($ref)) {
 		}
 
 		print "</table>\n";
-		print "<br/>\n";
+		print '</div>';
+		print "<br>\n";
 
 		if ($nbproduct) 
 		{
-            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($commande->statuts[5]));
+            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
             
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
-			print '<input type="text" size="60" maxlength="128" name="comment" value="';
-			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $commande->ref);
-			// print ' / '.$commande->ref_supplier; // Not yet available
+			print '<input type="text" class="minwidth200" maxlength="128" name="comment" value="';
+			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+			// print ' / '.$object->ref_supplier; // Not yet available
 			print '" class="flat"><br>';
 
 			print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
 			
-			// print '<div class="center">';
 			print '<br><input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
 			if (count($listwarehouses) <= 0)
 				print ' disabled';
 			print '>';
-			// print '</div>';
+			print '</div>';
 		}
-		if (! $nbproduct && $nbfreeproduct) {
-			print $langs->trans("NoPredefinedProductToDispatch");
+
+		// Message if nothing to dispatch
+		if (! $nbproduct) {
+			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
+				print $langs->trans("NoPredefinedProductToDispatch");		// No predefined line at all
+			else 
+				print $langs->trans("NoMorePredefinedProductToDispatch");	// No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';
@@ -577,6 +635,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	dol_fiche_end();
 
+	
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
@@ -584,7 +643,7 @@ if ($id > 0 || ! empty($ref)) {
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e ON cfd.fk_entrepot = e.rowid";
-	$sql .= " WHERE cfd.fk_commande = " . $commande->id;
+	$sql .= " WHERE cfd.fk_commande = " . $object->id;
 	$sql .= " AND cfd.fk_product = p.rowid";
 	$sql .= " ORDER BY cfd.rowid ASC";
 
@@ -594,10 +653,11 @@ if ($id > 0 || ! empty($ref)) {
 		$i = 0;
 
 		if ($num > 0) {
-			print "<br/>\n";
+			print "<br>\n";
 
 			print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
+			print '<div class="div-table-responsive">';
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -666,7 +726,7 @@ if ($id > 0 || ! empty($ref)) {
 						}
 					} else {
 						$disabled = '';
-						if ($commande->statut == 5)
+						if ($object->statut == 5)
 							$disabled = 1;
 						if (empty($objp->status)) {
 							print '<a class="button' . ($disabled ? ' buttonRefused' : '') . '" href="' . $_SERVER["PHP_SELF"] . "?id=" . $id . "&action=checkdispatchline&lineid=" . $objp->dispatchlineid . '">' . $langs->trans("Approve") . '</a>';
@@ -692,6 +752,7 @@ if ($id > 0 || ! empty($ref)) {
 			$db->free($resql);
 
 			print "</table>\n";
+			print '</div>';
 		}
 	} else {
 		dol_print_error($db);

@@ -289,7 +289,7 @@ if ($sall) {
 }
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '')
+if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 }
@@ -333,7 +333,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.=', p.ref DESC';
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -538,7 +538,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
 	$parameters=array();
@@ -556,6 +556,7 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
+    print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	// Fields title
@@ -1003,6 +1004,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 				
 	print '</table>'."\n";
+    print '</div>'."\n";
 
 	print '</form>'."\n";
 	

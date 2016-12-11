@@ -72,6 +72,12 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
+if ($action == 'view' && $object->fetch($socid)<=0)
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
@@ -109,7 +115,7 @@ if (empty($reshook))
         }
     }
 
-	if ($action == 'confirm_merge' && $confirm == 'yes')
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer)
 	{
 		$object->fetch($socid);
 
@@ -1013,7 +1019,7 @@ else
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1"></option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
         print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
@@ -1692,7 +1698,7 @@ else
             // VAT is used
             print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td colspan="3">';
             print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
-            print '</td>';
+            print '</td></tr>';
 
             // Local Taxes
             //TODO: Place into a function to control showing by country or study better option
@@ -1745,7 +1751,7 @@ else
             }
             
             // VAT Code
-            print '<td>'.fieldLabel('VATIntra','intra_vat').'</td>';
+            print '<tr><td>'.fieldLabel('VATIntra','intra_vat').'</td>';
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 

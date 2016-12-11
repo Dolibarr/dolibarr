@@ -114,7 +114,7 @@ class Commande extends CommonOrder
      */
     public $availability;
 
-    public $demand_reason_id;
+    public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
     public $demand_reason_code;
     public $address;
     public $date;				// Date commande
@@ -123,14 +123,14 @@ class Commande extends CommonOrder
 	 * @see date
 	 */
     public $date_commande;
-    public $date_livraison;	// Date livraison souhaitee
+    public $date_livraison;	    // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
     public $fk_remise_except;
     public $remise_percent;
     public $remise_absolue;
     public $info_bits;
     public $rang;
     public $special_code;
-    public $source;			// Origin of order
+    public $source;			    // Order mode. How we received order (by phone, by email, ...)
     public $extraparams=array();
 
     public $linked_objects=array();
@@ -875,54 +875,70 @@ class Commande extends CommonOrder
                     	$this->ref = $initialref;
 
                         // Add object linked
-                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
+                        if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
-                        	foreach($this->linked_objects as $origin => $origin_id)
+                        	foreach($this->linked_objects as $origin => $tmp_origin_id)
                         	{
-                        		$ret = $this->add_object_linked($origin, $origin_id);
-                        		if (! $ret)
-                        		{
-                        			dol_print_error($this->db);
-                        			$error++;
-                        		}
-
-                        		if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-                        		{
-                        		    $originforcontact = $origin;
-                        		    $originidforcontact = $origin_id;
-                        		    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-                        		    {
-                        		        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-                        		        $exp = new Expedition($db);
-                        		        $exp->fetch($origin_id);
-                        		        $exp->fetchObjectLinked();
-                        		        if (count($exp->linkedObjectsIds['commande']) > 0)
-                        		        {
-                        		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
-                        		            {
-                        		                $originforcontact = 'commande';
-                        		                $originidforcontact = $value->id;
-                        		                break; // We take first one
-                        		            }
-                        		        }
-                        		    }
-
-                        		    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-                        		    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-
-                        		    $resqlcontact = $this->db->query($sqlcontact);
-                        		    if ($resqlcontact)
-                        		    {
-                        		        while($objcontact = $this->db->fetch_object($resqlcontact))
-                        		        {
-                					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
-                        		            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
-                        		        }
-                        		    }
-                        		    else dol_print_error($resqlcontact);
-                        		}
+                        	    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+                        	    {
+                        	        foreach($tmp_origin_id as $origin_id)
+                        	        {
+                        	            $ret = $this->add_object_linked($origin, $origin_id);
+                        	            if (! $ret)
+                        	            {
+                        	                dol_print_error($this->db);
+                        	                $error++;
+                        	            }
+                        	        }
+                        	    }
+                        	    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+                        	    {
+                        	        $origin_id = $tmp_origin_id;
+                        	        $ret = $this->add_object_linked($origin, $origin_id);
+                        	        if (! $ret)
+                        	        {
+                        	            dol_print_error($this->db);
+                        	            $error++;
+                        	        }
+                          	    }
                         	}
                         }
+
+            			if (! $error && $this->id && ! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && ! empty($this->origin) && ! empty($this->origin_id))   // Get contact from origin object
+            			{
+            				$originforcontact = $this->origin;
+            				$originidforcontact = $this->origin_id;
+                		    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+                		    {
+                		        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                		        $exp = new Expedition($db);
+                		        $exp->fetch($this->origin_id);
+                		        $exp->fetchObjectLinked();
+                		        if (count($exp->linkedObjectsIds['commande']) > 0)
+                		        {
+                		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+                		            {
+                		                $originforcontact = 'commande';
+                		                $originidforcontact = $value->id;
+                		                break; // We take first one
+                		            }
+                		        }
+                		    }
+
+                		    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+                		    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+
+                		    $resqlcontact = $this->db->query($sqlcontact);
+                		    if ($resqlcontact)
+                		    {
+                		        while($objcontact = $this->db->fetch_object($resqlcontact))
+                		        {
+        					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+                		            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+                		        }
+                		    }
+                		    else dol_print_error($resqlcontact);
+                		}
                     }
 
                     if (! $error)
@@ -1209,6 +1225,7 @@ class Commande extends CommonOrder
      * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
      * 	@param		string		    $origin				'order', ...
      *  @param		int			    $origin_id			Id of origin object
+	 * 	@param		double			$pu_ht_devise		Unit price in currency
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1218,7 +1235,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise = 0)
     {
     	global $mysoc, $conf, $langs, $user;
 
@@ -1294,18 +1311,20 @@ class Commande extends CommonOrder
     		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
     		}
 
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+			$pu_ht = $tabprice[3];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
 
             // Rang to use
             $rangtouse = $rang;
@@ -1369,7 +1388,7 @@ class Commande extends CommonOrder
 			// Multicurrency
 			$this->line->fk_multicurrency			= $this->fk_multicurrency;
 			$this->line->multicurrency_code			= $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+			$this->line->multicurrency_subprice		= $pu_ht_devise;
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -1741,7 +1760,7 @@ class Commande extends CommonOrder
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 	    $sql.= ' l.fk_unit,';
 		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch,';
         $sql.= ' p.weight, p.weight_units, p.volume, p.volume_units';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1801,6 +1820,7 @@ class Commande extends CommonOrder
                 $line->libelle			= $objp->product_label;
                 $line->product_label	= $objp->product_label;
                 $line->product_desc     = $objp->product_desc;
+                $line->product_tobatch  = $objp->product_tobatch;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 	            $line->fk_unit          = $objp->fk_unit;
 
@@ -2728,17 +2748,17 @@ class Commande extends CommonOrder
      *  Update a line in database
      *
      *  @param    	int				$rowid            	Id of line to update
-     *  @param    	string			$desc             	Description de la ligne
-     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	string			$desc             	Description of line
+     *  @param    	float			$pu               	Unit price
      *  @param    	float			$qty              	Quantity
-     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$remise_percent   	Percent of discount
      *  @param    	float			$txtva           	Taux TVA
      * 	@param		float			$txlocaltax1		Local tax 1 rate
      *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	int		$date_start        	Start date of the line
-     *  @param    	int		$date_end          	End date of the line
+     *  @param    	int				$date_start        	Start date of the line
+     *  @param    	int				$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -2748,9 +2768,10 @@ class Commande extends CommonOrder
      *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array			$array_options		extrafields array
      * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		double			$pu_ht_devise		Amount in currency
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null, $pu_ht_devise = 0)
     {
         global $conf, $mysoc, $langs, $user;
 
@@ -2794,28 +2815,32 @@ class Commande extends CommonOrder
     		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
     		}
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
 
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
-            $price = $pu;
+            $price = $pu_ht;
 			if ($price_base_type == 'TTC')
 			{
-				$subprice = $tabprice[5];
+				$subprice = $pu_ttc;
 			}
 			else
 			{
-				$subprice = $pu;
+				$subprice = $pu_ht;
 			}
             $remise = 0;
             if ($remise_percent > 0)
@@ -2893,7 +2918,7 @@ class Commande extends CommonOrder
 			$this->line->pa_ht = $pa_ht;
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= price2num($subprice * $this->multicurrency_tx);
+			$this->line->multicurrency_subprice		= $pu_ht_devise;
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -3765,7 +3790,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 	    $sql.= ' cd.fk_unit,';
 		$sql.= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
-        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc, p.tobatch as product_tobatch,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -3810,7 +3835,8 @@ class OrderLine extends CommonOrderLine
             $this->libelle			= $objp->product_libelle;  // deprecated
             $this->product_label	= $objp->product_libelle;
             $this->product_desc     = $objp->product_desc;
-	        $this->fk_unit          = $objp->fk_unit;
+            $this->product_tobatch  = $objp->product_tobatch;
+            $this->fk_unit          = $objp->fk_unit;
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
@@ -3828,6 +3854,7 @@ class OrderLine extends CommonOrderLine
         }
         else
         {
+            $this->error = $this->db->lasterror();
             return -1;
         }
     }

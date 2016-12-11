@@ -135,7 +135,7 @@ class Subscriptions extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve subscription list : '.$subscription->error);
+            throw new RestException(503, 'Error when retrieve subscription list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Subscription found');
@@ -188,6 +188,7 @@ class Subscriptions extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $subscription->$field = $value;
         }
 

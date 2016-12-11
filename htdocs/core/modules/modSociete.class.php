@@ -242,12 +242,12 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -282,7 +282,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
 		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
-		
+
 		// Export list of contacts and attributes
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -300,9 +300,12 @@ class modSociete extends DolibarrModules
         }
         $keyforselect='socpeople'; $keyforelement='contact'; $keyforaliasextra='extra';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+        $keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extrasoc';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
@@ -403,7 +406,7 @@ class modSociete extends DolibarrModules
 				'sr.code_banque'=>"0000", 'sr.code_guichet'=>"1111",'sr.number'=>"3333333333",
 				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333"
 		);
-		
+
 		// Import Company Salesman
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
@@ -412,7 +415,7 @@ class modSociete extends DolibarrModules
 		$this->import_entities_array[$r]=array('sr.fk_user'=>'user');		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
 		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.fk_user'=>"User*");
-		
+
 		$this->import_convertvalue_array[$r]=array(
 				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 				'sr.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')

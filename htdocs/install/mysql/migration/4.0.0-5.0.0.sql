@@ -25,8 +25,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 -- after changing const name, please insure that old constant was rename
-UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRPARTY_CREATION_INDIVIDUAL'  -- under 3.9.0
-UPDATE llx_const SET name = 'THIRDPARTY_DEFAULT_CREATE_CONTACT' WHERE name='MAIN_THIRDPARTY_CREATION_INDIVIDUAL' -- under 4.0.1
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
+UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRDPARTY_CREATION_INDIVIDUAL')__; -- under 4.0.1
 
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
@@ -48,6 +48,9 @@ ALTER TABLE llx_don ADD COLUMN date_valid datetime;
 
 DELETE FROM llx_menu where module='expensereport';
 
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_author integer after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
+
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
@@ -61,6 +64,10 @@ ALTER TABLE llx_website ADD COLUMN virtualhost varchar(255) after fk_default_hom
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_account integer after fk_type;
 ALTER TABLE llx_chargesociales ADD COLUMN fk_mode_reglement integer after fk_account;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_author		integer;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_modif         integer;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_valid			integer;
+
 
 ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover; 
 
@@ -173,17 +180,23 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
 ALTER TABLE llx_bank_account ADD COLUMN import_key      		varchar(14);
 
+ALTER TABLE llx_projet ADD COLUMN import_key      	        	varchar(14);
+ALTER TABLE llx_projet_task ADD COLUMN import_key      		    varchar(14);
+ALTER TABLE llx_projet_task_time ADD COLUMN import_key      	varchar(14);
+
+
 ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
 ALTER TABLE llx_mailing_cibles ADD COLUMN error_text varchar(255);
 
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
 
 create table llx_user_employment
 (
@@ -206,6 +219,14 @@ create table llx_user_employment
 )ENGINE=innodb;
 
 
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_debut (date_debut);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_fin (date_fin);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_statut (fk_statut);
+
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_author (fk_user_author);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_approve (fk_user_approve);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_approve);
 
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
@@ -218,4 +239,10 @@ drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
+ALTER TABLE llx_expensereport ADD UNIQUE INDEX idx_expensereport_uk_ref (ref, entity);
+
+UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
+ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
+
+ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 

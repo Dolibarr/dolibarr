@@ -74,6 +74,7 @@ ResultOfMailSending=Result of mass EMail sending
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
+ContactsWithThirdpartyFilter=Contact with customer filters
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s in file
@@ -97,7 +98,7 @@ ToAddRecipientsChooseHere=Add recipients by choosing from the lists
 NbOfEMailingsReceived=Mass emailings received
 NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID record
-DeliveryReceipt=Delivery Receipt
+DeliveryReceipt=Delivery Ack.
 YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
 TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
@@ -118,6 +119,8 @@ MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Se
 MailSendSetupIs3=If you have any questions on how to setup your SMTP server, you can ask to %s.
 YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor) 
 NbOfTargetedContacts=Current number of targeted contact emails
+UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
+UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=Recipients (advanced selection)
 AdvTgtTitle=Fill input fields to preselect the thirdparties or contacts/addresses to target
 AdvTgtSearchTextHelp=Use %% as magic caracters. For exemple to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For exemple  <b>jean;joe;jim%%;!jimo;!jima%</b> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima 

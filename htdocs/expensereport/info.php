@@ -43,21 +43,36 @@ $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
 $helpurl="EN:Module_Expense_Reports";
 llxHeader("",$title,$helpurl);
 
-if ($id)
+if ($id > 0 || ! empty($ref))
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id);
-	$object->info($id);
+	$object->fetch($id,$ref);
+	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), 0, 'trip');
 
-    print '<table width="100%"><tr><td>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
+
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	
+	print '<br>';
+	
+	print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
 
     print '</div>';
+    
+    dol_fiche_end();
 }
 
 llxFooter();

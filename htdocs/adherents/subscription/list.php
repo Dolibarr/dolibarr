@@ -61,7 +61,7 @@ $result=restrictedArea($user,'adherent','','','cotisation');
  *	Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search="";
 	$search_ref="";
@@ -110,7 +110,7 @@ if ($search_account > 0) $sql.= " AND b.fk_account = ".$search_account;
 if ($search_amount) $sql.= natural_search('c.subscription', $search_amount, 1);
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -154,7 +154,10 @@ if ($result)
 		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 	}
 
-    print '<table class="noborder" width="100%">';
+    $moreforfilter = '';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
@@ -301,6 +304,7 @@ if ($result)
     print "</tr>\n";
 
     print "</table>";
+    print '</div>';
 	print '</form>';
 }
 else

@@ -53,6 +53,7 @@ $langs->load("other");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
@@ -95,6 +96,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($cancel) 
+	{
+		if ($action != 'addlink')
+		{
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+			header("Location: ".$urltogo);
+			exit;
+		}		
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		$action='';
+	}
+	
 	// Action to add record
 	if ($action == 'add')
 	{
@@ -140,11 +153,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
-
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
+	if ($action == 'update')
 	{
 		$error=0;
 

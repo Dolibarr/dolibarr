@@ -216,6 +216,7 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 
                 $i = 0;
+                print '<div class="div-table-responsive">';
                 print '<table class="tagtable liste listwithfilterbefore" width="100%">';
                 print '<tr class="liste_titre">';
                 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$option,'',$sortfield,$sortorder);
@@ -265,8 +266,8 @@ if ($id > 0 || ! empty($ref))
                 print '<td align="right">'.price($total_ht).'</td>';
                 print '<td></td>';
                 print "</table>";
+                print '</div>';
                 print '</form>';
-                print '<br>';
             } else {
                 dol_print_error($db);
             }

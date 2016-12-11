@@ -2,9 +2,9 @@
 ErrorCompanyNameAlreadyExists=Ime podjetja %s že obstaja. Izberite drugačno ime.
 ErrorSetACountryFirst=Najprej izberite državo
 SelectThirdParty=Izberite partnerja
-ConfirmDeleteCompany=Ali zares želite izbrisati to podjetje in vse z njim povezane informacije ?
+ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
 DeleteContact=Izbrišite kontakt
-ConfirmDeleteContact=Ali zares želite izbrisati ta kontakt in vse z njim povezane informacije ?
+ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
 MenuNewThirdParty=Nov partner
 MenuNewCustomer=Nov kupec
 MenuNewProspect=Nova možna stranka
@@ -77,6 +77,7 @@ VATIsUsed=Davčni zavezanec
 VATIsNotUsed=Ni davčni zavezanec
 CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
+PaymentBankAccount=Payment bank account
 ##### Local Taxes #####
 LocalTax1IsUsed=Uporabi drugi davek
 LocalTax1IsUsedES= RE je uporabljen
@@ -200,7 +201,7 @@ ProfId1MA==
 ProfId2MA==
 ProfId3MA==
 ProfId4MA==
-ProfId5MA=Id prof. 5 (C.I.C.E.)
+ProfId5MA=Id. prof. 5 (I.C.E.)
 ProfId6MA=-
 ProfId1MX==
 ProfId2MX==
@@ -271,7 +272,7 @@ DefaultContact=Privzeti kontakt
 AddThirdParty=Ustvari partnerja
 DeleteACompany=Izbriši podjetje
 PersonalInformations=Osebni podatki
-AccountancyCode=Računovodska koda
+AccountancyCode=Računovodstvo račun
 CustomerCode=Koda kupca
 SupplierCode=Koda dobavitelja
 CustomerCodeShort=Koda kupca
@@ -297,7 +298,7 @@ ContactForProposals=Kontakt za ponudbo
 ContactForContracts=Kontakt za pogodbo
 ContactForInvoices=Kontakt za račun
 NoContactForAnyOrder=Ta kontakt ni pravi za naročila
-NoContactForAnyOrderOrShipments=This contact is not a contact for any order or shipment
+NoContactForAnyOrderOrShipments=Ta kontakt ni pravi za naročilo ali pošiljanje
 NoContactForAnyProposal=Ta kontakt ni pravi za komercialne ponudbe
 NoContactForAnyContract=Ta kontakt ni pravi za pogodbe
 NoContactForAnyInvoice=Ta kontakt ni pravi za račune
@@ -364,7 +365,7 @@ ImportDataset_company_3=Podatki o banki
 ImportDataset_company_4=Patner/prodajni predstavnik (Vpliva na prodajne prdstavnike partnerjem)
 PriceLevel=Cenovni nivo
 DeliveryAddress=Naslov za dostavo
-AddAddress=Add address
+AddAddress=Dodaj naslov
 SupplierCategory=Kategorija dobavitelja
 JuridicalStatus200=Independent
 DeleteFile=Izbriši datoteko
@@ -392,10 +393,10 @@ LeopardNumRefModelDesc=Koda kupca / dobavitelja po želji. Lahko jo kadarkoli sp
 ManagingDirectors=Ime direktorja(ev) (CEO, direktor, predsednik...)
 MergeOriginThirdparty=Podvojen partner (partner, ki ga želite zbrisati)
 MergeThirdparties=Združi partnerje
-ConfirmMergeThirdparties=Ali zares želite združiti tega partnerja s trenutnim? Vsi povezani objekti (računi, naročila,  ...) bodo premaknjeni k trenutnemu partnerju, zato boste lahko zbrisali podvojene.
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
 ThirdpartiesMergeSuccess=Partnerja sta bila združena
 SaleRepresentativeLogin=Login of sales representative
 SaleRepresentativeFirstname=Firstname of sales representative
 SaleRepresentativeLastname=Lastname of sales representative
-ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please check the log. Changes have been reverted.
+ErrorThirdpartiesMerge=Pri brisanju partnerja je prišlo do napake. Prosimo, preverite dnevnik. Spremembe so bile preklicane.
 NewCustomerSupplierCodeProposed=New customer or supplier code suggested on duplicate code

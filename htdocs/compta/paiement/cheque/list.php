@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
@@ -62,8 +62,13 @@ $formother = new FormOther($db);
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
+
+/*
+ * Actions
+ */
+
 // If click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_ref='';
     $search_amount='';
@@ -71,6 +76,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $year='';
     $month='';
 }
+
+
 
 /*
  * View
@@ -105,7 +112,7 @@ else if ($year > 0)
 }
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -134,8 +141,12 @@ if ($resql)
 	
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', '', '', $limit);
 	
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
+	$moreforfilter='';
+	
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
@@ -160,7 +171,7 @@ if ($resql)
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td></td>';
     print '<td class="liste_titre" align="right">';
@@ -179,7 +190,7 @@ if ($resql)
     		print "<tr ".$bc[$var].">";
     
     		// Num ref cheque
-    		print '<td width="80">';
+    		print '<td>';
     		$checkdepositstatic->id=$objp->rowid;
     		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
     		$checkdepositstatic->statut=$objp->statut;
@@ -219,6 +230,7 @@ if ($resql)
    		print '</tr>';
     }
 	print "</table>";
+	print "</div>";
 	print "</form>\n";
 }
 else

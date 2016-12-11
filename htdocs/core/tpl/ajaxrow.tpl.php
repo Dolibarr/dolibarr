@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *
  * Javascript code to activate drag and drop on lines
  * You can use this if you want to be abale to drag and drop rows of a table.
- * You must add id="tablelines" ont table level tag and have count($object->lines) or count($taskarray) > 0
+ * You must add id="tablelines" on table level tag and have count($object->lines) or count($taskarray) > 0
  */
 ?>
 

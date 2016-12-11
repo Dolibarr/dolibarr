@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("interventions");
 $langs->load("sendings");
@@ -105,6 +107,7 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
+$formproject=new FormProjets($db);
 
 llxHeader('',$langs->trans("Intervention"));
 
@@ -112,43 +115,74 @@ llxHeader('',$langs->trans("Intervention"));
 
 if ($id > 0 || ! empty($ref))
 {
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
+	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
 	dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"), 0, 'intervention');
 
 
-	/*
-	 *   Fiche intervention synthese pour rappel
-	 */
-	print '<table class="border" width="100%">';
-
+	// Intervention card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print "</td></tr>";
-
-	// Customer
-	if ( is_null($object->thirdparty) )
-		$object->fetch_thirdparty();
-
-	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
-	print "</table>";
-
-	print '</div>';
-
+	
+	
+	$morehtmlref='<div class="refidno">';
+	// Ref customer
+	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    if ($user->rights->ficheinter->creer)
+	    {
+	        if ($action != 'classify')
+	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.=' : ';
+	        	if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	$morehtmlref.='</div>';
+	
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, 0, 0, '', '', 1);
+	    
+	dol_fiche_end();
+	
 	print '<br>';
-
+	
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
 
-	// Contacts lines
-	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	foreach($dirtpls as $reldir)
+	{
+	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+	    if ($res) break;
+	}
+
 }
 
 

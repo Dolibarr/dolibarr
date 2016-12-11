@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar com facturat el pressupost
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificar com facturades les comanda(es) quan la factura relacionada es classifiqui com a pagada
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificar com a facturades les comanda(es) de clients relacionats quan la factura sigui validada
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica com a facturat el pressupost enllaçat quan la factura de client sigui validada
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificar enllaçant origen de la comanda i enviament quan l'enviament està validat i la quantitat enviada és la mateixa que la de la comanda
+AutomaticCreation=Creació automàtica
+AutomaticClassification=Classificació automàtica

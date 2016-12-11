@@ -378,7 +378,7 @@ class ImportCsv extends ModeleImports
                                     
                                     if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
-                                        $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
+                                        $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
                                         $method=$objimport->array_import_convertvalue[0][$val]['method'];
                                         if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '')
@@ -387,7 +387,12 @@ class ImportCsv extends ModeleImports
                                         }
                                         else
 										{
-                                            dol_include_once($file);
+                                            $resultload = dol_include_once($file);
+                                            if (empty($resultload))
+                                            {
+                                                dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+                                                break;
+                                            }
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
                                             call_user_func_array(array($classinstance, $method),array('', $newval));
@@ -460,6 +465,22 @@ class ImportCsv extends ModeleImports
                                     }
                                     if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getrefifauto')
+                                {
+                                    $defaultref='';
+                                    // TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
+                                    $obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
+                                    if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
+                                    {
+                                        require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+                                        $modTask = new $obj;
+                                        $defaultref = $modTask->getNextValue(null,null);
+                                    }
+                                    if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
+                                    $newval=$defaultref;
+                                }                                
+                                
+                                
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
                                 {
                                     $newval = price2num($newval);

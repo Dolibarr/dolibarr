@@ -848,6 +848,7 @@ class Account extends CommonObject
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
+        $sql.= " ba.datec as date_creation, ba.tms as date_update,";
         $sql.= ' c.code as country_code, c.label as country,';
         $sql.= ' d.code_departement as state_code, d.nom as state';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -903,13 +904,15 @@ class Account extends CommonObject
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
 
+                $this->date_creation  = $this->db->jdate($obj->date_creation);
+                $this->date_update    = $this->db->jdate($obj->date_update);
+                
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 $this->fetch_optionals($this->id,$extralabels);
-
 
                 return 1;
             }
@@ -1221,8 +1224,9 @@ class Account extends CommonObject
         $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
         if (! empty($conf->accounting->enabled))
         {
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $langs->load("accountancy");
-            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . $this->account_number;
+            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
             $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -1927,7 +1931,7 @@ class AccountLine extends CommonObject
      */
     function info($id)
     {
-        $sql = 'SELECT b.rowid, b.datec,';
+        $sql = 'SELECT b.rowid, b.datec, b.tms as datem,';
         $sql.= ' b.fk_user_author, b.fk_user_rappro';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
         $sql.= ' WHERE b.rowid = '.$id;
@@ -1954,6 +1958,7 @@ class AccountLine extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datem);
                 //$this->date_rappro       = $obj->daterappro;    // Not yet managed
             }
             $this->db->free($result);

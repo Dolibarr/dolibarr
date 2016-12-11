@@ -870,7 +870,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= " WHERE a.entity IN (".getEntity('actioncomm', 1).")";
+        $sql.= " WHERE a.entity IN (".getEntity('agenda', 1).")";
         if (! empty($socid)) $sql.= " AND a.fk_soc = ".$socid;
         if (! empty($elementtype))
         {
@@ -921,7 +921,7 @@ class ActionComm extends CommonObject
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
         $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
-        $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
@@ -1281,7 +1281,7 @@ class ActionComm extends CommonObject
 			// We must filter on assignement table
 			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			$sql.= " WHERE a.fk_action=c.id";
-            $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
+            $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
             foreach ($filters as $key => $value)
             {
                 if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
