@@ -355,7 +355,6 @@ if ($socid && $action != 'edit' && $action != "create")
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
 
     print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
@@ -425,16 +424,14 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	print '</table>';
 
-    print "</div>";
 
-    dol_fiche_end();
-
-
+	print '<br>';
+	
     /*
      * List of bank accounts
      */
 
-    print load_fiche_titre($langs->trans("AllRIB"));
+    print load_fiche_titre($langs->trans("AllRIB"), '', '');
 
     $rib_list = $object->get_all_rib();
     $var = false;
@@ -485,6 +482,14 @@ if ($socid && $action != 'edit' && $action != "create")
                     $string .= $rib->iban.' ';*/
                 }
             }
+        	if (! empty($rib->label)) {
+			    if (! checkBanForAccount($rib)) {
+			        $string.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
+			    } else {
+			        $string.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
+			    }
+			}				
+            
             print $string;
             print '</td>';
             // IBAN
@@ -613,6 +618,9 @@ if ($socid && $action != 'edit' && $action != "create")
         dol_print_error($db);
     }
 
+    dol_fiche_end();
+    
+    
     
     if ($socid && $action != 'edit' && $action != 'create')
     {
