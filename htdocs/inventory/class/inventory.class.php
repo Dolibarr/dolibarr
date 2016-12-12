@@ -69,8 +69,10 @@ class Inventory extends CoreObject
 		,'title'=>array('type'=>'string')
 	);
 	
-	function __construct() 
+	function __construct(&$db) 
 	{
+		
+		$this->db = &$db;
 		
 		parent::init();
 		
@@ -316,22 +318,64 @@ class Inventory extends CoreObject
         return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$i->getId().'&action=view', 1).'">'.img_picto('','object_list.png','',0).' '.$title.'</a>';
         
     }
+	
+	static function getSQL($type) {
+		global $conf;
+		
+		if($type=='All') {
+			
+			$sql="SELECT i.rowid, e.label, i.date_inventory, i.fk_warehouse, i.date_cre, i.date_maj, i.status
+				  FROM ".MAIN_DB_PREFIX."inventory i
+				  LEFT JOIN ".MAIN_DB_PREFIX."entrepot e ON (e.rowid = i.fk_warehouse)
+				  WHERE i.entity=".(int) $conf->entity;
+			
+		}
+	
+		return $sql;	
+	}
+	
 }
 
-class Inventorydet extends TObjetStd
+class Inventorydet extends CoreObject
 {
-	function __construct()
+	public $element='inventorydet';
+	public $table_element='inventorydet';
+	protected $isnolinkedbythird = 1;     // No field fk_soc
+	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	
+	public $fk_inventory;
+	public $fk_warehouse;
+	public $fk_product;
+	public $entity;
+	public $qty_view;
+	public $qty_stock;
+	public $qty_regulated;
+	public $pmp;
+	public $pa;
+	public $new_pmp;
+	
+	private $__fields=array(
+		'fk_inventory'=>array('type'=>'int')
+		,'fk_warehouse'=>array('type'=>'int')
+		,'fk_product'=>array('type'=>'int')
+		,'entity'=>array('type'=>'int')
+		,'qty_view'=>array('type'=>'float')
+		,'qty_stock'=>array('type'=>'float')
+		,'qty_regulated'=>array('type'=>'float')
+		,'pmp'=>array('type'=>'float')
+		,'pa'=>array('type'=>'float')
+		,'new_pmp'=>array('type'=>'float')
+	);
+	
+	
+	function __construct(&$db)
 	{
 		global $conf;
 		
-		$this->set_table(MAIN_DB_PREFIX.'inventorydet');
-    	$this->TChamps = array(); 	  
-		$this->add_champs('fk_inventory,fk_warehouse,fk_product,entity', 'type=entier;');
-		$this->add_champs('qty_view,qty_stock,qty_regulated,pmp,pa,new_pmp', 'type=float;');
-
-		$this->_init_vars();
-	    $this->start();
+		$this->db = &$db;
 		
+		parent::init();
+				
 		$this->entity = $conf->entity;
 		$this->errors = array();
 		
