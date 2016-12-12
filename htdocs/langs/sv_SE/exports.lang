@@ -26,8 +26,6 @@ FieldTitle=Fält titel
 NowClickToGenerateToBuildExportFile=Nu väljer filformat i kombinationsruta och klicka på &quot;Generera&quot; för att bygga exportera fil ...
 AvailableFormats=Tillgängliga format
 LibraryShort=Bibliotek
-LibraryUsed=Biblioteket som används
-LibraryVersion=Version
 Step=Steg
 FormatedImport=Import assistant
 FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
@@ -87,7 +85,7 @@ TooMuchWarnings=Det finns fortfarande <b>%s</b> andra källrader med varningar m
 EmptyLine=Tom rad (kommer att slängas)
 CorrectErrorBeforeRunningImport=Du måste först rätta alla fel innan du kör slutgiltig import.
 FileWasImported=Filen importeras nummer <b>%s.</b>
-YouCanUseImportIdToFindRecord=Du hittar alla importerade poster i databasen genom att filtrera på fältet <b>import_key = %s</b>.
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Antal rader utan fel och inga varningar: <b>%s.</b>
 NbOfLinesImported=Antal rader importerades: <b>%s.</b>
 DataComeFromNoWhere=Värde att infoga kommer från ingenstans i källfilen.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Semikolonavgränsade</b> filformat (. Csv). <br> Detta är en t
 Excel95FormatDesc=<b>Excel-format</b> (.xls) <br> Detta är Excel 95-format (BIFF5).
 Excel2007FormatDesc=<b>Excel-format</b> (.xlsx) <br> Detta är Excel 2007-format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separerad Värde</b> filformat (.tsv) <br> Detta är en textfil format där fälten skiljs åt av en tabulator [flik].
-ExportFieldAutomaticallyAdded=<b>Fält %s</b> lades automatiskt. Den kommer att undvika dig att ha liknande linjer som ska behandlas som dubbla poster (med det här fältet till, kommer alla linjer äga sin egen id och kan skilja).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv alternativ
 Separator=Avdelare
 Enclosure=Inneslutning

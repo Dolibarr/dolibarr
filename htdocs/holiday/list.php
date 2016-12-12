@@ -364,7 +364,7 @@ print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('typ
 print '</td>';
 
 // DUREE
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 
 // DATE DEBUT
 print '<td class="liste_titre" align="center">';

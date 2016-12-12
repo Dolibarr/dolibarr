@@ -32,13 +32,13 @@ ECMDocsByProducts=Документи, свързани с продуктите
 ECMDocsByProjects=Документи свързани към проекти
 ECMDocsByUsers=Документи свързани към потребители
 ECMDocsByInterventions=Документи свързани към интервенции
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Не е създадена директория
 ShowECMSection=Покажи директория
 DeleteSection=Изтриване на директория
-ConfirmDeleteSection=Сигурни ли сте, че желаете да изтриете директорията <b>%s</b>?
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Относителна директория за файловете
 CannotRemoveDirectoryContainsFiles=Премахването не е възможно, защото съдържа файлове
 ECMFileManager=Файлов мениджър
 ECMSelectASection=Изберете директория от лявото дърво ...
 DirNotSynchronizedSyncFirst=Тази директория излгежда е създадена или променена извън ECM модула. Трябва да кликнете на бутон "Refresh" първо за обновяване на диска и базата данни да вземе съдържанието на тази директория.
-

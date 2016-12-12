@@ -32,6 +32,7 @@ ECMDocsByProducts=Dokumenter knyttet til varer
 ECMDocsByProjects=Dokumenter relatert til prosjekter
 ECMDocsByUsers=Dokumenter relatert til brukere
 ECMDocsByInterventions=Dokumenter relatert til intervensjoner
+ECMDocsByExpenseReports=Dokumenter lenket til utgiftsrapporter
 ECMNoDirectoryYet=Ingen mapper opprettet
 ShowECMSection=Vis mappe
 DeleteSection=Fjern mappe

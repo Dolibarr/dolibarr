@@ -37,6 +37,7 @@ $langs->load("users");
 
 $object = new User($db);
 $object->fetch($id);
+$object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessforbidden();

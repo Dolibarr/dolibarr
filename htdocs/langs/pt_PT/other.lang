@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Código segurança
-Calendar=Calendario
 NumberingShort=N°
 Tools=Utilidades
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Envio por correio
 Notify_MEMBER_VALIDATE=Membro validado
 Notify_MEMBER_MODIFY=Membro modificado
 Notify_MEMBER_SUBSCRIPTION=Membro subscrito
-Notify_MEMBER_RESILIATE=Membro anulado
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Membro excluído
 Notify_PROJECT_CREATE=Criação do projeto
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Tamanho Total dos Ficheiros/Documentos anexos
 MaxSize=Tamanho Máximo
 AttachANewFile=Adicionar Novo Ficheiro/documento
 LinkedObject=Objecto adjudicado
-Miscellaneous=Diversos
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Este é um email de teste. \\ NO duas linhas são separadas por um enter.
 PredefinedMailTestHtml=Este é um email de <b>teste</b> (o teste de palavra deve ser em negrito). <br> As duas linhas são separadas por um enter.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repositório para fontes
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Exportação
 ExportsArea=Área de Exportações
 AvailableFormats=Formatos disponiveis
-LibraryUsed=Livraria utilizada
-LibraryVersion=Versão
+LibraryUsed=Livraria Utilizada
+LibraryVersion=Library version
 ExportableDatas=Dados exportaveis
 NoExportableData=Não existem dados exportaveis (sem módulos com dados exportaveis , o necessitam de permissões)
-NewExport=Nova Exportação
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Título
+WEBSITE_DESCRIPTION=Descrição
 WEBSITE_KEYWORDS=Keywords

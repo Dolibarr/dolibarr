@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Išlaidų ataskaita
 ExpenseReports=Išlaidų ataskaitos
+ShowExpenseReport=Rodyti išlaidų ataskaitą
 Trips=Išlaidų ataskaitos
 TripsAndExpenses=Išlaidų ataskaitos
 TripsAndExpensesStatistics=Išlaidų ataskaitų statistika
@@ -8,12 +9,13 @@ TripCard=Išlaidų ataskaitos kortelė
 AddTrip=Sukurti išlaidų ataskaitą
 ListOfTrips=Išlaidų ataskaitų sąrašas
 ListOfFees=Įmokų sąrašas
+TypeFees=Types of fees
 ShowTrip=Rodyti išlaidų ataskaitą
 NewTrip=Nauja išlaidų ataskaita
 CompanyVisited=Aplankyta įmonė/organizacija
 FeesKilometersOrAmout=Suma arba Kilometrai
 DeleteTrip=Ištrinti išlaidų ataskaitą
-ConfirmDeleteTrip=Ar tikrai norite ištrinti šią išlaidų ataskaitą ?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
 ListToApprove=Laukiama patvirtinimo
 ExpensesArea=Išlaidų ataskaitų sritis
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Pripažintas (laukia patvirtinimo)
 
 NOT_AUTHOR=Jūs nesate šios išlaidų ataskaitos autorius. Operacija nutraukta.
 
-ConfirmRefuseTrip=Ar tikrai norite atmesti šią išlaidų ataskaitą ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Patvirtinti išlaidų ataskaitą
-ConfirmValideTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Apmokėti išlaidų ataskaitą
-ConfirmPaidTrip=Ar tikrai norite pakeisti šios išlaidų ataskaitos būklę į "Apmokėta" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Ar tikrai norite nutraukti šią išlaidų ataskaitą ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Grąžinti išlaidų ataskaitos būklę į "Projektas"
-ConfirmBrouillonnerTrip=Ar tikrai norite grąžinti šios išlaidų ataskaitos būklę į "Projektas" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Patvirtinti išlaidų ataskaitą
-ConfirmSaveTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Už šį laikotarpį nėra išlaidų ataskaitų eksportui
 ExpenseReportPayment=Išlaidų apmokėjimų ataskaita

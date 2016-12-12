@@ -87,9 +87,9 @@ class PaymentLoan extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
-		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
-		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
+		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital?$this->amount_capital:0);
+		if (isset($this->amount_insurance))	$this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
+		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest?$this->amount_interest:0);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
 		if (isset($this->note_private))     $this->note_private = trim($this->note_private);

@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Hagyja üresen ha a felhasználónak nincs jelszava (az il
 SaveConfigurationFile=Értékek mentése
 ServerConnection=Szerver kapcsolat
 DatabaseCreation=Adatbázis létrehozása
-UserCreation=Felhasználó létrehozása
 CreateDatabaseObjects=Adatbázis objektumok létrehozása
 ReferenceDataLoading=Referencia adatok betöltése
 TablesAndPrimaryKeysCreation=Táblák és Elsõdleges kulcsok létrehozása
@@ -133,12 +132,12 @@ MigrationFinished=Migráció befejezte
 LastStepDesc=<strong>Utolsó lépés:</strong> Adjuk meg itt bejelentkezési név és jelszó használatát tervezi, hogy csatlakozik a szoftver. Ne veszítse/felejtse el ezt, mivel ez a fiók felelős a többi meghatározására.
 ActivateModule=Modul aktiválása %s
 ShowEditTechnicalParameters=Klikkelj ide a haladó beállítasok megtekintéséhez/szerkezstéséhez. (szakértő mód)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Az adatbázis verziója %s. Ez a verzió kritikus hibát tartalmaz az az adatbis struktúrájának megváltoztatásakor, ami a migrációs folyamat során szükséges. Ennek elkerülése érdekében a migráció nem engedélyezett, amíg az adatbázis nem kerül frissítésre egy magasabb stabil verzióra. (Az ismert hibás verziókat lásd itt:%s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=A DoliWamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
+KeepDefaultValuesDeb=Linux csomagból (Ubuntun, Fedora vagy Debian, ...) használja a telepítési varázslót, az itt lévõ értékek már optimalizálva vannak. Csak az adatbázis tulajdonosnak kell jelszót megadni. Csak saját felelõsségre módosítsa ezeket az értékeket.
+KeepDefaultValuesMamp=A DoliMamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
+KeepDefaultValuesProxmox=Ön használja az Dolibarr Setup Wizard egy Proxmox virtuális készüléket, így az itt javasolt értékek már optimalizálva. Megváltoztatni őket, ha tudod, mit csinálsz.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Hiba miatt véletlenül lezárt szerzõdések újran
 MigrationReopenThisContract=%s szerzõdés újranyitása
 MigrationReopenedContractsNumber=%s szerzõdés módosítva
 MigrationReopeningContractsNothingToUpdate=Nincs újranyitásra szoruló szerzõdés
-MigrationBankTransfertsUpdate=Linkek frissítése banki tranzakciók és banki átutalások között
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Minden link friss
 MigrationShipmentOrderMatching=Küldött bizonylatok frissítése
 MigrationDeliveryOrderMatching=Szállítási bizonylatok frissítése

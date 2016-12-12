@@ -153,6 +153,8 @@ class ChargeSociales extends CommonObject
     {
     	global $conf;
 
+        $now=dol_now();
+
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
@@ -162,17 +164,18 @@ class ChargeSociales extends CommonObject
 			 return -2;
 		}
 
-
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity, fk_user_author, date_creation)";
         $sql.= " VALUES (".$this->type;
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
-        $sql.= ", '".$this->db->escape($this->lib)."',";
-        $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
-        $sql.= " '".price2num($newamount)."',";
-        $sql.= " ".$conf->entity;
+        $sql.= ", '".$this->db->escape($this->lib)."'";
+        $sql.= ", '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."'";
+        $sql.= ", '".price2num($newamount)."'";
+        $sql.= ", ".$conf->entity;
+        $sql.= ", ".$user->id;
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -276,10 +279,11 @@ class ChargeSociales extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
-        $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."',";
-        $sql.= " amount='".price2num($this->amount,'MT')."'";
+        $sql.= " SET libelle='".$this->db->escape($this->lib)."'";
+        $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
+        $sql.= ", periode='".$this->db->idate($this->periode)."'";
+        $sql.= ", amount='".price2num($this->amount,'MT')."'";
+        $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -505,8 +509,9 @@ class ChargeSociales extends CommonObject
      */
     function info($id)
     {
-        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
+        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
+        $sql.= " fk_user_author, fk_user_modif, fk_user_valid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
         dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -522,7 +527,13 @@ class ChargeSociales extends CommonObject
                 if ($obj->fk_user_author) {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
+                    $this->user_creation = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
                 }
 
                 if ($obj->fk_user_valid) {
@@ -532,7 +543,7 @@ class ChargeSociales extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
+                if (! empty($obj->fk_user_modif))	$this->date_modification = $this->db->jdate($obj->datem);
                 $this->date_validation   = $this->db->jdate($obj->datev);
                 $this->import_key        = $obj->import_key;
             }

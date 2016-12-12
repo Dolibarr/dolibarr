@@ -54,6 +54,7 @@ ShipmentValidatedInDolibarr=Leveranse %s validert
 ShipmentClassifyClosedInDolibarr=Levering %s klassifisert som fakturert
 ShipmentUnClassifyCloseddInDolibarr=Levering %s klassifisert som gjenåpnet
 ShipmentDeletedInDolibarr=Leveranse %s slettet
+OrderCreatedInDolibarr=Ordre %s opprettet
 OrderValidatedInDolibarr=Ordre %s validert
 OrderDeliveredInDolibarr=Ordre %s klassifisert som levert
 OrderCanceledInDolibarr=Ordre %s kansellert

@@ -1,19 +1,21 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Nota spese
 ExpenseReports=Note spese
+ShowExpenseReport=Show expense report
 Trips=Note spese
 TripsAndExpenses=Note spese
 TripsAndExpensesStatistics=Statistiche note spese
 TripCard=Scheda nota spese
 AddTrip=Crea nota spese
-ListOfTrips=List of expense reports
+ListOfTrips=Lista delle note spese
 ListOfFees=Elenco delle tariffe
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Nuova nota spese
 CompanyVisited=Società/Fondazione visitata
 FeesKilometersOrAmout=Tariffa kilometrica o importo
 DeleteTrip=Elimina nota spese
-ConfirmDeleteTrip=Vuoi davvero eliminare questa nota spese?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Lista delle note spese
 ListToApprove=In attesa di approvazione
 ExpensesArea=Area note spese
@@ -27,7 +29,7 @@ TripNDF=Informazioni nota spese
 PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
 ExpenseReportLine=Riga di nota spese
 TF_OTHER=Altro
-TF_TRIP=Transportation
+TF_TRIP=Trasporto
 TF_LUNCH=Pranzo
 TF_METRO=Metro
 TF_TRAIN=Treno
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
 
-ConfirmRefuseTrip=Vuoi davvero rifiutare questa nota spese?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Approva la nota spese
-ConfirmValideTrip=Vuoi davvero approvare questa nota spese?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Liquida una nota spese
-ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquidata"?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Vuoi davvero eliminare questa nota spese?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Vuoi davvero riportare questa nota spese allo stato "bozza"?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Convalida la nota spese
-ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
 ExpenseReportPayment=Expense report payment

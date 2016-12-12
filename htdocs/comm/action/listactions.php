@@ -368,7 +368,7 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
