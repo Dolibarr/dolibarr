@@ -109,7 +109,7 @@ if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$original_file              = $check_access['original_file'];
+$original_file              = $check_access['original_file'];               // original_file is now a full path name
 
 // Basic protection (against external users only)
 if ($user->societe_id > 0)
