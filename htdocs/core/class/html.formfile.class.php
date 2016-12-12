@@ -856,26 +856,28 @@ class FormFile
 
 
     /**
-     *  Show list of documents in a directory
+     *  Show list of documents in $filearray (may be they are all in same directory but may not)
      *
-     *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
-     * 	@param	 Object	$object				Object on which document is linked to
-     * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper
+     *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
+     * 	@param	 Object	$object				Object on which document is linked to.
+     * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper.
      * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
-     * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file
-     * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module.
+     * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file.
+     * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
      * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
      * 	@param	 int	$useinecm			Change output for use in ecm module
      * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-     *  @param   int	$maxlength          Maximum length of file name shown
+     *  @param   int	$maxlength          Maximum length of file name shown.
      *  @param	 string	$title				Title before list
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
 	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    $permtoeditline     Permission to edit document line (You msut provide a value, -1 is deprecated and must not be used any more)
+	 *  @param   int    $permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
+     *  @param   string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this if you want to complete file data with database indexes.
+     *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
+     *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
      * 	@return	 int						<0 if KO, nb of files shown if OK
-     *  @return  string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT.
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC')
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc;
@@ -894,9 +896,13 @@ class FormFile
 		    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
 		}
 		// Defined relative dir to DOL_DATA_ROOT
-		$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
-		$rel_dir = preg_replace('/^[\\/]/','',$rel_dir); 
-		
+		$relativedir = '';
+		if ($upload_dir)
+		{
+    		$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+    		$relativedir = preg_replace('/^[\\/]/','',$relativedir); 
+		}
+
 		$hookmanager->initHooks(array('formfile'));
 		$parameters=array(
 				'filearray' => $filearray,
@@ -904,7 +910,7 @@ class FormFile
 				'param' => $param,
 				'forcedownload' => $forcedownload,
 				'relativepath' => $relativepath,    // relative filename to module dir
-				'reldir' => $rel_dir,               // relative dirname to DOL_DATA_ROOT
+				'relativedir' => $relativedir,      // relative dirname to DOL_DATA_ROOT
 				'permtodelete' => $permonobject,
 				'useinecm' => $useinecm,
 				'textifempty' => $textifempty,
@@ -960,37 +966,43 @@ class FormFile
 			print "</tr>\n";
 
 			// Get list of files stored into database for same directory
-            $filearrayindatabase = dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC);
-
-            //var_dump($filearray);
-            //var_dump($filearrayindatabase);
-            
-            // Complete filearray with properties found into $filearrayindatabase
-			foreach($filearray as $key => $val)
+			if ($relativedir)
 			{
-			    $found=0;
-			    // Search if it exists into $filearrayindatabase
-			    foreach($filearrayindatabase as $key2 => $val2)
-			    {
-			        if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
-			        {
-			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
-			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
-			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
-			            $found=1;
-			            break;
-			        }
-			    }
-			    if (! $found)
-			    {
-			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace existing in position
-			        $filearray[$key]['cover']=0;
-			        $filearray[$key]['acl']='';
-			    }
+                $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+    
+                //var_dump($filearray);
+                //var_dump($filearrayindatabase);
+                
+                // Complete filearray with properties found into $filearrayindatabase
+    			foreach($filearray as $key => $val)
+    			{
+    			    $found=0;
+    			    // Search if it exists into $filearrayindatabase
+    			    foreach($filearrayindatabase as $key2 => $val2)
+    			    {
+    			        if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
+    			        {
+    			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
+    			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
+    			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
+    			            $found=1;
+    			            break;
+    			        }
+    			    }
+    			    if (! $found)
+    			    {
+    			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace existing in position
+    			        $filearray[$key]['cover']=0;
+    			        $filearray[$key]['acl']='';
+    			    }
+    			}
+    
+    			if ($sortfield && $sortorder)
+    			{
+        			$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
+    			}
+    			//var_dump($filearray);
 			}
-
-			$filearray=dol_sort_array($filearray, 'position');
-			//var_dump($filearray);
 			
 			$nboffiles=count($filearray);
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';

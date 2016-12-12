@@ -88,7 +88,9 @@ $formfile->list_of_documents(
     '',
     0,
     $permtoedit,
-    $upload_dir
+    $upload_dir,
+    $sortfield,
+    $sortorder
 );
 
 print "<br>";
