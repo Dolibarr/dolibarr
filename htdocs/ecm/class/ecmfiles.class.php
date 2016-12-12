@@ -136,6 +136,21 @@ class EcmFiles //extends CommonObject
 		}
         if (empty($this->date_c)) $this->date_c = dol_now();
 		
+        $maxposition=0;
+		if (empty($this->position))   // Get max used
+		{
+		    $sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
+		    $sql.= " WHERE filepath ='".$this->filepath."'";
+		    
+		    $resql = $this->db->query($sql);
+		    if ($resql)
+		    {
+		        $obj = $this->db->fetch_object($resql);
+		        $maxposition = (int) $obj->maxposition;
+		    }
+		    else dol_print_error($this->db);
+		}
+		$maxposition=$maxposition+1;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -167,7 +182,7 @@ class EcmFiles //extends CommonObject
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
 		$sql .= ' '.(! isset($this->cover)?'NULL':"'".$this->db->escape($this->cover)."'").',';
-		$sql .= ' '.(! isset($this->position)?'0':$this->db->escape($this->position)).',';
+		$sql .= ' '.$maxposition.',';
 		$sql .= ' '.(! isset($this->gen_or_uploaded)?'NULL':"'".$this->db->escape($this->gen_or_uploaded)."'").',';
 		$sql .= ' '.(! isset($this->extraparams)?'NULL':"'".$this->db->escape($this->extraparams)."'").',';
 		$sql .= ' '."'".$this->db->idate($this->date_c)."'".',';

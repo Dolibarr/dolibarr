@@ -863,7 +863,7 @@ class FormFile
      * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper
      * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
      * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file
-     * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided)
+     * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module.
      * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
      * 	@param	 int	$useinecm			Change output for use in ecm module
      * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
@@ -871,23 +871,40 @@ class FormFile
      *  @param	 string	$title				Title before list
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
 	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    $permtoeditline     Permission to edit document line (-1 is deprecated)
+	 *  @param   int    $permtoeditline     Permission to edit document line (You msut provide a value, -1 is deprecated and must not be used any more)
      * 	@return	 int						<0 if KO, nb of files shown if OK
+     *  @return  string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT.
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1)
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='')
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc;
 		global $sortfield, $sortorder, $maxheightmini;
 
+		// Define relative path used to store the file
+		if (empty($relativepath))
+		{
+		    $relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+		    if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
+		    if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
+		}
+		// For backward compatiblity, we detect file is stored into an old path
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+		{
+		    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+		}
+		// Defined relative dir to DOL_DATA_ROOT
+		$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+		$rel_dir = preg_replace('/^[\\/]/','',$rel_dir); 
+		
 		$hookmanager->initHooks(array('formfile'));
-
 		$parameters=array(
 				'filearray' => $filearray,
 				'modulepart'=> $modulepart,
 				'param' => $param,
 				'forcedownload' => $forcedownload,
-				'relativepath' => $relativepath,
+				'relativepath' => $relativepath,    // relative filename to module dir
+				'reldir' => $rel_dir,               // relative dirname to DOL_DATA_ROOT
 				'permtodelete' => $permonobject,
 				'useinecm' => $useinecm,
 				'textifempty' => $textifempty,
@@ -942,10 +959,42 @@ class FormFile
 			print_liste_field_titre('');
 			print "</tr>\n";
 
+			// Get list of files stored into database for same directory
+            $filearrayindatabase = dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC);
+
+            //var_dump($filearray);
+            //var_dump($filearrayindatabase);
+            
+            // Complete filearray with properties found into $filearrayindatabase
+			foreach($filearray as $key => $val)
+			{
+			    $found=0;
+			    // Search if it exists into $filearrayindatabase
+			    foreach($filearrayindatabase as $key2 => $val2)
+			    {
+			        if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
+			        {
+			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
+			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
+			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
+			            $found=1;
+			            break;
+			        }
+			    }
+			    if (! $found)
+			    {
+			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace existing in position
+			        $filearray[$key]['cover']=0;
+			        $filearray[$key]['acl']='';
+			    }
+			}
+
+			$filearray=dol_sort_array($filearray, 'position');
+			//var_dump($filearray);
+			
 			$nboffiles=count($filearray);
-
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
+				
 			$var=true;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
@@ -953,23 +1002,13 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-					// Define relative path used to store the file
-					if (empty($relativepath))
-					{
-						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
-						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
-					}
-					// For backward compatiblity, we detect file is stored into an old path
-					if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
-	                {
-	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
-	                }
 					$var=!$var;
 					
 					$editline=0;
 					
-			        print '<!-- Line list_of_documents '.$key.' -->'."\n";
+			        print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
+			        // Do we have entry into database ?
+			        print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
 					print '<tr '.$bc[$var].'>';
 					print '<td class="tdoverflow">';
 					

@@ -79,7 +79,7 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
+    $relativepathwithnofile,		// relative path with no file. For example "0/1"
     $permission,
     0,
     '',
@@ -87,7 +87,8 @@ $formfile->list_of_documents(
     '',
     '',
     0,
-    $permtoedit
+    $permtoedit,
+    $upload_dir
 );
 
 print "<br>";

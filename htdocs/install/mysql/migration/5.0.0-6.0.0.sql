@@ -27,3 +27,4 @@
 
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(750);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;
+ALTER TABLE llx_ecm_files CHANGE COLUMN keyword keyword varchar(750);

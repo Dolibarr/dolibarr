@@ -41,7 +41,7 @@ function dol_basename($pathfile)
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$path        	Starting path from which to search. This is a full path.
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
@@ -50,7 +50,8 @@ function dol_basename($pathfile)
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @param	int			$nohook			Disable all hooks
- *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ *  @see dol_dir_list_indatabase
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
@@ -204,6 +205,82 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	}
 }
 
+
+/**
+ *  Scan a directory and return a list of files/directories.
+ *  Content for string is UTF8 and dir separator is "/".
+ *
+ *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ *  @param	array|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
+ *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','type'=>'dir|file',...)
+ *  @see dol_dir_list
+ */
+function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
+{
+    global $conf, $db;
+    
+    $sql=" SELECT label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m, acl, position";
+    if ($mode) $sql.=", description";
+    $sql.=" FROM ".MAIN_DB_PREFIX."ecm_files";
+    $sql.=" WHERE filepath = '".$db->escape($path)."'";
+    $sql.=" AND entity = ".$conf->entity;
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $file_list=array();
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);            
+            if ($obj)
+            {
+                preg_match('/([^\/]+)\/[^\/]+$/',DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,$reg);
+                $level1name=(isset($reg[1])?$reg[1]:'');
+                $file_list[] = array(
+    				"name" => $obj->filename,
+    				"path" => DOL_DATA_ROOT.'/'.$obj->filepath,
+                    "level1name" => $level1name,
+    				"fullname" => DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,
+    				"fullpath_orig" => $obj->fullpath_orig,
+                    "date_c" => $db->jdate($obj->date_c),
+                    "date_m" => $db->jdate($obj->date_m),
+    				"type" => 'file',
+                    "keywords" => $obj->keywords,
+                    "cover" => $obj->cover,
+                    "position" => (int) $obj->position,
+                    "acl" => $obj->acl
+                );
+            }
+            $i++;
+        }
+        
+        // Obtain a list of columns
+        if (! empty($sortcriteria))
+        {
+            $myarray=array();
+            foreach ($file_list as $key => $row)
+            {
+                $myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
+            }
+            // Sort the data
+            if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
+        }
+        
+        return $file_list;
+    }
+    else
+    {
+        dol_print_error($db);
+        return array();
+    }
+}
+    
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
@@ -751,7 +828,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
     				    $rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filename);
     				    if (! preg_match('/\/temp\//', $rel_filetodelete))     // If not a tmp file
     				    {
-    				        $rel_filetodelete = preg_replace('/^\//', '', $rel_filetodelete);
+    				        $rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
     				        
     				        dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
         				    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -1083,10 +1160,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					else   // Update table of files 
 					{
 					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
-					    if (! preg_match('/\/temp\//', $rel_dir))     // If not a tmp file
+					    if (! preg_match('/[\\/]temp[\\/]/', $rel_dir))     // If not a tmp file
 					    {
-					        $rel_dir = preg_replace('/\/$/', '', $rel_dir);
-					        $rel_dir = preg_replace('/^\//', '', $rel_dir);
+					        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+					        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
     					    
     					    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
     					    $ecmfile=new EcmFiles($db);
@@ -1384,11 +1461,11 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
- * @param	string	$original_file		Relative path with filename
+ * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity
  * @param  	User	$fuser				User object (forced)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
- * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
+ * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  */
 function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='',$refname='')
 {
@@ -1682,7 +1759,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project', 1).")";
 	}
 	else if ($modulepart == 'project_task')
 	{
@@ -1691,7 +1768,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project', 1).")";
 	}
 	// Wrapping for interventions
 	else if ($modulepart == 'fichinter')
@@ -1806,6 +1883,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->contrat->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract', 1).")";
 	}
 
 	// Wrapping pour les dons
