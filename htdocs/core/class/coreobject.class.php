@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 class CoreObject extends CommonObject {
 	
-	 
+	protected $__fields=array(); 
 	 /**
 	 *  Constructor
 	 *
@@ -38,7 +38,7 @@ class CoreObject extends CommonObject {
 		$this->date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
 	}
 	
-	private function init() {
+	protected function init() {
 		
 		$this->id = 0;
 		$this->datec = time();
@@ -110,20 +110,20 @@ class CoreObject extends CommonObject {
 		}
 		else return false;
 	}
-	private function _is_float($info){
+	private function is_float($info){
 		if(is_array($info)) {
 			if(isset($info['type']) && $info['type']=='float') return true;
 			else return false;
 		} else return false;
 	}
 	
-	private function _is_text($info){
+	private function is_text($info){
 	  	if(is_array($info)) {
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
 		} else return false;
 	}
-	private function _is_index($info){
+	private function is_index($info){
 	  	if(is_array($info)) {
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
@@ -172,14 +172,23 @@ class CoreObject extends CommonObject {
 		return $query;
 	}
 		
+	private function get_field_list(){
+			
+		$keys = array_keys($this->__fields);
+		
+	    return implode(',', $keys);
+	}
 	
 	public function fetch($id, $loadChild = true) {
 		
 		if(empty($id)) return false;
 
-		$res = $db->query( 'SELECT '.$this->get_field_list().'datec,tms
+		$sql = 'SELECT '.$this->get_field_list().',datec,tms
 						FROM '.$this->table_element.'
-						WHERE rowid='.$id );
+						WHERE rowid='.$id;
+						
+		$res = $this->db->query( $sql );
+			var_dump($sql);		
 		if($obj = $db->fetch_object($res)) {
 				$this->rowid=$id;
 			

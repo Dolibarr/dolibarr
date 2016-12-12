@@ -61,7 +61,7 @@ class Inventory extends CoreObject
 	 */
 	public $title;
 	
-	private $__fields=array(
+	protected $__fields=array(
 		'fk_warehouse'=>array('type'=>'integer','index'=>true)
 		,'entity'=>array('type'=>'integer','index'=>true)
 		,'status'=>array('type'=>'integer','index'=>true)
@@ -69,20 +69,14 @@ class Inventory extends CoreObject
 		,'title'=>array('type'=>'string')
 	);
 	
-	function __construct(&$db) 
+	function __construct(DoliDB &$db) 
 	{
 		
 		$this->db = &$db;
 		
 		parent::init();
 		
-        $this->_init_vars();
-        
-	    $this->start();
-		
-		$this->setChild('Inventorydet','fk_inventory');
-		
-		$this->status = 0;
+       	$this->status = 0;
 		$this->entity = $conf->entity;
 		$this->errors = array();
 		$this->amount = 0;
@@ -94,12 +88,12 @@ class Inventory extends CoreObject
 		usort($this->Inventorydet, array('Inventory', 'customSort'));
 	}
 	
-	function load(&$PDOdb, $id,$annexe = true) 
+	function fetch($id,$annexe = true) 
 	{
 	    
         if(!$annexe) $this->withChild = false;
         
-		$res = parent::load($PDOdb, $id);
+		$res = parent::fetch($id);
 		$this->sort_det();
 		
 		$this->amount = 0;
@@ -124,7 +118,7 @@ class Inventory extends CoreObject
 		return $r;
 	}
 	
-	function changePMP(&$PDOdb) {
+	function changePMP() {
 		
 		foreach ($this->Inventorydet as $k => &$Inventorydet)
 		{
@@ -133,15 +127,8 @@ class Inventory extends CoreObject
 				$Inventorydet->pmp = $Inventorydet->new_pmp; 
 				$Inventorydet->new_pmp = 0;
 			
-				$PDOdb->Execute("UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$Inventorydet->pmp."
+				$db->query("UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$Inventorydet->pmp."
 				WHERE rowid = ".$Inventorydet->fk_product );
-				
-				if((float)DOL_VERSION<4.0) {
-					
-					$PDOdb->Execute("UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp=".$Inventorydet->pmp."
-					 WHERE fk_entrepot = ".$this->fk_warehouse." AND fk_product = ".$Inventorydet->fk_product) ;
-					
-				}
 				
 			}
 		}
@@ -150,15 +137,15 @@ class Inventory extends CoreObject
 		
 	}
 	
-	function save(&$PDOdb)
+	function update()
 	{
 		//si on valide l'inventaire on sauvegarde le stock à cette instant
 		if ($this->status)
 		{
-			 $this->regulate($PDOdb);
+			 $this->regulate();
 		}
 		
-		parent::save($PDOdb);
+		parent::update();
 	}
 	
 	function set_values($Tab)
@@ -188,24 +175,24 @@ class Inventory extends CoreObject
 		return parent::set_values($Tab);
 	}
 	
-    function deleteAllLine(&$PDOdb) {
+    function deleteAllLine() {
         
         foreach($this->Inventorydet as &$det) {
             $det->to_delete = true;
         }
         
-        $this->save($PDOdb);
+        $this->update();
       
         $this->Inventorydet=array();
         
     }
     
-    function add_product(&$PDOdb, $fk_product, $fk_entrepot='') {
+    function add_product($fk_product, $fk_entrepot='') {
         
-        $k = $this->addChild($PDOdb, 'Inventorydet');
+        $k = $this->addChild('Inventorydet');
         $det =  &$this->Inventorydet[$k];
         
-        $det->fk_inventory = $this->getId();
+        $det->fk_inventory = $this->id;
         $det->fk_product = $fk_product;
 		$det->fk_warehouse = empty($fk_entrepot) ? $this->fk_warehouse : $fk_entrepot;
         
@@ -213,16 +200,16 @@ class Inventory extends CoreObject
                 
         $date = $this->get_date('date_inventory', 'Y-m-d');
         if(empty($date))$date = $this->get_date('date_cre', 'Y-m-d'); 
-        $det->setStockDate($PDOdb, $date , $fk_entrepot);
+        $det->setStockDate( $date , $fk_entrepot);
         
     }
     
-    function correct_stock($fk_product, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
+    function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
 	{
 		global $conf, $db, $langs, $user;
 		
 		/* duplication method product to add datem */
-		if ($id_entrepot)
+		if ($fk_warehouse)
 		{
 			$db->begin();
 
@@ -234,7 +221,7 @@ class Inventory extends CoreObject
 			$datem = empty($conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT) ? dol_now() : $this->date_inventory;
 
 			$movementstock=new MouvementStock($db);
-			$result=$movementstock->_create($user,$fk_product,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode, $datem);
+			$result=$movementstock->_create($user,$fk_product,$fk_warehouse,$op[$movement],$movement,$price,$label,$inventorycode, $datem);
 			
 			if ($result >= 0)
 			{
@@ -252,7 +239,7 @@ class Inventory extends CoreObject
 		}
 	}
 	
-	function regulate(&$PDOdb)
+	function regulate()
 	{
 		global $db,$user,$langs,$conf;
 		
@@ -288,10 +275,10 @@ class Inventory extends CoreObject
 				$nbpiece = abs($Inventorydet->qty_regulated);
 				$movement = (int) ($Inventorydet->qty_view < $Inventorydet->qty_stock); // 0 = add ; 1 = remove
 						
-				$href = dol_buildpath('/inventory/inventory.php?id='.$this->getId().'&action=view', 1);
+				$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
 				
 				if(empty($this->title))
-					$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock', $href, $this->getId()));
+					$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock', $href, $this->id));
 				else
 					$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStockWithNomInventaire', $href, $this->title));
 			}
@@ -306,16 +293,14 @@ class Inventory extends CoreObject
 	}
     
     static function getLink($id) {
-        global $langs;
+        global $langs,$db;
         
-        $PDOdb=new TPDOdb;
+        $i = new Inventory($db);
+        $i->fetch($id, false);
         
-        $i = new Inventory;
-        $i->load($PDOdb, $id, false);
+        $title = !empty($i->title) ? $i->title : $langs->trans('inventoryTitle').' '.$i->id;
         
-        $title = !empty($i->title) ? $i->title : $langs->trans('inventoryTitle').' '.$i->getId();
-        
-        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$i->getId().'&action=view', 1).'">'.img_picto('','object_list.png','',0).' '.$title.'</a>';
+        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$i->id.'&action=view', 1).'">'.img_picto('','object_list.png','',0).' '.$title.'</a>';
         
     }
 	
@@ -354,7 +339,7 @@ class Inventorydet extends CoreObject
 	public $pa;
 	public $new_pmp;
 	
-	private $__fields=array(
+	protected $__fields=array(
 		'fk_inventory'=>array('type'=>'int')
 		,'fk_warehouse'=>array('type'=>'int')
 		,'fk_product'=>array('type'=>'int')
@@ -385,11 +370,11 @@ class Inventorydet extends CoreObject
 		
 	}
 	
-	function load(&$PDOdb, $id) 
+	function fetch($id) 
 	{
 		global $conf;
 		
-		$res = parent::load($PDOdb, $id);
+		$res = parent::fetch($id);
 		$this->load_product();
         $this->fetch_current_pa();
 			
@@ -431,9 +416,9 @@ class Inventorydet extends CoreObject
                 AND datem<='".$date." 23:59:59'
                 ORDER BY datem DESC LIMIT 1";
                
-        $PDOdb->Execute($sql);
+        $res = $db->query($sql);
        
-        if($obj = $PDOdb->Get_line()) {
+        if($obj = $db->fetch_object($res)) {
             $last_pa = $obj->price;
         }
         
@@ -467,7 +452,7 @@ class Inventorydet extends CoreObject
 				ORDER BY datem DESC";
 
 		//echo $sql.'<br>';
-		$PDOdb->Execute($sql);
+		$db->query($sql);
 		$TMouvementStock = $PDOdb->Get_All();
 		$laststock = $stock;
 		$lastpmp = $pmp;
