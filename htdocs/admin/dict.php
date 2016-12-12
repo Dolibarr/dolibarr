@@ -1064,7 +1064,9 @@ if ($id)
 			if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); }
 			if ($fieldlist[$field]=='percent')         { $valuetoshow=$langs->trans("Percentage"); }
 			if ($fieldlist[$field]=='affect')          { $valuetoshow=$langs->trans("Info"); }
-
+			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
+			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
+				
             if ($id == 2)	// Special cas for state page
             {
             	if ($fieldlist[$field]=='region_id') { $valuetoshow='&nbsp;'; $showfield=1; }

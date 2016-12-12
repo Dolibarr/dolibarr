@@ -905,6 +905,8 @@ class Holiday extends CommonObject
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
             {
+                dol_syslog("A new moth was detected (month=".$month.", monthLastUpdate=".$monthLastUpdate.". We update leave balance.");
+                
             	$this->db->begin();
 
             	$users = $this->fetchUsers(false,false);
