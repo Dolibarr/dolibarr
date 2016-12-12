@@ -675,8 +675,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
 
 	// Clean some parameters
-    if (! empty($_POST["localtax1_type"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
-    if (! empty($_POST["localtax2_type"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
+    if ((! empty($_POST["localtax1_type"]) || ($_POST['localtax1_type'] == '0')) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
+    if ((! empty($_POST["localtax2_type"]) || ($_POST['localtax2_type'] == '0')) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
