@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označi komercijalnu ponudu kao napla�
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označi komerijalnu(e) ponudu(e) kao naplaćenu(e) kada je račun klijenta označen kao plaćen.
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označi komerijalnu(e) ponudu(e) kao naplaćenu(e) kada je račun klijenta označen kao potvrđen.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

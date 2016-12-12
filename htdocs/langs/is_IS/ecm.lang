@@ -32,13 +32,13 @@ ECMDocsByProducts=Skjöl sem tengjast vöru
 ECMDocsByProjects=Documents linked to projects
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Engin skrá búin til
 ShowECMSection=Sýna skrá
 DeleteSection=Fjarlægja möppu
-ConfirmDeleteSection=Getur þú staðfestir að þú viljir eyða <b>skrá %s ?</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Hlutfallsleg skrá fyrir skrá
 CannotRemoveDirectoryContainsFiles=Fjarri ekki hægt því það inniheldur nokkrar skrár
 ECMFileManager=File Manager
 ECMSelectASection=Velja möppu á vinstri tré ...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
-

@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=給空如果用戶沒有密碼（避免這種情況）
 SaveConfigurationFile=保存價值
 ServerConnection=服務器連接
 DatabaseCreation=數據庫的創建
-UserCreation=用戶創建
 CreateDatabaseObjects=數據庫對象的創建
 ReferenceDataLoading=數據加載參考
 TablesAndPrimaryKeysCreation=創建表和主鍵
@@ -133,12 +132,12 @@ MigrationFinished=遷移完成
 LastStepDesc=<strong>最後一步</strong> ：此處定義的登錄名和密碼，您打算使用連接到軟件。不松，因為它是帳戶管理所有其他。
 ActivateModule=激活模塊%s
 ShowEditTechnicalParameters=點選這裡以顯示/編輯進階參數設定(專家模式)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=您的資料庫版本是 %s. 如果您需要使用遷移程序進行資料庫結構的變更, 這個版本有嚴重錯誤使得資料遺失.因此, 直到您升級資料庫版本到較新的已解決版本(已知有問題的版本: %s),遷移程序將不會被允許執行.
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=您使用從DoliWamp Dolibarr安裝向導，所以這裏建議值已經進行了優化。他們唯一的變化，如果你知道你做什麽。
+KeepDefaultValuesDeb=您使用從Ubuntu或者Debian軟件包的Dolibarr安裝向導，所以這裏建議值已經進行了優化。只有數據庫的所有者創建的密碼必須完成。其他參數的變化，如果你只知道你做什麽。
+KeepDefaultValuesMamp=您使用從DoliMamp Dolibarr安裝向導，所以這裏建議值已經進行了優化。他們唯一的變化，如果你知道你做什麽。
+KeepDefaultValuesProxmox=您使用Proxmox的虛擬設備的Dolibarr安裝向導，因此，這裏提出的價值已經優化。改變他們，只有當你知道你做什麽。
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=未平倉合約關閉錯誤
 MigrationReopenThisContract=重新打開%s的合同
 MigrationReopenedContractsNumber=%s的合同修改
 MigrationReopeningContractsNothingToUpdate=沒有合同，打開封閉
-MigrationBankTransfertsUpdate=銀行之間的交易和銀行轉帳更新鏈接
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=所有鏈接是最新的
 MigrationShipmentOrderMatching=Sendings收據更新
 MigrationDeliveryOrderMatching=送達回執更新

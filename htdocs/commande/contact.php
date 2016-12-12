@@ -142,10 +142,6 @@ if ($id > 0 || ! empty($ref))
 	{
 	    $object->fetch_thirdparty();
 	    
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
-
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
 
@@ -160,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	    // Project
 	    if (! empty($conf->projet->enabled))
 	    {
@@ -196,10 +192,6 @@ if ($id > 0 || ! empty($ref))
 	    }
 		$morehtmlref.='</div>';		
 
-		// Order card
-
-		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 		dol_fiche_end();
@@ -216,7 +208,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Contrat non trouve
+		// Contact not found
 		print "ErrorRecordNotFound";
 	}
 }

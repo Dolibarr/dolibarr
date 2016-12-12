@@ -32,13 +32,13 @@ ECMDocsByProducts=Документы, связанные с продуктами
 ECMDocsByProjects=Документы, связанные с проектрами
 ECMDocsByUsers=Документы, связанные с пользователями
 ECMDocsByInterventions=Документы, связанные с меропрятиями
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Директория не создана
 ShowECMSection=Показать директорию
 DeleteSection=Удаление директории
-ConfirmDeleteSection=Вы точно хотите удалить <b>директорию %s?</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Относительная директория для файлов
 CannotRemoveDirectoryContainsFiles=Директория не может быть удалена, потому что содержит файлы
 ECMFileManager=Файловый менеджер
 ECMSelectASection=Выберите директорию на левом дереве ...
 DirNotSynchronizedSyncFirst=Эта директория была создана или изменена не с помощью модуля электронного документооборота. Вы должны нажать "Обновить", чтобы синхронизировать данные на диске и базу данных и иметь возможность их использования. 
-

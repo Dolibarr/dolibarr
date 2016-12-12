@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=安全代碼
-Calendar=日歷
 NumberingShort=N°
 Tools=工具
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=通過電子郵件發送的航運
 Notify_MEMBER_VALIDATE=會員驗證
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=會員訂閱
-Notify_MEMBER_RESILIATE=會員resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=會員刪除
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=附件大小總計
 MaxSize=檔案最大
 AttachANewFile=附加一個新的檔案/文件
 LinkedObject=鏈接對象
-Miscellaneous=雜項
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=這是一個測試郵件。\\ n該兩行是由一個回車分隔。
 PredefinedMailTestHtml=這是一個<b>測試</b>郵件（單詞測試必須大膽）。 <br>這兩條線隔開，回車。
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=出口
 ExportsArea=出口地區
 AvailableFormats=可用的格式
-LibraryUsed=Librairy使用
-LibraryVersion=版本
+LibraryUsed=使用的程式庫
+LibraryVersion=Library version
 ExportableDatas=可匯出的資料
 NoExportableData=沒有可匯出的資料（導出加載的數據，或丟失的權限沒有模塊）
-NewExport=建立新的匯出
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
+WEBSITE_TITLE=標題
 WEBSITE_DESCRIPTION=廠商品號/品名/商品描述
 WEBSITE_KEYWORDS=Keywords

@@ -26,8 +26,6 @@ FieldTitle=Заглавие
 NowClickToGenerateToBuildExportFile=Сега, изберете файловия формат, в комбо кутия и кликнете върху &quot;Генериране&quot; за изграждане на файл за износ ...
 AvailableFormats=Налични формати
 LibraryShort=Библиотека
-LibraryUsed=Библиотека използва
-LibraryVersion=Версия
 Step=Стъпка
 FormatedImport=Import assistant
 FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
@@ -87,7 +85,7 @@ TooMuchWarnings=Все още <b>%s</b> други линии източник �
 EmptyLine=Празен ред (ще бъдат отхвърлени)
 CorrectErrorBeforeRunningImport=Трябва първо да поправи всички грешки, преди да пуснете окончателен внос.
 FileWasImported=Файла е внесен с цифровите <b>%s.</b>
-YouCanUseImportIdToFindRecord=Можете да намерите всички внесени записи във вашата база данни чрез филтриране на областта <b>import_key = '%s &quot;.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Брой на линии с грешки и без предупреждения: <b>%s.</b>
 NbOfLinesImported=Брой на линиите успешно внесени: <b>%s.</b>
 DataComeFromNoWhere=Стойност да вмъкнете идва от нищото в изходния файл.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Разделени със запетаи</b> формат <b>с
 Excel95FormatDesc=Файлов формат на <b>Excel</b> (XLS) <br> Това е роден Excel 95 формат (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> файлов формат (XLSX) <br> Това е роден формат Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b>Tab раздяла</b> формат <b>стойност</b> файл (TSV) <br> Това е формат текстов файл, където полетата са разделени с табулатор [Tab].
-ExportFieldAutomaticallyAdded=Полеви <b>%s</b> добавят автоматично. Тя ще ви избягват да има подобни линии, които да бъдат третирани като дублирани записи (с тази област, добави всички Ligne ще притежава своя номер и ще се различават).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv опции
 Separator=Разделител
 Enclosure=Enclosure

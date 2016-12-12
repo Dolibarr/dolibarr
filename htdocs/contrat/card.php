@@ -991,6 +991,7 @@ if (empty($reshook))
 	}
 }
 
+
 /*
  * View
  */
@@ -1381,7 +1382,6 @@ else
 		print '</td>';
 		print '</tr>';
 
-
         // Other attributes
         $cols = 3;
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -1395,7 +1395,7 @@ else
             print '</form>';
         }
 
-        //echo '<br>';
+        echo '<br>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
@@ -1990,8 +1990,8 @@ else
 
             if (! empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
-            	$langs->load("bills");
-            	if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+            	$langs->load("orders");
+            	if ($user->rights->commande->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
             	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
             }
             

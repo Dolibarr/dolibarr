@@ -2,15 +2,6 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-WARNING: 
-
-Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
-Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
-You may also experience troubles with Mysql 5.5.41/42/43 with error "Lost connection" during
-migration.
-Upgrading to any other version or any other database system is abolutely required BEFORE trying
-make a Dolibarr upgrade.
-
 
 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
@@ -258,12 +249,12 @@ NEW: Add the admin info on combo of type of contact
 NEW: Add the event BILL_PAYED to the list of supported events for module notification.
 NEW: Add total weight and volume on PDF. 
 NEW: Add hidden option to hide column qty ordered on shipments.
-NEW: Add view of virtual stock into product list (when appropriate).
-NEW: Add warning on tasks when they are late (add also the warning tolerance parameter).
-NEW: Add weight/volume for one product into shipment export.
-NEW: Add width and height on product card
-NEW: allow a document to be linked to project of another customer by config setup.
-NEW: allow project to be shared across entities (for multicompany module).
+NEW: Add view of virtual stock into product list (when appropriate)
+NEW: Add warning on tasks when they are late (add also the warning tolerance parameter)
+NEW: Add weight/volume for one product into shipment export
+NEW: Add width and height on product table
+NEW: allow a document to be linked to project from another customer on config
+NEW: allow project to be shared across entities (for multicompany module)
 NEW: All variant of ckeditor config can be tested into the setup page of module.
 NEW: Can change dynamically number of records visible into lists.
 NEW: Can change type of extrafields (for some combinations only).

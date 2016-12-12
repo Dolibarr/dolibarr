@@ -805,7 +805,7 @@ class FormFile
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
-    	    
+
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
@@ -828,7 +828,7 @@ class FormFile
     			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
     			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
     			else $this->infofiles['extensions'][$ext]++;
-    			
+
     			// Preview
     			$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
     		    if ($urladvanced) $tmpout.= '<li><a data-ajax="false" href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
@@ -838,9 +838,8 @@ class FormFile
     			if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
     			$tmpout.= '>';
     			$tmpout.=img_mime($relativepath, $file["name"]).' ';
-    			$tmpout.= $langs->trans("Download ".$ext);
+    			$tmpout.= $langs->trans("Download").' '.$ext;
     			$tmpout.= '</a></li>'."\n";
-    			
     		}
     		$out.=$tmpout;
     		$out.='</ul></div></dd>

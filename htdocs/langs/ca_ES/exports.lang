@@ -26,8 +26,6 @@ FieldTitle=Títol camp
 NowClickToGenerateToBuildExportFile=Ara, seleccioneu el format d'exportació de la llista desplegable i feu clic a "Generar" per generar el fitxer exportació...
 AvailableFormats=Formats dispo.
 LibraryShort=Llibreria
-LibraryUsed=Llibreria utilitzada
-LibraryVersion=Versió
 Step=Pas
 FormatedImport=Assistent d'importació
 FormatedImportDesc1=Aquesta àrea permet realitzar importacions personalitzades de dades mitjançant un ajudant que evita tenir coneixements tècnics de Dolibarr.
@@ -87,7 +85,7 @@ TooMuchWarnings=Encara hi ha <b>%s</b> línies amb warnings, però la seva visua
 EmptyLine=Línia en blanc
 CorrectErrorBeforeRunningImport=Ha de corregir tots els errors abans d'iniciar la importació definitiva.
 FileWasImported=El fitxer s'ha importat amb el número d'importació <b>%s</b>.
-YouCanUseImportIdToFindRecord=Podeu trobar els registres d'aquesta importació a la base de dades filtrant el camp <b>import_key='%s'</b>.
+YouCanUseImportIdToFindRecord=Pots buscar tots els registres importats a la teva base de dades filtrant pel camp <b>import_key='%s'</b>.
 NbOfLinesOK=Nombre de línies sense errors ni warnings: <b>%s</b>.
 NbOfLinesImported=Nombre de línies correctament importades: <b>%s</b>.
 DataComeFromNoWhere=El valor a inserir no correspon a cap camp de l'arxiu origen.
@@ -105,7 +103,7 @@ CSVFormatDesc=Arxiu amb format <b>Valors separats per coma</b> (.csv).<br>És un
 Excel95FormatDesc=Arxiu amb format <b>Excel</b> (.xls)<br>Aquest és el format natiu d'Excel 95 (BIFF5).
 Excel2007FormatDesc=Arxiu amb format <b>Excel</b> (.xlsx)<br>Aquest és el format natiu d'Excel 2007 (SpreadsheetML).
 TsvFormatDesc=Arxiu amb format <b>Valors separats per tabulador</b> (. Tsv)<br> Aquest és un format d'arxiu de text en què els camps són separats per un tabulador [tab].
-ExportFieldAutomaticallyAdded=S'ha afegit automàticament el camp <b>%s</b>, ja que evitarà que línies idèntiques siguin considerades com duplicades (amb aquest camp, cada línia tindrà un id propi).
+ExportFieldAutomaticallyAdded=El camp <b>%s</b> va ser automàticament afegit. T'evitarà tenir línies similars que hauries de tractar com a registres duplicats (amb aquest camp afegit, totes les línies tindran el seu propi identificador que els diferenciarà)
 CsvOptions=Opcions de l'arxiu CSV
 Separator=Separador
 Enclosure=Delimitador de camps

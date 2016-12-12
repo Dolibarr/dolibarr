@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Jätä tyhjä, jos käyttäjä ei ole salasanaa (välttä�
 SaveConfigurationFile=Tallenna arvot
 ServerConnection=Palvelinyhteys
 DatabaseCreation=Tietokannan luominen
-UserCreation=Käyttäjän luominen
 CreateDatabaseObjects=Tietokannan objektien luominen
 ReferenceDataLoading=Vertailutiedoilla lastaus
 TablesAndPrimaryKeysCreation=Taulukot ja Perusjäämä avaimet luominen
@@ -133,12 +132,12 @@ MigrationFinished=Muuttoliike valmis
 LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
 ActivateModule=Aktivoi moduuli %s
 ShowEditTechnicalParameters=Klikkaa tästä näyttääksesi/muuttaaksesi edistyneemmät parametrit (asiantuntija tila)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Voit käyttää DoliWamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
+KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debian-pakettien, joten ehdottamat arvot tässä on jo optimoitu. Vain salasanan tietokannan omistajan luoda on täytettävä. Muuta muut parametrit vain, jos tiedät mitä teet.
+KeepDefaultValuesMamp=Voit käyttää DoliMamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
+KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Avoinna sopimuksen suljettu virhe
 MigrationReopenThisContract=Uudelleen sopimuksen %s
 MigrationReopenedContractsNumber=%s sopimusten muuntamattomat
 MigrationReopeningContractsNothingToUpdate=N: o suljettu sopimuksen auki
-MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankkisiirtoa
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Kaikki linkit ovat ajan tasalla
 MigrationShipmentOrderMatching=Sendings vastaanottamisesta päivitys
 MigrationDeliveryOrderMatching=Toimitus vastaanottamisesta päivitys

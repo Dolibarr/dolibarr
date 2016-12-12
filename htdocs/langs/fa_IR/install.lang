@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=دیدگاهتان را خالی اگر کاربر هیچ 
 SaveConfigurationFile=صرفه جویی در مقدار
 ServerConnection=اتصال به سرور
 DatabaseCreation=ایجاد پایگاه داده
-UserCreation=ایجاد کاربر
 CreateDatabaseObjects=اشیاء پایگاه داده ایجاد
 ReferenceDataLoading=مرجع بارگذاری داده ها
 TablesAndPrimaryKeysCreation=جداول و کلید اولیه ایجاد
@@ -133,12 +132,12 @@ MigrationFinished=مهاجرت به پایان رسید
 LastStepDesc=<strong>آخرین مرحله:</strong> تعریف اینجا کاربری و رمز عبور شما قصد استفاده برای اتصال به نرم افزار. آیا این شل نیست آن را به عنوان حساب به اداره همه دیگران است.
 ActivateModule=فعال بخش٪ s
 ShowEditTechnicalParameters=برای نشان دادن پارامترهای پیشرفته / ویرایش اینجا را کلیک کنید (حالت کارشناسی)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliWamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr راه اندازی از یک بسته لینوکس (اوبونتو، دبیان، فدورا ...)، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تنها رمز صاحب پایگاه داده برای ایجاد باید پر شوند. تغییر پارامترهای دیگر تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=قرارداد باز کردن بسته های خط�
 MigrationReopenThisContract=بازگشایی قرارداد از٪ s
 MigrationReopenedContractsNumber=٪ s در قرارداد اصلاح شده
 MigrationReopeningContractsNothingToUpdate=بدون قرارداد بسته یا باز
-MigrationBankTransfertsUpdate=لینک به روز رسانی بین معامله بانک و انتقال بانکی
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=تمامی لینک ها به روز می باشد
 MigrationShipmentOrderMatching=Sendings به روز رسانی دریافت
 MigrationDeliveryOrderMatching=به روز رسانی رسید تحویل

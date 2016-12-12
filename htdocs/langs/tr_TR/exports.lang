@@ -26,8 +26,6 @@ FieldTitle=Alan başlğı
 NowClickToGenerateToBuildExportFile=Şimdi, açılan kutudan dosya biçimini seçin ve dışaaktarılacak dosyayı oluşturmak için "Oluştur" düğmesine tıklayın...
 AvailableFormats=Kullanılabilecek biçimler
 LibraryShort=Kitaplık
-LibraryUsed=Kullanılan kitaplık
-LibraryVersion=Sürüm
 Step=Adım
 FormatedImport=İçeaktarma yardımcısı
 FormatedImportDesc1=Buradan, yeterli teknik bilginiz olmasa da, yardımcıyı kullanarak, istediğiniz verileri alabilirsiniz.
@@ -87,7 +85,7 @@ TooMuchWarnings=Kaynak dosyasında, liste sınırlandığından görüntülenmey
 EmptyLine=Boş satır (atlanacak)
 CorrectErrorBeforeRunningImport=Kesin alma işleminden önce tüm hataları düzeltmelisiniz.
 FileWasImported=Dosya <b>%s</b> sayısı ile alındı.
-YouCanUseImportIdToFindRecord=Veritabanınızı <b>import_key='%s'</b> ölçütü ile süzerseniz içeaktarılmış tüm kayıtları görebilirsiniz.
+YouCanUseImportIdToFindRecord=Veritabanınızı <b>import_key='%s'</b> alanında süzerseniz alınmış tüm kayıtları bulabilirsiniz.
 NbOfLinesOK=Hatasız ve uyarı içermeyen satır sayısı:<b>%s</b>.
 NbOfLinesImported=Sorunsuz içeaktarılan satır sayısı:<b>%s</b>.
 DataComeFromNoWhere=Eklenecek değer kaynak dosyada hiç bir yerden gelmiyor.

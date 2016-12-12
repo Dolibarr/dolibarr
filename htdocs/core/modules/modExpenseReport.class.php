@@ -100,7 +100,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[1][0] = 771;
 		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[3][0] = 772;

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Güvenlik kodu
-Calendar=Takvim
 NumberingShort=N°
 Tools=Araçlar
 ToolsDesc=Bu alan diğer menü girişlerinde bulunmayan çeşitli araçlarburada toplanmıştır.<br /><br />Bütün araçlara sol menüden ulaşılabilir.
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Eklenen dosyaların/belgelerin toplam boyutu
 MaxSize=Ençok boyut
 AttachANewFile=Yeni bir dosya/belge ekle
 LinkedObject=Bağlantılı nesne
-Miscellaneous=Çeşitli
 NbOfActiveNotifications=Bildirim sayısı (alıcı epostaları sayısı)
 PredefinedMailTest=Bu bir deneme postasıdır.\nİki satır enter tuşu ile ayrılmıştır.
 PredefinedMailTestHtml=Bu bir <b>deneme</b> postası (deneme sözcüğü koyu olmalı).<br>İki satır enter tuşu ile ayrılmıştır.
@@ -201,33 +199,13 @@ IfAmountHigherThan=Eğer tutar <strong>%s</strong> den büyükse
 SourcesRepository=Kaynaklar için havuz
 Chart=Çizelge
 
-##### Calendar common #####
-NewCompanyToDolibarr=Eklenen firma %s
-ContractValidatedInDolibarr=Doğrulanan firma %s
-PropalClosedSignedInDolibarr=İmzalan teklif %s
-PropalClosedRefusedInDolibarr=Reddedilen teklif %s
-PropalValidatedInDolibarr=Doğrulanan teklif %s
-PropalClassifiedBilledInDolibarr=Faturalandı olarak sınıflandırılan teklif %s
-InvoiceValidatedInDolibarr=Doğrulanan fatura %s
-InvoicePaidInDolibarr=Ödemeye değiştirilen fatura %s
-InvoiceCanceledInDolibarr=İptal edilen fatura %s
-MemberValidatedInDolibarr=Doğrulanan üye %s
-MemberResiliatedInDolibarr=Bitirilen üyelik %s
-MemberDeletedInDolibarr=Silinen üyelik %s
-MemberSubscriptionAddedInDolibarr=Abonelik eklenen üye %s
-ShipmentValidatedInDolibarr=Doğrulanan sevkiyat %s
-ShipmentClassifyClosedInDolibarr=%s Sevkiyatı faturalandı olarak sınıflandırıldı
-ShipmentUnClassifyCloseddInDolibarr=%s Sevkiyatı yeniden açıldı olarak sınıflandırıldı
-ShipmentDeletedInDolibarr=Silinen sevkiyat %s
 ##### Export #####
-Export=Dışaaktar
 ExportsArea=Dışaaktar alanı
 AvailableFormats=Varolan biçimler
-LibraryUsed=Kullanılan kütüphane
-LibraryVersion=Sürüm
+LibraryUsed=Kullanılan kitaplık
+LibraryVersion=Kütüphane sürümü
 ExportableDatas=Dışaaktarılabilir veri
 NoExportableData=Dışaaktarılabilir veri yok (dışaaktarılabilir verili modül yok ya da izinler yok)
-NewExport=Yeni dışaaktarım
 ##### External sites #####
 WebsiteSetup=Websitesi modülü ayarları
 WEBSITE_PAGEURL=Sayfanın URL si
