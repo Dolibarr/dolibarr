@@ -19,6 +19,7 @@
 use Luracast\Restler\Restler;
 use Luracast\Restler\RestException;
 use Luracast\Restler\Defaults;
+use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -47,14 +48,14 @@ class DolibarrApi
     function __construct($db, $cachedir='')
     {
         global $conf;
-        
+
         if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
         Defaults::$cacheDirectory = $cachedir;
-        
+
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
-        
+
         $this->r->setAPIVersion(1);
     }
 
@@ -86,20 +87,20 @@ class DolibarrApi
 
         // Remove $db object property for object
         unset($object->db);
-        
+
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
-        
+
         unset($object->lignes); // should be ->lines
         unset($object->oldline);
-        
+
         unset($object->error);
         unset($object->errors);
-        
+
         unset($object->ref_previous);
         unset($object->ref_next);
         unset($object->ref_int);
-        
+
         unset($object->projet);     // Should be fk_project
         unset($object->project);    // Should be fk_project
         unset($object->author);     // Should be fk_user_author
@@ -111,18 +112,18 @@ class DolibarrApi
         unset($object->timespent_withhour);
         unset($object->timespent_fk_user);
         unset($object->timespent_note);
-        
+
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
-        
+
         unset($object->element);
         unset($object->fk_element);
         unset($object->table_element);
         unset($object->table_element_line);
         unset($object->picto);
-        
+
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"
@@ -152,7 +153,7 @@ class DolibarrApi
                 }
             }
         }*/
-        
+
 		return $object;
     }
 
@@ -187,12 +188,12 @@ class DolibarrApi
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-	
+
 	/**
 	 * Return if a $sqlfilters parameter is valid
-	 * 
+	 *
 	 * @param  string   $sqlfilters     sqlfilter string
-	 * @return boolean                  True if valid, False if not valid 
+	 * @return boolean                  True if valid, False if not valid
 	 */
 	function _checkFilters($sqlfilters)
 	{
@@ -216,22 +217,22 @@ class DolibarrApi
 	    }
 	    return true;
 	}
-	
+
 	/**
 	 * Function to forge a SQL criteria
-	 * 
+	 *
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	static function _forge_criteria_callback($matches)
 	{
 	    global $db;
-	    
+
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
 	    $tmp=explode(':',$matches[1]);
         if (count($tmp) < 3) return '';
-        
+
 	    $tmpescaped=$tmp[2];
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
@@ -242,5 +243,5 @@ class DolibarrApi
 	        $tmpescaped = $db->escape($tmpescaped);
 	    }
 	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
-	}	
+	}
 }
