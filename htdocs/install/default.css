@@ -1,5 +1,5 @@
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2009-2016 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,49 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
+.minwidth300 { min-width: 300px; }
+.minwidth400 { min-width: 400px; }
+.minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	input, input[type=text], input[type=password], select, textarea     { 
+		min-width: 20px; 
+    	min-height: 1.4em;
+    	line-height: 1.4em;
+    	padding: .4em .1em;
+    	border: 1px solid #BBB;
+    	/* max-width: inherit; why this ? */
+     }
+     
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth50onsmartphone { max-width: 40px; }
+    .maxwidth75onsmartphone { max-width: 50px; }
+    .maxwidth100onsmartphone { max-width: 70px; }
+    .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
+}
 
 body {
 	font-size:13px;
@@ -94,6 +135,11 @@ input:focus, textarea:focus, button:focus, select:focus {
 }
 input[type=text], input[type=password] {
     border: 1px solid #ACBCBB;
+    padding: 4px;
+}
+select {
+    padding: 4px;
+    background-color: #fff;
 }
 input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
     border: 1px solid #ACBCBB;
@@ -244,12 +290,11 @@ td.comment {
 	padding: 5px 5px 5px 5px;
 	margin: 0 0 0 0;
 	text-decoration:none;
-	font-size: 11px;
+	font-size: 12px;
 	border-bottom: 1px solid #CCCCDB;
 }
-
 table {
-	font-size: 12px;
+	font-size: 13px;
 }
 
 .install

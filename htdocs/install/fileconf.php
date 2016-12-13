@@ -127,7 +127,7 @@ if (! empty($force_install_message))
 	?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_document_root ?>"
 			       name="main_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -158,7 +158,7 @@ if (! empty($force_install_message))
 		?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_data_root ?>"
 			       name="main_data_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -189,7 +189,7 @@ if (! empty($force_install_message))
 		</td>
 		<td valign="top" class="label">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
 				<?php if (!empty($force_install_noedit)) {
