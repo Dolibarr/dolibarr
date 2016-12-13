@@ -30,10 +30,10 @@
  */
 class FormVentilation extends Form
 {
-    
+
     private $options_cache = array();
-    
-    
+
+
 	/**
 	 * Return select filter with date of transaction
 	 *
@@ -87,21 +87,22 @@ class FormVentilation extends Form
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
 		    $options = $this->options_cache[$usecache];
+		    $selected=$selectid;
 		}
 		else
 		{
     		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
-    
+
     		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
     		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
     		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
     		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
     		$sql .= " AND aa.active = 1";
     		$sql .= " ORDER BY aa.account_number";
-    
+
     		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
     		$resql = $this->db->query($sql);
-    
+
     		if (!$resql) {
     			$this->error = "Error " . $this->db->lasterror();
     			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
@@ -109,16 +110,16 @@ class FormVentilation extends Form
     		}
 
     		$out = ajax_combobox($htmlname, $event);
-    
+
     		$selected = 0;
-    		while ($obj = $this->db->fetch_object($resql)) 
+    		while ($obj = $this->db->fetch_object($resql))
     		{
     			$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
     			$label = dol_trunc($label, $trunclength);
-    
+
     			$select_value_in = $obj->rowid;
     			$select_value_out = $obj->rowid;
-    
+
     			// Try to guess if we have found default value
     			if ($select_in == 1) {
     				$select_value_in = $obj->account_number;
@@ -132,19 +133,19 @@ class FormVentilation extends Form
     			    //var_dump("Found ".$selectid." ".$select_value_in);
     				$selected = $select_value_out;
     			}
-    
+
     			$options[$select_value_out] = $label;
     		}
     		$this->db->free($resql);
-    		
+
     		if ($usecache)
     		{
                 $this->options_cache[$usecache] = $options;
     		}
 		}
-		
+
 		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
-		
+
 		return $out;
 	}
 
@@ -303,7 +304,7 @@ class FormVentilation extends Form
 	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
 	    global $conf;
-	    
+
 		$out_array = array();
 
 		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
@@ -342,7 +343,7 @@ class FormVentilation extends Form
 	function selectjournal_accountancy_bookkepping($selected = '', $htmlname = 'journalid', $useempty = 0, $output_format = 'html')
 	{
 	    global $conf,$langs;
-	    
+
 		$out_array = array();
 
 		$sql = "SELECT DISTINCT code_journal";

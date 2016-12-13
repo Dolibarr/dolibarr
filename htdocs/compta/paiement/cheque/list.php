@@ -94,9 +94,9 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql.=" AND bc.ref=".$search_ref;
+if ($search_ref)			$sql.=natural_search("bc.ref",$search_ref);
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
-if ($search_amount)			$sql.=" AND bc.amount='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -166,14 +166,14 @@ if ($resql)
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
-    print '<td>';
+    print '<td class="liste_titre">';
     $form->select_comptes($search_account,'search_account',0,'',1);
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
-	print '<td></td>';
+	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;

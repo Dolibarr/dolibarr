@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codi comptable pagament de salaris
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codi comptable càrregues financeres
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable per defecte per a pagament de salaris
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per a despeses de personal
 Salary=Sou
 Salaries=Sous
 NewSalaryPayment=Nou pagament de sous

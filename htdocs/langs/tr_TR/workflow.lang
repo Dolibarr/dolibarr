@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir müşteri siparişi ödenmiş olar
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Müşteri faturası ödendi olarak ayarlandığında bağlantılı kaynak sipariş(ler)ini faturalandı olarak sınıflandır
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müşteri faturası doğrulandığında bağlantılı kaynak sipariş(ler)ini faturalandı olarak sınıflandır
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müşteri faturası doğrulandığında  bağlantılı teklif kaynağını faturalandı olarak sınıflandır
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

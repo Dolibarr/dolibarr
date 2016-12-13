@@ -26,8 +26,6 @@ FieldTitle=Pole název
 NowClickToGenerateToBuildExportFile=Nyní vyberte formát souboru v poli se seznamem a klikněte na "Generovat" pro sestavení souboru exportu ....
 AvailableFormats=Dostupné formáty
 LibraryShort=Knihovna
-LibraryUsed=Použitá knihovna
-LibraryVersion=Verze
 Step=Krok
 FormatedImport=Asistent importu
 FormatedImportDesc1=Tato oblast umožňuje importovat osobní údaje, pomocí asistenta, který vám pomůže v procesu, bez technických znalostí.
@@ -87,7 +85,7 @@ TooMuchWarnings=Tam je ještě <b>%s</b> další zdrojové řádky s varováním
 EmptyLine=Prázdný řádek (budou odstraněny)
 CorrectErrorBeforeRunningImport=Nejprve je nutné opravit všechny chyby před spuštěním trvalému dovozu.
 FileWasImported=Soubor byl importován s číslem <b>%s.</b>
-YouCanUseImportIdToFindRecord=Najdete zde všechny importované záznamy v databázi filtrováním pole <b>import_key = &quot;%s&quot;.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Počet řádků bez chyb a bez varování: <b>%s.</b>
 NbOfLinesImported=Počet řádků úspěšně importovaných: <b>%s.</b>
 DataComeFromNoWhere=Hodnota vložit pochází z ničeho nic ve zdrojovém souboru.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Hodnoty oddělené čárkami</b> formát souboru (. Csv). <br> 
 Excel95FormatDesc=<b>Excel</b> formát souboru (. Xls) <br> Toto je nativní formát aplikace Excel 95 (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> formát souboru (. Xlsx) <br> Toto je nativní formát aplikace Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b>Tab Hodnoty oddělené</b> formát souboru (. TSV) <br> Jedná se o textový formát souboru, kde jsou pole oddělena tabulátorem [Tab].
-ExportFieldAutomaticallyAdded=Terénní <b>%s</b> byl automaticky přidán. Bude vám vyhnout se mají podobné trati, které budou považovány za duplicitní záznamy (s toto pole přidáno, budou všechny řádky vlastnit id a bude se lišit).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv možnosti
 Separator=Oddělovač
 Enclosure=Příloha

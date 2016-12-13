@@ -13,8 +13,8 @@ Prospect=احتمال
 DeleteProp=اقتراح حذف التجارية
 ValidateProp=مصادقة على اقتراح التجارية
 AddProp=إنشاء اقتراح
-ConfirmDeleteProp=هل أنت متأكد من أنك تريد حذف هذا التجارية الاقتراح؟
-ConfirmValidateProp=هل أنت متأكد من هذا التجارية للمصادقة على الاقتراح؟
+ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 LastPropals=Latest %s proposals
 LastModifiedProposals=Latest %s modified proposals
 AllPropals=جميع المقترحات
@@ -56,8 +56,8 @@ CreateEmptyPropal=إنشاء خاليا التجارية vierge مقترحات �
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
 UseCustomerContactAsPropalRecipientIfExist=استخدام العميل عنوان الاتصال إذا حددت بدلا من التصدي لطرف ثالث حسب الاقتراح المستفيدة معالجة
 ClonePropal=اقتراح استنساخ التجارية
-ConfirmClonePropal=هل أنت متأكد من استنساخ هذا الاقتراح <b>٪ ق</b> التجارية؟
-ConfirmReOpenProp=هل أنت متأكد أنك تريد فتح ظهر <b>%s</b> اقتراح التجارية؟
+ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
+ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=واقتراح الخطوط التجارية
 ProposalLine=اقتراح خط
 AvailabilityPeriod=توفر تأخير

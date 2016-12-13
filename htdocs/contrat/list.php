@@ -488,7 +488,7 @@ if ($resql)
     }    
     if (! empty($arrayfields['sale_representative']['checked']))
     {
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     }
     if (! empty($arrayfields['c.date_contrat']['checked']))
     {

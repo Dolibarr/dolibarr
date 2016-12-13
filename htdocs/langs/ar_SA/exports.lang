@@ -26,8 +26,6 @@ FieldTitle=حقل العنوان
 NowClickToGenerateToBuildExportFile=الآن ، انقر على "توليد" لبناء ملف التصدير...
 AvailableFormats=الصيغ المتاحة و
 LibraryShort=المكتبة
-LibraryUsed=وتستخدم المكتبة
-LibraryVersion=النسخة
 Step=خطوة
 FormatedImport=مساعد والاستيراد
 FormatedImportDesc1=ويسمح هذا المجال لاستيراد البيانات الشخصية ، وذلك باستخدام مساعد لمساعدتكم في هذه العملية من دون المعرفة التقنية.
@@ -87,7 +85,7 @@ TooMuchWarnings=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع �
 EmptyLine=سيتم تجاهل سطر فارغ ()
 CorrectErrorBeforeRunningImport=أولا يجب أن تقوم بتصحيح كافة الأخطاء قبل تشغيل استيراد نهائي.
 FileWasImported=تم استيراد ملف مع <b>%s</b> عدد.
-YouCanUseImportIdToFindRecord=يمكنك العثور على كافة السجلات المستوردة في قاعدة البيانات الخاصة بك عن طريق تصفية على <b>import_key</b> الحقل <b>= '%s'.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=عدد الأسطر مع عدم وجود أخطاء وتحذيرات لا : <b>%s.</b>
 NbOfLinesImported=عدد خطوط المستوردة بنجاح : <b>%s.</b>
 DataComeFromNoWhere=قيمة لادخال تأتي من أي مكان في الملف المصدر.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (cs
 Excel95FormatDesc=شكل <b>ملف</b> اكسل (. XLS) <br> هذا هو الأصلي تنسيق Excel 95 (BIFF5).
 Excel2007FormatDesc=شكل <b>ملف</b> اكسل (. XLSX) <br> هذا هو الأصلي تنسيق Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b>علامة التبويب</b> تنسيق ملف <b>منفصل القيمة</b> (و .tsv) <br> هذا هو شكل ملف نصي حيث يتم فصل الحقول من قبل الجدوال [التبويب].
-ExportFieldAutomaticallyAdded=وأضافت <b>الحقل٪ الصورة</b> تلقائيا. ذلك تجنب أن يكون لديك خطوط مماثلة إلى أن تعامل على أنها سجلات مكررة (مع هذا المجال وأضاف، أن جميع خطوط امتلاك الهوية الخاصة بهم وسوف تختلف).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=خيارات CSV
 Separator=الفاصل
 Enclosure=سياج

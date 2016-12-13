@@ -3956,7 +3956,11 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmulticurrencyrate">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" />';
+            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" /> ';
+			print '<select name="calculation_mode">';
+			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
+			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
+			print '</select> ';
             print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             print '</form>';
         }
@@ -4231,6 +4235,10 @@ class Form
 		}
 
         $out.= '</select>';
+		// Make select dynamic
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		$out.= ajax_combobox($htmlname);
+		
         return $out;
     }
 
@@ -5188,7 +5196,7 @@ class Form
             </a>
             <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
-            <dd>
+            <dd class="dropowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="ul'.$htmlname.'">
                     '.$lis.'
@@ -5997,9 +6005,10 @@ class Form
     {
         global $conf, $langs;
 
-        $out='';
+        $out='<div class="nowrap">';
         $out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         $out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        $out.='</div>';
         if ($addcheckuncheckall)
         {
             if (! empty($conf->use_javascript_ajax)) $out.='<input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions">';

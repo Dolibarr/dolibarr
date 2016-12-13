@@ -805,7 +805,7 @@ class FormFile
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
-    	    
+
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
@@ -828,7 +828,7 @@ class FormFile
     			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
     			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
     			else $this->infofiles['extensions'][$ext]++;
-    			
+
     			// Preview
     			$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
     		    if ($urladvanced) $tmpout.= '<li><a data-ajax="false" href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
@@ -838,9 +838,8 @@ class FormFile
     			if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
     			$tmpout.= '>';
     			$tmpout.=img_mime($relativepath, $file["name"]).' ';
-    			$tmpout.= $langs->trans("Download ".$ext);
+    			$tmpout.= $langs->trans("Download").' '.$ext;
     			$tmpout.= '</a></li>'."\n";
-    			
     		}
     		$out.=$tmpout;
     		$out.='</ul></div></dd>
@@ -933,7 +932,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">'."\n";
+			print '<table width="100%" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
@@ -1088,7 +1087,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'" class="opacitymedium">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'5').'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1131,7 +1130,7 @@ class FormFile
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="nobordernopadding">'."\n";
+        print '<table width="100%" class="noborder">'."\n";
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';

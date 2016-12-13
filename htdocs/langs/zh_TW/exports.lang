@@ -26,8 +26,6 @@ FieldTitle=欄位標題
 NowClickToGenerateToBuildExportFile=現在請選擇檔案格式，並按下產生按鍵來產生匯出檔案。
 AvailableFormats=可用的格式
 LibraryShort=程式庫
-LibraryUsed=使用的程式庫
-LibraryVersion=程式庫版本
 Step=步驟
 FormatedImport=匯入小幫手
 FormatedImportDesc1=此區域允許匯入個人化的資料。您不需任何專業知識，只需利用小幫手幫助你。
@@ -87,7 +85,7 @@ TooMuchWarnings=還有<b>%s的</b>線，警告其他來源，但產量一直有�
 EmptyLine=空行（將被丟棄）
 CorrectErrorBeforeRunningImport=您必須先輸入正確運行前確定的所有錯誤。
 FileWasImported=進口數量<b>%s</b>文件。
-YouCanUseImportIdToFindRecord=你可以找到所有進口領域<b>import_key</b>記錄過濾您的數據庫<b>='%s'的</b> 。
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=行數沒有錯誤，也沒有警告<b>：%s的</b> 。
 NbOfLinesImported=線成功導入數<b>：%s的</b> 。
 DataComeFromNoWhere=值插入來自無處源文件。
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>逗號分隔</b>檔案格式（csv格式）。 <br>這是一個
 Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Options
 Separator=Separator
 Enclosure=Enclosure

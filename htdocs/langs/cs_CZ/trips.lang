@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Zpráva výdaje
 ExpenseReports=Zpráva výdajů
+ShowExpenseReport=Show expense report
 Trips=Zprávy výdaje
 TripsAndExpenses=Zprávy výdajů
 TripsAndExpensesStatistics=Statistiky výdaje
@@ -8,12 +9,13 @@ TripCard=Karta zpráv výdajů
 AddTrip=Vytvoření zprávy o výdajích
 ListOfTrips=Seznam vyúčtování výdajů
 ListOfFees=Sazebník poplatků
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Nová zpráva výdaje
 CompanyVisited=Firma/nadace navštívena
 FeesKilometersOrAmout=Množství nebo kilometrů
 DeleteTrip=Smazat zprávy o výdajích
-ConfirmDeleteTrip=Jste si jisti, že chcete smazat tuto zprávu o výdajích?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Seznam vyúčtování výdajů
 ListToApprove=Čekání na schválení
 ExpensesArea=Oblast vyúčtování výdajů
@@ -27,7 +29,7 @@ TripNDF=Informace o správě nákladů
 PDFStandardExpenseReports=Standardní šablona pro vytvoření PDF dokumentu pro zprávy o výdajích
 ExpenseReportLine=Výdajová zpráva řádek
 TF_OTHER=Ostatní
-TF_TRIP=Transportation
+TF_TRIP=Doprava
 TF_LUNCH=Oběd
 TF_METRO=Metro
 TF_TRAIN=Vlak
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_AUTHOR=Nejste autorem této zprávy výdajů. Operace zrušena.
 
-ConfirmRefuseTrip=Jste si jisti, že chcete zamítnout tuto zprávu o výdajích?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Schválit zprávu o výdajích
-ConfirmValideTrip=Jste si jisti, že chcete schválit tuto zprávu o výdajích?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Platit zprávu o výdajích
-ConfirmPaidTrip=Jste si jisti, že chcete změnit stav této zprávy výdajů na "Placeno"?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Jste si jisti, že chcete zrušit tuto zprávu o výdajích?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Návrat výdajových zpráv do stavu "Koncept"
-ConfirmBrouillonnerTrip=Jste si jisti, že chcete přesunout tuto zprávu o výdajích na status "Koncept"?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Ověřit zprávu o výdajích
-ConfirmSaveTrip=Jste si jisti, že chcete ověřit tuto zprávu o výdajích?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Žádná zpráva o výdajích na export pro toto období.
 ExpenseReportPayment=Expense report payment

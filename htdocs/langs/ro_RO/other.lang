@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Cod de securitate
-Calendar=Calendar
 NumberingShort=N°
 Tools=Instrumente
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Transport trimise prin poştă
 Notify_MEMBER_VALIDATE=Membru validate
 Notify_MEMBER_MODIFY=Membru modificat
 Notify_MEMBER_SUBSCRIPTION=Membru subscris
-Notify_MEMBER_RESILIATE=Membru reziliat
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Membre elimină
 Notify_PROJECT_CREATE=Creare proiect
 Notify_TASK_CREATE=Task creat
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Total marimea ataşat fişiere / documente
 MaxSize=Mărimea maximă a
 AttachANewFile=Ataşaţi un fişier nou / document
 LinkedObject=Legate de obiectul
-Miscellaneous=Diverse
 NbOfActiveNotifications=Numărul de notificări (Nr de e-mailuri beneficiare)
 PredefinedMailTest=Acesta este un e-mail de test. \\ NMesajul două linii sunt separate printr-un retur de car.
 PredefinedMailTestHtml=Acesta este un e-mail <b>de testare</b> (test de cuvânt trebuie să fie în aldine). <br> Cele două linii sunt separate printr-un retur de car.
@@ -201,33 +199,13 @@ IfAmountHigherThan=Daca valoarea mai mare  <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Compania %s adăugată
-ContractValidatedInDolibarr=Contract %s validat
-PropalClosedSignedInDolibarr=Oferta  %s semnată
-PropalClosedRefusedInDolibarr=Oferta  %s refuzată
-PropalValidatedInDolibarr=Oferta  %s validată
-PropalClassifiedBilledInDolibarr=Oferta %s clasificată facturată
-InvoiceValidatedInDolibarr=Factura %s validată
-InvoicePaidInDolibarr=Factura %s schimbată la plată
-InvoiceCanceledInDolibarr=Factura %s anulată
-MemberValidatedInDolibarr=Membru %s validat
-MemberResiliatedInDolibarr=Membru %s reziliat
-MemberDeletedInDolibarr=Membru %s şters
-MemberSubscriptionAddedInDolibarr=Înscrierea pentru membrul %s adăugat
-ShipmentValidatedInDolibarr=Livrare %s validată
-ShipmentClassifyClosedInDolibarr=Livrarea %s clasificată facturată
-ShipmentUnClassifyCloseddInDolibarr=Livrarea %s clasificată redeschisa
-ShipmentDeletedInDolibarr=Livrare %s ştearsă
 ##### Export #####
-Export=Export
 ExportsArea=Export
 AvailableFormats=Formatele disponibile
-LibraryUsed=Librarie  folosită
-LibraryVersion=Versiune
+LibraryUsed=Librairie
+LibraryVersion=Library version
 ExportableDatas=Date Exportabile
 NoExportableData=Nu exportabil de date (nu module cu exportabil date încărcate, sau lipsă permissions)
-NewExport=Export nou
 ##### External sites #####
 WebsiteSetup=Configurare modul website
 WEBSITE_PAGEURL=URL pagina

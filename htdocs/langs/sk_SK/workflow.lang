@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Triediť prepojené zdrojový návrh �
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Triediť spojené zdroj objednávka zákazníka (y) účtoval, keď je zákazník faktúry nastavený na platené
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Triediť prepojený zdroj objednávky zákazníka (y) účtoval keď je overený zákazníkmi faktúra
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Označiť zdroj ako vyfakturovaný po overení zákazníckej faktúry
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Označiť ako odoslanépo overení odoslania ak odoslaný počet ks. je rovnaký ako v objednávke
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Leyfi tómur ef notandi hefur ekki aðgangsorð (forðast 
 SaveConfigurationFile=Vista gildi
 ServerConnection=Server tengingu
 DatabaseCreation=Gagnasafn sköpun
-UserCreation=Notandi sköpun
 CreateDatabaseObjects=Gagnasafn mótmæla stofnun
 ReferenceDataLoading=Tilvísun gögn hleðsla
 TablesAndPrimaryKeysCreation=Töflur og Primary lykla sköpun
@@ -133,12 +132,12 @@ MigrationFinished=Migration lokið
 LastStepDesc=<strong>Síðasta skref:</strong> Tilgreindu hér notandanafn og lykilorð sem þú ætlar að nota til að tengjast hugbúnaði. Ekki missa þetta eins og það er á reikningnum að gefa öllum öðrum.
 ActivateModule=Virkja mát %s
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Þú notar Dolibarr skipulag töframaður frá DoliWamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+KeepDefaultValuesDeb=Þú notar Dolibarr skipulag töframaður frá Ubuntu eða Debian pakka, þannig gildi lagt hér eru nú þegar bjartsýni. Aðeins lykilorð gagnagrunninum eigandi að búa verður að vera lokið. Breyta aðrar breytur aðeins ef þú veist hvað þú gerir.
+KeepDefaultValuesMamp=Þú notar Dolibarr skipulag töframaður frá DoliMamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+KeepDefaultValuesProxmox=Þú notar Dolibarr uppsetningarhjálpina frá Proxmox raunverulegur tæki, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Opinn samning lokað með því að villa
 MigrationReopenThisContract=Hefja aftur samning %s
 MigrationReopenedContractsNumber=%s  samninga breytt
 MigrationReopeningContractsNothingToUpdate=Nei lokað samning til að opna
-MigrationBankTransfertsUpdate=Uppfæra tengsl milli viðskipta banka og millifærslu
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Allir tenglar eru upp til dagsetning
 MigrationShipmentOrderMatching=Sendings kvittun uppfæra
 MigrationDeliveryOrderMatching=Sending kvittun uppfæra

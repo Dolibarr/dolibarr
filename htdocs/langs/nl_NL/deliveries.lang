@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Ref Delivery
-DeliveryCard=Bezorging kaart
+DeliveryCard=Receipt card
 DeliveryOrder=Ontvangsbon
 DeliveryDate=Leveringsdatum
-CreateDeliveryOrder=Genereer ontvangstbon\n
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Stel verzenddatum in
 ValidateDeliveryReceipt=Valideer ontvangstbewijs
-ValidateDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt valideren?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Verwijder ontvangstbewijs
-DeleteDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt verwijderen?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Leveringswijze
 TrackingNumber=Volgnummer
 DeliveryNotValidated=Levering niet gevalideerd
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Geannuleerd
+StatusDeliveryDraft=Ontwerp
+StatusDeliveryValidated=Ontvangen
 # merou PDF model
 NameAndSignature=Naam en handtekening:
 ToAndDate=Aan________________________________ op ____ / _____ / __________

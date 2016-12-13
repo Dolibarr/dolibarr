@@ -54,7 +54,5 @@ ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<
 Module770Name=Reporte de gastos
 Module1400Name=Contabilidad
 DictionaryCanton=Estado/Provincia
-Upgrade=Actualizar
 MenuCompanySetup=Empresa/Fundación
-CompanyName=Nombre
 LDAPFieldFirstName=Nombre(s)

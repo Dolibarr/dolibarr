@@ -417,7 +417,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
@@ -507,9 +507,8 @@ function detect_dolibarr_main_document_root()
 {
 	// If PHP is in CGI mode, SCRIPT_FILENAME is PHP's path.
 	// Since that's not what we want, we suggest $_SERVER["DOCUMENT_ROOT"]
-	if (preg_match('/php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',
-			$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"])
-	) {
+	if ($_SERVER["SCRIPT_FILENAME"] == 'php' || preg_match('/[\\/]php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"]))
+	{
 		$dolibarr_main_document_root = $_SERVER["DOCUMENT_ROOT"];
 
 		if (!preg_match('/[\\/]dolibarr[\\/]htdocs$/i', $dolibarr_main_document_root)) {
