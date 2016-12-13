@@ -282,8 +282,12 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
 		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
 		if(!$user->rights->societe->client->voir) {
-			$subordinatesids = $user->getAllChildIds();
-			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' '.count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).'))' : '';
+			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
+			if ($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS) {
+				$subordinatesids = $user->getAllChildIds();
+				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+			}
+			$this->export_sql_end[$r] .=')';
 		}
 
 		// Export list of contacts and attributes
@@ -315,8 +319,12 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity("societe", 1).')';
 		if(!$user->rights->societe->client->voir) {
-			$subordinatesids = $user->getAllChildIds();
-			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' '.count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).'))' : '';
+			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
+			if ($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS) {
+				$subordinatesids = $user->getAllChildIds();
+				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+			}
+			$this->export_sql_end[$r] .=')';
 		}
 
 
