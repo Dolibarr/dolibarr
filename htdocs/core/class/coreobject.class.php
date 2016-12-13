@@ -25,6 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 class CoreObject extends CommonObject {
 	
+	public $db;
+	
 	protected $__fields=array(); 
 	 /**
 	 *  Constructor
@@ -32,8 +34,6 @@ class CoreObject extends CommonObject {
 	 *  @param      DoliDB		$db      Database handler
 	 */
 	function __construct(DoliDB &$db) {
-		
-		$this->db = &$db;
 		
 		$this->date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
 	}
@@ -179,27 +179,55 @@ class CoreObject extends CommonObject {
 	    return implode(',', $keys);
 	}
 	
+	private function set_vars_by_db(&$obj){
+
+		foreach ($this->__fields as $field=>$info) {
+			if($this->is_date($info)){
+				if($obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00')$this->{$field} = 0;
+				else $this->{$field} = strtotime($obj->{$field});
+			}
+			elseif($this->is_array($info)){
+				$this->{$field} = @unserialize($obj->{$field});
+				//HACK POUR LES DONNES NON UTF8
+				if($this->{$field}===FALSE)@unserialize(utf8_decode($obj->{$field}));
+			}
+			elseif($this->is_int($info)){
+				$this->{$field} = (int)$obj->{$field};
+			}
+			elseif($this->is_float($info)){
+				$this->{$field} = (double)$obj->{$field};
+			}
+			elseif($this->is_null($info)){
+				$val = $obj->{$field};
+				// zero is not null 
+				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0')?null:$val);
+			}
+			else{
+				$this->{$field} = $obj->{$field};
+			}
+
+		}
+	}
+	
 	public function fetch($id, $loadChild = true) {
 		
 		if(empty($id)) return false;
 
 		$sql = 'SELECT '.$this->get_field_list().',datec,tms
-						FROM '.$this->table_element.'
+						FROM '.MAIN_DB_PREFIX.$this->table_element.'
 						WHERE rowid='.$id;
-						
+				var_dump($sql);		
 		$res = $this->db->query( $sql );
-			var_dump($sql);		
-		if($obj = $db->fetch_object($res)) {
+				
+		if($obj = $this->db->fetch_object($res)) {
 				$this->rowid=$id;
 			
-				$this->set_vars_by_db($db);
+				$this->set_vars_by_db($obj);
 
 				$this->datec=$this->db->idate($obj->datec);
 				$this->tms=$this->db->idate($obj->tms);
 				
-				if($loadChild) $this->loadChild($db);
-
-				$this->run_trigger($db, 'load');
+				if($loadChild) $this->fetchChild();
 
 				return $this->id;
 		}
@@ -208,6 +236,38 @@ class CoreObject extends CommonObject {
 		}
 		
 	}
+	
+	public function fetchChild() {
+		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
+
+			foreach($this->childtables as &$childTable) {
+					
+					$className = ucfirst($childTable);
+					
+					$this->{$className}=array();
+					
+					$sql = " SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element."=".$this->rowid;
+					$res = $this->db->query($sql);
+					if($res) {
+						
+						while($obj = $db->fetch_object($res)) {
+							
+							$o=new $className($this->db);	
+							$o->fetch($obj->rowid);
+							
+							$this->{$className}[] = $o;
+							
+						}
+						
+					}
+
+			}
+
+		}
+
+	}
+	
+	
 	public function update() {
 		
 		

@@ -69,6 +69,8 @@ class Inventory extends CoreObject
 		,'title'=>array('type'=>'string')
 	);
 	
+	public $db;
+	
 	function __construct(DoliDB &$db) 
 	{
 		
@@ -292,15 +294,22 @@ class Inventory extends CoreObject
 		return 1;
 	}
     
+	public function getNomUrl($picto = 1) {
+		global $langs;
+		
+		$title = !empty($this->title) ? $this->title : $langs->trans('inventoryTitle').' '.$this->id;
+        
+        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($picto ? img_picto('','object_list.png','',0).' ' : '').$title.'</a>';
+        
+	} 
+	
     static function getLink($id) {
         global $langs,$db;
         
         $i = new Inventory($db);
         $i->fetch($id, false);
         
-        $title = !empty($i->title) ? $i->title : $langs->trans('inventoryTitle').' '.$i->id;
-        
-        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$i->id.'&action=view', 1).'">'.img_picto('','object_list.png','',0).' '.$title.'</a>';
+        return $i->getNomUrl();
         
     }
 	
@@ -309,7 +318,7 @@ class Inventory extends CoreObject
 		
 		if($type=='All') {
 			
-			$sql="SELECT i.rowid, e.label, i.date_inventory, i.fk_warehouse, i.date_cre, i.date_maj, i.status
+			$sql="SELECT i.rowid, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status
 				  FROM ".MAIN_DB_PREFIX."inventory i
 				  LEFT JOIN ".MAIN_DB_PREFIX."entrepot e ON (e.rowid = i.fk_warehouse)
 				  WHERE i.entity=".(int) $conf->entity;

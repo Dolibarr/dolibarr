@@ -820,7 +820,6 @@ class Listview {
 	}
 	
 	private function parse_sql( &$THeader, &$TField,&$TParam, $sql) {
-		global $db;	
 		
 		$this->sql = $this->limitSQL($sql, $TParam);
 		
@@ -828,17 +827,26 @@ class Listview {
 		
 		$this->THideFlip = array_flip($TParam['hide']);
 
-		$res = $db->query($this->sql);
-		$first=true;
-		while($currentLine = $db->fetch_object($res)) {
-			if($first) {
-				$this->init_entete($THeader, $TParam, $currentLine);
-				$first = false;
+		$res = $this->db->query($this->sql);
+		if($res!==false) {
+			
+			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_DEBUG);
+			
+			$first=true;
+			while($currentLine = $this->db->fetch_object($res)) {
+				if($first) {
+					$this->init_entete($THeader, $TParam, $currentLine);
+					$first = false;
+				}
+				
+				$this->set_line($TField, $TParam, $currentLine);
+				
 			}
 			
-			$this->set_line($TField, $TParam, $currentLine);
-			
 		}
-
+		else {
+			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_ERR);
+		}
+		
 	}	
 }
