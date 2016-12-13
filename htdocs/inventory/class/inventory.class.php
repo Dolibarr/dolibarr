@@ -87,7 +87,8 @@ class Inventory extends CoreObject
 	
 	function sort_det() 
 	{
-		usort($this->Inventorydet, array('Inventory', 'customSort'));
+
+		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
 	}
 	
 	function fetch($id,$annexe = true) 
@@ -99,8 +100,12 @@ class Inventory extends CoreObject
 		$this->sort_det();
 		
 		$this->amount = 0;
-		foreach($this->Inventorydet as &$det){
-			$this->amount+=$det->qty_view * $det->pmp;
+		
+		if(!empty($this->Inventorydet ))  {
+			foreach($this->Inventorydet as &$det){
+				$this->amount+=$det->qty_view * $det->pmp;
+			}
+			
 		}
 		
 		return $res;

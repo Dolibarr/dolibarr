@@ -41,33 +41,30 @@ class Listview {
 		if(!isset($TParam['orderby']['noOrder']))$TParam['orderby']['noOrder']=array();
 		if(!isset($TParam['no-select'])) $TParam['no-select'] = 1;
 		
-		if(!isset($TParam['liste']))$TParam['liste']=array();
-		$TParam['liste'] = array_merge(array(
-			'messageNothing'=>"Il n'y a aucun élément à afficher."
-			,'picto_precedent'=>'&lt;'
-			,'picto_suivant'=>'&gt;'
-			,'order_down'=>img_down()
-			,'order_up'=>img_up()
+		if(!isset($TParam['list']))$TParam['list']=array();
+		$TParam['list'] = array_merge(array(
+			'messageNothing'=>$langs->trans('ListMessageNothingToShow')
 			,'noheader'=>0
 			,'useBottomPagination'=>0
 			,'image'=>''
-			,'titre'=>'Liste'
+			,'title'=>$langs->trans('List')
 			,'orderDown'=>''
 			,'orderUp'=>''
 			,'id'=>$this->id
-			,'picto_search'=>img_picto('Search', 'search.png')
 			,'head_search'=>''
 			,'export'=>array()
-			,'view_type'=>''
-		),$TParam['liste']);
+			,'view_type'=>'' //TODO to include graph or kanban instead of list
+		),$TParam['list']);
+		
+		$POSTList = GETPOST('Listview');
 		
 		if(empty($TParam['limit']))$TParam['limit']=array();
-		if(!empty($_REQUEST['TListTBS'][$this->id]['page'])) $TParam['limit']['page'] = $_REQUEST['TListTBS'][$this->id]['page'];
+		if(!empty($POSTList[$this->id]['page'])) $TParam['limit']['page'] = $POSTList[$this->id]['page'];
 		
 		$TParam['limit']=array_merge(array('page'=>1, 'nbLine'=>$conf->liste_limit, 'global'=>0), $TParam['limit']);
 		
-		if(!empty($_REQUEST['TListTBS'][$this->id]['orderBy'])) {
-			$TParam['orderBy'] = $_REQUEST['TListTBS'][$this->id]['orderBy']; 
+		if(!empty($POSTList[$this->id]['orderBy'])) {
+			$TParam['orderBy'] = $POSTList[$this->id]['orderBy']; 
 		}
 		
 	//	print_r($TParam);
@@ -124,9 +121,9 @@ class Listview {
 			// Si le type de "recherche" est "calendars" on a 2 champs de transmis, [début et fin] ou [que début] ou [que fin] => un BETWEEN Sql serait utile que dans le 1er cas 
 			// donc l'utilisation des opérateur >= et <= permettent un fonctionnement générique
 			$TSQLDate=array();
-			if(!empty($value['deb']))
+			if(!empty($value['start']))
 			{
-				$valueDeb = $this->dateToSQLDate($value['deb']);
+				$valueDeb = $this->dateToSQLDate($value['start']);
 				
 				if(isset($this->TBind[$sBindKey.'_start'])) // TODO can't use this in query case
 				{
@@ -137,9 +134,9 @@ class Listview {
 				
 			}
 			
-			if(!empty($value['fin']))
+			if(!empty($value['end']))
 			{
-				$valueFin = $this->dateToSQLDate($value['fin']);
+				$valueFin = $this->dateToSQLDate($value['end']);
 				if(isset($this->TBind[$sBindKey.'_end'])) { // TODO can't use this in query case
 					$this->TBind[$sBindKey.'_end'] = $valueFin;
 				}
@@ -198,7 +195,7 @@ class Listview {
 
 	private function search($sql,&$TParam) {
 	
-		if(!empty($_REQUEST['TListTBS'][$this->id]['search'])) {
+		if(!empty($_REQUEST['Listview'][$this->id]['search'])) {
 			$sqlGROUPBY='';
 			if(strpos($sql,'GROUP BY')!==false) { //TODO regex
 				list($sql, $sqlGROUPBY) = explode('GROUP BY', $sql);
@@ -206,7 +203,7 @@ class Listview {
 			
 			if(strpos($sql,'WHERE ')===false)$sql.=' WHERE 1 '; //TODO regex
 			
-			foreach($_REQUEST['TListTBS'][$this->id]['search'] as $key=>$value)
+			foreach($_REQUEST['Listview'][$this->id]['search'] as $key=>$value)
 			{
 				$TsKey = $this->getSearchKey($key, $TParam);
 				$TsBindKey = $this->getTsBindKey($TsKey);
@@ -222,7 +219,7 @@ class Listview {
 					//if (!empty($value)) var_dump($sKey);
 					$sBindKey = $TsBindKey[$i];
 					
-					if($allow_is_null && !empty($_REQUEST['TListTBS'][$this->id]['search_on_null'][$key]))
+					if($allow_is_null && !empty($_REQUEST['Listview'][$this->id]['search_on_null'][$key]))
 					{
 						$this->TBind[$sBindKey.'_null'] = $sKey.' IS NULL ';
 						$TSQLMore[] = $sKey.' IS NULL ';
@@ -302,31 +299,31 @@ class Listview {
 		foreach($TParam['search'] as $key=>$param_search) {
 			
 		
-			$value = isset($_REQUEST['TListTBS'][$this->id]['search'][$key]) ? $_REQUEST['TListTBS'][$this->id]['search'][$key] : '';
+			$value = isset($_REQUEST['Listview'][$this->id]['search'][$key]) ? $_REQUEST['Listview'][$this->id]['search'][$key] : '';
 			
 			$typeRecherche = (is_array($param_search) && isset($param_search['recherche'])) ? $param_search['recherche'] : $param_search;  
 			
 			if(is_array($typeRecherche)) {
 				$typeRecherche = array(''=>' ') + $typeRecherche;
-				$fsearch=$form->combo('','TListTBS['.$this->id.'][search]['.$key.']', $typeRecherche,$value,0,'',' listviewtbs="combo" init-value="'.$value.'" ');
+				$fsearch=$form->combo('','Listview['.$this->id.'][search]['.$key.']', $typeRecherche,$value,0,'',' listviewtbs="combo" init-value="'.$value.'" ');
 			}
 			else if($typeRecherche==='calendar') {
-				$fsearch=$form->calendrier('','TListTBS['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
+				$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
 			}
 			else if($typeRecherche==='calendars') {
-				$fsearch=$form->calendrier('','TListTBS['.$this->id.'][search]['.$key.'][deb]',isset($value['deb'])?$value['deb']:'',10,10,' listviewtbs="calendars" ')
-					.' '.$form->calendrier('','TListTBS['.$this->id.'][search]['.$key.'][fin]',isset($value['fin'])?$value['fin']:'',10,10,' listviewtbs="calendars" ');	
+				$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.'][start]',isset($value['start'])?$value['start']:'',10,10,' listviewtbs="calendars" ')
+					.' '.$form->calendrier('','Listview['.$this->id.'][search]['.$key.'][end]',isset($value['end'])?$value['end']:'',10,10,' listviewtbs="calendars" ');	
 			}
 			else if(is_string($typeRecherche)) {
 				$fsearch=$TParam['search'][$key];	
 			}
 			else {
-				$fsearch=$form->texte('','TListTBS['.$this->id.'][search]['.$key.']',$value,15,255,' listviewtbs="input" ');	
+				$fsearch=$form->texte('','Listview['.$this->id.'][search]['.$key.']',$value,15,255,' listviewtbs="input" ');	
 			}
 
 			if(!empty($param_search['allow_is_null'])) {
-				$valueNull = isset($_REQUEST['TListTBS'][$this->id]['search_on_null'][$key]) ? 1 : 0;
-				$fsearch.=' '.$form->checkbox1('', 'TListTBS['.$this->id.'][search_on_null]['.$key.']',1, $valueNull,' onclick=" if($(this).is(\':checked\')){ $(this).prev().val(\'\'); }" ').img_help(1, $langs->trans('SearchOnNUllValue'));
+				$valueNull = isset($_REQUEST['Listview'][$this->id]['search_on_null'][$key]) ? 1 : 0;
+				$fsearch.=' '.$form->checkbox1('', 'Listview['.$this->id.'][search_on_null]['.$key.']',1, $valueNull,' onclick=" if($(this).is(\':checked\')){ $(this).prev().val(\'\'); }" ').img_help(1, $langs->trans('SearchOnNUllValue'));
 			}
 			
 
@@ -342,7 +339,7 @@ class Listview {
 				
 		}
 		
-		$search_button = ' <a href="#" onclick="TListTBS_submitSearch(this);" class="list-search-link">'.$TParam['liste']['picto_search'].'</a>';
+		$search_button = ' <a href="#" onclick="ListviewsubmitSearch(this);" class="list-search-link">'.$TParam['liste']['picto_search'].'</a>';
 
 		if(!empty($TParam['liste']['head_search'])) {
 			$TParam['liste']['head_search'].='<div align="right">'.$langs->trans('Search').' '.$search_button.'</div>';
@@ -519,22 +516,77 @@ class Listview {
 		$TExport=$this->setExport($TParam, $TField, $THeader);
 		$TField = $this->addTotalGroup($TField,$TTotalGroup);
 		
-		var_dump(
-			array(
-				'entete'=>$THeader
-				,'champs'=>$TField
-				,'recherche'=>$TSearch
-				,'total'=>$TTotal
-				,'export'=>$TExport
-			)
-			, array(
-				'liste'=>array_merge(array('haveExport'=>count($TExport), 'id'=>$this->id, 'nb_columns'=>count($THeader) ,'totalNB'=>count($TField), 'nbSearch'=>count($TSearch), 'haveTotal'=>(int)!empty($TTotal), 'havePage'=>(int)!empty($TPagination) ), $TParam['liste'])
-			)
-			, $TPagination
-			
-		);
+		$out = $javaScript;
 		
-		$javaScript;
+		$out.=load_fiche_titre($TParam['list']['title']);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, count($TField), 'title_products.png', 0, '', '', $limit);
+		/*
+		$out.='<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
+				<tr>
+					[onshow;block=begin; when [liste.noheader]==0]
+					<td class="nobordernopadding" width="40" align="left" valign="middle">
+						[liste.image;magnet=img; strconv=no]
+					</td>
+					<td class="nobordernopadding"><div class="titre">[liste.titre; strconv=no]</div></td>
+					[onshow;block=end]
+					<td class="nobordernopadding" align="right" valign="middle">
+						<div class="pagination"> 
+							[onshow;block=div; when [liste.havePage]+-0 ]
+							<!-- [onshow;block=div;when [pagination.last]+-1 ] -->
+							<ul style="display: inline-block; list-style: outside none none;">
+								<li class="pagination" style="display: inline-block;"><a class="paginationprevious" href="javascript:TListTBS_GoToPage('[liste.id]',[pagination.prev])"><!-- [pagination.prev;endpoint;magnet=li] --> [liste.picto_precedent;strconv=no] </a></li>
+								<li class="pagination" style="display: inline-block;"><a class="page" href="javascript:TListTBS_GoToPage('[liste.id]',[pagination.page;navsize=15;navpos=centred])"> [pagination.page;block=li] </a></li>
+								<li class="pagination" style="display: inline-block;"><span class="active"> [pagination.page;block=li;currpage] </span></li>
+								<li class="pagination" style="display: inline-block;"><a class="paginationnext" href="javascript:TListTBS_GoToPage('[liste.id]',[pagination.next])"><!-- [pagination.last;endpoint;magnet=li] --> [liste.picto_suivant;strconv=no] </a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+		</table>	
+		
+		<table id="[liste.id]" class="liste" width="100%">
+			<thead>
+				<tr class="liste_titre barre-recherche-head">
+					<td colspan="[liste.nb_columns]">[liste.head_search;strconv=no;magnet=tr]</td>
+				</tr>
+				<tr class="liste_titre">
+					<th style="width:[entete.width;];text-align:[entete.text-align]" class="liste_titre">[entete.libelle;block=th;strconv=no] 
+						<span class="nowrap">[onshow;block=span; when [entete.order]==1]<a href="javascript:TListTBS_OrderDown('[liste.id]','[entete.$;strconv=js]')">[liste.order_down;strconv=no]</a><a href="javascript:TListTBS_OrderUp('[liste.id]', '[entete.$;strconv=js]')">[liste.order_up;strconv=no]</a></span>
+						[entete.more;strconv=no;]
+					</th>
+				</tr>
+				
+				<tr class="liste_titre barre-recherche">[onshow;block=tr;when [liste.nbSearch]+-0]
+					<td class="liste_titre">[recherche.val;block=td;strconv=no]</td>
+				</tr>
+			
+			</thead>
+			<tbody>
+				<tr class="impair">
+					<!-- [champs.$;block=tr;sub1] -->
+					<td field="[champs_sub1.$]">[champs_sub1.val;block=td; strconv=no]</td>
+				</tr>
+				<tr class="pair">
+					<!-- [champs.$;block=tr;sub1] -->
+					<td field="[champs_sub1.$]">[champs_sub1.val;block=td; strconv=no]</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr class="liste_total">
+					[onshow;block=tr; when [liste.haveTotal]+-0 ]
+					<td align="right" field="[total.$]">[total.val;block=td;strconv=no;frm=0 000,00]</td>
+				</tr>
+			</tfoot>
+			
+		</table>
+		
+		<div class="tabsAction">
+			[onshow;block=div; when [liste.haveExport]+-0 ]
+			<a href="javascript:;" onclick="TListTBS_downloadAs(this, '[export.mode]','[export.url]','[export.token]','[export.session_name]');" class="butAction">[export.label;block=a;]</a>
+		</div>
+		<p align="center">
+			[liste.messageNothing;strconv=no] [onshow; block=p;  when [liste.totalNB]==0]
+		</p>';*/
 	}
 	
 	public function renderArray(&$db,$TField, $TParam=array()) {
@@ -611,14 +663,14 @@ class Listview {
 		global $user;
 		
 		$contextpage=md5($_SERVER['PHP_SELF']);
-		if((float)DOL_VERSION>=4.0 && empty($TParam['no-select'])) {
+		if(empty($TParam['no-select'])) {
 			
 			dol_include_once('/core/class/html.form.class.php');
 			
 			global $db,$conf,$user;
 			$form=new Form($db);
 				
-			$selectedfields = GETPOST('TListTBS_'.$this->id.'_selectedfields');
+			$selectedfields = GETPOST('Listview'.$this->id.'_selectedfields');
 			
 			if(!empty($selectedfields)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -662,7 +714,7 @@ class Listview {
 				}
 			}	
 
-			$selectedfields=$form->multiSelectArrayWithCheckbox('TListTBS_'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
+			$selectedfields=$form->multiSelectArrayWithCheckbox('Listview'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
 			
 		}
 		
@@ -720,17 +772,6 @@ class Listview {
 						if(get_class($value)=='stdClass') {$value=print_r($value, true);}
 						else $value=(string)$value;
 					} 
-					
-					if(isset($TParam['subQuery'][$field])) {
-						$dbSub = new TPDOdb; //TODO finish it
-						$dbSub->Execute( strtr($TParam['subQuery'][$field], array_merge( $trans, array('@val@'=>$value)  )) );
-						$subResult = '';
-						while($dbSub->Get_line()) {
-							$subResult.= implode(', ',$dbSub->currentLine).'<br />';
-						}
-						$value=$subResult;
-						$dbSub->close();
-					}
 					
 					$trans['@'.$field.'@'] = $value;
 					

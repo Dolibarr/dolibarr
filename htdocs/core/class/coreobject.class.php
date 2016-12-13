@@ -27,6 +27,8 @@ class CoreObject extends CommonObject {
 	
 	public $db;
 	
+	public $withChild = true;
+	
 	protected $__fields=array(); 
 	 /**
 	 *  Constructor
@@ -216,7 +218,7 @@ class CoreObject extends CommonObject {
 		$sql = 'SELECT '.$this->get_field_list().',datec,tms
 						FROM '.MAIN_DB_PREFIX.$this->table_element.'
 						WHERE rowid='.$id;
-				var_dump($sql);		
+		
 		$res = $this->db->query( $sql );
 				
 		if($obj = $this->db->fetch_object($res)) {
@@ -238,8 +240,8 @@ class CoreObject extends CommonObject {
 	}
 	
 	public function fetchChild() {
-		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
 
+		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
 			foreach($this->childtables as &$childTable) {
 					
 					$className = ucfirst($childTable);
@@ -248,6 +250,7 @@ class CoreObject extends CommonObject {
 					
 					$sql = " SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element."=".$this->rowid;
 					$res = $this->db->query($sql);
+					
 					if($res) {
 						
 						while($obj = $db->fetch_object($res)) {
