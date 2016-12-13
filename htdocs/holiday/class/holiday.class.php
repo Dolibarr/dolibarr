@@ -36,7 +36,8 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'holiday';
+    
 	/**
 	 * @deprecated
 	 * @see id
@@ -785,7 +786,17 @@ class Holiday extends CommonObject
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-
+		if ($mode == 6)
+		{
+		    $pictoapproved='statut6';
+		    if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+		    if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+		    if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+		    if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+		    if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+		    if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+		}
+		
 		return $statut;
     }
 
