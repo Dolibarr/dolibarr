@@ -337,7 +337,7 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
+		<td valign="top" class="label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
 		</b></td>
 		<td valign="top" class="label">
 			<input type="text"
