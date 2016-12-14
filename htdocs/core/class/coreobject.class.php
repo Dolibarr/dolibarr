@@ -150,7 +150,7 @@ class CoreObject extends CommonObject {
 		
 		foreach ($this->__fields as $field=>$info) {
 	
-			if($this->_is_date($info)){
+			if($this->is_date($info)){
 				if(empty($this->{$field})){
 					$query[$field] = $this->date_0;
 				}
@@ -166,11 +166,11 @@ class CoreObject extends CommonObject {
 		    	$query[$field] = (int)price2num($this->{$field});
 		  	}
 		
-		  	else if($this->_is_float($info)){
+		  	else if($this->is_float($info)){
 		    	$query[$field] = (double)price2num($this->{$field});
 		  	}
 		
-		  	elseif($this->_is_null($info)) {
+		  	elseif($this->is_null($info)) {
 		  		$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0')?null:$this->{$field});
 		    }
 		    else{
@@ -264,6 +264,20 @@ class CoreObject extends CommonObject {
 	
 		return $k;
 	}
+	
+	public function removeChild($tabName, $id, $key='id') {
+		foreach($this->{$tabName} as &$object) {
+	
+			if($object->{$key} == $id) {
+				$object->to_delete = true;
+				return true;
+			}
+	
+	
+		}
+		return false;
+	}
+	
 	public function fetchChild() {
 
 		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
@@ -295,18 +309,96 @@ class CoreObject extends CommonObject {
 
 	}
 	
+	public function saveChild(User &$user) {
 	
+		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
+			foreach($this->childtables as &$childTable) {
+	
+				$className = ucfirst($childTable);
+	
+				foreach($this->{$className} as $i => &$object) {
+	
+					$object->{$this->fk_element} = $this->id;
+					
+					$object->update($user);
+					if($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete==true) unset($this->{$className}[$i]);
+				}
+	
+			}
+		}
+	}
 	public function update(User &$user) {
 		if(empty($this->id )) return $this->create($user);
+		
+		if(isset($this->to_delete) && $this->to_delete==true) {
+			$this->delete();
+		}
+		else {
+		
+			$query = array();
+			
+			$query['id']=$this->id;
+			if(!isset($this->no_dt_maj))$query['tms'] = date('Y-m-d H:i:s');
+			$this->set_save_query($query);
+		
+			$this->db->update($this->table_element,$query,array('id'));
+			
+			$this->id = $this->db->last_insert_id($this->table_element);
+				
+			$result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
+				
+			$this->saveChild($user);
+		
+		}
+		return $this->id;
 		
 		
 	}
 	public function create(User &$user) {
 		if($this->id>0) return $this->update($user);
 		
+		$query = array();
+		$query['datec'] = date("Y-m-d H:i:s",$this->datec);
+		if(!isset($this->no_dt_maj))$query['tms'] = date('Y-m-d H:i:s');
+		$this->set_save_query($query);
+	
+		$this->db->insert($this->table_element,$query);
+	
+		$this->id = $this->db->last_insert_id($this->table_element);
+		
+		$result = $this->call_trigger(strtoupper($this->element). '_CREATE', $user);
+		
+		$this->saveChild($user);
+	
+	
+		return $this->id;
 		
 	}
+	public function delete(){
+		if($this->id>0){
+			$this->call_trigger(strtoupper($this->element). '_DELETE', $user);
+			$this->db->delete($this->table_element,array('id'=>$this->id),array(0=>'id'));
+			
+			if($this->withChild) {
+				foreach($this->childtables as &$childTable) {
+						
+					$className = ucfirst($childTable);
+					foreach($this->{$className} as &$object) {
+			
+						$object->delete();
+			
+					}
+			
+				}
+			}
+			
+		
+			
+		}
 	
+		
+	
+	}
 	public function get_date($field,$format='') {
 		if(empty($this->{$field})) return '';
 		elseif($this->{$field}<=strtotime('1000-01-01 00:00:00')) return '';

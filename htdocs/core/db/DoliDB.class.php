@@ -288,5 +288,113 @@ abstract class DoliDB implements Database
 	{
 		return $this->lastqueryerror;
 	}
+	
+	/**
+	 *	Generate and execute Update SQL commande
+	 *
+	 * 	@param	string				$table		table to update
+	 *	@param	array				$values		array of values to update
+	 *	@param  int|string|array	$key		key of value to select row to update
+	 *	@return	bool|result						false or boolean
+	 */
+	function update($table,$values,$key){
+	
+		foreach ($value as $k => $v) {
+			if(is_string($v)) $v=stripslashes($v);
+				
+			if (is_array($key)){
+				$i=array_search($k , $key );
+				if ( $i !== false) {
+					$where[] = $key[$i]."=" . $this->escape( $v ) ;
+					continue;
+				}
+			} else {
+				if ( $k == $key) {
+					$where[] = "$k=" .$this->escape( $v ) ;
+					continue;
+				}
+			}
+	
+			if(is_null($v)) $val = 'NULL';
+			else if(is_int($v) || is_double($v)) $val=$v;
+			else $val = $this->escape( $v );
+	
+			$tmp[] = "$k=$val";
+		}
+		$sql = sprintf( "UPDATE $table SET %s WHERE %s" , implode( ",", $tmp ) , implode(" AND ",$where) );
+	
+		$res = $this->query( $sql );
+	
+		if($res===false) {
+			//error
+			return false;
+		}
+	
+		return true;
+	}
+	
+	/**
+	 *	Generate and execute Insert SQL commande
+	 *
+	 * 	@param	string				$table		table to update
+	 *	@param	array				$values		array of values to update
+	 *	@return	bool|result						false or boolean
+	 */
+	function insert($table,$values){
+		 
+		foreach ($values as $k => $v) {
+	
+			$fields[] = $k;
+			if(is_null($v)){
+				$values[] = 'NULL';
+			}else{
+				$v=stripslashes($v);
+				$values[] =$this->escape( $v );
+			}
+		}
+		$sql = sprintf( 'INSERT INTO '.$table.' ( %s ) values( %s ) ', implode( ",", $fields ) ,  implode( ",", $values ) );
+	
+		$res = $this->query($sql);
+		
+		if($res===false) {
+	
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 *	Generate and execute Delete SQL commande
+	 *
+	 * 	@param	string				$table		table for the delete
+	 *	@param	array				$values		array of values to delete
+	 *	@param  int|string|array	$key		key of value to select row to update
+	 *	@return	bool|result						false or boolean
+	 */
+	function delete($table,$values,$key){
+		foreach ($values as $k => $v) {
+			if(is_string($v)) $v=stripslashes($v);
+		
+			if (is_array($key)){
+				$i=array_search($k , $key );
+				if ( $i !== false) {
+					$where[] = $key[$i]."=" . $this->escape( $v ) ;
+					continue;
+				}
+			} else {
+				if ( $k == $key) {
+					$where[] = "$k=" .$this->escape( $v ) ;
+					continue;
+				}
+			}
+			
+		}
+	
+		$sql = sprintf( 'DELETE FROM '.$table.' WHERE '.implode(" AND ",$where));
+	
+		return $this->query( $sql );
+	}
+	
 }
 
