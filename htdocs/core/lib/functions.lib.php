@@ -294,10 +294,10 @@ function dol_getprefix()
     
 	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 	{
-	    if (! empty($conf->gobal->MAIL_PREFIX_FOR_EMAIL_ID))
+	    if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
 	    {
-	        if ($conf->gobal->MAIL_PREFIX_FOR_EMAIL_ID == 'SERVER_NAME') return $_SERVER["SERVER_NAME"];
-	        return $conf->gobal->MAIL_PREFIX_FOR_EMAIL_ID;
+	        if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID == 'SERVER_NAME') return $_SERVER["SERVER_NAME"];
+	        return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 	    }
 		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		// Use this for a "clear" cookie name
