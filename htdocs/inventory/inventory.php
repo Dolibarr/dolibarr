@@ -66,18 +66,17 @@ function _action()
 			
 			$inventory = new Inventory($db);
 			
-			_fiche_warehouse($user, $db, $conf, $langs, $inventory);
+			_card_warehouse( $inventory);
 
 			break;
 		
 		case 'confirmCreate':
 			if (!$user->rights->inventory->create) accessforbidden();
-			
-			
+		
 			$inventory = new Inventory($db);
-			$inventory->set_values($_REQUEST);
+			$inventory->set_values($_POST);
 			
-            $fk_inventory = $inventory->save();
+            $fk_inventory = $inventory->create($user);
             $fk_category = (int)GETPOST('fk_category');
             $fk_supplier = (int)GETPOST('fk_supplier');
             $fk_warehouse = (int)GETPOST('fk_warehouse');
@@ -86,7 +85,7 @@ function _action()
 			$e = new Entrepot($db);
 			$e->fetch($fk_warehouse);
 			$TChildWarehouses = array($fk_warehouse);
-			if(method_exists($e, 'get_children_warehouses')) $e->get_children_warehouses($fk_warehouse, $TChildWarehouses);
+			$e->get_children_warehouses($fk_warehouse, $TChildWarehouses);
 			
 			$sql = 'SELECT ps.fk_product, ps.fk_entrepot 
 			     FROM '.MAIN_DB_PREFIX.'product_stock ps 
@@ -103,27 +102,27 @@ function _action()
 					ORDER BY p.ref ASC,p.label ASC';
                  
                  
-			$Tab = $PDOdb->ExecuteAsArray($sql);
-			
-			foreach($Tab as &$row) {
-			
-                $inventory->add_product($PDOdb, $row->fk_product, $row->fk_entrepot);
+			$res = $db->query($sql);
+			if($res) {
+				while($obj = $db->fetch_object($res)){
+				
+	                $inventory->add_product($obj->fk_product, $obj->fk_entrepot);
+				}
 			}
 			
-			$inventory->save($PDOdb);
+			$inventory->update($user);
 			
-			header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=edit', 1));
-		
+			header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=edit', 1));
+			break;
+			
 		case 'edit':
 			if (!$user->rights->inventory->write) accessforbidden();
 			
 			
-			$id = __get('id', 0, 'int');
-			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch(GETPOST('id'));
 			
-			_fiche($PDOdb, $user, $db, $conf, $langs, $inventory, __get('action', 'edit', 'string'));
+			_card($inventory, GETPOST('action'));
 			
 			break;
 			
@@ -389,29 +388,29 @@ function _list()
 	llxFooter('');
 }
 
-function _fiche_warehouse(&$PDOdb, &$user, &$db, &$conf, $langs, $inventory)
+function _card_warehouse(&$inventory)
 {
+	global $langs,$conf,$db, $user, $form;
+	
 	dol_include_once('/categories/class/categorie.class.php');    
         
 	llxHeader('',$langs->trans('inventorySelectWarehouse'),'','');
 	print dol_get_fiche_head(inventoryPrepareHead($inventory));
 	
-	$form=new TFormCore('inventory.php', 'confirmCreate');
-	print $form->hidden('action', 'confirmCreate');
-	$form->Set_typeaff('edit');
+	echo '<form name="confirmCreate" action="'.$_SERVER['PHP_SELF'].'" method="post" />';
+	echo '<input type="hidden" name="action" value="confirmCreate" />';
 	
     $formproduct = new FormProduct($db);
-    $formDoli = new Form($db);
     
     ?>
     <table class="border" width="100%" >
         <tr>
             <td><?php echo $langs->trans('Title') ?></td>
-            <td><?php echo $form->texte('', 'title', '',50,255) ?></td> 
+            <td><input type="text" name="title" value="" size="50" /></td> 
         </tr>
         <tr>
             <td><?php echo $langs->trans('Date') ?></td>
-            <td><?php echo $form->calendrier('', 'date_inventory',time()) ?></td> 
+            <td><?php echo $form->select_date(time(),'date_inventory'); ?></td> 
         </tr>
         
         <tr>
@@ -421,11 +420,11 @@ function _fiche_warehouse(&$PDOdb, &$user, &$db, &$conf, $langs, $inventory)
         
         <tr>
             <td><?php echo $langs->trans('SelectCategory') ?></td>
-            <td><?php echo $formDoli->select_all_categories(0,'', 'fk_category') ?></td> 
+            <td><?php echo $form->select_all_categories(0,'', 'fk_category') ?></td> 
         </tr>
         <tr>
             <td><?php echo $langs->trans('SelectFournisseur') ?></td>
-            <td><?php echo $formDoli->select_thirdparty('','fk_supplier','s.fournisseur = 1') ?></td> 
+            <td><?php echo $form->select_thirdparty('','fk_supplier','s.fournisseur = 1') ?></td> 
         </tr>
         <tr>
             <td><?php echo $langs->trans('OnlyProdsInStock') ?></td>
@@ -439,7 +438,8 @@ function _fiche_warehouse(&$PDOdb, &$user, &$db, &$conf, $langs, $inventory)
 	print '<input type="submit" class="butAction" value="'.$langs->trans('inventoryConfirmCreate').'" />';
 	print '</div>';
 	
-	print $form->end_form();	
+	echo '</form>';
+	
 	llxFooter('');
 }
 
@@ -455,7 +455,7 @@ function _card(&$inventory, $mode='edit')
 	print dol_get_fiche_head(inventoryPrepareHead($inventory, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), '&action='.$mode));
 	
 	$lines = array();
-	_card_line($inventory, $lines, $form);
+	_card_line($inventory, $lines, $mode);
 	
 	print '<b>'.$langs->trans('inventoryOnDate')." ".$inventory->get_date('date_inventory').'</b><br><br>';
 	
@@ -488,7 +488,7 @@ function _card(&$inventory, $mode='edit')
 }
 
 
-function _card_line(&$inventory, &$lines, &$form)
+function _card_line(&$inventory, &$lines, $mode)
 {
 	global $db;
 	$inventory->amount_actual = 0;
@@ -512,21 +512,23 @@ function _card_line(&$inventory, &$lines, &$form)
 		if(!empty($TCacheEntrepot[$Inventorydet->fk_warehouse])) $e = $TCacheEntrepot[$Inventorydet->fk_warehouse];
 		elseif($e->fetch($Inventorydet->fk_warehouse) > 0) $TCacheEntrepot[$e->id] = $e;
 		
+		$qty = (float)GETPOST('qty_to_add')[$k];
+		
 		$lines[]=array(
 			'produit' => $product->getNomUrl(1).'&nbsp;-&nbsp;'.$product->label
 			,'entrepot'=>$e->getNomUrl(1)
 			,'barcode' => $product->barcode
-			/*,'qty' => $form->texte('', 'qty_to_add['.$k.']', (isset($_REQUEST['qty_to_add'][$k]) ? $_REQUEST['qty_to_add'][$k] : 0), 8, 0, "style='text-align:center;'")
-                        .($form->type_aff!='view' ? '<a id="a_save_qty_'.$k.'" href="javascript:save_qty('.$k.')">'.img_picto('Ajouter', 'plus16@inventory').'</a>' : '')
+			,'qty' =>($mode == 'edit' ? '<input type="text" name="qty_to_add['.$k.']" value="'.$qty.'" size="8" style="text-align:center;" />' : $qty )
+                        .($mode =='edit' ? '<a id="a_save_qty_'.$k.'" href="javascript:save_qty('.$k.')">'.img_picto($langs->trans('Add'), 'plus16@inventory').'</a>' : '')
 			,'qty_view' => $Inventorydet->qty_view ? $Inventorydet->qty_view : 0
 			,'qty_stock' => $stock
 			,'qty_regulated' => $Inventorydet->qty_regulated ? $Inventorydet->qty_regulated : 0
-			,'action' => $user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=delete_line&rowid='.$Inventorydet->getId(), 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : ''
+			,'action' => ($user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=delete_line&rowid='.$Inventorydet->getId(), 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
 			,'pmp_stock'=>round($pmp_actual,2)
             ,'pmp_actual'=> round($pmp * $Inventorydet->qty_view,2)
-			,'pmp_new'=>(!empty($user->rights->inventory->changePMP) ?  $form->texte('', 'new_pmp['.$k.']',$Inventorydet->new_pmp, 8, 0, "style='text-align:right;'")
-                        .($form->type_aff!='view' ? '<a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' : '') : '' )
-            */,'pa_stock'=>round($last_pa * $stock,2)
+			,'pmp_new'=>(!empty($user->rights->inventory->changePMP) ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" />'
+					.($mode =='edit' ? '<a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' : '') : '')
+            ,'pa_stock'=>round($last_pa * $stock,2)
             ,'pa_actual'=>round($last_pa * $Inventorydet->qty_view,2)
 			,'current_pa_stock'=>round($current_pa * $stock,2)
 			,'current_pa_actual'=>round($current_pa * $Inventorydet->qty_view,2)
@@ -610,79 +612,8 @@ function exportCSV(&$inventory) {
 	exit;
 }
 
-function generateODT(&$PDOdb, &$db, &$conf, &$langs, &$inventory) 
-{
-	$TBS=new TTemplateTBS();
-
-	$InventoryPrint = array(); // Tableau envoyé à la fonction render contenant les informations concernant l'inventaire
-	
-	foreach($inventory->Inventorydet as $k => $v) 
-	{
-		$prod = new Product($db);
-		$prod->fetch($v->fk_product);
-		//$prod->fetch_optionals($prod->id);
-		
-		$InventoryPrint[] = array(
-			'product' => $prod->ref.' - '.$prod->label
-			, 'qty_view' => $v->qty_view
-		);
-	}
-
-	$warehouse = new Entrepot($db);
-	$warehouse->fetch($inventory->fk_warehouse);
-	
-	$dirName = 'INVENTORY'.$inventory->getId().'('.date("d_m_Y").')';
-	$dir = DOL_DATA_ROOT.'/inventory/'.$dirName.'/';
-	
-	@mkdir($dir, 0777, true);
-	
-	$template = "templateINVENTORY.odt";
-	//$template = "templateOF.doc";
-
-	$file_gen = $TBS->render(dol_buildpath('inventory/exempleTemplate/'.$template)
-		,array(
-			'InventoryPrint'=>$InventoryPrint
-		)
-		,array(
-			'date_cre'=>$inventory->get_date('date_cre', 'd/m/Y')
-			,'date_maj'=>$inventory->get_date('date_maj', 'd/m/Y H:i')
-			,'date_inv'=>$inventory->get_date('date_inventory', 'd/m/Y')
-			,'numero'=>empty($inventory->title) ? 'Inventaire n°'.$inventory->getId() : $inventory->title
-			,'warehouse'=>$warehouse->libelle
-			,'status'=>($inventory->status ? $langs->transnoentitiesnoconv('inventoryValidate') : $langs->transnoentitiesnoconv('inventoryDraft'))
-			,'logo'=>DOL_DATA_ROOT."/mycompany/logos/".MAIN_INFO_SOCIETE_LOGO
-		)
-		,array()
-		,array(
-			'outFile'=>$dir.$inventory->getId().".odt"
-			,"convertToPDF"=>(!empty($conf->global->INVENTORY_GEN_PDF) ? true : false)
-			,'charset'=>OPENTBS_ALREADY_UTF8
-			
-		)
-		
-	);
-
-	header("Location: ".DOL_URL_ROOT."/document.php?modulepart=inventory&entity=".$conf->entity."&file=".$dirName."/".$inventory->getId(). (!empty($conf->global->INVENTORY_GEN_PDF) ? '.pdf' : '.odt') );
-	
-   /*
-    $size = filesize("./" . basename($file_gen));
-    header("Content-Type: application/force-download; name=\"" . basename($file_gen) . "\"");
-    header("Content-Transfer-Encoding: binary");
-    header("Content-Length: $size");
-    header("Content-Disposition: attachment; filename=\"" . basename($file_gen) . "\"");
-    header("Expires: 0");
-    header("Cache-Control: no-cache, must-revalidate");
-    header("Pragma: no-cache"); 
-    
-	readfile($file_gen);
-   */
-    
-	//header("Location: ".DOL_URL_ROOT."/document.php?modulepart=asset&entity=1&file=".$dirName."/".$assetOf->numero.".doc");
-
-}
 function _footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual) {
 	global $conf,$user,$langs;
-	
 	
 	    if ($view['can_validate'] == 1) { ?>
         <tr style="background-color:#dedede;">

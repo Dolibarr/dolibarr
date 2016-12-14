@@ -147,15 +147,16 @@ class Inventory extends CoreObject
 		
 	}
 	
-	function update()
+	function update(User &$user)
 	{
+		
 		//si on valide l'inventaire on sauvegarde le stock à cette instant
 		if ($this->status)
 		{
 			 $this->regulate();
 		}
 		
-		parent::update();
+		parent::update($user);
 	}
 	
 	function set_values($Tab)
@@ -209,7 +210,7 @@ class Inventory extends CoreObject
         $det->load_product();
                 
         $date = $this->get_date('date_inventory', 'Y-m-d');
-        if(empty($date))$date = $this->get_date('date_cre', 'Y-m-d'); 
+        if(empty($date))$date = $this->get_date('datec', 'Y-m-d'); 
         $det->setStockDate( $date , $fk_entrepot);
         
     }
@@ -416,9 +417,9 @@ class Inventorydet extends CoreObject
 		return true;
 	}
 	
-    function setStockDate(&$PDOdb, $date, $fk_warehouse) {
+    function setStockDate($date, $fk_warehouse) {
         
-		list($pmp,$stock) = $this->getPmpStockFromDate($PDOdb, $date, $fk_warehouse);
+		list($pmp,$stock) = $this->getPmpStockFromDate($date, $fk_warehouse);
 		
         $this->qty_stock = $stock;
         $this->pmp = $pmp;
@@ -432,18 +433,17 @@ class Inventorydet extends CoreObject
                 AND datem<='".$date." 23:59:59'
                 ORDER BY datem DESC LIMIT 1";
                
-        $res = $db->query($sql);
+        $res = $this->db->query($sql);
        
-        if($obj = $db->fetch_object($res)) {
+        if($res && $obj = $this->db->fetch_object($res)) {
             $last_pa = $obj->price;
         }
         
         $this->pa = $last_pa;
-      /*  var_dump($fk_warehouse,$this->product->stock_warehouse,$this->pmp, $this->pa, $this->qty_stock);
-        exit;*/
+      
     }
 
-	function getPmpStockFromDate(&$PDOdb, $date, $fk_warehouse){
+	function getPmpStockFromDate( $date, $fk_warehouse){
 		
 		$res = $this->product->load_stock();
 		
@@ -459,7 +459,7 @@ class Inventorydet extends CoreObject
 			
 		}
 		
-		//On récupère tous les mouvements de stocks du produit entre aujourd'hui et la date de l'inventaire
+		//All Stock mouvement between now and inventory date
 		$sql = "SELECT value, price
 				FROM ".MAIN_DB_PREFIX."stock_mouvement
 				WHERE fk_product = ".$this->product->id."
@@ -467,31 +467,25 @@ class Inventorydet extends CoreObject
 					AND datem > '".date('Y-m-d 23:59:59',strtotime($date))."'
 				ORDER BY datem DESC";
 
-		//echo $sql.'<br>';
-		$db->query($sql);
-		$TMouvementStock = $PDOdb->Get_All();
+		
+		$res = $this->db->query($sql);
+		
 		$laststock = $stock;
 		$lastpmp = $pmp;
-		//Pour chacun des mouvements on recalcule le PMP et le stock physique
-		foreach($TMouvementStock as $mouvement){
-			
-			//150
-			//if($this->product->id==394) echo 'laststock = '.$stock.'<br>';
-			
-			//9.33
-			//if($this->product->id==394) echo 'lastpmp = '.$pmp.'<br>';
-			$price = ($mouvement->price>0 && $mouvement->value>0) ? $mouvement->price : $lastpmp;  
+		
+		if($res) {
+			while($mouvement = $this->db->fetch_object($res)) {
+				$price = ($mouvement->price>0 && $mouvement->value>0) ? $mouvement->price : $lastpmp;
 				
-			$stock_value = $laststock * $lastpmp;
+				$stock_value = $laststock * $lastpmp;
+					
+				$laststock -= $mouvement->value;
+					
+				$last_stock_value = $stock_value - ($mouvement->value * $price);
+					
+				$lastpmp = ($laststock != 0) ? $last_stock_value / $laststock : $lastpmp;
+			}
 			
-			$laststock -= $mouvement->value;
-			
-			$last_stock_value = $stock_value - ($mouvement->value * $price);	
-			
-			$lastpmp = ($laststock != 0) ? $last_stock_value / $laststock : $lastpmp;
-			 
-			
-
 		}
 		
 		return array($lastpmp,$laststock);

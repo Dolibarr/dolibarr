@@ -78,14 +78,20 @@ class CoreObject extends CommonObject {
 			
 	}
 	
+	private function checkFieldType($field, $type) {
+		
+		if( isset($this->__fields[$field]) && method_exists($this, 'is_'.$type)) {
+			return $this->{'is_'.$type}($this->__fields[$field]);
+		}
+		else return false;
+		
+	}
 	
 	private function is_date(Array &$info){
 	
-		if(is_array($info)) {
-			if(isset($info['type']) && $info['type']=='date') return true;
-			else return false;
-		}
+		if(isset($info['type']) && $info['type']=='date') return true;
 		else return false;
+		
 	}
 	
 	private function is_array($info) {
@@ -239,7 +245,25 @@ class CoreObject extends CommonObject {
 		}
 		
 	}
+	public function addChild($tabName, $id='', $key='id', $try_to_load = false) {
+		if(!empty($id)) {
+			foreach($this->{$tabName} as $k=>&$object) {
+				if($object->{$key} === $id) return $k;
 	
+			}
+		}
+	
+		$k = count($this->{$tabName});
+	
+		$className = ucfirst($tabName);
+		$this->{$tabName}[$k] = new $className($this->db);
+		if($id>0 && $key==='id' && $try_to_load) { 
+			$this->{$tabName}[$k]->fetch($id); 
+		}
+	
+	
+		return $k;
+	}
 	public function fetchChild() {
 
 		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
@@ -272,13 +296,13 @@ class CoreObject extends CommonObject {
 	}
 	
 	
-	public function update() {
-		
+	public function update(User &$user) {
+		if(empty($this->id )) return $this->create($user);
 		
 		
 	}
-	public function create() {
-		
+	public function create(User &$user) {
+		if($this->id>0) return $this->update($user);
 		
 		
 	}
@@ -287,10 +311,46 @@ class CoreObject extends CommonObject {
 		if(empty($this->{$field})) return '';
 		elseif($this->{$field}<=strtotime('1000-01-01 00:00:00')) return '';
 		else {
+			
 			return dol_print_date($this->{$field}, $format);
 		}
 	
 	}
 	
+	public function set_date($field,$date){
+
+	  	if(empty($date)) {
+	  		$this->{$field} = 0;
+	  	}
+		else {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+				
+			$this->{$field} = dol_stringtotime($date);
+		}
+
+		return $this->{$field};
+	}
+	
+	public function set_values(&$Tab) {
+		foreach ($Tab as $key=>$value) {
+	
+			if($this->checkFieldType($key,'date')) {
+				$this->set_date($key, $value);
+			}
+			else if( $this->checkFieldType($key,'array')){
+				$this->{$key} = $value;
+			}
+			else if( $this->checkFieldType($key,'float') ) {
+				$this->{$key} = (double)price2num($value);
+			}
+			else if( $this->checkFieldType($key,'int') ) {
+				$this->{$key} = (int)price2num($value);
+			}
+			else {
+				$this->{$key} = @stripslashes($value);
+			}
+			
+		}
+	}
 	
 }

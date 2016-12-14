@@ -154,9 +154,9 @@
 					<td align="center" width="20%"><?php echo $row['action']; ?></td>
 				<?php } ?>
 			</tr>
-			<?php $i++; ?>
-		
-		<?php } 
+			<?php $i++; 
+        
+        } 
 		
 		_footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual);
 		?>
@@ -168,18 +168,17 @@
 	<?php if ($view['is_already_validate'] != 1) { ?>
 		<div class="tabsAction" style="height:30px;">
 			<?php if ($view['mode'] == 'view') { ?>
-				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=printDoc" class="butAction"><?php echo $langs->trans('Print') ?></a>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
 				<?php 
 				 if(!empty($user->rights->inventory->changePMP)) {
-				 	echo '<a href="javascript:;" onclick="javascript:if (!confirm(\'Confirmez-vous l\\\'application du nouveau PMP ?\')) return false; else document.location.href=\''.$view_url
+				 	echo '<a href="javascript:;" onclick="if (!confirm(\'Confirmez-vous l\\\'application du nouveau PMP ?\')) return false; else document.location.href=\''.$view_url
 				 			.'?id='.$inventory->id
 				 			.'&action=changePMP&token='.$view['token'].'\'; " class="butAction">'.$langs->trans('ApplyPMP').'</a>';
 				 }
 				
 				if ($can_validate == 1) { ?>
-					<a href="javascript:;" onclick="javascript:if (!confirm('Confirmez-vous la régulation ?')) return false; else document.location.href='<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=regulate&token=<?php echo $view['token']; ?>'; " class="butAction">Réguler le stock</a>
+					<a href="javascript:;" onclick="if (!confirm('Confirmez-vous la régulation ?')) return false; else document.location.href='<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=regulate&token=<?php echo $view['token']; ?>'; " class="butAction">Réguler le stock</a>
 				<?php } ?>
 			<?php } ?>
 			<?php if ($view['mode'] == 'edit') { ?>
@@ -196,7 +195,6 @@
 		<div class="tabsAction">
 			<?php if ($can_validate == 1) { ?>
 
-				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=printDoc" class="butAction"><?php echo $langs->trans('Print') ?></a>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
 				<a href="#" title="Cet inventaire est validé" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
 				
