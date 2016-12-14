@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2016		ATM Consulting			<support@atm-consulting.fr>
+/* EXPERIMENTAL
+ * 
+ * Copyright (C) 2016		ATM Consulting			<support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,9 +222,8 @@ class CoreObject extends CommonObject {
 						WHERE rowid='.$id;
 		
 		$res = $this->db->query( $sql );
-				
 		if($obj = $this->db->fetch_object($res)) {
-				$this->rowid=$id;
+				$this->id=$id;
 			
 				$this->set_vars_by_db($obj);
 
@@ -248,12 +249,12 @@ class CoreObject extends CommonObject {
 					
 					$this->{$className}=array();
 					
-					$sql = " SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element."=".$this->rowid;
+					$sql = " SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element."=".$this->id;
 					$res = $this->db->query($sql);
 					
 					if($res) {
-						
-						while($obj = $db->fetch_object($res)) {
+						$Tab=array();
+						while($obj = $this->db->fetch_object($res)) {
 							
 							$o=new $className($this->db);	
 							$o->fetch($obj->rowid);
@@ -280,6 +281,15 @@ class CoreObject extends CommonObject {
 		
 		
 		
+	}
+	
+	public function get_date($field,$format='') {
+		if(empty($this->{$field})) return '';
+		elseif($this->{$field}<=strtotime('1000-01-01 00:00:00')) return '';
+		else {
+			return dol_print_date($this->{$field}, $format);
+		}
+	
 	}
 	
 	

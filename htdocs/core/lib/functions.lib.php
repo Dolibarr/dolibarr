@@ -3157,7 +3157,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 }
 
 /**
- *	Print a title with navigation controls for pagination
+ *	return a title with navigation controls for pagination
  *
  *	@param	string	    $titre				Title to show (required)
  *	@param	int   	    $page				Numero of page to show in navigation links (required)
@@ -3176,7 +3176,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function load_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 	
@@ -3196,27 +3196,26 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		$nextpage = 0;
 	}
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
-	
-	print "\n";
-	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
+	$out = "\n";
+	$out.= "<!-- Begin title '".$titre."' -->\n";
+	$out.='<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
 
 	// Left
-	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding valignmiddle">';
-	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
-	print '<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines >= 0) print ' ('.$totalnboflines.')';
-	print '</div></td>';
+	//if ($picto && $titre) $out.='<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	$out.='<td class="nobordernopadding valignmiddle">';
+	if ($picto && $titre) $out.=img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
+	$out.='<div class="titre inline-block">'.$titre;
+	if (!empty($titre) && $savtotalnboflines >= 0) $out.=' ('.$totalnboflines.')';
+	$out.='</div></td>';
 
 	// Center
 	if ($center)
 	{
-		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
+		$out.='<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
 	}
 
 	// Right
-	print '<td class="nobordernopadding valignmiddle" align="right">';
+	$out.='<td class="nobordernopadding valignmiddle" align="right">';
 	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
@@ -3265,15 +3264,39 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
-	print '</td>';
+	$out.=load_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	$out.='</td>';
 
-	print '</tr></table>'."\n";
-	print "<!-- End title -->\n\n";
+	$out.='</tr></table>'."\n";
+	$out.="<!-- End title -->\n\n";
+}
+/**
+ *	Print a title with navigation controls for pagination
+ *
+ *	@param	string	    $titre				Title to show (required)
+ *	@param	int   	    $page				Numero of page to show in navigation links (required)
+ *	@param	string	    $file				Url of page (required)
+ *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
+ *	@param	string    	$sortfield       	Field to sort on ('' by default)
+ *	@param	string	    $sortorder       	Order to sort ('' by default)
+ *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	int		    $num				Number of records found by select with limit+1
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
+ *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
+ *  @param	string	    $morehtml			More html to show
+ *  @param  string      $morecss            More css to the table
+ *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
+ *  @param  int         $hideselectlimit    Force to hide select limit
+ *	@return	void
+ */
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+{
+	echo load_barre_liste($titre, $page, $file, $options, $sortfield, $sortorder, $center, $num, $totalnboflines, $picto, $pictoisfullpath, $morehtml, $morecss, $limit, $hideselectlimit);
 }
 
 /**
- *	Function to show navigation arrows into lists
+ *	Function to return navigation arrows into lists
  *
  *	@param	int				$page				Number of page
  *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
@@ -3286,11 +3309,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *  @param  int             $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
+function load_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
 {
 	global $conf, $langs;
 
-	print '<div class="pagination"><ul>';
+	$out='<div class="pagination"><ul>';
 	if ((int) $limit >= 0 && empty($hideselectlimit))
 	{
 	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
@@ -3298,8 +3321,8 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	    //$pagesizechoices.=',2:2';
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
 	     
-        print '<li class="pagination">';
-        print '<select class="flat selectlimit" name="limit">';
+        $out.='<li class="pagination">';
+        $out.='<select class="flat selectlimit" name="limit">';
         $tmpchoice=explode(',',$pagesizechoices);
         $tmpkey=$limit.':'.$limit;
         if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
@@ -3320,13 +3343,13 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
                     $selected = ' selected="selected"';
                     $found = true;
                 }
-                print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+                $out.='<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
             }
         }
-        print '</select>';
+        $out.='</select>';
         if ($conf->use_javascript_ajax)
         {
-            print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+            $out.='<!-- JS CODE TO ENABLE select limit to launch submit of page -->
             		<script type="text/javascript">
                 	jQuery(document).ready(function () {
             	  		jQuery(".selectlimit").change(function() {
@@ -3337,31 +3360,48 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
             		</script>
                 ';
         }
-        print '</li>';	    
+        $out.='</li>';	    
 	}
 	if ($page > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
-		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
+		if (($conf->dol_use_jmobile != 4)) $out.='<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		else $out.='<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	if ($betweenarrows)
 	{
-		print $betweenarrows;
+		$out.=$betweenarrows;
 	}
 	if ($nextpage > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
-		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
+		if (($conf->dol_use_jmobile != 4)) $out.='<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		else $out.='<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
 	}
 	if ($afterarrows)
 	{
-		print '<li class="paginationafterarrows">';
-		print $afterarrows;
-		print '</li>';
+		$out.='<li class="paginationafterarrows">';
+		$out.=$afterarrows;
+		$out.='</li>';
 	}
-	print '</ul></div>'."\n";
+	$out.='</ul></div>'."\n";
 }
-
+/**
+ *	Function to show navigation arrows into lists
+ *
+ *	@param	int				$page				Number of page
+ *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
+ *	@param	string			$options         	Other url paramaters to propagate ("" by default, may include sortfield and sortorder)
+ *	@param	integer			$nextpage	    	Do we show a next page button
+ *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
+ *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
+ *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
+ *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
+ *  @param  int             $hideselectlimit    Force to hide select limit
+ *	@return	void
+ */
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
+{
+	echo load_fleche_navigation($page, $file, $options, $nextpage, $betweenarrows, $afterarrows, $limit, $totalnboflines, $hideselectlimit);
+}
 
 /**
  *	Return a string with VAT rate label formated for view output

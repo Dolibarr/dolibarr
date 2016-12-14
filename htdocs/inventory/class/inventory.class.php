@@ -97,17 +97,20 @@ class Inventory extends CoreObject
         if(!$annexe) $this->withChild = false;
         
 		$res = parent::fetch($id);
-		$this->sort_det();
 		
-		$this->amount = 0;
-		
-		if(!empty($this->Inventorydet ))  {
-			foreach($this->Inventorydet as &$det){
-				$this->amount+=$det->qty_view * $det->pmp;
-			}
+		if($res>0) {
+			$this->sort_det();
 			
+			$this->amount = 0;
+			
+			if(!empty($this->Inventorydet ))  {
+				foreach($this->Inventorydet as &$det){
+					$this->amount+=$det->qty_view * $det->pmp;
+				}
+				
+			}
 		}
-		
+				
 		return $res;
 	}
 	
@@ -312,9 +315,8 @@ class Inventory extends CoreObject
         global $langs,$db;
         
         $i = new Inventory($db);
-        $i->fetch($id, false);
-        
-        return $i->getNomUrl();
+        if($i->fetch($id, false)>0) return $i->getNomUrl();
+        else return $langs->trans('InventoryUnableToFetchObject');
         
     }
 	
