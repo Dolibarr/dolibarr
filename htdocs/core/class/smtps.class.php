@@ -1190,7 +1190,7 @@ class SMTPs
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
-		$host=dol_getprefix().'-'.$host;
+		$host=dol_getprefix('email').'-'.$host;
 		
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
