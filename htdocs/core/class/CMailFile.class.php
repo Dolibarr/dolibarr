@@ -680,7 +680,7 @@ class CMailFile
 		global $conf;
 		$out = "";
 
-		$host = dol_getprefix();
+		$host = dol_getprefix('email');
 
 		// Sender
 		//$out.= "Sender: ".getValidAddress($this->addr_from,2)).$this->eol2;
