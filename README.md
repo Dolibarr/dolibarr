@@ -26,6 +26,16 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
+### Install from composer
+If you do not already have Composer installed, you may do so by following the instructions at getcomposer.org. On Linux and Mac OS X, you'll run the following commands:
+
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+
+On Windows, you'll download and run https://getcomposer.org/Composer-Setup.exe
+
+composer create-project dolibarr/dolibarr erp
+
 ### Simple setup
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in few clicks, you can use one of the packaged versions:
