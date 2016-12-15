@@ -58,9 +58,6 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 $object->fetch_thirdparty();
 $object->info($object->id);
 
-$soc = new Societe($db);
-$soc->fetch($object->thirdparty->id);
-
 $head = commande_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), 0, 'order');
 
@@ -68,13 +65,12 @@ dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), 0, 'order');
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-
 $morehtmlref='<div class="refidno">';
 // Ref customer
 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
-$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
 if (! empty($conf->projet->enabled))
 {
