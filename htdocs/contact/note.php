@@ -74,11 +74,6 @@ if ($id > 0)
     $head = contact_prepare_head($object);
 
     dol_fiche_head($head, 'note', $title,0,'contact');
-
-
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
@@ -88,11 +83,12 @@ if ($id > 0)
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
     
     print '<div class="fichecenter">';
-    
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+	print '<table class="border centpercent">';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -153,7 +149,6 @@ if ($id > 0)
     //print '<br>';
 
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
 
     dol_fiche_end();
 }
