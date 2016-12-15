@@ -77,16 +77,25 @@ function _action()
 			$inventory->set_values($_POST);
 			
             $fk_inventory = $inventory->create($user);
-			
-            $fk_category = (int)GETPOST('fk_category');
-            $fk_supplier = (int)GETPOST('fk_supplier');
-            $fk_warehouse = (int)GETPOST('fk_warehouse');
-			$only_prods_in_stock = (int)GETPOST('OnlyProdsInStock');
+			if($fk_inventory>0) {
+            	
+            	$fk_category = (int)GETPOST('fk_category');
+            	$fk_supplier = (int)GETPOST('fk_supplier');
+            	$fk_warehouse = (int)GETPOST('fk_warehouse');
+            	$only_prods_in_stock = (int)GETPOST('OnlyProdsInStock');
+            	
+            	$inventory->add_products_for($fk_warehouse,$fk_category,$fk_supplier,$only_prods_in_stock);
+            	$inventory->update($user);
+            	
+            	header('Location: '.dol_buildpath('/inventory/inventory.php?id='.$inventory->id.'&action=edit', 1));
+            	
+            }
+            else{
+            	
+            	setEventMessage($inventory->error,'errors');
+            	header('Location: '.dol_buildpath('/inventory/inventory.php?action=create', 1));
+            }
             
-			$inventory->add_products_for($fk_warehouse,$fk_category,$fk_supplier,$only_prods_in_stock);
-			$inventory->update($user);
-			
-			header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=edit', 1));
 			break;
 			
 		case 'edit':
@@ -118,14 +127,14 @@ function _action()
 			}
 			else 
 			{
-				$inventory->save($PDOdb);
+				$inventory->udpate($user);
 				header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=view', 1));
 			}
 			
 			break;
 			
-		case 'regulate':
-			
+		case 'confirm_regulate':
+			if (!$user->rights->inventory->write) accessforbidden();
 			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
@@ -145,14 +154,14 @@ function _action()
             
 			break;
 			
-		case 'changePMP':
+		case 'confirm_changePMP':
 			
 			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
 			$inventory->fetch( $id );
 			
-			$inventory->changePMP($PDOdb);
+			$inventory->changePMP($user);
 			
 			_card( $inventory, 'view');
 			
@@ -167,35 +176,33 @@ function _action()
 			$inventory = new Inventory($db);
 			$inventory->fetch( $id );
 			
-			$type = (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT) ? 'string' : 'int'); //AA heu ?
-			
-			$fk_product = __get('fk_product', 0, $type);
-			
-			if ($fk_product)
+			$fk_product = GETPOST('fk_product');
+			if ($fk_product>0)
 			{
 				$product = new Product($db);
-				$product->fetch($fk_product);	// ! ref TODO vérifier quand même			
-				if($product->type != 0) {
+				if($product->fetch($fk_product)<=0 || $product->type != 0) {
 					setEventMessage($langs->trans('ThisIsNotAProduct'),'errors');
 				}
 				else{
 					
 					//Check product not already exists
 					$alreadyExists = false;
-					foreach ($inventory->Inventorydet as $invdet)
-					{
-						if ($invdet->fk_product == $product->id
-							&& $invdet->fk_warehouse == $fk_warehouse)
+					if(!empty($inventory->Inventorydet)) {
+						foreach ($inventory->Inventorydet as $invdet)
 						{
-							$alreadyExists = true;
-							break;
+							if ($invdet->fk_product == $product->id
+								&& $invdet->fk_warehouse == $fk_warehouse)
+							{
+								$alreadyExists = true;
+								break;
+							}
 						}
 					}
-					
 					if (!$alreadyExists)
 					{
-					    $inventory->add_product($PDOdb, $product->id, $fk_warehouse);
-                        
+					    if($inventory->add_product($product->id, $fk_warehouse)) {
+					    	setEventMessage($langs->trans('ProductAdded'));
+					    }
 					}
 					else
 					{
@@ -204,7 +211,7 @@ function _action()
 					
 				}
 				
-				$inventory->save($PDOdb);
+				$inventory->update($user);
 				$inventory->sort_det();
 			}
 			
@@ -212,7 +219,7 @@ function _action()
 			
 			break;
 			
-		case 'delete_line':
+		case 'confirm_delete_line':
 			if (!$user->rights->inventory->write) accessforbidden();
 			
 			
@@ -230,7 +237,7 @@ function _action()
 			_card($inventory, 'edit');
 			
 			break;
-        case 'flush':
+        case 'confirm_flush':
             if (!$user->rights->inventory->create) accessforbidden();
             
             
@@ -239,15 +246,15 @@ function _action()
             $inventory = new Inventory($db);
             $inventory->fetch($id);
             
-            $inventory->deleteAllLine($PDOdb);
+            $inventory->deleteAllLine($user);
             
-            setEventMessage('Inventaire vidé');
+            setEventMessage($langs->trans('InventoryFlushed'));
             
             _card( $inventory, 'edit');
            
             
             break;
-		case 'delete':
+		case 'confirm_delete':
 			if (!$user->rights->inventory->create) accessforbidden();
             
 			
@@ -258,7 +265,9 @@ function _action()
 			
 			$inventory->delete($user);
 			
-			header('Location: '.dol_buildpath('/inventory/inventory.php', 1));
+			setEventMessage($langs->trans('InventoryDeleted'));
+			
+			header('Location: '.dol_buildpath('/inventory/inventory.php?action=list', 1));
 			exit;
 			//_list();
 			
@@ -407,19 +416,53 @@ function _card_warehouse(&$inventory)
 	llxFooter('');
 }
 
-function _card(&$inventory, $mode='edit')
+function _card(&$inventory, $action='edit')
 {
-	global $langs, $conf, $db, $user;
+	global $langs, $conf, $db, $user,$form;
 	
 	llxHeader('',$langs->trans('inventoryEdit'),'','');
+	
+	if($action == 'changePMP') {
+	
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$inventory->id,$langs->trans('ApplyNewPMP')
+				,$langs->trans('ConfirmApplyNewPMP',$inventory->getTitle()),'confirm_changePMP'
+				,array(),'no',1);
+	
+	}
+	else if($action == 'flush') {
+	
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$inventory->id,$langs->trans('FlushInventory')
+				,$langs->trans('ConfirmFlushInventory',$inventory->getTitle()),'confirm_flush'
+				,array(),'no',1);
+	
+	}
+	else if($action == 'delete') {
+	
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$inventory->id,$langs->trans('Delete')
+				,$langs->trans('ConfirmDelete',$inventory->getTitle()),'confirm_delete'
+				,array(),'no',1);
+	
+	}
+	else if($action == 'delete_line') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$inventory->id.'&rowid='.GETPOST('rowid'),$langs->trans('DeleteLine')
+				,$langs->trans('ConfirmDeleteLine',$inventory->getTitle()),'confirm_delete_line'
+				,array(),'no',1);
+	
+	}
+	else if($action == 'regulate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$inventory->id,$langs->trans('RegulateStock')
+				,$langs->trans('ConfirmRegulateStock',$inventory->getTitle()),'confirm_regulate'
+				,array(),'no',1);
+	
+	}
 	
 	$warehouse = new Entrepot($db);
 	$warehouse->fetch($inventory->fk_warehouse);
 	
-	print dol_get_fiche_head(inventoryPrepareHead($inventory, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), empty($mode) ? '': '&action='.$mode));
+	print dol_get_fiche_head(inventoryPrepareHead($inventory, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), empty($action) ? '': '&action='.$action));
 	
 	$lines = array();
-	_card_line($inventory, $lines, $mode);
+	_card_line($inventory, $lines, $action);
 	
 	print '<b>'.$langs->trans('inventoryOnDate')." ".$inventory->get_date('date_inventory').'</b><br><br>';
 	
@@ -439,7 +482,7 @@ function _card(&$inventory, $mode='edit')
 	$view_url = dol_buildpath('/inventory/inventory.php', 1);
 	
 	$view = array(
-		'mode' => $mode
+		'mode' => $action
 		,'url' => dol_buildpath('/inventory/inventory.php', 1)
 		,'can_validate' => (int) $user->rights->inventory->validate
 		,'is_already_validate' => (int) $inventory->status
@@ -486,7 +529,7 @@ function _card_line(&$inventory, &$lines, $mode)
 			,'qty_view' => $Inventorydet->qty_view ? $Inventorydet->qty_view : 0
 			,'qty_stock' => $stock
 			,'qty_regulated' => $Inventorydet->qty_regulated ? $Inventorydet->qty_regulated : 0
-			,'action' => ($user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
+			,'action' => ($user->rights->inventory->write && $mode=='edit' ? '<a href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
 			,'pmp_stock'=>round($pmp_actual,2)
             ,'pmp_actual'=> round($pmp * $Inventorydet->qty_view,2)
 			,'pmp_new'=>(!empty($user->rights->inventory->changePMP && $mode =='edit') ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" /> <a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' :  price($Inventorydet->new_pmp))

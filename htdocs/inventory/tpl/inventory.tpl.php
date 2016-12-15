@@ -159,44 +159,40 @@
         } 
 		
 		_footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual);
-		?>
 	
-	  
-		
+		?>
 	</table>
 	
-	<?php if ($view['is_already_validate'] != 1) { ?>
+	<?php if ($inventory->status != 1) { ?>
 		<div class="tabsAction" style="height:30px;">
-			<?php if ($view['mode'] == 'view') { ?>
+			<?php if ($action!= 'edit') { ?>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
 				<?php 
 				 if(!empty($user->rights->inventory->changePMP)) {
-				 	echo '<a href="javascript:;" onclick="if (!confirm(\'Confirmez-vous l\\\'application du nouveau PMP ?\')) return false; else document.location.href=\''.$view_url
-				 			.'?id='.$inventory->id
-				 			.'&action=changePMP&token='.$view['token'].'\'; " class="butAction">'.$langs->trans('ApplyPMP').'</a>';
+				 	echo '<a href="'.$view_url.'?id='.$inventory->id.'&action=changePMP" class="butAction">'.$langs->trans('ApplyPMP').'</a>';
 				 }
 				
 				if ($can_validate == 1) { ?>
-					<a href="javascript:;" onclick="if (!confirm('Confirmez-vous la régulation ?')) return false; else document.location.href='<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=regulate&token=<?php echo $view['token']; ?>'; " class="butAction">Réguler le stock</a>
+					<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=regulate&token=" class="butAction"><?php echo $langs->trans('RegulateStock') ?></a>
 				<?php } ?>
 			<?php } ?>
-			<?php if ($view['mode'] == 'edit') { ?>
-				<input name="back" type="button" class="butAction" value="Quitter la saisie" onclick="document.location='?id=<?php echo $inventory->id; ?>&action=view';" />
+			<?php if ($action == 'edit') { ?>
+				<input name="back" type="button" class="butAction" value="<?php echo $langs->trans('ExitEditMode'); ?>" onclick="document.location='?id=<?php echo $inventory->id; ?>&action=view';" />
 			<?php } ?>
 			<?php if ($can_validate == 1) { ?>
-                <a onclick="if (!confirm('Confirmez-vous la vidange ?')) return false;" href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=flush" class="butActionDelete">Vider</a>
+                <a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=flush" class="butActionDelete"><?php  echo $langs->trans('Flush'); ?></a>
                 &nbsp;&nbsp;&nbsp;
-                <a onclick="if (!confirm('Confirmez-vous la suppression ?')) return false;" href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=delete" class="butActionDelete">Supprimer</a>
+                <a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=delete" class="butActionDelete"><?php echo $langs->trans('Delete') ?></a>
         	<?php } ?>
 		</div>
 	<?php } ?>
-	<?php if ($view['is_already_validate'] == 1) { ?>
+	<?php if ($inventory->status == 1) { ?>
 		<div class="tabsAction">
 			<?php if ($can_validate == 1) { ?>
 
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
-				<a href="#" title="Cet inventaire est validé" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
+				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
 				
 			<?php } ?>
 		</div>

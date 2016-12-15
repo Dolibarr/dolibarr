@@ -35,6 +35,7 @@ class CoreObject extends CommonObject {
 	
 	public $date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
 	
+	public $error = '';
 	/*
 	 *  @var Array $_fields Fields to synchronize with Database
 	 */
@@ -244,6 +245,8 @@ class CoreObject extends CommonObject {
 				return $this->id;
 		}
 		else {
+				$this->error = $this->db->lasterror();
+				
 				return false;
 		}
 		
@@ -335,7 +338,7 @@ class CoreObject extends CommonObject {
 		if(empty($this->id )) return $this->create($user); // To test, with that, no need to test on high level object, the core decide it, update just needed
 		
 		if(isset($this->to_delete) && $this->to_delete==true) {
-			$this->delete();
+			$this->delete($user);
 		}
 		else {
 		
@@ -345,13 +348,21 @@ class CoreObject extends CommonObject {
 			$query['rowid']=$this->id;
 			if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
 				
-			$this->db->update($this->table_element,$query,array('rowid'));
+			$res = $this->db->update($this->table_element,$query,array('rowid'));
 			
-			$this->id = $this->db->last_insert_id($this->table_element);
+			if($res) {
+			
+				$result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
 				
-			$result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
+				$this->saveChild($user);
+			
+				return true;
+			}
+			else{
+				$this->error = $this->db->lasterror();
 				
-			$this->saveChild($user);
+				return false;
+			}
 		
 		}
 		return $this->id;
@@ -378,6 +389,9 @@ class CoreObject extends CommonObject {
 			return $this->id;
 		}
 		else{
+			
+			$this->error = $this->db->lasterror();
+			
 			return false;
 		}
 	

@@ -86,7 +86,7 @@ class Inventory extends CoreObject
 		
 	}
 	
-	private function sort_det() 
+	public function sort_det() 
 	{
 
 		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
@@ -129,22 +129,23 @@ class Inventory extends CoreObject
 		return $r;
 	}
 	
-	public function changePMP() {
-		
-		foreach ($this->Inventorydet as $k => &$Inventorydet)
-		{
-			
-			if($Inventorydet->new_pmp>0) {
-				$Inventorydet->pmp = $Inventorydet->new_pmp; 
-				$Inventorydet->new_pmp = 0;
-			
-				$db->query("UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$Inventorydet->pmp."
-				WHERE rowid = ".$Inventorydet->fk_product );
+	public function changePMP(User &$user) {
+		if(!empty($this->Inventorydet)) {
+			foreach ($this->Inventorydet as $k => &$Inventorydet)
+			{
 				
+				if($Inventorydet->new_pmp>0) {
+					$Inventorydet->pmp = $Inventorydet->new_pmp; 
+					$Inventorydet->new_pmp = 0;
+				
+					$this->db->query("UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$Inventorydet->pmp."
+					WHERE rowid = ".$Inventorydet->fk_product );
+					
+				}
 			}
 		}
 		
-		parent::save($PDOdb);
+		return parent::update($user);
 		
 	}
 	
@@ -214,6 +215,7 @@ class Inventory extends CoreObject
         if(empty($date))$date = $this->get_date('datec', 'Y-m-d'); 
         $det->setStockDate( $date , $fk_entrepot);
         
+        return true;
     }
     
     public function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
@@ -233,6 +235,9 @@ class Inventory extends CoreObject
 			$datem = empty($conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT) ? dol_now() : $this->date_inventory;
 
 			$movementstock=new MouvementStock($db);
+			$movementstock->origin = new stdClass();
+			$movementstock->origin->element = 'inventory';
+			$movementstock->origin->id = $this->id;
 			$result=$movementstock->_create($user,$fk_product,$fk_warehouse,$op[$movement],$movement,$price,$label,$inventorycode, $datem);
 			
 			if ($result >= 0)
@@ -289,10 +294,7 @@ class Inventory extends CoreObject
 						
 				$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
 				
-				if(empty($this->title))
-					$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock', $href, $this->id));
-				else
-					$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStockWithNomInventaire', $href, $this->title));
+				$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
 			}
 		}
 
@@ -304,12 +306,15 @@ class Inventory extends CoreObject
 		return 1;
 	}
     
-	public function getNomUrl($picto = 1) {
+	public function getTitle() {
 		global $langs;
 		
-		$title = !empty($this->title) ? $this->title : $langs->trans('inventoryTitle').' '.$this->id;
-        
-        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($picto ? img_picto('','object_list.png','',0).' ' : '').$title.'</a>';
+		return !empty($this->title) ? $this->title : $langs->trans('inventoryTitle').' '.$this->id;
+	}
+	
+	public function getNomUrl($picto = 1) {
+		
+        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($picto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
         
 	} 
 	
