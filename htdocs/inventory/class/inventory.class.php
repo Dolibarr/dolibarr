@@ -71,8 +71,9 @@ class Inventory extends CoreObject
 	
 	public $db;
 	
-	function __construct(DoliDB &$db) 
+	public function __construct(DoliDB &$db) 
 	{
+		global $conf;
 		
 		$this->db = &$db;
 		
@@ -85,13 +86,13 @@ class Inventory extends CoreObject
 		
 	}
 	
-	function sort_det() 
+	private function sort_det() 
 	{
 
 		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
 	}
 	
-	function fetch($id,$annexe = true) 
+	public function fetch($id,$annexe = true) 
 	{
 	    
         if(!$annexe) $this->withChild = false;
@@ -115,7 +116,7 @@ class Inventory extends CoreObject
 	}
 	
 	
-	function customSort(&$objA, &$objB)
+	private function customSort(&$objA, &$objB)
 	{
 		global $db;
 		
@@ -128,7 +129,7 @@ class Inventory extends CoreObject
 		return $r;
 	}
 	
-	function changePMP() {
+	public function changePMP() {
 		
 		foreach ($this->Inventorydet as $k => &$Inventorydet)
 		{
@@ -147,7 +148,7 @@ class Inventory extends CoreObject
 		
 	}
 	
-	function update(User &$user)
+	public function update(User &$user)
 	{
 		
 		//si on valide l'inventaire on sauvegarde le stock à cette instant
@@ -159,7 +160,7 @@ class Inventory extends CoreObject
 		parent::update($user);
 	}
 	
-	function set_values(&$Tab)
+	public function set_values(&$Tab)
 	{
 		global $db,$langs;
 		
@@ -186,19 +187,19 @@ class Inventory extends CoreObject
 		parent::set_values($Tab);
 	}
 	
-    function deleteAllLine() {
+    public function deleteAllLine(User &$user) {
         
         foreach($this->Inventorydet as &$det) {
             $det->to_delete = true;
         }
         
-        $this->update();
+        $this->update($user);
       
         $this->Inventorydet=array();
         
     }
     
-    function add_product($fk_product, $fk_entrepot='') {
+    public function add_product($fk_product, $fk_entrepot='') {
         
         $k = $this->addChild('Inventorydet');
         $det =  &$this->Inventorydet[$k];
@@ -215,7 +216,7 @@ class Inventory extends CoreObject
         
     }
     
-    function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
+    public function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
 	{
 		global $conf, $db, $langs, $user;
 		
@@ -250,7 +251,7 @@ class Inventory extends CoreObject
 		}
 	}
 	
-	function regulate()
+	public function regulate()
 	{
 		global $db,$user,$langs,$conf;
 		
@@ -311,6 +312,36 @@ class Inventory extends CoreObject
         return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($picto ? img_picto('','object_list.png','',0).' ' : '').$title.'</a>';
         
 	} 
+	
+	public function add_products_for($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0) {
+		$e = new Entrepot($this->db);
+		$e->fetch($fk_warehouse);
+		$TChildWarehouses = array($fk_warehouse);
+		$e->get_children_warehouses($fk_warehouse, $TChildWarehouses);
+			
+		$sql = 'SELECT ps.fk_product, ps.fk_entrepot
+			     FROM '.MAIN_DB_PREFIX.'product_stock ps
+			     INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ps.fk_product)
+                 LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product cp ON (cp.fk_product = p.rowid)
+				 LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid)
+			     WHERE ps.fk_entrepot IN ('.implode(', ', $TChildWarehouses).')';
+			
+		if($fk_category>0) $sql.= " AND cp.fk_categorie=".$fk_category;
+		if($fk_supplier>0) $sql.= " AND pfp.fk_soc=".$fk_supplier;
+		if(!empty($only_prods_in_stock)) $sql.= ' AND ps.reel > 0';
+			
+		$sql.=' GROUP BY ps.fk_product, ps.fk_entrepot
+					ORDER BY p.ref ASC,p.label ASC';
+		 
+		$res = $this->db->query($sql);
+		if($res) {
+			while($obj = $this->db->fetch_object($res)){
+				$this->add_product($obj->fk_product, $obj->fk_entrepot);
+			}
+		}
+			
+		
+	}
 	
     static function getLink($id) {
         global $langs,$db;

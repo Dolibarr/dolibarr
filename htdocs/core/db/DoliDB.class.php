@@ -355,7 +355,7 @@ abstract class DoliDB implements Database
 			$values[] = $this->quote($v);
 			
 		}
-		
+
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$table.' 
 					( '.implode( ",", $keys ).' ) 
 					VALUES ( '.implode( ",", $values ).' ) ';

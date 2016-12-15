@@ -158,7 +158,7 @@ class CoreObject extends CommonObject {
 					$query[$field] = $this->date_0;
 				}
 				else{
-					$query[$field] = $this->db->jdate($this->{$field});
+					$query[$field] = $this->db->idate($this->{$field});
 				}
 		  	}
 		  	else if($this->is_array($info)){
@@ -427,7 +427,6 @@ class CoreObject extends CommonObject {
 	  	}
 		else {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-				
 			$this->{$field} = dol_stringtotime($date);
 		}
 
@@ -435,6 +434,7 @@ class CoreObject extends CommonObject {
 	}
 	
 	public function set_values(&$Tab) {
+		
 		foreach ($Tab as $key=>$value) {
 	
 			if($this->checkFieldType($key,'date')) {

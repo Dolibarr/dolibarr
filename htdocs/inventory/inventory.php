@@ -83,34 +83,7 @@ function _action()
             $fk_warehouse = (int)GETPOST('fk_warehouse');
 			$only_prods_in_stock = (int)GETPOST('OnlyProdsInStock');
             
-			$e = new Entrepot($db);
-			$e->fetch($fk_warehouse);
-			$TChildWarehouses = array($fk_warehouse);
-			$e->get_children_warehouses($fk_warehouse, $TChildWarehouses);
-			
-			$sql = 'SELECT ps.fk_product, ps.fk_entrepot 
-			     FROM '.MAIN_DB_PREFIX.'product_stock ps 
-			     INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ps.fk_product) 
-                 LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product cp ON (cp.fk_product = p.rowid)
-				 LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid)
-			     WHERE ps.fk_entrepot IN ('.implode(', ', $TChildWarehouses).')';
-			
-            if($fk_category>0) $sql.= " AND cp.fk_categorie=".$fk_category;
-			if($fk_supplier>0) $sql.= " AND pfp.fk_soc=".$fk_supplier;
-			if($only_prods_in_stock>0) $sql.= ' AND ps.reel > 0';
-			
-			$sql.=' GROUP BY ps.fk_product, ps.fk_entrepot
-					ORDER BY p.ref ASC,p.label ASC';
-                 
-                 
-			$res = $db->query($sql);
-			if($res) {
-				while($obj = $db->fetch_object($res)){
-				
-	                $inventory->add_product($obj->fk_product, $obj->fk_entrepot);
-				}
-			}
-			
+			$inventory->add_products_for($fk_warehouse,$fk_category,$fk_supplier,$only_prods_in_stock);
 			$inventory->update($user);
 			
 			header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=edit', 1));
@@ -134,14 +107,14 @@ function _action()
 			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch($id);
 			
 			$inventory->set_values($_REQUEST);
 			
 			if ($inventory->errors)
 			{
 				setEventMessage($inventory->errors, 'errors');
-				_fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'edit');
+				_card( $inventory, 'edit');
 			}
 			else 
 			{
@@ -156,18 +129,18 @@ function _action()
 			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch($id);
             
             if($inventory->status == 0) {
                 $inventory->status = 1;
-                $inventory->save($PDOdb);
+                $inventory->update($user);
                 
-                _fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'view');
+                _card( $inventory, 'view');
                 
             
             }
             else {
-               _fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'view');
+               _card( $inventory, 'view');
             }
             
 			break;
@@ -181,7 +154,7 @@ function _action()
 			
 			$inventory->changePMP($PDOdb);
 			
-			_fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'view');
+			_card( $inventory, 'view');
 			
 			break;
 			
@@ -235,7 +208,7 @@ function _action()
 				$inventory->sort_det();
 			}
 			
-			_fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'edit');
+			_card( $inventory, 'edit');
 			
 			break;
 			
@@ -261,16 +234,16 @@ function _action()
             if (!$user->rights->inventory->create) accessforbidden();
             
             
-            $id = __get('id', 0, 'int');
+            $id = GETPOST('id');
             
             $inventory = new Inventory($db);
-            $inventory->load($PDOdb, $id);
+            $inventory->fetch($id);
             
             $inventory->deleteAllLine($PDOdb);
             
             setEventMessage('Inventaire vidé');
             
-            _fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'edit');
+            _card( $inventory, 'edit');
            
             
             break;
@@ -278,33 +251,23 @@ function _action()
 			if (!$user->rights->inventory->create) accessforbidden();
             
 			
-			$id = __get('id', 0, 'int');
+			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch($id);
 			
-			$inventory->delete($PDOdb);
+			$inventory->delete($user);
 			
 			header('Location: '.dol_buildpath('/inventory/inventory.php', 1));
 			exit;
 			//_list();
 			
-		case 'printDoc':
-			
-			$id = __get('id', 0, 'int');
-			
-			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
-			
-			generateODT($PDOdb, $db, $conf, $langs, $inventory);
-			break;
-			
 		case 'exportCSV':
 			
-			$id = __get('id', 0, 'int');
+			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch($id);
 			
 			exportCSV($inventory);
 			
@@ -453,7 +416,7 @@ function _card(&$inventory, $mode='edit')
 	$warehouse = new Entrepot($db);
 	$warehouse->fetch($inventory->fk_warehouse);
 	
-	print dol_get_fiche_head(inventoryPrepareHead($inventory, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), '&action='.$mode));
+	print dol_get_fiche_head(inventoryPrepareHead($inventory, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), empty($mode) ? '': '&action='.$mode));
 	
 	$lines = array();
 	_card_line($inventory, $lines, $mode);
