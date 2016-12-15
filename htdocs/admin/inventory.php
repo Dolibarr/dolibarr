@@ -23,17 +23,16 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-    $res = @include("../../../main.inc.php"); // From "custom" directory
-}
+require '../main.inc.php';
+
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once '../lib/inventory.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/inventory/lib/inventory.lib.php';
 
 // Translations
-$langs->load("inventory@inventory");
+$langs->load("stock");
+$langs->load("inventory");
 
 // Access control
 if (! $user->admin) {
@@ -103,21 +102,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
-
-
-// Example with a yes / no select
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("INVENTORY_GEN_PDF").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="300">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_INVENTORY_GEN_PDF">';
-print $form->selectyesno("INVENTORY_GEN_PDF",$conf->global->INVENTORY_GEN_PDF,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print '</td></tr>';
 
 // Example with a yes / no select
 $var=!$var;
