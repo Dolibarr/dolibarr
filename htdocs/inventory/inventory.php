@@ -77,6 +77,7 @@ function _action()
 			$inventory->set_values($_POST);
 			
             $fk_inventory = $inventory->create($user);
+			
             $fk_category = (int)GETPOST('fk_category');
             $fk_supplier = (int)GETPOST('fk_supplier');
             $fk_warehouse = (int)GETPOST('fk_warehouse');
@@ -490,7 +491,7 @@ function _card(&$inventory, $mode='edit')
 
 function _card_line(&$inventory, &$lines, $mode)
 {
-	global $db;
+	global $db,$langs,$user,$conf;
 	$inventory->amount_actual = 0;
 	
 	$TCacheEntrepot = array();
@@ -523,7 +524,7 @@ function _card_line(&$inventory, &$lines, $mode)
 			,'qty_view' => $Inventorydet->qty_view ? $Inventorydet->qty_view : 0
 			,'qty_stock' => $stock
 			,'qty_regulated' => $Inventorydet->qty_regulated ? $Inventorydet->qty_regulated : 0
-			,'action' => ($user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=delete_line&rowid='.$Inventorydet->getId(), 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
+			,'action' => ($user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
 			,'pmp_stock'=>round($pmp_actual,2)
             ,'pmp_actual'=> round($pmp * $Inventorydet->qty_view,2)
 			,'pmp_new'=>(!empty($user->rights->inventory->changePMP) ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" />'

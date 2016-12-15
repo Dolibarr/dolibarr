@@ -288,6 +288,19 @@ abstract class DoliDB implements Database
 	{
 		return $this->lastqueryerror;
 	}
+	/*
+	 * Add quote to field value if necessary
+	 * 
+	 * @param string|int	$value	value to protect
+	 * @return string|int 
+	*/
+	function quote($value) {
+		
+		if(is_null($value)) return 'NULL';
+		else if(is_numeric($value)) return $value;
+		else return "'".$this->escape( $value )."'";
+		
+	}
 	
 	/**
 	 *	Generate and execute Update SQL commande
@@ -297,31 +310,27 @@ abstract class DoliDB implements Database
 	 *	@param  int|string|array	$key		key of value to select row to update
 	 *	@return	bool|result						false or boolean
 	 */
-	function update($table,$values,$key){
+	function update($table,$fields,$key){
 	
-		foreach ($value as $k => $v) {
+		foreach ($fields as $k => $v) {
 			if(is_string($v)) $v=stripslashes($v);
 				
 			if (is_array($key)){
 				$i=array_search($k , $key );
 				if ( $i !== false) {
-					$where[] = $key[$i]."=" . $this->escape( $v ) ;
+					$where[] = $key[$i].'=' . $this->quote( $v ) ;
 					continue;
 				}
 			} else {
 				if ( $k == $key) {
-					$where[] = "$k=" .$this->escape( $v ) ;
+					$where[] = $k.'=' .$this->quote( $v ) ;
 					continue;
 				}
 			}
 	
-			if(is_null($v)) $val = 'NULL';
-			else if(is_int($v) || is_double($v)) $val=$v;
-			else $val = $this->escape( $v );
-	
-			$tmp[] = "$k=$val";
+			$tmp[] = $k.'='.$this->quote($val);
 		}
-		$sql = sprintf( "UPDATE $table SET %s WHERE %s" , implode( ",", $tmp ) , implode(" AND ",$where) );
+		$sql = sprintf( 'UPDATE '.MAIN_DB_PREFIX.$table.' SET %s WHERE %s' , implode( ',', $tmp ) , implode(' AND ',$where) );
 	
 		$res = $this->query( $sql );
 	
@@ -340,22 +349,18 @@ abstract class DoliDB implements Database
 	 *	@param	array				$values		array of values to update
 	 *	@return	bool|result						false or boolean
 	 */
-	function insert($table,$values){
+	function insert($table,$fields){
 		 
-		foreach ($values as $k => $v) {
+		foreach ($fields as $k => $v) {
 	
-			$fields[] = $k;
-			if(is_null($v)){
-				$values[] = 'NULL';
-			}else{
-				$v=stripslashes($v);
-				$values[] =$this->escape( $v );
-			}
+			$keys[] = $k;
+			$values[] = $this->quote($v);
+			
 		}
-		$sql = sprintf( 'INSERT INTO '.$table.' ( %s ) values( %s ) ', implode( ",", $fields ) ,  implode( ",", $values ) );
-	
-		$res = $this->query($sql);
 		
+		$sql = sprintf( 'INSERT INTO '.MAIN_DB_PREFIX.$table.' ( %s ) values( %s ) ', implode( ",", $keys ) ,  implode( ",", $values ) );
+
+		$res = $this->query($sql);
 		if($res===false) {
 	
 			return false;
@@ -372,8 +377,8 @@ abstract class DoliDB implements Database
 	 *	@param  int|string|array	$key		key of value to select row to update
 	 *	@return	bool|result						false or boolean
 	 */
-	function delete($table,$values,$key){
-		foreach ($values as $k => $v) {
+	function delete($table,$fields,$key){
+		foreach ($fields as $k => $v) {
 			if(is_string($v)) $v=stripslashes($v);
 		
 			if (is_array($key)){
@@ -391,7 +396,7 @@ abstract class DoliDB implements Database
 			
 		}
 	
-		$sql = sprintf( 'DELETE FROM '.$table.' WHERE '.implode(" AND ",$where));
+		$sql = sprintf( 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.implode(' AND ',$where));
 	
 		return $this->query( $sql );
 	}

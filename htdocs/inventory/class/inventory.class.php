@@ -159,7 +159,7 @@ class Inventory extends CoreObject
 		parent::update($user);
 	}
 	
-	function set_values($Tab)
+	function set_values(&$Tab)
 	{
 		global $db,$langs;
 		
@@ -183,7 +183,7 @@ class Inventory extends CoreObject
 			}	
 		}
 		
-		return parent::set_values($Tab);
+		parent::set_values($Tab);
 	}
 	
     function deleteAllLine() {

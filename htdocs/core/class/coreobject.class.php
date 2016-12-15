@@ -31,7 +31,14 @@ class CoreObject extends CommonObject {
 	
 	public $withChild = true;
 	
-	protected $__fields=array(); 
+	public $no_update_tms = false;
+	
+	public $date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
+	
+	/*
+	 *  @var Array $_fields Fields to synchronize with Database
+	 */
+	protected $__fields=array();
 	 /**
 	 *  Constructor
 	 *
@@ -39,7 +46,7 @@ class CoreObject extends CommonObject {
 	 */
 	function __construct(DoliDB &$db) {
 		
-		$this->date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
+
 	}
 	
 	protected function init() {
@@ -142,11 +149,7 @@ class CoreObject extends CommonObject {
 		
 	private function set_save_query(){
 		
-		$query=array(
-			'rowid'=>$this->id
-			,'datec'=>($this->id>0 ? $this->db->jdate($this->datec) : time())
-			,'tms'=>time()
-		);
+		$query=array();
 		
 		foreach ($this->__fields as $field=>$info) {
 	
@@ -315,20 +318,21 @@ class CoreObject extends CommonObject {
 			foreach($this->childtables as &$childTable) {
 	
 				$className = ucfirst($childTable);
-	
-				foreach($this->{$className} as $i => &$object) {
-	
-					$object->{$this->fk_element} = $this->id;
-					
-					$object->update($user);
-					if($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete==true) unset($this->{$className}[$i]);
+				if(!empty($this->{$className})) {
+					foreach($this->{$className} as $i => &$object) {
+		
+						$object->{$this->fk_element} = $this->id;
+						
+						$object->update($user);
+						if($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete==true) unset($this->{$className}[$i]);
+					}
 				}
 	
 			}
 		}
 	}
 	public function update(User &$user) {
-		if(empty($this->id )) return $this->create($user);
+		if(empty($this->id )) return $this->create($user); // To test, with that, no need to test on high level object, the core decide it, update just needed
 		
 		if(isset($this->to_delete) && $this->to_delete==true) {
 			$this->delete();
@@ -337,10 +341,10 @@ class CoreObject extends CommonObject {
 		
 			$query = array();
 			
+			$query = $this->set_save_query();
 			$query['id']=$this->id;
-			if(!isset($this->no_dt_maj))$query['tms'] = date('Y-m-d H:i:s');
-			$this->set_save_query($query);
-		
+			if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
+				
 			$this->db->update($this->table_element,$query,array('id'));
 			
 			$this->id = $this->db->last_insert_id($this->table_element);
@@ -358,21 +362,25 @@ class CoreObject extends CommonObject {
 		if($this->id>0) return $this->update($user);
 		
 		$query = array();
+		$query = $this->set_save_query();
 		$query['datec'] = date("Y-m-d H:i:s",$this->datec);
-		if(!isset($this->no_dt_maj))$query['tms'] = date('Y-m-d H:i:s');
-		$this->set_save_query($query);
-	
-		$this->db->insert($this->table_element,$query);
-	
-		$this->id = $this->db->last_insert_id($this->table_element);
+		if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
 		
-		$result = $this->call_trigger(strtoupper($this->element). '_CREATE', $user);
-		
-		$this->saveChild($user);
+		$res = $this->db->insert($this->table_element,$query);
 	
+		if($res) {
+			$this->id = $this->db->last_insert_id($this->table_element);
+			
+			$result = $this->call_trigger(strtoupper($this->element). '_CREATE', $user);
+			
+			$this->saveChild($user);
+			
+			return $this->id;
+		}
+		else{
+			return false;
+		}
 	
-		return $this->id;
-		
 	}
 	public function delete(){
 		if($this->id>0){
