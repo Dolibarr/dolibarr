@@ -23,8 +23,6 @@
  
 require_once '../main.inc.php';
 
-ini_set('memory_limit', '512M');
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/listview.class.php';
 require_once DOL_DOCUMENT_ROOT.'/inventory/class/inventory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/inventory/lib/inventory.lib.php';
@@ -35,11 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-set_time_limit(0);
+$langs->load("stock");
+$langs->load("inventory");
 
 if(!$user->rights->inventory->read) accessforbidden();
-
-$langs->load("inventory");
 
 _action();
 

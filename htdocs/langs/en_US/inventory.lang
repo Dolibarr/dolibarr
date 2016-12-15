@@ -1,0 +1,52 @@
+# Dolibarr language file - Source file is en_US - inventory
+
+Module104420Name = Inventory
+Module104420Desc = Create and manage your inventory
+
+inventorySetup = Inventory Setup
+
+inventoryCreatePermission=Create new inventory
+inventoryReadPermission=View inventories
+inventoryWritePermission=Update inventories
+inventoryValidatePermission=Validate inventory
+
+inventoryTitle=Inventory
+inventoryListTitle=List
+inventoryListEmpty=No inventory in progress
+
+inventoryCreateDelete=Create/Delete inventory
+inventoryCreate=Create new
+inventoryEdit=Edit
+inventoryValidate=Validated
+inventoryDraft=Running
+inventorySelectWarehouse=Warehouse choice
+inventoryConfirmCreate=Create
+inventoryOfWarehouse=Inventory for warehouse : %s
+inventoryErrorQtyAdd=Error : one quantity is leaser than zero
+inventoryMvtStock=By inventory
+inventoryWarningProductAlreadyExists=This product is already into list
+SelectCategory=Category filter
+SelectFournisseur=Supplier filter
+inventoryOnDate=Inventory 
+INVENTORY_DISABLE_VIRTUAL=Allow to not destock child product from a kit on inventory
+INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Use the buy price if no last buy price can be found
+INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Stock mouvment have date of inventory
+inventoryChangePMPPermission=Allow to change PMP value for a product
+ColumnNewPMP=New unit PMP
+OnlyProdsInStock=Do not add product without stock
+TheoricalQty=Theorique qty
+TheoricalValue=Theorique qty
+LastPA=Last BP
+CurrentPA=Curent BP
+RealQty=Real Qty
+RealValue=Real Value
+RegulatedQty=Regulated Qty
+AddInventoryProduct=Add product to inventory
+AddProduct=Add
+ApplyPMP=Apply PMP
+FlushInventory=Flush inventory
+ConfirmFlushInventory=Do you confirm this action ?
+InventoryFlushed=Inventory flushed
+ExitEditMode=Exit edition
+inventoryDeleteLine=Delete line
+RegulateStock=Regulate Stock
