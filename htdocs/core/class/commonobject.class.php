@@ -3090,11 +3090,14 @@ abstract class CommonObject
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
-			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
-			else
-				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
-
+			if (!empty($user->rights->margins->creer))
+			{
+				if ($conf->global->MARGIN_TYPE == "1")
+					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				else
+					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';	
+			}
+			
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)

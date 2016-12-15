@@ -178,7 +178,10 @@ if (empty($usemargins)) $usemargins=0;
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
+  		
+  	<?php if (!empty($user->rights->margins->creer)) { ?>
   	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<?php } ?>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
   	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }

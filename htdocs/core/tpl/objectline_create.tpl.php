@@ -81,9 +81,13 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','inv
 	}
 	if (! empty($usemargins))
 	{
+		if (!empty($user->rights->margins->creer)) {
 		?>
 		<td align="right" class="margininfos linecolmargin1">
 		<?php
+		}
+		else $colspan++;
+		
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
 		else
@@ -256,6 +260,7 @@ else {
 	}
 	if (! empty($usemargins))
 	{
+		if (!empty($user->rights->margins->creer)) {
 		?>
 		<td align="right" class="nobottom margininfos linecolmargin">
 			<!-- For predef product -->
@@ -266,8 +271,9 @@ else {
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
-
 		$coldisplay++;
+		}
+		
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
@@ -362,7 +368,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 
 	if (! empty($usemargins))
 	{
-		$colspan++; // For the buying price
+		if (!empty($user->rights->margins->creer)) $colspan++; // For the buying price
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 	}
