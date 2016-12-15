@@ -342,10 +342,10 @@ class CoreObject extends CommonObject {
 			$query = array();
 			
 			$query = $this->set_save_query();
-			$query['id']=$this->id;
+			$query['rowid']=$this->id;
 			if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
 				
-			$this->db->update($this->table_element,$query,array('id'));
+			$this->db->update($this->table_element,$query,array('rowid'));
 			
 			$this->id = $this->db->last_insert_id($this->table_element);
 				
@@ -382,19 +382,22 @@ class CoreObject extends CommonObject {
 		}
 	
 	}
-	public function delete(){
+	public function delete(User &$user){
 		if($this->id>0){
 			$this->call_trigger(strtoupper($this->element). '_DELETE', $user);
-			$this->db->delete($this->table_element,array('id'=>$this->id),array(0=>'id'));
 			
-			if($this->withChild) {
+			$this->db->delete($this->table_element,array('rowid'=>$this->id),array('rowid'));
+			
+			if($this->withChild && !empty($this->childtables)) {
 				foreach($this->childtables as &$childTable) {
 						
 					$className = ucfirst($childTable);
-					foreach($this->{$className} as &$object) {
-			
-						$object->delete();
-			
+					if(!empty($this->{$className})) {
+						foreach($this->{$className} as &$object) {
+				
+							$object->delete($user);
+				
+						}
 					}
 			
 				}

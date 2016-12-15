@@ -8,7 +8,7 @@
         $('#a_save_qty_'+k).hide();
         
         $.ajax({
-            url:"script/interface.php"
+            url:"ajax/ajax.inventory.php"
             ,data:{
                 'fk_det_inventory' : fk_det_inventory
                 ,'qty': qty
@@ -37,7 +37,7 @@
         $('#a_save_new_pmp_'+k).hide();
         
         $.ajax({
-            url:"script/interface.php"
+            url:"ajax/ajax.inventory.php"
             ,data:{
                 'fk_det_inventory' : fk_det_inventory
                 ,'pmp': pmp
@@ -137,7 +137,7 @@
                     <td align="right"><?php echo price($row['pmp_actual']); ?></td>
                     <?php
                     if(!empty($user->rights->inventory->changePMP)) {
-                    	echo '<td>'.$row['pmp_new'].'</td>';	
+                    	echo '<td align="right">'.$row['pmp_new'].'</td>';	
 					}
                     ?>
                     <td align="right"><?php echo price($row['pa_actual']); ?></td>

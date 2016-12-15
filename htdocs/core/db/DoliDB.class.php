@@ -313,7 +313,6 @@ abstract class DoliDB implements Database
 	function update($table,$fields,$key){
 	
 		foreach ($fields as $k => $v) {
-			if(is_string($v)) $v=stripslashes($v);
 				
 			if (is_array($key)){
 				$i=array_search($k , $key );
@@ -328,10 +327,9 @@ abstract class DoliDB implements Database
 				}
 			}
 	
-			$tmp[] = $k.'='.$this->quote($val);
+			$tmp[] = $k.'='.$this->quote($v);
 		}
-		$sql = sprintf( 'UPDATE '.MAIN_DB_PREFIX.$table.' SET %s WHERE %s' , implode( ',', $tmp ) , implode(' AND ',$where) );
-	
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET '.implode( ',', $tmp ).' WHERE ' . implode(' AND ',$where) ;
 		$res = $this->query( $sql );
 	
 		if($res===false) {
@@ -358,7 +356,9 @@ abstract class DoliDB implements Database
 			
 		}
 		
-		$sql = sprintf( 'INSERT INTO '.MAIN_DB_PREFIX.$table.' ( %s ) values( %s ) ', implode( ",", $keys ) ,  implode( ",", $values ) );
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$table.' 
+					( '.implode( ",", $keys ).' ) 
+					VALUES ( '.implode( ",", $values ).' ) ';
 
 		$res = $this->query($sql);
 		if($res===false) {
@@ -379,26 +379,30 @@ abstract class DoliDB implements Database
 	 */
 	function delete($table,$fields,$key){
 		foreach ($fields as $k => $v) {
-			if(is_string($v)) $v=stripslashes($v);
-		
 			if (is_array($key)){
 				$i=array_search($k , $key );
 				if ( $i !== false) {
-					$where[] = $key[$i]."=" . $this->escape( $v ) ;
+					$where[] = $key[$i].'=' . $this->quote( $v ) ;
 					continue;
 				}
 			} else {
 				if ( $k == $key) {
-					$where[] = "$k=" .$this->escape( $v ) ;
+					$where[] = $k.'='.$this->quote( $v ) ;
 					continue;
 				}
 			}
 			
 		}
 	
-		$sql = sprintf( 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.implode(' AND ',$where));
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.implode(' AND ',$where);
 	
-		return $this->query( $sql );
+		$res = $this->query( $sql );
+		if($res===false) {
+			return false;
+		}
+		
+		return true;
+		
 	}
 	
 }

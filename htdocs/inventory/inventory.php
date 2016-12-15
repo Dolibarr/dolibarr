@@ -131,7 +131,7 @@ function _action()
 			if (!$user->rights->inventory->write) accessforbidden();
 			
 			
-			$id = __get('id', 0, 'int');
+			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
 			$inventory->load($PDOdb, $id);
@@ -153,7 +153,7 @@ function _action()
 			
 		case 'regulate':
 			
-			$id = __get('id', 0, 'int');
+			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
 			$inventory->load($PDOdb, $id);
@@ -174,10 +174,10 @@ function _action()
 			
 		case 'changePMP':
 			
-			$id = __get('id', 0, 'int');
+			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch( $id );
 			
 			$inventory->changePMP($PDOdb);
 			
@@ -188,12 +188,11 @@ function _action()
 		case 'add_line':
 			if (!$user->rights->inventory->write) accessforbidden();
 			
-			
-			$id = __get('id', 0, 'int');
-			$fk_warehouse = __get('fk_warehouse', 0, 'int');
+			$id = GETPOST('id');
+			$fk_warehouse = GETPOST('fk_warehouse');
 			
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch( $id );
 			
 			$type = (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT) ? 'string' : 'int'); //AA heu ?
 			
@@ -245,16 +244,17 @@ function _action()
 			
 			
 			//Cette action devrais se faire uniquement si le status de l'inventaire est à 0 mais aucune vérif
-			$rowid = __get('rowid', 0, 'int');
-			$Inventorydet = new Inventory($db);
-			$Inventorydet->load($PDOdb, $rowid);
-			$Inventorydet->delete($PDOdb);
-			
-			$id = __get('id', 0, 'int');
+			$rowid = GETPOST('rowid');
+			$Inventorydet = new Inventorydet($db);
+			if($Inventorydet->fetch($rowid)>0) {
+				$Inventorydet->delete($user);
+				setEventMessage("ProductDeletedFromInventory");
+			}
+			$id = GETPOST('id');
 			$inventory = new Inventory($db);
-			$inventory->load($PDOdb, $id);
+			$inventory->fetch( $id);
 			
-			_fiche($PDOdb, $user, $db, $conf, $langs, $inventory, 'edit');
+			_card($inventory, 'edit');
 			
 			break;
         case 'flush':
@@ -519,16 +519,14 @@ function _card_line(&$inventory, &$lines, $mode)
 			'produit' => $product->getNomUrl(1).'&nbsp;-&nbsp;'.$product->label
 			,'entrepot'=>$e->getNomUrl(1)
 			,'barcode' => $product->barcode
-			,'qty' =>($mode == 'edit' ? '<input type="text" name="qty_to_add['.$k.']" value="'.$qty.'" size="8" style="text-align:center;" />' : $qty )
-                        .($mode =='edit' ? '<a id="a_save_qty_'.$k.'" href="javascript:save_qty('.$k.')">'.img_picto($langs->trans('Add'), 'plus16@inventory').'</a>' : '')
+			,'qty' =>($mode == 'edit' ? '<input type="text" name="qty_to_add['.$k.']" value="'.$qty.'" size="8" style="text-align:center;" /> <a id="a_save_qty_'.$k.'" href="javascript:save_qty('.$k.')">'.img_picto($langs->trans('Add'), 'plus16@inventory').'</a>' : '' )
 			,'qty_view' => $Inventorydet->qty_view ? $Inventorydet->qty_view : 0
 			,'qty_stock' => $stock
 			,'qty_regulated' => $Inventorydet->qty_regulated ? $Inventorydet->qty_regulated : 0
 			,'action' => ($user->rights->inventory->write ? '<a onclick="if (!confirm(\'Confirmez-vous la suppression de la ligne ?\')) return false;" href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : '')
 			,'pmp_stock'=>round($pmp_actual,2)
             ,'pmp_actual'=> round($pmp * $Inventorydet->qty_view,2)
-			,'pmp_new'=>(!empty($user->rights->inventory->changePMP) ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" />'
-					.($mode =='edit' ? '<a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' : '') : '')
+			,'pmp_new'=>(!empty($user->rights->inventory->changePMP && $mode =='edit') ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" /> <a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' :  price($Inventorydet->new_pmp))
             ,'pa_stock'=>round($last_pa * $stock,2)
             ,'pa_actual'=>round($last_pa * $Inventorydet->qty_view,2)
 			,'current_pa_stock'=>round($current_pa * $stock,2)
@@ -656,24 +654,24 @@ function _headerList($view) {
 	?>
 			<tr style="background-color:#dedede;">
 				<th align="left" width="20%">&nbsp;&nbsp;Produit</th>
-				<th align="center">Entrepôt</td>
+				<th align="center"><?php echo $langs->trans('Warehouse'); ?></th>
 				<?php if (! empty($conf->barcode->enabled)) { ?>
-					<th align="center">Code-barre</td>
+					<th align="center"><?php echo $langs->trans('Barcode'); ?></th>
 				<?php } ?>
 				<?php if ($view['can_validate'] == 1) { ?>
-					<th align="center" width="20%">Quantité théorique</th>
+					<th align="center" width="20%"><?php echo $langs->trans('TheoricalQty'); ?></th>
 					<?php
 	                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
-	              		echo '<th align="center" width="20%" colspan="3">Valeur théorique</th>';   	
+	              		echo '<th align="center" width="20%" colspan="3">'.$langs->trans('TheoricalValue').'</th>';   	
 					 }
 					 else {
-					 	echo '<th align="center" width="20%" colspan="2">Valeur théorique</th>';
+					 	echo '<th align="center" width="20%" colspan="2">'.$langs->trans('TheoricalValue').'</th>';
 					 }
 					 
 					?>
 					
 				<?php } ?>
-				    <th align="center" width="20%">Quantité réelle</th>
+				    <th align="center" width="20%"><?php echo $langs->trans('RealQty'); ?></th>
 				<?php if ($view['can_validate'] == 1) { ?>
 				    
 				    <?php
@@ -682,39 +680,39 @@ function _headerList($view) {
 					 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)) $colspan++;
 				     if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)) $colspan++;
 					
-	                 echo '<th align="center" width="20%" colspan="'.$colspan.'">Valeur réelle</th>';
+	                 echo '<th align="center" width="20%" colspan="'.$colspan.'">'.$langs->trans('RealValue').'</th>';
 					 
 					?>
 						
-					<th align="center" width="15%">Quantité régulée</th>
+					<th align="center" width="15%"><?php echo $langs->trans('RegulatedQty'); ?></th>
 				<?php } ?>
 				<?php if ($view['is_already_validate'] != 1) { ?>
 					<th align="center" width="5%">#</th>
 				<?php } ?>
-				<th align="center" width="5%"></th>
+				
 			</tr>
 			<?php if ($view['can_validate'] == 1) { ?>
 	    	<tr style="background-color:#dedede;">
 	    	    <th colspan="<?php echo empty($conf->barcode->enabled) ? 3 : 4;  ?>">&nbsp;</th>
-	    	    <th>PMP</th>
-	    	    <th>Dernier PA</th>
+	    	    <th><?php echo $langs->trans('PMP'); ?></th>
+	    	    <th><?php echo $langs->trans('LastPA'); ?></th>
 	    	    <?php
 	                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
-	              		echo '<th>PA courant</th>';   	
+	              		echo '<th>'.$langs->trans('CurrentPA').'</th>';   	
 					 }
 					 
 				?>
 	    	    <th>&nbsp;</th>
-	    	    <th>PMP</th>
+	    	    <th><?php echo $langs->trans('PMP'); ?></th>
 	    	    <?php
 	    	    if(!empty($user->rights->inventory->changePMP)) {
 	    	    	echo '<th rel="newPMP">'.$langs->trans('ColumnNewPMP').'</th>';
 	    	    }
 	    	    ?>
-	            <th>Dernier PA</th>
+	            <th><?php echo $langs->trans('LastPA'); ?></th>
 	            <?php
 	                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
-	              		echo '<th>PA courant</th>';   	
+	              		echo '<th>'.$langs->trans('CurrentPA').'</th>';   	
 					 }
 					 
 				?>

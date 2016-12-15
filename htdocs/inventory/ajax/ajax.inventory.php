@@ -1,13 +1,10 @@
 <?php
 
-    require('../config.php');
-    require('../class/inventory.class.php');
-
+    require '../../main.inc.php';
+    require_once DOL_DOCUMENT_ROOT.'/inventory/class/inventory.class.php';
     
     $get = GETPOST('get');
     $put = GETPOST('put');
-    
-    $PDOdb=new TPDOdb;
     
     switch ($put) {
         case 'qty':
@@ -15,10 +12,10 @@
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
-            $det = new Inventorydet;
-            if( $det->load($PDOdb, $fk_det_inventory)) {
+            $det = new Inventorydet($db);
+            if( $det->fetch( $fk_det_inventory)) {
                 $det->qty_view+=GETPOST('qty');
-                $det->save($PDOdb);
+                $det->update($user);
                 
                 echo $det->qty_view;
             }
@@ -33,10 +30,10 @@
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
-            $det = new Inventorydet;
-            if( $det->load($PDOdb, $fk_det_inventory)) {
+            $det = new Inventorydet($db);
+            if( $det->fetch( $fk_det_inventory)) {
                 $det->new_pmp=price2num(GETPOST('pmp'));
-                $det->save($PDOdb);
+                $det->update($user);
                 
                 echo $det->new_pmp;
             }
