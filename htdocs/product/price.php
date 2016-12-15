@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -246,8 +246,8 @@ if (empty($reshook))
 		        {
 		            $obj = $db->fetch_object($resql);
 		            $npr = $obj->recuperableonly;
-		            $localtax1 = $obj->localtax1;
-		            $localtax2 = $obj->localtax2;
+		            $localtax1 = get_localtax($tva_tx,1);
+		            $localtax2 = get_localtax($tva_tx,2);
 		            $localtax1_type = $obj->localtax1_type;
 		            $localtax2_type = $obj->localtax2_type;
 		        }
