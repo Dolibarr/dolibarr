@@ -567,7 +567,7 @@ print '<td class="liste_titre" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';
-print '</tr>';
+print "</tr>\n";
 
 
 $plannedworkloadoutputformat='allhourmin';
