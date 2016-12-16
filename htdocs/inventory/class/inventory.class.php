@@ -362,7 +362,7 @@ class Inventory extends CoreObject
 		
 		if($type=='All') {
 			
-			$sql="SELECT i.rowid, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status
+			$sql="SELECT i.rowid,i.title, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status
 				  FROM ".MAIN_DB_PREFIX."inventory i
 				  LEFT JOIN ".MAIN_DB_PREFIX."entrepot e ON (e.rowid = i.fk_warehouse)
 				  WHERE i.entity=".(int) $conf->entity;

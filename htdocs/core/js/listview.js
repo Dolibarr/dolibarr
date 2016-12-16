@@ -85,7 +85,15 @@ function Listview_GoToPage(idListe,pageNumber){
 }
 function Listview_submitSearch(obj) {
 	
-	$(obj).closest('form').submit();
+	$form = $(obj).closest('form');
+	console.log($form);
+	if($form.length>0){
+		$form.submit();
+	}
+	else{
+		//There is no form for search action
+		null;
+	}
 
 }
 function Listview_launch_downloadAs(mode,url,token,session_name) {

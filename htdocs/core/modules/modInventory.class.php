@@ -250,7 +250,7 @@ class modinventory extends DolibarrModules
 								'titre'=>'ListInventory',
 								'mainmenu'=>'inventory',
 								'leftmenu'=>'inventory',
-								'url'=>'/inventory/inventory.php?action=list',
+								'url'=>'/inventory/list.php',
 								'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.

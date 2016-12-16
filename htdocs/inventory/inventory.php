@@ -53,11 +53,6 @@ function _action()
 	$action=GETPOST('action');
 	
 	switch($action) {
-		case 'list':
-			_list();
-
-			break;
-		
 		case 'create':
 			if (!$user->rights->inventory->create) accessforbidden();
 			
@@ -264,7 +259,7 @@ function _action()
 			
 			setEventMessage($langs->trans('InventoryDeleted'));
 			
-			header('Location: '.dol_buildpath('/inventory/inventory.php?action=list', 1));
+			header('Location: '.dol_buildpath('/inventory/list.php', 1));
 			exit;
 			
 			break;
@@ -294,67 +289,6 @@ function _action()
 			break;
 	}
 	
-}
-
-function _list() 
-{
-	
-	global $db, $conf, $langs, $user;
-		
-	llxHeader('',$langs->trans('inventoryListTitle'),'','');
-	
-	$inventory = new Inventory($db);
-	$l = new ListView($db,'listInventory');
-
-	$THide = array('label');
-
-	echo $l->render(Inventory::getSQL('All'), array(
-		'link'=>array(
-			'fk_warehouse'=>'<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id=@val@">'.img_picto('','object_stock.png','',0).' @label@</a>'
-		)
-		,'translate'=>array()
-		,'hide'=>$THide
-		,'type'=>array(
-			'datec'=>'date'
-			,'tms'=>'datetime'
-			,'date_inventory'=>'date'
-		)
-		,'liste'=>array(
-			'titre'=>$langs->trans('inventoryListTitle')
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['fk_soc']) | (int)isset($_REQUEST['fk_product'])
-			,'messageNothing'=>$langs->trans('inventoryListEmpty')
-			,'picto_search'=>img_picto('','search.png', '', 0)
-		)
-		,'title'=>array(
-			'rowid'=>$langs->trans('Title')
-			,'fk_warehouse'=>$langs->trans('Warehouse')
-			,'date_inventory'=>$langs->trans('InventoryDate')
-			,'datec'=>$langs->trans('DateCreation')
-			,'tms'=>$langs->trans('DateUpdate')
-			,'status'=>$langs->trans('Status')
-		)
-		,'eval'=>array(
-			'status' => '(@val@ ? img_picto("'.$langs->trans("inventoryValidate").'", "statut4") : img_picto("'.$langs->trans("inventoryDraft").'", "statut3"))'
-			,'rowid'=>'Inventory::getLink(@val@)'
-		)
-		,'search'=>array(
-				'date_inventory'=>'calendar'
-				
-		)
-	));
-
-
-	if ($user->rights->inventory->create)
-	{
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="inventory.php?action=create">'.$langs->trans('inventoryCreate').'</a>';
-		print '</div>';
-	}
-
-	llxFooter('');
 }
 
 function _card_warehouse(&$inventory)

@@ -40,7 +40,7 @@ class Listview {
 		if(!isset($TParam['link']))$TParam['link']=array();
 		if(!isset($TParam['type']))$TParam['type']=array();
 		if(!isset($TParam['orderby']['noOrder']))$TParam['orderby']['noOrder']=array();
-		if(!isset($TParam['no-select'])) $TParam['no-select'] = 1;
+		if(!isset($TParam['allow-fields-select'])) $TParam['allow-fields-select'] = 0;
 		
 		if(!isset($TParam['list']))$TParam['list']=array();
 		$TParam['list'] = array_merge(array(
@@ -53,7 +53,7 @@ class Listview {
 			,'orderUp'=>''
 			,'id'=>$this->id
 			,'head_search'=>''
-			,'export'=>array()
+			,'export'=>array() //TODO include native export
 			,'view_type'=>'' //TODO to include graph or kanban instead of list
 		),$TParam['list']);
 		
@@ -133,7 +133,7 @@ class Listview {
 		}
 	}
 	
-	private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $sBindKey, $key)
+	private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
 	{
 	
 		if(isset($TParam['operator'][$key]))
@@ -272,38 +272,40 @@ class Listview {
 				//$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
 			}
 			else if($typeRecherche==='calendars') {
-				$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.'][start]',isset($value['start'])?$value['start']:'',10,10,' listviewtbs="calendars" ')
-					.' '.$form->calendrier('','Listview['.$this->id.'][search]['.$key.'][end]',isset($value['end'])?$value['end']:'',10,10,' listviewtbs="calendars" ');	
+				
+				$fsearch = $form->select_date(isset($value['start'])?$value['start']:'', 'Listview['.$this->id.'][search]['.$key.'][start]',0, 0, 1, "", 1, 0, 1)
+						 . $form->select_date(isset($value['end'])?$value['end']:'', 'Listview['.$this->id.'][search]['.$key.'][end]',0, 0, 1, "", 1, 0, 1);
+				
 			}
 			else if(is_string($typeRecherche)) {
 				$fsearch=$TParam['search'][$key];	
 			}
 			else {
-				$fsearch=$form->texte('','Listview['.$this->id.'][search]['.$key.']',$value,15,255,' listviewtbs="input" ');	
+				$fsearch='<input type="text" name="Listview['.$this->id.'][search]['.$key.']" id="Listview['.$this->id.'][search]['.$key.']" value="'.$value.'" size="15" />';
 			}
 
 			if(!empty($param_search['allow_is_null'])) {
-				$valueNull = isset($_REQUEST['Listview'][$this->id]['search_on_null'][$key]) ? 1 : 0;
+				$valueNull = isset($ListPOST[$this->id]['search_on_null'][$key]) ? 1 : 0;
 				$fsearch.=' '.$form->checkbox1('', 'Listview['.$this->id.'][search_on_null]['.$key.']',1, $valueNull,' onclick=" if($(this).is(\':checked\')){ $(this).prev().val(\'\'); }" ').img_help(1, $langs->trans('SearchOnNUllValue'));
 			}
 			
 
-			if(!empty($THeader[$key]) || $this->getViewType($TParam) == 'chart') {
+			if(!empty($THeader[$key])) {
 				$TSearch[$key] = $fsearch;
 				$nb_search_in_bar++;
 			}
 			else {
 				
-				$libelle = !empty($TParam['title'][$key]) ? $TParam['title'][$key] : $key ;
-				$TParam['liste']['head_search'].='<div>'.$libelle.' '.$fsearch.'</div>';	
+				$label = !empty($TParam['title'][$key]) ? $TParam['title'][$key] : $key ;
+				$TParam['list']['head_search'].='<div><span style="min-width:200px;display:inline-block;">'.$libelle.'</span> '.$fsearch.'</div>';	
 			}
 				
 		}
 		
-		$search_button = ' <a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.$TParam['liste']['picto_search'].'</a>';
+		$search_button = ' <a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.img_search().'</a>';
 
-		if(!empty($TParam['liste']['head_search'])) {
-			$TParam['liste']['head_search'].='<div align="right">'.$langs->trans('Search').' '.$search_button.'</div>';
+		if(!empty($TParam['list']['head_search'])) {
+			$TParam['list']['head_search']='<div style="float:right;">'.$search_button.'</div>'.$TParam['list']['head_search'];
 		}
 		
 		if($nb_search_in_bar>0) {
@@ -364,7 +366,7 @@ class Listview {
 		return array($TTotal,$TTotalGroup);
 	}
 
-	private function getJS(&$TParam) {
+	private function getJS() {
 		$javaScript = '<script language="javascript">
 		if(typeof(Listview_include)=="undefined") {
 			document.write("<script type=\"text/javascript\" src=\"'.DOL_URL_ROOT.'/core/js/listview.js?version='.DOL_VERSION.'\"></scr");
@@ -467,34 +469,32 @@ class Listview {
 	
 	private function renderList(&$THeader, &$TField, &$TTotal,&$TTotalGroup, &$TParam) {
 		
-		$javaScript = $this->getJS($TParam);
-		
-		/*$TPagination=array(
-			'pagination'=>array('pageSize'=>$TParam['limit']['nbLine'], 'pageNum'=>$TParam['limit']['page'], 'blockName'=>'champs', 'totalNB'=>count($TField))
-		);*/
-		
 		$TSearch = $this->setSearch($THeader, $TParam);
 		$TExport=$this->setExport($TParam, $TField, $THeader);
 		$TField = $this->addTotalGroup($TField,$TTotalGroup);
 		
-		$out = $javaScript;
+		$out = $this->getJS();
 		$out.=load_fiche_titre($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $TParam['limit']['page'], count($TField), 'title_products.png', 0, '', '', $limit);
 		$out.='<table id="'.$this->id.'" class="liste" width="100%">
 			<thead>';
 		
-		if(!empty($TParam['liste']['head_search'])) {
+		if(!empty($TParam['list']['head_search'])) {
 			$out.='<tr class="liste_titre barre-recherche-head">
-					<td colspan="'.$TParam['liste']['nb_columns'].'">'.$TParam['liste']['head_search'].'</td>
+					<td colspan="'.count($THeader).'">'.$TParam['list']['head_search'].'</td>
 				</tr>';
 		}
 			
 		$out.='<tr class="liste_titre">';
 		
-		foreach($THeader as $head) {
+		foreach($THeader as $field=>$head) {
+			if(empty($head['width']))$head['width']='auto';
+			
 			$out.='<th style="width:'.$head['width'].';text-align:'.$head['text-align'].'" class="liste_titre">'.$head['libelle'];
-						
-			if($head['order']) $out.='<span class="nowrap">[onshow;block=span; when [entete.order]==1]<a href="javascript:Listview_OrderDown(\'[liste.id]\',\'[entete.$;strconv=js]\')">'.img_down().'</a>
-								<a href="javascript:Listview_OrderUp(\'[liste.id]\', \'[entete.$;strconv=js]\')">'.img_up().'</a></span>';
+				
+			if($head['order']) $out.='<span class="nowrap">
+					<a href="javascript:Listview_OrderDown(\''.$this->id.'\',\''.$field.'\')">'.img_down().'</a>
+					<a href="javascript:Listview_OrderUp(\''.$this->id.'\', \''.$field.'\')">'.img_up().'</a>
+			</span>';
 			
 			$out.=$head['more'];
 			$out.='</th>';
@@ -517,7 +517,7 @@ class Listview {
 		
 		if(empty($TField)) {
 			$out.='<tr class="'.$class.'">
-					<td colspan="'.$TParam['liste']['nb_columns'].'">'.$TParam['liste']['messageNothing'].'</td></tr>';
+					<td colspan="'.$TParam['list']['nb_columns'].'">'.$TParam['list']['messageNothing'].'</td></tr>';
 			
 		}
 		else{
@@ -537,7 +537,7 @@ class Listview {
 			
 			$out.='</tbody>';
 			
-			if(!empty($TParam['liste']['haveTotal'])) {
+			if(!empty($TParam['list']['haveTotal'])) {
 				$out.='<tfoot>
 				<tr class="liste_total">';
 			
@@ -584,8 +584,8 @@ class Listview {
 			foreach($TParam['orderBy'] as $field=>$order) {
 				if(!$first) $sql.=',';
 				
-				if($order=='DESC')$TParam['liste']['orderDown'] = $field;
-				else $TParam['liste']['orderUp'] = $field;
+				if($order=='DESC')$TParam['list']['orderDown'] = $field;
+				else $TParam['list']['orderUp'] = $field;
 				
 				if(strpos($field,'.')===false)	$sql.='`'.$field.'` '.$order;
 				else $sql.=$field.' '.$order;
@@ -610,7 +610,7 @@ class Listview {
 		
 		foreach($TField as $row) {
 			if($first) {
-				$this->init_entete($THeader, $TParam, $row);
+				$this->initHeader($THeader, $TParam, $row);
 				$first=false;
 			}	
 			
@@ -619,7 +619,7 @@ class Listview {
 
 	}
 	
-	private function init_entete(&$THeader, &$TParam, $currentLine) {
+	private function initHeader(&$THeader, &$TParam, $currentLine) {
 		
 		$TField=$TFieldVisibility=array();
 		
@@ -630,9 +630,9 @@ class Listview {
 		global $user;
 		
 		$contextpage=md5($_SERVER['PHP_SELF']);
-		if(empty($TParam['no-select'])) {
+		if(!empty($TParam['allow-field-select'])) {
 			
-			dol_include_once('/core/class/html.form.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			
 			global $db,$conf,$user;
 			$form=new Form($db);
@@ -693,7 +693,7 @@ class Listview {
 				$lastfield = $field;
 				$THeader[$field] = array(
 					'libelle'=>$libelle
-					,'order'=>((in_array($field, $TParam['orderby']['noOrder']) || $this->typeRender != 'sql') ? 0 : 1)
+					,'order'=>(in_array($field, $TParam['orderby']['noOrder']) ? 0 : 1)
 					,'width'=>(!empty($TParam['size']['width'][$field]) ? $TParam['size']['width'][$field] : 'auto')
 					,'text-align'=>(!empty($TParam['position']['text-align'][$field]) ? $TParam['position']['text-align'][$field] : 'auto')
 					,'more'=>''
@@ -843,7 +843,7 @@ class Listview {
 			$first=true;
 			while($currentLine = $this->db->fetch_object($res)) {
 				if($first) {
-					$this->init_entete($THeader, $TParam, $currentLine);
+					$this->initHeader($THeader, $TParam, $currentLine);
 					$first = false;
 				}
 				
