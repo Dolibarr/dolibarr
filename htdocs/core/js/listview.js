@@ -1,27 +1,27 @@
-var TListTBS_include = true;
+var Listview_include = true;
 
-function TListTBS_OrderDown(idListe, column) {
+function Listview_OrderDown(idListe, column) {
 	var base_url = document.location.href;
 	
-	base_url = TListTBS_recup_form_param(idListe,base_url);
-	base_url = TListTBS_removeParam(base_url,'TListTBS['+encodeURIComponent(idListe)+'][orderBy]');
+	base_url = Listview_recup_form_param(idListe,base_url);
+	base_url = Listview_removeParam(base_url,'Listview['+encodeURIComponent(idListe)+'][orderBy]');
 	
-	base_url = TListTBS_removeParam(base_url,'get-all-for-export');
+	base_url = Listview_removeParam(base_url,'get-all-for-export');
 	
-	document.location.href=TListTBS_modifyUrl(base_url,"TListTBS["+encodeURIComponent(idListe)+"][orderBy]["+encodeURIComponent(column)+"]","DESC");
+	document.location.href=Listview_modifyUrl(base_url,"Listview["+encodeURIComponent(idListe)+"][orderBy]["+encodeURIComponent(column)+"]","DESC");
 }
-function TListTBS_OrderUp(idListe, column) {
+function Listview_OrderUp(idListe, column) {
 	
 	var base_url = document.location.href;
 	
-	base_url = TListTBS_recup_form_param(idListe,base_url);
-	base_url = TListTBS_removeParam(base_url,'TListTBS['+encodeURIComponent(idListe)+'][orderBy]');
+	base_url = Listview_recup_form_param(idListe,base_url);
+	base_url = Listview_removeParam(base_url,'Listview['+encodeURIComponent(idListe)+'][orderBy]');
 	
-	base_url = TListTBS_removeParam(base_url,'get-all-for-export');
+	base_url = Listview_removeParam(base_url,'get-all-for-export');
 	
-	document.location.href=TListTBS_modifyUrl(base_url,"TListTBS["+encodeURIComponent(idListe)+"][orderBy]["+encodeURIComponent(column)+"]","ASC");
+	document.location.href=Listview_modifyUrl(base_url,"Listview["+encodeURIComponent(idListe)+"][orderBy]["+encodeURIComponent(column)+"]","ASC");
 }
-function TListTBS_modifyUrl(strURL,paramName,paramNewValue){
+function Listview_modifyUrl(strURL,paramName,paramNewValue){
 	    if (strURL.indexOf(paramName+'=')!=-1){
         	
                 var strFirstPart=strURL.substring(0,strURL.indexOf(paramName+'=',0))+paramName+'=';
@@ -39,7 +39,7 @@ function TListTBS_modifyUrl(strURL,paramName,paramNewValue){
         
         return strURL;
 }
-function TListTBS_removeParam(strURL, paramMask) {
+function Listview_removeParam(strURL, paramMask) {
 	var cpt=0;
 	var url = '';
 	
@@ -60,11 +60,11 @@ function TListTBS_removeParam(strURL, paramMask) {
 	 return url;
 }
 
-function TListTBS_recup_form_param(idListe,base_url) {
+function Listview_recup_form_param(idListe,base_url) {
 	
 	$('#'+idListe+' tr.barre-recherche [listviewtbs],#'+idListe+' tr.barre-recherche-head input,#'+idListe+' tr.barre-recherche-head select,#'+idListe+' div.tabsAction input[listviewtbs]').each(function(i,item) {
 		if($(item).attr("name")) {
-			base_url = TListTBS_modifyUrl(base_url, $(item).attr("name") , $(item).val());
+			base_url = Listview_modifyUrl(base_url, $(item).attr("name") , $(item).val());
 		}
 		
 	});
@@ -72,37 +72,37 @@ function TListTBS_recup_form_param(idListe,base_url) {
 	return base_url;
 }
 
-function TListTBS_GoToPage(idListe,pageNumber){
+function Listview_GoToPage(idListe,pageNumber){
 	
 	var base_url = document.location.href;
 	
-	base_url = TListTBS_recup_form_param(idListe,base_url);
-	base_url =TListTBS_modifyUrl(base_url,"TListTBS["+encodeURIComponent(idListe)+"][page]",pageNumber);
+	base_url = Listview_recup_form_param(idListe,base_url);
+	base_url =Listview_modifyUrl(base_url,"Listview["+encodeURIComponent(idListe)+"][page]",pageNumber);
 	
-	base_url = TListTBS_removeParam(base_url,'get-all-for-export');
+	base_url = Listview_removeParam(base_url,'get-all-for-export');
 	
 	document.location.href=base_url;
 }
-function TListTBS_submitSearch(obj) {
+function Listview_submitSearch(obj) {
 	
 	$(obj).closest('form').submit();
-	//console.log($(obj).closest('form'));
+
 }
-function TListTBS_launch_downloadAs(mode,url,token,session_name) {
-	 $('#listTBSdAS_export_form').remove();
+function Listview_launch_downloadAs(mode,url,token,session_name) {
+	 $('#listviewdAS_export_form').remove();
 	
-	$form = $('<form action="'+url+'" method="post" name="listTBSdAS_export_form" id="listTBSdAS_export_form"></form>');
+	$form = $('<form action="'+url+'" method="post" name="listviewdAS_export_form" id="listTBSdAS_export_form"></form>');
 	$form.append('<input type="hidden" name="mode" value="'+mode+'" />');
 	$form.append('<input type="hidden" name="token" value="'+token+'" />');
 	$form.append('<input type="hidden" name="session_name" value="'+session_name+'" />');
 	
 	$('body').append($form);
 	
-    $('#listTBSdAS_export_form').submit();
+    $('#listviewdAS_export_form').submit();
 	
 }
 
-function TListTBS_downloadAs(obj, mode,url,token,session_name) {
+function Listview_downloadAs(obj, mode,url,token,session_name) {
 	
 	$form = $(obj).closest('form');
 	$div = $form.find('div.tabsAction');
@@ -112,7 +112,7 @@ function TListTBS_downloadAs(obj, mode,url,token,session_name) {
 	$div.append('<input type="hidden" listviewtbs="hidden" name="session_name" value="'+session_name+'" />');
 	$div.append('<input type="hidden" listviewtbs="hidden" name="get-all-for-export" value="1" />');
 	
-	TListTBS_submitSearch(obj);
+	Listview_submitSearch(obj);
 }
 
 $(document).ready(function() {
@@ -137,7 +137,7 @@ $(document).ready(function() {
 	});
 	
 	if(typeof $_GET["get-all-for-export"] != "undefined") {
-		TListTBS_launch_downloadAs($_GET["mode"],$_GET["url"],$_GET["token"],$_GET["session_name"]);
+		Listview_launch_downloadAs($_GET["mode"],$_GET["url"],$_GET["token"],$_GET["session_name"]);
 	}
 	
 });

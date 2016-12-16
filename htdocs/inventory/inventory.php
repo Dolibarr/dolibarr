@@ -266,8 +266,8 @@ function _action()
 			
 			header('Location: '.dol_buildpath('/inventory/inventory.php?action=list', 1));
 			exit;
-			//_list();
 			
+			break;
 		case 'exportCSV':
 			
 			$id = GETPOST('id');
@@ -309,18 +309,14 @@ function _list()
 	$THide = array('label');
 
 	echo $l->render(Inventory::getSQL('All'), array(
-		'limit'=>array(
-			'nbLine'=>'30'
-		)
-		,'subQuery'=>array()
-		,'link'=>array(
+		'link'=>array(
 			'fk_warehouse'=>'<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id=@val@">'.img_picto('','object_stock.png','',0).' @label@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>$THide
 		,'type'=>array(
-			'date_cre'=>'date'
-			,'date_maj'=>'datetime'
+			'datec'=>'date'
+			,'tms'=>'datetime'
 			,'date_inventory'=>'date'
 		)
 		,'liste'=>array(
@@ -343,7 +339,10 @@ function _list()
 		,'eval'=>array(
 			'status' => '(@val@ ? img_picto("'.$langs->trans("inventoryValidate").'", "statut4") : img_picto("'.$langs->trans("inventoryDraft").'", "statut3"))'
 			,'rowid'=>'Inventory::getLink(@val@)'
-            
+		)
+		,'search'=>array(
+				'date_inventory'=>'calendar'
+				
 		)
 	));
 

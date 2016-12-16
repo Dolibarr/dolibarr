@@ -48,3 +48,5 @@ InventoryFlushed=Inventory flushed
 ExitEditMode=Exit edition
 inventoryDeleteLine=Delete line
 RegulateStock=Regulate Stock
+InventoryDate=Inventory date
+DateUpdate=Last update

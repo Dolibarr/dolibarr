@@ -68,7 +68,6 @@ class Listview {
 			$TParam['orderBy'] = $POSTList[$this->id]['orderBy']; 
 		}
 		
-	//	print_r($TParam);
 	}
 	private function getSearchNull($key, &$TParam) {
 		return !empty($TParam['search'][$key]['allow_is_null']);
@@ -80,7 +79,7 @@ class Listview {
 			if (!is_array($TParam['search'][$key]['table'])) $TParam['search'][$key]['table'] = array($TParam['search'][$key]['table']);
 			
 			foreach ($TParam['search'][$key]['table'] as $prefix_table) {
-				$TPrefixe[] = '`'.$prefix_table.'`.'; 
+				$TPrefixe[] = $prefix_table.'.'; 
 			}
 		}
 		
@@ -90,27 +89,18 @@ class Listview {
 			
 			foreach ($TParam['search'][$key]['field'] as $i => $field) {
 				$prefixe = !empty($TPrefixe[$i]) ? $TPrefixe[$i] : $TPrefixe[0];
-				$TKey[] = $prefixe.'`'. $field .'`';
+				$TKey[] = $prefixe. $field ;
 			}
 		} else {
-			$TKey[] =$TPrefixe[0].'`'. strtr($key,';','*').'`';
+			$TKey[] =$TPrefixe[0].$key;
 		}
 		
 		return $TKey;
 	} 
-	private function getSearchValue($value) {
-		$value = strtr(trim($value),';','*');	
-			
-		return $value;
-	}
 	
 	private function dateToSQLDate($date) {
 		
-		list($dd,$mm,$aaaa) = explode('/', substr($date,0,10));
-		
-		$value = date('Y-m-d', mktime(0,0,0,$mm,$dd,$aaaa));
-		
-		return $value;
+		return $this->db->jdate($date);
 	}
 	
 	private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey, $sBindKey)
@@ -118,19 +108,10 @@ class Listview {
 		if(is_array($value))
 		{
 			
-			unset($this->TBind[$sBindKey]);
-			// Si le type de "recherche" est "calendars" on a 2 champs de transmis, [début et fin] ou [que début] ou [que fin] => un BETWEEN Sql serait utile que dans le 1er cas 
-			// donc l'utilisation des opérateur >= et <= permettent un fonctionnement générique
 			$TSQLDate=array();
 			if(!empty($value['start']))
 			{
 				$valueDeb = $this->dateToSQLDate($value['start']);
-				
-				if(isset($this->TBind[$sBindKey.'_start'])) // TODO can't use this in query case
-				{
-					$this->TBind[$sBindKey.'_start'] = $valueDeb;
-				}
-				
 				$TSQLDate[]=$sKey." >= '".$valueDeb." 00:00:00'" ;
 				
 			}
@@ -138,10 +119,6 @@ class Listview {
 			if(!empty($value['end']))
 			{
 				$valueFin = $this->dateToSQLDate($value['end']);
-				if(isset($this->TBind[$sBindKey.'_end'])) { // TODO can't use this in query case
-					$this->TBind[$sBindKey.'_end'] = $valueFin;
-				}
-				
 				$TSQLDate[]=$sKey." <= '".$valueFin." 23:59:59'" ;	
 				
 			}
@@ -150,25 +127,15 @@ class Listview {
 		}
 		else
 		{
-			// Sinon je communique une date directement au format d/m/Y et la méthode du dessous reformat en Y-m-d
 			$value = $this->dateToSQLDate($value);
-			if(isset($this->TBind[$sBindKey]))
-			{
-				$this->TBind[$sBindKey] = $value;
-			}
-			else
-			{
-				// Le % en fin de chaine permet de trouver un resultat si le contenu est au format Y-m-d H:i:s et non en Y-m-d
-				$TSQLMore[]=$sKey." LIKE '".$value."%'" ;
-			}
+			$TSQLMore[]=$sKey." LIKE '".$value."%'" ;
+			
 		}
 	}
 	
 	private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $sBindKey, $key)
 	{
 	
-		$value = $this->getSearchValue($value);
-		
 		if(isset($TParam['operator'][$key]))
 		{
 			if($TParam['operator'][$key] == '<' || $TParam['operator'][$key] == '>' || $TParam['operator'][$key]=='=')
@@ -207,7 +174,6 @@ class Listview {
 			foreach($_REQUEST['Listview'][$this->id]['search'] as $key=>$value)
 			{
 				$TsKey = $this->getSearchKey($key, $TParam);
-				$TsBindKey = $this->getTsBindKey($TsKey);
 				
 				//if (!empty($value)) var_dump($TsKey, $TsBindKey, '==================================');
 				$TSQLMore = array();
@@ -217,38 +183,32 @@ class Listview {
 				
 				foreach ($TsKey as $i => &$sKey)
 				{
-					//if (!empty($value)) var_dump($sKey);
-					$sBindKey = $TsBindKey[$i];
-					
 					if($allow_is_null && !empty($_REQUEST['Listview'][$this->id]['search_on_null'][$key]))
 					{
-						$this->TBind[$sBindKey.'_null'] = $sKey.' IS NULL ';
 						$TSQLMore[] = $sKey.' IS NULL ';
 						$search_on_null = true;
 						
-						if(isset($this->TBind[$sBindKey])) $this->TBind[$sBindKey]= '';
 						$value = '';
 					}
 					elseif($allow_is_null)
 					{
-						$this->TBind[$sBindKey.'_null'] =0; // $sKey.' IS NOT NULL ';
-						//$TSQLMore[] =  $sKey.' IS NOT NULL ';
+						null;
 					}
 					
 					if($value!='') { // pas empty car biensûr le statut = 0 existe dans de nombreux cas
 						
 						if(isset($TParam['type'][$key]) && ($TParam['type'][$key]==='date' || $TParam['type'][$key]==='datetime'))
 						{
-							$this->addSqlFromTypeDate($TSQLMore, $value, $sKey, $sBindKey);
+							$this->addSqlFromTypeDate($TSQLMore, $value, $sKey);
 						}
 						else
 						{
-							$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $sBindKey, $key);
+							$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $key);
 						}
 					}
 				}
 
-				if(!isset($this->TBind[$sBindKey]) && !empty($TSQLMore))
+				if(!empty($TSQLMore))
 				{
 					$sql.=' AND ( '.implode(' OR ',$TSQLMore).' ) ';
 				}
@@ -282,13 +242,11 @@ class Listview {
 	}
 
 	private function setSearch(&$THeader, &$TParam) {
-		global $langs;
+		global $langs, $form;
 		
 		if(empty($TParam['search'])) return array();
 		
 		$TSearch=array();
-		$form=new TFormCore;
-		$form->strict_string_compare = true;
 		
 		$nb_search_in_bar = 0;
 		
@@ -296,20 +254,22 @@ class Listview {
 			foreach($THeader as $key=>$libelle) { // init
 				if(empty($TSearch[$key]))$TSearch[$key]='';
 			}
-		}		
+		}	
+		
+		$ListPOST = GETPOST('Listview');
+		
 		foreach($TParam['search'] as $key=>$param_search) {
 			
-		
-			$value = isset($_REQUEST['Listview'][$this->id]['search'][$key]) ? $_REQUEST['Listview'][$this->id]['search'][$key] : '';
+			$value = isset($ListPOST[$this->id]['search'][$key]) ? $ListPOST[$this->id]['search'][$key] : '';
 			
 			$typeRecherche = (is_array($param_search) && isset($param_search['recherche'])) ? $param_search['recherche'] : $param_search;  
 			
 			if(is_array($typeRecherche)) {
-				$typeRecherche = array(''=>' ') + $typeRecherche;
-				$fsearch=$form->combo('','Listview['.$this->id.'][search]['.$key.']', $typeRecherche,$value,0,'',' listviewtbs="combo" init-value="'.$value.'" ');
+				$fsearch=$form->selectarray('Listview['.$this->id.'][search]['.$key.']', $typeRecherche,$value,1);
 			}
 			else if($typeRecherche==='calendar') {
-				$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
+				$fsearch = $form->select_date($value, 'Listview['.$this->id.'][search]['.$key.']',0, 0, 1, "", 1, 0, 1);
+				//$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
 			}
 			else if($typeRecherche==='calendars') {
 				$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.'][start]',isset($value['start'])?$value['start']:'',10,10,' listviewtbs="calendars" ')
@@ -340,7 +300,7 @@ class Listview {
 				
 		}
 		
-		$search_button = ' <a href="#" onclick="ListviewsubmitSearch(this);" class="list-search-link">'.$TParam['liste']['picto_search'].'</a>';
+		$search_button = ' <a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.$TParam['liste']['picto_search'].'</a>';
 
 		if(!empty($TParam['liste']['head_search'])) {
 			$TParam['liste']['head_search'].='<div align="right">'.$langs->trans('Search').' '.$search_button.'</div>';
@@ -406,8 +366,8 @@ class Listview {
 
 	private function getJS(&$TParam) {
 		$javaScript = '<script language="javascript">
-		if(typeof(TListview_include)=="undefined") {
-			document.write("<script type=\"text/javascript\" src=\"'.DOL_URL_ROOT.'/core/js/list.view.js\"></scr");
+		if(typeof(Listview_include)=="undefined") {
+			document.write("<script type=\"text/javascript\" src=\"'.DOL_URL_ROOT.'/core/js/listview.js?version='.DOL_VERSION.'\"></scr");
 	  		document.write("ipt>");
 		}
 		</script>';
@@ -542,10 +502,13 @@ class Listview {
 		
 		$out.='</tr>';
 			
-		if(!empty($TParam['liste']['nbSearch'])) {
-		$out.='<tr class="liste_titre barre-recherche">
-					<td class="liste_titre">'.img_search().'</td>
-				</tr>';
+		if(count($TSearch)>0) {
+			$out.='<tr class="liste_titre barre-recherche">';
+			foreach($TSearch as $field=>$search) {
+				$out.='<td class="liste_titre">'.$search.'</td>';
+				
+			}
+			$out.='</tr>';
 		}
 				
 		$out.='</thead><tbody>';

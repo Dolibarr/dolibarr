@@ -66,7 +66,7 @@ class modinventory extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='inventory@inventory';
+		$this->picto='inventory';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /inventory/core/xxxxx) (0=disable, 1=enable)
@@ -167,8 +167,6 @@ class modinventory extends DolibarrModules
 		// Example:
 		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
 
-		$langs->load('inventory@inventory');
-		
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
@@ -249,11 +247,11 @@ class modinventory extends DolibarrModules
 		// $r++;
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',			                // Put 0 if this is a top menu
 								'type'=>'left',			                // This is a Top menu entry
-								'titre'=>'Liste des inventaires',
+								'titre'=>'ListInventory',
 								'mainmenu'=>'inventory',
 								'leftmenu'=>'inventory',
 								'url'=>'/inventory/inventory.php?action=list',
-								'langs'=>'inventory@inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
 								'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
@@ -263,11 +261,10 @@ class modinventory extends DolibarrModules
 		
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',			                // Put 0 if this is a top menu
 								'type'=>'left',			                // This is a Top menu entry
-								'titre'=>'Nouvel inventaire',
+								'titre'=>'NewInventory',
 								'mainmenu'=>'inventory',
 								'leftmenu'=>'inventory',
 								'url'=>'/inventory/inventory.php?action=create',
-								'langs'=>'inventory@inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
 								'perms'=>'$user->rights->inventory->create',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
