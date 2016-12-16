@@ -173,6 +173,7 @@ class Listview {
 			}
 			
 			if(strpos($sql,'WHERE ')===false)$sql.=' WHERE 1 '; //TODO regex
+			//TODO	$value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
 			
 			foreach($ListPOST[$this->id]['search'] as $key=>$value)
 			{
@@ -271,13 +272,19 @@ class Listview {
 				$fsearch=$form->selectarray('Listview['.$this->id.'][search]['.$key.']', $typeRecherche,$value,1);
 			}
 			else if($typeRecherche==='calendar') {
-				$fsearch = $form->select_date($value, 'Listview['.$this->id.'][search]['.$key.']',0, 0, 1, "", 1, 0, 1);
+				
+				$value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
+				
+				$fsearch = $form->select_date($value, 'Listview_'.$this->id.'_search_'.$key,0, 0, 1, "", 1, 0, 1);
 				//$fsearch=$form->calendrier('','Listview['.$this->id.'][search]['.$key.']',$value,10,10,' listviewtbs="calendar" ');	
 			}
 			else if($typeRecherche==='calendars') {
 				
-				$fsearch = $form->select_date(isset($value['start'])?$value['start']:'', 'Listview['.$this->id.'][search]['.$key.'][start]',0, 0, 1, "", 1, 0, 1)
-						 . $form->select_date(isset($value['end'])?$value['end']:'', 'Listview['.$this->id.'][search]['.$key.'][end]',0, 0, 1, "", 1, 0, 1);
+				$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
+				$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
+			
+				$fsearch = $form->select_date($value_start, 'Listview_'.$this->id.'_search_'.$key.'_start',0, 0, 1, "", 1, 0, 1)
+						 . $form->select_date($value_end, 'Listview_'.$this->id.'_search_'.$key.'_end',0, 0, 1, "", 1, 0, 1);
 				
 			}
 			else if(is_string($typeRecherche)) {
@@ -837,7 +844,7 @@ class Listview {
 		$this->TTotalTmp=array();
 		
 		$this->THideFlip = array_flip($TParam['hide']);
-
+var_dump($this->sql);
 		$res = $this->db->query($this->sql);
 		if($res!==false) {
 			
