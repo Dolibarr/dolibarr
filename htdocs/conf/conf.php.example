@@ -274,6 +274,18 @@ $dolibarr_nocsrfcheck='0';
 // Examples:
 // $dolibarr_main_limit_users='0';
 
+// dolibarr_mailing_limit_sendbyweb
+// Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on OS level.
+// Default value: '0' (no overwrite, use database value if exists)
+// Examples: '-1' (sending by web is forbidden)
+// $dolibarr_mailing_limit_sendbyweb='0';
+
+// dolibarr_mailing_limit_sendbycli
+// Can set a limit for mailing send by cli. This overwrite database value. Can be used to restrict on OS level.
+// Default value: '0' (no overwrite, use database value if exists)
+// Examples: '-1' (sending by cli is forbidden)
+// $dolibarr_mailing_limit_sendbycli='0';
+
 // dolibarr_strict_mode
 // Set this to 1 to enable the PHP strict mode. For dev environment only.
 // Default value: 0 (use database value if exist)

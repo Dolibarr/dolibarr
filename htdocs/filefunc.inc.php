@@ -151,6 +151,7 @@ if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
+if (empty($dolibarr_mailing_limit_sendbycli)) $dolibarr_mailing_limit_sendbycli=0;
 if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php strict mode
 // TODO Multicompany Remove this. Useless.
 if (empty($multicompany_transverse_mode)) $multicompany_transverse_mode=0;
