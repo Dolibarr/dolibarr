@@ -103,7 +103,7 @@ class Listview {
 		return $this->db->jdate($date);
 	}
 	
-	private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey, $sBindKey)
+	private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey)
 	{
 		if(is_array($value))
 		{
@@ -135,7 +135,8 @@ class Listview {
 	
 	private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
 	{
-	
+		if($value==-1) return false;
+			
 		if(isset($TParam['operator'][$key]))
 		{
 			if($TParam['operator'][$key] == '<' || $TParam['operator'][$key] == '>' || $TParam['operator'][$key]=='=')
@@ -154,16 +155,18 @@ class Listview {
 		}
 		else
 		{
-			if(strpos($value,'%')===false) $value = '%'.$value.'%';
-			$TSQLMore[]=$sKey." LIKE '".addslashes($value)."'" ;
+				if(strpos($value,'%')===false) $value = '%'.$value.'%';
+				$TSQLMore[]=$sKey." LIKE '".addslashes($value)."'" ;
 		}
 		
-	
+		return true;
 	}
 
 	private function search($sql,&$TParam) {
 	
-		if(!empty($_REQUEST['Listview'][$this->id]['search'])) {
+		$ListPOST = GETPOST('Listview');
+		
+		if(!empty($ListPOST[$this->id]['search'])) {
 			$sqlGROUPBY='';
 			if(strpos($sql,'GROUP BY')!==false) { //TODO regex
 				list($sql, $sqlGROUPBY) = explode('GROUP BY', $sql);
@@ -171,7 +174,7 @@ class Listview {
 			
 			if(strpos($sql,'WHERE ')===false)$sql.=' WHERE 1 '; //TODO regex
 			
-			foreach($_REQUEST['Listview'][$this->id]['search'] as $key=>$value)
+			foreach($ListPOST[$this->id]['search'] as $key=>$value)
 			{
 				$TsKey = $this->getSearchKey($key, $TParam);
 				
@@ -183,7 +186,7 @@ class Listview {
 				
 				foreach ($TsKey as $i => &$sKey)
 				{
-					if($allow_is_null && !empty($_REQUEST['Listview'][$this->id]['search_on_null'][$key]))
+					if($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$key]))
 					{
 						$TSQLMore[] = $sKey.' IS NULL ';
 						$search_on_null = true;

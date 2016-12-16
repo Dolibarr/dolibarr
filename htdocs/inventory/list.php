@@ -83,9 +83,8 @@ function _list()
 			,'rowid'=>'Inventory::getLink(@val@)'
 		)
 		,'search'=>array(
-				'date_inventory'=>'calendar'
-				,'title'=>true
-				
+				'date_inventory'=>'calendars'
+				,'status'=>array(1=>$langs->trans("inventoryValidate"), 0=>$langs->trans("inventoryDraft"))
 		)
 	));
 

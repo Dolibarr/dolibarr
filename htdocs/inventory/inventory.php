@@ -270,7 +270,7 @@ function _action()
 			$inventory = new Inventory($db);
 			$inventory->fetch($id);
 			
-			exportCSV($inventory);
+			_exportCSV($inventory);
 			
 			exit;
 			break;
@@ -476,7 +476,7 @@ function _card_line(&$inventory, &$lines, $mode)
 
 }
 
-function exportCSV(&$inventory) {
+function _exportCSV(&$inventory) {
 	global $conf;
 	
 	header('Content-Type: application/octet-stream');
