@@ -366,7 +366,7 @@ class CMailFile
 	 */
 	function sendfile()
 	{
-		global $conf,$db;
+		global $conf,$db,$langs;
 
 		$errorlevel=error_reporting();
 		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
@@ -388,7 +388,31 @@ class CMailFile
                 
                 return $reshook;
             }
-			
+
+            // Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=10;
+            $tmparray = explode(',', $this->addr_to);
+            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in to:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+            $tmparray = explode(',', $this->addr_cc);
+            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in cc:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+            $tmparray = explode(',', $this->addr_bcc);
+            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in bcc:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+
 			// Action according to choosed sending method
 			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{
@@ -449,7 +473,8 @@ class CMailFile
 						{
 							$this->error.=" to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port');	// This values are value used only for non linuxlike systems
 						}
-						$this->error.=".<br>Check your server logs and your firewalls setup";
+						$this->error.=".<br>";
+						$this->error.=$langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					}
 					else
