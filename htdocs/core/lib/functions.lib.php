@@ -5256,7 +5256,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-	$sql.= " WHERE ".$fieldkey." = '".$key."'";
+	$sql.= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
