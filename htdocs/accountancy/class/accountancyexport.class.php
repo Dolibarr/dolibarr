@@ -163,13 +163,13 @@ class AccountancyExport
 
 		foreach ( $objectLines as $line ) {
 			// Std export
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $this->separator;
 			print $line->doc_ref . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
 			print length_accounta($line->code_tiers) . $this->separator;
-			print price($line->debit) . $this->separator;
-			print price($line->credit) . $this->separator;
+			print '"' . price($line->debit) . '"' . $this->separator;
+			print '"' . price($line->credit) . '"' . $this->separator;
 			print $line->code_journal . $this->separator;
 			print $this->end_line;
 		}
