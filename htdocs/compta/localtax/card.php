@@ -66,12 +66,12 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
     $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
-    $localtax->accountid=$_POST["accountid"];
-    $localtax->paymenttype=$_POST["paiementtype"];
+    $localtax->accountid=GETPOST("accountid");
+    $localtax->paymenttype=GETPOST("paiementtype");
     $localtax->datev=$datev;
     $localtax->datep=$datep;
-    $localtax->amount=$_POST["amount"];
-	$localtax->label=$_POST["label"];
+    $localtax->amount=price2num(GETPOST("amount"));
+	$localtax->label=GETPOST("label");
 	$localtax->ltt=$lttype;
 
     $ret=$localtax->addPayment($user);
@@ -178,10 +178,10 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry(($lttype==2?"LT2Payment":"LT1Payment"),$mysoc->country_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->transcountry(($lttype==2?"LT2Payment":"LT1Payment"),$mysoc->country_code)).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {

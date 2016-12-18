@@ -29,7 +29,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
-$year=$_GET["year"];
+$year = GETPOST('year', 'int');
 if ($year == 0 )
 {
   $year_current = strftime("%Y",time());

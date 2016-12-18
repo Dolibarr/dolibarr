@@ -251,9 +251,9 @@ if (empty($reshook))
 	    $paiement->datepaye     = $datepaye;
 	    $paiement->amounts      = $amounts;   // Array with all payments dispatching
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
-	    $paiement->num_paiement = $_POST['num_paiement'];
-	    $paiement->note         = $_POST['comment'];
+	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement');
+	    $paiement->num_paiement = GETPOST('num_paiement');
+	    $paiement->note         = GETPOST('comment');
 
 	    if (! $error)
 	    {
@@ -513,7 +513,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td valign="top">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment').'</textarea></td></tr>';
         
         print '</table>';
 
@@ -683,12 +683,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                         if (!empty($conf->use_javascript_ajax))
 							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
                         print '<input type=hidden class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-                        print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
                     else
                     {
-                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-                        print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
+                        print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
                     print "</td>";
 
