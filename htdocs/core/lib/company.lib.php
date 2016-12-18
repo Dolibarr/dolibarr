@@ -713,12 +713,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         print '</td>';
     
         // Address / Phone
-        print '<td>';
+        print '<td class="liste_titre">';
         //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
         // Email
-        print '<td>&nbsp;</td>';
+        print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
         print '<td class="liste_titre maxwidthonsmartphone">';
@@ -729,7 +729,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
         	$colspan++;
-            print '<td>&nbsp;</td>';
+            print '<td class="liste_titre">&nbsp;</td>';
         }
     
     	// Edit

@@ -85,9 +85,6 @@ if ($id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table class="border centpercent">';
 
     // Company
@@ -144,12 +141,13 @@ if ($id > 0)
 
     print "</table>";
 
-    //print '<div>';
+    print '<br>';
     
-    //print '<br>';
+	$cssclass="titlefield";
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	print '</div>';
+	
     dol_fiche_end();
 }
 
