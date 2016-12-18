@@ -441,8 +441,6 @@ class CMailFile
 				}
 				else
 				{
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-
 					$bounce = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
@@ -455,7 +453,8 @@ class CMailFile
                     {
                         $bounce .= ($bounce?' ':'').'-ba';
                     }
-
+                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$bounce, LOG_DEBUG);
+                    
 					$this->message=stripslashes($this->message);
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
