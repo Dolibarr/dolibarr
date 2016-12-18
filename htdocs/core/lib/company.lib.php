@@ -1179,18 +1179,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.='<tr class="liste_titre">';
 		if ($donetodo)
 		{
-            $out.='<td></td>';
+            $out.='<td class="liste_titre"></td>';
 		}
-		$out.='<td></td>';
-		$out.='<td class="maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out.='<td></td>';
-		$out.='<td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
 		$out.='</td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
     	// Action column
     	$out.='<td class="liste_titre" align="middle">';
     	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
