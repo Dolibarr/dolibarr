@@ -275,7 +275,7 @@ if (empty($reshook))
 		$discount->unlink_invoice();
 	}
 
-	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->paiement)
 	{
 		$object->fetch($id);
 		$result=$object->set_paid($user);
@@ -574,7 +574,7 @@ if (empty($reshook))
 
 
 	// Delete payment
-	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer && $user->rights->fournisseur->facture->paiement)
 	{
 	 	$object->fetch($id);
 		if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0)
@@ -2273,9 +2273,9 @@ else
 
 		}
 
-		// Confirmation set paid
-		if ($action == 'paid')
-		{
+        // Confirmation set paid
+        if ($action == 'paid'  && $user->rights->fournisseur->facture->paiement)
+        {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 
 		}
@@ -2285,10 +2285,10 @@ else
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
 
-		}
-		if ($action == 'deletepaiement')
-		{
-			$payment_id = GETPOST('paiement_id');
+        }
+        if ($action == 'deletepaiement' && $user->rights->fournisseur->facture->paiement)
+        {
+        	$payment_id = GETPOST('paiement_id');
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
 
 		}
@@ -3014,13 +3014,13 @@ else
 				}
 
 	            // Make payments
-	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0 && $user->rights->fournisseur->facture->paiement)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a></div>';	// must use facid because id is for payment id not invoice
 	            }
 
 	            // Classify paid
-	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0 && $user->rights->fournisseur->facture->paiement)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
 	                print '>'.$langs->trans('ClassifyPaid').'</a></div>';
@@ -3029,7 +3029,7 @@ else
 				}
 
 				// Reverse back money or convert to reduction
-				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD) {
+				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT && $user->rights->fournisseur->facture->paiement) {
 					// For credit note only
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0)
 					{
@@ -3049,7 +3049,7 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessPaidToReduc').'</a></div>';
 					}
 					// For credit note
-					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0) {
+					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->paiement) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 					}
 					// For deposit invoice

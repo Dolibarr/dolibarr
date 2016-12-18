@@ -52,7 +52,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+if ($action == 'setnote' && $user->rights->fournisseur->facture->paiement)
 {
 	$db->begin();
 
@@ -70,7 +70,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes'  && $user->rights->fournisseur->facture->paiement)
 {
 	$db->begin();
 
@@ -89,10 +89,14 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
+<<<<<<< HEAD
 if ($action == 'confirm_valide' && $confirm == 'yes' &&
 	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
 	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 )
+=======
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisseur->facture->paiement)
+>>>>>>> 1ba78bb... new: Privilege for supplier invoice payments
 {
 	$db->begin();
 
@@ -197,18 +201,30 @@ if ($result > 0)
 	print '</td></tr>';*/
 
 	// Date payment
+<<<<<<< HEAD
 	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
+=======
+    print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->paiement).'</td><td colspan="3">';
+    print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 &&  $user->rights->fournisseur->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+    print '</td></tr>';
+>>>>>>> 1ba78bb... new: Privilege for supplier invoice payments
 
 	// Payment mode
 	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
+<<<<<<< HEAD
 	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
+=======
+    print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->paiement).'</td><td colspan="3">';
+    print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->paiement,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+    print '</td></tr>';
+>>>>>>> 1ba78bb... new: Privilege for supplier invoice payments
 
 	// Amount
 	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
@@ -219,9 +235,15 @@ if ($result > 0)
 	}
 
 	// Note
+<<<<<<< HEAD
 	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
 	print '</td></tr>';
+=======
+    print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->paiement).'</td><td colspan="3">';
+    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
+    print '</td></tr>';
+>>>>>>> 1ba78bb... new: Privilege for supplier invoice payments
 
 	$allow_delete = 1 ;
 	// Bank account
@@ -344,8 +366,12 @@ if ($result > 0)
 	{
 		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
 		{
+<<<<<<< HEAD
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
 		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+=======
+        	if ($user->rights->fournisseur->facture->paiement)
+>>>>>>> 1ba78bb... new: Privilege for supplier invoice payments
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
@@ -354,7 +380,7 @@ if ($result > 0)
 	}
 	if ($user->societe_id == 0 && $action == '')
 	{
-		if ($user->rights->fournisseur->facture->supprimer)
+		if ($user->rights->fournisseur->facture->paiement)
 		{
 			if ($allow_delete)
 			{

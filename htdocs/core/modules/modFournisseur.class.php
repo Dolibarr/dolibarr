@@ -262,6 +262,14 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
+        $r++;
+        $this->rights[$r][0] = 1238;
+        $this->rights[$r][1] = 'Emettre des paiements sur les factures fournisseurs';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'facture';
+        $this->rights[$r][5] = 'paiement';
+
 	    if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 	    {
 			$r++;
