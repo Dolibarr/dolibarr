@@ -384,11 +384,11 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+    print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";  
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
