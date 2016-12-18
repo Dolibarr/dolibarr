@@ -1164,7 +1164,7 @@ else
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("hone_mobile"):$object->phone_mobile).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
 	    if (! empty($conf->skype->enabled))
