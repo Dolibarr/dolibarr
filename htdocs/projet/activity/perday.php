@@ -424,17 +424,17 @@ print '<td align="right">'.$langs->trans("Note").'</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td class="liste_total"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
-print '<td class="liste_total"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-print '<td class="liste_total"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) print '<td class="liste_total"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
-print '<td class="liste_total"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 // Action column
 print '<td class="liste_titre nowrap" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);

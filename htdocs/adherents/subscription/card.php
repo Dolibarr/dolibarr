@@ -40,6 +40,7 @@ $action=GETPOST("action",'alpha');
 $rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
 $typeid=GETPOST("typeid","int");
 $cancel=GETPOST('cancel');
+$confirm=GETPOST('confirm');
 
 if (! $user->rights->adherent->cotisation->lire)
 	 accessforbidden();
@@ -62,10 +63,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, 
 //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 
-if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"])
+if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $cancel)
 {
 	// Charge objet actuel
-	$result=$object->fetch($_POST["rowid"]);
+	$result=$object->fetch($rowid);
 	if ($result > 0)
 	{
 		$db->begin();
@@ -138,7 +139,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent->cotisation->creer)
 {
 	$result=$object->fetch($rowid);
     $result=$object->delete($user);
@@ -189,10 +190,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
-	print "\n";
-	print '<table class="border" width="100%">';
-
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
+
+    print "\n";
+	print '<table class="border" width="100%">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -287,49 +288,50 @@ if ($rowid && $action != 'edit')
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
 
-    // Ref
-    print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-	print '<td class="valeur" colspan="3">';
-	print $form->showrefnav($object, 'rowid', $linkback, 1);
-	print '</td></tr>';
-
+    dol_banner_tab($object, 'rowid', $linkback, 1);
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border" width="100%">';
+    
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date record
     /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->datec,'dayhour').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->datec,'dayhour').'</td>';
     print '</tr>';*/
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->dateh,'day').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->dateh,'day').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dol_print_date($object->datef,'day').'</td>';
     print '</tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($object->amount).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($object->amount).'</td></tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$object->note.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
     // Bank line
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
 	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="3">';
+    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 			if ($object->fk_bank)
 			{
 	    		$bankline=new AccountLine($db);
@@ -346,6 +348,8 @@ if ($rowid && $action != 'edit')
 
 
     print "</table>\n";
+    print '</div>';
+    
     print '</form>';
 
     dol_fiche_end();

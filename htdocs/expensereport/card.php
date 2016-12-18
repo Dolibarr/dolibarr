@@ -1350,9 +1350,9 @@ else
 					print '<input type="hidden" name="action" value="update">';
 				}
 
-				print '<table class="border" style="width:100%;">';
-
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+				print '<table class="border" style="width:100%;">';
 
 				print '<tr>';
 				print '<td>'.$langs->trans("User").'</td>';
@@ -1564,12 +1564,6 @@ else
 				
 				print '<table class="border centpercent">';
 
-            	// Ref
-            	/*
-            	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
-            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-            	print '</td></tr>';*/
-
 				// Author
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -1586,7 +1580,7 @@ else
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
-				print get_date_range($object->date_debut,$object->date_fin,'',$langs,0);
+				print get_date_range($object->date_debut,$object->date_fin,'day',$langs,0);
 				print '</td>';
 				print '</tr>';
 				if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1596,13 +1590,6 @@ else
 					print '<td>'.$object->libelle_paiement.'</td>';
 					print '</tr>';
 				}
-				// Status
-				/*
-				print '<tr>';
-				print '<td>'.$langs->trans("Statut").'</td>';
-				print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
-				print '</tr>';
-				*/
 
 				// Amount
 				print '<tr>';

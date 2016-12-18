@@ -417,7 +417,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 

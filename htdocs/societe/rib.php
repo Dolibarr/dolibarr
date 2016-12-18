@@ -330,7 +330,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<form action="rib.php?socid='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.GETPOST("id","int").'">';
 }
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {

@@ -286,7 +286,8 @@ $configfileparameters=array(
 		'separator4' => '',
 		'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
-		'?dolibarr_strict_mode' => 'Strict mode is on/off',
+		'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+        '?dolibarr_strict_mode' => 'Strict mode is on/off',
 		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
 );
 

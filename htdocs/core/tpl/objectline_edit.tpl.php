@@ -185,7 +185,7 @@ $coldisplay=-1; // We remove first td
 	    <?php if ($user->rights->margins->creer) {
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				  {
-				    $margin_rate = (isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				    $margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate","alpha",2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -195,7 +195,7 @@ $coldisplay=-1; // We remove first td
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
-				    $mark_rate = (isset($_POST["np_markRate"])?$_POST["np_markRate"]:price($line->marque_tx));
+				    $mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';

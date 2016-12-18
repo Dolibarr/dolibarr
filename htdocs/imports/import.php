@@ -76,7 +76,8 @@ $import_name		= GETPOST('import_name');
 $hexa				= GETPOST('hexa');
 $importmodelid		= GETPOST('importmodelid');
 $excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 1);
-$endatlinenb     	= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
+$endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
+$updatekeys			= (GETPOST('updatekeys') ? GETPOST('updatekeys') : array());
 $separator			= (GETPOST('separator') ? GETPOST('separator') : (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?$conf->global->IMPORT_CSV_SEPARATOR_TO_USE:','));
 $enclosure			= (GETPOST('enclosure') ? GETPOST('enclosure') : '"');
 
@@ -1184,8 +1185,9 @@ if ($step == 5 && $datatoimport)
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param;  // $param2 = $param without excludefirstline and endatlinenb
-	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
-	if ($endatlinenb)      $param.='&endatlinenb='.$endatlinenb;
+	if ($excludefirstline)		$param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb)			$param.='&endatlinenb='.$endatlinenb;
+	if (!empty($updatekeys))	$param.='&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 	
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -1289,6 +1291,24 @@ if ($step == 5 && $datatoimport)
 	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
 	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
+	print '</td></tr>';
+	
+	print '<tr><td>';
+	print $langs->trans("KeysToUseForUpdates");
+	print '</td><td>';
+	if($action=='launchsimu') {
+		print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '', 'disabled');
+		foreach($updatekeys as $val) {
+			print '<input type="hidden" name="updatekeys[]" value="'.$val.'">';
+		}
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
+	} else {
+		print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
+		print $form->textwithpicto("", $langs->trans("SelectColumnsOfYourFileForUpdateAttempt"));
+	}
+	/*echo '<pre>';
+	print_r($objimport->array_import_updatekeys);
+	echo '</pre>';*/
 	print '</td></tr>';
 	
 	print '</table>';
@@ -1424,7 +1444,7 @@ if ($step == 5 && $datatoimport)
                 if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
                 
                 // Run import
-                $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+                $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
                 
                 if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
                 if (count($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
@@ -1460,9 +1480,13 @@ if ($step == 5 && $datatoimport)
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
-        if (! count($arrayoferrors) && ! count($arrayofwarnings)) print '<center>'.img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b></center><br><br>';
+        if (! count($arrayoferrors) && ! count($arrayofwarnings)) {
+        	print '<center>'.img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b></center><br><br>';
+			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+		}
         else print '<b>'.$langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
-        
+
         // Show Errors
         //var_dump($arrayoferrors);
         if (count($arrayoferrors))
@@ -1778,7 +1802,7 @@ if ($step == 6 && $datatoimport)
 			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
 
 			// Run import
-			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
 			
 			if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (count($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
@@ -1824,7 +1848,9 @@ if ($step == 6 && $datatoimport)
 	// Show result
 	print '<br>';
 	print '<div class="center">';
-	print $langs->trans("NbOfLinesImported",$nbok).'</b><br><br>';
+	print $langs->trans("NbOfLinesImported",$nbok).'</b><br>';
+	print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
+	print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
 	print $langs->trans("FileWasImported",$importid).'<br>';
 	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
 	print '</div>';

@@ -480,7 +480,7 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
-	print '<table width="100%" class="nobordernopadding">'."\n";
+	print '<table width="100%" class="liste noborderbottom">'."\n";
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

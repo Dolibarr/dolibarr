@@ -89,7 +89,6 @@ function test_sql_and_script_inject($val, $type)
         $sql_inj += preg_match('/union.+select/i', 	 $val);
         $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
         $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
-        $sql_inj += preg_match('/onerror=/i', 	     $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
@@ -98,7 +97,8 @@ function test_sql_and_script_inject($val, $type)
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
+    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='>' onerror = alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);

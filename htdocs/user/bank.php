@@ -117,7 +117,7 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 }
 if ($id && $action == 'create' && $user->rights->user->user->creer)
 {

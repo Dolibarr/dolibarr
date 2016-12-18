@@ -321,10 +321,20 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
+ *  @param  string  $mode       '' or 'email'              
  *  @return	string      		A calculated prefix
  */
-function dol_getprefix()
+function dol_getprefix($mode='')
 {
+    global $conf;
+    
+    // If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
+    if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+    {
+        if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+        else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+    }
+
 	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 	{
 		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
@@ -5246,7 +5256,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-	$sql.= " WHERE ".$fieldkey." = '".$key."'";
+	$sql.= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)

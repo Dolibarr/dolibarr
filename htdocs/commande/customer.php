@@ -44,11 +44,13 @@ accessforbidden();
 
 $langs->load("companies");
 $langs->load("orders");
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
@@ -77,32 +79,32 @@ $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=$stcomm";
+	$sql.= " AND s.fk_stcomm=".$stcomm;
 }
-
-if ($_GET["search_nom"])
-{
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
-}
-if ($_GET["search_compta"])
-{
-	$sql.= " AND s.code_compta like '%".$db->escape($_GET["search_compta"])."%'";
-}
-if ($_GET["search_code_client"])
-{
-	$sql.= " AND s.code_client like '%".$db->escape($_GET["search_code_client"])."%'";
-}
+if (GETPOST("search_nom"))  $sql.= natural_search("s.nom", GETPOST("search_nom"));
+if (GETPOST("search_compta")) $sql.= natural_search("s.code_compta", GETPOST("search_compta"));
+if (GETPOST("search_code_client")) $sql.= natural_search("s.code_client", GETPOST("search_code_client"));
 if (dol_strlen($begin))
 {
 	$sql.= " AND s.nom like '".$db->escape($begin)."'";
 }
-if ($socid)
+if ($socid > 0)
 {
 	$sql.= " AND s.rowid = ".$socid;
 }
 $sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 $sql.= " GROUP BY s.nom";
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = -1;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -129,26 +131,27 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+	print '<input class="flat" type="text" name="search_nom" value="'.dol_escape_htmltag(GETPOST("search_nom")).'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.dol_escape_htmltag(GETPOST("search_code_client")).'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.dol_escape_htmltag(GETPOST("search_compta")).'">';
 	print '</td>';
 
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
+	
 	print "</tr>\n";
 
 	$var=true;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
 
