@@ -753,11 +753,12 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
-				// Note: MAILING_LIMIT_SENDBYWEB is always defined to something != 0
+				// MAILING_NO_USING_PHPMAIL may be defined or not
+				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0, MAILING_LIMIT_SENDBYCLI may be defined ot not.
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
-					// You ensure that every user is using its own SMTP server.
+					// You ensure that every user is using its own SMTP server when using the mass emailing module.
 					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
 					$linktoadminemailend='</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
@@ -767,10 +768,13 @@ else
 				}
 				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-					// No limit was defined, so the feature is forbidden from GUI, we show just a message.
-					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+					// The feature is forbidden from GUI, we show just message to use from command line.
+				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					if ($conf->file->mailing_limit_sendbyweb != '-1')
+					if ($conf->file->mailing_limit_sendbyweb != '-1')  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.
 					{
 					   setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');  // You can send online with constant...
 					}
@@ -778,8 +782,11 @@ else
 				}
 				else
 				{
-					$text='';
-					if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+				    $text='';
+				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
                     	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
