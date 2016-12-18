@@ -34,7 +34,7 @@ $langs->load("other");
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $modulepart=GETPOST('modulepart','alpha')?GETPOST('modulepart','alpha'):'produit|service';
-$original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
+$original_file = GETPOST("file");
 $backtourl=GETPOST('backtourl');
 $cancel=GETPOST("cancel");
 

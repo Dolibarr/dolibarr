@@ -44,7 +44,7 @@ if (!$user->admin) accessforbidden();
 if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " WHERE id = ".GETPOST("pid",'int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -52,7 +52,7 @@ if ($action == 'add')
 if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " WHERE id = ".GETPOST('pid','int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }

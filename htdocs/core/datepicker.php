@@ -108,7 +108,7 @@ if (isset($_GET["m"]) && isset($_GET["y"]))
 if ($qualified)
 {
 	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
-	displayBox($_GET["sd"],$_GET["m"],$_GET["y"]);
+	displayBox(GETPOST("sd",'alpha'),GETPOST("m",'int'),GETPOST("y",'int'));
 }
 else
 {
