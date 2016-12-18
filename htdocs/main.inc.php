@@ -1003,10 +1003,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
     if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
-    if (empty($conf->global->MAIN_ACTIVATE_HTML5)) {
+    if (! empty($conf->global->MAIN_ACTIVATE_HTML4)) {
         $doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
     }else {
-        $doctype = '<!doctype html>'; // Html5 - Developement - Only available on Eldy template
+        $doctype = '<!doctype html>';
     }
     print $doctype."\n";
     if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
