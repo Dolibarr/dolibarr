@@ -79,7 +79,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 if ($db->ok)
 {
     print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? $_GET["login"] : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
+	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
     print '<input type="password" name="pass"></td></tr>';
     print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';

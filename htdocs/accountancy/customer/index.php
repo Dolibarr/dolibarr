@@ -47,7 +47,7 @@ if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST("year",'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -57,7 +57,7 @@ if ($year == 0) {
 }
 
 // Validate History
-$action = GETPOST('action');
+$action = GETPOST('action','alpha');
 
 
 
