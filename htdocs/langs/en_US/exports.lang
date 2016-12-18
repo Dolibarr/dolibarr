@@ -120,3 +120,8 @@ SelectFilterFields=If you want to filter on some values, just input values here.
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule
+## imports updates
+KeysToUseForUpdates=Key to use for updating data
+NbInsert=Number of inserted lines: %s
+NbUpdate=Number of updated lines: %s
+MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s

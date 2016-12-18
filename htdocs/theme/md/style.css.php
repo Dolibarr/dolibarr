@@ -1946,6 +1946,7 @@ img.toolbarbutton {
 }
 
 .ecm-in-layout-south {
+    border-top: 0px !important;
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;

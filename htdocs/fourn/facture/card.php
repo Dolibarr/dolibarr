@@ -386,13 +386,13 @@ if (empty($reshook))
 
 			if (! $error) {
 				// This is a replacement invoice
-				$result = $object->fetch($_POST['fac_replacement']);
+				$result = $object->fetch(GETPOST('fac_replacement'),'int');
 				$object->fetch_thirdparty();
 
-				$object->ref				= $_POST['ref'];
-				$object->ref_supplier		= $_POST['ref_supplier'];
-				$object->socid				= $_POST['socid'];
-				$object->libelle			= $_POST['label'];
+				$object->ref				= GETPOST('ref');
+				$object->ref_supplier		= GETPOST('ref_supplier','alpha');
+				$object->socid				= GETPOST('socid','int');
+				$object->libelle			= GETPOST('label');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public');
@@ -407,7 +407,7 @@ if (empty($reshook))
 				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture de remplacement
-				$object->fk_facture_source = $_POST['fac_replacement'];
+				$object->fk_facture_source = GETPOST('fac_replacement');
 				$object->type = FactureFournisseur::TYPE_REPLACEMENT;
 
 				$id = $object->createFromCurrent($user);
@@ -586,7 +586,7 @@ if (empty($reshook))
 				if (! $error && $_POST['origin'] && $_POST['originid'])
 				{
 					// Parse element/subelement (ex: project_task)
-					$element = $subelement = $_POST['origin'];
+					$element = $subelement = GETPOST('origin');
 					/*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
 					 {
 					$element = $regs[1];
@@ -610,8 +610,8 @@ if (empty($reshook))
 					{
 						$element = 'projet';
 					}
-					$object->origin    = $_POST['origin'];
-					$object->origin_id = $_POST['originid'];
+					$object->origin    = GETPOST('origin');
+					$object->origin_id = GETPOST('originid');
 
 					$id = $object->create($user);
 
@@ -623,7 +623,7 @@ if (empty($reshook))
 						if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
 						$srcobject = new $classname($db);
 
-						$result=$srcobject->fetch($_POST['originid']);
+						$result=$srcobject->fetch(GETPOST('originid','int'));
 						if ($result > 0)
 						{
 							$lines = $srcobject->lines;

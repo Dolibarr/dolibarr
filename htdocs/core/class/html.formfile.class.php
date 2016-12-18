@@ -955,7 +955,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">'."\n";
+			print '<table width="100%" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
@@ -1138,7 +1138,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'" class="opacitymedium">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'5').'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1181,7 +1181,7 @@ class FormFile
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="nobordernopadding">'."\n";
+        print '<table width="100%" class="noborder">'."\n";
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';

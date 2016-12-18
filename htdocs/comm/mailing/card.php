@@ -756,6 +756,7 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
+				// Note: MAILING_LIMIT_SENDBYWEB is always defined to something != 0
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
@@ -767,19 +768,21 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-					// on affiche donc juste un message
+					// No limit was defined, so the feature is forbidden from GUI, we show just a message.
 					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
+					if ($conf->file->mailing_limit_sendbyweb != '-1')
+					{
+					   setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');  // You can send online with constant...
+					}
 					$_GET["action"]='';
 				}
 				else
 				{
 					$text='';
-                    if ($conf->file->mailing_limit_sendbyweb == 0)
+					if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
                     	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';

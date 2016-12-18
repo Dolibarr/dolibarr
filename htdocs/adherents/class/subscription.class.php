@@ -32,7 +32,8 @@ class Subscription extends CommonObject
 {
 	public $element='subscription';
 	public $table_element='subscription';
-
+    public $picto='payment';
+    
 	var $datec;				// Date creation
 	var $datem;				// Date modification
 	var $dateh;				// Subscription start date (date subscription)
@@ -277,6 +278,31 @@ class Subscription extends CommonObject
 	}
 
 
+	/**
+	 *  Retourne le libelle du statut d'une adhesion
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string				Label
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return '';
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int			$statut      			Id statut
+	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string      						Label
+	 */
+	function LibStatut($statut)
+	{
+	    global $langs;
+	    $langs->load("members");
+	    return '';
+	}
+	
     /**
      *  Load information of the subscription object
 	 *
