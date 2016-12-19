@@ -1236,8 +1236,9 @@ else
         }
 
         print "</div>";
-        print "<br>";
+        //print "<br>";
 
+        /*
 		if (! empty($conf->agenda->enabled))
 		{
 			$objthirdparty=$objsoc;
@@ -1261,6 +1262,7 @@ else
 
         	print show_actions_done($conf,$langs,$db,$objsoc,$object,0,'','');
 		}
+		*/
     }
 }
 

@@ -1148,7 +1148,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        if ($objcon && get_class($objcon) == 'Contact' && get_class($filterobj) == 'Societe')
+        {
+            $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+        }
+        else
+        {
+            $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        }
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
