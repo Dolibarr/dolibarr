@@ -246,10 +246,17 @@ if (empty($reshook))
 		        {
 		            $obj = $db->fetch_object($resql);
 		            $npr = $obj->recuperableonly;
-		            $localtax1 = get_localtax($tva_tx,1);
-		            $localtax2 = get_localtax($tva_tx,2);
+		            $localtax1 = $obj->localtax1;
+		            $localtax2 = $obj->localtax2;
 		            $localtax1_type = $obj->localtax1_type;
 		            $localtax2_type = $obj->localtax2_type;
+
+		            // If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule
+		            if (in_array($mysoc->country_code, array('ES')))
+		            {
+    		            $localtax1 = get_localtax($tva_tx,1);
+	   	                $localtax2 = get_localtax($tva_tx,2);
+		            }
 		        }
 		    }
 			$pricestoupdate[0] = array(
