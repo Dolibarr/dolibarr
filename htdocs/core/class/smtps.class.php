@@ -1253,7 +1253,9 @@ class SMTPs
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
 
-		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));
+		// Make RFC2045 Compliant
+		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
+		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
 
 		$this->_msgContent[$strType] = array();
 

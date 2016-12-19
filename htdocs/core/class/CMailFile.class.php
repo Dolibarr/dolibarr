@@ -152,6 +152,8 @@ class CMailFile
 			$this->msgishtml = $msgishtml;
 		}
 
+		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
+		    
 		// Detect images
 		if ($this->msgishtml)
 		{
@@ -531,8 +533,6 @@ class CMailFile
 				}
 				else
 				{
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-
 					$bounce = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
@@ -545,7 +545,8 @@ class CMailFile
                     {
                         $bounce .= ($bounce?' ':'').'-ba';
                     }
-
+                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$bounce, LOG_DEBUG);
+                    
 					$this->message=stripslashes($this->message);
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
@@ -967,8 +968,9 @@ class CMailFile
 			$strContent = preg_replace("/\r\n/si", "\n", $strContent);
 		}
 
-        //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
-        $strContent = rtrim(wordwrap($strContent));
+		// Make RFC2045 Compliant, split lines
+        //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
+        $strContent = rtrim(wordwrap($strContent));   // TODO Using this method creates unexpected line break on text/plain content.
 
 		if ($this->msgishtml)
 		{
