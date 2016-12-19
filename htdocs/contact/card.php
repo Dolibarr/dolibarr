@@ -1049,7 +1049,18 @@ else
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
         
-        dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+        $morehtmlref='<div class="refidno">';
+        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+        {
+            $objsoc->fetch($object->socid);
+            // Thirdparty
+            $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+            else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+        }
+        $morehtmlref.='</div>';        
+        
+        dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
         
         
         print '<div class="fichecenter">';
@@ -1057,24 +1068,6 @@ else
         
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-
-        // Company
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-            print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
-            if ($object->socid > 0)
-            {
-                $objsoc->fetch($object->socid);
-                print $objsoc->getNomUrl(1);
-            }
-            else
-            {
-                print $langs->trans("ContactNotLinkedToCompany");
-            }
-            print '</td>';
-        }
-
-        print '</tr>';
 
         // Civility
         print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
