@@ -652,7 +652,6 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
                     {
                         setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
                     }                    
-                    $result = $ecmfile->create($user);
                 }
                 elseif ($result < 0)
                 {

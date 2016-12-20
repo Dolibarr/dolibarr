@@ -29,6 +29,7 @@ $table_element_line=(empty($table_element_line)?$object->table_element_line:$tab
 $nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):(empty($nboflines)?0:$nboflines)));
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
+$filepath=(empty($filepath)?'':$filepath);
 
 if (GETPOST('action') != 'editline' && $nboflines > 1) { ?>
 <script type="text/javascript">
@@ -48,12 +49,14 @@ $(document).ready(function(){
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
+			var filepath = "<?php echo urlencode($filepath); ?>";
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,
 						table_element_line: table_element_line,
 						fk_element: fk_element,
-						element_id: element_id
+						element_id: element_id,
+						filepath: filepath
 					},
 					function() {
 						if (reloadpage == 1) {

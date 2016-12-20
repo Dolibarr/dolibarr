@@ -203,7 +203,8 @@ class EcmFiles //extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
-
+            $this->position = $maxposition;
+            
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.

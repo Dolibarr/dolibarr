@@ -997,11 +997,41 @@ class FormFile
     			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace an existing position
     			        $filearray[$key]['cover']=0;
     			        $filearray[$key]['acl']='';
-    			        $filearray[$key]['rowid']=0;
-    			        // TODO Add entry into database
-    			        
-    			        //...
-    			        
+
+    			        $rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filearray[$key]['fullname']);
+    			        if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+    			        {
+        			        dol_syslog("list_of_documents We found a file not indexed into database. We add it");
+        			        include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+        			        $ecmfile=new EcmFiles($this->db);
+        			        	
+        			        // Add entry into database
+        			        $filename = basename($rel_filename);
+        			        $rel_dir = dirname($rel_filename);
+        			        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+        			        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+        			         
+        			        $ecmfile->filepath = $rel_dir;
+        			        $ecmfile->filename = $filename;
+        			        $ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname']));        // $destfile is a full path to file
+        			        $ecmfile->fullpath_orig = $filearray[$key]['fullname'];
+        			        $ecmfile->gen_or_uploaded = 'unknown';
+        			        $ecmfile->description = '';    // indexed content
+        			        $ecmfile->keyword = '';        // keyword content
+        			        $result = $ecmfile->create($user);
+        			        if ($result < 0)
+        			        {
+        			            setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+        			        }
+    			            else
+    			            {
+    			                $filearray[$key]['rowid']=$result;
+    			            }
+    			        }
+    			        else
+    			        {
+    			            $filearray[$key]['rowid']=0;     // Should not happened
+    			        }
     			    }
     			}
     
