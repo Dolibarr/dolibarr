@@ -28,3 +28,9 @@
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(750);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;
 ALTER TABLE llx_ecm_files CHANGE COLUMN keyword keyword varchar(750);
+
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
+
