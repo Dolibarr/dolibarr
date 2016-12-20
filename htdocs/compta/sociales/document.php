@@ -75,6 +75,13 @@ $modulepart='tax';
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+    $object->fetch($id);
+    $result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+    if ($result < 0)
+        setEventMessages($object->error, $object->errors, 'errors');
+}
 
 /*
  * View
@@ -82,8 +89,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
+$title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Documents");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$langs->trans("SocialContribution"),$help_url);
+llxHeader("",$title,$help_url);
 
 if ($object->id)
 {
@@ -93,6 +101,20 @@ if ($object->id)
 
     dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
 
+	$morehtmlref='<div class="refidno">';
+	// Label of social contribution
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.='</div>';
+
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+
+	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
     // Construit liste des fichiers
     $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -105,62 +127,15 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
 
-    // Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'id');
-	print "</td></tr>";
-
-    // Label
-    if ($action == 'edit')
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td>';
-        print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
-        print '</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->lib.'</td></tr>';
-    }
-
-    // Type
-    print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td></tr>";
-
-    // Period end date
-    print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
-    print "<td>";
-    if ($action == 'edit')
-    {
-        print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
-    }
-    else
-    {
-        print dol_print_date($object->periode,"day");
-    }
-    print "</td>";
-    print "</tr>";
-
-    // Due date
-    if ($action == 'edit')
-    {
-        print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-        print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
-        print "</td></tr>";
-    }
-    else {
-        print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
-    }
-
-    // Amount
-    print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-
-    // Status
-    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4,$alreadypayed).'</td></tr>';
-
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
 
     print '</div>';
+    
+    print '<div class="clearboth"></div>';
+    
+    dol_fiche_end();
 
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
