@@ -375,7 +375,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right" class="nowrap">'."\n";
-    $formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", '', 0, 1);
+    $formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
     print '</td></tr>'."\n";
 }
 
