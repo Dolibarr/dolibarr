@@ -165,7 +165,11 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
                     
                     setEventMessages($langs->trans("FileRenamed"), null);
                 }
-                else setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+                else 
+                {
+                    $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+                    setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+                }
             }
         }
     }

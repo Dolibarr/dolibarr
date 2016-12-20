@@ -134,11 +134,50 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 {
 	$fullpath=$dir."/".$original_file;
 	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
-
+	
 	if ($result == $fullpath)
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+		
+		include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		     
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+		
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -168,6 +207,45 @@ if ($action == 'confirm_crop')
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+		
+		include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		     
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+		
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -197,7 +275,7 @@ llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/p
 
 print load_fiche_titre($langs->trans("ImageEditor"));
 
-$infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
+$infoarray=dol_getImageSize($dir."/".GETPOST("file"));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print $langs->trans("CurrentInformationOnImage").': ';
@@ -218,7 +296,8 @@ print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
 print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px  &nbsp; '.$langs->trans("or").' &nbsp; ';
 print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
-print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
+
+print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
 print '<input type="hidden" name="modulepart" value="'.$modulepart.'" />';
@@ -240,7 +319,7 @@ print '<br>'."\n";
 
 if (! empty($conf->use_javascript_ajax))
 {
-	$infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
+	$infoarray=dol_getImageSize($dir."/".GETPOST("file"));
 	$height=$infoarray['height'];
 	$width=$infoarray['width'];
 	$widthforcrop=$width; $refsizeforcrop='orig'; $ratioforcrop=1;
@@ -260,7 +339,7 @@ if (! empty($conf->use_javascript_ajax))
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':
 	         <label>X1 <input type="text" size="4" id="x" name="x" /></label>
@@ -271,13 +350,13 @@ if (! empty($conf->use_javascript_ajax))
 	         <label>H <input type="text" size="4" id="h" name="h" /></label>
 	      </div>
 
-	      <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
+	      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 	      <input type="hidden" id="action" name="action" value="confirm_crop" />
-	      <input type="hidden" id="product" name="product" value="'.$id.'" />
+	      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
 	      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" />
-          <input type="hidden" name="modulepart" value="'.$modulepart.'" />
-	      <input type="hidden" name="id" value="'.$id.'" />
+          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
+	      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 	      <br>
 	      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
 	      &nbsp;

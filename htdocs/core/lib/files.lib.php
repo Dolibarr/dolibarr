@@ -223,7 +223,7 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
 {
     global $conf, $db;
     
-    $sql=" SELECT label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m, acl, position";
+    $sql=" SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m, acl, position";
     if ($mode) $sql.=", description";
     $sql.=" FROM ".MAIN_DB_PREFIX."ecm_files";
     $sql.=" WHERE filepath = '".$db->escape($path)."'";
@@ -243,6 +243,7 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
                 preg_match('/([^\/]+)\/[^\/]+$/',DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,$reg);
                 $level1name=(isset($reg[1])?$reg[1]:'');
                 $file_list[] = array(
+                    "rowid" => $obj->rowid,
     				"name" => $obj->filename,
     				"path" => DOL_DATA_ROOT.'/'.$obj->filepath,
                     "level1name" => $level1name,
@@ -574,11 +575,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
-    global $conf;
+    global $user, $db, $conf;
     $result=false;
 
     dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
+    $srcexists=dol_is_file($srcfile);
     $destexists=dol_is_file($destfile);
+
+    if (! $srcexists) 
+    {
+        dol_syslog("files.lib.php::dol_move srcfile does not exists. we ignore the move request.");
+        return false;
+    }
+    
     if ($overwriteifexists || ! $destexists)
     {
         $newpathofsrcfile=dol_osencode($srcfile);
@@ -589,13 +598,69 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         {
         	if ($destexists)
         	{
-        		dol_syslog("files.lib.php::dol_move failed. We try to delete first and move after.", LOG_WARNING);
+        		dol_syslog("files.lib.php::dol_move Failed. We try to delete target first and move after.", LOG_WARNING);
         		// We force delete and try again. Rename function sometimes fails to replace dest file with some windows NTFS partitions.
         		dol_delete_file($destfile);
         		$result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
         	}
-        	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        	else dol_syslog("files.lib.php::dol_move Failed.", LOG_WARNING);
         }
+
+        // Move ok
+        if ($result)
+        {
+            // Rename entry into ecm database
+            $rel_filetorenamebefore = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $srcfile);
+            $rel_filetorenameafter = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $destfile);
+            if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+            {
+                $rel_filetorenamebefore = preg_replace('/^[\\/]/', '', $rel_filetorenamebefore);
+                $rel_filetorenameafter = preg_replace('/^[\\/]/', '', $rel_filetorenameafter);
+                //var_dump($rel_filetorenamebefore.' - '.$rel_filetorenameafter);
+
+                dol_syslog("Try to rename also entries in database for full relative path before = ".$rel_filetorenamebefore." after = ".$rel_filetorenameafter, LOG_DEBUG);
+                include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+                $ecmfile=new EcmFiles($db);
+                $result = $ecmfile->fetch(0, '', $rel_filetorenamebefore);
+                if ($result > 0)   // If found
+                {
+                    $filename = basename($rel_filetorenameafter);
+                    $rel_dir = dirname($rel_filetorenameafter);
+                    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+                    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+                    
+                    $ecmfile->filepath = $rel_dir;
+                    $ecmfile->filename = $filename;
+                    $result = $ecmfile->update($user);
+                }
+                elseif ($result == 0)   // If not found
+                {
+                    $filename = basename($rel_filetorenameafter);
+                    $rel_dir = dirname($rel_filetorenameafter);
+                    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+                    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+                    	
+                    $ecmfile->filepath = $rel_dir;
+                    $ecmfile->filename = $filename;
+                    $ecmfile->label = md5_file(dol_osencode($destfile));        // $destfile is a full path to file
+                    $ecmfile->fullpath_orig = $srcfile;
+                    $ecmfile->gen_or_uploaded = 'unknown';
+                    $ecmfile->description = '';    // indexed content
+                    $ecmfile->keyword = '';        // keyword content
+                    $result = $ecmfile->create($user);
+                    if ($result < 0)
+                    {
+                        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+                    }                    
+                    $result = $ecmfile->create($user);
+                }
+                elseif ($result < 0)
+                {
+                    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+                }
+            }        
+        }
+        
         if (empty($newmask)) $newmask=empty($conf->global->MAIN_UMASK)?'0755':$conf->global->MAIN_UMASK;
         $newmaskdec=octdec($newmask);
         // Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -826,7 +891,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					    
 	                    // Delete entry into ecm database
     				    $rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filename);
-    				    if (! preg_match('/\/temp\//', $rel_filetodelete))     // If not a tmp file
+    				    if (! preg_match('/(\/temp\/|\/thumbs\/|\.meta$)/', $rel_filetodelete))     // If not a tmp file
     				    {
     				        $rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
     				        
@@ -846,7 +911,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					}
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because of not exists, we must can return true but we should return false if this is a permission problem
+					// If error because of not exists, we must should return true and we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_WARNING);
@@ -1095,7 +1160,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * All information used are in db, conf, langs, user and _FILES.
  * Note: This function can be used only into a HTML page context.
  *
- * @param	string	$upload_dir				Directory where to store uploaded file (note: also find in first part of dest_file)
+ * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
@@ -1150,6 +1215,21 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 				
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+					
+					// Generate thumbs.
+					if (image_format_supported($destpath) == 1)
+					{
+					    // Create thumbs
+					    // We can't use $object->addThumbs here because there is no $object known
+					
+					    // Used on logon for example
+					    $imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+					    // Create mini thumbs for image (Ratio is near 16/9)
+					    // Used on menu or for setup page for example
+					    $imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+					}
+					
+					// Update session
 					if (empty($donotupdatesession))
 					{
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1157,19 +1237,22 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 						$formmail->trackid = $trackid;
 						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
 					}
-					else   // Update table of files 
+					
+					// Update table of files
+					if ($donotupdatesession) 
 					{
-					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $destfile);
 					    if (! preg_match('/[\\/]temp[\\/]/', $rel_dir))     // If not a tmp file
 					    {
+					        $filename = basename($destfile);
 					        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 					        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
     					    
     					    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
     					    $ecmfile=new EcmFiles($db);
-    					    $ecmfile->label = md5_file($destpath);
-    					    $ecmfile->filename = $destfile;
     					    $ecmfile->filepath = $rel_dir;
+    					    $ecmfile->filename = $filename;
+    					    $ecmfile->label = md5_file(dol_osencode($destpath));
     					    $ecmfile->fullpath_orig = $TFile['name'][$i];
     					    $ecmfile->gen_or_uploaded = 'uploaded';
     					    $ecmfile->description = '';    // indexed content
@@ -1181,18 +1264,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
                             }
 					    }
 					}
-					if (image_format_supported($destpath) == 1)
-					{
-						// Create thumbs
-						// We can't use $object->addThumbs here because there is no $object known
-						
-						// Used on logon for example
-						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-						// Create mini thumbs for image (Ratio is near 16/9)
-						// Used on menu or for setup page for example
-						$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-					}
-	
+
 					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 				}
 				else

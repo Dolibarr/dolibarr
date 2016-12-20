@@ -875,12 +875,13 @@ class FormFile
      *  @param   string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this if you want to complete file data with database indexes.
      *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
      *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
+     *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1)
 	{
 		global $user, $conf, $langs, $hookmanager;
-		global $bc;
+		global $bc,$bcdd;
 		global $sortfield, $sortorder, $maxheightmini;
 
 		// Define relative path used to store the file
@@ -955,17 +956,18 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
 			
-			print '<tr class="liste_titre">';
+			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
 			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
 			print_liste_field_titre('');
+			if (! $disablemove) print_liste_field_titre('');
 			print "</tr>\n";
 
-			// Get list of files stored into database for same directory
+			// Get list of files stored into database for same relative directory
 			if ($relativedir)
 			{
                 $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
@@ -985,15 +987,21 @@ class FormFile
     			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
     			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
     			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
+    			            $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
     			            $found=1;
     			            break;
     			        }
     			    }
     			    if (! $found)
     			    {
-    			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace existing in position
+    			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace an existing position
     			        $filearray[$key]['cover']=0;
     			        $filearray[$key]['acl']='';
+    			        $filearray[$key]['rowid']=0;
+    			        // TODO Add entry into database
+    			        
+    			        //...
+    			        
     			    }
     			}
     
@@ -1007,7 +1015,7 @@ class FormFile
 			$nboffiles=count($filearray);
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 				
-			$var=true;
+			$var=true; $i=0; $nboflines = 0; $lastrowid=0;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -1016,12 +1024,14 @@ class FormFile
 				{
 					$var=!$var;
 					
-					$editline=0;
+					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
 					
+					$editline=0;
+					$nboflines++;
 			        print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 			        // Do we have entry into database ?
 			        print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr '.$bc[$var].'>';
+					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
 					print '<td class="tdoverflow">';
 					
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1125,6 +1135,24 @@ class FormFile
     						print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
     					}
 					    print "</td>";
+
+					    if (empty($disablemove))
+					    {
+    					    if ($nboffiles > 1 && empty($conf->browser->phone)) { 
+    					    	print '<td align="center" class="linecolmove tdlineupdown">'; 
+    					    	if ($i > 0) {
+    					    		print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
+    					    	}
+    					        if ($i < $nboffiles-1) {
+    					    		print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id.'">'.img_down('default',0,'imgdownforline').'</a>';
+    				    		}
+    					    	print '</td>';
+    					    }
+    					    else {
+    					       	print '<td align="center"'.((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+    					       	print '</td>';
+    					    }
+					   }
 					}
 					else
 					{
@@ -1132,18 +1160,32 @@ class FormFile
 					    print '<input type="submit" class="button" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 					    print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 					    print '</td>';
+					    if (empty($disablemove)) print '<td class="right"></td>';
 					}
 					print "</tr>\n";
+					
+					$i++;
 				}
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'5').'" class="opacitymedium">';
+			    $colspan=(empty($useinecm)?'5':'5');
+			    if (empty($disablemove)) $colspan++;
+				print '<tr '.$bc[false].'><td colspan="'.$colspan.'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
 			}
 			print "</table>";
+			
+			
+			if (! $editline && $nboflines > 1) { 
+				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
+				    $table_element_line = 'ecm_files';
+				    include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+				}
+			}				
+			
 			if (GETPOST('action') == 'editfile' && $permtoeditline)
 			{
 			    print '</form>';

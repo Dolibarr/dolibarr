@@ -72,6 +72,9 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+$disablemove=1;
+if ($modulepart == 'produit') $disablemove=0;
+    
 // List of document
 $formfile->list_of_documents(
     $filearray,
@@ -90,7 +93,8 @@ $formfile->list_of_documents(
     $permtoedit,
     $upload_dir,
     $sortfield,
-    $sortorder
+    $sortorder,
+    $disablemove
 );
 
 print "<br>";
