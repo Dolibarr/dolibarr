@@ -54,6 +54,7 @@ class CMailFile
 	var $deliveryreceipt;
 
 	var $eol;
+	var $eol2;
 	var $atleastonefile=0;
 	var $error='';
 
@@ -103,7 +104,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string
-	 *  @param  string  $moreinheader        More in header (for phpmail only for the moment)
+	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
 	 */
 	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='')
 	{
@@ -117,6 +118,7 @@ class CMailFile
 		{
 			$this->eol="\n";
 			$this->eol2="\n";
+			$moreinheader = str_replace("\r\n","\n",$moreinheader);
 		}
 
 		// On defini mixed_boundary
@@ -209,7 +211,7 @@ class CMailFile
 			$this->deliveryreceipt = $deliveryreceipt;
 			$this->trackid = $trackid;
 			$smtp_headers = $this->write_smtpheaders();
-            if (! empty($moreinheader)) $smtp_headers.=$moreinheader;
+            if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
             
 			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
@@ -270,7 +272,8 @@ class CMailFile
 			$smtps->setFrom($this->getValidAddress($from,0,1));
 			$smtps->setTrackId($trackid);
 			$smtps->setReplyTo($this->getValidAddress($from,0,1));   // Set property with this->smtps->setReplyTo after constructor if you want to use another value than the From
-					
+			if (! empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
+			    
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -324,7 +327,8 @@ class CMailFile
 			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
 			$this->phpmailer->SetReplyTo($this->getValidAddress($from,0,1));   // Set property with this->phpmailer->setReplyTo after constructor if you want to use another value than the From
 			// TODO Add trackid into smtp header
-
+			// TODO if (! empty($moreinheader)) ...
+					
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -377,7 +381,8 @@ class CMailFile
             $msgid = $headers->get('Message-ID');
             $msgid->setId($headerID);
             $headers->addIdHeader('References', $headerID);
-
+            // TODO if (! empty($moreinheader)) ...
+            
             // Give the message a subject
             $this->message->setSubject($this->encodetorfc2822($subject));
 
