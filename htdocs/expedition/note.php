@@ -97,22 +97,19 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
 
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
 	$head=shipping_prepare_head($object);
-    dol_fiche_head($head, 'note', $langs->trans("Shipment"), 0, 'sending');
+	dol_fiche_head($head, 'note', $langs->trans("Shipment"), 0, 'sending');
 
     
-    // Shipment card
-    $linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
-    
-    $morehtmlref='<div class="refidno">';
-    // Ref customer shipment
-    $morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-    $morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
-    // Thirdparty
-    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	// Shipment card
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref='<div class="refidno">';
+	// Ref customer shipment
+	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled)) {
         $langs->load("projects");
