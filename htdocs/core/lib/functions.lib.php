@@ -3171,7 +3171,7 @@ function get_localtax_by_third($local)
  *  @param	Societe	$seller        		Company object
  *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
-function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
+function getLocalTaxesFromRate($vatrate, $local, $buyer="", $seller="")
 {
 	global $db;
 
