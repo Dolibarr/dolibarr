@@ -33,7 +33,6 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
-
 /**
  *	Class to manage Dolibarr users
  */
@@ -43,90 +42,90 @@ class User extends CommonObject
 	public $table_element='user';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id=0;
-	var $ldap_sid;
-	var $search_sid;
-	var $employee;
-	var $gender;
-	var $email;
-	var $skype;
-	var $job;
-	var $signature;
-	var $address;
-    var $zip;
-    var $town;
-    var $state_id;
-    var $state_code;
-    var $state;
-	var $office_phone;
-	var $office_fax;
-	var $user_mobile;
-	var $admin;
-	var $login;
-    var $api_key;
-	var $entity;
+	public $id=0;
+	public $ldap_sid;
+	public $search_sid;
+	public $employee;
+	public $gender;
+	public $email;
+	public $skype;
+	public $job;
+	public $signature;
+	public $address;
+    	public $zip;
+    	public $town;
+    	public $state_id;
+    	public $state_code;
+    	public $state;
+	public $office_phone;
+	public $office_fax;
+	public $user_mobile;
+	public $admin;
+	public $login;
+    	public $api_key;
+	public $entity;
 
 	//! Clear password in memory
-	var $pass;
+	public $pass;
 	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
-	var $pass_indatabase;
+	public $pass_indatabase;
 	//! Encrypted password in database (always defined)
-	var $pass_indatabase_crypted;
+	public $pass_indatabase_crypted;
 
-	var $datec;
-	var $datem;
+	public $datec;
+	public $datem;
 
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
 	 * @see socid
 	 */
-	var $societe_id;
+	public $societe_id;
 	/**
 	 * @deprecated
 	 * @see contactid
 	 */
-	var $contact_id;
-	var $socid;
-	var $contactid;
+	public $contact_id;
+	public $socid;
+	public $contactid;
 
-	var $fk_member;
-	var $fk_user;
+	public $fk_member;
+	public $fk_user;
 
-	var $clicktodial_url;
-	var $clicktodial_login;
-	var $clicktodial_password;
-	var $clicktodial_poste;
+	public $clicktodial_url;
+	public $clicktodial_login;
+	public $clicktodial_password;
+	public $clicktodial_poste;
 
-	var $datelastlogin;
-	var $datepreviouslogin;
-	var $statut;
-	var $photo;
-	var $lang;
+	public $datelastlogin;
+	public $datepreviouslogin;
+	public $statut;
+	public $photo;
+	public $lang;
 
-	var $rights;                        // Array of permissions user->rights->permx
-	var $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
+	public $rights;                        // Array of permissions user->rights->permx
+	public $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
-	var $nb_rights;						// Number of rights granted to the user
+	public $nb_rights;			// Number of rights granted to the user
 
-	var $conf;           			// To store personal config
+	public $conf;           		// To store personal config
 	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
 
-	var $users;						// To store all tree of users hierarchy
-	var $parentof;					// To store an array of all parents for all ids.
+	public $users;					// To store all tree of users hierarchy
+	public $parentof;				// To store an array of all parents for all ids.
 
-	var $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
+	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 	
-	var $thm;						// Average cost of employee - Used for valuation of time spent
-	var $tjm;						// Average cost of employee
+	public $thm;					// Average cost of employee - Used for valuation of time spent
+	public $tjm;					// Average cost of employee
 	
-	var $salary;					// Monthly salary       - Denormalized value from llx_user_employment  
-	var $salaryextra;				// Monthly salary extra - Denormalized value from llx_user_employment
-	var $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
+	public $salary;					// Monthly salary       - Denormalized value from llx_user_employment  
+	public $salaryextra;				// Monthly salary extra - Denormalized value from llx_user_employment
+	public $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
 
-	var $color;						// Define background color for user in agenda
+	public $color;						// Define background color for user in agenda
 	
-	var $dateemployment;			// Define date of employment by company
+	public $dateemployment;			// Define date of employment by company
 
 	/**
 	 *    Constructor de la classe
