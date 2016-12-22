@@ -247,12 +247,6 @@ if ($id > 0)
 		print '</tr>';
 	}
 
-	// Skype
-  	if (! empty($conf->skype->enabled))
-  	{
-		print '<td>'.$langs->trans('Skype').'</td><td>'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
-  	}
-
 	// Assujeti a TVA ou pas
 	print '<tr>';
 	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td>';
