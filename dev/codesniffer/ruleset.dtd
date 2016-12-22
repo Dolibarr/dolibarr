@@ -3,6 +3,7 @@
 <!ATTLIST ruleset name CDATA "">
 <!ELEMENT description (#PCDATA)>
 <!ELEMENT exclude-pattern (#PCDATA)>
+<!ATTLIST exclude-pattern type CDATA "">
 <!ELEMENT rule (properties*,severity*)>
 <!ATTLIST rule ref CDATA "">
 <!ELEMENT properties (property+)>

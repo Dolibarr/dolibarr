@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /*
  * Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
@@ -69,7 +69,7 @@ if (! empty($login)) $user->fetch('',$login);
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
 $sql.= " m.email_from, m.email_replyto, m.email_errorsto";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql.= " WHERE m.statut = 1";
+$sql.= " WHERE m.statut IN (1,2)";
 if ($id != 'all')
 {
 	$sql.= " AND m.rowid= ".$id;

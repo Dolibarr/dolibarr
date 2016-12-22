@@ -36,21 +36,6 @@ class PaiementFourn extends Paiement
     public $element='payment_supplier';
     public $table_element='paiementfourn';
 
-    var $id;
-	var $ref;
-	var $facid;
-	var $datepaye;
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $author;
-	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
-						// de llx_paiement qui est lie aux types de
-						//paiement de llx_c_paiement
-	var $num_paiement;	// Numero du CHQ, VIR, etc...
-	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;		// Id de la ligne d'ecriture bancaire
-	var $note;
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -80,18 +65,28 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Load payment object
 	 *
-	 *	@param	int		$id     Id if payment to get
-	 *	@return int     		<0 if ko, >0 if ok
+	 *	@param	int		$id         Id if payment to get
+	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	int		$fk_bank	Id of bank line associated to payment
+	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id, $ref='', $fk_bank='')
 	{
+	    $error=0;
+	    
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
-		$sql.= ' AND p.rowid = '.$id;
+		if ($id > 0)
+			$sql.= ' AND p.rowid = '.$id;
+		else if ($ref)
+			$sql.= ' AND p.rowid = '.$ref;
+		else if ($fk_bank)
+			$sql.= ' AND p.fk_bank = '.$fk_bank;
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -114,7 +109,7 @@ class PaiementFourn extends Paiement
 			}
 			else
 			{
-				$error = -2;
+				$error = -2;    // TODO Use 0 instead
 			}
 			$this->db->free($resql);
 		}
@@ -143,10 +138,9 @@ class PaiementFourn extends Paiement
 		$this->total = 0;
 		foreach ($this->amounts as $key => $value)
 		{
-			$value = price2num($value);
-			$val = round($value, 2);
-			$this->amounts[$key] = $val;
-			$this->total += $val;
+			$newvalue = price2num($value, 'MT');
+			$this->amounts[$key] = $newvalue;
+			$this->total += $newvalue;
 		}
 		$this->total = price2num($this->total);
 
@@ -257,6 +251,8 @@ class PaiementFourn extends Paiement
 	 */
 	function delete($notrigger=0)
 	{
+	    global $conf, $user, $langs;
+	    
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -325,6 +321,19 @@ class PaiementFourn extends Paiement
     	    		return -4;
     		    }
 			}
+			
+			if (! $notrigger)
+			{
+			    // Appel des triggers
+			    $result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
+			    if ($result < 0)
+			    {
+			        $this->db->rollback();
+			        return -1;
+			    }
+			    // Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return 1;
 		}

@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=No error, we commit
 # Errors
-Error=Error
-Errors=Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=EMail %s is wrong
 ErrorBadUrl=Url %s is wrong
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
 ErrorNoValueForSelectType=Please fill value for select list
 ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
-ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
+ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
@@ -172,6 +170,16 @@ ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
+ErrorSavingChanges=An error has ocurred when saving the changes
+ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
+ErrorFileMustHaveFormat=File must have format %s
+ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
 
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.  
@@ -194,3 +202,4 @@ WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when dis
 WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s. 
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit. 
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.

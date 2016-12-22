@@ -6,7 +6,7 @@ AllSendings=Alle forsendelser
 Shipment=Levering
 Shipments=Leveringer
 ShowSending=Vis forsendelser
-Receivings=Kvitteringer
+Receivings=Leveringskvitteringer
 SendingsArea=Leveringsområde
 ListOfSendings=Oversikt over leveringer
 SendingMethod=Leveringsmåte
@@ -69,7 +69,9 @@ ProductQtyInCustomersOrdersRunning=Varekvantum i åpnede kundeordre
 ProductQtyInSuppliersOrdersRunning=Varekvantum i åpnede leverandørordre
 ProductQtyInShipmentAlreadySent=Varekvantum i åpnede kundeordre som er sendt
 ProductQtyInSuppliersShipmentAlreadyRecevied=Varekvantum i åpnede leverandørordre som er mottatt
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Ingen varer for utsendelse funnet på lager <b>%s</b>. Korriger varebeholdning eller gå tilbake for å velge et annet lager.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Hentet av kunde

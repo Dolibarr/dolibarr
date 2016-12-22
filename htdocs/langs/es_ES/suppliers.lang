@@ -3,6 +3,7 @@ Suppliers=Proveedores
 AddSupplier=Crear un proveedor
 SupplierRemoved=Proveedor eliminado
 SuppliersInvoice=Factura proveedor
+ShowSupplierInvoice=Ver factura de proveedor
 NewSupplier=Nuevo proveedor
 History=Histórico
 ListOfSuppliers=Listado de proveedores

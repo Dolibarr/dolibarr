@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - trips
+ExpenseReports=Spesenabrechnungen Hinweis
+TripCard=Reisekosten Karte
+ListOfTrips=Liste Reise- und Spesenabrechnungen
+ShowTrip=Spesenreport anzeigen
+NewTrip=neue Reisekostenabrechnung
+CompanyVisited=Besuchte Firma/Stiftung
+ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
+ExpenseReportWaitingForApproval=Eine neue Reisekostenabrechnung ist zur Genehmigung vorgelegt worden
+ExpenseReportWaitingForApprovalMessage=Eine neue Kostenabrechnung wurde vorgelegt und steht zur Überprüfung an.\n- Benutzer: %s \n- Zeitraum: %s  \nKlicken Sie hier, um zu überprüfen: %s
+AnyOtherInThisListCanValidate=Zu informierende Person für die Bestätigung
+TripSociete=Information Firma
+ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnliche Datumsbereich erstellt.
+Date_DEBUT=Beginndatum
+NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen.
+RefuseTrip=Verweigern einer Spesenabrechnung
+CancelTrip=Abrechen einer Spesenabrechnung
+BrouillonnerTrip=Spesenabrechnung rückgängig, auf den Status "Entwurf"
+ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wollen?
+ExpenseReportsToPay=Spesenabrechnungen zu entrichten

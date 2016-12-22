@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=ทรัพยากร
 MenuResourceAdd=ทรัพยากรใหม่
 MenuResourcePlanning=การวางแผนทรัพยากร
@@ -17,6 +17,7 @@ ResourceFormLabel_description=คำอธิบายทรัพยากร
 
 ResourcesLinkedToElement=ทรัพยากรที่เชื่อมโยงกับองค์ประกอบ
 
+ShowResource=Show resource
 ShowResourcePlanning=แสดงการวางแผนทรัพยากร
 GotoDate=ไปยังวันที่
 

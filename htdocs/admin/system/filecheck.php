@@ -40,7 +40,7 @@ $error=0;
 
 llxHeader();
 
-print_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
+print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
 
 // Version
 $var = true;

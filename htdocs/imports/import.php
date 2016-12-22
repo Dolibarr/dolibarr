@@ -139,11 +139,11 @@ if ($action == 'builddoc')
 	$result=$objimport->build_file($user, GETPOST('model','alpha'), $datatoimport, $array_match_file_to_database);
 	if ($result < 0)
 	{
-		setEventMessage($objimport->error, 'errors');
+		setEventMessages($objimport->error, $objimport->errors, 'errors');
 	}
 	else
 	{
-		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
+		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	}
 }
 
@@ -176,23 +176,23 @@ if ($action == 'add_import_model')
 		$result = $objimport->create($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("ImportModelSaved",$objimport->model_name));
+			setEventMessages($langs->trans("ImportModelSaved", $objimport->model_name), null, 'mesgs');
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				setEventMessage($langs->trans("ErrorImportDuplicateProfil"), 'errors');
+				setEventMessages($langs->trans("ErrorImportDuplicateProfil"), null, 'errors');
 			}
 			else {
-				setEventMessage($objimport->error, 'errors');
+				setEventMessages($objimport->error, null, 'errors');
 			}
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ImportModelName")), null, 'errors');
 	}
 }
 
@@ -211,7 +211,7 @@ if ($step == 3 && $datatoimport)
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 		}
 	}
 
@@ -225,8 +225,8 @@ if ($step == 3 && $datatoimport)
 
 		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
@@ -617,6 +617,11 @@ if ($step == 4 && $datatoimport)
 	    $obj->separator = $separator;
 	    $obj->enclosure = $enclosure;
 	}
+	
+	$update = GETPOST('update');
+	if(!empty($update)) {
+		$array_match_file_to_database=array();
+	}
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -738,7 +743,7 @@ if ($step == 4 && $datatoimport)
 		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
 		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
-		print '<input type="submit" value="'.$langs->trans('Update').'" class="button" />';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
 		print '</form>';
 		print '</td></tr>';
     }
@@ -836,6 +841,7 @@ if ($step == 4 && $datatoimport)
 	print '</td><td width="50%">';
 
 	// List of targets fields
+	$height=24;
 	$i = 0;
 	$var=true;
 	$mandatoryfieldshavesource=true;
@@ -843,7 +849,7 @@ if ($step == 4 && $datatoimport)
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="20">';
+		print '<tr '.$bc[$var].' height="'.$height.'">';
 
 		$i++;
 
@@ -896,8 +902,9 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')        $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		}
 		// Format control rule
 		if (! empty($objimport->array_import_regex[0][$code]))
@@ -1703,13 +1710,15 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
+	$height='24';
+	
 	print "\n\n<!-- Box ".$pos." start -->\n";
 	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
@@ -1720,7 +1729,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	elseif ($key == 'none')	// Empty line
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -1731,7 +1740,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	else	// Print field of source file
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');

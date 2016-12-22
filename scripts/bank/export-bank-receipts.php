@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /*
  * Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>

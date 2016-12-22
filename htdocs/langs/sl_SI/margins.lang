@@ -23,8 +23,8 @@ ChooseProduct/Service=Izberi proizvod ali storitev
 StartDate=Začetni datum
 EndDate=Končni datum
 Launch=Start
-ForceBuyingPriceIfNull=Uveljavi nabavno ceno, če je nič
-ForceBuyingPriceIfNullDetails=če je "ON", bo marža 0 (nabavna cena = prodajna cena), drugače ("OFF")  bo marža enaka prodajni ceni (nabavna cena = 0)
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Metoda marž pri globalnih popustih
 UseDiscountAsProduct=Kot proizvod
 UseDiscountAsService=Kot storitev
@@ -35,8 +35,9 @@ MargeBrute=Bruto marža
 MargeNette=Neto marža
 MargeType1=Marža na najboljšo nabavno ceno
 MargeType2=Marža na uravnoteženo povprečno ceno (WAP)
-MARGIN_TYPE_DETAILS=Bruto marža : prodajna cena - nabavna cena<br/>Neto marža : prodajna cena - stroškovna cena
-MarginTypeDesc=Marža na najboljšo nabavno ceno : Prodajna cena - Najboljša nabavna cena s kartice proizvoda<br/>Marža na uravnoteženo povprečno ceno (WAP) : Prodajna cena - Uravnotežena povprečna cena proizvoda
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Stroškovna cena
 BuyingCost=Stroškovna cena
 UnitCharges=Stroški po enoti

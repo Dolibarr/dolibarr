@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Kaynaklar
 MenuResourceAdd=Yeni kaynaklar
 MenuResourcePlanning=Kaynak planlama
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Kaynak açıklaması
 
 ResourcesLinkedToElement=Öğeye bağlantılı kaynaklar
 
+ShowResource=Kaynak göster
 ShowResourcePlanning=Kaynak planlama göster
 GotoDate=Tarihe git
 

@@ -58,8 +58,10 @@ BoxLastExpiredServices=Sidste %s ældste kontakter med aktive udløbne tjenester
 BoxTitleLastActionsToDo=Seneste %s aktioner at gøre
 BoxTitleLastContracts=Sidste %s kontrakter
 BoxTitleLastModifiedDonations=Sidste %s ændret donationer
-BoxTitleLastModifiedExpenses=Sidste %s ændret udgifter
+BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Det lykkedes ikke at opdatere RSS flux. Seneste vellykkede opdatere dato: %s
 LastRefreshDate=Sidst opdateret dato
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Nr. bogmærker defineret. Klik <a href="%s">her</a> for at tilføje bogmærker.
@@ -95,3 +97,4 @@ ForCustomersInvoices=Kundernes fakturaer
 ForCustomersOrders=Customers orders
 ForProposals=Forslag
 LastXMonthRolling=The last %s month rolling
+ChooseBoxToAdd=Add a box to your dashboard...

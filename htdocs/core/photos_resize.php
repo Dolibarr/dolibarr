@@ -139,7 +139,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 	}
 	else
 	{
-		setEventMessage($result, 'errors');
+		setEventMessages($result, null, 'errors');
 		$_GET['file']=$_POST["file"];
 		$action='';
 	}
@@ -168,7 +168,7 @@ if ($action == 'confirm_crop')
 	}
 	else
 	{
-		setEventMessage($result, 'errors');
+		setEventMessages($result, null, 'errors');
 		$_GET['file']=$_POST["file"];
 		$action='';
 	}
@@ -182,7 +182,7 @@ if ($action == 'confirm_crop')
 llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js','/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
 
 
-print_fiche_titre($langs->trans("ImageEditor"));
+print load_fiche_titre($langs->trans("ImageEditor"));
 
 $infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];

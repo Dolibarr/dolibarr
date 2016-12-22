@@ -33,7 +33,9 @@ $langs->load("banks");
 $langs->load("bills");
 
 $id=GETPOST("id",'int');
-$action=GETPOST('action');
+$action=GETPOST("action","alpha");
+$refund=GETPOST("refund","int");
+if (empty($refund)) $refund=0;
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -44,7 +46,6 @@ $tva = new Tva($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('taxvatcard','globalcard'));
-
 
 
 /**
@@ -69,28 +70,33 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$tva->num_payment=GETPOST("num_payment");
     $tva->datev=$datev;
     $tva->datep=$datep;
-    $tva->amount=GETPOST("amount");
+	
+	$amount = price2num(GETPOST("amount"));
+	if ($refund == 1) {
+		$amount= -$amount;
+	}
+    $tva->amount= $amount;
 	$tva->label=GETPOST("label");
 	$tva->note=GETPOST("note");
 	
 	if (empty($tva->datev))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateValue")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
 		$error++;
 	}
 	if (empty($tva->datep))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DatePayment")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
 		$error++;
 	}
 	if (empty($tva->type_payment) || $tva->type_payment < 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if (empty($tva->amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
 
@@ -108,7 +114,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		else
 		{
 			$db->rollback();
-			setEventMessage($tva->error, 'errors');
+			setEventMessages($tva->error, $tva->errors, 'errors');
 			$action="create";
 		}
 	}
@@ -144,25 +150,25 @@ if ($action == 'delete')
 			{
 				$tva->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($tva->error,'errors');
+				setEventMessages($tva->error, $tva->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        setEventMessage($tva->error,'errors');
+	        setEventMessages($tva->error, $tva->errors, 'errors');
 	    }
 	}
 	else
 	{
-        setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
@@ -182,12 +188,46 @@ if ($id)
 // Formulaire saisie tva
 if ($action == 'create')
 {
-    print "<form name='add' action=\"card.php\" method=\"post\">\n";
+	print load_fiche_titre($langs->trans("VAT") . ' - ' . $langs->trans("New"));
+
+	if (! empty($conf->use_javascript_ajax))
+    {
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print '$(document).ready(function () {
+                $("#radiopayment").click(function() {
+                    $("#label").val($(this).data("label"));
+                    
+                });
+                $("#radiorefund").click(function() {
+                    $("#label").val($(this).data("label"));
+                    
+                });
+        });';
+		print '</script>'."\n";
+	}
+
+    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->trans("NewVATPayment"));
-
+    print '<div id="selectmethod">';
+    print '<div class="hideonsmartphone float">';
+    print $langs->trans("Type").':&nbsp;&nbsp;&nbsp;';
+    print '</div>';
+    print '<label for="radiopayment">';
+    print '<input type="radio" id="radiopayment" data-label="'.$langs->trans('VATPayment').'" class="flat" name="refund" value="0"'.($refund?'':' checked="checked"').'>';
+    print '&nbsp;';
+    print $langs->trans("Payment");
+    print '</label>';
+    print '&nbsp;&nbsp;&nbsp;';
+    print '<label for="radiorefund">';
+    print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund?' checked="checked"':'').'>';
+    print '&nbsp;';
+    print $langs->trans("Refund");
+    print '</label>';
+    print '</div>';
+    print "<br>\n";
+	
     dol_fiche_head();
 
     print '<table class="border" width="100%">';
@@ -202,7 +242,12 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
+	if ($refund == 1) {
+		$label = $langs->trans("VATRefund");
+	} else {
+		$label = $langs->trans("VATPayment");
+	}
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$label).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
@@ -327,7 +372,5 @@ if ($id)
 	print "</div>";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

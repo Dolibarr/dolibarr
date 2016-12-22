@@ -59,7 +59,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
     }
     else
     {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
     }
 }
@@ -78,7 +78,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -99,7 +99,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -110,11 +110,11 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
     $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
-		setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
+		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans('PaymentNumberUpdateFailed'), 'errors');
+		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
 	}
 }
 
@@ -125,11 +125,11 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
-		setEventMessage($langs->trans('PaymentDateUpdateSucceeded'));
+		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans('PaymentDateUpdateFailed'), 'errors');
+		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
 
@@ -171,34 +171,34 @@ if ($result > 0)
 	print '<table class="border" width="100%">';
 
 	print '<tr>';
-	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
+	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
     print $form->showrefnav($object,'id','',1,'rowid','ref');
 	print '</td></tr>';
 
 	// Date payment
-    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print '<tr><td colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
 	// Payment mode
 	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
     print '</td></tr>';
 
 	// Amount
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
-		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+		print '<tr><td colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
 
 	// Note
-    print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
     print '</td></tr>';
 

@@ -145,7 +145,7 @@ if ($action == 'assign')
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'warnings');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'warnings');
 		}
 		else
 		{
@@ -224,7 +224,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
     	if (! $error)
     	{
-	    	setEventMessage($langs->trans("RecordSaved"));
+	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
     	    // Redirect to avoid submit twice on back
         	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
@@ -233,7 +233,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     }
     else
     {
-	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
+	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
     }
 }
 
@@ -274,10 +274,10 @@ if ($id)
     $project->fetch_thirdparty();
 }
 
-$onlyopened=1;	// or -1
-$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
+$onlyopenedproject=1;	// or -1
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -313,11 +313,11 @@ $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperday', '', 0, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
 if ($mine)
 {
@@ -408,7 +408,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
 print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
 print '</form>';
 

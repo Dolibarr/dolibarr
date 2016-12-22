@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Oauth Konfiguration
+NoAccessToken=Kein Zugriffstoken in der lokalen Datenbank gespeichert
+HasAccessToken=Ein Token wurde erstellt und in der lokalen Datenbank gespeichert
+NewTokenStored=Empfangene und gespeicherte Token
+ToCheckDeleteTokenOnProvider=Prüfe/Löschen Authentifizierung gespeichert durch den OAuth Anbieter %s
+TokenDeleted=Token gelöscht
+RequestAccess=Hier klcien, um Zugriff anzufordern/zu verlängern und einen neuen Token zu bekommen.
+DeleteAccess=Hier klicken, um das Token zu löschen
+UseTheFollowingUrlAsRedirectURI=Benutzen Sie diese URL zur Weiterleitung, wenn Sie die Anmeldedaten Ihres OAuth Anbieters erstellen.
+ListOfSupportedOauthProviders=Hier Anmeldedaten Ihres OAuth2 Anbieters eintragen. Nur OAuth2 Anbieter werden hier angezeigt. Diese Einstellungen können von anderen Module genutzt werden, die OAuth2 Authentifizierung benötigen.
+OAUTH_GOOGLE_NAME=Google API
+OAUTH_GOOGLE_ID=Google APi ID
+OAUTH_GOOGLE_SECRET=API Google Secret

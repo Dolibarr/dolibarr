@@ -63,6 +63,7 @@ create table llx_commande
   
   date_livraison		date 	  default NULL,
   fk_shipping_method    integer,                       -- shipping method id
+  fk_warehouse		  integer 	  default NULL,
   fk_availability		integer NULL,
   fk_input_reason		integer,						-- id coming from c_input_reason, '0' if no defined
   fk_delivery_address	integer,						-- delivery address (deprecated)

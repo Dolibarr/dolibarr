@@ -48,7 +48,7 @@ else dol_print_error($db,'');
 
 
 
-print_fiche_titre($langs->trans("OpenSurveyArea"));
+print load_fiche_titre($langs->trans("OpenSurveyArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -291,7 +291,7 @@ if ($result < 0)
 {
 	$langs->load("errors");
 	$error++;
-	setEventMessage($langs->trans("ErrorFailedToCreateDir"), 'errors');
+	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 }
 else
 {

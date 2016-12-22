@@ -43,9 +43,6 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $rowid;
 
-    //! Database handler
-    public $db;
-
 	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string
@@ -54,7 +51,7 @@ abstract class CommonObjectLine extends CommonObject
 
 
     /**
-     *	Returns the text label from units dictionnary
+     *	Returns the text label from units dictionary
      *
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok

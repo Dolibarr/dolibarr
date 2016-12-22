@@ -301,7 +301,7 @@ class FormMail extends Form
         	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
         	if ($result<0)
         	{
-        		setEventMessage($this->error,'errors');
+        		setEventMessages($this->error, $this->errors, 'errors');
         	}
         	$modelmail_array=array();
         	foreach($this->lines_model as $line)
@@ -316,10 +316,25 @@ class FormMail extends Form
 	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected">';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
 	        	$out.= '</div>';
         	}
+        	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
+        	        'propal_send','order_send','facture_send',
+        	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
+        	        'invoice_supplier_send','thirdparty'
+           	    )))
+        	{
+        	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
+        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none" disabled="disabled">'.$langs->trans("NoTemplateDefined").'</option></select>';
+        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        	    $out.= ' &nbsp; ';
+        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
+        	    $out.= ' &nbsp; ';
+        	    $out.= '</div>';
+        	}
+
 
 
         	$out.= '<table class="border" width="100%">'."\n";
@@ -524,7 +539,7 @@ class FormMail extends Form
 
         		$showinfobcc='';
         		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'askpricesupplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
         		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
         		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
         		if ($showinfobcc) $out.=' + '.$showinfobcc;
@@ -544,7 +559,7 @@ class FormMail extends Form
         		{
         			$defaultvaluefordeliveryreceipt=0;
         			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ASKPRICESUPPLIER) && ! empty($this->param['models']) && $this->param['models'] == 'askpricesupplier_send') $defaultvaluefordeliveryreceipt=1;
+					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
         			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
         			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
         			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
@@ -648,7 +663,7 @@ class FormMail extends Form
         			}
         			if ($this->param["models"]=='facture_send')
         			{
-        				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
+        				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__REF__']);
         				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
@@ -692,7 +707,7 @@ class FormMail extends Form
 						else $this->withfckeditor=0;
         			}
 
-        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
+        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,'95%');
         			$out.= $doleditor->Create(1);
         		}
         		$out.= "</td></tr>\n";
@@ -786,7 +801,7 @@ class FormMail extends Form
 				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
 	        	elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
 	        	elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
-	        	elseif ($type_template=='askpricesupplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendAskPriceSupplier"); }
+	        	elseif ($type_template=='supplier_proposal_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); }
 	        	elseif ($type_template=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
 	        	elseif ($type_template=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
 	        	elseif ($type_template=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
@@ -879,7 +894,7 @@ class FormMail extends Form
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
-				$line->content=$obj->lacontentbel;
+				$line->content=$obj->content;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}

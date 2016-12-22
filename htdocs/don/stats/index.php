@@ -49,6 +49,7 @@ $endyear=$year;
 
 $langs->load("sendings");
 $langs->load("other");
+$langs->load("companies");
 
 
 /*
@@ -59,7 +60,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
 
 
 dol_mkdir($dir);
@@ -240,11 +241,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_users($userid,'userid',1);
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';

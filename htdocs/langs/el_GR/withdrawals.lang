@@ -48,7 +48,6 @@ RefusedReason=Λόγος απόρριψης
 RefusedInvoicing=Χρέωσης για την απόρριψη
 NoInvoiceRefused=Μην φορτίζετε την απόρριψη
 InvoiceRefused=Τιμολόγιο απορρίφθηκε (Φορτίστε την απόρριψη στον πελάτη)
-Status=Κατάσταση
 StatusUnknown=Άγνωστος
 StatusWaiting=Αναμονή
 StatusTrans=Απεσταλμένο

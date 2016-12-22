@@ -46,7 +46,7 @@ $object = new CommandeFournisseur($db);
 
 
 /*
- * Ajout d'un nouveau contact
+ * Add a new contact
  */
 
 if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
@@ -69,16 +69,16 @@ if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-// bascule du statut d'un contact
+// Toggle the status of a contact
 else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 {
 	if ($object->fetch($id))
@@ -91,7 +91,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 	}
 }
 
-// Efface un contact
+// Deleting a contact
 else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-		// Fournisseur
+		// Supplier
 		print '<tr><td>'.$langs->trans("Supplier")."</td>";
 		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
 		print '</tr>';
@@ -172,7 +172,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Contrat non trouv
+		// Contact not found
 		print "ErrorRecordNotFound";
 	}
 }

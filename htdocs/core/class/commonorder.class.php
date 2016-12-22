@@ -138,36 +138,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $localtax2_type;
 
 	/**
-	 * Total amount before taxes
-	 * @var float
-	 */
-	public $total_ht;
-
-	/**
-	 * Total VAT amount
-	 * @var float
-	 */
-	public $total_tva;
-
-	/**
-	 * Total local tax 1 amount
-	 * @var float
-	 */
-	public $total_localtax1;
-
-	/**
-	 * Total local tax 2 amount
-	 * @var float
-	 */
-	public $total_localtax2;
-
-	/**
-	 * Total amount with taxes
-	 * @var float
-	 */
-	public $total_ttc;
-
-	/**
 	 * Liste d'options cumulables:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
 	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)

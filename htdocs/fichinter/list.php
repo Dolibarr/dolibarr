@@ -44,9 +44,10 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
@@ -55,21 +56,32 @@ if (! $sortfield)
  	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sortfield="fd.date";
  	else $sortfield="f.ref";
 }
-$limit = $conf->liste_limit;
 
 $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
+$optioncss = GETPOST('optioncss','alpha');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_company="";
 	$search_desc="";
 	$search_status="";
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'f.ref'=>'Ref',
+    's.nom'=>"ThirdParty",
+    'f.description'=>'Description',
+    'f.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
+if (! empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['f.description']);
+
 
 /*
  *	View
@@ -109,9 +121,13 @@ if (! $user->rights->societe->client->voir && empty($socid))
 if ($socid)
 	$sql.= " AND s.rowid = " . $socid;
 if ($sall) {
-	$arraytosearch=array('f.ref', 'f.description', 's.nom');
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $arraytosearch=array('f.ref', 'f.description', 's.nom', 'fd.description');
-	$sql .= natural_search($arraytosearch, $sall);
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+}
+$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -123,20 +139,34 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	$urlparam='';
+	if ($sall) $urlparam.="&sall=".$sall;
 	if ($socid) $urlparam.="&socid=".$socid;
 	if ($search_ref) $urlparam.="&search_ref=".urlencode($search_ref);
 	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);
 	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
 	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
+	if ($optioncss != '') $urlparam.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_commercial.png');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<table class="noborder" width="100%">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+    
+    print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{

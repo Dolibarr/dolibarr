@@ -49,5 +49,6 @@ SendSms=Αποστολή SMS
 SmsInfoCharRemain=Αρ. υπόλοιπων χαρακτήρων
 SmsInfoNumero= (Μορφή διεθνούς δηλαδή: +308997017610)
 DelayBeforeSending=Καθυστέρηση πριν από την αποστολή (λεπτά)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Δεν υπάρχει στόχος. Ελέγξτε την εγκατάσταση του SMS του παροχέα σας.
 

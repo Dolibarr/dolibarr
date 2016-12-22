@@ -30,21 +30,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class ExpenseReport extends CommonObject
 {
-    var $db;
-    var $error;
     var $element='expensereport';
     var $table_element='expensereport';
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
 
-    var $id;
-    var $ref;
     var $lignes=array();
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
-    var $note_public;
-    var $note_private;
     var $date_debut;
     var $date_fin;
 
@@ -382,7 +373,7 @@ class ExpenseReport extends CommonObject
     function set_paid($id, $fuser)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6";
+        $sql.= " SET fk_statut = 6, paid=1";
         $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
@@ -758,7 +749,7 @@ class ExpenseReport extends CommonObject
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
-        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
         $sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
 
@@ -788,7 +779,7 @@ class ExpenseReport extends CommonObject
                 $deplig->total_tva      = $objp->total_tva;
                 $deplig->total_ttc      = $objp->total_ttc;
 
-                $deplig->type_fees_code     = $objp->code_type_fees;
+                $deplig->type_fees_code     = empty($objp->code_type_fees)?'TF_OTHER':$objp->code_type_fees;
                 $deplig->type_fees_libelle  = $objp->libelle_type_fees;
 				$deplig->tva_tx			    = $objp->tva_tx;
                 $deplig->vatrate            = $objp->tva_tx;
@@ -862,11 +853,8 @@ class ExpenseReport extends CommonObject
     {
         global $conf,$langs;
 
+        $this->oldref = $this->ref;
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
-
-        // Sélection du numéro de ref suivant
-        $ref_next = $this->getNextNumRef();
-        $ref_number_int = ($this->ref+1)-1;
 
         // Sélection de la date de début de la NDF
         $sql = 'SELECT date_debut';
@@ -876,21 +864,59 @@ class ExpenseReport extends CommonObject
         $objp = $this->db->fetch_object($result);
         $this->date_debut = $this->db->jdate($objp->date_debut);
 
-        // Création du ref_number suivant
-        if($ref_next)
+        $update_number_int = false;
+
+        // Create next ref if ref is PROVxx
+        // Rename directory if dir was a temporary ref
+        if (preg_match('/^[\(]?PROV/i', $this->ref))
         {
-            $prefix="ER";
-            if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-            $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+            // Sélection du numéro de ref suivant
+            $ref_next = $this->getNextNumRef();
+            $ref_number_int = ($this->ref+1)-1;
+            $update_number_int = true;
+            // Création du ref_number suivant
+            if($ref_next)
+            {
+                $prefix="ER";
+                if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
+                $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+            }
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            // We rename directory in order to avoid losing the attachments
+            $oldref = dol_sanitizeFileName($this->oldref);
+            $newref = dol_sanitizeFileName($this->ref);
+            $dirsource = $conf->expensereport->dir_output.'/'.$oldref;
+            $dirdest = $conf->expensereport->dir_output.'/'.$newref;
+            if (file_exists($dirsource))
+            {
+                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+
+                if (@rename($dirsource, $dirdest))
+                {
+                    dol_syslog("Rename ok");
+                    // Rename docs starting with $oldref with $newref
+                    $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+                    foreach($listoffiles as $fileentry)
+                    {
+                        $dirsource=$fileentry['name'];
+                        $dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+                        $dirsource=$fileentry['path'].'/'.$dirsource;
+                        $dirdest=$fileentry['path'].'/'.$dirdest;
+                        @rename($dirsource, $dirdest);
+                    }
+                }
+            }
         }
 
         if ($this->fk_statut != 2)
         {
         	$now = dol_now();
-        	
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."',";
-            $sql.= " ref_number_int = ".$ref_number_int;
+            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
+            if ($update_number_int) {
+                $sql.= ", ref_number_int = ".$ref_number_int;
+            }
             $sql.= ' WHERE rowid = '.$this->id;
 
             $resql=$this->db->query($sql);
@@ -1277,7 +1303,9 @@ class ExpenseReport extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.rowid = ".$projet_id;
             $result = $this->db->query($sql);
-            $objp_projet = $this->db->fetch_object($result);
+            if ($result) {
+            	$objp_projet = $this->db->fetch_object($result);
+            }
             $ligne->projet_ref          = $objp_projet->ref_projet;
             $ligne->projet_title        = $objp_projet->title_projet;
 
@@ -1515,7 +1543,6 @@ class ExpenseReport extends CommonObject
             $this->error=$this->db->error();
             return -1;
         }
-
     }
 
     /**
@@ -1603,7 +1630,7 @@ class ExpenseReportLine
      *
      * @param DoliDB    $db     Handlet database
      */
-    function ExpenseReportLine($db)
+    function __construct($db)
     {
         $this->db= $db;
     }
@@ -1814,9 +1841,10 @@ class ExpenseReportLine
  *    @param    int     $selected       preselect status
  *    @param    string  $htmlname       Name of HTML select
  *    @param    int     $useempty       1=Add empty line
+ *    @param    int     $useshortlabel  Use short labels
  *    @return   string                  HTML select with status
  */
-function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1)
+function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1, $useshortlabel=0)
 {
     global $db, $langs;
 
@@ -1824,7 +1852,9 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
 
     print '<select class="flat" name="'.$htmlname.'">';
     if ($useempty) print '<option value="-1">&nbsp;</option>';
-    foreach ($tmpep->statuts as $key => $val)
+    $arrayoflabels=$tmpep->statuts;
+    if ($useshortlabel) $arrayoflabels=$tmpep->statuts_short;
+    foreach ($arrayoflabels as $key => $val)
     {
         if ($selected != '' && $selected == $key)
         {

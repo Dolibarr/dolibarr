@@ -56,7 +56,7 @@ class modBarcode extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/barcode/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();        // May be used for product or service or third party module
 		$this->requiredby = array();
 

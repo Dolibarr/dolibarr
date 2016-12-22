@@ -29,6 +29,9 @@ Files are saved int .gnupg directory
 [DEFAULT]
 pristine-tar = True
 
+[buildpackage]
+ignore-branch = True
+
 [git-buildpackage]
 sign-tags = True
 export-dir = ../build-area/
@@ -131,6 +134,19 @@ Thanks. Fixed into git.
 or replay to email control@bugs.debian.org
 With only message 
 tag 729538 +pending
+
+
+To remove status of a bug without "moreinfo" (bug can be processed)
+
+or replay to email 999999@bugs.debian.org + submitter of bug
+With a message starting with: 
+
+Control: tag -1 -moreinfo
+Thanks. Fixed into git.
+
+or replay to email control@bugs.debian.org
+With only message 
+tag 729538 -moreinfo
 
 
 
@@ -239,7 +255,7 @@ http://packages.qa.debian.org/t/tcpdf.html
 
 ##### Create/Maintain dolibarr package
 
-To update dolibarr debian package when upstream version has changed
+To update dolibarr debian package when upstream (official version of external project) has changed:
 
 * You can git clone debian git repo
 > git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
@@ -284,10 +300,10 @@ Then check/modify also the user/date signature:
 - Name and email must match value into debian/control file (Entry added here is used by next step).
 
 
-To update dolibarr debian package when only files into debian has changed
+To update dolibarr debian package when only files into debian has changed, or if you include manually backport:
 
 * Change files and commit.
-* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2)
+* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
 
 
 Once files has been prepared, it's time to test:
@@ -331,7 +347,7 @@ http://packages.qa.debian.org
 
 Use this to move from unstable to testing.
 
-reportbug -B debian
+reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
 Then "unblock"
 Then name of package "dolibarr"
@@ -345,15 +361,25 @@ After discussion with ..., it appears that security holes are enough to request 
 
 Use this to request an update of a stable package
 
-reportbug -B debian
+reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
 Then "unblock"
 Then name of package "dolibarr"
 Fill message, for example:
-"Please unblock package dolibarr
-A security error CVE-2015-3935 was reported and is fixed into package 3.5.7.
-Note that package 3.5.7 contains not only fixed for bugs reported to debian. It includes other fixes, but they are all related to stability or security,
-so it is a better solution to validate this maintenance release than applying a patch of the only CVE-2015-3935. 
-After discussion with ..., it appears that security holes are enough to request this unblock request."
+"
+A security error CVE-2015-3935 was reported for Dolibarr ERP CRM package. This bug is fixed into official package 3.5.7 of Dolibarr.
+Package 3.5.7 is a maintenance release compared to 3.5.5 and contains only fixes. But not only bugs reported to debian, it includes also other fixes (but they are all related to stability or security).
+I think it is a better solution to validate this maintenance release based on the new upstream version of Dolibarr than applying a patch of the only CVE-2015-3935.
+Pro are:
+- It fixes all debian reported bugs (including security one)
+- It fixes also stability bugs
+- Patches were already tested because deployed and used by several thousands of users.
+- It is easier for package maintener to include this official set of fixes than applying one patch after one patch for each debian report or backported each patch into a dedicated version.
+- Debian maintenance version matches with official project maintenance version (better when all fixes are not related to the way the software is packaged)
+Cons are: 
+- The patch include more than the only one security reported fxes
 
+So I just need to know if it's ok to push such a version 3.5.7 (fixes for 3.5.* branch) instead of only one fix for only the few (the only) reported debian bugs,
+since it provides more stability and is or me a more secured process.
+"
 

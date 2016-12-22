@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Regnskab
 Globalparameters=Globale parametre
-Chartofaccounts=Kontoplan
-Fiscalyear=Finansår
 Menuaccount=Regnskabskonti
 Menuthirdpartyaccount=Trediepartskonti
 MenuTools=Værktøjer
@@ -29,39 +26,32 @@ Selectmodelcsv=Vælg en eksportmodel
 Modelcsv_normal=Klassisk eksport
 Modelcsv_CEGID=Eksporter med CEGID ekspert
 BackToChartofaccounts=Returner kontoplan
-Back=Returner
 
 Definechartofaccounts=Definer en kontoplan
 Selectchartofaccounts=Vælg en kontoplan
-Validate=Godkend
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Sammenbrud
-ToDispatch=Afsend
-Dispatched=Afsendt
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Udspecificer kunder
 SuppliersVentilation=Udspecificer leverandører
 TradeMargin=Handelsforskel
 Reports=Reporter
 ByCustomerInvoice=Efter fakturakunder
-ByMonth=Efter måned
 NewAccount=By regnskabskonto
-Update=Opdater
-List=Liste
 Create=Opret
 CreateMvts=Create movement
 UpdateAccount=Ændring af en regnskabsmæssig konto
 UpdateMvts=Ændring af en bevægelse
 WriteBookKeeping=Optage konti i kontoplanen
 Bookkeeping=Kontoplan
-AccountBalanceByMonth=Kontobalance efter måned
+AccountBalance=Account balance
 
 AccountingVentilation=Udspecificer regnskab
 AccountingVentilationSupplier=Udspecificer regnskab leverandører
 AccountingVentilationCustomer=Udspecificer regnskab kunder
-Line=Linje
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer af faktura, der skal fornyes
@@ -112,22 +102,16 @@ Docref=Reference
 Numerocompte=Konto
 Code_tiers=Trediepart
 Labelcompte=Kontonavn
-Debit=Debet
-Credit=Kredit
-Amount=Beløb
 Sens=Sens
 Codejournal=Journal
+NumPiece=Piece number
 
 DelBookKeeping=Slet posterne i kontoplanen
 
-SellsJournal=Salgskladde
-PurchasesJournal=Købskladde
 DescSellsJournal=Salgskladde
 DescPurchasesJournal=Købskladde
-BankJournal=Bankjournal
-DescBankJournal=Bankkladden herunder alle de typer af andre betalinger end kontanter
-CashJournal=Kontantkladde
-DescCashJournal=Kontantkladde herunder betalinger med kontanter
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Kontant betaling
 
@@ -150,9 +134,6 @@ Pcgversion=Version af planen
 Pcgtype=Kontoens klasse
 Pcgsubtype=Kontoens underklasse
 Accountparent=Roden af kontoen
-Active=Erklæring
-
-NewFiscalYear=Nyt finansår
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
@@ -168,6 +149,31 @@ DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør 
 ValidateHistory=Forny automatisk
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl, kan du ikke slette denne regnskabsmæssige konto, fordi den bruges
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

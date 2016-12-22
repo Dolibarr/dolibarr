@@ -290,9 +290,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				dol_mkdir($conf->propal->dir_temp);
 
 
-				// If BILLING contact defined on invoice, we use it
+				// If CUSTOMER contact defined on proposal, we use it
 				$usecontact=false;
-				$arrayidcontact=$object->getIdContact('external','BILLING');
+				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -304,13 +304,16 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->client;
+					else {
+                        			$socobject = $object->client;
+                        			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+                        			$contactobject = $object->contact;
+                    			}
 				}
 				else
 				{
 					$socobject=$object->client;
 				}
-
 				// Make substitution
 				$substitutionarray=array(
 				'__FROM_NAME__' => $this->emetteur->name,
@@ -326,7 +329,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='PROPALE_FREE_TEXT';
+				$paramfreetext='PROPOSAL_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
@@ -371,9 +374,14 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
+		                // retrieve contact information for use in proposal as contact_xxx tags
+                		$array_thirdparty_contact = array();
+                		if ($usecontact)
+                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+				$object->fetch_optionals();
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

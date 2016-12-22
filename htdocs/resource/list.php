@@ -55,7 +55,7 @@ if ($page == -1) {
 	$page = 0 ;
 }
 
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -77,12 +77,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 /*
  * View
  */
-$pagetitle=$langs->trans('ResourcePageIndex');
-llxHeader('',$pagetitle,'');
-
-
 
 $form=new Form($db);
+
+$pagetitle=$langs->trans('ResourcePageIndex');
+llxHeader('',$pagetitle,'');
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource')
@@ -150,27 +149,6 @@ else
 
 }
 
-/*
- * Boutons actions
-*/
-print '<div class="tabsAction">';
-$parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-// modified by hook
-if (empty($reshook))
-{
-	if ($action != "edit" )
-	{
-		// Edit resource
-		if($user->rights->resource->write)
-		{
-			print '<div class="inline-block divButAction">';
-			print '<a href="add.php" class="butAction">'.$langs->trans('AddResource').'</a>';
-			print '</div>';
-		}
-	}
-}
-print '</div>';
 
 llxFooter();
 

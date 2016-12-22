@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Label
+ *	Class to describe and enable module Label
  */
 class modLabel extends DolibarrModules
 {
@@ -43,7 +43,7 @@ class modLabel extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 60;
 
-		$this->family = "other";
+		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des etiquettes";

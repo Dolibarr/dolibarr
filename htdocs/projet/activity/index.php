@@ -61,7 +61,7 @@ if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print_fiche_titre($title, '', 'title_project');
+print load_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -73,36 +73,41 @@ else
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-// Search task
+// Search project
 if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/tasks/index.php">';
+	$listofsearchfields['search_task']=array('text'=>'Task');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="mode" value="'.$mine.'">';
-	print '<input type="hidden" name="search_status" value="-1">';	// All status
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATask").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_task_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	//print '<tr '.$bc[$var].'><td class="nowrap"><label for="syear">'.$langs->trans("Year").'</label>:</td><td><input type="text" class="flat" name="search_year" id="search_year" size="18"></td>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_task_label" id="search_task_label" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>\n";
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr '.$bc[false].'>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 
 /* Affichage de la liste des projets d'aujourd'hui */
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
 print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -112,7 +117,7 @@ $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(task_date,'%y-%m-%d') = '".strftime("%y-%m-%d",$now)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid, p.ref, p.title";
+$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -128,6 +133,7 @@ if ( $resql )
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
 		$projectstatic->title=$row->title;
+		$projectstatic->public=$row->public;
 		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
@@ -158,7 +164,7 @@ if ($db->type != 'pgsql')
 	print '<td align="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
+	$sql = "SELECT p.rowid, p.ref, p.title, p.public, sum(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -168,7 +174,7 @@ if ($db->type != 'pgsql')
 	$sql.= " AND tt.fk_user = ".$user->id;
 	$sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%y-%m-%d') = '".strftime("%y-%m-%d",$now)."'";
 	$sql.= " AND p.rowid in (".$projectsListId.")";
-	$sql.= " GROUP BY p.rowid, p.ref, p.title";
+	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 	$resql = $db->query($sql);
 	if ( $resql )
@@ -184,6 +190,7 @@ if ($db->type != 'pgsql')
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
 			$projectstatic->title=$row->title;
+			$projectstatic->public=$row->public;
 			print $projectstatic->getNomUrl(1, '', 1);
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
@@ -217,7 +224,7 @@ if ($db->type != 'pgsql')
     print '<td align="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
     
-    $sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
+    $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
     $sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
     $sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -243,6 +250,7 @@ if ($db->type != 'pgsql')
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
     		$projectstatic->title=$row->title;
+    		$projectstatic->public=$row->public;
     		print $projectstatic->getNomUrl(1, '', 1);
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
@@ -274,7 +282,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($no
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -284,7 +292,7 @@ $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid, p.ref, p.title";
+$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -300,6 +308,7 @@ if ( $resql )
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
 		$projectstatic->title=$row->title;
+		$projectstatic->public=$row->public;
 		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
@@ -328,7 +337,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	print '<td align="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
+	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -338,7 +347,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql.= " AND tt.fk_user = ".$user->id;
 	$sql.= " AND YEAR(task_date) = '".strftime("%Y",$now)."'";
 	$sql.= " AND p.rowid in (".$projectsListId.")";
-	$sql.= " GROUP BY p.rowid, p.ref, p.title";
+	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 	$var=false;
 	$resql = $db->query($sql);
@@ -351,6 +360,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
 			$projectstatic->title=$row->title;
+			$projectstatic->public=$row->public;
 			print $projectstatic->getNomUrl(1, '', 1);
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
@@ -413,7 +423,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HID
 
 	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
-	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -431,7 +441,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HID
 	}
 	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " AND p.fk_statut=1";
-	$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
+	$sql.= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
 	$sql.= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
 	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
 
@@ -444,7 +454,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HID
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		//print_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
+		//print load_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -479,6 +489,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HID
 			$projectstatic->id=$obj->projectid;
 			$projectstatic->ref=$obj->ref;
 			$projectstatic->title=$obj->title;
+			$projectstatic->public=$obj->public;
 			print $projectstatic->getNomUrl(1,'',16,'','<br>');
 			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 			print '</td>';

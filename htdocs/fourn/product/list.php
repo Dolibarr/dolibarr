@@ -40,6 +40,7 @@ $sref = GETPOST('sref');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom');
 $type = GETPOST('type');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield');
 $sortorder = GETPOST('sortorder');
@@ -48,7 +49,7 @@ if ($page < 0) {
     $page = 0 ;
 }
 
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (! $sortfield) $sortfield = 'p.ref';
@@ -150,6 +151,7 @@ if ($resql)
 
 
 	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
 
@@ -163,6 +165,7 @@ if ($resql)
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -246,7 +249,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

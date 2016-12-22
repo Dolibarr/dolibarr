@@ -3,9 +3,9 @@ WorkflowSetup=Oppsett av Arbeidsflyt-modulen
 WorkflowDesc=Denne modulen er laget for å sette opp automatiske hendelser i programmet. Som standard er arbeidsflyt-modulen åpen (du kan gjøre ting i de rekkefølgen du ønsker). Du kan aktivere de automatiske hendelsene du vil.
 ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt-modifikasjoner tilgjengelig med aktiverte moduler.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisk opprettelse av kundeordre etter at et tilbud er signert
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at et tilbud er signert
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at en kontrakt er validert
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at en ordre er lukket
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når et tilbud er signert
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når en kontrakt er validert
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når en kundeordre er lukket
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilbud som fakturert når kundeordre er satt til betalt
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til betalt
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til validert

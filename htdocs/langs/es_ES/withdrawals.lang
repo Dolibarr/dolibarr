@@ -48,7 +48,6 @@ RefusedReason=Motivo de devolución
 RefusedInvoicing=Facturación de la devolución
 NoInvoiceRefused=No facturar la devolución
 InvoiceRefused=Factura rechazada (Cargar los gastos al cliente)
-Status=Estado
 StatusUnknown=Desconocido
 StatusWaiting=En espera
 StatusTrans=Enviada

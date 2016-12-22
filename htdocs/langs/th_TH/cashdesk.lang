@@ -38,3 +38,4 @@ ShowStock=แสดงคลังสินค้า
 DeleteArticle=คลิกเพื่อลบบทความนี้
 FilterRefOrLabelOrBC=ค้นหา (Ref / ป้าย)
 UserNeedPermissionToEditStockToUsePos=คุณถามว่าจะลดลงหุ้นในการสร้างใบแจ้งหนี้เพื่อให้ผู้ใช้ที่ใช้ POS จำเป็นต้องได้รับอนุญาตให้แก้ไขหุ้น
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

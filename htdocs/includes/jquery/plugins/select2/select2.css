@@ -28,7 +28,7 @@ Version: 3.5.2 Timestamp: Sat Nov  1 14:43:36 EDT 2014
 .select2-container .select2-choice {
     display: block;
     height: 26px;
-    padding: 0 0 0 8px;
+    padding: 0 0 0 5px;
     overflow: hidden;
     position: relative;
 

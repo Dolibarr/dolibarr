@@ -134,6 +134,40 @@ class FormProduct
 		return $out;
 	}
 
+    /**
+     *    Display form to select warehouse
+     *
+     *    @param    string  $page        Page
+     *    @param    int     $selected    Id of warehouse
+     *    @param    string  $htmlname    Name of select html field
+     *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return   void
+     */
+    function formSelectWarehouses($page, $selected='', $htmlname='warehouse_id', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none") {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setwarehouse">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print $this->selectWarehouses($selected, $htmlname, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        } else {
+            if ($selected) {
+                require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
+                $warehousestatic=new Entrepot($this->db);
+                $warehousestatic->fetch($selected);
+                print $warehousestatic->getNomUrl();
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base

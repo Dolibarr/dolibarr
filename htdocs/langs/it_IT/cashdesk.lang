@@ -38,3 +38,4 @@ ShowStock=Mostra magazzino
 DeleteArticle=Clicca per rimuovere l'articolo
 FilterRefOrLabelOrBC=Cerca (Rif/Etichetta)
 UserNeedPermissionToEditStockToUsePos=Hai impostato di diminuire le scorte sulla creazione della fattura, quindi l'utente che usa il POS deve avere i permessi per modificare le scorte.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

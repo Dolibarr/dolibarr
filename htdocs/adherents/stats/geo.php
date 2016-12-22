@@ -64,7 +64,7 @@ if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
@@ -282,7 +282,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 if ($mode)
 {
     // Print array / Affiche le tableau
-    print '<table class="border" width="100%">';
+    print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td align="center">'.$label.'</td>';
     if ($label2) print '<td align="center">'.$label2.'</td>';

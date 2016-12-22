@@ -1,25 +1,22 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_SEPARATORCSV=Разделител за колона за експорт на файл
+ACCOUNTING_EXPORT_DATE=Формат на дата за експорт на файл
+ACCOUNTING_EXPORT_PIECE=Експортирай номера от частта
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Експортирай глобалния акаунт
+ACCOUNTING_EXPORT_LABEL=Експортирай етикета
+ACCOUNTING_EXPORT_AMOUNT=Експортирай количеството
 ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+Selectformat=Избери формата за файла
+ACCOUNTING_EXPORT_PREFIX_SPEC=Уточнете префикса за името на файла
 
 Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
+Globalparameters=Глобални параметри
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
 MenuTools=Инструменти
 
 ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
+Journaux=Журнали
 JournalFinancial=Financial journals
 Exports=Exports
 Export=Export
@@ -29,39 +26,32 @@ Selectmodelcsv=Select a model of export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
-Back=Return
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Валидирай
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Trade margin
 Reports=Отчети
 ByCustomerInvoice=By invoices customers
-ByMonth=По месец
 NewAccount=New accounting account
-Update=Update
-List=Списък
 Create=Create
 CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+AccountBalance=Account balance
 
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
@@ -112,22 +102,16 @@ Docref=Справка
 Numerocompte=Сметка
 Code_tiers=Трета страна
 Labelcompte=Етикет на сметка
-Debit=Дебит
-Credit=Кредит
-Amount=Сума
 Sens=Sens
 Codejournal=Дневник
+NumPiece=Номер на част
 
 DelBookKeeping=Delete the records of the general ledger
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -150,9 +134,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=New fiscal year
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
@@ -168,6 +149,31 @@ DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier a
 ValidateHistory=Валидирайте автоматично
 
 ErrorAccountancyCodeIsAlreadyUse=Възникна грешка, вие не можете да изтриете тази счетоводна сметка, защото се използва.
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Формат за Експорт
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Рамка на текстовата стойност
+Headercol=Colname in header of file
+Fieldname=Име на Полето
+Headername=Име в горния колонтитул
+Type=Тип на полетата
+Param=Допълнителни параметри
+EnabledProduct=В Продукт
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

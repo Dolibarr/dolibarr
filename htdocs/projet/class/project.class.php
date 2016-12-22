@@ -43,8 +43,6 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-    var $ref;
     var $description;
 	/**
 	 * @var string
@@ -60,8 +58,6 @@ class Project extends CommonObject
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
-    var $note_private;
-    var $note_public;
     var $budget_amount;
 
     var $statuts_short;
@@ -457,7 +453,9 @@ class Project extends CommonObject
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
         $elements = array();
-
+        
+        if ($this->id <= 0) return $elements;
+        
 		if ($type == 'agenda')
         {
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
@@ -896,7 +894,14 @@ class Project extends CommonObject
             if (preg_match('/\.php$/',$option)) {
                 $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
                 $linkend = '</a>';
-            } else {
+            }
+            else if ($option == 'task')
+            {
+                $link = '<a href="' . DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
+            }
+            else
+            {
                 $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
                 $linkend = '</a>';
             }
@@ -933,6 +938,7 @@ class Project extends CommonObject
         $this->date_c = $now;
         $this->date_m = $now;
         $this->date_start = $now;
+        $this->date_end = $now + (3600 * 24 * 365);
         $this->note_public = 'SPECIMEN';
 		$this->fk_ele = 20000;
         $this->opp_amount = 20000;
@@ -1115,6 +1121,7 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_optionals();
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;

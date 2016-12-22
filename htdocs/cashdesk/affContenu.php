@@ -56,9 +56,10 @@ exit;*/
 
 
 // Left area with selected articles (area for article, amount and payments)
+print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
-$page=GETPOST('menu','alpha');
+$page=GETPOST('menutpl','alpha');
 if (empty($page)) $page='facturation';
 
 if (in_array(
@@ -78,16 +79,17 @@ else
 }
 
 print '</div>';
-
+print '</div>';
 
 
 
 // Right area with selected articles (shopping cart)
+print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="liste_articles">';
 
 require ('tpl/liste_articles.tpl.php');
 
 print '</div>';
-
+print '</div>';
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);

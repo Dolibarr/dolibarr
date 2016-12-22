@@ -64,7 +64,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     			{
     				$moduleid=$reg[1];
 
-    				// Chargement de la classe
+    				// Loading Class
     				$file = $dir."/export_".$moduleid.".modules.php";
     				$classname = "Export".ucfirst($moduleid);
 

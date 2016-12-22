@@ -131,16 +131,15 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
-
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
+    print '<div class="underbanner clearboth"></div>';
 	print '<table width="100%" class="border">';
-	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
-	print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td>'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
+	print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -167,35 +166,6 @@ if ($object->id > 0)
         print '</td>';
         print '</tr>';
 	}
-
-	// Address
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
-	dol_print_address($object->address,'gmap','thirdparty',$object->id);
-	print '</td></tr>';
-
-	// Zip / Town
-	print '<tr><td class="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
-	print '</tr>';
-
-	// Country
-	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	//$img=picto_from_langcode($object->country_code);
-	$img='';
-	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$object->country;
-	print '</td></tr>';
-
-    // EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
-
-	// Web
-	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url).'</td></tr>';
-
-	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-
-	// Fax
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
@@ -396,14 +366,16 @@ if ($object->id > 0)
 		$sql2.= ' AND s.rowid = '.$object->id;
 		// Show orders with status validated, shipping started and delivered (well any order we can bill)
 		$sql2.= " AND c.fk_statut IN (5)";
+		$sql2.= " AND c.billed = 0";
 		// Find order that are not already invoiced
-		$sql2 .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
+		// just need to check received status because we have the billed status now
+		//$sql2 .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
 		$resql2=$db->query($sql2);
 		if ($resql2) {
 			$orders2invoice = $db->num_rows($resql2);
 			$db->free($resql2);
 		} else {
-			setEventMessage($db->lasterror(),'errors');
+			setEventMessages($db->lasterror(), null, 'errors');
 		}
 
 		// TODO move to DAO class
@@ -567,72 +539,72 @@ if ($object->id > 0)
 	if (empty($reshook))
 	{
 
-	print '<div class="tabsAction">';
+		print '<div class="tabsAction">';
 
-	if ($user->rights->fournisseur->commande->creer)
-	{
-		$langs->load("orders");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+		if ($user->rights->fournisseur->commande->creer)
+		{
+			$langs->load("orders");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+		}
+
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			$langs->load("bills");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+		}
+
+		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
+		{
+			$langs->load("supplier_proposal");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+		}
+
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+			else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+		}
+
+    	// Add action
+    	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    	{
+        	if ($user->rights->agenda->myactions->create)
+        	{
+            	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
+        	}
+        	else
+        	{
+            	print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+        	}
+    	}
+
+		print '</div>';
+		print '<br>';
+
+    	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+    	{
+        	print '<br>';
+        	// List of contacts
+        	show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+    	}
+
+    	// Addresses list
+    	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
+    	{
+    		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+    	}
+
+    	if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    	{
+        	print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+
+        	// List of todo actions
+        	show_actions_todo($conf,$langs,$db,$object);
+
+        	// List of done actions
+        	show_actions_done($conf,$langs,$db,$object);
+    	}
 	}
-
-	if ($user->rights->fournisseur->facture->creer)
-	{
-		$langs->load("bills");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	}
-
-	if ($conf->askpricesupplier->enabled && $user->rights->askpricesupplier->creer)
-	{
-		$langs->load("askpricesupplier");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAskPriceSupplier").'</a>';
-	}
-
-	if ($user->rights->fournisseur->facture->creer)
-	{
-		if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-		else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-	}
-
-    // Add action
-    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        if ($user->rights->agenda->myactions->create)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
-        }
-        else
-        {
-            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
-        }
-    }
-
-	print '</div>';
-	print '<br>';
-
-    if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
-    {
-        print '<br>';
-        // List of contacts
-        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-    }
-
-    // Addresses list
-    if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
-    {
-    	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-    }
-
-    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-
-        // List of todo actions
-        show_actions_todo($conf,$langs,$db,$object);
-
-        // List of done actions
-        show_actions_done($conf,$langs,$db,$object);
-    }
-}
 }
 else
 {

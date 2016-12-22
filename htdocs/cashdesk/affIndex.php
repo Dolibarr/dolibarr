@@ -42,7 +42,7 @@ $langs->load("cashdesk");
  */
 
 //header("Content-type: text/html; charset=UTF-8");
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+//header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');

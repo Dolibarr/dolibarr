@@ -31,7 +31,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *  Classe de description et activation du module Adherent
+ *  Class to describe and enable module Adherent
  */
 class modAdherent extends DolibarrModules
 {
@@ -49,6 +49,7 @@ class modAdherent extends DolibarrModules
         $this->numero = 310;
 
         $this->family = "hr";
+        $this->module_position = 20;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Management of members of a foundation or association";
@@ -64,33 +65,129 @@ class modAdherent extends DolibarrModules
         //-------------
         $this->config_page_url = array("adherent.php@adherents");
 
-        // Dependances
+        // Dependencies
         //------------
         $this->depends = array();
         $this->requiredby = array('modMailmanSpip');
         $this->langfiles = array("members","companies");
 
-        // Constantes
+        // Constants
         //-----------
         $this->const = array();
-        $this->const[2]  = array("MAIN_SEARCHFORM_ADHERENT","yesno","1","Show form for quick member search");
-        $this->const[3]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt","Mail de résiliation");
-        $this->const[4]  = array("ADHERENT_MAIL_VALID","texte","Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n","Mail de validation");
-        $this->const[5]  = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhésion a été validée","Sujet du mail de validation");
-        $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Résiliation de votre adhésion","Sujet du mail de résiliation");
-        $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
-        $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %FIRSTNAME%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée","Mail de validation de cotisation");
-        $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Reçu de votre cotisation","Sujet du mail de validation de cotisation");
-        $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%YEAR%","Texte imprimé sur le haut de la carte adhérent");
-        $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","%COMPANY%","Texte imprimé sur le bas de la carte adhérent");
-        $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%","Text to print on member cards");
-        $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
-        $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
-        $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
-        $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");
-        $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type of address sheets");
-        $this->const[35] = array("ADHERENT_ETIQUETTE_TEXT",'texte',"%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%","Text to print on member address sheets");
-
+        $r=0;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_RESIL";
+        $this->const[$r][1] = "texte";
+        $this->const[$r][2] = "Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt";
+        $this->const[$r][3] = "Mail de résiliation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_VALID";
+        $this->const[$r][1] = "texte";
+        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n";
+        $this->const[$r][3] = "Mail de validation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_VALID_SUBJECT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "Votre adhésion a été validée";
+        $this->const[$r][3] = "Sujet du mail de validation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_RESIL_SUBJECT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "Résiliation de votre adhésion";
+        $this->const[$r][3] = "Sujet du mail de résiliation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_FROM";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "From des mails";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_COTIS";
+        $this->const[$r][1] = "texte";
+        $this->const[$r][2] = "Bonjour %FIRSTNAME%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
+        $this->const[$r][3] = "Mail de validation de cotisation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAIL_COTIS_SUBJECT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "Reçu de votre cotisation";
+        $this->const[$r][3] = "Sujet du mail de validation de cotisation";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "%YEAR%";
+        $this->const[$r][3] = "Texte imprimé sur le haut de la carte adhérent";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_CARD_FOOTER_TEXT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "%COMPANY%";
+        $this->const[$r][3] = "Texte imprimé sur le bas de la carte adhérent";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_CARD_TEXT";
+        $this->const[$r][1] = "texte";
+        $this->const[$r][2] = "%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%";
+        $this->const[$r][3] = "Text to print on member cards";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "Mot de passe Admin des liste mailman";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_BANK_USE_AUTO";
+        $this->const[$r][1] = "yesno";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte banquaire";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "ID du Compte banquaire utilise";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "ID de la catégorie banquaire des cotisations";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_ETIQUETTE_TYPE";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "L7163";
+        $this->const[$r][3] = "Type of address sheets";
+        $this->const[$r][4] = 0;
+        $r++;
+        
+        $this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
+        $this->const[$r][1] = "texte";
+        $this->const[$r][2] = "%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
+        $this->const[$r][3] = "Text to print on member address sheets";
+        $this->const[$r][4] = 0;
+        $r++;
+        
         // Boxes
         //-------
         $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));

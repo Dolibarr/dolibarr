@@ -100,6 +100,8 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PRODUCT_MODIFY':
 		    case 'PRODUCT_DELETE':
 		    case 'PRODUCT_PRICE_MODIFY':
+		    case 'PRODUCT_SET_MULTILANGS':
+		    case 'PRODUCT_DEL_MULTILANGS':
 
 			//Stock mouvement
 		    case 'STOCK_MOVEMENT':
@@ -148,18 +150,18 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'LINEPROPAL_UPDATE':
 		    case 'LINEPROPAL_DELETE':
 
-			// Askpricesupplier
-		    case 'ASKPRICESUPPLIER_CREATE':
-		    case 'ASKPRICESUPPLIER_CLONE':
-		    case 'ASKPRICESUPPLIER_MODIFY':
-		    case 'ASKPRICESUPPLIER_VALIDATE':
-		    case 'ASKPRICESUPPLIER_SENTBYMAIL':
-		    case 'ASKPRICESUPPLIER_CLOSE_SIGNED':
-		    case 'ASKPRICESUPPLIER_CLOSE_REFUSED':
-		    case 'ASKPRICESUPPLIER_DELETE':
-		    case 'LINEASKPRICESUPPLIER_INSERT':
-		    case 'LINEASKPRICESUPPLIER_UPDATE':
-		    case 'LINEASKPRICESUPPLIER_DELETE':
+			// SupplierProposal
+		    case 'SUPPLIER_PROPOSAL_CREATE':
+		    case 'SUPPLIER_PROPOSAL_CLONE':
+		    case 'SUPPLIER_PROPOSAL_MODIFY':
+		    case 'SUPPLIER_PROPOSAL_VALIDATE':
+		    case 'SUPPLIER_PROPOSAL_SENTBYMAIL':
+		    case 'SUPPLIER_PROPOSAL_CLOSE_SIGNED':
+		    case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
+		    case 'SUPPLIER_PROPOSAL_DELETE':
+		    case 'LINESUPPLIER_PROPOSAL_INSERT':
+		    case 'LINESUPPLIER_PROPOSAL_UPDATE':
+		    case 'LINESUPPLIER_PROPOSAL_DELETE':
 		    
 			// Contracts
 		    case 'CONTRACT_CREATE':
@@ -167,7 +169,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
 		    case 'CONTRACT_DELETE':
-		    case 'LINECONTRACT_CREATE':
+		    case 'LINECONTRACT_INSERT':
 		    case 'LINECONTRACT_UPDATE':
 		    case 'LINECONTRACT_DELETE':
 
@@ -234,6 +236,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'CATEGORY_CREATE':
 		    case 'CATEGORY_MODIFY':
 		    case 'CATEGORY_DELETE':
+		    case 'CATEGORY_SET_MULTILANGS':
 
 			// Projects
 		    case 'PROJECT_CREATE':

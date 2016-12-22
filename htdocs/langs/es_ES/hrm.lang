@@ -1,0 +1,20 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=E-Mail servicio externo R.R.H.H.
+Establishments=Establecimientos
+Establishment=Establecimiento
+NewEstablishment=Nuevo establecimiento
+DeleteEstablishment=Eliminar establecimiento
+ConfirmDeleteEstablishment=¿Está seguro de querer eliminar este establecimiento?
+OpenEtablishment=Abrir establecimiento
+CloseEtablishment=Cerrar establecimiento
+# Dictionary
+DictionaryDepartment= R.R.H.H. Listado departamentos
+DictionaryFunction= R.R.H.H. Listado funciones
+# Module
+ListOfEmployees=Listado de empleados
+Employees=Empleados
+Employee=Empleado
+Employe=Empleado
+NewEmployee=Nuevo empleado
+EmployeeCard=Ficha de empleado

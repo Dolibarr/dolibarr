@@ -155,7 +155,7 @@ if ($_GET["action"] == 'create')
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
+    print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
     
     if ($mesg) print $mesg;
 
@@ -269,8 +269,6 @@ if ($id)
 	print "</div>";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();
 

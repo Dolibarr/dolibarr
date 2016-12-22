@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.7.2", "3.6.3", "3.5.6" );
+return ( "3.8.1", "3.7.1", "3.6.4", "3.5.7" );
 }
 
 sub script_dolibarr_category
@@ -163,7 +163,7 @@ return ("tar", "gunzip");
 }
 
 # script_dolibarr_install(&domain, version, &opts, &files, &upgrade-info)
-# Actually installs joomla, and returns either 1 and an informational
+# Actually installs dolibarr, and returns either 1 and an informational
 # message, or 0 and an error
 sub script_dolibarr_install
 {
@@ -206,6 +206,9 @@ $pgcharset = $tmpl->{'postgres_encoding'};
 $charset = $dbtype eq "mysql" ? $mycharset : $pgcharset;
 $collate = $dbtype eq "mysql" ? $mycollate : "C";
 
+# Install filename
+local $step = $version >= 3.8 ? "step" : "etape";
+
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/ || $d->{'ssl'}) {
         $url = "https://$d->{'dom'}";
@@ -224,6 +227,10 @@ if (!$upgrade) {
 	&set_permissions_as_domain_user($d, 0666, $cfile);
 	&run_as_domain_user($d, "mkdir ".quotemeta($docdir));
 	&set_permissions_as_domain_user($d, 0777, $docdir);
+	if (!$version >= 3.7.2) {
+		&run_as_domain_user($d, "mkdir ".quotemeta($altdir));
+		&set_permissions_as_domain_user($d, 0777, $altdir);
+	}
 }
 else {
 	# Preserve old config file, documents and custom directory
@@ -259,7 +266,7 @@ if ($upgrade) {
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, "step5", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, $step."5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory.
@@ -282,15 +289,15 @@ else {
 			  [ "main_force_https", $opts->{'forcehttps'} ],
 			  [ "dolibarr_main_db_character_set", $charset ],
 			  [ "dolibarr_main_db_collation", $collate ],
-			  [ "usealternaterootdir", "1" ],
+			  [ "main_use_alt_dir", "1" ],
 			  [ "main_alt_dir_name", "custom" ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, "step1", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, $step."1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
-	local $err = &call_dolibarr_wizard_page(\@params, "step2", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, $step."2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Third page (Add administrator account)
@@ -299,7 +306,7 @@ else {
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
 	 		 );
-	local $err = &call_dolibarr_wizard_page(\@params, "step5", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, $step."5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory and protect config file.
@@ -324,14 +331,10 @@ local ($params, $page, $d, $opts) = @_;
 local $params = join("&", map { $_->[0]."=".&urlize($_->[1]) } @$params );
 local $ipage = $opts->{'path'}."/install/".$page.".php";
 local ($iout, $ierror);
-
 &post_http_connection($d, $ipage, $params, \$iout, \$ierror);
-print STDERR $iout;
-
 if ($ierror) {
 	return $ierror;
 	}
-
 return undef;
 }
 
@@ -347,8 +350,8 @@ local $derr = &delete_script_install_directory($d, $opts);
 return (0, $derr) if ($derr);
 
 # Remove all llx_ tables from the database
-# 4 times because of constraints
-for(my $i=0; $i<4; $i++) {
+# 10 times because of constraints
+for(my $i=0; $i<10; $i++) {
 	&cleanup_script_database($d, $opts->{'db'}, "llx_");
 	}
 
@@ -381,9 +384,10 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
-                $ver >= 3.2 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
-                $ver >= 3.1 ? "dolibarr\\-(3\\.1\\.[0-9\\.]+)\\.tgz" :
-                $ver >= 3 ? "dolibarr\\-(3\\.0\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.8 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.7 ? "dolibarr\\-(3\\.7\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.6 ? "dolibarr\\-(3\\.6\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.5 ? "dolibarr\\-(3\\.5\\.[0-9\\.]+)\\.tgz" :
                 $ver >= 2.9 ? "dolibarr\\-(2\\.9\\.[0-9\\.]+)\\.tgz" :
                               "dolibarr\\-(2\\.8\\.[0-9\\.]+)\\.tgz");
 return "Failed to find versions" if (!@vers);

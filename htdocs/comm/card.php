@@ -105,7 +105,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
 		$object->code_compta=$_POST["customeraccountancycode"];
 		$result=$object->update($object->id,$user,1,1,0);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// conditions de reglement
@@ -113,7 +113,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// mode de reglement
@@ -121,7 +121,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// assujetissement a la TVA
@@ -130,7 +130,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->tva_assuj=$_POST['assujtva_value'];
 		$result=$object->update($object->id);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// set prospect level
@@ -139,7 +139,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
 		$result=$object->set_prospect_level($user);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// set communication status
@@ -148,7 +148,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
 		$result=$object->set_commnucation_level($user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// update outstandng limit
@@ -157,7 +157,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('outstanding_limit');
 		$result=$object->set_OutstandingBill($user);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -184,7 +184,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-
+/*
 if ($mode == 'search')
 {
 	if ($modesearch == 'soc')
@@ -209,7 +209,7 @@ if ($mode == 'search')
 		$db->free($resql);
 	}
 }
-
+*/
 
 if ($id > 0)
 {
@@ -218,17 +218,15 @@ if ($id > 0)
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
 
 
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-
+    print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
-	print '</td></tr>';
-
 	// Alias name (commercial, trademark or alias name)
-	print '<tr><td>'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
+	print '<tr><td class="titelfield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -263,39 +261,6 @@ if ($id > 0)
 		print '</td>';
 		print '</tr>';
 	}
-
-	// Address
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-	dol_print_address($object->address,'gmap','thirdparty',$object->id);
-	print "</td></tr>";
-
-	// Zip / Town
-	print '<tr><td class="nowrap">'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td>';
-	print '<td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town."</td>";
-	print '</tr>';
-
-	// Country
-	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if (! empty($object->country_code))
-	{
-		//$img=picto_from_langcode($object->country_code);
-		$img='';
-		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-		else print ($img?$img.' ':'').$object->country;
-	}
-	print '</td></tr>';
-
-	// EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
-
-	// Web
-	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url,'_blank').'</td></tr>';
-
-	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-
-	// Fax
-	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
 	// Skype
   	if (! empty($conf->skype->enabled))
@@ -411,17 +376,6 @@ if ($id > 0)
 		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-		// display amount and link to unpaid bill
-		$outstandingBills = $object->get_OutstandingBill();
-		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($object->outstanding_limit != '') 
-		{
-			if ($outstandingBills > $object->outstanding_limit)
-				print img_warning($langs->trans("OutstandingBillReached"));
-			//print ' / ' . price($soc->outstanding_limit);
-		}
-		print ')';
 		
 		print '</td>';
 		print '</tr>';
@@ -526,14 +480,24 @@ if ($id > 0)
 
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST=4;
-	$tableaushown=1;
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLISTE_LIMIT;
 
 	// Lien recap
+	$outstandingBills = $object->get_OutstandingBill();
+	$warn = '';
+	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingBills) 
+	{
+		$warn = img_warning($langs->trans("OutstandingBillReached"));
+	}
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
+	print '<td>'.$langs->trans("Summary").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
+	print '</tr>';
+	print '<tr class="impair">';
+	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
+	print '<td align="right">'.price($outstandingBills).$warn.'</td>';
 	print '</tr>';
 	print '</table>';
 	print '<br>';
@@ -719,7 +683,6 @@ if ($id > 0)
             if ($num > 0) {
                 print '<table class="noborder" width="100%">';
 
-                $tableaushown=1;
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -905,7 +868,6 @@ if ($id > 0)
 			{
 		        print '<table class="noborder" width="100%">';
 
-			    $tableaushown=1;
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -1070,6 +1032,7 @@ if ($id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
+
 }
 else
 {

@@ -74,8 +74,10 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 $form = new Form($db);
 
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader("",$langs->trans("Contact"), $helpurl);
+llxHeader('', $title, $helpurl);
 
 if ($object->id)
 {
@@ -93,16 +95,14 @@ if ($object->id)
         $totalsize+=$file['size'];
     }
 
-    print '<table class="border" width="100%">';
-
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-    print $form->showrefnav($object, 'id', $linkback);
-    print '</td></tr>';
-
-    // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -123,12 +123,19 @@ if ($object->id)
     	}
     }
     
+    // Civility
+    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print $object->getCivilityLabel();
+    print '</td></tr>';
+
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
 
     print '</div>';
 
+    dol_fiche_end();
+    
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;
     $param = '&id=' . $object->id;

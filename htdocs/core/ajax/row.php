@@ -17,7 +17,8 @@
 
 /**
  *       \file       htdocs/core/ajax/row.php
- *       \brief      File to return Ajax response on Row move
+ *       \brief      File to return Ajax response on Row move. 
+ *                   This ajax page is called when doing an up or down drag and drop. 
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disable token renewal
@@ -64,7 +65,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->line_ajaxorder($newrowordertab);
 
 	// Reorder line to have position of chilren lines sharing same counter than parent lines
-	// This should be useless because there is no need to have children sharing same counter that parent.
+	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
 	if (in_array($fk_element,array('fk_facture','fk_propal','fk_commande')))
 	{
 		$result=$row->line_order(true);

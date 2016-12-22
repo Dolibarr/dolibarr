@@ -94,8 +94,8 @@ class pdf_beluga extends ModelePDFProjects
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxdate=$this->marge_gauche+25;
 		$this->posxsociety=$this->marge_gauche+45;
-		$this->posxamountht=$this->marge_gauche+115;
-		$this->posxamountttc=$this->marge_gauche+140;
+		$this->posxamountht=$this->marge_gauche+110;
+		$this->posxamountttc=$this->marge_gauche+135;
 		$this->posxstatut=$this->marge_gauche+165;
 	}
 
@@ -231,14 +231,16 @@ class pdf_beluga extends ModelePDFProjects
                     	'class'=>'Propal',
                     	'table'=>'propal',
                         'datefieldname'=>'datep',
-                    	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
+                    	'test'=>$conf->propal->enabled && $user->rights->propale->lire,
+                        'lang'=>'propal'),
                     'order'=>array(
                     	'name'=>"CustomersOrders",
                     	'title'=>"ListOrdersAssociatedProject",
                     	'class'=>'Commande',
                     	'table'=>'commande',
                     	'datefieldname'=>'date_commande',
-                    	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
+                    	'test'=>$conf->commande->enabled && $user->rights->commande->lire,
+                        'lang'=>'order'),
                     'invoice'=>array(
                     	'name'=>"CustomersInvoices",
                     	'title'=>"ListInvoicesAssociatedProject",
@@ -246,21 +248,24 @@ class pdf_beluga extends ModelePDFProjects
                     	'margin'=>'add',
                     	'table'=>'facture',
                     	'datefieldname'=>'datef',
-                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+                        'lang'=>'bills'),
                     'invoice_predefined'=>array(
                     	'name'=>"PredefinedInvoices",
                     	'title'=>"ListPredefinedInvoicesAssociatedProject",
                     	'class'=>'FactureRec',
                     	'table'=>'facture_rec',
                     	'datefieldname'=>'datec',
-                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+                        'lang'=>'bills'),
                     'order_supplier'=>array(
                     	'name'=>"SuppliersOrders",
                     	'title'=>"ListSupplierOrdersAssociatedProject",
                     	'class'=>'CommandeFournisseur',
                     	'table'=>'commande_fournisseur',
                     	'datefieldname'=>'date_commande',
-                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
+                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire,
+                        'lang'=>'orders'),
                     'invoice_supplier'=>array(
                     	'name'=>"BillsSuppliers",
                     	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -268,14 +273,16 @@ class pdf_beluga extends ModelePDFProjects
                     	'margin'=>'minus',
                     	'table'=>'facture_fourn',
                     	'datefieldname'=>'datef',
-                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
+                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire,
+                        'lang'=>'bills'),
                     'contract'=>array(
                     	'name'=>"Contracts",
                     	'title'=>"ListContractAssociatedProject",
                     	'class'=>'Contrat',
                     	'table'=>'contrat',
                     	'datefieldname'=>'date_contrat',
-                    	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
+                    	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire,
+                        'lang'=>'contract'),
                     'intervention'=>array(
                     	'name'=>"Interventions",
                     	'title'=>"ListFichinterAssociatedProject",
@@ -283,7 +290,8 @@ class pdf_beluga extends ModelePDFProjects
                     	'table'=>'fichinter',
                     	'datefieldname'=>'date_valid',
                     	'disableamount'=>1,
-                    	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
+                    	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire,
+                        'lang'=>'interventions'),
                     'trip'=>array(
                     	'name'=>"TripsAndExpenses",
                     	'title'=>"ListTripAssociatedProject",
@@ -292,7 +300,18 @@ class pdf_beluga extends ModelePDFProjects
                     	'datefieldname'=>'dated',
                     	'margin'=>'minus',
                     	'disableamount'=>1,
-                    	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
+                    	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
+                        'lang'=>'trip'),
+                    'expensereport'=>array(
+                    	'name'=>"ExpensesReports",
+                    	'title'=>"ListTripAssociatedProject",
+                    	'class'=>'ExpenseReport',
+                    	'table'=>'expensereport',
+                    	'datefieldname'=>'dated',
+                    	'margin'=>'minus',
+                    	'disableamount'=>1,
+                    	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
+                        'lang'=>'trip'),                    
                     'agenda'=>array(
                     	'name'=>"Agenda",
                     	'title'=>"ListActionsAssociatedProject",
@@ -300,7 +319,8 @@ class pdf_beluga extends ModelePDFProjects
                     	'table'=>'actioncomm',
                     	'datefieldname'=>'datep',
                     	'disableamount'=>1,
-                    	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
+                    	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
+                        'lang'=>'agenda')
                 );
                 
                 
@@ -311,12 +331,17 @@ class pdf_beluga extends ModelePDFProjects
                 	$tablename=$value['table'];
                 	$datefieldname=$value['datefieldname'];
                 	$qualified=$value['test'];
+                	$langstoload=$value['lang'];
+                	$langs->load($langstoload);
                 	
                     if ($qualified)
                     {
+                        //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
                         $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+                        //var_dump($elementarray);
+                        
                         $num = count($elementarray);
-                        if ($num > 0)
+                        if ($num >= 0)
                         {
                             $nexY = $pdf->GetY() + 5;
                             $curY = $nexY;
@@ -334,9 +359,9 @@ class pdf_beluga extends ModelePDFProjects
                             $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $outputlangs->transnoentities("ThirdParty"), 1, 'L');
                             if (empty($value['disableamount'])) {
                                 $pdf->SetXY($this->posxamountht, $curY);
-                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHT"), 1, 'R');
+                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHTShort"), 1, 'R');
                                 $pdf->SetXY($this->posxamountttc, $curY);
-                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTC"), 1, 'R');
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTCShort"), 1, 'R');
                             } else {
                                 $pdf->SetXY($this->posxamountht, $curY);
                                 $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
@@ -433,8 +458,6 @@ class pdf_beluga extends ModelePDFProjects
                         }
                     }
                 }
-
-
 
 				/*
 				 * Pied de page

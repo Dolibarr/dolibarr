@@ -21,6 +21,7 @@
 create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  ref              varchar(30) NOT NULL, -- payment reference number
   entity           integer   DEFAULT 1 NOT NULL,		-- Multi company id
   datec            datetime,							-- date de creation
   tms              timestamp,

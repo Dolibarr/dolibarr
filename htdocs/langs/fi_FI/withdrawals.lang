@@ -48,7 +48,6 @@ RefusedReason=Hylkäämisen syy
 RefusedInvoicing=Laskutus hylkääminen
 NoInvoiceRefused=Älä lataa hylkäämisestä
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Tila
 StatusUnknown=Tuntematon
 StatusWaiting=Odotus
 StatusTrans=Toimitettu

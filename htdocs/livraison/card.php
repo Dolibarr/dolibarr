@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2015			  Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->expedition_bon->enabled))
@@ -55,15 +57,17 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
 $object = new Livraison($db);
+$extrafields = new ExtraFields($db);
+$extrafieldsline = new ExtraFields($db);
 
-// Load object
-if ($id > 0 || ! empty($ref)) {
-	$ret = $object->fetch($id, $ref);
-	if ($ret > 0)
-		$ret = $object->fetch_thirdparty();
-	if ($ret < 0)
-		dol_print_error('', $object->error);
-}
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
+// Load object. Make an object->fetch
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('deliverycard','globalcard'));
@@ -113,7 +117,7 @@ if ($action == 'add')
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"]=$_POST["commande_id"];
@@ -181,6 +185,64 @@ elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
+// Update extrafields
+if ($action == 'update_extras')
+{
+	// Fill array 'array_options' with data from update form
+	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	if ($ret < 0) $error++;
+
+	if (! $error)
+	{
+		// Actions on extra fields (by external module or standard code)
+		// TODO le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('livraisondao'));
+		$parameters = array('id' => $object->id);
+		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook)) {
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		} else if ($reshook < 0)
+			$error++;
+	}
+
+	if ($error)
+		$action = 'edit_extras';
+}
+
+// Extrafields line
+if ($action == 'update_extras_line')
+{
+	$array_options=array();
+	$num=count($object->lines);
+	
+	for ($i = 0; $i < $num; $i++)
+	{
+		// Extrafields
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_" . $key]);
+			}
+		}
+		
+		$ret = $object->update_line($object->lines[$i]->id,$array_options[$i]);	// extrafields update
+		if ($ret < 0)
+		{
+			$mesg='<div class="error">'.$object->error.'</div>';
+			$error++;
+		}
+	}
+
+}
+
+
 /*
  * Build document
  */
@@ -216,8 +278,8 @@ elseif ($action == 'remove_file')
 	$upload_dir =	$conf->expedition->dir_output . "/receipt";
 	$file =	$upload_dir	. '/' .	GETPOST('file');
 	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
 
 
@@ -235,10 +297,10 @@ $formfile = new FormFile($db);
  * Mode creation
  *
  *********************************************************************/
-if ($action == 'create')
+if ($action == 'create')    // Seems to no be used
 {
 
-	print_fiche_titre($langs->trans("CreateADeliveryOrder"));
+	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
 
 	if ($mesg)
 	{
@@ -476,8 +538,17 @@ else
 			$soc->fetch($object->socid);
 
 			$head=delivery_prepare_head($object);
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
+			
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update_extras_line">';
+			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+				
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
+				
 			/*
 			 * Confirmation de la suppression
 			 *
@@ -502,6 +573,7 @@ else
 			/*
 			 *   Livraison
 			 */
+			
 			print '<table class="border" width="100%">';
 
 			// Shipment
@@ -520,7 +592,9 @@ else
 
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">'.$object->ref.'</td></tr>';
+    		print '<td colspan="3">';
+    		print $object->ref;
+    		print '</td></tr>';
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
@@ -638,6 +712,10 @@ else
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
 				print '</tr>';
 			}
+			
+			// Other attributes
+			$cols = 2;
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table><br>\n";
 
@@ -727,14 +805,30 @@ else
 				print '<td align="center">'.$object->lines[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
+				
+				//Display lines extrafields
+				if (is_array($extralabelslines) && count($extralabelslines)>0) {
+					$colspan=2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$line = new LivraisonLigne($db);
+					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
+					print '<tr '.$bc[$var].'>';
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
+					print '</tr>';
+				}
 
 				$i++;
 			}
 
 			print "</table>\n";
+			
+            dol_fiche_end();
 
-			print "\n</div>\n";
-
+			//if ($object->statut == 0)	// only if draft
+			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+            
+			print '</form>';
+            
 
 			/*
 			 *    Boutons actions
@@ -807,6 +901,7 @@ else
 
 			print '</td></tr></table>';
 
+			// List of existing shipment and delivery receipts
 			if ($expedition->origin_id)
 			{
 				print '<br>';

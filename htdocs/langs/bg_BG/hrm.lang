@@ -1,0 +1,20 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
+Establishments=Обекти
+Establishment=Обект
+NewEstablishment=Нов обект
+DeleteEstablishment=Изтриване на обект
+ConfirmDeleteEstablishment=Сигурни ли сте, че искате да изтриете този обект?
+OpenEtablishment=Отвори обект
+CloseEtablishment=Затвори обект
+# Dictionary
+DictionaryDepartment=HRM - Department list
+DictionaryFunction=HRM - Function list
+# Module
+ListOfEmployees=Списък на служителите
+Employees=Служители
+Employee=Служител
+Employe=Employe
+NewEmployee=Нов служител
+EmployeeCard=Служител досие

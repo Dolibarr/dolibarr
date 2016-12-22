@@ -36,14 +36,18 @@ class RemiseCheque extends CommonObject
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
 
-	var $id;
 	var $num;
 	var $intitule;
-	var $ref_ext;
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
-	public $statut;
+	public $amount;
+	public $date_bordereau;
+	public $account_id;
+	public $account_label;
+	public $author_id;
+	public $nbcheque;
+	public $number;
 
 	/**
 	 *	Constructor

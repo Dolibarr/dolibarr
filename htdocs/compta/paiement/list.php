@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,16 +53,17 @@ $companystatic=new Societe($db);
 $search_ref=GETPOST("search_ref","int");
 $search_account=GETPOST("search_account","int");
 $search_paymenttype=GETPOST("search_paymenttype");
-$search_amount=GETPOST("search_amount");
-$search_company=GETPOST("search_company");
+$search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
+$search_company=GETPOST("search_company",'alpha');
+$search_payment_num=GETPOST('search_payment_num','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 
@@ -71,6 +73,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_account="";
 	$search_amount="";
     $search_paymenttype="";
+    $search_payment_num="";
 	$search_company="";
     $day='';
     $year='';
@@ -95,7 +98,7 @@ $formother=new FormOther($db);
 if (GETPOST("orphelins"))
 {
     // Paiements lies a aucune facture (pour aide au diagnostic)
-    $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
+    $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
 	// Add fields for extrafields
@@ -117,7 +120,7 @@ if (GETPOST("orphelins"))
 }
 else
 {
-    $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
+    $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.label,";
@@ -164,9 +167,10 @@ else
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }
-    if ($search_ref > 0)       		$sql .=" AND p.rowid=".$search_ref;
+    if ($search_ref)       		    $sql .=natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_payment_num != '')  $sql .=" AND p.num_paiement = '".$db->escape($search_payment_num)."'";
     if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
@@ -200,6 +204,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$paramlist,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
@@ -228,6 +233,9 @@ if ($resql)
     print '<td>';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
+    print '<td align="left">';
+    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
+    print '</td>';
     print '<td>';
     $form->select_comptes($search_account,'search_account',0,'',1);
     print '</td>';
@@ -253,7 +261,7 @@ if ($resql)
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
@@ -270,7 +278,7 @@ if ($resql)
         else print '&nbsp;';
         print '</td>';
 
-        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
+        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td><td>'.$objp->num_paiement.'</td>';
         print '<td>';
         if ($objp->bid)
         {
@@ -304,6 +312,5 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

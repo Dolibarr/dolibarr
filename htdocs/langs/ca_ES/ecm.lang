@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-MenuECM=Documents
 DocsMine=Els meus documents
 DocsGenerated=Documents generats
 DocsElements=Documents elements
@@ -35,7 +34,7 @@ ECMSearchByEntity=Cercar per objecte
 ECMSectionOfDocuments=Carpetes de documents
 ECMTypeManual=Manual
 ECMTypeAuto=Automàtic
-ECMDocsBySocialContributions=Documents relacionats als impostos socials o fiscals
+ECMDocsBySocialContributions=Documents relacionats als impostos varis
 ECMDocsByThirdParties=Documents associats a tercers
 ECMDocsByProposals=Documents associats a pressupostos
 ECMDocsByOrders=Documents associats a comandes

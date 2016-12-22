@@ -42,7 +42,7 @@ if (!$user->admin) accessforbidden();
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoWebServer"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoWebServer"),'','title_setup');
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";

@@ -58,7 +58,7 @@ class ProductFournisseur extends Product
     var $fourn_remise_percent;    // discount for quantity (percent)
     var $fourn_remise;            // discount for quantity (amount)
     var $product_fourn_id;        // supplier id
-    var $fk_availability;         // availability delay
+    var $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
     var $fourn_unitprice;
     var $fourn_tva_npr;
 
@@ -121,26 +121,40 @@ class ProductFournisseur extends Product
      */
     function remove_product_fournisseur_price($rowid)
     {
-        global $conf;
-
+        global $conf, $user;
+        
+        $error=0;
+        
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-        $sql.= " WHERE rowid = ".$rowid;
+        // Call trigger
+        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE',$user);
+        if ($result < 0) $error++;
+        // End call triggers
 
-        dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
+        if (empty($error))
         {
+
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $this->error=$this->db->lasterror();
+                $error++;
+            }
+        }
+
+        if (empty($error)){
             $this->db->commit();
             return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
+        }else{
             $this->db->rollback();
             return -1;
         }
+
     }
 
 
@@ -176,7 +190,6 @@ class ProductFournisseur extends Product
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
-			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
 			$ttx = $tva_tx;
 			$buyprice = $buyprice/(1+($ttx/100));
 		}
@@ -229,7 +242,7 @@ class ProductFournisseur extends Product
 				else
 				{
 					$this->db->rollback();
-					return 1;
+					return -1;
 				}
 			}
 			else
@@ -312,7 +325,7 @@ class ProductFournisseur extends Product
         				else
         				{
         					$this->db->rollback();
-        					return 1;
+        					return -1;
         				}
 		            }
 		            else
@@ -356,12 +369,12 @@ class ProductFournisseur extends Product
             	$this->fourn_ref				= $obj->ref_fourn; // deprecated
 	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
-            	$this->fourn_charges            = $obj->charges;
+            	$this->fourn_charges            = $obj->charges;	// deprecated
             	$this->fourn_qty                = $obj->quantity;
             	$this->fourn_remise_percent     = $obj->remise_percent;
             	$this->fourn_remise             = $obj->remise;
             	$this->fourn_unitprice          = $obj->unitprice;
-            	$this->fourn_unitcharges        = $obj->unitcharges;
+            	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
             	$this->fourn_tva_tx					= $obj->tva_tx;
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
@@ -370,7 +383,8 @@ class ProductFournisseur extends Product
             	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
 
-                if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+                if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) 
+                {
                     $priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($this->fk_product, $this->fk_supplier_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
                     if ($price_result >= 0) {
@@ -419,7 +433,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE pfp.entity IN (".getEntity('productprice', 1).")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND pfp.fk_product = ".$prodid;
         if (empty($sortfield)) $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
@@ -443,9 +457,9 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_qty				= $record["quantity"];
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];
 				$prodfourn->fourn_remise			= $record["remise"];
-                $prodfourn->fourn_unitprice			= $record["unitprice"];
-				$prodfourn->fourn_charges           = $record["charges"];
-				$prodfourn->fourn_unitcharges       = $record["unitcharges"];
+				$prodfourn->fourn_unitprice			= $record["unitprice"];
+				$prodfourn->fourn_charges           = $record["charges"];		// deprecated
+				$prodfourn->fourn_unitcharges       = $record["unitcharges"];	// deprecated
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
@@ -578,8 +592,8 @@ class ProductFournisseur extends Product
                         $this->fourn_remise_percent     = $record["remise_percent"];
                         $this->fourn_remise             = $record["remise"];
                         $this->fourn_unitprice          = $fourn_unitprice;
-                        $this->fourn_charges            = $record["charges"];
-                        $this->fourn_unitcharges        = $record["unitcharges"];
+                        $this->fourn_charges            = $record["charges"];		// deprecated
+                        $this->fourn_unitcharges        = $record["unitcharges"];	// deprecated
                         $this->fourn_tva_tx             = $record["tva_tx"];
                         $this->fourn_id                 = $record["fourn_id"];
                         $this->fourn_name               = $record["supplier_name"];

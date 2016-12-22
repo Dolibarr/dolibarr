@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2015	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015           Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,19 +102,19 @@ if ($_POST["action"] == 'add')
 
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
-        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
+        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'error');
         $action='create';       // Force chargement page en mode creation
         $error++;
     }
     if (empty($account->ref))
     {
-        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
+        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
         $action='create';       // Force chargement page en mode creation
         $error++;
     }
     if (empty($account->label))
     {
-    	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
     	$action='create';       // Force chargement page en mode creation
     	$error++;
     }
@@ -130,7 +130,7 @@ if ($_POST["action"] == 'add')
             $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
-            setEventMessage($account->error,'errors');
+            setEventMessages($account->error, $account->errors, 'errors');
             $action='create';   // Force chargement page en mode creation
         }
     }
@@ -177,19 +177,19 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
-        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
+        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'error');
         $action='edit';       // Force chargement page en mode creation
         $error++;
     }
     if (empty($account->ref))
     {
-        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
+        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
         $action='edit';       // Force chargement page en mode creation
         $error++;
     }
     if (empty($account->label))
     {
-    	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
     	$action='edit';       // Force chargement page en mode creation
     	$error++;
     }
@@ -206,7 +206,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         }
         else
         {
-	        setEventMessage($account->error, 'errors');
+	        setEventMessages($account->error, $account->errors, 'errors');
             $action='edit';     // Force chargement page edition
         }
     }
@@ -243,7 +243,7 @@ if ($action == 'create')
 {
 	$account=new Account($db);
 
-	print_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
 
     if ($conf->use_javascript_ajax)
     {
@@ -777,7 +777,7 @@ else
         $account = new Account($db);
         $account->fetch(GETPOST('id','int'));
 
-        print_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
+        print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
 
         if ($conf->use_javascript_ajax)
         {
@@ -870,7 +870,7 @@ else
         $conciliate=$account->canBeConciliated();
         if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-        else print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked').'"> '.$langs->trans("DisableConciliation");
+        else print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0)?'':' checked="checked"').'"> '.$langs->trans("DisableConciliation");
         print '</td></tr>';
 
         // Balance
@@ -1041,8 +1041,5 @@ else
 
 }
 
-
-
-$db->close();
-
 llxFooter();
+$db->close();

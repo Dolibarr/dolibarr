@@ -74,7 +74,7 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5)
+ * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
  * 	@return		string					Hash of string
  */
 function dol_hash($chain,$type=0)

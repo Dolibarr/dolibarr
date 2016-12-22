@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Вернуться Numero с форматом %syymm-YY,
 PacificNumRefModelError=Вмешательство карточки начиная с $ syymm уже и не совместимы с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.
 PrintProductsOnFichinter=Выводить товары на карточки посредничества
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

@@ -42,12 +42,12 @@ if ($action == 'setvalue')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -59,7 +59,7 @@ if ($action == 'setvalue')
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BookmarkSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BookmarkSetup"),$linkback,'title_setup');
 
 print $langs->trans("BookmarkDesc")."<br>\n";
 
@@ -82,6 +82,5 @@ print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf-
 print '</td></tr>';
 print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

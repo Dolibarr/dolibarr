@@ -25,10 +25,14 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
+
+$youuselaststable = 0;
 
 
 /*
@@ -38,13 +42,58 @@ $langs->load("members");
 llxHeader();
 
 
-print_fiche_titre("Dolibarr",'','title_setup');
+print load_fiche_titre("Dolibarr",'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
+
+
+print '<div class="fichecenter"><div class="fichehalfleft">';
+
 print $langs->trans("Version").' / '.$langs->trans("DolibarrLicense").':';
 print '<ul>';
-print '<li>'.DOL_VERSION.' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<li><strong>'.DOL_VERSION.'</strong>';
+
+$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+//var_dump($result['content']);
+$sfurl = simplexml_load_string($result['content']);
+if ($sfurl)
+{
+    $i=0;
+    $version='0.0';
+    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+    {
+        $title=$sfurl->channel[0]->item[$i]->title;
+        if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+        {
+            $newversion=$reg[1];
+            $newversionarray=explode('.',$newversion);
+            $versionarray=explode('.',$version);
+            //var_dump($newversionarray);var_dump($versionarray);
+            if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+        }
+        $i++;
+    }
+
+    // Show version
+    if ($version != '0.0') 
+    {
+        print ' ('.$langs->trans("LastStableVersion").': <b>'.$version.'</b>';
+    	if (DOL_VERSION == $version)
+    	{
+    	    $youuselaststable=1;
+            print $langs->trans("YouUseLastStableVersion");  
+    	}
+    	print ')';
+    }
+	print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+}
+else
+{
+    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+}
+
+
 print '</ul>';
 
 //print "<br>\n";
@@ -114,6 +163,9 @@ print '</li>';
 print '</ul>';
 
 
+print '</div><div class="fichehalfright">';
+
+
 print $langs->trans("HelpCenter").':';
 print '<ul>';
 print '<li>';
@@ -121,6 +173,7 @@ print '<li>';
 print '<a target="_blank" href="'.DOL_URL_ROOT.'/support/index.php" data-ajax="false">'.$langs->trans("HelpCenter").'</a>';
 print '</li>';
 print '</ul>';
+
 
 print $langs->trans("Foundation").':';
 
@@ -152,6 +205,33 @@ print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';
 print '</li>';
 
 print '</ul>';
+
+print '</div>';
+print '</div>';
+print '<div class="clearboth"></div>';
+
+
+if ($youuselaststable)
+{
+    print '<br>';
+    print '<br>';
+    
+    $tmp=versiondolibarrarray();
+    if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+    {
+        print $langs->trans("TitleExampleForMajorRelease").':<br>';
+        print '<textarea style="width:80%; min-height: 60px">';
+        print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
+        print '</textarea>';
+    }
+    else
+    {
+        print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
+        print '<textarea style="width:80%; min-height: 60px">';
+        print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
+        print '</textarea>';
+    }
+}
 
 
 llxFooter();

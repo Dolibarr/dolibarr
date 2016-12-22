@@ -27,7 +27,7 @@ create table llx_societe_rib
   tms            timestamp,
   label          varchar(30),
   bank           varchar(255),  -- bank name
-  code_banque    varchar(7),    -- bank code
+  code_banque    varchar(128),  -- bank code
   code_guichet   varchar(6),    -- desk code
   number         varchar(255),  -- account number
   cle_rib        varchar(5),    -- key of bank account

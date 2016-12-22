@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Comptabilite
+ *	Class to describe and enable module Comptabilite
  */
 class modComptabilite extends DolibarrModules
 {
@@ -48,6 +48,7 @@ class modComptabilite extends DolibarrModules
 		$this->numero = 10;
 
 		$this->family = "financial";
+		$this->module_position = 600;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion sommaire de comptabilite";
@@ -62,13 +63,13 @@ class modComptabilite extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("compta.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
 		$this->conflictwith = array("modAccounting");
 		$this->langfiles = array("compta");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Data directories to create when module is enabled
@@ -78,7 +79,7 @@ class modComptabilite extends DolibarrModules
 		                    "/comptabilite/bordereau"
 		                    );
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

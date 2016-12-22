@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +45,7 @@ class Account extends CommonObject
      * @see id
      */
     var $rowid;
-    var $id;
 
-    var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
     var $courant;
@@ -74,10 +73,6 @@ class Account extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-
-    var $country_id;
-    var $country_code;
-    var $country;
 
     var $type_lib=array();
 
@@ -767,11 +762,12 @@ class Account extends CommonObject
 
 
     /**
-     *    Delete bank account from database
+     *  Delete bank account from database
      *
-     *    @return      int         <0 if KO, >0 if OK
+     *	@param	User	$user	User deleting
+     *  @return int             <0 if KO, >0 if OK
      */
-    function delete()
+    function delete($user='')
     {
         global $conf;
 
@@ -976,6 +972,35 @@ class Account extends CommonObject
 
 
     /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *      @return int     Nb of account we can reconciliate
+     */
+    public static function countAccountToReconcile()
+    {
+        global $db, $conf, $langs;
+    
+        if ($user->societe_id) return 0;   // protection pour eviter appel par utilisateur externe
+    
+        $nb=0;
+        
+        $sql = "SELECT COUNT(ba.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+        $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            $nb = $obj->nb;
+        }
+        else dol_print_error($db);
+
+        return $nb;
+    }
+        
+    /**
      *    	Return clicable name (with picto eventually)
      *
      *		@param	int		$withpicto		Include picto into link
@@ -1004,7 +1029,12 @@ class Account extends CommonObject
             $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
             $linkend='</a>';
         }
-
+        else if ($mode == 'receipts')
+        {
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
+            $linkend='</a>';
+        }
+        
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->label.$linkend;
         return $result;
@@ -1088,8 +1118,8 @@ class Account extends CommonObject
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('CH','DE','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU','BE','CA','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, Great Britain...
+        if (in_array($country_code,array('CH','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon, ...
+        if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
         return 0;
     }
 
@@ -1148,6 +1178,10 @@ class AccountLine extends CommonObject
     var $ref;
     var $datec;
     var $dateo;
+
+    /**
+     * Value date
+     */
     var $datev;
     var $amount;
     var $label;

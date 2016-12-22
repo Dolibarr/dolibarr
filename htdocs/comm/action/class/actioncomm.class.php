@@ -107,7 +107,6 @@ class ActionComm extends CommonObject
 
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
-    var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
     var $userownerid;	// Id of user owner = fk_user_action into table
@@ -148,12 +147,6 @@ class ActionComm extends CommonObject
      */
     var $contact;
 
-    /**
-     * Id of project (optional)
-     * @var int
-     */
-    var $fk_project;
-
     // Properties for links to other objects
     var $fk_element;    // Id of record
     var $elementtype;   // Type of record. This if property ->element of object linked to.
@@ -164,7 +157,17 @@ class ActionComm extends CommonObject
 
     var $actions=array();
 
+    // Fields for emails
+    var $email_msgid;
+    var $email_from;
+    var $email_sender;
+    var $email_to;
+    var $email_tocc;
+    var $email_tobcc;
+    var $email_subject;
+    var $errors_to;
 
+    
     /**
      *      Constructor
      *
@@ -228,7 +231,7 @@ class ActionComm extends CommonObject
         	$this->userassigned[$tmpid]=array('id'=>$tmpid);
         }
 
-        if (is_object($this->contact) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
+        if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
 
 
         $userownerid=$this->userownerid;
@@ -410,8 +413,8 @@ class ActionComm extends CommonObject
 
         $this->db->begin();
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
 		$this->fetch_optionals();
 		$this->fetch_userassigned();
@@ -909,10 +912,10 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now = dol_now();
+            $agenda_static = new ActionComm($this->db);
 
 	        $response = new WorkboardResponse();
-	        $response->warning_delay = $conf->actions->warning_delay/60/60/24;
+	        $response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
 	        $response->img = img_object($langs->trans("Actions"),"action");
@@ -922,7 +925,9 @@ class ActionComm extends CommonObject
             {
 	            $response->nbtodo++;
 
-                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) {
+                $agenda_static->datep = $this->db->jdate($obj->dp);
+
+                if ($agenda_static->hasDelay()) {
 	                $response->nbtodolate++;
                 }
             }
@@ -1387,6 +1392,20 @@ class ActionComm extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the action delayed?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        $now = dol_now();
+
+        return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
+    }
 
 }
 

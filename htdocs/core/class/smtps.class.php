@@ -1133,8 +1133,10 @@ class SMTPs
 		$trackid = $this->getTrackId();
 		if ($trackid)
 		{
-			$_header .= 'Message-ID: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
-			$_header .= 'references: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
+			// References is kept in response and Message-ID is returned into In-Reply-To:
+			$_header .= 'Message-ID: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
+			$_header .= 'References: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
+			$_header .= 'X-Dolibarr-TRACKID: ' . $trackid . "\r\n";
 		}
 		else
 		{

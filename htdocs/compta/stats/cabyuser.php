@@ -280,7 +280,7 @@ if ($modecompta == 'CREANCES-DETTES') {
            $sortorder
 	   );
     } else {
-	print '<td colspan="1"></td>';
+	print_liste_field_titre('');
 }
 print_liste_field_titre(
 	$langs->trans("AmountTTC"),

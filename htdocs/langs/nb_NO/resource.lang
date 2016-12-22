@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressurser
 MenuResourceAdd=Ny ressurs
 MenuResourcePlanning=Ressursplanlegging
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Beskrivelse av ressurs
 
 ResourcesLinkedToElement=Ressurs koblet til element
 
+ShowResource=Vis ressurs
 ShowResourcePlanning=Vis ressursplanlegging
 GotoDate=Gå til dato
 

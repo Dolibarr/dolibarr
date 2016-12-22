@@ -1,0 +1,20 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
+Establishments=Establishments
+Establishment=Establishment
+NewEstablishment=New establishment
+DeleteEstablishment=Delete establishment
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
+OpenEtablishment=Open establishment
+CloseEtablishment=Close establishment
+# Dictionary
+DictionaryDepartment=HRM - Department list
+DictionaryFunction=HRM - Function list
+# Module
+ListOfEmployees=Darbinieku saraksts
+Employees=Darbinieki
+Employee=Darbinieks
+Employe=Employe
+NewEmployee=Jauns darbinieks
+EmployeeCard=Darbinieka kartiņa

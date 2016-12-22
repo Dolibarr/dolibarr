@@ -121,7 +121,6 @@ AttributeName=Attribuutin nimi
 String=String
 Text=Teksti
 Int=Int
-Date=Päivämäärä
 DateAndTime=Päivämäärä ja kellonaika
 PublicMemberCard=Osakkeenomistajan julkinen kortti
 MemberNotOrNoMoreExpectedToSubscribe=Jäsen tai ei ole enää odotettavissa tilata

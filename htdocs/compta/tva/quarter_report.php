@@ -135,7 +135,7 @@ $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
+//print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -378,10 +378,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+	
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	
 	foreach (array_keys($x_coll) as $rate) {
 		$subtot_coll_total_ht = 0;
@@ -707,6 +709,5 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 }
 print '</table>';
 
-$db->close();
-
 llxFooter();
+$db->close();

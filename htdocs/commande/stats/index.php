@@ -77,7 +77,7 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title,'','title_commercial.png');
+print load_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 
@@ -250,18 +250,17 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_dolusers($userid,'userid',1);
-	print '</td></tr>';
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
@@ -275,8 +274,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
 print '<td align="center">%</td>';
@@ -287,13 +286,15 @@ print '<td align="center">%</td>';
 print '</tr>';
 
 $oldyear=0;
+$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		print '<tr height="24">';
+		$var=!$var;
+		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
 		print '<td align="right">0</td>';
@@ -305,7 +306,8 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	print '<tr height="24">';
+	$var=!$var;
+	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

@@ -25,6 +25,7 @@
 // $action must be defined
 // $object must be defined
 // $permissiondellink must be defined
+// $uploaddir (example $conf->projet->dir_output . "/";)
 
 $dellinkid = GETPOST('dellinkid','int');
 
@@ -34,3 +35,5 @@ if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel') &
 	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
 	if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 }
+
+

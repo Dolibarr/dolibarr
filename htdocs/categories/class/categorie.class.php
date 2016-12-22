@@ -112,10 +112,16 @@ class Categorie extends CommonObject
 	public $element='category';
 	public $table_element='categories';
 
-	var $id;
 	var $fk_parent;
 	var $label;
 	var $description;
+	/**
+	 * @var string     Color
+	 */
+	var $color;
+	/**
+	 * @var ???
+	 */
 	var $socid;
 	/**
 	 * @var int Category type
@@ -127,7 +133,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CONTACT
 	 */
 	var $type;
-	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof=array();
@@ -156,7 +161,7 @@ class Categorie extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($label)) return -1;
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id)
 		{
@@ -180,6 +185,7 @@ class Categorie extends CommonObject
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description	= $res['description'];
+				$this->color    	= $res['color'];
 				$this->socid		= $res['fk_soc'];
 				$this->visible		= $res['visible'];
 				$this->type			= $res['type'];
@@ -223,10 +229,11 @@ class Categorie extends CommonObject
 		$error=0;
 
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
-		
+
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
 		if (empty($this->visible)) $this->visible=0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
@@ -245,6 +252,7 @@ class Categorie extends CommonObject
 		$sql.= "fk_parent,";
 		$sql.= " label,";
 		$sql.= " description,";
+		$sql.= " color,";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= "fk_soc,";
@@ -257,6 +265,7 @@ class Categorie extends CommonObject
 		$sql.= $this->fk_parent.",";
 		$sql.= "'".$this->db->escape($this->label)."',";
 		$sql.= "'".$this->db->escape($this->description)."',";
+		$sql.= "'".$this->db->escape($this->color)."',";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
@@ -357,7 +366,8 @@ class Categorie extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql.= " SET label = '".$this->db->escape($this->label)."',";
-		$sql.= " description = '".$this->db->escape($this->description)."'";
+		$sql.= " description = '".$this->db->escape($this->description)."',";
+		$sql.= " color = '".$this->db->escape($this->color)."'";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
@@ -389,13 +399,12 @@ class Categorie extends CommonObject
 			}
 			else if ($reshook < 0) $error++;
 
-			$this->db->commit();
-
-
             // Call trigger
             $result=$this->call_trigger('CATEGORY_MODIFY',$user);
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
+
+			$this->db->commit();
 
 			return 1;
 		}
@@ -562,14 +571,15 @@ class Categorie extends CommonObject
 		if ($this->id == -1) return -2;
 
 		// For backward compatibility
-		if ($type == 'societe') {
+		if ($type == 'societe')
+		{
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",
-				LOG_WARNING );
-		} elseif ($type == 'fournisseur') {
+			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
+		}
+		elseif ($type == 'fournisseur')
+		{
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
-				LOG_WARNING );
+			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();
@@ -878,7 +888,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
@@ -897,6 +907,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$this->cats[$obj->rowid]['label'] = ! empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = ! empty($obj->description_trans) ? $obj->description_trans : $obj->description;
+				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$i++;
 			}
 		}
@@ -1122,29 +1133,57 @@ class Categorie extends CommonObject
 	 * Retourne les chemin de la categorie, avec les noms des categories
 	 * separes par $sep (" >> " par defaut)
 	 *
-	 * @param	string	$sep	Separator
-	 * @param	string	$url	Url
+	 * @param	string	$sep	     Separator
+	 * @param	string	$url	     Url
+	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
-	function print_all_ways($sep = " &gt;&gt; ", $url='')
+	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
 	{
 		$ways = array();
 
-		foreach ($this->get_all_ways() as $way)
+		$allways = $this->get_all_ways(); // Load array of categories
+		foreach ($allways as $way)
 		{
 			$w = array();
+			$i = 0;
 			foreach ($way as $cat)
 			{
+			    $i++;
+
+			    if (empty($nocolor))
+			    {
+    			    $forced_color='toreplace';
+    			    if ($i == count($way))
+    			    {
+    			        // Check contrast with background and correct text color
+    			        $forced_color='categtextwhite';
+    			        if ($cat->color)
+    			        {
+    			            $hex=$cat->color;
+    			            $r = hexdec($hex[0].$hex[1]);
+    			            $g = hexdec($hex[2].$hex[3]);
+    			            $b = hexdec($hex[4].$hex[5]);
+    			            $bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+    			            if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+    			        }
+    			    }
+			    }
+			    
 				if ($url == '')
 				{
-					$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."&amp;type=".$cat->type."'>".$cat->label."</a>";
+			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color .'">';
+			        $linkend='</a>';
+				    $w[] = $link.$cat->label.$linkend;
 				}
 				else
 				{
 					$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
 				}
 			}
-			$ways[] = implode($sep, $w);
+			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));
+			
+			$ways[] = $newcategwithpath;
 		}
 
 		return $ways;
@@ -1340,6 +1379,7 @@ class Categorie extends CommonObject
 
 	/**
 	 *	Return name and link of category (with picto)
+	 *  Use ->id, ->ref, ->label, ->color
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
@@ -1353,7 +1393,19 @@ class Categorie extends CommonObject
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		// Check contrast with background and correct text color
+		$forced_color='categtextwhite';
+		if ($this->color)
+		{
+    		$hex=$this->color;
+    		$r = hexdec($hex[0].$hex[1]);
+    		$g = hexdec($hex[2].$hex[3]);
+    		$b = hexdec($hex[4].$hex[5]);
+    		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+    		if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+		}		
+
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
 		$linkend='</a>';
 
 		$picto='category';
@@ -1499,9 +1551,11 @@ class Categorie extends CommonObject
 	/**
 	 *	Update ou cree les traductions des infos produits
 	 *
+	 *	@param	User	$user		Object user
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs()
+	function setMultiLangs($user)
 	{
 	    global $langs;
 
@@ -1565,6 +1619,15 @@ class Categorie extends CommonObject
 	            }
 	        }
 	    }
+
+			// Call trigger
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS',$user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			// End call triggers
+
 	    return 1;
 	}
 

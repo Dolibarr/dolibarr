@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Oauth Yapılandırma
+NoAccessToken=Yerel veritabanına kayıtlı erişim belirteçi yok
+HasAccessToken=Bir belirteç oluşturuldu ve yerel veritabanına kaydedildi
+NewTokenStored=Belirteç kabul edildi ve kaydedildi
+ToCheckDeleteTokenOnProvider=%s OAuth sağlayıcısı tarafından kaydedilen kimlik onaylamasını denetlemek/silmek için
+TokenDeleted=Belirteç silindi
+RequestAccess=Erişim ve kaydedilecek yeni bir belirteç alma isteği/yenilemesi için buraya tıklayın
+DeleteAccess=Belirteçi silmek için burayı tıkla
+UseTheFollowingUrlAsRedirectURI=OAuth sağlayıcınız üzerinde kimlik oluştururken Yönlendirme URI olarak aşağıdaki URL'yi kullanın:
+ListOfSupportedOauthProviders=OAuth2 sağlayıcınız tarafınıdan verilen kimlik bilgilerini burada girin. Burada yalnızca desteklenen OAuth2 sağlayıcılar görünür. Bu ayarlar OAuth2 kimlik doğrulaması gerektiren diğer modüller tarafından da kullanılabilir.
+OAUTH_GOOGLE_NAME=Api Google
+OAUTH_GOOGLE_ID=Api Google Id
+OAUTH_GOOGLE_SECRET=Api Google Parolası

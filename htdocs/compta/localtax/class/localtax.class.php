@@ -29,15 +29,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Localtax extends CommonObject
 {
-    var $id;
-    var $ref;
     var $ltt;
 	var $tms;
 	var $datep;
 	var $datev;
 	var $amount;
 	var $label;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

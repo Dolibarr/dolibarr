@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuration OAuth
+NoAccessToken=Aucun jeton d'accès sauvegardé dans la base de donnée locale
+HasAccessToken=Un jeton a été généré et sauvegardé dans la base de donnée locale
+NewTokenStored=Jeton reçu et sauvegardé
+ToCheckDeleteTokenOnProvider=Pour vérifier/effacer l'autorisation sauvegardée par le fournisseur OAuth %s
+TokenDeleted=Jeton effacé
+RequestAccess=Cliquez ici pour demander/renouveler un accès et recevoir un nouveau jeton à sauvegarder
+DeleteAccess=Cliquez ici pour effacer le jeton
+UseTheFollowingUrlAsRedirectURI=Utilisez l'URL suivante comme URI de redirection quand vous créez un crédit avec votre fournisseur OAuth :
+ListOfSupportedOauthProviders=Saisissez ici le crédit fourni par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Ce paramétrage est potentiellement utilisé par d'autres modules qui nécessitent une authentification OAuth2.
+OAUTH_GOOGLE_NAME=API Google
+OAUTH_GOOGLE_ID=ID API Google
+OAUTH_GOOGLE_SECRET=API Google Secrète

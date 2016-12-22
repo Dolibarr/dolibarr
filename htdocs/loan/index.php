@@ -45,12 +45,13 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $search_ref=GETPOST('search_ref','int');
 $search_label=GETPOST('search_label','alpha');
 $search_amount=GETPOST('search_amount','alpha');
 $filtre=GETPOST("filtre");
+$optioncss = GETPOST('optioncss','alpha');
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -82,6 +83,12 @@ if ($filtre) {
 }
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
+$numall = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $numall = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -92,9 +99,16 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-	print_fiche_titre($langs->trans("Loans"));
+    $param="";
+    if ($search_ref) $param.="&amp;search_ref=".$search_ref;
+    if ($search_label) $param.="&amp;search_label=".$search_user;
+    if ($search_amount) $param.="&amp;search_amount=".$search_amount_ht;
+    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $numall,'title_generic.png');
+
     print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);

@@ -48,6 +48,7 @@ class modMargin extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "financial";
+		$this->module_position = 550;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -76,7 +77,11 @@ class modMargin extends DolibarrModules
 		$this->langfiles = array("margins");
 
 		// Constants
-		$this->const = array();			// List of particular constants to add when module is enabled
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
+		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
+		// );
+		$this->const = array(0=>array('MARGIN_TYPE','chaine','1','Rule for margin calculation by default',0,'current',0));			// List of particular constants to add when module is enabled
 
 		// New pages on tabs
 		$this->tabs = array(

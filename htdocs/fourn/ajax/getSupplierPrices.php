@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015      Francis Appels      <francis.appels@z-application.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,97 +50,49 @@ if ($idprod > 0)
 	$producttmp=new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
 
-	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, s.rowid as idsoc,";
-	$sql.= " pfp.ref_fourn,";
-	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
-	$sql.= " pfp.fk_supplier_price_expression, pfp.tva_tx, s.nom as name";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pfp.fk_soc";
-	$sql.= " WHERE pfp.fk_product = ".$idprod;
-	$sql.= " AND p.tobuy = 1";
-	$sql.= " AND s.fournisseur = 1";
-	$sql.= " ORDER BY pfp.unitprice, s.nom, pfp.ref_fourn DESC";           // Best price first
-
-	dol_syslog("Ajax::getSupplierPrices", LOG_DEBUG);
-	$result=$db->query($sql);
-
-	if ($result)
+	$sorttouse = 's.nom, pfp.quantity, pfp.price';
+	if (GETPOST('bestpricefirst')) $sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
+	
+	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse);    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
+	if ( is_array($productSupplierArray))
 	{
-		$num = $db->num_rows($result);
-
-		if ($num)
+		foreach ($productSupplierArray as $productSupplier)
 		{
-            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-			$i = 0;
-			while ($i < $num)
+			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
+			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
+			
+			$title = $productSupplier->fourn_name.' - '.$productSupplier->fourn_ref.' - ';
+			
+			if ($productSupplier->fourn_qty == 1)
 			{
-				$objp = $db->fetch_object($result);
-				
-				if($conf->multidevise->enabled){
-
-					$resql = $db->query("SELECT s.devise_code FROM ".MAIN_DB_PREFIX."societe as s WHERE rowid = ".$objp->idsoc);
-					$res = $db->fetch_object($resql);
-					$currency = $res->devise_code;
-				}
-				else{
-					$currency = $conf->currency;
-				}
-
-                if (!empty($objp->fk_supplier_price_expression)) {
-                    $priceparser = new PriceParser($db);
-                    $price_result = $priceparser->parseProductSupplier($idprod, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
-                    if ($price_result >= 0) {
-                        $objp->fprice = $price_result;
-                        if ($objp->quantity >= 1)
-                        {
-                            $objp->unitprice = $objp->fprice / $objp->quantity;
-                        }
-                    }
-                }
-
-				$price = $objp->fprice * (1 - $objp->remise_percent / 100);
-				$unitprice = $objp->unitprice * (1 - $objp->remise_percent / 100);
-
-				$title = $objp->name.' - '.$objp->ref_fourn.' - ';
-
-				if ($objp->quantity == 1)
-				{
-					$title.= price($price,0,$langs,0,0,-1,$currency)."/";
-				}
-				$title.= $objp->quantity.' '.($objp->quantity == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
-
-				if ($objp->quantity > 1)
-				{
-					$title.=" - ";
-					$title.= price($unitprice,0,$langs,0,0,-1,$currency)."/".$langs->trans("Unit");
-
-					$price = $unitprice;
-				}
-				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
-				{
-					$title.=" + ";
-					$title.= price($objp->unitcharges,0,$langs,0,0,-1,$currency);
-					$price += $objp->unitcharges;
-				}
-				if ($objp->duration) $label .= " - ".$objp->duration;
-
-				$label = price($price,0,$langs,0,0,-1,$currency)."/".$langs->trans("Unit");
-
-				if ($objp->ref_fourn) $label.=' ('.$objp->ref_fourn.')';
-
-				$prices[] = array("id" => $objp->idprodfournprice, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
-				$i++;
+				$title.= price($price,0,$langs,0,0,-1,$conf->currency)."/";
 			}
-
-			$db->free($result);
+			$title.= $productSupplier->fourn_qty.' '.($productSupplier->fourn_qty == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
+			
+			if ($productSupplier->fourn_qty > 1)
+			{
+				$title.=" - ";
+				$title.= price($unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
+				$price = $unitprice;
+			}
+			if ($productSupplier->fourn_unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
+			{
+				$title.=" + ";
+				$title.= price($productSupplier->fourn_unitcharges,0,$langs,0,0,-1,$conf->currency);
+				$price += $productSupplier->fourn_unitcharges;
+			}
+			
+			$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
+			if ($productSupplier->fourn_ref) $label.=' ('.$productSupplier->fourn_ref.')';
+			
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
 		}
 	}
-
+	
 	if(!empty($conf->stock->enabled)) {
 		// Add price for pmp
 		$price=$producttmp->pmp;
-		$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
+		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));  // For price field, we must use price2num(), for label or title, price()
 	}
 }
 

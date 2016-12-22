@@ -191,14 +191,14 @@ if ($id)
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
     print '<td colspan="2">';
     print $form->showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
     print '</td>';
     print '</tr>';
 
     // Nom
-    print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+    print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
     print '<td colspan="2">'.$fgroup->name.'';
     if (! $fgroup->entity)
     {
@@ -207,7 +207,7 @@ if ($id)
     print "</td></tr>\n";
 
     // Note
-    print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+    print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
     print '<td class="valeur">'.dol_htmlentitiesbr($fgroup->note).'</td>';
     print "</tr>\n";
 
@@ -315,7 +315,7 @@ if ($id)
                 print '<td>&nbsp</td>';
             }
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
+            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
             print '<td>'.$perm_libelle. '</td>';
 
             print '</tr>';
@@ -326,6 +326,5 @@ if ($id)
     print '</table>';
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

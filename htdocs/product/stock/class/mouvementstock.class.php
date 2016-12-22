@@ -30,9 +30,6 @@
  */
 class MouvementStock extends CommonObject
 {
-    var $error;
-    var $db;
-
 	var $product_id;
 	var $entrepot_id;
 	var $qty;
@@ -140,17 +137,26 @@ class MouvementStock extends CommonObject
             	while ($i < $num)
             	{
             		$obj = $this->db->fetch_object($resql);
-            		if ($this->db->jdate($obj->eatby) != $eatby)
+					// only check date values
+					$tmparray=dol_getdate($eatby, true);
+					$eatby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($sellby, true);
+					$sellby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($this->db->jdate($obj->eatby), true);
+					$dbEatby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($this->db->jdate($obj->sellby), true);
+					$dbSellby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+            		if ($dbEatby != $eatby)
             		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby);
-						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby));
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbEatby), dol_print_date($eatby));
+						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbEatby), dol_print_date($eatby)), LOG_ERR);
 						$this->db->rollback();
             			return -3;
             		}
-            		if ($this->db->jdate($obj->sellby) != $sellby)
+            		if ($dbSellby != $sellby)
             		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby);
-						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby));
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbSellby), dol_print_date($sellby));
+						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbSellby), dol_print_date($sellby)), LOG_ERR);
 						$this->db->rollback();
             			return -3;
             		}
@@ -433,7 +439,7 @@ class MouvementStock extends CommonObject
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$tmpmove = dol_clone($this);
+			$tmpmove = clone $this;
 			$tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode);		// This will also call _createSubProduct making this recursive
 			unset($tmpmove);
 		}

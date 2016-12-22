@@ -73,7 +73,7 @@ if ($actionsave)
 
 		if (! empty($src) && ! dol_is_url($src))
 		{
-			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
+			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
 			$error++;
 			$errorsaved++;
 			break;
@@ -105,12 +105,12 @@ if ($actionsave)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-        if (empty($errorsaved))	setEventMessage($langs->trans("Error"),'errors');
+        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -128,7 +128,7 @@ $arrayofcss=array();
 llxHeader('',$langs->trans("AgendaSetup"),'','',0,0,$arrayofjs,$arrayofcss);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 print '<br>';
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';

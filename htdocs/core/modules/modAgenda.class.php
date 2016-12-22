@@ -50,6 +50,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
+		$this->module_position = 15;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion de l'agenda et des actions";
@@ -72,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array();
 		$this->langfiles = array("companies");
 
-		// Constantes
+		// Constants
 		//-----------
 		$this->const = array();
 		$this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_SENTBYMAIL","chaine","1");
@@ -265,7 +266,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuToDoActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo',
+													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>105,
 													'perms'=>'$user->rights->agenda->allactions->read',
@@ -277,7 +278,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuDoneActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done',
+													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>106,
 													'perms'=>'$user->rights->agenda->allactions->read',
@@ -326,7 +327,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuToDoActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/listactions.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo',
+													'url'=>'/comm/action/listactions.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>115,
 													'perms'=>'$user->rights->agenda->allactions->read',
@@ -338,7 +339,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuDoneActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/listactions.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done',
+													'url'=>'/comm/action/listactions.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>116,
 													'perms'=>'$user->rights->agenda->allactions->read',

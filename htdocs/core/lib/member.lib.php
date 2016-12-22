@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,8 +84,13 @@ function member_prepare_head(Adherent $object)
     if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$h++;
 
+    // Attachments
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    $upload_dir = $conf->adherent->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,1,$object,'member').'/'.dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Documents");
+    $head[$h][1] = $langs->trans('Documents');
+    if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
     $head[$h][2] = 'document';
     $h++;
 

@@ -38,3 +38,4 @@ ShowStock=Prikaži skladišče
 DeleteArticle=Kliknite za izbris tega artikla
 FilterRefOrLabelOrBC=Iskanje (Referenca/Naziv)
 UserNeedPermissionToEditStockToUsePos=Zahtevali ste zmanjšanje zaloge ob izdaji računa, torej mora imeti uporabnik POS-a dovoljenje za popravljanje zaloge
+DolibarrReceiptPrinter=Dolibarr tiskalnik računov

@@ -7,6 +7,7 @@ DeliveryOrders=Phiếu giao hàng
 DeliveryDate=Ngày giao hàng
 DeliveryDateShort=Ngày giao hàng
 CreateDeliveryOrder=Tạo phiếu giao hàng
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Số lượng đã giao hàng
 SetDeliveryDate=Lập ngày vận chuyển
 ValidateDeliveryReceipt=Xác nhận chứng từ giao hàng
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Bạn có chắc muốn xóa chứng từ giao hàn
 DeliveryMethod=Phương thức giao hàng
 TrackingNumber=Số theo dõi
 DeliveryNotValidated=Giao hàng chưa được xác nhận
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Tên và chữ ký:
 ToAndDate=Gửi___________________________________ vào ____ / _____ / __________

@@ -7,6 +7,7 @@ DeliveryOrders=توصيل الطلبات
 DeliveryDate=تاريخ التسليم
 DeliveryDateShort=Deliv. تاريخ
 CreateDeliveryOrder=ومن أجل توليد التسليم
+DeliveryStateSaved=الدولة تسليم أنقذت
 QtyDelivered=الكمية المسلمة
 SetDeliveryDate=حدد تاريخ الشحن
 ValidateDeliveryReceipt=تحقق من إنجاز ورود
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=هل أنت متأكد أنك تريد حذف <b>%s
 DeliveryMethod=طريقة التسليم
 TrackingNumber=تتبع عدد
 DeliveryNotValidated=التسليم يتم التحقق من صحة
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=الاسم والتوقيع :
 ToAndDate=To___________________________________ على ____ / _____ / __________
@@ -23,4 +27,6 @@ GoodStatusDeclaration=وتلقى البضائع الواردة أعلاه في �
 Deliverer=المنفذ :
 Sender=مرسل
 Recipient=المتلقي
-ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=ليس هناك مخزون كاف
+Shippable=قابل للشحن
+NonShippable=لا قابل للشحن

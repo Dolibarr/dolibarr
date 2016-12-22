@@ -10,6 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016      Ferran Marcet	     <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,7 @@ $search_author=GETPOST('search_author','alpha');
 $search_product_category=GETPOST('search_product_category','int');
 $search_town=GETPOST('search_town','alpha');
 $viewstatut=GETPOST('viewstatut');
+$optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
@@ -107,6 +109,15 @@ $viewstatut=$object_statut;
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'p.ref'=>'Ref',
+    'p.ref_client'=>'CustomerRef',
+    'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'p.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*
@@ -144,7 +155,7 @@ $pagenext = $page + 1;
 
 if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 
 $sql = 'SELECT';
@@ -191,7 +202,7 @@ if ($search_montant_ht != '')
 	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
-    $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -245,6 +256,7 @@ if ($result)
 	}
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	if ($sall)				 $param.='&sall='.$sall;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -255,14 +267,26 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        //sort($fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+	
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
 	$moreforfilter='';
 
@@ -295,12 +319,13 @@ if ($result)
 	}
 	if (! empty($moreforfilter))
 	{
-	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="10">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	    print $moreforfilter;
-	    print '</td></tr>';
+	    print '</div>';
 	}
 
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);

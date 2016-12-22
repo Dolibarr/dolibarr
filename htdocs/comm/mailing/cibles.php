@@ -80,7 +80,7 @@ if ($action == 'add')
 	    //print $dir."\n<br>";
 	    dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Chargement de la classe
+	    // Loading Class
 	    $file = $dir."/".$module.".modules.php";
 	    $classname = "mailing_".$module;
 
@@ -95,29 +95,30 @@ if ($action == 'add')
 
 			// Add targets into database
 			$obj = new $classname($db);
+			dol_syslog("Call add_to_target on class ".$classname);
 			$result=$obj->add_to_target($id,$filtersarray);
 		}
 	}
 	if ($result > 0)
 	{
-		setEventMessage($langs->trans("XTargetsAdded",$result),'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
 
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 	if ($result == 0)
 	{
-		setEventMessage($langs->trans("WarningNoEMailsAdded"),'warnings');
+		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
 	if ($result < 0)
 	{
-		setEventMessage($langs->trans("Error").($obj->error?' '.$obj->error:''),'errors');
+		setEventMessages($langs->trans("Error").($obj->error?' '.$obj->error:''), null, 'errors');
 	}
 }
 
 if (GETPOST('clearlist'))
 {
-	// Chargement de la classe
+	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
 
@@ -223,7 +224,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -267,7 +268,7 @@ if ($object->fetch($id) >= 0)
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
-				// Chargement de la classe
+				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
 				require_once $file;

@@ -42,22 +42,33 @@ $result=restrictedArea($user,'adherent',$id);
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$adh = new Adherent($db);
-$adh->fetch($id);
-$adh->info($id);
+$object = new Adherent($db);
+$object->fetch($id);
+$object->info($id);
 
-$head = member_prepare_head($adh);
+$head = member_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Member"), 0, 'user');
 
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($adh);
-print '</td></tr></table>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'rowid', $linkback);
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+dol_print_object_info($object);
 
 print '</div>';
+
+dol_fiche_end();
 
 
 llxFooter();

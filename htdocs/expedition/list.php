@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,19 +40,20 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 $search_ref_exp = GETPOST("search_ref_exp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_company = GETPOST("search_company");
+$sall = GETPOST('sall');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
-$limit = $conf->liste_limit;
 
 $viewstatut=GETPOST('viewstatut');
 
@@ -61,12 +63,21 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_ref_exp='';
     $search_ref_liv='';
     $search_company='';
+    $viewstatut='';
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'e.ref'=>"Ref",
+    's.nom'=>"ThirdParty"
+);
+
 
 /*
  * View
  */
 
+$form=new Form($db);
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
@@ -94,16 +105,18 @@ if ($socid)
 {
 	$sql.= " AND e.fk_soc = ".$socid;
 }
-if ($viewstatut <> '') {
+if ($viewstatut <> '' && $viewstatut >= 0) {
 	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
+//print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -112,21 +125,33 @@ if ($resql)
 	$expedition = new Expedition($db);
 
 	$param="";
+	if ($sall) $param.= "&amp;sall=".$sall;
 	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 
 	$i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<table class="noborder" width="100%">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+    
+    $moreforfilter='';
+    
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
     if($conf->livraison_bon->enabled)
     {
@@ -157,7 +182,9 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	// Status
-	print '<td></td>';
+	print '<td align="right">';
+	print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
+	print '</td>';
 	// Search
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -203,7 +230,8 @@ if ($resql)
         if ($conf->livraison_bon->enabled)
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
-            $receiving=(! empty($shipment->linkedObjects['delivery'][0])?$shipment->linkedObjects['delivery'][0]:'');
+            $receiving='';
+            if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
         	// Ref
             print '<td>';
@@ -232,6 +260,5 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

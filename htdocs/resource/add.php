@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013	Jean-François Ferry	 <jfefe@aternatik.fr>
  * Copyright (C) 2015	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ if ($action == 'confirm_add_resource')
 		if (empty($ref))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
-			setEventMessage($mesg, 'errors');
+			setEventMessages($mesg, null, 'errors');
 			$error++;
 		}
 
@@ -89,14 +90,14 @@ if ($action == 'confirm_add_resource')
 			{
 				// Creation OK
 				$db->commit();
-				setEventMessage($langs->trans('ResourceCreatedWithSuccess'));
+				setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
 				Header("Location: card.php?id=" . $object->id);
 				return;
 			}
 			else
 			{
 				// Creation KO
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
 		}
@@ -111,9 +112,9 @@ if ($action == 'confirm_add_resource')
 	}
 }
 
+
 /*
  * View
- *
  */
 
 $form=new Form($db);
@@ -123,7 +124,7 @@ if (! $action)
 {
 	$pagetitle=$langs->trans('AddResource');
 	llxHeader('',$pagetitle,'');
-	print_fiche_titre($pagetitle,'','title_generic');
+	print load_fiche_titre($pagetitle,'','title_generic');
 
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="add_resource">';
 	print '<input type="hidden" name="action" value="confirm_add_resource" />';
@@ -146,7 +147,7 @@ if (! $action)
 	// Type
 	print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
 	print '<td>';
-	$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
+	$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 1);
 	print '</td></tr>';
 
 	// Description
@@ -168,7 +169,7 @@ if (! $action)
 
 	echo '<div align="center">',
 	'<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-	'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+	' &nbsp; ',
 	'<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
 	'</div>';
 

@@ -53,7 +53,7 @@ $projectstatic = new Project($db);
  * Actions
  */
 
-if ($action == 'addtimespent' && $user->rights->projet->creer)
+if ($action == 'addtimespent' && $user->rights->projet->lire)
 {
 	$error=0;
 
@@ -61,13 +61,13 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	$timespent_durationmin = GETPOST('timespent_durationmin','int');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
 	}
 	if (empty($_POST["userid"]))
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorUserNotAssignedToTask'),'errors');
+		setEventMessages($langs->trans('ErrorUserNotAssignedToTask'), null, 'errors');
 		$error++;
 	}
 
@@ -78,7 +78,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 		if (empty($object->projet->statut))
 		{
-			setEventMessage($langs->trans("ProjectMustBeValidatedFirst"),'errors');
+			setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
 			$error++;
 		}
 		else
@@ -100,11 +100,11 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 			$result=$object->addTimeSpent($user);
 			if ($result >= 0)
 			{
-				setEventMessage($langs->trans("RecordSaved"));
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			}
 			else
 			{
-				setEventMessage($langs->trans($object->error),'errors');
+				setEventMessages($langs->trans($object->error), null, 'errors');
 				$error++;
 			}
 		}
@@ -121,7 +121,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
 	}
 
@@ -148,11 +148,11 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans($object->error),'errors');
+			setEventMessages($langs->trans($object->error), null, 'errors');
 			$error++;
 		}
 	}
@@ -170,7 +170,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	if ($result < 0)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error),'errors');
+		setEventMessages($langs->trans($object->error), null, 'errors');
 		$error++;
 		$action='';
 	}
@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$object->project = dol_clone($projectstatic);
+		$object->project = clone $projectstatic;
 
 		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -237,7 +237,7 @@ if ($id > 0 || ! empty($ref))
 			// Define a complementary filter for search of next/prev ref.
 			if (! $user->rights->projet->all->lire)
 			{
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
 			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
@@ -296,7 +296,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;

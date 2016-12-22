@@ -41,7 +41,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
@@ -62,7 +62,7 @@ if ($action == 'builddoc')
 	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
-		setEventMessage($cat->error, 'errors');
+		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
 }
 
@@ -150,7 +150,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

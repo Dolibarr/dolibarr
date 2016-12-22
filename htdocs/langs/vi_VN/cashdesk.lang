@@ -38,3 +38,4 @@ ShowStock=Hiện kho
 DeleteArticle=Nhấn vào đây để gỡ bỏ bài viết này
 FilterRefOrLabelOrBC=Tìm kiếm (Ref / Label)
 UserNeedPermissionToEditStockToUsePos=Bạn yêu cầu để giảm chứng khoán vào việc tạo ra hóa đơn, vì vậy người dùng có sử dụng POS cần phải có sự cho phép để chỉnh sửa chứng khoán.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

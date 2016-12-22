@@ -76,7 +76,7 @@ else if ($action == 'updateform')
 {
 	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
     $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
-	if ($res1 && $res2) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	if ($res1 && $res2) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
 
@@ -87,9 +87,10 @@ else if ($action == 'updateform')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Miscellaneous"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Miscellaneous"),$wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";

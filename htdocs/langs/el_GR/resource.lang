@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Πόροι
 MenuResourceAdd=Νέος πόρος
 MenuResourcePlanning=Προγραμματισμός των πόρων
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Η περιγραφή πόρου
 
 ResourcesLinkedToElement=Πόροι που σχετίζονται με το στοιχείο
 
+ShowResource=Show resource
 ShowResourcePlanning=Εμφάνιση σχεδιασμού των πόρων
 GotoDate=Μετάβαση στην ημερομηνία
 

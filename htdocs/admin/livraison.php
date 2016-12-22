@@ -6,7 +6,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015			 Claudio Aschieri			<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 
 $langs->load("admin");
@@ -58,28 +60,28 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free=GETPOST('DELIVERY_FREE_TEXT','alpha');
+    $free=GETPOST('DELIVERY_FREE_TEXT');	// No alpha here, we want exact string
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -117,13 +119,13 @@ if ($action == 'specimen')
         }
         else
         {
-            setEventMessage($module->error,'errors');
+            setEventMessages($module->error, $module->errors, 'errors');
             dol_syslog($module->error, LOG_ERR);
         }
     }
     else
     {
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -148,12 +150,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -208,36 +210,18 @@ llxHeader("","");
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
+$head = expedition_admin_prepare_head();
 
+dol_fiche_head($head, 'receivings', $langs->trans("Receivings"), 0, 'sending');
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
-$head[$h][1] = $langs->trans("Setup");
-$h++;
-
-if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
-    $head[$h][1] = $langs->trans("Shipment");
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-$head[$h][1] = $langs->trans("Receivings");
-$hselected=$h;
-$h++;
-
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  * Livraison numbering model
  */
 
-print_titre($langs->trans("DeliveryOrderNumberingModules"));
+print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -340,7 +324,7 @@ print '</table>';
  *  Documents Models for delivery
  */
 print '<br>';
-print_titre($langs->trans("DeliveryOrderModel"));
+print load_fiche_titre($langs->trans("DeliveryOrderModel"),'','');
 
 // Defini tableau def de modele
 $type="delivery";
@@ -487,7 +471,7 @@ print '</table>';
  *  Autres Options
  */
 print "<br>";
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -503,7 +487,17 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnDeliveryReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="DELIVERY_FREE_TEXT" class="flat" cols="120">'.$conf->global->DELIVERY_FREE_TEXT.'</textarea>';
+$variablename='DELIVERY_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -511,6 +505,6 @@ print '</form>';
 
 print '</table>';
 
+llxFooter();
 $db->close();
 
-llxFooter();

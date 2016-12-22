@@ -33,7 +33,7 @@ $arrayofjs=array(
 	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION))
 );
-$titleofloginpage=$langs->trans('Login').' @ '.$title;	// title is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page.
+$titleofloginpage=$langs->trans('Login').' @ '.$titletruedolibarrversion;	// $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 ?>
@@ -222,7 +222,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<div class="center login_main_message" style="max-width: 520px"><div class="error">
+	<div class="center login_main_message"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
 	</div></div>
 <?php

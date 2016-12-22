@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposals=Propuestas de proveedores
+SupplierProposalOpened=Abierta
+SupplierProposalStatusClosed=Cerrada
+SupplierProposalStatusOpenedShort=Abierta
+SupplierProposalStatusClosedShort=Cerrada

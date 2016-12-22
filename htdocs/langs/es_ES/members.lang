@@ -121,7 +121,6 @@ AttributeName=Nombre del atributo
 String=Cadena
 Text=Texto largo
 Int=Numérico
-Date=Fecha
 DateAndTime=Fecha y hora
 PublicMemberCard=Ficha pública miembro
 MemberNotOrNoMoreExpectedToSubscribe=No sometida a cotización

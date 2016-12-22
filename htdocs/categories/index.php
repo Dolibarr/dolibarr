@@ -61,7 +61,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
 
-print_fiche_titre($title);
+print load_fiche_titre($title);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -146,6 +146,7 @@ foreach($fulltree as $key => $val)
 {
 	$categstatic->id=$val['id'];
 	$categstatic->ref=$val['label'];
+	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
 	$li=$categstatic->getNomUrl(1,'',60);
 	$desc=dol_htmlcleanlastbr($val['description']);
@@ -153,8 +154,8 @@ foreach($fulltree as $key => $val)
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
+	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
+	'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);

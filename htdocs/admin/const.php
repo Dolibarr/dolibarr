@@ -55,12 +55,12 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 
 	if (empty($constname))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 		$error++;
 	}
 	if ($constvalue == '')
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value")), null, 'errors');
 		$error++;
 	}
 
@@ -68,7 +68,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 	{
 		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action="";
 			$constname="";
 			$constvalue="";
@@ -99,7 +99,7 @@ if (! empty($consts) && $action == 'update')
 			}
 		}
 	}
-	if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
+	if ($nbmodified > 0) setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	$action='';
 }
 
@@ -122,7 +122,7 @@ if (! empty($consts) && $action == 'delete')
 			}
 		}
 	}
-	if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
+	if ($nbdeleted > 0) setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	$action='';
 }
 
@@ -131,7 +131,7 @@ if ($action == 'delete')
 {
 	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
 	{
-		setEventMessage($langs->trans("RecordDeleted"));
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
 	else
 	{
@@ -146,7 +146,8 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("OtherSetup"));
+$wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
@@ -172,7 +173,7 @@ jQuery(document).ready(function() {
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";

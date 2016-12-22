@@ -112,7 +112,7 @@ if($_GET["id"])
             }
 
 
-            print_fiche_titre("Ventilation");
+            print load_fiche_titre("Ventilation");
 
             print '<table class="border" width="100%">';
 
@@ -160,6 +160,5 @@ else
     print "Error ID incorrect";
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

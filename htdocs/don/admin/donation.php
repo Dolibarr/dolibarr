@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ if (!$user->admin) accessforbidden();
 $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
+$value = GETPOST('value');
 
 $type='donation';
 
@@ -71,13 +73,13 @@ if ($action == 'specimen')
         }
         else
         {
-            setEventMessage($obj->error,'errors');
+            setEventMessages($obj->error, $obj->errors, 'errors');
             dol_syslog($obj->error, LOG_ERR);
         }
     }
     else
     {
-        setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -126,11 +128,11 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -144,11 +146,11 @@ if ($action == 'set_DONATION_MESSAGE')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -160,9 +162,9 @@ else if ($action == 'setart200') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 else if ($action == 'setart238') {
@@ -172,9 +174,9 @@ else if ($action == 'setart238') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 else if ($action == 'setart885') {
@@ -184,9 +186,9 @@ else if ($action == 'setart885') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
@@ -199,7 +201,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
 
 $head = donation_admin_prepare_head();
 
@@ -208,7 +210,7 @@ dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
 /*
  *  Params
  */
-print_titre($langs->trans("Options"));
+print load_fiche_titre($langs->trans("Options"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -255,7 +257,7 @@ print '</form>';
 if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
-	print_titre($langs->trans("FrenchOptions"));
+	print load_fiche_titre($langs->trans("FrenchOptions"));
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -308,7 +310,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 
 // Document templates
 print '<br>';
-print_titre($langs->trans("DonationsModels"));
+print load_fiche_titre($langs->trans("DonationsModels"));
 
 // Defini tableau def de modele
 $type='donation';
@@ -377,18 +379,18 @@ if (is_resource($handle))
                 // Active
                 if (in_array($name, $def))
                 {
-                    print "<td align=\"center\">\n";
                     if ($conf->global->DON_ADDON_MODEL == $name)
                     {
-                        print img_picto($langs->trans("Enabled"),'switch_on');
-                    }
+						print "<td align=\"center\">\n";
+                    	print img_picto($langs->trans("Enabled"),'switch_on');
+						print '</td>';
+					}
                     else
                     {
-                        print '&nbsp;';
-                        print '</td><td align="center">';
+                        print "<td align=\"center\">\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-                    }
-                    print '</td>';
+						print '</td>';
+					}
                 }
                 else
                 {
@@ -398,16 +400,18 @@ if (is_resource($handle))
                 }
 
                 // Defaut
-                print "<td align=\"center\">";
                 if ($conf->global->DON_ADDON_MODEL == "$name")
                 {
-                    print img_picto($langs->trans("Default"),'on');
+					print "<td align=\"center\">";
+					print img_picto($langs->trans("Default"),'on');
+					print '</td>';
                 }
                 else
                 {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-                }
-                print '</td>';
+                    print "<td align=\"center\">";
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '</td>';
+				}                
 
                 // Info
                 $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
@@ -437,10 +441,6 @@ if (is_resource($handle))
 
 print '</table>';
 
-
-print "<br>";
-
+llxFooter();
 
 $db->close();
-
-llxFooter();

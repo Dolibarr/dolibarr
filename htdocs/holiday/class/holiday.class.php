@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +34,14 @@ class Holiday extends CommonObject
 {
 	public $element='holiday';
 	public $table_element='holiday';
-
-	var $db;
-    var $error;
-    var $errors=array();
+	protected $isnolinkedbythird = 1;     // No field fk_soc
+	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * @deprecated
 	 * @see id
 	 */
     var $rowid;
-    var $ref;
 
     var $fk_user;
     var $date_create='';
@@ -120,7 +118,7 @@ class Holiday extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $conf, $langs;
+        global $conf;
         $error=0;
 
         $now=dol_now();
@@ -140,7 +138,8 @@ class Holiday extends CommonObject
         $sql.= "statut,";
         $sql.= "fk_validator,";
         $sql.= "fk_type,";
-        $sql.= "fk_user_create";
+        $sql.= "fk_user_create,";
+        $sql.= "entity";
         $sql.= ") VALUES (";
         $sql.= "'".$this->fk_user."',";
         $sql.= " '".$this->db->idate($now)."',";
@@ -151,7 +150,8 @@ class Holiday extends CommonObject
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
         $sql.= " '".$this->fk_type."',";
-        $sql.= " ".$user->id;
+        $sql.= " ".$user->id.",";
+        $sql.= " ".$conf->entity;
         $sql.= ")";
 
         $this->db->begin();
@@ -164,7 +164,7 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-            $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
         }
 
         // Commit or rollback
@@ -181,7 +181,7 @@ class Holiday extends CommonObject
         else
         {
             $this->db->commit();
-            return $this->rowid;
+            return $this->id;
         }
     }
 
@@ -216,7 +216,8 @@ class Holiday extends CommonObject
         $sql.= " cp.note_private,";
         $sql.= " cp.note_public,";
         $sql.= " cp.fk_user_create,";
-        $sql.= " cp.fk_type";
+        $sql.= " cp.fk_type,";
+        $sql.= " cp.entity";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
@@ -252,6 +253,7 @@ class Holiday extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->fk_user_create = $obj->fk_user_create;
                 $this->fk_type = $obj->fk_type;
+                $this->entity = $obj->entity;
             }
             $this->db->free($resql);
 
@@ -302,7 +304,8 @@ class Holiday extends CommonObject
         $sql.= " ua.firstname as validator_firstname";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-		$sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
         $sql.= " AND cp.fk_user = '".$user_id."'";
 
         // Filtre de séléction
@@ -414,7 +417,8 @@ class Holiday extends CommonObject
         $sql.= " ua.firstname as validator_firstname";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
         // Filtrage de séléction
         if(!empty($filter)) {
@@ -561,7 +565,7 @@ class Holiday extends CommonObject
             $sql.= " detail_refuse = NULL";
         }
 
-        $sql.= " WHERE rowid= '".$this->rowid."'";
+        $sql.= " WHERE rowid= '".$this->id."'";
 
         $this->db->begin();
 
@@ -608,7 +612,7 @@ class Holiday extends CommonObject
         $error=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday";
-        $sql.= " WHERE rowid=".$this->rowid;
+        $sql.= " WHERE rowid=".$this->id;
 
         $this->db->begin();
 
@@ -737,6 +741,16 @@ class Holiday extends CommonObject
 			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
 			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
+		if ($mode == 3)
+		{
+			$pictoapproved='statut6';
+			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
+			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+		}
 		if ($mode == 5)
 		{
 			$pictoapproved='statut6';
@@ -808,18 +822,17 @@ class Holiday extends CommonObject
     }
 
     /**
-     *  Retourne la valeur d'un paramètre de configuration
+     *  Return value of a conf parameterfor leave module
+     *  TODO Move this into llx_const table
      *
-     *  @param	string	$name       name du paramètre de configuration
-     *  @param	int		$fk_type	Filter on type
-     *  @return string      		retourne la valeur du paramètre
+     *  @param	string	$name       name of parameter
+     *  @return string      		value of parameter
      */
-    function getConfCP($name, $fk_type=0)
+    function getConfCP($name)
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
         $sql.= " WHERE name = '".$name."'";
-        if ($fk_type > 0) $sql.=" AND fk_type = ".$fk_type;
 
         dol_syslog(get_class($this).'::getConfCP name='.$name.'', LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -1104,16 +1117,29 @@ class Holiday extends CommonObject
      */
     function fetchUsers($stringlist=true,$type=true)
     {
+    	global $conf;
+
         // Si vrai donc pour user Dolibarr
         if ($stringlist)
         {
-            if($type)
+            if ($type)
             {
                 // Si utilisateur de Dolibarr
 
                 $sql = "SELECT u.rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > 0";
+
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                {
+                	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " AND ug.entity = ".$conf->entity.")";
+                	$sql.= " OR u.admin = 1";
+                }
+                else
+                	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+                $sql.= " AND u.statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1130,7 +1156,7 @@ class Holiday extends CommonObject
                     {
                         $obj = $this->db->fetch_object($resql);
 
-                        if($i == 0) {
+                        if ($i == 0) {
                             $stringlist.= $obj->rowid;
                         } else {
                             $stringlist.= ', '.$obj->rowid;
@@ -1150,7 +1176,7 @@ class Holiday extends CommonObject
 
             }
             else
-           {
+            {
            		// We want only list of user id
                 $sql = "SELECT DISTINCT cpu.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu";
@@ -1191,14 +1217,25 @@ class Holiday extends CommonObject
 
         }
         else
-       { // Si faux donc user Congés Payés
+        { // Si faux donc user Congés Payés
 
             // List for Dolibarr users
             if ($type)
             {
                 $sql = "SELECT u.rowid, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > 0";
+
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                {
+                	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " AND ug.entity = ".$conf->entity.")";
+                	$sql.= " OR u.admin = 1";
+                }
+                else
+                	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+                $sql.= " AND u.statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1799,8 +1836,8 @@ class Holiday extends CommonObject
     /**
      *  Return array with list of types
      *
-     *  @param		int		$active		Status of type
-     *  @param		int		$affect		Filter on affect
+     *  @param		int		$active		Status of type. -1 = Both
+     *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
      *  @return     array	    		Return array with list of types
      */
     function getTypes($active=-1, $affect=-1)

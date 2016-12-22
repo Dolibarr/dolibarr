@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -151,8 +151,7 @@ if (empty($reshook))
 		$result=$cat->del_type($object,$elementtype);
 		if ($result < 0)
 		{
-			setEventMessage($cat->error,'errors');
-			setEventMessage($cat->errors,'errors');
+			setEventMessages($cat->error, $cat->errors, 'errors');
 		}
 	}
 
@@ -199,17 +198,17 @@ if (empty($reshook))
 		$result=$cat->add_type($object,$elementtype);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("WasAddedSuccessfully",$cat->label));
+			setEventMessages($langs->trans("WasAddedSuccessfully",$cat->label), null, 'mesgs');
 		}
 		else
 		{
 			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+				setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 			}
 			else
 			{
-				setEventMessages( $cat->error, $cat->errors, 'errors' );
+				setEventMessages($cat->error, $cat->errors, 'errors');
 			}
 		}
 	}
@@ -641,7 +640,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	}
 
 	print '<br>';
-	print_fiche_titre($title,$linktocreate,'');
+	print load_fiche_titre($title,$linktocreate,'');
 
 	// Form to add record into a category
 	if ($showclassifyform)

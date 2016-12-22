@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - agenda
+MenuDoneActions=Alle abgeschl. Termine
+MenuDoneMyActions=Meine abgeschl. Termine
+AgendaAutoActionDesc=Definieren Sie hier Termine zur automatischen Übernahme in den Terminkalender. Ist nichts aktviert (Standardmässig), umfasst der Terminkalender nur manuell eingetragene Termine.
+OrderCanceledInDolibarr=Auftrag storniert %s
+ShippingSentByEMail=Lieferung %s per Email versendet
+InterventionSentByEMail=Intervention %s gesendet via E-Mail
+NewCompanyToDolibarr=Geschäftspartner erstellt
+DateActionBegin=Beginnzeit des Ereignis
+DateStartPlusOne=Anfangsdatum + 1 Stunde

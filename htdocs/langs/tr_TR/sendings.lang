@@ -6,7 +6,7 @@ AllSendings=Tüm sevkiyatlar
 Shipment=Sevkiyat
 Shipments=Sevkiyatlar
 ShowSending=Sevkiyatları göster
-Receivings=Kabuller
+Receivings=Teslimat Makbuzları
 SendingsArea=Sevkiyat alanı
 ListOfSendings=Sevkiyat listesi
 SendingMethod=Sevkiyat yöntemi
@@ -69,7 +69,9 @@ ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün mik
 ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
 ProductQtyInShipmentAlreadySent=Gönderilmiş olan ve açık durumdaki müşteri siparişindeki miktar
 ProductQtyInSuppliersShipmentAlreadyRecevied=Açık tedarikçi siparişlerindeki halihazırda teslim alınmış ürün miktarı
-NoProductToShipFoundIntoStock=<b>%s</b> deposunda gönderilecek ürün bulunamadı. Stoku düzeltin ya da başka bir depo seçmek için geri dönün.
+NoProductToShipFoundIntoStock=Bu <b>%s</b> deposunda sevk edilecek hiç mal bulunamadı. Stoğu düzeltin ya da bir başka depo seçmek için geri gidin.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Müşteri tarafından

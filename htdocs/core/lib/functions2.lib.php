@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2008-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,9 @@ function dolGetModulesDirs($subdir='')
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         // Default core/modules dir
-        $modulesdir[$dirroot . '/core/modules'.$subdir.'/'] = $dirroot . '/core/modules'.$subdir.'/';
+        if ($type === 'main') {
+            $modulesdir[$dirroot . '/core/modules' . $subdir . '/'] = $dirroot . '/core/modules' . $subdir . '/';
+        }
 
         // Scan dir from external modules
         $handle=@opendir($dirroot);
@@ -1613,8 +1616,8 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	if ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
-	if ($objecttype == 'askpricesupplier')  {
-		$classpath = 'comm/askpricesupplier/class';
+	if ($objecttype == 'supplier_proposal')  {
+		$classpath = 'supplier_proposal/class';
 	}
 	if ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
@@ -1847,9 +1850,8 @@ function getElementProperties($element_type)
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
     }
-
-    if ($element_type == 'askpricesupplier')  {
-        $classpath = 'comm/askpricesupplier/class';
+    if ($element_type == 'supplier_proposal')  {
+        $classpath = 'supplier_proposal/class';
     }
     if ($element_type == 'shipping') {
         $classpath = 'expedition/class';
@@ -1909,7 +1911,7 @@ function fetchObjectByElement($element_id, $element_type)
 	global $db,$conf;
 
     $element_prop = getElementProperties($element_type);
-    if (is_array($element_prop) && $conf->$element_prop['module']->enabled)
+    if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 

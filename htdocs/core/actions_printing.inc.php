@@ -46,19 +46,27 @@ if ($action == 'print_file' and $user->rights->printing->read)
 
             if (! empty($conf->global->{$printer->active})) {
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
-                $errorprint = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
-                //if ($errorprint < 0) {
-                //    setEventMessage($interface->errors, 'errors');
-                //}
-                if ($errorprint=='') {
-                    setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name);
+                $module = GETPOST('printer', 'alpha');
+                if ($module =='commande_fournisseur') {
+                    $module = 'fournisseur';
+                    $subdir = 'commande';
+                }
+                $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+                if ($ret > 0) {
+                    //print '<pre>'.print_r($printer->errors, true).'</pre>';
+                    setEventMessages($printer->error, $printer->errors, 'errors');
+                }
+                if ($ret==0) {
+                    //print '<pre>'.print_r($printer->errors, true).'</pre>';
+                    setEventMessages($printer->error, $printer->errors);
+                    setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name, null);
                     $printed++;
                 }
             }
         }
-        if ($printed==0) setEventMessage($langs->trans("NoActivePrintingModuleFound"));
+        if ($printed==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warnings');
     } else {
-        setEventMessage($langs->trans("NoModuleFound"), 'warning');
+        setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
     }
     $action = '';
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 
 $langs->load("categories");
@@ -121,7 +122,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -136,13 +137,13 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	$result=$object->add_type($newobject,$elementtype);
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("WasAddedSuccessfully",$newobject->ref));
+		setEventMessages($langs->trans("WasAddedSuccessfully",$newobject->ref), null, 'mesgs');
 	}
 	else
 	{
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
-			setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		}
 		else
 		{
@@ -159,6 +160,7 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
@@ -187,7 +189,7 @@ print '<table border="0" width="100%" class="border">';
 
 // Path of category
 print '<tr><td width="20%" class="notopnoleft">';
-$ways = $object->print_all_ways();
+$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)
@@ -197,9 +199,15 @@ foreach ($ways as $way)
 print '</td></tr>';
 
 // Description
-print '<tr><td width="20%" class="notopnoleft">';
+print '<tr><td class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
+print '</td></tr>';
+
+// Color
+print '<tr><td class="notopnoleft">';
+print $langs->trans("Color").'</td><td>';
+print $formother->showColor($object->color);
 print '</td></tr>';
 
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -286,6 +294,7 @@ else
 	print "</table>\n";
 }
 
+
 // List of products or services (type is type of category)
 if ($object->type == Categorie::TYPE_PRODUCT)
 {
@@ -331,7 +340,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $prod->getNomUrl(1,'category');
+				print $prod->getNomUrl(1);
 				print "</td>\n";
 				print '<td valign="top">'.$prod->label."</td>\n";
 				// Link to delete from category
@@ -382,7 +391,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category_supplier');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -436,7 +445,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -489,7 +498,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
-				print $member->getNomUrl(1,0,'category');
+				print $member->getNomUrl(1,0);
 				print "</td>\n";
 				print '<td valign="top">'.$member->lastname."</td>\n";
 				print '<td valign="top">'.$member->firstname."</td>\n";
@@ -518,7 +527,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 	}
 }
 
-//Categorie contact
+// Categorie contact
 if($object->type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");

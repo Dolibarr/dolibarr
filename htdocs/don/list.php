@@ -34,34 +34,52 @@ $langs->load("donations");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
-$limit = $conf->liste_limit;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
+$search_all=GETPOST('sall','alpha');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');
 $search_amount = GETPOST('search_amount','alpha');
+$optioncss = GETPOST('optioncss','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
+	$search_all="";
+    $search_ref="";
 	$search_company="";
 	$search_name="";
 	$search_amount="";
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('orderlist'));
+
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.rowid'=>'Id',
+    'd.ref'=>'Ref',
+    'd.lastname'=>'Lastname',
+    'd.firstname'=>'Firstname',
+);
+    
+
+    
 /*
  * View
  */
 
+$form=new Form($db);
 if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
@@ -82,6 +100,10 @@ if (trim($search_ref) != '')
 {
     $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
 }
+if (trim($search_all) != '')
+{
+    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if (trim($search_company) != '')
 {
     $sql .= natural_search('d.societe', $search_company);
@@ -101,34 +123,49 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+	$param = '&statut='.$statut;
+    if ($page > 0) $param.= '&page='.$page;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	if ($statut >= 0)
 	{
 	    $donationstatic->statut=$statut;
 	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
+		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+
+    if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+    }
+    
 	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
     // Filters lines
@@ -200,7 +237,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

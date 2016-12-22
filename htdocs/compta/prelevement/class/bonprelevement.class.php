@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 		Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 class BonPrelevement extends CommonObject
 {
-    var $db;
-
     var $date_echeance;
     var $raison_sociale;
     var $reference_remise;
@@ -921,7 +919,7 @@ class BonPrelevement extends CommonObject
 					$dir=$conf->prelevement->dir_output.'/receipts';
 					if (! is_dir($dir)) dol_mkdir($dir);
 					
-					$this->filename = $dir.'/receipts/'.$ref.'.xml';
+					$this->filename = $dir.'/'.$ref.'.xml';
 
 	                // Create withdraw receipt in database
 	                $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -1560,7 +1558,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR ='';
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
-		$XML_DEBITOR .='					<EndToEndId>'.('AS-'.$row_facnumber.'-'.$Rowing).'</EndToEndId>'.$CrLf;
+		$XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_facnumber,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='				</PmtId>'.$CrLf;
 		$XML_DEBITOR .='				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 		$XML_DEBITOR .='				<DrctDbtTx>'.$CrLf;
@@ -1675,8 +1673,9 @@ class BonPrelevement extends CommonObject
      *	@return	string					String with SEPA Sender
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
-    {	// SEPA INITIALISATION
-		global $confs;
+    {	
+        // SEPA INITIALISATION
+		global $conf;
 
 		$dateTime_YMD = dol_print_date($ladate, '%Y%m%d');
 		$dateTime_ETAD = dol_print_date($ladate, '%Y-%m-%d');

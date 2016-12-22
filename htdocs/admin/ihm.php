@@ -37,6 +37,7 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
 $langs->load("projects");
+$langs->load("hrm");
 
 if (! $user->admin) accessforbidden();
 
@@ -46,30 +47,39 @@ $action = GETPOST('action');
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT);
-$searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"));
-$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
+$searchform=array();
+/* deprecated
+if (empty($conf->use_javascript_ajax))
+{
+    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
+    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
+    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
+    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
+}
+*/
 
+
+/*
+ * Action
+ */
+
+if (GETPOST('cancel'))
+{
+    $action='';
+}
 
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["main_lang_default"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["main_multilangs"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_ACTIVATE_HTML5",				$_POST["MAIN_ACTIVATE_HTML5"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
-	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
+	
+    $val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', join(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
 
@@ -77,21 +87,32 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
 
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",			$_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",	$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",			$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PROJECT",			$_POST["MAIN_SEARCHFORM_PROJECT"],'chaine',0,'',$conf->entity);
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', join(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array())),'chaine',0,'',$conf->entity);
+    
+    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', join(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
+	
+    dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+    
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
-
-	if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') dolibarr_set_const($db,"THEME_ELDY_USE_HOVER", 1,'chaine',0,'',$conf->entity);
-	else dolibarr_set_const($db,"THEME_ELDY_USE_HOVER",0,'chaine',0,'',$conf->entity);
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
@@ -114,7 +135,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
+print load_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
@@ -132,7 +153,6 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print_fiche_titre($langs->trans("Language"),'','');
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -147,7 +167,7 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Multilangual GUI
+	// Multilingual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
@@ -161,20 +181,23 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // Liste des zone de recherche permanantes supportees
-    print '<table summary="search" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-    $var=True;
-    foreach ($searchform as $key => $value)
+    // List of permanent supported search box
+    if (! empty($searchform))
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
-        print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
-        print '</td></tr>';
+        print '<table summary="search" class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
+        $var=True;
+        foreach ($searchform as $key => $value)
+        {
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
+            print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
+            print '</td></tr>';
+        }
+        print '</table>';
+        print '<br>';
     }
-    print '</table>';
-    print '<br>';
-
+    
     // Other
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -189,33 +212,18 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableHtml5").'</td><td>';
-		print $form->selectyesno('MAIN_ACTIVATE_HTML5',$conf->global->MAIN_ACTIVATE_HTML5,1);
-		print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
-
-    // Activate FileCache - Developement
-    if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
-        print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
-        print '</td>';
-        print '<td width="20">&nbsp;</td>';
-            print '</tr>';
-        }
-
 	// Max size of lists
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
+	// Max size of short lists on customer card
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
     // Disable javascript and ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
@@ -322,11 +330,12 @@ if ($action == 'edit')	// Edit
 
 
     print '<br><div class="center">';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; ';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
     print '</form>';
-    print '<br>';
 }
 else	// Show
 {
@@ -343,7 +352,7 @@ else	// Show
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
 	print '<td width="20">';
-    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation",$conf->global->MAIN_LANG_DEFAULT),1);
+    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
 
@@ -360,20 +369,23 @@ else	// Show
     print '<br>';
 
 
-    // Liste des zone de recherches permanentes supportees
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
-    $var=true;
-    foreach ($searchform as $key => $value)
+    // List of search forms to show
+    if (! empty($searchform))
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
-		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
-        print '</td></tr>';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
+        $var=true;
+        foreach ($searchform as $key => $value)
+        {
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
+    		print '<td align="left">';
+    		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
+            print '</td></tr>';
+        }
+        print '</table>';
+        print '<br>';
     }
-    print '</table>';
-    print '<br>';
-
 
     // Other
     $var=true;
@@ -385,25 +397,13 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-    {
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableHtml5").'</td><td>' . yn($conf->global->MAIN_ACTIVATE_HTML5) . '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print "</tr>";
-	}
-
-    // Activate FileCache - Developement
-    if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableFileCache").'</td><td>' . yn($conf->global->MAIN_ACTIVATE_FILECACHE) . '</td>';
-        print '<td width="20">&nbsp;</td>';
-        print "</tr>";
-    }
-
 	$var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -501,7 +501,6 @@ else	// Show
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
-	print '<br>';
 }
 
 

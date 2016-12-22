@@ -48,7 +48,6 @@ RefusedReason=เหตุผลในการปฏิเสธ
 RefusedInvoicing=การเรียกเก็บเงินการปฏิเสธ
 NoInvoiceRefused=ไม่คิดค่าบริการการปฏิเสธ
 InvoiceRefused=ใบแจ้งหนี้ไม่ยอม (ชาร์จปฏิเสธให้กับลูกค้า)
-Status=สถานะ
 StatusUnknown=ไม่ทราบ
 StatusWaiting=ที่รอ
 StatusTrans=ส่ง

@@ -48,7 +48,6 @@ RefusedReason=拒绝的原因
 RefusedInvoicing=帐单拒绝
 NoInvoiceRefused=拒绝不收
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=地位
 StatusUnknown=未知
 StatusWaiting=等候
 StatusTrans=传播

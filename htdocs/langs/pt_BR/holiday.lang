@@ -7,7 +7,6 @@ NotActiveModCP=Você deve permitir módulo de folhas para visualizar esta págin
 NotConfigModCP=Você deve configurar o módulo de folhas para ver esta página. Para fazer isso, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click aqui </ a>.
 NoCPforUser=Você não tem qualquer dia disponível.
 AddCP=Faça um pedido de licença
-Employe=Empregado
 DateDebCP=Data inicio
 DateFinCP=Data fim
 DateCreateCP=Data criacão
@@ -108,7 +107,6 @@ ErrorMailNotSend=Ocorreu um erro durante o envio de e-mail:
 NoCPforMonth=Não deixe este mês.
 nbJours=Número de dias
 TitleAdminCP=Configuração das folhas
-NoticePeriod=Período de aviso
 HolidaysToValidate=Validar as solicitações de licença
 HolidaysToValidateBody=Abaixo está um pedido de licença para validar
 HolidaysToValidateDelay=Este pedido de licença terá lugar dentro de um período de menos de %s dias.

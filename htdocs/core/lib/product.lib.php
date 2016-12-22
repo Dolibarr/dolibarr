@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,19 +45,27 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("CustomerPrices");
-	$head[$h][2] = 'price';
-	$h++;
-
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+	if (! empty($object->status))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SuppliersPrices");
-		$head[$h][2] = 'suppliers';
-		$h++;
+    	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+    	$head[$h][1] = $langs->trans("SellingPrices");
+    	$head[$h][2] = 'price';
+    	$h++;
 	}
-
+	
+	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
+	{
+    	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	|| (! empty($conf->margin->enabled) && $user->rights->margin->liretous)
+    	)
+    	{
+    		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+    		$head[$h][1] = $langs->trans("BuyingPrices");
+    		$head[$h][2] = 'suppliers';
+    		$h++;
+    	}
+	}
+	
 	// Show category tab
 	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
@@ -92,12 +101,12 @@ function product_prepare_head($object)
 	$head[$h][2] = 'stats';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?showmessage=1&id=".$object->id;
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
 	$h++;
 
-    if ($object->isproduct() || ($object->isservice() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
+    if ($object->isProduct() || ($object->isService() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
@@ -132,19 +141,13 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-
-	// More tabs from canvas
-	// TODO Is this still used ?
-	if (isset($object->onglets) && is_array($object->onglets))
-	{
-		foreach ($object->onglets as $onglet)
-		{
-			$head[$h] = $onglet;
-			$h++;
-		}
-	}
-
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
+
+    // Log
+    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
 	return $head;
 }
@@ -165,6 +168,16 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans('Parameters');
 	$head[$h][2] = 'general';
 	$h++;
+
+	if (!empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
+	{
+		$head[$h] = array(
+			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
+			1 => $langs->trans('MultipriceRules'),
+			2 => 'generator'
+		);
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -188,22 +201,25 @@ function product_admin_prepare_head()
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	integer
+ * @return	integer					NB of lines shown into array
  */
 function show_stats_for_company($product,$socid)
 {
 	global $conf,$langs,$user,$db;
 
+	$nblines = 0;
+	
 	print '<tr>';
 	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Propals
 	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_propale($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
@@ -221,6 +237,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes clients
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -238,6 +255,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -255,6 +273,7 @@ function show_stats_for_company($product,$socid)
 	// Contrats
 	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_contrat($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
@@ -272,6 +291,7 @@ function show_stats_for_company($product,$socid)
 	// Factures clients
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -289,6 +309,7 @@ function show_stats_for_company($product,$socid)
 	// Factures fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -304,7 +325,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 
-	return 0;
+	return $nblines++;
 }
 
 

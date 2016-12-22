@@ -32,19 +32,29 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * Content of the info tooltip.
 	 *
-	 * @return false|string
+	 * @return string
 	 */
 	public function getInfo()
+	{
+		return '';
+	}
+
+	/**
+	 * Return warning if something is wrong with logger
+	 *
+	 * @return string
+	 */
+	public function getWarning()
 	{
 		global $langs;
 
 		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
 	}
-
+	
 	/**
 	 * Is the module active ?
 	 *
-	 * @return int
+	 * @return int         -1 if not active, 0 if active but lib/path not found, 1 if OK
 	 */
 	public function isActive()
 	{
@@ -52,11 +62,10 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		try
 		{
 			if (empty($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH)) {
-				$conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH=DOL_DOCUMENT_ROOT . '/includes/chromephp/';
+				$conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH = DOL_DOCUMENT_ROOT . '/includes/ccampbell/chromephp/';
 			}
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
 
-			//print 'rrrrr'.get_include_path();
 		    $res = @include_once('ChromePhp.php');
 		    if (! $res) $res=@include_once('ChromePhp.class.php');
 
@@ -65,6 +74,10 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		    if ($res)
 		    {
 		        return 1;
+		    }
+		    else
+		    {
+		        return 0;
 		    }
 		}
 		catch(Exception $e)
@@ -88,9 +101,9 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			array(
 				'name' => $langs->trans('IncludePath','SYSLOG_CHROMEPHP_INCLUDEPATH'),
 				'constant' => 'SYSLOG_CHROMEPHP_INCLUDEPATH',
-				'default' => DOL_DOCUMENT_ROOT . '/includes/chromephp/',
+				'default' => DOL_DOCUMENT_ROOT . '/includes/ccampbell/chromephp/',
 				'attr' => 'size="60"',
-			    'example' =>'/usr/share/php'
+			    'example' =>'/usr/share/php, '.DOL_DOCUMENT_ROOT . '/includes/ccampbell/chromephp/'
 			)
 		);
 	}

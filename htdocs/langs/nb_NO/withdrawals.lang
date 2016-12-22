@@ -48,7 +48,6 @@ RefusedReason=Årsak til avslag
 RefusedInvoicing=Belast tilbakekallingen
 NoInvoiceRefused=Ikke belast tilbakekallingen
 InvoiceRefused=Faktura avvist (Kunden skal belastes for avvisningen)
-Status=Status
 StatusUnknown=Ukjent
 StatusWaiting=Venter
 StatusTrans=Sendt

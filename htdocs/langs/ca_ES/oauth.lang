@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuració Oauth
+NoAccessToken=No es pot accedir al token desat en la base de dades local
+HasAccessToken=S'ha generat un token i s'ha desat en la base de dades local
+NewTokenStored=Token rebut i desat
+ToCheckDeleteTokenOnProvider=Per comprobar/eliminar l'autorització desada pel proveïdor OAuth %s
+TokenDeleted=Token eliminat
+RequestAccess=Clica aquí per demanar/renovar l'accés i rebre un nou token per desar
+DeleteAccess=Faci clic aquí per eliminar token
+UseTheFollowingUrlAsRedirectURI=Utilitza la següent URL com a URI de redirecció quan es crea la teva credencial en el teu proveïdor OAuth:
+ListOfSupportedOauthProviders=Entra les credencials donades pel teu proveïdor OAuth2. Només es poden veure proveïdors que suporten OAuth2. Aquesta configuració es pot utilitzar per altres mòduls que necessiten autenticació OAuth2.
+OAUTH_GOOGLE_NAME=Api Google
+OAUTH_GOOGLE_ID=Api Google Id
+OAUTH_GOOGLE_SECRET=Api Google Secret

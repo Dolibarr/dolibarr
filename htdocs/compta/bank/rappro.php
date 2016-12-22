@@ -71,7 +71,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						setEventMessage($bankline->error, 'errors');
+						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
 					}
@@ -83,7 +83,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
+	    setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
     }
 
     if (! $error)
@@ -185,11 +185,11 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
+    print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
     print '<br>';
 
     // Show last bank receipts
-    $nbmax=5;
+    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
     $liste="";
     $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
@@ -201,10 +201,14 @@ if ($resql)
     {
         $numr=$db->num_rows($resqlr);
         $i=0;
+        $last_ok=0;
         while (($i < $numr) && ($i < $nbmax))
         {
             $objr = $db->fetch_object($resqlr);
+            if (! $last_ok) {
             $last_releve = $objr->num_releve;
+                $last_ok=1;
+            }
             $i++;
             $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
@@ -221,11 +225,11 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
+	print '<input type="hidden" name="action" value="rappro">';
+	print '<input type="hidden" name="account" value="'.$acct->id.'">';
 
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
     print '<br>';
     if ($options)
     {

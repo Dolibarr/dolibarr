@@ -71,7 +71,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -89,7 +89,7 @@ else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -104,7 +104,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
     else
     {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -125,17 +125,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if ($object->type == '-1')
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
@@ -150,7 +150,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-	            setEventMessage($object->error, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -190,7 +190,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
@@ -240,7 +240,7 @@ if ($action == 'create')
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print_fiche_titre($langs->trans("NewTrip"));
+    print load_fiche_titre($langs->trans("NewTrip"));
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
@@ -257,7 +257,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-    print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+    print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
     print '</td></tr>';
 
     print "<tr>";
@@ -353,7 +353,7 @@ else if ($id)
             // Who
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-            print $form->select_dolusers(GETPOST('fk_user','int')?GETPOST('fk_user','int'):$object->fk_user,'fk_user',0);
+            print $form->select_dolusers(GETPOST('fk_user','int')?GETPOST('fk_user','int'):$object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
             print '</td></tr>';
 
             // Date
@@ -411,8 +411,8 @@ else if ($id)
         }
         else
         {
-            /*
-             * Confirmation de la suppression du deplacement
+           /*
+            * Confirm delete trip 
             */
             if ($action == 'delete')
             {

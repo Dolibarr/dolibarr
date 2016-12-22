@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015 Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ class PrintingDriver
     {
         global $conf;
 
-        $type='printing';
-        $liste=array();
+        $type = 'printing';
+        $list = array();
 
         $moduledir=DOL_DOCUMENT_ROOT."/core/modules/printing/";
         $tmpfiles=dol_dir_list($moduledir,'all',0,'\modules.php','','name',SORT_ASC,0);

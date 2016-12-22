@@ -123,7 +123,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$result = dol_delete_file($pathtodelete,1);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
+			setEventMessages(array($langs->trans("FileWasRemoved"), $filetodelete), null, 'mesgs');
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
@@ -152,7 +152,8 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	$deliveryreceipt= $_POST["deliveryreceipt"];
-
+	$trackid    = GETPOST('trackid');
+	
 	//Check if we have to decode HTML
 	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
 		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
@@ -169,19 +170,19 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 	if (empty($_POST["frommail"]))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (! $error)
 	{
-		// Le message est-il en html
+		// Is the message in HTML?
 		$msgishtml=0;	// Message is not HTML
 		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
@@ -202,18 +203,20 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
             $sendtoccc,
             $deliveryreceipt,
             $msgishtml,
-            $errors_to
+            $errors_to,
+        	'',
+        	$trackid	
         );
 
 		$result=$mailfile->sendfile();
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)));
+			setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result,'errors');
+			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 		}
 
 		$action='';
@@ -244,7 +247,7 @@ if (! $server) $server='127.0.0.1';
 $wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
 print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
@@ -502,7 +505,6 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-	print '<br>';
 }
 else
 {
@@ -659,8 +661,7 @@ else
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{
-		print '<br>';
-		print_titre($langs->trans("DoTestServerAvailability"));
+		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
@@ -677,7 +678,7 @@ else
 				$errormsg .= ' - '.$mail->error;
 			}
 
-			setEventMessage($errormsg, 'errors');
+			setEventMessages($errormsg, null, 'errors');
 		}
 		print '<br>';
 	}
@@ -685,14 +686,14 @@ else
 	// Show email send test form
 	if ($action == 'test' || $action == 'testhtml')
 	{
-		print '<br>';
-		print_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
+		print load_fiche_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->trackid='test';
 		$formmail->withfromreadonly=0;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;

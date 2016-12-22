@@ -48,7 +48,7 @@ if ($page == -1)
 {
 	$page = 0 ;
 }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if ($sortorder == "")
@@ -70,7 +70,7 @@ if ($action == 'add')
 {
 	if (! GETPOST('titre'))
 	{
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -88,13 +88,13 @@ if ($action == 'add')
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
 		}
 	}
 }
 
-// Suppression
+// Delete
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
 	$object->fetch($id);
@@ -118,7 +118,7 @@ $companystatic = new Societe($db);
  */
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
@@ -191,7 +191,7 @@ if ($action == 'create')
 		else if (empty($conf->product->enabled))
 			$title = $langs->trans("Services");
 
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		/*
 		 * Invoice lines
@@ -456,7 +456,7 @@ else
 			else if (empty($conf->product->enabled))
 				$title = $langs->trans("Services");
 
-			print_titre($title);
+			print load_fiche_titre($title);
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';

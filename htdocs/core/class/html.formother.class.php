@@ -302,7 +302,7 @@ class FormOther
     /**
      * Return select list for categories (to use in form search selectors)
      *
-     * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+     * @param	int		$type			Type of categories (0=product, 1=supplier, 2=customer, 3=member, 4=contact)
      * @param   integer	$selected     	Preselected value
      * @param   string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
@@ -595,10 +595,21 @@ class FormOther
      */
     static function showColor($color, $textifnotdefined='')
     {
+    	$textcolor='FFF';
+    	if ($color)
+    	{
+        	$hex=$color;
+        	$r = hexdec($hex[0].$hex[1]);
+        	$g = hexdec($hex[2].$hex[3]);
+        	$b = hexdec($hex[4].$hex[5]);
+        	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+            if ($bright > 0.6) $textcolor='000';     	   
+    	}
+    	
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+    	
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
 
@@ -794,6 +805,7 @@ class FormOther
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
+            $select_week .= '</option>';
         }
         $select_week .= '</select>';
         return $select_week;
@@ -833,6 +845,7 @@ class FormOther
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
+            $select_month .= '</option>';
         }
         $select_month .= '</select>';
         return $select_month;

@@ -83,6 +83,4 @@ ConfirmCloneEvent=Tem certeza de que deseja clonar o <b>evento %s?</b>
 RepeatEvent=Repita evento
 EveryWeek=Toda semana
 EveryMonth=Todo mês
-DayOfMonth=Dia do mês
-DayOfWeek=Dia da semana
 DateStartPlusOne=Data de início + 1 hora

@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorFailedToDeleteJoinedFiles=Geschäftspartner kann nicht gelöscht werden. Entfernen Sie zuerst alle verknüpften Dateien.
+ErrorBadThirdPartyName=Der für den Geschäftspartner eingegebene Name ist ungültig.
+ErrorUserCannotBeDelete=Dieser Benutzer kann nicht gelöscht werden. Eventuell ist er noch mit einem Geschäftspartner verknüpft.
+ErrorFileSizeTooLarge=Die Grösse der gewählten Datei übersteigt den zulässigen Maximalwert.
+ErrorSizeTooLongForIntType=Die Grösse überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
+ErrorSizeTooLongForVarcharType=Die Grösse überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen, Grossbuchstaben und Zahlen enthalten.
+ErrorMaxNumberReachForThisMask=Maximum Grösse für diese Maske erreicht
+ErrorProdIdAlreadyExist=%s wurde bereits einem Geschäftspartner zugewiesen
+ErrorForbidden3=Es scheint keine ordnungsgemässe Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fehler: Dieses Mitglied ist noch nicht mit einem Geschäftspartner verbunden. Verknüpfen Sie das Mitglied zuerst mit einem vorhandenen Geschäftspartner oder legen Sie einen neuen an, bevor Sie ein Abonnement mit Rechnung erstellen.
+WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmässig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.

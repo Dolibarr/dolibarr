@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - interventions
+InterventionsArea=Interventieruimte
+DraftFichinter=Concept interventie
+LastModifiedInterventions=Laatste %s gewijzigde interventies
+InterId=Interventie id
+InterRef=Interventie ref.
+InterDateCreation=Datum aanmaak interventie
+InterDuration=Duur interventie
+InterStatus=Status interventie
+InterNote=Nota interventie
+InterLineId=Lijn id interventie
+InterLineDate=Lijn datum interventie
+InterLineDuration=Lijn duur interventie
+InterLineDesc=Lijn omschrijving interventie

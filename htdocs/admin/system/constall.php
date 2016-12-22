@@ -39,10 +39,10 @@ if (!$user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
+print load_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
 
 
-print_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
+print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters=array(
 							'dolibarr_main_url_root',
@@ -200,7 +200,7 @@ print '<br>';
 
 
 // Parameters in database
-print_titre($langs->trans("Database"));
+print load_fiche_titre($langs->trans("Database"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

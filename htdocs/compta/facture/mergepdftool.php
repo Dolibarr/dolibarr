@@ -49,7 +49,7 @@ $builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
-if (GETPOST('button_search'))
+if (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x'))
 {
 	$filter=GETPOST('filtre',2);
 	//if ($filter != 'payed:0') $option='';
@@ -112,14 +112,14 @@ if ($action == 'presend' && GETPOST('sendmail'))
 	if (!isset($user->email))
 	{
 		$error++;
-		setEventMessage("NoSenderEmailDefined");
+		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
 	}
 
 	$countToSend = count($_POST['toSend']);
 	if (empty($countToSend))
 	{
 		$error++;
-		setEventMessage("InvoiceNotChecked","warnings");
+		setEventMessages($langs->trans("InvoiceNotChecked"), null, 'warnings');
 	}
 
 	if (! $error)
@@ -365,11 +365,11 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		if ($nbsent)
 		{
 			$action='';	// Do not show form post if there was at least one successfull sent
-			setEventMessage($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+			setEventMessages($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoRemindSent"), 'warnings');  // May be object has no generated PDF file
+			setEventMessages($langs->trans("NoRemindSent"), null, 'warnings');  // May be object has no generated PDF file
 		}
 	}
 }
@@ -454,16 +454,16 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessage($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')));
+			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans('NoPDFAvailableForChecked'),'errors');
+			setEventMessages($langs->trans('NoPDFAvailableForChecked'), null, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans('InvoiceNotChecked'), 'warnings');
+		setEventMessages($langs->trans('InvoiceNotChecked'), null, 'warnings');
 	}
 }
 
@@ -476,8 +476,8 @@ if ($action == 'remove_file')
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -545,7 +545,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $sql = "SELECT s.nom as name, s.rowid as socid, s.email";
 $sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
@@ -605,7 +605,7 @@ if ($search_user > 0)
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
 }
 $sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.ref_client, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp,";
-$sql.= " f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fk_mode_reglement";
+$sql.= " f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, f.fk_mode_reglement";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -649,7 +649,7 @@ if ($resql)
 
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 
-	print_fiche_titre($titre,$link);
+	print load_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	$arrayofinvoices=GETPOST('toSend','array');
@@ -700,6 +700,15 @@ if ($resql)
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='inv'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=$langs->trans("AllRecipientSelectedForRemind");
 		if (count($listofinvoicesthirdparties) == 1)
@@ -722,13 +731,13 @@ if ($resql)
 		$formmail->withtofree=0;
 		$formmail->withtocc=1;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->transnoentities($topicmail, '__FACREF__', '__REFCLIENT__');
-		$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
+		$formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+		$formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		//$formmail->substit['__FACREF__']='';
+		//$formmail->substit['__REF__']='';
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		//$formmail->substit['__REFCLIENT__']='';
 		$formmail->substit['__PERSONALIZED__']='';
@@ -761,38 +770,44 @@ if ($resql)
 	}
 
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
+ 		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
+	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+        $moreforfilter.='</div>';
     }
-    if ($moreforfilter)
+    if (! empty($moreforfilter))
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="13">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
     }
 
-	print '<tr class="liste_titre">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"f.fk_mode_reglement","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Taxes"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
@@ -879,6 +894,8 @@ if ($resql)
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
 			$facturestatic->type=$objp->type;
+			$facturestatic->statut=$objp->fk_statut;
+			$facturestatic->date_lim_reglement= $db->jdate($objp->datelimite);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
@@ -889,7 +906,9 @@ if ($resql)
 
 			// Warning picto
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+			if ($facturestatic->hasDelay()) {
+				print img_warning($langs->trans("Late"));
+			}
 			print '</td>';
 
 			// PDF Picto
@@ -922,7 +941,7 @@ if ($resql)
 
             // Payment mode
             print '<td>';
-            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none', '', -1);
             print '</td>';
 
 

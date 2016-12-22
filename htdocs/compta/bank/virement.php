@@ -54,22 +54,22 @@ if ($action == 'add')
 	if (! $label)
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
 	}
 	if (! $amount)
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
 	if (! GETPOST('account_from','int'))
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
 	if (! GETPOST('account_to','int'))
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
 	if (! $error)
 	{
@@ -113,18 +113,18 @@ if ($action == 'add')
 			if (! $error)
 			{
 				$mesgs = $langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
-				setEventMessage($mesgs);
+				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
 			else
 			{
-				setEventMessage($accountfrom->error.' '.$accountto->error, 'errors');
+				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorFromToAccountsMustDiffers"), 'errors');
+			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
 }
@@ -132,7 +132,7 @@ if ($action == 'add')
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();
@@ -152,7 +152,7 @@ if($error)
 	$amount = GETPOST('amount','int');
 }
 
-print_fiche_titre($langs->trans("BankTransfer"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("BankTransfer"), '', 'title_bank.png');
 
 print $langs->trans("TransferDesc");
 print "<br><br>";
@@ -188,6 +188,5 @@ print '<br><div class="center"><input type="submit" class="button" value="'.$lan
 
 print "</form>";
 
-$db->close();
-
 llxFooter();
+$db->close();

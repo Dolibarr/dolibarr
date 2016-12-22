@@ -76,7 +76,7 @@ if ($result)
     dol_print_error($db);
 }
 
-print_fiche_titre($langs->trans("DonationsArea"));
+print load_fiche_titre($langs->trans("DonationsArea"));
 
 
 print '<table width="100%" class="notopnoleftnoright">';

@@ -27,8 +27,8 @@
  * @since 2008-03-04
  */
 
-require_once('../../htdocs/includes/tcpdf/config/lang/eng.php');
-require_once('../../htdocs/includes/tcpdf/tcpdf.php');
+require_once('../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php');
+require_once('../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php');
 
 // create new PDF document
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);

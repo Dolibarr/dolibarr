@@ -104,7 +104,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 
 	if ($count) $mesg=$langs->trans("PurgeNDirectoriesDeleted", $count);
 	else $mesg=$langs->trans("PurgeNothingToDelete");
-	setEventMessage($mesg);
+	setEventMessages($mesg, null, 'mesgs');
 }
 
 
@@ -116,7 +116,7 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("Purge"),'','title_setup');
+print load_fiche_titre($langs->trans("Purge"),'','title_setup');
 
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
 print '<br>';

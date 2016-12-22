@@ -181,7 +181,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$link='';
 		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
 		elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'?'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
-		print_fiche_titre($titre,$link);
+		print load_fiche_titre($titre,$link);
 
 		print_barre_liste('','',$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;
@@ -230,6 +230,9 @@ if ($user->rights->fournisseur->facture->lire)
 			{
 				$objp = $db->fetch_object($resql);
 
+				$facturestatic->statut = $objp->fk_statut;
+				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
+
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
@@ -245,7 +248,9 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
-				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print "</td>\n";
 
 				print '<td>';
@@ -294,5 +299,5 @@ if ($user->rights->fournisseur->facture->lire)
 }
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();

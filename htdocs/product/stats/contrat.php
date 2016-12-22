@@ -71,6 +71,8 @@ if ($id > 0 || ! empty($ref))
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
+	$object = $product;
+	
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -87,34 +89,22 @@ if ($id > 0 || ! empty($ref))
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		print '<table class="border" width="100%">';
+        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        
+        print '<div class="fichecenter">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($product,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->label.'</td>';
-		print '</tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
-
-		show_stats_for_company($product,$socid);
+        show_stats_for_company($product,$socid);
 
 		print "</table>";
 
-		print '</div>';
+        print '</div>';
+        print '<div style="clear:both"></div>';
+		
+		dol_fiche_end();
+		
 
 		$now=dol_now();
 
@@ -147,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 			print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
 			$i = 0;
-			print "<table class=\"noborder\" width=\"100%\">";
+			print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
@@ -155,9 +145,9 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
+			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 
 			$contratstatic=new Contrat($db);

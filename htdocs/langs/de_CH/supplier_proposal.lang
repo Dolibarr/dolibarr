@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+supplier_proposalDESC=Preisanfragen Lieferant verwalten
+CommRequest=Generelle Preisanfrage
+CommRequests=Generelle Preisanfragen
+SearchRequest=Anfragen finden
+DraftRequests=Entwürfe Preisanfragen
+LastModifiedRequests=Die letzten %s geänderten Preisanfragen
+RequestsOpened=Offene Preisanfragen
+NewAskPrice=Neue Preisanfrage
+NewAsk=Neue Anfrage
+ConfirmValidateAsk=Sind Sie sicher, dass Sie diese Preisanfrage unter dem Namen <b>%s</b> bestätigen wollen?
+ValidateAsk=Anfrage bestätigen
+AddAsk=Neue Anfrage erstellen
+CopyAskFrom=Neue Preisanfrage erstellen (Kopie einer bestehenden Anfrage)
+CreateEmptyAsk=Leere Anfrage erstellen
+ConfirmCloneAsk=Sind Sie sicher, dass Sie die Preisanfrage <b>%s</b> duplizieren wollen?
+ConfirmReOpenAsk=Sind Sie sicher, dass Sie die Preisanfrage <b>%s</b> wiedereröffnen wollen?
+SendAskByMail=Preisanfrage mit E-Mail versenden
+SendAskRef=Preisanfrage %s versenden
+ConfirmDeleteAsk=Sind Sie sicher, dass Sie diese Preisanfrage löschen wollen?
+DocModelAuroreDescription=Eine vollständige Preisanfrage-Vorlage (Logo...)

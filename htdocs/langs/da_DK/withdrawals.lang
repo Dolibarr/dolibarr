@@ -48,7 +48,6 @@ RefusedReason=Årsag til afvisning
 RefusedInvoicing=Fakturering afvisningen
 NoInvoiceRefused=Oplad ikke afvisning
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Status
 StatusUnknown=Ukendt
 StatusWaiting=Venter
 StatusTrans=Transmitteret

@@ -61,7 +61,7 @@ if (preg_match('/del(.*)/',$action,$reg))
 llxHeader('',$langs->trans("WorkflowSetup"),'');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
 
 print $langs->trans("WorkflowDesc").'<br>';
 print "<br>";
@@ -69,21 +69,16 @@ print "<br>";
 // List of workflow we can enable
 
 print '<table class="noborder" width="100%">'."\n";
-print '<tr class="liste_titre">'."\n";
-print '  <td>'.$langs->trans("Description").'</td>';
-print '  <td align="center">'.$langs->trans("Status").'</td>';
-print "</tr>\n";
 
 clearstatcache();
 
 $workflowcodes=array(
-	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
-	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
+	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('family'=>'create', 'position'=>20, 'enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
 	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
-
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>40, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -94,16 +89,30 @@ if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['
 	}
 }
 
+// TODO We must sort on position here
+
 $nbqualified=0;
+$oldfamily='';
 
 foreach($workflowcodes as $key => $params)
 {
 	$picto=$params['picto'];
 	$enabled=$params['enabled'];
+	$family=$params['family'];
    	if (! verifCond($enabled)) continue;
 
    	$nbqualified++;
-	$var = !$var;
+
+   	if ($oldfamily != $family)
+   	{
+	   	print '<tr class="liste_titre">'."\n";
+		print '  <td>'.$langs->trans("Description").'</td>';
+		print '  <td align="center">'.$langs->trans("Status").'</td>';
+		print "</tr>\n";
+		$oldfamily = $family;
+   	}   	
+   	
+   	$var = !$var;
    	print "<tr ".$bc[$var].">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
    	if (! empty($params['warning']))

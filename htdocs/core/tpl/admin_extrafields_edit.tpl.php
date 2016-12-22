@@ -93,7 +93,7 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio'))
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio') || ($type == 'link'))
 {
 ?>
 <tr id="value_choice">

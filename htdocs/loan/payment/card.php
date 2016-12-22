@@ -65,7 +65,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	}
 	else
 	{
-		setEventMessage($payment->error, 'errors');
+		setEventMessages($payment->error, $payment->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -103,7 +103,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 	}
 	else
 	{
-		setEventMessage($payment->error);
+		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
 }

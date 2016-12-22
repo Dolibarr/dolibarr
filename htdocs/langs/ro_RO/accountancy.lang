@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilitate
 Globalparameters=Parametri globali
-Chartofaccounts=Plan de conturi
-Fiscalyear=Ani fiscali
 Menuaccount=Conturi contabile
 Menuthirdpartyaccount=Conturi terţi
 MenuTools=Instrumente
@@ -29,39 +26,32 @@ Selectmodelcsv=Selectează un model de export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export către CEGID Expert
 BackToChartofaccounts=Înapi la plan de conturi
-Back=Return
 
 Definechartofaccounts=Defineşte un plan de conturi
 Selectchartofaccounts=Selectează un plan de conturi
-Validate=Validează
 Addanaccount=Add un cont contabil
 AccountAccounting=Cont contabil
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ventilare
-ToDispatch=De ventilat
-Dispatched=Ventilat
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Ventilare clienţi
 SuppliersVentilation=Ventilare furnizori
 TradeMargin=Marjă comercială
 Reports=Rapoarte
 ByCustomerInvoice=Pe facturi clienţi
-ByMonth=Pe lună
 NewAccount=Cont contabil nou
-Update=Modifică
-List=List
 Create=Crează
 CreateMvts=Create movement
 UpdateAccount=Modificare cont contabil
 UpdateMvts=Modificare mişcare
 WriteBookKeeping=Înregistrare contabilă in Cartea Mare
 Bookkeeping=Cartea Mare
-AccountBalanceByMonth=Sold pe luni
+AccountBalance=Account balance
 
 AccountingVentilation=Ventilare contabilă
 AccountingVentilationSupplier=Ventilare contabila furnizor
 AccountingVentilationCustomer=Ventilare contabila  client
-Line=Linie
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Liniile facturii de ventilat
@@ -112,22 +102,16 @@ Docref=Referinţă
 Numerocompte=Cont
 Code_tiers=Terţ
 Labelcompte=Etichetă cont
-Debit=Debit
-Credit=Credit
-Amount=Sumă
 Sens=Sens
 Codejournal=Journal
+NumPiece=Piece number
 
 DelBookKeeping=Şterge înregistrări din Cartea Mare
 
-SellsJournal=Jurnal Vânzări
-PurchasesJournal=Jurnal Cumpărări
 DescSellsJournal=Jurnal Vânzări
 DescPurchasesJournal=Jurnal Cumpărări
-BankJournal=Jurnal Bancă
-DescBankJournal=Jurnal Banca inclusiv toate tipurile plaţilor altele decat numerar
-CashJournal=Jurnal Casă
-DescCashJournal=Jurnal Cash inclusiv tipul plaţii numerar
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Plaţi numerar
 
@@ -150,16 +134,13 @@ Pcgversion=Versiunea planului
 Pcgtype=Clasa contului
 Pcgsubtype=Sub Clasa contului
 Accountparent=Rădăcina contului
-Active=Extras 
-
-NewFiscalYear=An fiscal nou
 
 DescVentilCustomer=Consultati aici ventilarea contabilă anuală a facturilor de clienților ale dvs.
 TotalVente=Total turnover before tax
 TotalMarge=Total Marje vânzări
 DescVentilDoneCustomer=Consultati aici lista liniilor de facturi client și conturile lor  contabile
 DescVentilTodoCustomer=Consultati aici lista liniilor de facturi client cu un cont contabil
-ChangeAccount=Schimbaţi contul contabil pentru liniile selectate prin contul: 
+ChangeAccount=Schimbaţi contul contabil pentru liniile selectate prin contul:
 Vide=-
 DescVentilSupplier=Consultati aici ventilarea contabilă anuală a facturilor de furnizori ale dvs.
 DescVentilTodoSupplier=Consultati aici lista liniilor de facturi furnizor cu un cont contabil
@@ -168,6 +149,31 @@ DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și co
 ValidateHistory=Validează automat
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Fişă Ventilare
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Formatul de export
+Prefixname=Prefixul  fișierului export
+Separate=Separator Export 
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Denumire câmp
+Headername=Nume în antet
+Type=Tip campuri
+Param=Parametrii suplimentari
+EnabledProduct=În produse
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

@@ -17,6 +17,7 @@
 
 use Luracast\Restler\Restler;
 use Luracast\Restler\RestException;
+use Luracast\Restler\Defaults;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -40,10 +41,16 @@ class DolibarrApi
     /**
      * Constructor
      *
-     * @param	DoliDb	$db		Database handler
+     * @param	DoliDb	$db		      Database handler
+     * @param   string  $cachedir     Cache dir
      */
-    function __construct($db) {
+    function __construct($db, $cachedir='')
+    {
         global $conf;
+        
+        if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
+        Defaults::$cacheDirectory = $cachedir;
+        
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
@@ -84,7 +91,7 @@ class DolibarrApi
         // If object has lines, remove $db property
         if(isset($object->lines) && count($object->lines) > 0)  {
             $nboflines = count($object->lines);
-        	for ($i=0; $i < $nbofline; $i++)
+        	for ($i=0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
             }

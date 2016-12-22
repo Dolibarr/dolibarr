@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - projects
+ProjectsArea=Projects Area
+MyTasksDesc=Diese Ansicht ist für Sie beschränkt auf Projekte oder Aufgaben, bei welchen Sie als Ansprechpartner eingetragen sind.
+OnlyOpenedProject=Nur offene Projekte sind sichtbar. (Projekte im Entwurf- oder Geschlossenstatus sind nicht sichtbar)
+AllTaskVisibleButEditIfYouAreAssigned=Alle Aufgaben dieser Projekte sind sichtbar, aber sie können nur auf ihnen zugewiesenen Aufgaben Zeit erfassen. Weisen sie sich dei Aufgabe zu, wenn sie Zeit erfassen möchten.
+ListFichinterAssociatedProject=Liste Eingriffe, die mit diesem Projekt verknüpft sind
+CloseAProject=Projekt schliessen
+ConfirmCloseAProject=Möchten Sie dieses Projekt wirklich schliessen?
+ProjectsDedicatedToThisThirdParty=Mit diesem Geschäftspartner verknüpfte Projekte
+LinkedToAnotherCompany=Mit Geschäftspartner verknüpft
+ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> akutelle Aufgaben) und alle Zeitaufwände.
+CloneTaskFiles=Aufgabe (n) clonen beigetreten Dateien (falls Aufgabe (n) geklont)
+OpenedProjectsByThirdparties=Offene Projekte nach Geschäftspartner
+OpportunityPonderatedAmount=Verkaufschancen geschätzer Betrag
+OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability

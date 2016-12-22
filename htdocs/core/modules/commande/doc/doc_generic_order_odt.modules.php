@@ -292,7 +292,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='COMMANDE_FREE_TEXT';
+				$paramfreetext='ORDER_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);

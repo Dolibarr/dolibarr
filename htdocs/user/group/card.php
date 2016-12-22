@@ -81,7 +81,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -93,7 +93,7 @@ if ($action == 'add')
     if ($caneditperms)
     {
         if (! $_POST["nom"]) {
-            setEventMessage($langs->trans("NameNotDefined"), 'errors');
+            setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
             $action="create";       // Go back to create page
         } else {
 			$object->nom	= trim($_POST["nom"]);	// For backward compatibility
@@ -123,7 +123,7 @@ if ($action == 'add')
                 $db->rollback();
 
                 $langs->load("errors");
-                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->name), 'errors');
+                setEventMessages($langs->trans("ErrorGroupAlreadyExists",$object->name), null, 'errors');
                 $action="create";       // Go back to create page
             }
         }
@@ -131,7 +131,7 @@ if ($action == 'add')
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -143,7 +143,7 @@ if ($action == 'adduser' || $action =='removeuser')
         if ($userid)
         {
             $object->fetch($id);
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
@@ -157,14 +157,14 @@ if ($action == 'adduser' || $action =='removeuser')
             }
             else
             {
-                setEventMessage($edituser->error, 'errors');
+                setEventMessages($edituser->error, $edituser->errors, 'errors');
             }
         }
     }
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -177,7 +177,7 @@ if ($action == 'update')
 
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+		$object->oldcopy = clone $object;
 
 		$object->name	= trim($_POST["group"]);
 		$object->nom	= $object->name;			// For backward compatibility
@@ -194,19 +194,19 @@ if ($action == 'update')
 
         if ($ret >= 0 && ! count($object->errors))
         {
-	        setEventMessage($langs->trans("GroupModified"));
+	        setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
             $db->commit();
         }
         else
         {
-            setEventMessage($object->error);
+            setEventMessages($object->error, $object->errors, 'errors');
             $db->rollback();
         }
     }
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'));
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
 
@@ -223,7 +223,7 @@ $fuserstatic = new User($db);
 
 if ($action == 'create')
 {
-    print_fiche_titre($langs->trans("NewGroup"));
+    print load_fiche_titre($langs->trans("NewGroup"));
 
     print dol_set_focus('#nom');
 
@@ -236,7 +236,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td valign="top" class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
+	print '<td class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
 
 	// Multicompany
@@ -254,7 +254,7 @@ if ($action == 'create')
 		}
 	}
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Description").'</td><td>';
+    print "<tr>".'<td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
     $doleditor->Create();
@@ -311,14 +311,14 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
 			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 
 			// Name
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
 			print '<td width="75%" class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
@@ -336,7 +336,7 @@ else
 			}
 
 			// Note
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
+			print '<tr><td width="25%" class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 
@@ -375,7 +375,7 @@ else
              * Liste des utilisateurs dans le groupe
              */
 
-            print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
+            print load_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();
@@ -399,7 +399,7 @@ else
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 print '<td>';
-                print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
+                print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
                 print ' &nbsp; ';
                 // Multicompany
                 if (! empty($conf->multicompany->enabled) && is_object($mc))

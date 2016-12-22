@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Tax
+ *	Class to describe and enable module Tax
  */
 class modTax extends DolibarrModules
 {
@@ -67,16 +67,16 @@ class modTax extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("taxes.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("compta","bills");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

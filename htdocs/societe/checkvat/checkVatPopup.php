@@ -39,7 +39,7 @@ print '<body style="margin: 10px">';
 print '<div>';
 print '<div>';
 
-print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
+print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
 
 if (! $_REQUEST["vatNumber"])
@@ -171,3 +171,4 @@ if ($messagetoshow)
 
 
 llxFooter();
+$db->close();

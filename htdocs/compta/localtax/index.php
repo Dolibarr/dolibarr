@@ -122,7 +122,7 @@ if($localTaxType==1) {
 $textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 print $langs->trans("LTReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
@@ -130,10 +130,10 @@ print '<br>';
 
 print '<table width="100%" class="nobordernopadding">';
 print '<tr><td>';
-print_titre($langs->transcountry($LTSummary,$mysoc->country_code));
+print load_fiche_titre($langs->transcountry($LTSummary,$mysoc->country_code));
 
 print '</td><td width="5">&nbsp;</td><td>';
-print_titre($langs->transcountry($LTPaid,$mysoc->country_code));
+print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code));
 print '</td></tr>';
 
 print '<tr><td width="50%" valign="top">';
@@ -170,9 +170,11 @@ for ($m = 1 ; $m < 13 ; $m++ ) {
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
+    $parameters["type"] = 'localtax'.$localTaxType;
+    
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
-    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1) {
         $langs->load("errors");
@@ -281,6 +283,5 @@ print '</td></tr></table>';
 print '</td></tr>';
 print '</table>';
 
-$db->close();
-
 llxFooter();
+$db->close();

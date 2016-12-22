@@ -38,3 +38,4 @@ ShowStock=Zobrazit skladiště
 DeleteArticle=Klepnutím odeberete tento článek
 FilterRefOrLabelOrBC=Vyhledávání (Ref./Štítekl)
 UserNeedPermissionToEditStockToUsePos=Ptáte se na snížení zásoby na vytvořené faktuře, ale uživatel, který používá POS musí mít oprávnění k úpravám zásob.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

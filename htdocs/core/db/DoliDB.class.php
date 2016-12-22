@@ -221,12 +221,12 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
-	 * @param	string	$sortorder  Sort order
+	 * @param	'ASC'|'DESC'	$sortorder  Sort order
 	 * @return	string      		String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=null,$sortorder=null)
 	{
-		if (isset($sortfield))
+		if (! empty($sortfield))
 		{
 			$return='';
 			$fields=explode(',',$sortfield);
@@ -236,9 +236,11 @@ abstract class DoliDB implements Database
 				else $return.=',';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				if (isset($sortorder))
-				{
-					$return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
+				// Only ASC and DESC values are valid SQL
+				if (strtoupper($sortorder) === 'ASC') {
+					$return .= ' ASC';
+				} elseif (strtoupper($sortorder) === 'DESC') {
+					$return .= ' DESC';
 				}
 			}
 			return $return;

@@ -63,7 +63,7 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
@@ -79,28 +79,28 @@ if ($action == 'addline')
 	if (! ($id_product > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Product")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
 	if (! ($id_sw > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseSource")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 	}
 	if (! ($id_tw > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseTarget")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 	}
 	if ($id_sw > 0 && $id_tw == $id_sw)
 	{
 		$error++;
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorWarehouseMustDiffers"),'errors');
+		setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
 	}
 	if (! $qty)
 	{
 		$error++;
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")),'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	}
 
 	// Check a batch number is provided if product need it
@@ -113,7 +113,7 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessage($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), 'errors');
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
 			}
 		}
 	}
@@ -161,7 +161,7 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"));
+		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
 	}
 
 	$db->begin();
@@ -209,7 +209,7 @@ if ($action == 'createmovements')
 					if ($result1 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 
 					// Add stock
@@ -225,7 +225,7 @@ if ($action == 'createmovements')
 					if ($result2 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 				}
 				else
@@ -260,7 +260,7 @@ if ($action == 'createmovements')
 					if ($result1 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 
 					// Add stock
@@ -279,7 +279,7 @@ if ($action == 'createmovements')
 					if ($result2 < 0)
 					{
 						$error++;
-						setEventMessage($product->errors,'errors');
+						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 				}
 			}
@@ -296,14 +296,14 @@ if ($action == 'createmovements')
 		unset($_SESSION['massstockmove']);
 
 		$db->commit();
-		setEventMessage($langs->trans("StockMovementRecorded"),'mesgs');
+		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php');		// Redirect to avoid pb when using back
 		exit;
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -325,7 +325,7 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print_fiche_titre($langs->trans("MassStockMovement")).'<br><br>';
+print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");

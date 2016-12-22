@@ -79,6 +79,10 @@ if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SI
 if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
 if (! isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT=5038;
 if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
+if (! isset($conf->global->ASTERISK_CONTEXT))   $conf->global->ASTERISK_CONTEXT="from-internal";
+if (! isset($conf->global->ASTERISK_WAIT_TIME)) $conf->global->ASTERISK_WAIT_TIME="30";
+if (! isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY="1";
+if (! isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY="2";
 
 
 $login = $_GET['login'];
@@ -96,14 +100,13 @@ $prefix = $conf->global->ASTERISK_INDICATIF;
 // Port
 $port = $conf->global->ASTERISK_PORT;
 // Context ( generalement from-internal )
-$strContext = "from-internal";
-
+$strContext = $conf->global->ASTERISK_CONTEXT;
 // Delai d'attente avant de raccrocher
-$strWaitTime = "30";
+$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
 // Priority
-$strPriority = "1";
+$strPriority = $conf->global->ASTERISK_PRIORITY;
 // Nomber of try
-$strMaxRetry = "2";
+$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
 
 
 /*
@@ -111,6 +114,34 @@ $strMaxRetry = "2";
  */
 
 llxHeader();
+
+$sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
+$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND (s.phone='".$db->escape($called)."'";
+$sql.= " OR sp.phone='".$db->escape($called)."'";
+$sql.= " OR sp.phone_perso='".$db->escape($called)."'";
+$sql.= " OR sp.phone_mobile='".$db->escape($called)."')";
+$sql.= $db->plimit(1);
+
+dol_syslog('click to dial search information with phone '.$called, LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql)
+{
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$found = $obj->name;
+	} else {
+		$found = $notfound;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db,'Error');
+	$found = 'Error';
+}
 
 $number=strtolower($called);
 $pos=strpos($number,"local");
@@ -120,7 +151,7 @@ if (! empty($number))
     {
         $errno=0;
         $errstr=0;
-        $strCallerId = "Dolibarr <".strtolower($caller).">";
+        $strCallerId = "Dolibarr call $found <".strtolower($number).">";
         $oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
         if (!$oSocket)
         {
@@ -162,3 +193,4 @@ else {
 }
 
 llxFooter();
+$db->close();

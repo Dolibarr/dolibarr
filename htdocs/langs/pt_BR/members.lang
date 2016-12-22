@@ -72,7 +72,6 @@ BlankSubscriptionFormDesc=Dolibarr pode fornecer uma URL pública para permitir 
 EnablePublicSubscriptionForm=Habilite a forma pública auto-assinatura
 ExportDataset_member_1=Membros e Filiações
 LastSubscriptionsModified=Assinaturas Últimas modificadas
-Date=Data
 MemberNotOrNoMoreExpectedToSubscribe=não submetida a cotação
 AddSubscription=Criar subscripção
 MemberModifiedInDolibarr=membro modificado em Dolibarr

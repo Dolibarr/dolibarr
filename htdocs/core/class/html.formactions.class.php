@@ -136,7 +136,7 @@ class FormActions
             if (empty($onlyselect))
             {
 	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
-    	        print '<span class="hideifna">%</span>';
+    	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
         }
         else
@@ -171,7 +171,7 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'askpricesupplier')    $title=$langs->trans('ActionsOnAskPriceSupplier');
+        	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
@@ -240,16 +240,17 @@ class FormActions
 
 
     /**
-     *  Output list of type of event
+     *  Output html select list of type of event
      *
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
-     *  @param  string		$htmlname       Nom champ formulaire
-     *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
-     *  @param	int			$hideinfohelp	1=Do not show info help
+     *  @param  string		$htmlname       Name of select field
+     *  @param	string		$excludetype	A type to exclude ('systemauto', 'system', '')
+     *  @param	string		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param	int		    $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
+     *  @param  int		    $multiselect    1=Allow multiselect of action type
      * 	@return	void
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0)
+    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
     {
         global $langs,$user,$form,$conf;
 
@@ -269,8 +270,20 @@ class FormActions
 
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-        print $form->selectarray($htmlname, $arraylist, $selected);
-        if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+		if (! empty($multiselect)) 
+		{
+	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
+			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+		}
+		else 
+		{
+			print $form->selectarray($htmlname, $arraylist, $selected);
+		}
+		
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+        {
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
+        }
     }
 
 }

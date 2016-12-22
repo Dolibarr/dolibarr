@@ -100,7 +100,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 
 	if (! $ecmdir->label)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		$action = 'create';
 		$ok=false;
 	}
@@ -117,18 +117,18 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans($ecmdir->error), 'errors');
-			setEventMessage($ecmdir->errors, 'errors');
+			setEventMessages($langs->trans($ecmdir->error), null, 'errors');
+			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 			$action = 'create';
 		}
 	}
 }
 
-// Suppression fichier
+// Deleting file
 else if ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }
 
 
@@ -153,7 +153,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 
 	$title=$langs->trans("ECMNewSection");
-	print_fiche_titre($title);
+	print load_fiche_titre($title);
 	
 	dol_fiche_head();
 
@@ -193,7 +193,7 @@ if (empty($action) || $action == 'delete_section')
 	//***********************
 	// List
 	//***********************
-	print_fiche_titre($langs->trans("ECMSectionOfDocuments"));
+	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
 /*

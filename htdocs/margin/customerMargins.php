@@ -66,7 +66,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Clients"));
 
 $text=$langs->trans("Margins");
-//print_fiche_titre($text);
+//print load_fiche_titre($text);
 
 // Show tabs
 $head=marges_prepare_head($user);
@@ -171,7 +171,7 @@ $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.fk_statut > 0";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if ($client)

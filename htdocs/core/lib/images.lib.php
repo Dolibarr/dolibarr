@@ -301,7 +301,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
  *    	@param     string	$extName        	Extension to differenciate thumb file name ('_small', '_mini')
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
- *      @param     int		$targetformat     	New format of target (1,2,3,... or 0 to keep old format)
+ *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
  *    	@return    string						Full path of thumb or '' if it fails
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
@@ -473,6 +473,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// Initialisation des variables selon l'extension de l'image
+	// $targetformat is 0 by default, in such case, we keep original extension
 	switch($targetformat)
 	{
 		case IMAGETYPE_GIF:	    // 1
@@ -483,7 +484,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
             break;
 		case IMAGETYPE_JPEG:    // 2
             $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg');
+            $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'.jpg');
             $newquality=$quality;
             break;
 		case IMAGETYPE_PNG:	    // 3
@@ -512,7 +513,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
-	$imgThumbName = $dirthumb.'/'.$fileName.$extName.$extImgTarget; // Chemin complet du fichier de la vignette
+	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
+	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget);   // Full path of thumb file
+
 
 	// Check if permission are ok
 	//$fp = fopen($imgThumbName, "w");

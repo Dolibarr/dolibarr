@@ -17,7 +17,7 @@
 */
 
 /**
- *       \file       htdocs/core/class/html.formmail.class.php
+ *       \file       htdocs/core/class/html.formsms.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */
@@ -324,7 +324,7 @@ function limitChars(textarea, limit, infodiv)
         print '<input class="button" type="submit" name="sendmail" value="'.$langs->trans("SendSms").'">';
         if ($this->withcancel)
         {
-            print '&nbsp;&nbsp;&nbnp;&nbsp;&nbsp;';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
         }
         print '</div>';

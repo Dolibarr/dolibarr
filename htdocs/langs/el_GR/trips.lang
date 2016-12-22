@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
-ExpenseReports=Expense reports
+ExpenseReports=Αναφορές εξόδων
 Trip=Αναφορά εξόδων
 Trips=Αναφορές εξόδων
 TripsAndExpenses=Αναφορές εξόδων
@@ -25,23 +25,21 @@ ExpenseReportWaitingForApproval=A new expense report has been submitted for appr
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
+TripSociete=Πληροφορίες εταιρίας
+TripSalarie=Πληροφορίες χρήστη
 TripNDF=Informations expense report
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
 TF_OTHER=Άλλο
-TF_TRANSPORTATION=Transportation
+TF_TRIP=Transportation
 TF_LUNCH=Γεύμα
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
+TF_TRAIN=Τρένο
+TF_BUS=Λεωφορείο
 TF_CAR=Όχημα
 TF_PEAGE=Διόδια
 TF_ESSENCE=Καύσιμα
-TF_HOTEL=Hotel
+TF_HOTEL=Ξενοδοχείο
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
@@ -53,8 +51,6 @@ AddLineMini=Add
 Date_DEBUT=Period date start
 Date_FIN=Period date end
 ModePaiement=Payment mode
-Note=Note
-Project=Project
 
 VALIDATOR=User responsible for approval
 VALIDOR=Approved by
@@ -63,8 +59,8 @@ AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
 CANCEL_USER=Deleted by
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Αιτία
+MOTIF_CANCEL=Αιτία
 
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
@@ -77,7 +73,7 @@ BROUILLONNER=Reopen
 SendToValid=Sent on approval
 ModifyInfoGen=Edit
 ValidateAndSubmit=Validate and submit for approval
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidatedWaitingApproval=Επικύρωση (αναμονή για έγκριση)
 
 NOT_VALIDATOR=You are not allowed to approve this expense report
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
@@ -92,7 +88,7 @@ PaidTrip=Pay an expense report
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
 CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+ConfirmCancelTrip=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτή την αναφορά εξόδων
 
 BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
@@ -103,4 +99,5 @@ ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

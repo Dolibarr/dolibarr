@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Document
+ *	Class to describe and enable module Document
  */
 class modDocumentGeneration extends DolibarrModules
 {
@@ -45,6 +45,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->numero = 1520;
 
 		$this->family = "technic";
+		$this->module_position = 10000;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Direct mail document generation";
@@ -67,11 +68,11 @@ class modDocumentGeneration extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies","mails");
 
-		// Constantes
+		// Constants
 
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

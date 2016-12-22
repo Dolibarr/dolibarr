@@ -1,7 +1,21 @@
 # Dolibarr language file - Source file is en_US - bills
+CreateCreditNote=Créer avoir
+AmountOfBillsByMonthHT=Montant de factures par mois (no tax.)
 ShowSocialContribution=Afficher charge sociale
+EscompteOffered=Escompte (règlement avant échéance)
+EscompteOfferedShort=Remise
 AddGlobalDiscount=Créer ligne de déduction
 IdSocialContribution=Id charge sociale
+PaymentRef=Règlement référence
+AmountPaymentDistributedOnInvoice=Montant du paiement distribué sur la facture
+PaymentNote=Note de règlement
+PaymentTypeTIP=Paiement interbanque
+PaymentTypeShortTIP=Paiement interbanque
+ChequeMaker=Émetteur du chèque/transfert
+PaymentByChequeOrderedTo=Règlement (tx incl.) par chèque à l'ordre de %s envoyé à
+PaymentByChequeOrderedToShort=Règlement (tx incl.) par chèque à l'ordre de
+DepositId=Identifiant de dépot
 ClosePaidInvoicesAutomatically=Classer "Payées" touts les factures standards ou de remplacements ayant un reste à payer nul
-MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for deposit invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=Numéro de retour avec le format %syymm-nnnn pour les factures standards %syymm-nnnn pour les factures de remplacement , %syymm-nnnn pour les factures de dépôt et %syymm-nnnn pour les notes de crédit où yy année, mm le mois et nnnn est une séquence sans casse et pas de retour à 0
+SituationAmount=Montant de facture de situation (no tax.)
 NoSituations=Pas de point de situation ouvert

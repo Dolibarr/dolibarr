@@ -58,8 +58,10 @@ BoxLastExpiredServices=Síðustu %s Elstu samskipti við virka útrunnum þjónu
 BoxTitleLastActionsToDo=Last %s  aðgerða til að gera
 BoxTitleLastContracts=Last %s  samninga
 BoxTitleLastModifiedDonations=Síðustu %s breytt framlög
-BoxTitleLastModifiedExpenses=Síðustu %s breytt útgjöld
+BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Ekki tókst að hressa RSS hreyfingu. Síðast vel hressa dagsetning: %s
 LastRefreshDate=Síðast endurnýjað dagsetningu
 NoRecordedBookmarks=Engin bókamerki skilgreind. Smelltu <a href="%s">hér</a> til að bæta við bókamerki.
@@ -95,3 +97,4 @@ ForCustomersInvoices=reikninga viðskiptavinar
 ForCustomersOrders=Customers orders
 ForProposals=Tillögur
 LastXMonthRolling=The last %s month rolling
+ChooseBoxToAdd=Add a box to your dashboard...

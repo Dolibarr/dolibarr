@@ -83,27 +83,27 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
     $actioncode=GETPOST('actioncode');
 	if (! $dateech)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $dateperiod)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $actioncode > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (empty($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! is_numeric($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
 	else
@@ -133,22 +133,22 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
     $amount=price2num(GETPOST('amount'));
     if (! $dateech)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
         $action = 'edit';
     }
     elseif (! $dateperiod)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
         $action = 'edit';
     }
     elseif (empty($amount))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
         $action = 'edit';
     }
 	elseif (! is_numeric($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
     else
@@ -164,7 +164,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
         $result=$chargesociales->update($user);
         if ($result <= 0)
         {
-            setEventMessage($chargesociales->error, 'errors');
+            setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
         }
 	}
 }
@@ -237,7 +237,7 @@ llxHeader("",$langs->trans("SocialContribution"),$help_url);
 // Mode creation
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewSocialContribution"));
+	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
     $var=false;
 

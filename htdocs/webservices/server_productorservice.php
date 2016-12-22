@@ -374,7 +374,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$product->load_stock();
 
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos/";
+            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->ref . "/";
             	$dir = $dir . '/'. $pdir;
 
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
@@ -946,9 +946,9 @@ function getListOfProductsOrServices($authentication,$filterproduct)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterproduct as $key => $val)
         {
-        	if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
-        	if ($key == 'tosell') 				$sql.=" AND to_sell = ".$db->escape($val);
-        	if ($key == 'tobuy')  				$sql.=" AND to_buy = ".$db->escape($val);
+		if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
+		if ($key == 'status_tosell') 				$sql.=" AND tosell = ".$db->escape($val);
+		if ($key == 'status_tobuy')  				$sql.=" AND tobuy = ".$db->escape($val);
         }
 		$resql=$db->query($sql);
         if ($resql)

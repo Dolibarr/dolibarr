@@ -76,7 +76,7 @@ if (empty($reshook))
 		if (empty($ref))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 		}
 
 		if (! $error)
@@ -96,14 +96,14 @@ if (empty($reshook))
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					$action='edit';
 				}
 
 			}
 			else
 			{
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action='edit';
 			}
 		}
@@ -122,17 +122,18 @@ if (empty($reshook))
 
 			if ($result >= 0)
 			{
-				setEventMessage($langs->trans('RessourceSuccessfullyDeleted'));
+				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
 				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			}
-			else {
-				setEventMessage($object->error,'errors');
+			else 
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }

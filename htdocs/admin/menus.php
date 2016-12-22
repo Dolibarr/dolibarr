@@ -102,8 +102,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 				else
 				{
 					$error++;
-					//TODO: Translate
-					setEventMessage('Failed to initialize menu '.$key.'.', 'errors');
+					setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
 					$db->rollback();
 				}
 			}
@@ -131,7 +130,7 @@ $formadmin=new FormAdmin($db);
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("Menus"),'','title_setup');
+print load_fiche_titre($langs->trans("Menus"),'','title_setup');
 
 
 $h = 0;

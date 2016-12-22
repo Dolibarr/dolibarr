@@ -100,7 +100,7 @@ $html = new Form($db);
 $submit = isset($_POST['submit'])?true:false;
 $idAccount=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 
-print_fiche_titre($langs->trans("TripSynch"));
+print load_fiche_titre($langs->trans("TripSynch"));
 
 
 dol_fiche_head('');

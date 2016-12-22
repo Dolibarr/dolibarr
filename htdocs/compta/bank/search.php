@@ -62,6 +62,8 @@ if (dol_strlen($search_dt_start) > 0)
 	$param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
 if (dol_strlen($search_dt_end) > 0)
 	$param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
+if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
+if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -70,7 +72,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
@@ -91,7 +93,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
 
-llxHeader();
+llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -114,12 +116,10 @@ $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 if (GETPOST("req_nb"))
 {
     $sql.= " AND b.num_chq LIKE '%".$db->escape(GETPOST("req_nb"))."%'";
-    $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
 }
 if (GETPOST("thirdparty"))
 {
     $sql.=" AND s.nom LIKE '%".$db->escape(GETPOST("thirdparty"))."%'";
-    $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 }
 if ($bid)
 {
@@ -179,19 +179,23 @@ if ($resql)
 	print '<form method="post" action="search.php" name="search_form">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
+	$moreforfilter = '';
+	
+	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= ' - ';
 	$moreforfilter .= $langs->trans('EndDate') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= '</div>';
 
-
-	if ($moreforfilter) {
-		print '<div class="liste_titre">';
+	if ($moreforfilter) 
+	{
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>'."\n";
 	}
 
-	print '<table class="liste" width="100%">'."\n";
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
@@ -349,7 +353,5 @@ if ($_POST["action"] == "search" && ! $num)
 	print $langs->trans("NoRecordFound");
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

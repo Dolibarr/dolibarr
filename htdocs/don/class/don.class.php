@@ -40,29 +40,17 @@ class Don extends CommonObject
 	public $fk_element = 'fk_donation';
 	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $id;
-    var $ref;
     var $date;
     var $amount;
-    var $firstname;
-    var $lastname;
     var $societe;
     var $address;
     var $zip;
     var $town;
-    var $country_id;
-    var $country_code;
-    var $country;
     var $email;
     var $public;
     var $fk_projet;
     var $fk_typepayment;
 	var $num_payment;
-    var $note_private;
-    var $note_public;
-    var $statut;
-	var $modelpdf;
-    var $projet;
 
 	/**
 	 * @deprecated

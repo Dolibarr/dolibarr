@@ -43,7 +43,6 @@ $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);
-$companystatic = new Societe($db);
 $search_statut=GETPOST('search_statut','int');
 
 if ($search_statut == '') $search_statut='1';
@@ -65,7 +64,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')','','',0,0,$arrayofjs,$arrayofcss);
 
-print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
+print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
 
 
 
@@ -82,6 +81,7 @@ foreach($fulltree as $key => $val)
 {
 	$userstatic->id=$val['id'];
 	$userstatic->ref=$val['label'];
+	$userstatic->login=$val['login'];
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
@@ -90,6 +90,7 @@ foreach($fulltree as $key => $val)
 	$userstatic->societe_id=$val['fk_soc'];
 	$userstatic->admin=$val['admin'];
 	$userstatic->entity=$val['entity'];
+	$userstatic->photo=$val['photo'];
 	
 	$entity=$val['entity'];
 	$entitystring='';
@@ -111,7 +112,7 @@ foreach($fulltree as $key => $val)
 		}
 	}
 
-	$li=$userstatic->getNomUrl(1,'',0,1);
+	$li=$userstatic->getNomUrl(-1,'',0,1);
 	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
 	{
 		$li.=img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -121,12 +122,12 @@ foreach($fulltree as $key => $val)
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
-
+	
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],
 		'statut'=>$val['statut'],
-		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(5).'</td></tr></table>'
+		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
 	);
 }
 

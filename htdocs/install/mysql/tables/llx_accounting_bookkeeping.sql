@@ -22,7 +22,7 @@ CREATE TABLE llx_accounting_bookkeeping
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   doc_date			date NOT NULL,
   doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
-  doc_ref			varchar(30) NOT NULL,	-- facture_client/reglement_client/... reference number
+  doc_ref			varchar(300) NOT NULL,	-- facture_client/reglement_client/... reference number
   fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
   fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
   code_tiers		varchar(24),			-- code tiers
@@ -35,5 +35,6 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_user_author	integer NOT NULL,
   import_key		varchar(14),
   code_journal		varchar(10) DEFAULT NULL,
-  piece_num			integer NOT NULL
+  piece_num			integer NOT NULL,
+  validated         tinyint DEFAULT 0 NOT NULL -- 0 line not validated / 1 line validated (No deleting / No modification) 
 ) ENGINE=innodb;

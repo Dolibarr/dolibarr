@@ -7,6 +7,7 @@ DeliveryOrders=Leveringsordre
 DeliveryDate=Leveringsdato
 DeliveryDateShort=Lev. dato
 CreateDeliveryOrder=Opprett leveringsordre
+DeliveryStateSaved=Leveringsstatus lagret
 QtyDelivered=Ant. levert
 SetDeliveryDate=Angi leveringsdato
 ValidateDeliveryReceipt=Godkjenn leveringskvittering
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvitteri
 DeliveryMethod=Leveringsmåte
 TrackingNumber=Trackingnummer
 DeliveryNotValidated=Levering ikke validert
+StatusDeliveryCanceled=Kansellert
+StatusDeliveryDraft=Kladd
+StatusDeliveryValidated=Mottatt
 # merou PDF model
 NameAndSignature=Navn og signatur :
 ToAndDate=Til___________________________________ den ____/_____/__________

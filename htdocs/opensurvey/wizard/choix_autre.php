@@ -84,7 +84,7 @@ if (isset($_POST["confirmecreation"]))
 
 	//message d'erreur si aucun champ renseigné
 	if ($testremplissage != "ok" || (!$toutchoix)) {
-		setEventMessage($langs->trans("ErrorOpenSurveyOneChoice"), 'errors');
+		setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
 	} else {
 
 		//format du sondage AUTRE
@@ -121,7 +121,7 @@ if (empty($_SESSION['titre']))
 
 print '<form name="formulaire" action="#bas" method="POST">'."\n";
 
-print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
 
 print '<br>'. $langs->trans("PollOnChoice") .'<br><br>'."\n";

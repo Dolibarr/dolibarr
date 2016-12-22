@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module externalrss
+ *	Class to describe and enable module externalrss
  */
 class modExternalRss extends DolibarrModules
 {
@@ -60,13 +60,13 @@ class modExternalRss extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("external_rss.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
 		$this->phpmax = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

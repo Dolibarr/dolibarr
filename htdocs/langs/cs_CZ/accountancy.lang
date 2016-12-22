@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Účetnictví
 Globalparameters=Globální parametry
-Chartofaccounts=Graf účtů
-Fiscalyear=Fiskální roky
 Menuaccount=Účetní závěrka
 Menuthirdpartyaccount=Účty třetích stran
 MenuTools=Nástroje
@@ -29,39 +26,32 @@ Selectmodelcsv=Vyberte způsob exportu
 Modelcsv_normal=Klasický export
 Modelcsv_CEGID=Export směrem CEGID Expert
 BackToChartofaccounts=Návrat účtové osnovy
-Back=Návrat
 
 Definechartofaccounts=Definovat účtové osnovy
 Selectchartofaccounts=Vyberte účtové osnovy
-Validate=Potvrdit
 Addanaccount=Přidat účetní účet
 AccountAccounting=Účetní účet
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Přerušení
-ToDispatch=Nahlásit
-Dispatched=Odesláno
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Členění zákazníků
 SuppliersVentilation=Členění dodvatelů
 TradeMargin=Obchodní marže
 Reports=Zprávy
 ByCustomerInvoice=Fakturováno zákazníky
-ByMonth=Měsíčně
 NewAccount=Nový účetní účet
-Update=Aktualizovat
-List=Seznam
 Create=Vytvořit
 CreateMvts=Create movement
 UpdateAccount=Změna účetního účtu
 UpdateMvts=Změna pohybu
 WriteBookKeeping=Účetní záznamy v hlavní účetní knize
 Bookkeeping=Hlavní účetní kniha
-AccountBalanceByMonth=Zůstatek na účtu podle měsíce
+AccountBalance=Account balance
 
 AccountingVentilation=Členění účetnictví
 AccountingVentilationSupplier=Členění účetnictví dodavatel
 AccountingVentilationCustomer=Členění účetnictví zákazník
-Line=Linka
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Řádky faktury, které mají být prověřeny
@@ -112,22 +102,16 @@ Docref=Reference
 Numerocompte=Účet
 Code_tiers=Třetí strana
 Labelcompte=Štítek účtu
-Debit=Debet
-Credit=Kredit
-Amount=Částka
 Sens=Sens
 Codejournal=Deník
+NumPiece=Piece number
 
 DelBookKeeping=Odstranit záznamy hlavní knihy
 
-SellsJournal=Prodejní denák
-PurchasesJournal=Nákupní deník
 DescSellsJournal=Prodejní deník
 DescPurchasesJournal=Nákupní deník
-BankJournal=Bankovní deník
-DescBankJournal=Bankovní deník včetně všech typů jiných než hotovostních plateb
-CashJournal=Peněžní deník
-DescCashJournal=Peněžní deník včetně typů platby v hotovosti
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Platba v hotovosti
 
@@ -150,9 +134,6 @@ Pcgversion=Verze plánu
 Pcgtype=Třída účtu
 Pcgsubtype=Podle třídy účtu
 Accountparent=kořen účtu
-Active=Prohlášení
-
-NewFiscalYear=Nový fiskální rok
 
 DescVentilCustomer=Seznamte se zde s ročním rozdělením účetnictví faktur zákazníků
 TotalVente=Total turnover before tax
@@ -163,11 +144,36 @@ ChangeAccount=Změna účetních účtů pro řádky vybraných účtů:
 Vide=-
 DescVentilSupplier=Poraďte se zde s ročním rozdělením účetnictví faktur dodavatelů
 DescVentilTodoSupplier=Prověřte zde své řádky dodavatelských faktur s účetním účtem
-DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů 
+DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů
 
 ValidateHistory=Ověřit automaticky
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Karta členění
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

@@ -111,7 +111,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	if (! $resql)
 	{
 		$error++;
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 
 	// Add event purge

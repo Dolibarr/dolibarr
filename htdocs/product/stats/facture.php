@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/stats/facture.php
  *	\ingroup    product service facture
- *	\brief      Page des stats des factures clients pour un produit
+ *	\brief      Page of invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -48,7 +48,7 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productstatsinvoice'));
 
-$mesg = '';
+$showmessage=GETPOST('showmessage');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -67,6 +67,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_year='';
 }
 
+
+
 /*
  * View
  */
@@ -81,7 +83,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-
+    
+	$object = $product;
+    
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -98,37 +102,27 @@ if ($id > 0 || ! empty($ref))
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		print '<table class="border" width="100%">';
+        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        
+        print '<div class="fichecenter">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($product,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->label.'</td>';
-		print '</tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
-
-		show_stats_for_company($product,$socid);
+		$nboflines = show_stats_for_company($product,$socid);
 
 		print "</table>";
 
-		print '</div>';
+        print '</div>';
+        print '<div style="clear:both"></div>';
+		
+		dol_fiche_end();
 
-
-        if ($user->rights->facture->lire) 
+		if ($showmessage && $nboflines > 1)
+		{
+			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
+		}
+        elseif ($user->rights->facture->lire) 
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
@@ -193,7 +187,8 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$product->id,$sortfield,$sortorder,'',$num,$totalrecords,'');
-                print '<div class="liste_titre">';
+                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+                print '<div class="divsearchfield">';
                 print $langs->trans('Period').' ('.$langs->trans("DateInvoice") .') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -202,9 +197,10 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
                 print '</div>';
 				print '</div>';
+				print '</div>';
 
                 $i = 0;
-                print '<table class="noborder" width="100%">';
+                print '<table class="tagtable liste listwithfilterbefore" width="100%">';
                 print '<tr class="liste_titre">';
                 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$option,'',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
  */
 
 /**
- * 		\defgroup   fournisseur     Module suppliers
- *		\brief      Module pour gerer des societes et contacts de type fournisseurs
+ * 		\defgroup   fournisseur     suppliers Module
+ *		\brief      Module to manage companies and contacts of supplier type
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Fichier de description et activation du module Fournisseur
+ *		\brief      Description and activation file for module Fournisseur
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Fournisseur
+ *	Description and activation class for module Fournisseur
  */
 class modFournisseur extends DolibarrModules
 {
@@ -48,6 +48,7 @@ class modFournisseur extends DolibarrModules
 		$this->numero = 40;
 
 		$this->family = "products";
+		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des fournisseurs";
@@ -67,7 +68,7 @@ class modFournisseur extends DolibarrModules
 		                    "/fournisseur/facture/temp"
 		                    );
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
 		$this->langfiles = array('bills', 'companies', 'suppliers', 'orders');
@@ -75,7 +76,7 @@ class modFournisseur extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("supplier_order.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-MenuECM=Documente
 DocsMine=Documentele mele
 DocsGenerated=Documente Generate
 DocsElements=Elemente  documente
@@ -35,7 +34,7 @@ ECMSearchByEntity=Caută după obiect
 ECMSectionOfDocuments=Directoare  documente
 ECMTypeManual=Manual
 ECMTypeAuto=Automat
-ECMDocsBySocialContributions=Documents linked to social or fiscal taxes
+ECMDocsBySocialContributions=Documente legate de taxe sociale sau fiscale
 ECMDocsByThirdParties=Documente legate de terţi
 ECMDocsByProposals=Documente legate de oferte
 ECMDocsByOrders=Documente legate de comenzi  clienţi

@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - bills
+BillsCustomers=Klantenfacturen
+PaymentModeShort=Betalingsmanier
+CreateCreditNote=Aanmaak krediet nota
+BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
+BillShortStatusClosedUnpaid=Afgesloten
+CustomersDraftInvoices=Klantenconceptfacturen
+RemainderToBill=Nog te factureren
+DateMaxPayment=Te betalen vóór
+GlobalDiscount=Globale korting
+PaymentRef=Betalingsref.
+CloneInvoice=Kopieer factuur
+AmountPaymentDistributedOnInvoice=Te betalen bedrag verdeeld over de factuur
+PaymentNote=Betalingsnota
+PaymentTypeVIR=Overschrijving
+PaymentTypeShortVIR=Overschrijving
+PaymentTypeTIP=Interbancaire betaling
+PaymentTypeShortTIP=Interbancaire betaling
+PaymentTypeTRA=Wissel
+PaymentTypeShortTRA=Wissel
+ChequeMaker=Cheque / Transfer uitvoerder
+DepositId=Id storting
+ShowUnpaidAll=Bekijk alle onbetaalde facturen
+MarsNumRefModelDesc1=Geeft een getal terug in de vorm van %syymm-nnnn voor standaard facturen, %syymm-nnnn voor vervangingsfacturen, %syymm-nnnn voor betalingsfacturen en %syymm-nnnn voor kredietnota's waar yy is jaar, mm is maand en nnnn is een volgnummer zonder onderbreking en die niet terug op 0 komt.
+TypeContact_facture_external_BILLING=Klant contact

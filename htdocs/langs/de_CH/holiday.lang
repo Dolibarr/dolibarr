@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - holiday
+CancelCP=widerrufen
+ErrorSQLCreateCP=Ein SQL Fehler trat auf bei der Eerstellung von:
+DeleteCP=Löschen
+ActionCancelCP=Abbrechen
+DateCancelCP=Datum der Absage
+HolidaysCancelation=Urlaubsanfragen Stornos
+ValidEventCP=Bestätigen
+DeleteEventOptionCP=Löschen
+ErrorMailNotSend=Ein Fehler ist beim EMail-Senden aufgetreten:
+HolidaysToValidateAlertSolde=Der Einreicher dieses Urlaubsantrags besitzt nicht mehr genügend verfügbare Tage.
+HolidaysCanceled=Urlaubsantrag storniert
+HolidaysCanceledBody=Ihr Antrag auf Urlaub von %s bis %s wurde storniert.

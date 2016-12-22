@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - products
+ProductVatMassChange=MwSt-Massenänderung
+CardProduct0=Produkt-Karte
+SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
+MinPriceHT=Mindest-Verkaufspreis (exkl. MwSt.)
+MinPriceTTC=Mindest-Verkaufspreis (inkl. MwSt.)
+CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
+SupplierCard=Lieferantenkarte
+SetDefaultBarcodeType=Wählen Sie den standardmässigen Barcode-Typ
+VATRateForSupplierProduct=MwSt. Satz (für diesen Lieferanten/Produkt)
+squaremeter=Quatratmeter
+FillBarCodeTypeAndValueFromThirdParty=Barcode-Typ und -Wert von einem Geschäftspartner wählen.
+DefinitionOfBarCodeForThirdpartyNotComplete=Barcode-Typ oder -Wert bei Geschäftspartner %s unvollständig.
+BarCodeDataForThirdparty=Barcode-Information von Geschäftspartner %s:
+PriceExpressionEditorHelp2=Sie können auf die ExtraFields mit Variablen wie <b>#extrafield_myextrafieldkey# </b> und globale Variablen mit <b>#global_mycode#</b> zugreifen

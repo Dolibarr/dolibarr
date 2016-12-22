@@ -39,10 +39,15 @@ function holiday_prepare_head($object)
     $head[$h][2] = 'card';
     $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Document');
-	$head[$h][2] = 'documents';
-	$h++;
+    // Attachments
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    $upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+    $head[$h][2] = 'documents';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

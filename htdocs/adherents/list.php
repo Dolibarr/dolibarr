@@ -48,6 +48,7 @@ $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -56,7 +57,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
+if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -77,6 +78,21 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.rowid'=>'Ref',
+    'd.login'=>'Login',
+    'd.lastname'=>'Lastname',
+    'd.firstname'=>'Firstname',
+    'd.societe'=>"Company",
+    'd.email'=>'EMail',
+    'd.address'=>'Address',
+    'd.zip'=>'Zip',
+    'd.town'=>'Town',
+    'd.note_public'=>'NotePublic',
+    'd.note_private'=>'NotePrivate',
+);
+   
 
 /*
  * View
@@ -110,7 +126,7 @@ if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
-if ($sall) $sql.=natural_search(array("d.rowid", "d.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
+if ($sall) $sql.=natural_search(array_keys($fieldstosearchall), $sall);
 if ($type > 0) $sql.=" AND t.rowid=".$db->escape($type);
 if (isset($_GET["statut"]) || isset($_POST["statut"])) $sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref)
@@ -176,29 +192,32 @@ if ($resql)
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
 	if ($type > 0)     $param.="&type=".$type;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	if ($sall)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ";
-		print '<strong>'.$sall.'</strong>';
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 	}
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories
 	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -206,7 +225,7 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -271,6 +290,8 @@ if ($resql)
 		$memberstatic->ref=$objp->rowid;
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
+		$memberstatic->statut=$objp->statut;
+		$memberstatic->datefin= $datefin;
 
 		if (! empty($objp->fk_soc)) {
 			$memberstatic->socid = $objp->fk_soc;
@@ -325,7 +346,9 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
-			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+			if ($memberstatic->hasDelay()) {
+				print " ".img_warning($langs->trans("SubscriptionLate"));
+			}
 			print '</td>';
 		}
 		else

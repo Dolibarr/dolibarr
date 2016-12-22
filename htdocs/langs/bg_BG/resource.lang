@@ -1,34 +1,35 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Ресурси
+MenuResourceAdd=Нов ресурс
+MenuResourcePlanning=Планиране на ресурс
+DeleteResource=Изтриване на ресурс
+ConfirmDeleteResourceElement=Потвърждаване на изтриване на ресурса за този елемент
+NoResourceInDatabase=Няма ресурс в базата данни.
+NoResourceLinked=Няма свързан ресурс
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+ResourcePageIndex=Списък ресурси
+ResourceSingular=Ресурс
+ResourceCard=Карта на ресурс
+AddResource=Създаване на ресурс
+ResourceFormLabel_ref=Име на ресурс
+ResourceType=Тип на ресурс
+ResourceFormLabel_description=Описание на ресурс
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Ресурси свързани към елемент
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Показване на ресурс
+ShowResourcePlanning=Показване на планиране на ресурс
+GotoDate=Отиване на дата
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ResourceElementPage=Ресурси на елемент
+ResourceCreatedWithSuccess=Ресурсът е успешно създаден
+RessourceLineSuccessfullyDeleted=Линията на ресурса е успешно изтрита
+RessourceLineSuccessfullyUpdated=Линията на ресурса е успешно обновена
+ResourceLinkedWithSuccess=Ресурсът е свързан успешно 
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+TitleResourceCard=Карта на ресурс
+ConfirmDeleteResource=Потвърждаване на изтриването на този ресурс
+RessourceSuccessfullyDeleted=Ресурсът е успешно изтрит
+DictionaryResourceType=Тип на ресурси
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
+SelectResource=Избиране на ресурс

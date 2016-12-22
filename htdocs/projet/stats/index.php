@@ -16,6 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *       \file       htdocs/projet/stats/index.php
+ *       \ingroup    project
+ *       \brief      Page for project statistics
+ */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -43,6 +49,7 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
+$langs->load('companies');
 $langs->load('projects');
 
 
@@ -60,7 +67,7 @@ llxHeader('', $langs->trans('Projects'));
 $title=$langs->trans("ProjectsStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print_fiche_titre($title,'','title_project.png');
+print load_fiche_titre($title,'','title_project.png');
 
 dol_mkdir($dir);
 
@@ -269,13 +276,14 @@ dol_fiche_head($head,'byyear',$langs->trans("Statistics"), 0, '');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<table class="border" width="100%">';
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 if ($mode == 'customer') $filter='s.client in (1,2,3)';
 if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1);
+print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
@@ -293,8 +301,8 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="center">'.$langs->trans("NbOfProjects").'</td>';
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -305,13 +313,15 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 print '</tr>';
 
 $oldyear=0;
+$var=true;
 foreach ($data_all_year as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		print '<tr height="24">';
+		$var=!$var;
+		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
@@ -321,7 +331,8 @@ foreach ($data_all_year as $val)
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
-	print '<tr height="24">';
+	$var=!$var;
+	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))

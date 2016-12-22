@@ -49,7 +49,7 @@ $helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
 llxHeader("",$langs->trans("ThirdParties"),$helpurl);
 $linkback='';
-print_fiche_titre($transAreaType,$linkback,'title_companies.png');
+print load_fiche_titre($transAreaType,$linkback,'title_companies.png');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -57,54 +57,43 @@ print_fiche_titre($transAreaType,$linkback,'title_companies.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search area
- */
-$rowspan=2;
-if (! empty($conf->barcode->enabled)) $rowspan++;
-print '<form method="post" action="'.DOL_URL_ROOT.'/societe/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">'."\n";
-print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("SearchThirdparty").'</th></tr>';
-print "<tr ".$bc[false]."><td>";
-print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_nom_only" id="search_nom_only"></td>';
-print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-if (! empty($conf->barcode->enabled))
-{
-	print "<tr ".$bc[false]."><td ".$bc[false].">";
-	print '<label for="sbarcode">'.$langs->trans("BarCode").'</label>:</td><td><input class="flat" type="text" size="14" name="sbarcode" id="sbarcode"></td>';
-	//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-	print '</tr>';
-}
-print "<tr ".$bc[false]."><td ".$bc[false].">";
-print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="search_all" id="search_all"></td>';
-//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>'."\n";
-print "</table></form><br>\n";
 
-/*
- * Search contact
- */
-$rowspan=2;
-if (! empty($conf->barcode->enabled)) $rowspan++;
-print '<form method="post" action="'.DOL_URL_ROOT.'/contact/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
-print '<table class="noborder nohover" width="100%">'."\n";
-print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("SearchContact").'</th></tr>'."\n";
-print "<tr ".$bc[false]."><td>";
-print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_firstlast_only" id="search_firstlast_only"></td>';
-print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>'."\n";
-print "<tr ".$bc[false]."><td ".$bc[false].">";
-print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="contactname" id="contactname"></td>';
-//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>'."\n";
-print "</table></form><br>\n";
+// Search thirdparty
+if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+{
+	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
+}
+// Search contact/address
+if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+{
+	$listofsearchfields['search_contact']=array('text'=>'Contact');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr '.$bc[false].'>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
+}
+
 
 /*
  * Statistics area
  */
+ 
 $third = array(
 		'customer' => 0,
 		'prospect' => 0,
@@ -127,9 +116,9 @@ if ($result)
     while ($objp = $db->fetch_object($result))
     {
         $found=0;
-        if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && $user->rights->societe->lire && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
-        if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && $user->rights->societe->lire && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
-        if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire && $objp->fournisseur) { $found=1; $third['supplier']++; }
+        if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
+        if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
+        if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found=1; $third['supplier']++; }
         if (! empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found=1; $third['other']++; }
         if ($found) $total++;
     }
@@ -142,9 +131,9 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
 {
     print '<tr '.$bc[0].'><td align="center" colspan="2">';
     $dataseries=array();
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && $user->rights->societe->lire)     $dataseries[]=array('label'=>$langs->trans("Prospects"),'data'=>round($third['prospect']));
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && $user->rights->societe->lire)     $dataseries[]=array('label'=>$langs->trans("Customers"),'data'=>round($third['customer']));
-    if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'data'=>round($third['supplier']));
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array('label'=>$langs->trans("Prospects"),'data'=>round($third['prospect']));
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[]=array('label'=>$langs->trans("Customers"),'data'=>round($third['customer']));
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'data'=>round($third['supplier']));
     if (! empty($conf->societe->enabled))                                                              $dataseries[]=array('label'=>$langs->trans("Others"),'data'=>round($third['other']));
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',0,'',0);
@@ -152,22 +141,22 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
 }
 else
 {
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && $user->rights->societe->lire)
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr ".$bc[0].">";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/list.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && $user->rights->societe->lire)
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
     {
         $statstring.= "<tr ".$bc[1].">";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/list.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
     {
         $statstring2 = "<tr ".$bc[0].">";
-        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/fourn/list.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
     }
     print $statstring;
@@ -251,6 +240,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur";
+$sql.= ", s.code_client";
+$sql.= ", s.code_fournisseur";
 $sql.= ", s.logo";
 $sql.= ", s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -299,8 +290,10 @@ if ($result)
             $thirdparty_static->logo = $objp->logo;
             $thirdparty_static->datem=$db->jdate($objp->datem);
             $thirdparty_static->status=$objp->status;
+            $thirdparty_static->code_client = $objp->code_client;
+            $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
-                    print $thirdparty_static->getNomUrl(1);
+            print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type
             print '<td align="center">';

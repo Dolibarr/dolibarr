@@ -38,3 +38,4 @@ ShowStock=Rādīt noliktavu
 DeleteArticle=Klikšķiniet, lai izņemtu šo rakstu
 FilterRefOrLabelOrBC=Meklēšana (Ref/Nosaukums)
 UserNeedPermissionToEditStockToUsePos=Jūs vēlaties samazināt krājumus rēķinu izveides brīdī. Lietotājs, kas izmanto POS nepieciešama atļauja rediģēt krājumus.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

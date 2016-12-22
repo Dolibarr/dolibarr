@@ -21,16 +21,15 @@
  */
 
 /**
- * \file		htdocs/accountancy/customer/index.php
- * \ingroup		Accounting Expert
- * \brief		Home customer ventilation
+ * \file htdocs/accountancy/customer/index.php
+ * \ingroup Accounting Expert
+ * \brief Home customer ventilation
  */
-
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -44,8 +43,8 @@ if ($user->societe_id > 0)
 	accessforbidden();
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
-
-// Filter
+	
+	// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -58,19 +57,19 @@ if ($year == 0) {
 // Validate History
 $action = GETPOST('action');
 if ($action == 'validatehistory') {
-
+	
 	$error = 0;
 	$db->begin();
-
+	
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
 		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accountingaccount as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	} else {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accountingaccount as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
 		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
@@ -78,7 +77,30 @@ if ($action == 'validatehistory') {
 	}
 	
 	dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
-
+	
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$db->commit();
+		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
+	}
+} elseif ($action == 'fixaccountancycode') {
+	$error = 0;
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sql1 .= " SET fd.fk_code_ventilation = 0";
+	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sql1 .= '	(SELECT accnt.rowid ';
+	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+	
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -86,7 +108,28 @@ if ($action == 'validatehistory') {
 		setEventMessage($db->lasterror(), 'errors');
 	} else {
 		$db->commit();
-		setEventMessage($langs->trans('Dispatched'), 'mesgs');
+		setEventMessage($langs->trans('Done'), 'mesgs');
+	}
+} elseif ($action == 'cleanaccountancycode') {
+	$error = 0;
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sql1 .= " SET fd.fk_code_ventilation = 0";
+	$sql1 .= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
+	$sql1 .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
+	$sql1 .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
+	
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	} else {
+		$db->commit();
+		setEventMessage($langs->trans('Done'), 'mesgs');
 	}
 }
 
@@ -98,10 +141,14 @@ llxHeader('', $langs->trans("CustomersVentilation"));
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
+print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
 print '<b>' . $langs->trans("DescVentilCustomer") . '</b>';
-print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=validatehistory">' . $langs->trans("ValidateHistory") . '</a></div>';
+print '<div class="inline-block divButAction">';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
@@ -154,7 +201,7 @@ $sql .= "  ROUND(SUM(IF(MONTH(f.datef)=12,fd.total_ht,0)),2) AS 'Decembre',";
 $sql .= "  ROUND(SUM(fd.total_ht),2) as 'Total'";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 
@@ -169,11 +216,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-
+	
 	while ( $i < $num ) {
 		$row = $db->fetch_row($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>' . length_accountg($row[0]) . '</td>';
+		$var = ! $var;
+		print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
 		print '<td align="right">' . price($row[3]) . '</td>';
@@ -242,10 +289,10 @@ $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-
+	
 	while ( $i < $num ) {
 		$row = $db->fetch_row($resql);
-
+		
 		print '<tr><td>' . $row[0] . '</td>';
 		print '<td align="right">' . price($row[1]) . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
@@ -286,7 +333,7 @@ if (! empty($conf->margin->enabled)) {
 	print '<td width="60" align="center">' . $langs->trans("NovemberMin") . '</td>';
 	print '<td width="60" align="center">' . $langs->trans("DecemberMin") . '</td>';
 	print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
-
+	
 	$sql = "SELECT '" . $langs->trans("Vide") . "' AS 'Marge',";
 	$sql .= "  ROUND(SUM(IF(MONTH(f.datef)=1,(fd.total_ht-(fd.qty * fd.buy_price_ht)),0)),2) AS 'Janvier',";
 	$sql .= "  ROUND(SUM(IF(MONTH(f.datef)=2,(fd.total_ht-(fd.qty * fd.buy_price_ht)),0)),2) AS 'Fevrier',";
@@ -305,7 +352,7 @@ if (! empty($conf->margin->enabled)) {
 	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-
+	
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 	}
@@ -315,10 +362,10 @@ if (! empty($conf->margin->enabled)) {
 	if ($resql) {
 		$i = 0;
 		$num = $db->num_rows($resql);
-
+		
 		while ( $i < $num ) {
 			$row = $db->fetch_row($resql);
-
+			
 			print '<tr><td>' . $row[0] . '</td>';
 			print '<td align="right">' . price($row[1]) . '</td>';
 			print '<td align="right">' . price($row[2]) . '</td>';

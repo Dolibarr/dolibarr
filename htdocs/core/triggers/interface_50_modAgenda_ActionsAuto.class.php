@@ -698,9 +698,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode;		// code of parent table llx_c_actioncomm (will be deprecated)
-		$actioncomm->code='AC_'.$action;
+		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;
+		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
@@ -712,15 +712,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-		//$actioncomm->userdone    = $user;	    // User doing action (not used anymore)
-		//$actioncomm->userdoneid  = $user->id;	// User doing action (not used anymore)
+        // Fields when action is en email (coentent should be into note)
+		$actioncomm->email_msgid = $object->email_msgid;
+		$actioncomm->email_from  = $object->email_from;
+		$actioncomm->email_sender= $object->email_sender;
+		$actioncomm->email_to    = $object->email_to;
+		$actioncomm->email_tocc  = $object->email_tocc;
+		$actioncomm->email_tobcc = $object->email_tobcc;
+		$actioncomm->email_subject = $object->email_subject;
+		$actioncomm->errors_to   = $object->errors_to;
 
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;
 
-		$ret=$actioncomm->add($user);       // User qui saisit l'action
+		$ret=$actioncomm->add($user);       // User creating action
 		
-		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse vallue of first action.
+		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		
 		if ($ret > 0)
 		{

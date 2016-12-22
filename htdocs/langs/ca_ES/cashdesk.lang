@@ -37,4 +37,5 @@ ShowCompany=Veure empresa
 ShowStock=Veure magatzem
 DeleteArticle=Feu clic per treure aquest article
 FilterRefOrLabelOrBC=Cerca (Ref/Etiq.)
-UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+UserNeedPermissionToEditStockToUsePos=Vostè pregunta per disminuir l'estoc en la creació de factures, per aixo l'usuari que utilitzi el TPV ha de tenir permís per editar l'estoc
+DolibarrReceiptPrinter=Impressora de tickets de Dolibarr

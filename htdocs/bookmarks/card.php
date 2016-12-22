@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,12 +80,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), null, 'errors');
 	}
 
 	if (! $url) {
 		$error++;
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), null, 'errors');
 	}
 
 	if (! $error)
@@ -106,11 +106,11 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				setEventMessage($langs->transnoentities("WarningBookmarkAlreadyExists"), 'warnings');
+				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
 			}
 			else
 			{
-				setEventMessage($bookmark->error, 'errors');
+				setEventMessages($bookmark->error, $bookmark->errors, 'errors');
 			}
 			$action = $invertedaction;
 		}
@@ -151,7 +151,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewBookmark"));
+	print load_fiche_titre($langs->trans("NewBookmark"));
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 
@@ -167,7 +167,7 @@ if ($action == 'create')
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	$form->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
+	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -264,7 +264,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($action == 'edit' && $user->admin)
 	{
-		$form->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
+		print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{

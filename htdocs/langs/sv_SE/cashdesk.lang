@@ -38,3 +38,4 @@ ShowStock=Visar lagret
 DeleteArticle=Klicka här för att ta bort den här artikeln
 FilterRefOrLabelOrBC=Sök (Ref / etikett)
 UserNeedPermissionToEditStockToUsePos=Du ber att minska lager på faktura skapelse, så användare som använder POS behöver ha behörighet att redigera lager.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

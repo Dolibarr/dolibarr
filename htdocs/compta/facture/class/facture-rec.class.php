@@ -42,34 +42,19 @@ class FactureRec extends Facture
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 
-	var $id;
-
-	//! Id customer
-	var $socid;
-	//! Customer object (charging by fetch_client)
-	var $client;
-
 	var $number;
-	var $author;
 	var $date;
-	var $ref;
 	var $amount;
 	var $remise;
 	var $tva;
 	var $total;
-	var $note_private;
-	var $note_public;
 	var $db_table;
 	var $propalid;
-	var $fk_project;
 
 	var $rang;
 	var $special_code;
 
 	var $usenewprice=0;
-
-	var $lines=array();
-
 
 	/**
 	 *	Constructor
@@ -201,10 +186,13 @@ class FactureRec extends Facture
 	/**
 	 *	Recupere l'objet facture et ses lignes de factures
 	 *
-	 *	@param	int		$rowid      Id de la facture a recuperer
-	 *	@return int         		>0 si ok, <0 si ko
+	 *	@param      int		$rowid       	Id of object to load
+	 * 	@param		string	$ref			Reference of invoice
+	 * 	@param		string	$ref_ext		External reference of invoice
+	 * 	@param		int		$ref_int		Internal reference of other object
+	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid)
+	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
@@ -218,8 +206,13 @@ class FactureRec extends Facture
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql.= ' WHERE f.rowid='.$rowid;
-
-        dol_syslog("FactureRec::Fetch rowid=".$rowid."", LOG_DEBUG);
+		if ($ref)     $sql.= " AND f.titre='".$this->db->escape($ref)."'";
+		/* This field are not used for template invoice
+		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
+		*/
+		
+        dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -368,32 +361,49 @@ class FactureRec extends Facture
 
 
 	/**
-	 * 		Delete current invoice
+	 * 	Delete template invoice
 	 *
-	 * 		@return		int		<0 if KO, >0 if OK
+	 *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
+	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete()
+	function delete($rowid=0, $notrigger=0, $idwarehouse=-1)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$this->id;
+	    if (empty($rowid)) $rowid=$this->id;
+	    
+	    dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+	    
+        $error=0;
+		$this->db->begin();
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
 		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
-			if ($this->db->query($sql))
-			{
-				return 1;
-			}
-			else
+			if (! $this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				return -1;
+				$error=-1;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
-			return -2;
+			$error=-2;
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+	        $this->db->rollback();
+	        return $error;
 		}
 	}
 
@@ -420,6 +430,8 @@ class FactureRec extends Facture
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
+	    global $mysoc;
+	    
 		$facid=$this->id;
 
 		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
@@ -452,7 +464,7 @@ class FactureRec extends Facture
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -557,21 +569,29 @@ class FactureRec extends Facture
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
-	 *	@return		string					Chaine avec URL
+	 * @param	int		$withpicto       Add picto into link
+	 * @param  string	$option          Where point the link
+	 * @param  int		$max             Maxlength of ref
+	 * @param  int		$short           1=Return just URL
+	 * @param  string   $moretitle       Add more text to title tooltip
+	 * @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
 	{
 		global $langs;
 
 		$result='';
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
-
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
+        
+        if ($short) return $url;
+        
+		$picto='bill';
+        
+		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='bill';
 
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);

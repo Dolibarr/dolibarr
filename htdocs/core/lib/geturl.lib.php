@@ -101,7 +101,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     	curl_setopt($ch, CURLOPT_POST, 0);			// GET
     }
 
-    //if USE_PROXY constant set to TRUE in Constants.php, then only proxy will be enabled.
+    //if USE_PROXY constant set at begin of this method.
     if ($USE_PROXY)
     {
         dol_syslog("getURLContent set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);

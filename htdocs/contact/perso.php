@@ -70,8 +70,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 $now=dol_now();
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-
-llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -155,21 +156,17 @@ if ($action == 'edit')
 }
 else
 {
-    /*
-     * Fiche en mode visu
-     */
-    print '<table class="border" width="100%">';
-
+    // View mode
+    
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-    print $form->showrefnav($object, 'id', $linkback);
-    print '</td></tr>';
-
-    // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -191,7 +188,7 @@ else
     }
 
     // Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $object->getCivilityLabel();
     print '</td></tr>';
 
@@ -225,6 +222,7 @@ else
 
     print "</table>";
 
+    print '</div>';
 }
 
 dol_fiche_end();

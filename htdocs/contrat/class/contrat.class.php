@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,24 +52,11 @@ class Contrat extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * Id of the contract
-	 * @var int
-	 */
-	var $id;
-
-	/**
-	 * Reference of the contract
+	 * Customer reference of the contract
 	 * @var string
 	 */
-	var $ref;
-
-	/**
-	 * External reference of the contract.
-	 * Used by 3rd party services
-	 * @var string
-	 */
-	var $ref_ext;
-
+	var $ref_customer;
+	
 	/**
 	 * Supplier reference of the contract
 	 * @var string
@@ -142,24 +129,10 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @var string	Private note
-	 */
-	var $note_private;
-
-	/**
-	 * @var string	Public note
-	 */
-	var $note_public;
-
-	var $modelpdf;
-
-	/**
 	 * @deprecated Use fk_project instead
 	 * @see fk_project
 	 */
 	var $fk_projet;
-
-	public $fk_project;
 
 	var $extraparams=array();
 
@@ -574,13 +547,13 @@ class Contrat extends CommonObject
 	function fetch($id,$ref='')
 	{
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
+		$sql.= " ref_supplier, ref_customer,";
+		$sql.= " ref_ext,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
 		$sql.= " fk_user_author,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
-		$sql.= " ,ref_supplier";
-		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
@@ -599,6 +572,7 @@ class Contrat extends CommonObject
 			{
 				$this->id						= $result["rowid"];
 				$this->ref						= (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
+				$this->ref_customer				= $result["ref_customer"];
 				$this->ref_supplier				= $result["ref_supplier"];
 				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
@@ -937,7 +911,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity, note_private, note_public, ref_supplier, ref_ext)";
+		$sql.= " ref, entity, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',".$this->socid.",".$user->id;
 		$sql.= ", '".$this->db->idate($this->date_contrat)."'";
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
@@ -947,6 +921,7 @@ class Contrat extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
+		$sql.= ", ".(!empty($this->ref_customer)?("'".$this->db->escape($this->ref_customer)."'"):"NULL");
 		$sql.= ", ".(!empty($this->ref_supplier)?("'".$this->db->escape($this->ref_supplier)."'"):"NULL");
 		$sql.= ", ".(!empty($this->ref_ext)?("'".$this->db->escape($this->ref_ext)."'"):"NULL");
 		$sql.= ")";
@@ -1206,6 +1181,7 @@ class Contrat extends CommonObject
 		// Clean parameters
 
 		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
@@ -1230,6 +1206,7 @@ class Contrat extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
 		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
 		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
 		$sql.= " entity=".$conf->entity.",";
@@ -1355,7 +1332,8 @@ class Contrat extends CommonObject
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-
+			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+					
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1378,10 +1356,18 @@ class Contrat extends CommonObject
 
 		    if (empty($pa_ht)) $pa_ht=0;
 
-			// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-			if ($pa_ht == 0) {
-				if ($pu_ht > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-					$pa_ht = $pu_ht * (1 - $remise_percent / 100);
+			
+			// if buy price not defined, define buyprice as configured in margin admin
+			if ($this->pa_ht == 0) 
+			{
+				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0)
+				{
+					return $result;
+				}
+				else
+				{
+					$pa_ht = $result;
+				}
 			}
 
 			// Insertion dans la base
@@ -1437,7 +1423,7 @@ class Contrat extends CommonObject
 
 					if (empty($error)) {
 					    // Call trigger
-					    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
+					    $result=$this->call_trigger('LINECONTRACT_INSERT',$user);
 					    if ($result < 0)
 					    {
 					        $this->db->rollback();
@@ -1528,7 +1514,8 @@ class Contrat extends CommonObject
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
-
+		$tvatx = preg_replace('/\s*\(.*\)/','',$tvatx);  // Remove code into vatrate.
+		
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -1551,10 +1538,17 @@ class Contrat extends CommonObject
 
 	    if (empty($pa_ht)) $pa_ht=0;
 
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-		if ($pa_ht == 0) {
-			if ($pu > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$pa_ht = $pu * (1 - $remise_percent / 100);
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0) 
+		{
+			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$pa_ht = $result;
+			}
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
@@ -2129,6 +2123,8 @@ class Contrat extends CommonObject
 		$this->specimen=1;
 
 		$this->ref = 'SPECIMEN';
+		$this->ref_customer = 'SPECIMENCUST';
+		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->statut= 0;
 		$this->date_contrat = dol_now();
@@ -2574,11 +2570,19 @@ class ContratLigne extends CommonObjectLine
 
 	    if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente
-		if ($this->pa_ht == 0) {
-			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0) 
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
 		}
+
 
 		$this->db->begin();
 
@@ -2751,7 +2755,7 @@ class ContratLigne extends CommonObjectLine
 			if (!$notrigger)
 			{
 				// Call trigger
-				$result = $this->call_trigger('LINECONTRACT_CREATE', $user);
+				$result = $this->call_trigger('LINECONTRACT_INSERT', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

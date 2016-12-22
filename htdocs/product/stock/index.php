@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ $result=restrictedArea($user,'stock');
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("Stocks"),$help_url);
 
-print_fiche_titre($langs->trans("StocksArea"));
+print load_fiche_titre($langs->trans("StocksArea"));
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -57,8 +57,7 @@ print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr ".$bc[false]."><td>";
-print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>";
 
 $sql = "SELECT e.label, e.rowid, e.statut";

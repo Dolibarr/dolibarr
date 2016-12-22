@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	$return=array();
 	if (empty($showempty)) $showempty=0;
 	
-	$return['value']	= $form->selectcontacts($id,'','contactid',$showempty,'','',0,'',true);
+	$return['value']	= $form->selectcontacts($id,'',$htmlname,$showempty,'','',0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 	

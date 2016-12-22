@@ -227,7 +227,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *		Return if a code is used (by other element)
 	 *
 	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code a verifier
+	 *		@param	string		$code		Code to check
 	 *		@param	Product		$product	Objet product
 	 *		@return	int						0 if available, <0 if KO
 	 */
@@ -277,10 +277,18 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			return '';
 		}
 
+		dol_syslog(get_class($this).'::verif_syntax codefortest='.$codefortest." typefortest=".$typefortest);
+
 		$newcodefortest=$codefortest;
+
+		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
 		if (in_array($typefortest,array('EAN13','ISBN')))	// We remove the CRC char not included into mask
 		{
-			$newcodefortest=substr($newcodefortest,0,12);
+    		if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    	    {
+    	        if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest,0,12);
+    	        dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
+    	    }
 		}
 
 		$result=check_value($mask,$newcodefortest);

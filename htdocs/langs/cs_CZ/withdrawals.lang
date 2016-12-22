@@ -48,7 +48,6 @@ RefusedReason=Důvod odmítnutí
 RefusedInvoicing=Fakturace odmítnutí
 NoInvoiceRefused=Neúčtovat odmítnutí
 InvoiceRefused=Faktura odmítnuta (Účtujte odmítnutí k zákazníkovi)
-Status=Status
 StatusUnknown=Neznámý
 StatusWaiting=Čekání
 StatusTrans=odesláno

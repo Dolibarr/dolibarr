@@ -39,7 +39,7 @@ $page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
@@ -60,8 +60,8 @@ if ($action == 'delete')
 {
 	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
 	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -95,7 +95,7 @@ $formfile = new FormFile($db);
 //$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 //llxHeader('','',$help_url);
 
-//print_fiche_titre($langs->trans("Backup"),'','title_setup');
+//print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 
 // Start with empty buffer
@@ -198,9 +198,12 @@ if ($what == 'mysql')
         $ok=0;
         dol_syslog("Run command ".$fullcommandcrypted);
         $handlein = popen($fullcommandclear, 'r');
+        $i=0;
         while (!feof($handlein))
         {
+            $i++;   // output line number
             $read = fgets($handlein);
+            if ($i == 1 && preg_match('/'.preg_quote('Warning: Using a password').'/i', $read)) continue;
             fwrite($handle,$read);
             if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
             elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
@@ -357,7 +360,7 @@ if ($what == 'postgresql')
 //{
     if ($errormsg)
     {
-    	setEventMessage($langs->trans("Error")." : ".$errormsg, 'errors');
+    	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
     	$resultstring='';
         $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
@@ -368,7 +371,7 @@ if ($what == 'postgresql')
 	{
 		if ($what)
 		{
-	        setEventMessage($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"));
+	        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
 
 	        $resultstring='<div class="ok">';
 	        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
@@ -379,7 +382,7 @@ if ($what == 'postgresql')
 		}
 		else
 		{
-			setEventMessage($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user));
+			setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
 		}
     }
 //}

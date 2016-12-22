@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
@@ -104,7 +104,7 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
 	{
-		setEventMessage($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), 'errors');
+		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
 	}
 
@@ -146,7 +146,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		$result = $db->query($sql);
 		if ($result)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		}
 		else
@@ -166,7 +166,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
     // Check parameters
     if ($rappro && empty($num_rel))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountStatement")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountStatement")), null, 'errors');
         $error++;
     }
 
@@ -184,7 +184,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         $result = $db->query($sql);
         if ($result)
         {
-	        setEventMessage($langs->trans("RecordSaved"));
+	        setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             $db->commit();
         }
         else
@@ -205,7 +205,7 @@ $form = new Form($db);
 
 llxHeader();
 
-// On initialise la liste des categories
+// The list of categories is initialized
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
 $sql.= " ORDER BY label";
@@ -559,7 +559,7 @@ if ($result)
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
             print '<br>'."\n";
-            print_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
+            print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';
@@ -593,7 +593,7 @@ if ($result)
             if ($user->rights->banque->consolidate)
             {
                 print '<td colspan="3">';
-                print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"])?($_POST["reconciled"]?' checked':''):($objp->rappro?' checked':'')).'">';
+                print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"])?($_POST["reconciled"]?' checked="checked"':''):($objp->rappro?' checked="checked"':'')).'">';
                 print '</td>';
             }
             else

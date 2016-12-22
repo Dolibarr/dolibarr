@@ -50,8 +50,7 @@ function printBookmarksList($aDb, $aLangs)
 	$ret.= '</td><td align="right">';
 	if ($user->rights->bookmark->creer)
 	{
-		$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-		//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
+		$ret.= '<a class="vsmenu addbookmarkpicto" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
 		$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
 		$ret.= '</a>';
 	}

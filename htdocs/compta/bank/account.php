@@ -127,7 +127,6 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$amount = - price2num($_POST["debit"]);
 	}
 
-	$fk_soc = GETPOST('fk_soc', 'int');
 	$dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
 	$operation=$_POST["operation"];
 	$num_chq=$_POST["num_chq"];
@@ -136,15 +135,15 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 
 	if (! $dateop) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 	}
 	if (! $operation) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Type")), null, 'errors');
 	}
 	if (! $amount) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 	}
 
 	if (! $error)
@@ -153,23 +152,13 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
-			if (!empty($fk_soc))
-			{
-				$societe = new Societe($db);
-				if ($societe->fetch($fk_soc) > 0)
-				{
-					// Si fournisseur  ->add_url_line($insertid, $fk_soc, DOL_URL_ROOT.'/fourn/card.php?socid=', $societe->name, 'company');
-					$object->add_url_line($insertid, $fk_soc, DOL_URL_ROOT.'/comm/card.php?socid=', $societe->name, 'company');	
-				}
-			}
-			
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
@@ -389,19 +378,6 @@ if ($id > 0 || ! empty($ref))
 	{
 		print '<div class="tabsAction">';
 
-		if ($object->type != 2 && $object->rappro) 
-		{ 
-			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) 
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
-			}
-		}
-
 		if ($action != 'addline') 
 		{
 			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
@@ -420,6 +396,20 @@ if ($id > 0 || ! empty($ref))
                 print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
             }
         }
+
+		if ($object->type != 2 && $object->rappro) 
+		{ 
+			// If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) 
+			{
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+			}
+		}
+
         print '</div>';
     }
 	
@@ -480,7 +470,7 @@ if ($id > 0 || ! empty($ref))
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
+        print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -491,7 +481,6 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="2">'.$langs->trans("Description").'</td>';
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
-		print '<td>'.$langs->trans("Company").'</td>';
 		print '<td colspan="2" align="center">&nbsp;</td>';
 		print '</tr>';
 
@@ -512,11 +501,6 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
 		print '<td align=right><input name="credit" class="flat" type="text" size="4" value="'.GETPOST("credit").'"></td>';
-		
-		// Tiers
-		print '<td>'.$form->select_thirdparty_list('', 'fk_soc', '', 1).'</td>';
-		
-		
 		print '<td colspan="2" align="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
@@ -626,10 +610,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account=".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
-
-	// Si le partage des compte bancaire est activé dans multicompany, on ne limite pas la recherche des comptes à l'entité dans laquelle on se trouve (Ticket 1573)
-	if(!$conf->global->MULTICOMPANY_BANK_ACCOUNT_SHARING_ENABLED) $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
-	
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
@@ -972,7 +953,7 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		} else {
@@ -981,9 +962,9 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("Total");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1), 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1)).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

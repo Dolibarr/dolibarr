@@ -58,8 +58,10 @@ BoxLastExpiredServices=تاریخ و زمان آخرین٪ قدیمی ترین �
 BoxTitleLastActionsToDo=تاریخ و زمان آخرین اقدامات٪ s را به انجام
 BoxTitleLastContracts=تاریخ و زمان آخرین٪ s در قرارداد
 BoxTitleLastModifiedDonations=تاریخ و زمان آخرین٪ بازدید کنندگان کمک های مالی اصلاح شده
-BoxTitleLastModifiedExpenses=تاریخ و زمان آخرین٪ s در هزینه های اصلاح شده
+BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=فعالیت های جهانی (فاکتورها، پیشنهادات، سفارشات)
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=به روز کردن شار RSS شکست خورده است. آخرین تاریخ تازه کردن موفق:٪ s را
 LastRefreshDate=آخرین تاریخ تازه کردن
 NoRecordedBookmarks=بدون بوک مارک ها تعریف شده است.
@@ -95,3 +97,4 @@ ForCustomersInvoices=مشتریان فاکتورها
 ForCustomersOrders=سفارشات مشتریان
 ForProposals=پیشنهادات
 LastXMonthRolling=The last %s month rolling
+ChooseBoxToAdd=Add a box to your dashboard...

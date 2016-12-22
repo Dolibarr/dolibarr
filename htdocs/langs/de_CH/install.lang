@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - install
+DirectoryRecommendation=Es empfiehlt sich die Verwendung eines Ordners ausserhalb Ihres Webverzeichnisses.
+ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
+CorrectProblemAndReloadPage=Bitte beheben Sie das Problem und klicken Sie anschliessend auf F5 um die Seite neu zu laden.
+CharacterSetClientComment=Wählen Sie den gewünschten Zeichensatz für die Anzeige im Web.<br/>Standardmässig empfiehlt sich jener Ihrer Datenbank.

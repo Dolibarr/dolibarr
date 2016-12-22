@@ -61,20 +61,20 @@ if ($action == 'confirm_rejet')
 		if (empty($daterej))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 		}
 
 		elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
-			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
+			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 
 		if (GETPOST('motif','alpha') == 0)
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefusedReason")), null, 'errors');
 		}
 
 		if ( ! $error )
@@ -261,7 +261,7 @@ if ($id)
 	if ($sortfield == "") $sortfield="pl.fk_soc";
 
 	/*
-	 * Liste des factures
+	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
 	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";

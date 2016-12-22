@@ -89,7 +89,8 @@ abstract class ActionsCardCommon
     }
 
     /**
-     *	Load data control
+     *  doActions of a canvas is not the doActions of the hook
+     *  @deprecated Use the doActions of hooks instead of this.
      *
      *	@param	int		$action	Action code
      *	@return	void
@@ -279,7 +280,7 @@ abstract class ActionsCardCommon
                         exit;
                     }
 
-                    $oldsoccanvas = dol_clone($this->object);
+					$oldsoccanvas = clone $this->object;
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->code_client))             $this->object->code_client='';
@@ -510,7 +511,7 @@ abstract class ActionsCardCommon
             $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
 
             // Select users
-            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id,'commercial_id',1);
+            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
             // Local Tax
             // TODO mettre dans une classe propre au pays

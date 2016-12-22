@@ -48,7 +48,6 @@ RefusedReason=Keeldumise põhjus
 RefusedInvoicing=Keeldumise eest arve esitamine
 NoInvoiceRefused=Ära esita arvet keeldumise eest
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Staatus
 StatusUnknown=Teadmata
 StatusWaiting=Ootel
 StatusTrans=Saadetud

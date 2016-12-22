@@ -121,7 +121,6 @@ AttributeName=Nome do atributo
 String=Cadeia
 Text=Texto largo
 Int=Numérico
-Date=data
 DateAndTime=data e hora
 PublicMemberCard=Ficha pública membro
 MemberNotOrNoMoreExpectedToSubscribe=Não sometida a cotação

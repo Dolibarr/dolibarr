@@ -30,7 +30,7 @@ include_once 'inc.php';
 
 $err = 0;
 $allowinstall = 0;
-$allowupgrade = 0;
+$allowupgrade = false;
 $checksok = 1;
 
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
@@ -71,12 +71,14 @@ if (! empty($useragent))
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(5,2,3)) < 0)        // Minimum to use (error if lower)
+$arrayphpminversionerror = array(5,3,0);
+$arrayphpminversionwarning = array(5,3,0);
+if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.2.3');
 	$checksok=0;	// 0=error, 1=warning
 }
-else if (versioncompare(versionphparray(),array(5,3,0)) < 0)    // Minimum supported (warning if lower)
+else if (versioncompare(versionphparray(),$arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
 {
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.3.0');
     $checksok=0;	// 0=error, 1=warning
@@ -179,11 +181,11 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	if ($databaseok)
 	{
 		// Already installed for all parts (config and database). We can propose upgrade.
-		$allowupgrade=1;
+		$allowupgrade=true;
 	}
 	else
 	{
-		$allowupgrade=0;
+		$allowupgrade=false;
 	}
 }
 else
@@ -214,7 +216,7 @@ else
 	}
 
 	// First install, we can't upgrade
-	$allowupgrade=0;
+	$allowupgrade=false;
 }
 
 
@@ -380,6 +382,7 @@ else
 			$allowupgrade=false;
 		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
+		if (GETPOST('allowupgrade')) $allowupgrade=true;
 		$migrationscript=array(	array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
@@ -387,7 +390,8 @@ else
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
 								array('from'=>'3.6.0', 'to'=>'3.7.0'),
-								array('from'=>'3.7.0', 'to'=>'3.8.0')
+								array('from'=>'3.7.0', 'to'=>'3.8.0'),
+		                        array('from'=>'3.8.0', 'to'=>'3.9.0')
 		);
 
 		$count=0;
@@ -532,5 +536,5 @@ $(".runupgrade").click(function() {
 </script>';
 
 dolibarr_install_syslog("--- check: end");
-pFooter(true);	// Never display next button
+pFooter(1);	// Never display next button
 

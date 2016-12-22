@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *  \brief			Library of admin functions
  */
 
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
 /**
  *  Renvoi une version en chaine depuis une version en tableau
@@ -60,12 +62,16 @@ function versioncompare($versionarray1,$versionarray2)
     {
         $operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
         $operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
-        if (preg_match('/alpha|dev/i',$operande1)) $operande1=-3;
-        if (preg_match('/alpha|dev/i',$operande2)) $operande2=-3;
-        if (preg_match('/beta/i',$operande1)) $operande1=-2;
-        if (preg_match('/beta/i',$operande2)) $operande2=-2;
-        if (preg_match('/rc/i',$operande1)) $operande1=-1;
-        if (preg_match('/rc/i',$operande2)) $operande2=-1;
+        if (preg_match('/alpha|dev/i',$operande1)) $operande1=-5;
+        if (preg_match('/alpha|dev/i',$operande2)) $operande2=-5;
+        if (preg_match('/beta$/i',$operande1)) $operande1=-4;
+        if (preg_match('/beta$/i',$operande2)) $operande2=-4;
+        if (preg_match('/beta([0-9])+/i',$operande1)) $operande1=-3;
+        if (preg_match('/beta([0-9])+/i',$operande2)) $operande2=-3;
+        if (preg_match('/rc$/i',$operande1)) $operande1=-2;
+        if (preg_match('/rc$/i',$operande2)) $operande2=-2;
+        if (preg_match('/rc([0-9])+/i',$operande1)) $operande1=-1;
+        if (preg_match('/rc([0-9])+/i',$operande2)) $operande2=-1;
         $level++;
         //print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
         if ($operande1 < $operande2) { $ret = -$level; break; }
@@ -589,7 +595,7 @@ function listOfSessions()
                     $sessValues = file_get_contents($fullpath);	// get raw session data
                     // Example of possible value
                     //$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";dol_login|s:5:"admin";dol_authmode|s:8:"dolibarr";dol_tz|s:1:"1";dol_tz_string|s:13:"Europe/Berlin";dol_dst|i:0;dol_dst_observed|s:1:"1";dol_dst_first|s:0:"";dol_dst_second|s:0:"";dol_screenwidth|s:4:"1920";dol_screenheight|s:3:"971";dol_company|s:12:"MyBigCompany";dol_entity|i:1;mainmenu|s:4:"home";leftmenuopened|s:10:"admintools";idmenu|s:0:"";leftmenu|s:10:"admintools";';
-                    
+
                     if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
                         (preg_match('/dol_entity\|i:'.$conf->entity.';/i',$sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i',$sessValues)) && // limit to current entity
                     preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
@@ -680,29 +686,9 @@ function activateModule($value,$withdeps=1)
     $modFile = $modName . ".class.php";
 
     // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
+    $modulesdir = dolGetModulesDirs();
 
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
-
-    // Loop on each directory
+    // Loop on each modulesdir directories
     $found=false;
     foreach ($modulesdir as $dir)
     {
@@ -806,29 +792,9 @@ function unActivateModule($value, $requiredby=1)
     $modFile = $modName . ".class.php";
 
     // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
+    $modulesdir = dolGetModulesDirs();
 
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
-
-    // Loop on each directory
+    // Loop on each modulesdir directories
     $found=false;
     foreach ($modulesdir as $dir)
     {
@@ -863,6 +829,7 @@ function unActivateModule($value, $requiredby=1)
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
         {
+            //var_dump($objMod->requiredby[$i]);
             unActivateModule($objMod->requiredby[$i]);
         }
     }
@@ -893,35 +860,125 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
     global $db, $modules, $conf, $langs;
 
     // Search modules
-    $filename = array();
-    $modules = array();
-    $orders = array();
-    $categ = array();
-    $dirmod = array();
-    $modulesdir = array();
+	$modulesdir = dolGetModulesDirs();
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
 
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
+    foreach ($modulesdir as $dir)
     {
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-        $handle=@opendir($dirroot);
+    	// Load modules attributes in arrays (name, numero, orders) from dir directory
+    	//print $dir."\n<br>";
+    	dol_syslog("Scan directory ".$dir." for modules");
+        $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
             {
-            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+                //print "$i ".$file."\n<br>";
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
                 {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                    $modName = substr($file, 0, dol_strlen($file) - 10);
+
+                    if ($modName)
                     {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                        include_once $dir.$file;
+                        $objMod = new $modName($db);
+
+                        if ($objMod->numero > 0)
+                        {
+                            $j = $objMod->numero;
+                        }
+                        else
+                        {
+                            $j = 1000 + $i;
+                        }
+
+                        $modulequalified=1;
+
+                        // We discard modules according to features level (PS: if module is activated we always show it)
+                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+                        //If module is not activated disqualified
+                        if (empty($conf->global->$const_name)) $modulequalified=0;
+
+                        if ($modulequalified)
+                        {
+							// Load languages files of module
+                        	if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                            	{
+                             		foreach($objMod->langfiles as $langfile)
+                              		{
+	                               		$langs->load($langfile);
+        	                       	}
+              			}
+
+                            // Complete arrays
+                            //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
+                            if (empty($objMod->dictionaries) && ! empty($objMod->dictionnaries)) $objMod->dictionaries=$objMod->dictionnaries;		// For backward compatibility
+
+                            if (! empty($objMod->dictionaries))
+                            {
+                                //var_dump($objMod->dictionaries['tabname']);
+                                $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
+                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = count($tabname)+1; $tabname[] = $val; }
+                                foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
+                                foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
+                                foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
+                                foreach($objMod->dictionaries['tabfield'] as $val)       { $nbtabfield++; $tabfield[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldvalue'] as $val)  { $nbtabfieldvalue++; $tabfieldvalue[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) { $nbtabfieldinsert++; $tabfieldinsert[] = $val; }
+                                foreach($objMod->dictionaries['tabrowid'] as $val)       { $nbtabrowid++; $tabrowid[] = $val; }
+                                foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
+                                if (! empty($objMod->dictionaries['tabhelp']))       foreach($objMod->dictionaries['tabhelp'] as $val)       { $nbtabhelp++; $tabhelp[] = $val; }
+                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
+                                
+                                if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
+                                {
+                                    print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';
+                                    //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
+                                }
+                            }
+
+                            $j++;
+                            $i++;
+                        }
+                        else dol_syslog("Module ".get_class($objMod)." not qualified");
                     }
                 }
             }
             closedir($handle);
         }
+        else
+        {
+            dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
+        }
     }
+
+    return 1;
+}
+
+/**
+ *  Add external modules to list of contact element
+ *
+ * 	@param		array		$elementList			elementList
+ * 	@return		int			1
+ */
+function complete_elementList_with_modules(&$elementList)
+{
+    global $db, $modules, $conf, $langs;
+
+    // Search modules
+    $filename = array();
+    $modules = array();
+    $orders = array();
+    $categ = array();
+    $dirmod = array();
+
+    $i = 0; // is a sequencer of modules found
+    $j = 0; // j is module number. Automatically affected if module number not defined.
+
+    $modulesdir = dolGetModulesDirs();
 
     foreach ($modulesdir as $dir)
     {
@@ -979,43 +1036,9 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
                             else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
-
-                            // Complete arrays
-                            //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
-                            if (empty($objMod->dictionaries) && ! empty($objMod->dictionnaries)) $objMod->dictionaries=$objMod->dictionnaries;		// For backward compatibility
-
-                            if (! empty($objMod->dictionaries))
+                            if (! empty($objMod->module_parts['contactelement']))
                             {
-                                //var_dump($objMod->dictionaries['tabname']);
-                                $taborder[] = 0;
-                                $tabfieldcheck[] = array(); $tabhelp[] = array();
-                                $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
-                                foreach($objMod->dictionaries['tabname'] as $val)
-                                {
-                                    $taborder[] = count($tabname)+1;
-                                    $nbtabname++;
-                                    $tabname[] = $val;
-                                }
-                                foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
-                                foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
-                                foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
-                                foreach($objMod->dictionaries['tabfield'] as $val)       { $nbtabfield++; $tabfield[] = $val; }
-                                foreach($objMod->dictionaries['tabfieldvalue'] as $val)  { $nbtabfieldvalue++; $tabfieldvalue[] = $val; }
-                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) { $nbtabfieldinsert++; $tabfieldinsert[] = $val; }
-                                foreach($objMod->dictionaries['tabrowid'] as $val)       { $nbtabrowid++; $tabrowid[] = $val; }
-                                foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
-                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
-                                if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val)             { $nbtabhelp++; $tabhelp[] = $val; }
-                                
-                                if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
-                                {
-                                    print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';   
-                                    //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
-                                }
-                                //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
-                                //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
-                                //var_dump($tabcond);
-                                //exit;
+                            	$elementList[$objMod->name] = $langs->trans($objMod->name);
                             }
 
                             $j++;
@@ -1036,12 +1059,11 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
     return 1;
 }
 
-
 /**
  *	Show array with constants to edit
  *
  *	@param	array	$tableau		Array of constants
- *	@param	int		$strictw3c		Respect W3C (no form into table)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
  *	@return	void
  */
 function form_constantes($tableau,$strictw3c=0)
@@ -1050,7 +1072,7 @@ function form_constantes($tableau,$strictw3c=0)
 
     $form = new Form($db);
 
-    if (! empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if (! empty($strictw3c) && $strictw3c == 1) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -1187,7 +1209,7 @@ function form_constantes($tableau,$strictw3c=0)
     }
     print '</table>';
 
-    if (! empty($strictw3c))
+    if (! empty($strictw3c) && $strictw3c == 1)
     {
     	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
     	print "</form>\n";

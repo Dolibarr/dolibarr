@@ -17,7 +17,6 @@ DonationsArea=Área de Doações
 DonationStatusPaid=Doaçaõ recebida
 DonationStatusPromiseValidatedShort=Validada
 DonationTitle=Recibo de doação
-DonationDatePayment=Data de pagamento
 DonationReceipt=Recibo doaçaõ
 DonationsModels=Modelo de documento de recepção de Doação
 LastModifiedDonations=As ultimas %s doações modificadaas

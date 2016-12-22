@@ -121,7 +121,6 @@ AttributeName=Öznitelik adı
 String=Söz dizesi
 Text=Metin
 Int=Int
-Date=Tarih
 DateAndTime=Tarih ve saat
 PublicMemberCard=Genel üyelik kartı
 MemberNotOrNoMoreExpectedToSubscribe=Artık üyelik ya da abonelike beklenmiyor

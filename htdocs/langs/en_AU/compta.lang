@@ -1,3 +1,20 @@
 # Dolibarr language file - Source file is en_US - compta
-ACCOUNTING_VAT_SOLD_ACCOUNT=Default accountancy code for collecting VAT (VAT on sales)
-ACCOUNTING_VAT_BUY_ACCOUNT=Default accountancy code for recovered VAT (VAT on purchases)
+AmountHTVATRealReceived=Amount excl GST collected
+AmountHTVATRealPaid=Amount excl GST paid
+VATToPay=GST to pay
+VATReceived=GST received
+VATToCollect=GST purchases
+VATSummary=GST balance
+VATPaid=GST paid
+VATCollected=GST to collect
+PaymentVat=GST payment
+NewVATPayment=New GST payment
+VATPayment=GST Payment
+VATPayments=GST Payments
+VATRefund=GST Refund
+ShowVatPayment=Show GST payment
+TotalVATReceived=Total GST received
+VATReportByCustomersInInputOutputMode=Report by the customer GST collected and paid
+VATReportByCustomersInDueDebtMode=Report by the customer GST collected and paid
+VATReportByQuartersInInputOutputMode=Report by rate of the GST collected and paid
+VATReportByQuartersInDueDebtMode=Report by rate of the GST collected and paid

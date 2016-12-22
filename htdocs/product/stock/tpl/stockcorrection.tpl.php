@@ -15,13 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * $object must be defined
- * $product can be defined
  */
 ?>
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-$langs->load("productbatch");
+        $productref = '';
+        if ($object->element == 'product') $productref = $object->ref;
+
+        $langs->load("productbatch");
 
 		if (empty($id)) $id = $object->id;
 
@@ -78,11 +80,14 @@ $langs->load("productbatch");
 		print '<td colspan="4"><input class="flat" name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
 		print '</tr>';
 
-		// Eat-by date
-		if ((! empty($conf->productbatch->enabled)) && is_object($product) && $product->hasbatch())
+		// Serial / Eat-by date
+		if (! empty($conf->productbatch->enabled) && 
+		    (($object->element == 'product' && $object->hasbatch())
+		    || ($object->element == 'stock'))
+		)
 		{
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans("batch_number").'</td><td colspan="4">';
+			print '<td colspan="2"'.($object->element == 'stock'?'': ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="4">';
 			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 			print '</td>';
 			print '</tr><tr>';
@@ -99,7 +104,7 @@ $langs->load("productbatch");
 		}
 
 		// Label of mouvement of id of inventory
-		$valformovementlabel=((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock",''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $product->ref));
+		$valformovementlabel=((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock",''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
 		print '<tr>';
 		print '<td width="20%" colspan="2">'.$langs->trans("MovementLabel").'</td>';
 		print '<td colspan="2">';

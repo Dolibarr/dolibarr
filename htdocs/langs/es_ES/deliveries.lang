@@ -7,6 +7,7 @@ DeliveryOrders=Notas de recepción
 DeliveryDate=Fecha de entrega
 DeliveryDateShort=Fecha entrega
 CreateDeliveryOrder=Generar nota de recepción
+DeliveryStateSaved=Estado de entrega guardado
 QtyDelivered=Cant. enviada
 SetDeliveryDate=Indicar la fecha de entrega
 ValidateDeliveryReceipt=Validar la nota de entrega
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar esta nota de entr
 DeliveryMethod=Método de envío
 TrackingNumber=Nº de seguimiento
 DeliveryNotValidated=Nota de recepción no validada
+StatusDeliveryCanceled=Anulado
+StatusDeliveryDraft=Borrador
+StatusDeliveryValidated=Recibido
 # merou PDF model
 NameAndSignature=Nombre y firma :
 ToAndDate=En___________________________________ a ____/_____/__________

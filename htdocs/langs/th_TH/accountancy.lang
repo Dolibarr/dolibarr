@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรับแฟ้มส่งออก
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=การบัญชี
 Globalparameters=พารามิเตอร์ทั่วโลก
-Chartofaccounts=ผังบัญชี
-Fiscalyear=รอบระยะเวลาบัญชี
 Menuaccount=บัญชีการบัญชี
 Menuthirdpartyaccount=บัญชี Thirdparty
 MenuTools=เครื่องมือ
@@ -29,39 +26,32 @@ Selectmodelcsv=เลือกรูปแบบของการส่งอ�
 Modelcsv_normal=การส่งออกคลาสสิก
 Modelcsv_CEGID=การส่งออกที่มีต่อ CEGID ผู้เชี่ยวชาญ
 BackToChartofaccounts=กลับผังบัญชี
-Back=กลับ
 
 Definechartofaccounts=กำหนดผังบัญชี
 Selectchartofaccounts=เลือกผังบัญชี
-Validate=ตรวจสอบ
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=การเสีย
-ToDispatch=ที่จะส่ง
-Dispatched=ส่ง
 
+MenuAccountancy=Accountancy
 CustomersVentilation=รายละเอียดของลูกค้า
 SuppliersVentilation=ซัพพลายเออร์ที่พังทลาย
 TradeMargin=อัตรากำไรขั้นต้นการค้า
 Reports=รายงาน
 ByCustomerInvoice=โดยลูกค้าใบแจ้งหนี้
-ByMonth=โดยเดือน
 NewAccount=บัญชีการบัญชีใหม่
-Update=ปรับปรุง
-List=รายการ
 Create=สร้าง
 CreateMvts=Create movement
 UpdateAccount=การเปลี่ยนแปลงของบัญชีบัญชี
 UpdateMvts=การปรับเปลี่ยนของการเคลื่อนไหว
 WriteBookKeeping=บันทึกในบัญชีแยกประเภททั่วไป
 Bookkeeping=บัญชีแยกประเภททั่วไป
-AccountBalanceByMonth=ยอดเงินในบัญชีโดย
+AccountBalance=Account balance
 
 AccountingVentilation=รายละเอียดบัญชี
 AccountingVentilationSupplier=รายละเอียดผู้จัดจำหน่ายบัญชี
 AccountingVentilationCustomer=รายละเอียดบัญชีของลูกค้า
-Line=สาย
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=เส้นของใบแจ้งหนี้ที่จะต้องมีการระบายอากาศ
@@ -112,22 +102,16 @@ Docref=การอ้างอิง
 Numerocompte=บัญชี
 Code_tiers=Thirdparty
 Labelcompte=บัญชีฉลาก
-Debit=หักบัญชี
-Credit=เครดิต
-Amount=จำนวน
 Sens=ซองส์
 Codejournal=วารสาร
+NumPiece=Piece number
 
 DelBookKeeping=ลบบันทึกบัญชีแยกประเภททั่วไป
 
-SellsJournal=วารสารขาย
-PurchasesJournal=ซื้อวารสาร
 DescSellsJournal=วารสารขาย
 DescPurchasesJournal=ซื้อวารสาร
-BankJournal=ธนาคารวารสาร
-DescBankJournal=วารสารธนาคารรวมถึงประเภททั้งหมดของการชำระเงินอื่นที่ไม่ใช่เงินสด
-CashJournal=วารสารเงินสด
-DescCashJournal=วารสารเงินสดรวมทั้งประเภทของการชำระเงินเงินสด
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=ชำระด้วยเงินสด
 
@@ -150,9 +134,6 @@ Pcgversion=รุ่นของแผน
 Pcgtype=ชั้นบัญชี
 Pcgsubtype=ภายใต้ระดับบัญชี
 Accountparent=รากของบัญชี
-Active=คำแถลง
-
-NewFiscalYear=ปีงบประมาณใหม่
 
 DescVentilCustomer=ที่นี่ให้คำปรึกษารายละเอียดบัญชีของลูกค้าประจำปีของใบแจ้งหนี้ของคุณ
 TotalVente=Total turnover before tax
@@ -168,6 +149,31 @@ DescVentilDoneSupplier=ให้คำปรึกษาที่นี่รา
 ValidateHistory=ตรวจสอบโดยอัตโนมัติ
 
 ErrorAccountancyCodeIsAlreadyUse=ข้อผิดพลาดที่คุณไม่สามารถลบบัญชีบัญชีนี้เพราะมันถูกนำมาใช้
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=บัตรพังทลาย
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

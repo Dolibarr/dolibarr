@@ -101,7 +101,7 @@ if($_GET["id"])
 	    }
 
 
-	  print_titre("Ventilation");
+	  print load_fiche_titre("Ventilation");
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td>Facture</td>';
@@ -144,6 +144,5 @@ else
   print "Error ID incorrect";
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

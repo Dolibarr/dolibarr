@@ -7,6 +7,7 @@ DeliveryOrders=Zamówień na dostawy
 DeliveryDate=Data dostawy
 DeliveryDateShort=Data dostarczenia
 CreateDeliveryOrder=Generowanie zamówienia dostawy
+DeliveryStateSaved=Stan dostawy zapisany
 QtyDelivered=Ilość dostarczona
 SetDeliveryDate=Ustaw datę wysyłki
 ValidateDeliveryReceipt=Potwierdzenie otrzymania dostawy
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Czy na pewno chcesz usunąć <b>%s</b> potwierdzeni
 DeliveryMethod=Metoda dostawy
 TrackingNumber=Numer przesyłki
 DeliveryNotValidated=Dostawa nie zatwierdzona
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Projekt
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nazwisko i podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________

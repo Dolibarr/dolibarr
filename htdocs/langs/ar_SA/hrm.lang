@@ -1,0 +1,20 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=البريد الإلكتروني لإيقاف شؤون الموظفين الخدمة الخارجية
+Establishments=وثائق
+Establishment=وثيقة
+NewEstablishment=وثيقة جديدة
+DeleteEstablishment=حذف وثيقة
+ConfirmDeleteEstablishment=هل أنت متأكد من حذف هذه الوثيقة
+OpenEtablishment=فتح وثيقة
+CloseEtablishment=إنشاء وثيقة
+# Dictionary
+DictionaryDepartment=شؤون الموظفين - الأقسام 
+DictionaryFunction=شؤون الموظفين - الوظائف
+# Module
+ListOfEmployees=قائمة الموظفين 
+Employees=الموظفين
+Employee=الموظف
+Employe=Employe
+NewEmployee=موظف جديد
+EmployeeCard=بطاقة موظف

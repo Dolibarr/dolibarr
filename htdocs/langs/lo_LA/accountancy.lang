@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=ບັນ​ຊີ
 Globalparameters=​ໂຕ​ຕັ້ງ​ຄ່າ​ທັງ​ໝົດ
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
 MenuTools=ເຄື່ອງມື
@@ -29,39 +26,32 @@ Selectmodelcsv=Select a model of export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
-Back=ກັບຄືນ
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Trade margin
 Reports=ບົດລາຍງານ
 ByCustomerInvoice=By invoices customers
-ByMonth=By Month
 NewAccount=New accounting account
-Update=ປັບປຸງ
-List=ລາຍການ
 Create=ສ້າງ
 CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+AccountBalance=Account balance
 
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
@@ -112,22 +102,16 @@ Docref=Reference
 Numerocompte=ບັນຊີ
 Code_tiers=Thirdparty
 Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
 Sens=Sens
 Codejournal=Journal
+NumPiece=Piece number
 
 DelBookKeeping=Delete the records of the general ledger
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -150,9 +134,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=New fiscal year
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
@@ -168,6 +149,31 @@ DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier a
 ValidateHistory=Validate Automatically
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In third party
+EnabledVat=In VAT
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

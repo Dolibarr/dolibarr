@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -39,6 +39,7 @@ $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport','','');
 
+$sall         = GETPOST('sall');
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
@@ -48,6 +49,7 @@ $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
+$optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
@@ -65,11 +67,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.ref'=>'Ref',
+    'u.lastname'=>'Lastname',
+    'u.firstname'=>"Firstname",
+);
+
+
 /*
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
@@ -83,15 +93,15 @@ $sortfield     = GETPOST("sortfield");
 $page          = GETPOST("page");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 if ($page == -1) {
 	$page = 0 ;
 }
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";
@@ -100,6 +110,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 $sql.= " WHERE d.entity = ".$conf->entity;
 
+// Search all
+if (!empty($sall))
+{
+	$sql.= natural_search(array_keys($fieldstosearchall), $sall);
+}
 // Ref
 if(!empty($search_ref)){
 	$sql.= " AND d.ref LIKE '%".$db->escape($search_ref)."%'";
@@ -162,6 +177,12 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 }
 
 $sql.= $db->order($sortfield,$sortorder);
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -172,14 +193,26 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+	if ($sall)					$param.="&sall=".$sall;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_user)			$param.="&search_user=".$search_user;
 	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
 	if ($search_amount_ttc)		$param.="&search_amount_ttc=".$search_amount_ttc;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+    }
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
@@ -214,7 +247,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		$html->select_users($search_user,"search_user",1,"",0,'');
+		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -230,7 +263,7 @@ if ($resql)
 
 	// Status
 	print '<td class="liste_titre" align="right">';
-	select_expensereport_statut($search_status,'search_status');
+	select_expensereport_statut($search_status,'search_status',1,1);
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
@@ -303,10 +336,12 @@ if ($resql)
 
 	print "</form>";
 
+	/*
 	print '<div class="tabsAction">';
 	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">'.$langs->trans("NewTrip").'</a>';
 	print '</div>';
-
+	*/
+	
 	$db->free($resql);
 }
 else

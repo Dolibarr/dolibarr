@@ -7,6 +7,7 @@ DeliveryOrders=Dodací objednávky
 DeliveryDate=Termín dodání
 DeliveryDateShort=Term. dodání
 CreateDeliveryOrder=Generovat objednávku k dodání
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Množství dodáno
 SetDeliveryDate=Nastavit datem odeslání
 ValidateDeliveryReceipt=Potvrzení o doručení
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Jste si jisti, že chcete smazat <b>%s</b> potvrzen
 DeliveryMethod=Způsob doručení
 TrackingNumber=Sledovací číslo
 DeliveryNotValidated=Dodávka není ověřena
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Jméno a podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________

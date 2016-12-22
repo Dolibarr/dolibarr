@@ -48,7 +48,6 @@ RefusedReason=Razlog za zavrnitev
 RefusedInvoicing=Zaračunavanje zavrnitev
 NoInvoiceRefused=Ne zaračunaj zavrnitve
 InvoiceRefused=Zavrnjen račun (zaračunati zavrnitev stranki)
-Status=Status
 StatusUnknown=Neznano
 StatusWaiting=Na čakanju
 StatusTrans=Prenešeno

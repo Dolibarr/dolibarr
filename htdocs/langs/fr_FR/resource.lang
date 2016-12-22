@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressources
 MenuResourceAdd=Nouvelle ressource
 MenuResourcePlanning=Resources
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Description de la ressource
 
 ResourcesLinkedToElement=Ressource lié au document
 
+ShowResource=Montrer ressource
 ShowResourcePlanning=Afficher ressource
 GotoDate=Aller à un date
 

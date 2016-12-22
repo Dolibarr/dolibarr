@@ -47,7 +47,7 @@ if (GETPOST('addfile'))
 /*
  * Remove file in email form
  */
-if (! empty($_POST['removedfile']))
+if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -56,15 +56,45 @@ if (! empty($_POST['removedfile']))
 	$upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'],0,1);
+	dol_remove_file_process(GETPOST('removedfile','alpha'),0);
 	$action='presend';
+}
+
+/*
+ * Remove all files in email form
+ */
+
+if(! empty($_POST['removAll']))
+{
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	$formmail = new FormMail($db);
+
+	foreach($listofpaths as $key => $value)
+	{
+		$pathtodelete = $value;
+		$filetodelete = $listofnames[$key];
+		$result = dol_delete_file($pathtodelete,1); // Delete uploded Files
+
+		$langs->load("other");
+		setEventMessages($langs->trans("FileWasRemoved",$filetodelete), null, 'mesgs');
+
+		$formmail->remove_attached_files($key); // Update Session
+	}
 }
 
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
+if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
+	if($conf->dolimail->enabled) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	$subject='';$actionmsg='';$actionmsg2='';
@@ -81,7 +111,37 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	else if ($object->element == 'societe')
 	{
 		$thirdparty=$object;
-		$sendtosocid=$thirdparty->id;
+		if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
+		elseif($conf->dolimail->enabled)
+		{
+			$dolimail = new Dolimail($db);
+			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
+			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
+			if (!$possibleaccounts && !$possibleuser)
+			{
+					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
+			}
+			elseif (count($possibleaccounts)>1)
+			{
+					$sendtosocid=$possibleaccounts[1]['id'];
+					$result=$object->fetch($sendtosocid);
+
+					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
+			}
+			else
+			{
+				if($possibleaccounts){
+					$sendtosocid=$possibleaccounts[1]['id'];
+					$result=$object->fetch($sendtosocid);
+				}elseif($possibleuser){
+					$sendtosocid=$possibleuser[0]['id'];
+
+					$result=$uobject->fetch($sendtosocid);
+					$object=$uobject;
+				}
+
+			}
+		}
 	}
 	else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
 
@@ -161,7 +221,49 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-			$trackid = GETPOST('trackid','aZ');
+			$trackid = GETPOST('trackid','aZ09');
+
+			// Feature to push mail sent into Sent folder
+			if (! empty($conf->dolimail->enabled))
+			{
+				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
+				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				else
+				{
+					$mbid = $mailfromid[1];
+
+					/*IMAP Postbox*/
+					$mailboxconfig = new IMAP($db);
+					$mailboxconfig->fetch($mbid);
+					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
+
+					$mailboxconfig->folder_id=$mailboxconfig->mailbox_imap_outbox;
+					$mailboxconfig->userfolder_fetch();
+
+					if ($mailboxconfig->mailbox_save_sent_mails == 1)
+					{
+
+						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
+						if (!$folder) $folder = "Sent";	// Default Sent folder
+
+						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
+						if (FALSE === $mailboxconfig->mbox)
+						{
+							$info = FALSE;
+							$err = $langs->trans('Error3_Imap_Connection_Error');
+							setEventMessages($err,$mailboxconfig->element, null, 'errors');
+						}
+						else
+						{
+							$mailboxconfig->mailboxid=$_POST['frommail'];
+							$mailboxconfig->foldername=$folder;
+							$from = $mailfromid[0] . $mailfromid[2];
+							$imap=1;
+						}
+
+					}
+				}
+			}
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -177,7 +279,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$error=0;
 
-					// Initialisation donnees
+					// FIXME This must be moved into a trigger for action $trigger_name
+					if (! empty($conf->dolimail->enabled))
+					{
+						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
+						if ($mid)
+						{
+							// set imap flag answered if it is an answered mail
+							$dolimail=new DoliMail($db);
+							$dolimail->id = $mid;
+							$res=$dolimail->set_prop($user, 'answered',1);
+				  		}
+						if ($imap==1)
+						{
+							// write mail to IMAP Server
+							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile);
+							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
+							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
+				 	 	}
+				 	}
+
+					// Initialisation of datas
 					$object->socid			= $sendtosocid;	// To link to a company
 					$object->sendtoid		= $sendtoid;	// To link to a contact/address
 					$object->actiontypecode	= $actiontypecode;
@@ -186,14 +308,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$object->fk_element		= $object->id;
 					$object->elementtype	= $object->element;
 
-					// Appel des triggers
+					// Call of triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
+						$error++; $errors=$interface->errors;
 					}
-					// Fin appel triggers
+					// End call of triggers
 
 					if ($error)
 					{
@@ -204,25 +326,28 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-						setEventMessage($mesg);
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
+						setEventMessages($mesg, null, 'mesgs');
+						if ($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
+						else header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
 						exit;
 					}
 				}
 				else
 				{
 					$langs->load("other");
+					$mesg='<div class="error">';
 					if ($mailfile->error)
 					{
-						$mesg='';
 						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
 						$mesg.='<br>'.$mailfile->error;
-						setEventMessage($mesg,'errors');
 					}
 					else
 					{
-						setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
+					$mesg.='</div>';
+
+					setEventMessages($mesg, null, 'warnings');
 					$action = 'presend';
 				}
 			}
@@ -237,7 +362,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")),'warnings');
+			setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
 			dol_syslog('Try to send email with no recipiend defined', LOG_WARNING);
 			$action = 'presend';
 		}
@@ -245,7 +370,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	else
 	{
 		$langs->load("other");
-		setEventMessage($langs->trans('ErrorFailedToReadEntity',$object->element),'errors');
+		setEventMessages($langs->trans('ErrorFailedToReadEntity',$object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}

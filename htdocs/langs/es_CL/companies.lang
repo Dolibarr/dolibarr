@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - companies
+Prospect=Cliente
 ContactForProposals=Contacto de cotizaciones
 NoContactForAnyProposal=Este contacto no es contacto de ninguna cotización
+InActivity=Abierto

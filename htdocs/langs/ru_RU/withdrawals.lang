@@ -48,7 +48,6 @@ RefusedReason=Причина для отказа
 RefusedInvoicing=Счета отказ
 NoInvoiceRefused=Не заряжайте отказ
 InvoiceRefused=Счёт отклонён (отказ платежа клиентом)
-Status=Статус
 StatusUnknown=Неизвестный
 StatusWaiting=Ожидание
 StatusTrans=Передающиеся

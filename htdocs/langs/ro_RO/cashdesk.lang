@@ -38,3 +38,4 @@ ShowStock=Arată depozit
 DeleteArticle=Faceţi clic pentru a elimina acest articol
 FilterRefOrLabelOrBC=Caută (Ref/Etichetă)
 UserNeedPermissionToEditStockToUsePos=Ca să scadă stocul la crearea facturii utilizatorul care foloseşte POSul trebuie sa aibă permisiunea de a edita stocul.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

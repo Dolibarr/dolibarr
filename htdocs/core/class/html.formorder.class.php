@@ -55,14 +55,17 @@ class FormOrder
      */
     function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
     {
+        $tmpsupplierorder=new CommandeFournisseur($db);
+        
         print '<select class="flat" name="'.$hmlname.'">';
         print '<option value="-1">&nbsp;</option>';
-        $statustohow=array('0'=>'0','1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6,7','9'=>'9');	// 7 is same label than 6. 8 does not exist.
+        $statustohow=array('0'=>'0','1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6,7','9'=>'9');	// 7 is same label than 6. 8 does not exists (billed is another field)
 
         foreach($statustohow as $key => $value)
         {
 			print '<option value="'.$value.'"'.(($selected == $key || $selected == $value)?' selected':'').'>';
-			print CommandeFournisseur::LibStatut($key,$short);
+			$tmpsupplierorder->statut=$key;
+			print $tmpsupplierorder->getLibStatut($short);
 	        print '</option>';
         }
         print '</select>';

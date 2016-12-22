@@ -35,40 +35,23 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
 
 
 /**
- *  \class      Livraison
- *  \brief      Classe de gestion des bons de livraison
+ *  Class to manage receptions
  */
 class Livraison extends CommonObject
 {
 	public $element="delivery";
 	public $fk_element="fk_livraison";
 	public $table_element="livraison";
+	public $table_element_line="livraisondet";
 
-	var $id;
 	var $brouillon;
-	var $origin;
-	var $origin_id;
 	var $socid;
 	var $ref_customer;
-	var $statut;
-
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-	var $note;
-	var $note_public;
-	var $note_private;
 
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
 	var $model_pdf;
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * Constructor
@@ -82,9 +65,9 @@ class Livraison extends CommonObject
 		$this->products = array();
 
 		// List of short language codes for status
-		$this->statuts[-1] = 'StatusSendingCanceled';
-		$this->statuts[0]  = 'StatusSendingDraft';
-		$this->statuts[1]  = 'StatusSendingValidated';
+		$this->statuts[-1] = 'StatusDeliveryCanceled';
+		$this->statuts[0]  = 'StatusDeliveryDraft';
+		$this->statuts[1]  = 'StatusDeliveryValidated';
 	}
 
 	/**
@@ -317,6 +300,14 @@ class Livraison extends CommonObject
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
+				
+				
+				// Retrieve all extrafields for delivery
+				// fetch optionals attributes and labels
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+				$extrafields=new ExtraFields($this->db);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+				$this->fetch_optionals($this->id,$extralabels);
 
 				/*
 				 * Lignes
@@ -541,7 +532,37 @@ class Livraison extends CommonObject
 		return $this->create($user);
 	}
 
-
+	/**
+	 * Update a livraison line (only extrafields)
+	 *
+	 * @param 	int		$id					Id of line (livraison line)
+	 * @param	array		$array_options		extrafields array
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	function update_line($id, $array_options=0)
+	{
+		global $conf;
+		$error = 0;
+	
+		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		{
+			$livraisonline = new LivraisonLigne($this->db);
+			$livraisonline->array_options=$array_options;
+			$livraisonline->id=$id;
+			$result=$livraisonline->insertExtraFields();
+			
+			if ($result < 0)
+			{
+				$this->error[]=$livraisonline->error;
+				$error++;
+			}
+		}
+	
+		if (! $error) return 1;
+		else return -1;
+	}
+	
+	
 	/**
 	 * 	Add line
 	 *
@@ -727,6 +748,7 @@ class Livraison extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
+				$line->id					= $obj->rowid;
 				$line->label			= $obj->custom_label;
 				$line->description		= $obj->description;
 				$line->fk_product		= $obj->fk_product;
@@ -779,9 +801,9 @@ class Livraison extends CommonObject
 
 		if ($mode==0)
 		{
-			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return $langs->trans('StatusSendingDraft');
-			if ($statut==1)  return $langs->trans('StatusSendingValidated');
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated');
 		}
 		if ($mode==1)
 		{
@@ -791,9 +813,9 @@ class Livraison extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-			if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
 	}
 
@@ -967,11 +989,14 @@ class Livraison extends CommonObject
 	/**
 	 *	Create object on disk
 	 *
-	 *	@param	string		$modele			force le modele a utiliser ('' to not force)
-	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @return int         				0 if KO, 1 if OK
+	 *	@param     string		$modele			force le modele a utiliser ('' to not force)
+	 * 	@param     Translate	$outputlangs	Object langs to use for output
+	 *  @param     int			$hidedetails    Hide details of lines
+	 *  @param     int			$hidedesc       Hide description
+	 *  @param     int			$hideref        Hide ref
+	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs='')
+	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $conf,$user,$langs;
 
@@ -992,7 +1017,7 @@ class Livraison extends CommonObject
 
 		$modelpath = "core/modules/livraison/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**
@@ -1021,6 +1046,8 @@ class Livraison extends CommonObject
  */
 class LivraisonLigne extends CommonObjectLine
 {
+	var $db;
+	
 	// From llx_expeditiondet
 	var $qty;
 	var $qty_asked;
@@ -1043,6 +1070,9 @@ class LivraisonLigne extends CommonObjectLine
 
 	public $product_ref;
 	public $product_label;
+	
+	public $element='livraisondet';
+	public $table_element='livraisondet';
 
 	/**
 	 *	Constructor

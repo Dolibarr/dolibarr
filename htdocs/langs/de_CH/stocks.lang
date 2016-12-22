@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - stocks
+CancelSending=Lieferung abbrechen
+ReStockOnDispatchOrder=Reale Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
+StockLimit=Sicherungsbestand für autom. Benachrichtigung
+AverageUnitPricePMP=Gewichteter Durchschnittpreis bei Erwerb
+UseVirtualStockByDefault=Nutze theoretische Lagerbestände anstatt des physischem Bestands für die Nachbestellungsfunktion
+ReplenishmentOrdersDesc=Das ist eine Liste aller offener Lieferantenbestellungen einschliesslich vordefinierter Produkte. Nur geöffnete Bestellungen mit vordefinierten Produkten, sofern es das Lager betrifft, sind hier sichtbar.
+ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)

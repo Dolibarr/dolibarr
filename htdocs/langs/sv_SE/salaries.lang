@@ -1,9 +1,8 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Bokförings kod för löne utbetalningar
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Bokförings kod för finansiell kostnad
 Salary=Lön
 Salaries=Löner
-Employee=Anställd
 NewSalaryPayment=Ny löneutbetalning
 SalaryPayment=Lönebetalning
 SalariesPayments=Löneutbetalningar

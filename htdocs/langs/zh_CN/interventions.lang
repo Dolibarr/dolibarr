@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=返回格式%syymm，其中yy是二○○一年numero，
 PacificNumRefModelError=干预卡$ syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。
 PrintProductsOnFichinter=干预卡上的打印产品
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

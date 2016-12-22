@@ -49,6 +49,13 @@ interface LogHandlerInterface
 	public function getInfo();
 
 	/**
+	 * 	Return warning if something is wrong with logger
+	 *
+	 * 	@return	string		Warning message
+	 */
+	public function getWarning();
+	
+	/**
 	 * 	Return array of configuration data
 	 *
 	 * 	@return	array		Return array of configuration data

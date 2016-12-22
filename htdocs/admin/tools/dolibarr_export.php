@@ -37,7 +37,7 @@ $page = GETPOST('page','int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin)
@@ -52,8 +52,8 @@ if ($action == 'delete')
 {
 	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
     $ret=dol_delete_file($file, 1);
-    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
     $action='';
 }
 
@@ -110,7 +110,7 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','title_setup');
+print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 
@@ -133,7 +133,7 @@ print '<br>';
 
 <?php
 
-print_titre($title?$title:$langs->trans("BackupDumpWizard"));
+print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
 
 print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').' nohover">';
 print '<tr class="liste_titre">';

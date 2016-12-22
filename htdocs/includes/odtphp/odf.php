@@ -6,14 +6,13 @@ class OdfException extends Exception
  * Templating class for odt file
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
- * Encoding : ISO-8859-1
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
- * @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
+ * @copyright  GPL License 2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
+ * @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
- * @version 1.4.6 (last update 2013-04-07)
+ * @version 1.5.0
  */
 class Odf
 {
@@ -25,6 +24,7 @@ class Odf
 	);
 	protected $file;
 	protected $contentXml;			// To store content of content.xml file
+	protected $metaXml;			    // To store content of meta.xml file
 	protected $stylesXml;			// To store content of styles.xml file
 	protected $manifestXml;			// To store content of META-INF/manifest.xml file
 	protected $tmpfile;
@@ -32,7 +32,14 @@ class Odf
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
+	
+	public $creator;
+	public $title;
+	public $subject;
+	public $userdefined=array();
+	
 	const PIXEL_TO_CM = 0.026458333;
+	
 	/**
 	 * Class constructor
 	 *
@@ -86,6 +93,9 @@ class Odf
 		if (($this->manifestXml = $this->file->getFromName('META-INF/manifest.xml')) === false) {
 			throw new OdfException("Something is wrong with META-INF/manifest.xml in source file '$filename'");
 		}
+		if (($this->metaXml = $this->file->getFromName('meta.xml')) === false) {
+			throw new OdfException("Nothing to parse - Check that the meta.xml file is correctly formed in source file '$filename'");
+		}
 		if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
 			throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
 		}
@@ -98,6 +108,7 @@ class Odf
 
 		copy($filename, $this->tmpfile);
 
+		// Clean file to have tags for line corrected
 		$this->_moveRowSegments();
 	}
 
@@ -187,11 +198,14 @@ class Odf
 	/**
 	 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
 	 *
+	 * @return int             0
 	 */
 	public function phpEval()
 	{
 		preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU',$this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
-		for ($i=0;$i < count($matches['content']);$i++) {
+		$nbfound=count($matches['content']);
+		for ($i=0; $i < $nbfound; $i++) 
+		{
 			try {
 				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
 				$code = $matches['content'][$i];
@@ -237,13 +251,18 @@ IMG;
 
 	/**
 	 * Move segment tags for lines of tables
-	 * Called automatically within the constructor
+	 * This function is called automatically within the constructor, so this->contentXml is clean before any other thing
 	 *
 	 * @return void
 	 */
 	private function _moveRowSegments()
 	{
-		// Search all possible rows in the document
+	    // Replace BEGIN<text:s/>xxx into BEGIN xxx
+	    $this->contentXml = preg_replace('/\[!--\sBEGIN<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- BEGIN \\1 --]', $this->contentXml);
+	    // Replace END<text:s/>xxx into END xxx
+	    $this->contentXml = preg_replace('/\[!--\sEND<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- END \\1 --]', $this->contentXml);
+    
+	    // Search all possible rows in the document
 		$reg1 = "#<table:table-row[^>]*>(.*)</table:table-row>#smU";
 		preg_match_all($reg1, $this->contentXml, $matches);
 		for ($i = 0, $size = count($matches[0]); $i < $size; $i++) {
@@ -268,17 +287,30 @@ IMG;
 	 * Merge template variables
 	 * Called automatically for a save
 	 *
-	 * @param  string	$type		'content' or 'styles'
+	 * @param  string	$type		'content', 'styles' or 'meta'
 	 * @return void
 	 */
 	private function _parse($type='content')
 	{
+	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
+	    $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+	    //var_dump($this->vars);exit;
+	    foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
+		{
+		    if (! empty($match[1]) && ! isset($this->vars[$match[1]]))
+			{
+			    $this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
+			}
+	    }
+	    //var_dump($this->vars);exit;
+	    
 		// Conditionals substitution
-		// Note: must be done before content substitution, else the variable will be replaced by its value and the conditional won't work anymore
-		foreach($this->vars as $key => $value)
+		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
+	    foreach($this->vars as $key => $value)
 		{
 			// If value is true (not 0 nor false nor null nor empty string)
-			if($value)
+			if ($value)
 			{
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
@@ -300,17 +332,17 @@ IMG;
 			}
 		}
 
-		// Content (variable) substitution
+		// Static substitution
 		if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
-		// Styles substitution
 		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
-
+		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
+		
 	}
 
 	/**
 	 * Add the merged segment to the document
 	 *
-	 * @param Segment $segment
+	 * @param Segment $segment     Segment
 	 * @throws OdfException
 	 * @return odf
 	 */
@@ -360,7 +392,7 @@ IMG;
 	/**
 	 * Declare a segment in order to use it in a loop
 	 *
-	 * @param string $segment
+	 * @param  string      $segment        Segment
 	 * @throws OdfException
 	 * @return Segment
 	 */
@@ -372,7 +404,7 @@ IMG;
 		// $reg = "#\[!--\sBEGIN\s$segment\s--\]<\/text:p>(.*)<text:p\s.*>\[!--\sEND\s$segment\s--\]#sm";
 		$reg = "#\[!--\sBEGIN\s$segment\s--\](.*)\[!--\sEND\s$segment\s--\]#sm";
 		if (preg_match($reg, html_entity_decode($this->contentXml), $m) == 0) {
-			throw new OdfException("'$segment' segment not found in the document");
+			throw new OdfException("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
 		}
 		$this->segments[$segment] = new Segment($segment, $m[1], $this);
 		return $this->segments[$segment];
@@ -408,13 +440,21 @@ IMG;
 		$res=$this->file->open($this->tmpfile);    // tmpfile is odt template
 		$this->_parse('content');
 		$this->_parse('styles');
+		$this->_parse('meta');
 
+		$this->setMetaData();
+		//print $this->metaXml;exit;
+		
 		if (! $this->file->addFromString('content.xml', $this->contentXml)) {
-			throw new OdfException('Error during file export addFromString');
+			throw new OdfException('Error during file export addFromString content');
+		}
+		if (! $this->file->addFromString('meta.xml', $this->metaXml)) {
+			throw new OdfException('Error during file export addFromString meta');
 		}
 		if (! $this->file->addFromString('styles.xml', $this->stylesXml)) {
-			throw new OdfException('Error during file export addFromString');
+			throw new OdfException('Error during file export addFromString styles');
 		}
+		
 		foreach ($this->images as $imageKey => $imageValue) {
 			// Add the image inside the ODT document
 			$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
@@ -428,9 +468,36 @@ IMG;
 	}
 
 	/**
+	 * Update Meta information
+	 * <dc:date>2013-03-16T14:06:25</dc:date>
+	 *
+	 * @return void
+	 */
+	public function setMetaData()
+	{
+	    if (empty($this->creator)) $this->creator='';
+	    
+		$this->metaXml = preg_replace('/<dc:date>.*<\/dc:date>/', '<dc:date>'.gmdate("Y-m-d\TH:i:s").'</dc:date>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:creator>.*<\/dc:creator>/', '<dc:creator>'.htmlspecialchars($this->creator).'</dc:creator>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:title>.*<\/dc:title>/', '<dc:title>'.htmlspecialchars($this->title).'</dc:title>', $this->metaXml);
+		$this->metaXml = preg_replace('/<dc:subject>.*<\/dc:subject>/', '<dc:subject>'.htmlspecialchars($this->subject).'</dc:subject>', $this->metaXml);
+		
+		if (count($this->userdefined))
+		{
+		    foreach($this->userdefined as $key => $val)
+		    {
+		      $this->metaXml = preg_replace('<meta:user-defined meta:name="'.$key.'"/>', '', $this->metaXml);
+		      $this->metaXml = preg_replace('/<meta:user-defined meta:name="'.$key.'">.*<\/meta:user-defined>/', '', $this->metaXml);
+		      $this->metaXml = str_replace('</office:meta>', '<meta:user-defined meta:name="'.$key.'">'.htmlspecialchars($val).'</meta:user-defined></office:meta>', $this->metaXml);
+		    }
+		}
+	}
+	
+	/**
 	 * Update Manifest file according to added image files
 	 *
 	 * @param string	$file		Image file to add into manifest content
+	 * @return void
 	 */
 	public function addImageToManifest($file)
 	{
@@ -616,9 +683,9 @@ IMG;
 
 	/**
 	 * return the value present on odt in [valuename][/valuename]
-	 * @param string $value name balise in the template
-	 * @return string the value inside the balise
-	 *
+	 * 
+	 * @param  string $value   name balise in the template
+	 * @return string          the value inside the balise
 	 */
 	public function getvalue($valuename)
 	{
@@ -630,4 +697,3 @@ IMG;
 
 }
 
-?>

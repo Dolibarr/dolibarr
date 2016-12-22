@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Prelevement
+ *	Class to describe and enable module Prelevement
  */
 class modPrelevement extends DolibarrModules
 {
@@ -48,6 +48,7 @@ class modPrelevement extends DolibarrModules
 		$this->numero = 57;
 
 		$this->family = "financial";
+		$this->module_position = 520;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des Prelevements";
@@ -70,10 +71,10 @@ class modPrelevement extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
