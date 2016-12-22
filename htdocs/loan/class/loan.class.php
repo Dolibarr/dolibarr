@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ class Loan extends CommonObject
     public $element='loan';
     public $table='loan';
     public $table_element='loan';
+    public $picto = 'bill';
 
     public $rowid;
     public $datestart;
@@ -278,6 +279,7 @@ class Loan extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."loan";
         $sql.= " SET label='".$this->db->escape($this->label)."',";
+		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
         $sql.= " datestart='".$this->db->idate($this->datestart)."',";
         $sql.= " dateend='".$this->db->idate($this->dateend)."',";
 		$sql.= " fk_user_modif = ".$user->id;
@@ -373,6 +375,12 @@ class Loan extends CommonObject
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         if ($mode == 5)
+        {
+            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+        }
+        if ($mode == 6)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
