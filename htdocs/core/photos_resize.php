@@ -300,7 +300,7 @@ print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" t
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
-print '<input type="hidden" name="modulepart" value="'.$modulepart.'" />';
+print '<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br>';
 print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';

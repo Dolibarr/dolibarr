@@ -30,26 +30,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 class ModeleImports
 {
-    var $db;
-    var $datatoimport;
+    public $db;
+    public $datatoimport;
 
-	var $error='';
+    public $error='';
 
-	var $id;           // Id of driver
-	var $label;        // Label of driver
-	var $extension;    // Extension of files imported by driver
-	var $version;      // Version of driver
+    public $id;           // Id of driver
+	public $label;        // Label of driver
+	public $extension;    // Extension of files imported by driver
+	public $version;      // Version of driver
 
-	var $label_lib;    // Label of external lib used by driver
-	var $version_lib;  // Version of external lib used by driver
+	public $label_lib;    // Label of external lib used by driver
+	public $version_lib;  // Version of external lib used by driver
 
 	// Array of all drivers
-	var $_driverlabel=array();
-	var $_driverdesc=array();
-	var $_driverversion=array();
+	public $_driverlabel=array();
+	public $_driverdesc=array();
+	public $_driverversion=array();
 
-	var $_liblabel=array();
-	var $_libversion=array();
+	public $_liblabel=array();
+	public $_libversion=array();
 
 
 	/**

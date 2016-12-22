@@ -4857,12 +4857,13 @@ class Form
      * 	@param	int				$disabled		Html select box is disabled
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
-     *  @param	int				$addjscombo		Add js combo
+     *  @param	int				$addjscombo		    Add js combo
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
-     * 	@return	string							HTML select string.
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry. 
+     * 	@return	string							    HTML select string.
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='')
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0)
     {
         global $conf, $langs;
 
@@ -4907,7 +4908,10 @@ class Form
         	// Translate
         	if ($translate)
         	{
-	        	foreach($array as $key => $value) $array[$key]=$langs->trans($value);
+	        	foreach($array as $key => $value) 
+	        	{
+	        	    $array[$key]=$langs->trans($value);
+	        	}
         	}
 
         	// Sort
@@ -4916,8 +4920,19 @@ class Form
 
             foreach($array as $key => $value)
             {
+                $disabled=''; $style='';
+                if (! empty($disablebademail))
+                {
+                    if (! preg_match('/&lt;.+@.+&gt;/', $value))
+                    {
+                        //$value=preg_replace('/'.preg_quote($a,'/').'/', $b, $value);
+                        $disabled=' disabled';
+                        $style=' class="warning"';
+                    }
+                }
                 $out.='<option value="'.$key.'"';
-                if ($id != '' && $id == $key) $out.=' selected';		// To preselect a value
+                $out.=$style.$disabled;
+                if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
                 $out.='>';
 
                 if ($key_in_label)
@@ -4929,6 +4944,7 @@ class Form
                     $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
                     if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
+                //var_dump($selectOptionValue);
                 $out.=$selectOptionValue;
                 $out.="</option>\n";
             }

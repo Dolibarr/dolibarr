@@ -116,7 +116,7 @@ if ($socid > 0)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	// Remise
+	// Discount
 	print '<tr><td class="titlefield">';
 	print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 
@@ -127,13 +127,13 @@ if ($socid > 0)
 
 	print '<table class="border centpercent">';
 
-	// Nouvelle valeur
+	// New value
 	print '<tr><td class="titlefield">';
-	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
+	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'">%</td></tr>';
 
 	// Motif/Note
 	print '<tr><td>';
-	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
+	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note")).'"></td></tr>';
 
 	print "</table>";
 

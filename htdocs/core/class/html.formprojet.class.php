@@ -446,7 +446,7 @@ class FormProjets
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 *    @param	string		$table_element		Table of the element to update
-	 *    @param	int			$socid				If of thirdparty to use as filter
+	 *    @param	string		$socid				If of thirdparty to use as filter or 'id1,id2,...'
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
@@ -502,7 +502,11 @@ class FormProjets
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element." as t";
 		if ($linkedtothirdparty) $sql.=", ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE ".$projectkey." is null";
-		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
+		if (! empty($socid) && $linkedtothirdparty)
+		{
+		    if (is_numeric($socid)) $sql.= " AND t.fk_soc=".$socid;
+		    else $sql.= " AND t.fk_soc IN (".$socid.")";
+		}
 		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;

@@ -40,10 +40,10 @@ if ($user->societe_id) $socid=$user->societe_id;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$payment = new PaymentDonation($db);
+$object = new PaymentDonation($db);
 if ($id > 0) 
 {
-	$result=$payment->fetch($id);
+	$result=$object->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
 }
 
@@ -57,7 +57,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 {
 	$db->begin();
 
-	$result = $payment->delete($user);
+	$result = $object->delete($user);
 	if ($result > 0)
 	{
         $db->commit();
@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	}
 	else
 	{
-		setEventMessages($payment->error, $payment->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -76,7 +76,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 {
 	$db->begin();
 
-	$result=$payment->valide();
+	$result=$object->valide();
 	
 	if ($result > 0)
 	{
@@ -99,12 +99,12 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 			}
 		}
 
-		header('Location: card.php?id='.$payment->id);
+		header('Location: card.php?id='.$object->id);
 		exit;
 	}
 	else
 	{
-		setEventMessages($payment->error, $payment->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -133,7 +133,7 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment'
  */
 if ($action == 'delete')
 {
-	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	
 }
 
@@ -142,46 +142,51 @@ if ($action == 'delete')
  */
 if ($action == 'valide')
 {
-	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	$facid = GETPOST('facid','int');
+	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 	
 }
 
 
+dol_banner_tab($object,'id','',1,'rowid','id');
+
+print '<div class="underbanner clearboth"></div>';
+
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="20%">'.$langs->trans('Ref').'</td>';
+/*print '<tr><td class=">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($payment,'id','',1,'rowid','id');
+print $form->showrefnav($object,'id','',1,'rowid','id');
 print '</td></tr>';
+*/
 
 // Date
-print '<tr><td valign="top">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Number
-print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-    if ($payment->bank_account)
+    if ($object->bank_account)
     {
     	$bankline=new AccountLine($db);
-    	$bankline->fetch($payment->bank_line);
+    	$bankline->fetch($object->bank_line);
 
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1,0,'showall');
     	print '</td>';
     	print '</tr>';
@@ -269,7 +274,7 @@ print '<div class="tabsAction">';
 /*
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $payment->statut == 0 && $_GET['action'] == '')
+	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{

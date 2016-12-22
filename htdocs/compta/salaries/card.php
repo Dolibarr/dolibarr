@@ -257,7 +257,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
@@ -275,7 +275,7 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td>';
 	print fieldLabel('Amount','amount',1).'</td><td>';
-	print '<input name="amount" id="amount" size="10" value="'.GETPOST("amount").'">';
+	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
 	// Bank
