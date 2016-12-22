@@ -49,16 +49,19 @@ $result = restrictedArea($user, 'expensereport','','');
 
 $diroutputmassaction=$conf->expensereport->dir_output . '/temp/massgeneration/'.$user->id;
 
+
+// Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='c.ref';
-if (! $sortorder) $sortorder='DESC';
+if (!$sortorder) $sortorder="DESC";
+if (!$sortfield) $sortfield="d.date_debut";
+
 
 $sall         = GETPOST('sall');
 $search_ref   = GETPOST('search_ref');
@@ -176,20 +179,6 @@ llxHeader('', $langs->trans("ListOfTrips"));
 $max_year = 5;
 $min_year = 5;
 
-$sortorder     = GETPOST("sortorder");
-$sortfield     = GETPOST("sortfield");
-$page          = GETPOST("page");
-if (!$sortorder) $sortorder="DESC";
-if (!$sortfield) $sortfield="d.date_debut";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-
-if ($page == -1) {
-	$page = 0 ;
-}
-
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,";
