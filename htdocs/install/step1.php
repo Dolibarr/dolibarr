@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
@@ -129,7 +129,6 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("--- step1: entering step1.php page");
 
 $error = 0;
 
@@ -138,6 +137,7 @@ $error = 0;
  *	View
  */
 
+dolibarr_install_syslog("--- step1: entering step1.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"step2");
 
@@ -541,7 +541,14 @@ if (! $error && $db->connected && $action == "set")
             {
                 if ($db->connected)
                 {
-                    $result=$db->DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
+                    // Create user
+                    $tmpdolibarr_main_db_host = $dolibarr_main_db_host;
+                    if ($databasefortest == 'mysql')
+                    {
+                        if (! in_array($conf->db->host, array('127.0.0.1', 'localhost', 'localhost.local'))) $tmpdolibarr_main_db_host='%';
+                    }
+                    
+                    $result=$db->DDLCreateUser($tmpdolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
 
                     if ($result > 0)
                     {
