@@ -640,9 +640,14 @@ foreach ($listofreferent as $key => $value)
 		$addform='';
 
 		$idtofilterthirdparty=0;
-		if (! in_array($tablename, array('facture_fourn', 'commande_fournisseur'))) $idtofilterthirdparty=$object->thirdparty->id;
+		$array_of_element_linkable_with_different_thirdparty = array('facture_fourn', 'commande_fournisseur');
+		if (! in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) 
+		{
+		    $idtofilterthirdparty=$object->thirdparty->id;
+		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0)
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty)
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
