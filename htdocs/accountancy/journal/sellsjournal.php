@@ -435,7 +435,7 @@ if ($action == 'export_csv') {
                     print '"' . $date . '"' . $sep;
                     print '"' . $val["ref"] . '"' . $sep;
                     print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-                    print '"' . dol_trunc($companystatic->name, 16) . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+                    print '"' . dol_trunc($companystatic->name, 16) . ' - '  . $invoicestatic->ref . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
                     print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
                     print '"' . ($mt >= 0 ? price($mt) : '') . '"';
                     print "\n";
