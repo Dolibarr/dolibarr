@@ -78,6 +78,9 @@ function dol_getImageSize($file, $url = false)
 	if (!$url)
 	{
 		$fichier = realpath($file); 	// Chemin canonique absolu de l'image
+		// if problem with realpath
+		if ($fichier == false)
+			return $ret;		
 		$dir = dirname($file); 			// Chemin du dossier contenant l'image
 	}
 
