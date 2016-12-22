@@ -41,12 +41,13 @@
  * @param 	int		$socid			Third party id
  * @param	string	$action			Action string
  * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
- * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on type
+ * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on event type
  * @param	int		$usergroupid	Id of group to filter on users
- *  @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
+ * @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
+ * @param	int   	$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='', $excludetype='')
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='', $excludetype='', $resourceid=0)
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
@@ -65,7 +66,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="fichecenter">';
 
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap borderright">';
+	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
 	print '<table class="nobordernopadding">';
 
@@ -74,12 +75,26 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '</td><td class="maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		print '</td></tr>';
 
+		if ($conf->resource->enabled)
+		{
+		    include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
+		    $formresource=new FormResource($db);
+		    
+    		// Resource
+    		print '<tr>';
+    		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+    		print $langs->trans("Resource");
+    		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+            print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
+    		print '</td></tr>';
+		}
+		
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 
@@ -94,14 +109,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
         print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), 0, $multiselect);
-		print '</td></tr>';
-
-		// Status
-		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
 
@@ -125,6 +132,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
+		print '</td></tr>';
+	}
+
+	if ($canedit)
+	{
+		// Status
+		print '<tr>';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print $langs->trans("Status");
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
 
@@ -425,7 +443,7 @@ function agenda_prepare_head()
  */
 function actions_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -438,19 +456,27 @@ function actions_prepare_head($object)
     // Tab to link resources
 	if ($conf->resource->enabled)
 	{
+	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+	    $resource=new DolResource($db);
+	    
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
+        $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
+        $nbResources=count($listofresourcelinked);
 		$head[$h][1] = $langs->trans("Resources");
+		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
 		$h++;
 	}
 
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
     $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
-	if ($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'documents';
     $h++;
 
@@ -480,9 +506,9 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewCal");
-    $head[$h][2] = 'cardmonth';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewDay");
+    $head[$h][2] = 'cardday';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param?'&'.$param:'');
@@ -490,13 +516,20 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardweek';
     $h++;
 
-	//$paramday=$param;
-	//if (preg_match('/&month=\d+/',$paramday) && ! preg_match('/&day=\d+/',$paramday)) $paramday.='&day=1';
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewDay");
-    $head[$h][2] = 'cardday';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewCal");
+    $head[$h][2] = 'cardmonth';
     $h++;
 
+    //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+    if (! empty($conf->global->AGENDA_SHOW_PERTYPE))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param?'?'.$param:'');
+        $head[$h][1] = $langs->trans("ViewPerType");
+        $head[$h][2] = 'cardpertype';
+        $h++;
+    }
+    
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';

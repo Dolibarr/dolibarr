@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,6 @@ class DoliDBMysqli extends DoliDB
             $this->ok = false;
             $this->error="Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.";
             dol_syslog(get_class($this)."::DoliDBMysqli : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-            return $this->ok;
         }
 
         if (! $host)
@@ -84,7 +84,6 @@ class DoliDBMysqli extends DoliDB
             $this->ok = false;
             $this->error=$langs->trans("ErrorWrongHostParameter");
             dol_syslog(get_class($this)."::DoliDBMysqli : Connect error, wrong host parameters",LOG_ERR);
-            return $this->ok;
         }
 
 		// Try server connection
@@ -96,7 +95,6 @@ class DoliDBMysqli extends DoliDB
 			$this->ok = false;
 			$this->error = $this->db->connect_error;
 			dol_syslog(get_class($this) . "::DoliDBMysqli Connect error: " . $this->error, LOG_ERR);
-			return $this->ok;
 		} else {
 			$this->connected = true;
 			$this->ok = true;
@@ -115,11 +113,9 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if ($this->db->character_set_name() != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
+				if ($this->db->character_set_name() != $clientmustbe) {
+					$this->db->set_charset($clientmustbe);
+				}
             }
             else
             {
@@ -141,15 +137,11 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if ($this->db->character_set_name() != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
+				if ($this->db->character_set_name() != $clientmustbe) {
+					$this->db->set_charset($clientmustbe);
+				}
             }
         }
-
-        return $this->ok;
     }
 
 
@@ -203,7 +195,7 @@ class DoliDBMysqli extends DoliDB
      */
     function getVersion()
     {
-        return $this->db->get_server_info();
+        return $this->db->server_info;
     }
 
     /**
@@ -213,7 +205,7 @@ class DoliDBMysqli extends DoliDB
      */
 	function getDriverInfo()
 	{
-		return $this->db->get_client_info();
+		return $this->db->client_info;
 	}
 
 
@@ -381,7 +373,7 @@ class DoliDBMysqli extends DoliDB
      */
     function escape($stringtoencode)
     {
-        return addslashes($stringtoencode);
+        return $this->db->real_escape_string($stringtoencode);
     }
 
     /**
@@ -420,6 +412,7 @@ class DoliDBMysqli extends DoliDB
             1100 => 'DB_ERROR_NOT_LOCKED',
             1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
             1146 => 'DB_ERROR_NOSUCHTABLE',
+            1215 => 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT',
             1216 => 'DB_ERROR_NO_PARENT',
             1217 => 'DB_ERROR_CHILD_EXISTS',
             1396 => 'DB_ERROR_USER_ALREADY_EXISTS',    // When creating user already existing
@@ -540,8 +533,12 @@ class DoliDBMysqli extends DoliDB
     function DDLGetConnectId()
     {
         $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
+        if ($resql)
+        {
+            $row=$this->fetch_row($resql);
+            return $row[0];
+        }
+        else return '?';
     }
 
     /**

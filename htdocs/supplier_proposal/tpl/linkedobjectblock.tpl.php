@@ -19,7 +19,7 @@
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE LINKEDOBJECTBOCK-->
 
 <?php
 
@@ -28,27 +28,15 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedSupplierProposal'), '', '');
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
 $var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"),"supplier_proposal").' '.$objectlink->ref; ?></a></td>
+<tr <?php echo $bc[$var]; ?> >
+	<td><?php echo $langs->trans("SupplierProposal"); ?></td>
+	<td><a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"),"supplier_proposal").' '.$objectlink->ref; ?></a></td>
 	<td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->datec,'day'); ?></td>
 	<td align="right"><?php
@@ -61,17 +49,6 @@ foreach($linkedObjectBlock as $key => $objectlink)
 </tr>
 <?php
 }
-
 ?>
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php
-		if ($user->rights->supplier_proposal->lire) {
-			echo price($total);
-		} ?></td>
-	<td></td>
-	<td></td>
-</tr>
-</table>
 
 <!-- END PHP TEMPLATE -->

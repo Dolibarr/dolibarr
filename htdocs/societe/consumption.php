@@ -114,27 +114,25 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
-dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
 
-// Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-print '<td colspan="3">'.$object->name_alias.'</td></tr>';
-
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
 //if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 
 if ($object->client)
 {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
 	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -149,13 +147,14 @@ if ($object->client)
 	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
 	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
 	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 }
 
+if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
+
 if ($object->fournisseur)
 {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
 	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -250,6 +249,7 @@ if ($type_element == 'supplier_invoice')
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";
+	$where.= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='supplier';
@@ -262,6 +262,7 @@ if ($type_element == 'supplier_order')
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
@@ -275,12 +276,14 @@ if ($type_element == 'contract')
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_contrat = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
 
-if(!empty($sql_select)) {
+if (!empty($sql_select)) 
+{
 	$sql = $sql_select;
 	$sql.= ' d.description as description,';
 	if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
@@ -304,7 +307,7 @@ if(!empty($sql_select)) {
 		$end = dol_time_plus_duree($start,1,'y') - 1;
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	}
-	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
+	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	if ($sprod_fulldescr)
 	{
 	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
@@ -318,14 +321,21 @@ if(!empty($sql_select)) {
 	$totalnboflines = $db->num_rows($resql);
 	
 	$sql.= $db->plimit($limit + 1, $offset);
+	//print $sql;
 }
-//print $sql;
+
+$disabled=0;
+$showempty=2;
+if (empty($elementTypeArray) && ! $object->client && ! $object->fournisseur)
+{
+    $showempty=$langs->trans("ThirdpartyNotCustomerNotSupplierSoNoRef");
+    $disabled=1;
+}
 
 // Define type of elements
-$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
+$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled);
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
-
 
 
 if ($sql_select)
@@ -337,7 +347,8 @@ if ($sql_select)
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sprod_fulldescr) $param.= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 	if ($sref) $param.= "&sref=".urlencode($sref);
 	if ($month) $param.= "&month=".$month;
@@ -370,8 +381,8 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("resetFilters")).'" title="'.dol_escape_htmltag($langs->trans("resetFilters")).'">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
     print '</td>';
     print '</tr>';
 
@@ -572,7 +583,7 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
 
 	print "</table>";
 }
@@ -581,7 +592,7 @@ else {
 
     print '<table class="liste" width="100%">'."\n";
 
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";
 }

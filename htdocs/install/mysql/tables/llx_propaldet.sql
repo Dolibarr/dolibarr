@@ -53,8 +53,14 @@ create table llx_propaldet
   
   special_code						integer      DEFAULT 0,          -- code pour les lignes speciales
   rang								integer      DEFAULT 0,           -- ordre affichage sur la propal
-  fk_unit           integer      DEFAULT NULL           -- lien vers table des unités
+  fk_unit           integer      DEFAULT NULL,           -- lien vers table des unités
   
+  fk_multicurrency			integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

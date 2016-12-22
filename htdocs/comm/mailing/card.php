@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("mails");
@@ -55,27 +56,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('mailingcard','globalcard'));
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
-$object->substitutionarray=array(
-    '__ID__' => 'IdRecord',
-    '__EMAIL__' => 'EMail',
-    '__LASTNAME__' => 'Lastname',
-    '__FIRSTNAME__' => 'Firstname',
-    '__MAILTOEMAIL__' => 'TagMailtoEmail',
-    '__OTHER1__' => 'Other1',
-    '__OTHER2__' => 'Other2',
-    '__OTHER3__' => 'Other3',
-    '__OTHER4__' => 'Other4',
-    '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'TagSignature',
-    '__CHECK_READ__' => 'TagCheckMail',
-	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
-	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
-);
-if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-{
-	$object->substitutionarray['__SECUREKEYPAYPAL__']='SecureKeyPaypal';
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $object->substitutionarray['__SECUREKEYPAYPAL_MEMBER__']='SecureKeyPaypalUniquePerMember';
-}
+$object->substitutionarray=FormMail::getAvailableSubstitKey('emailing');
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -243,8 +224,18 @@ if (empty($reshook))
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
+							
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
+							
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
 						$substitutionisok=true;
 	                    complete_substitutions_array($substitutionarray, $langs);
@@ -268,7 +259,8 @@ if (empty($reshook))
 						}
 
 						// Fabrication du mail
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css);
+						$trackid='';  // TODO Define a trackid for mass emailing too. We can use source type for this.
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid);
 
 						if ($mail->error)
 						{
@@ -681,9 +673,9 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
 	$parameters=array();
@@ -697,11 +689,11 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
+	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
-	print '<tr><td width="25%" valign="top"><span class="fieldrequired">'.$langs->trans("MailMessage").'</span><br>';
+	print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("MailMessage").'</span><br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 	foreach($object->substitutionarray as $key => $val)
 	{
@@ -761,10 +753,12 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
+				// MAILING_NO_USING_PHPMAIL may be defined or not
+				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0, MAILING_LIMIT_SENDBYCLI may be defined ot not.
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
-					// You ensure that every user is using its own SMTP server.
+					// You ensure that every user is using its own SMTP server when using the mass emailing module.
 					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
 					$linktoadminemailend='</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
@@ -772,19 +766,27 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-					// on affiche donc juste un message
-					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+					// The feature is forbidden from GUI, we show just message to use from command line.
+				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
+					if ($conf->file->mailing_limit_sendbyweb != '-1')  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.
+					{
+					   setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');  // You can send online with constant...
+					}
 					$_GET["action"]='';
 				}
 				else
 				{
-					$text='';
-                    if ($conf->file->mailing_limit_sendbyweb == 0)
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+				    $text='';
+				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
                     	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
@@ -800,7 +802,7 @@ else
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
@@ -821,7 +823,9 @@ else
 			print '</td></tr>';
 
 			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+			if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
+			print'</td></tr>';
 
 			// Nb of distinct emails
 			print '<tr><td>';
@@ -882,7 +886,7 @@ else
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
-				if (($object->statut == 0) && $user->rights->mailing->creer)
+				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditMailing").'</a>';
 				}
@@ -955,7 +959,7 @@ else
 					}
 				}
 
-				print '<br><br></div>';
+				print '</div>';
 			}
 
 			// Affichage formulaire de TEST
@@ -1001,7 +1005,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
 
 			// Joined files
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
@@ -1027,7 +1031,7 @@ else
             print '</td></tr>';*/
 
 		    // Message
-			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+			print '<tr><td valign="top">'.$langs->trans("MailMessage").'<br>';
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			foreach($object->substitutionarray as $key => $val)
 			{
@@ -1059,20 +1063,25 @@ else
 
 			print '<table class="border" width="100%">';
 
-			// Ref
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+
+			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+			print '<td colspan="3">';
+			print $form->showrefnav($object,'id', $linkback);
+			print '</td></tr>';
+
 			// Topic
-			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 			// From
-			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
-			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
 
 			// Status
-			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
-			print '<tr><td width="25%">';
+			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
@@ -1115,9 +1124,10 @@ else
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$object->sujet.'"></td></tr>';
+			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$object->sujet.'"></td></tr>';
 
-			dol_init_file_process($upload_dir);
+			$trackid=''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
+			dol_init_file_process($upload_dir, $trackid);
 
 			// Joined files
 			$addfileaction='addfile';
@@ -1156,12 +1166,12 @@ else
 			print '</td></tr>';
 
 		    // Background color
-			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
 			print '</td></tr>';
 
 			// Message
-			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+			print '<tr><td valign="top">'.$langs->trans("MailMessage").'<br>';
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			foreach($object->substitutionarray as $key => $val)
 			{

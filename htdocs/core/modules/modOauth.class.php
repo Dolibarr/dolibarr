@@ -105,14 +105,14 @@ class modOauth extends DolibarrModules
         $r=0;
 
         // This is to declare the Top Menu entry:
-        //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',               // Put 0 if this is a top menu
+        //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
         //                        'type'=>'left',                 // This is a Top menu entry
         //                        'titre'=>'MenuOauth',
         //                        'mainmenu'=>'oauth',
         //                        'url'=>'/oauth/index.php',
         //                        'langs'=>'oauth',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         //                        'position'=>300,
-        //                        'enabled'=>'$conf->oauth->enabled && $leftmenu==\'modulesadmintools\'',
+        //                        'enabled'=>'$conf->oauth->enabled && $leftmenu==\'admintools\'',
         //                        'perms'=>'$user->rights->oauth->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
         //                        'target'=>'',
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
@@ -137,11 +137,6 @@ class modOauth extends DolibarrModules
 
         // Clean before activation
         $this->remove($options);
-
-        $sql = array(
-            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."oauth_state (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), state varchar(128), fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."oauth_token (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), token text, fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-            );
 
         return $this->_init($sql,$options);
     }

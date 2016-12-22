@@ -18,18 +18,11 @@ ExportableFields=مجالات للتصدير
 ExportedFields=صدرت المجالات
 ImportModelName=استيراد صورة الاسم
 ImportModelSaved=استيراد صورة المحفوظة تحت اسم <b>٪ ق.</b>
-ImportableFields=ارداتها المجالات
-ImportedFields=الحقول المستوردة
 DatasetToExport=بيانات التصدير
 DatasetToImport=استيراد البيانات
-NoDiscardedFields=يتم تجاهل أي حقول في الملف المصدر
-Dataset=بيانات
 ChooseFieldsOrdersAndTitle=اختيار الحقول من أجل...
-FieldsOrder=المجالات من أجل
 FieldsTitle=عنوان الحقول
-FieldOrder=مجال النظام
 FieldTitle=حقل العنوان
-ChooseExportFormat=اختيار شكل للتصدير
 NowClickToGenerateToBuildExportFile=الآن ، انقر على "توليد" لبناء ملف التصدير...
 AvailableFormats=الصيغ المتاحة و
 LibraryShort=المكتبة
@@ -45,7 +38,7 @@ FormatedExportDesc2=والخطوة الأولى هي اختيار مجموعة �
 FormatedExportDesc3=عند تصدير البيانات ويتم اختيار ، يمكنك تحديد صيغة الملف الناتج تريد تصديره إلى بياناتك.
 Sheet=ورقة
 NoImportableData=لا ارداتها البيانات (أي وحدة مع السماح للبيانات تعريفات الواردات)
-FileSuccessfullyBuilt=ملف التصدير ولدت
+FileSuccessfullyBuilt=File generated
 SQLUsedForExport=SQL طلب استخدامه لبناء ملف التصدير
 LineId=معرف السطر
 LineLabel=تسمية الخط
@@ -72,13 +65,10 @@ MoveField=تحرك %s حقل رقم العمود
 ExampleOfImportFile=Example_of_import_file
 SaveImportProfile=حفظ هذا الملف الاستيراد
 ErrorImportDuplicateProfil=فشلت في انقاذ هذا الملف استيراد بهذا الاسم. تشكيل جانبي موجود مسبقا بهذا الاسم.
-ImportSummary=استيراد الإعداد ملخص
 TablesTarget=استهدفت الجداول
 FieldsTarget=استهداف حقول
-TableTarget=استهدفت الجدول
 FieldTarget=استهدف حقل
 FieldSource=مصدر الحقل
-DoNotImportFirstLine=لا استيراد السطر الأول من الملف المصدر
 NbOfSourceLines=عدد الأسطر في الملف المصدر
 NowClickToTestTheImport=الاختيار المعلمات استيراد عرفتها. وإذا كانت صحيحة ، انقر على <b>%s</b> "زر" لإطلاق محاكاة لعملية الاستيراد (يمكن تغيير أية بيانات في قاعدة البيانات وسوف ، انها مجرد محاكاة لحظة)...
 RunSimulateImportFile=بدء استيراد محاكاة
@@ -119,11 +109,6 @@ ExportFieldAutomaticallyAdded=وأضافت <b>الحقل٪ الصورة</b> تل
 CsvOptions=خيارات CSV
 Separator=الفاصل
 Enclosure=سياج
-SuppliersProducts=المنتوجات
-BankCode=رمز المصرف
-DeskCode=مدونة مكتبية
-BankAccountNumber=رقم الحساب
-BankAccountNumberKey=مفتاح
 SpecialCode=رمز خاص
 ExportStringFilter=٪٪ يسمح استبدال حرف واحد أو أكثر في النص
 ExportDateFilter=YYYY، YYYYMM، YYYYMMDD: فلاتر لسنة واحدة / شهر / يوم <br> YYYY + YYYY، YYYYMM + YYYYMM، YYYYMMDD + YYYYMMDD: مرشحات على مجموعة من سنوات / أشهر / أيام <br> > YYYY،> YYYYMM،> YYYYMMDD: مرشحات على جميع السنوات / أشهر / يوما التالية <br> <YYYY، <YYYYMM، <YYYYMMDD: مرشحات على جميع السنوات / أشهر / يوما السابقة
@@ -134,7 +119,6 @@ SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude th
 KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 ## filters
 SelectFilterFields=إذا كنت ترغب في تصفية على بعض القيم، قيم الإدخال فقط هنا.
-FilterableFields=الحقول تصفيتها
 FilteredFields=الحقول التي تمت تصفيتها
 FilteredFieldsValues=قيمة للمرشح
 FormatControlRule=حكم عنصر تنسيق

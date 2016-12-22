@@ -229,7 +229,7 @@ function limitChars(textarea, limit, infodiv)
                 }
                 else
                 {
-                    print '<span class="error">'.$langs->trans("SmsNoPossibleRecipientFound");
+                    print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
                     if (is_object($sms) && ! empty($sms->error)) print ' '.$sms->error;
                     print '</span>';
                 }
@@ -304,10 +304,10 @@ function limitChars(textarea, limit, infodiv)
 
            <tr><td>'.$langs->trans("Priority").' :</td><td>
            <select name="priority" id="valid" class="flat">
-           <option value="0">0</option>
-           <option value="1">1</option>
-           <option value="2">2</option>
-           <option value="3" selected>3</option>
+           <option value="0">high</option>
+           <option value="1">medium</option>
+           <option value="2" selected>low</option>
+           <option value="3">veryLow</option>
            </select></td></tr>
 
            <tr><td>'.$langs->trans("Type").' :</td><td>

@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - incoterm
-IncotermSetup=Configuración del módulo de Incoterm
-IncotermFunctionDesc=Activar función Incoterm (thirdparty, Propuesta, pedido del cliente, la factura del cliente, envío, orden Proveedor)

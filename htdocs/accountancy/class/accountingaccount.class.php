@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountingaccount.class.php
- * \ingroup Accounting Expert
- * \brief Fichier de la classe des comptes comptable
+ * \file		htdocs/accountancy/class/accountingaccount.class.php
+ * \ingroup		Advanced accountancy
+ * \brief		File of class to manage accounting accounts
  */
 
 /**
@@ -41,10 +41,12 @@ class AccountingAccount extends CommonObject
 	var $pcg_subtype;
 	var $account_number;
 	var $account_parent;
+	var $account_category;
 	var $label;
 	var $fk_user_author;
 	var $fk_user_modif;
-	var $active;
+	var $active;       // duplicate with status
+	var $status;
 	
 	/**
 	 * Constructor
@@ -58,25 +60,29 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param int $rowid Id
-	 * @param string $account_number Account number
-	 * @param int $limittocurentchart 1=Do not load record if it is into another accounting system
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	int 	$rowid 				Id
+	 * @param 	string 	$account_number 	Account number
+	 * @param 	int 	$limittocurrentchart 1=Do not load record if it is into another accounting system
+	 * @return 	int <0 if KO, >0 if OK
 	 */
-	function fetch($rowid = null, $account_number = null, $limittocurentchart = 0) {
+	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
 		global $conf;
 		
 		if ($rowid || $account_number) {
-			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account WHERE";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql .= ", ca.label as category_label";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
+			$sql .= " WHERE";
 			if ($rowid) {
-				$sql .= " rowid = '" . $rowid . "'";
+				$sql .= " a.rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
-				$sql .= " account_number = '" . $account_number . "'";
+				$sql .= " a.account_number = '" . $account_number . "'";
 			}
-			if (! empty($limittocurentchart)) {
-				$sql .= ' AND fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+			if (! empty($limittocurrentchart)) {
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 			}
+
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -93,9 +99,12 @@ class AccountingAccount extends CommonObject
 					$this->account_number = $obj->account_number;
 					$this->account_parent = $obj->account_parent;
 					$this->label = $obj->label;
+					$this->account_category = $obj->fk_accounting_category;
+					$this->account_category_label = $obj->category_label;
 					$this->fk_user_author = $obj->fk_user_author;
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
+					$this->status = $obj->active;
 					
 					return $this->id;
 				} else {
@@ -110,7 +119,7 @@ class AccountingAccount extends CommonObject
 	}
 	
 	/**
-	 * Insert line in accounting_account
+	 * Insert new accounting account in chart of accounts
 	 *
 	 * @param User $user Use making action
 	 * @param int $notrigger Disable triggers
@@ -134,6 +143,8 @@ class AccountingAccount extends CommonObject
 			$this->account_parent = trim($this->account_parent);
 		if (isset($this->label))
 			$this->label = trim($this->label);
+		if (isset($this->account_category))
+			$this->account_category = trim($this->account_category);
 		if (isset($this->fk_user_author))
 			$this->fk_user_author = trim($this->fk_user_author);
 		if (isset($this->active))
@@ -153,6 +164,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", account_number";
 		$sql .= ", account_parent";
 		$sql .= ", label";
+		$sql .= ", fk_accounting_category";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
 		
@@ -166,6 +178,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (! isset($this->account_number) ? 'NULL' : "'" . $this->account_number . "'");
 		$sql .= ", " . (! isset($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
 		$sql .= ", " . (! isset($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
+		$sql .= ", " . (! isset($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : "'" . $this->db->escape($this->active) . "'");
 		
@@ -226,6 +239,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , account_number = '" . $this->account_number . "'";
 		$sql .= " , account_parent = '" . $this->account_parent . "'";
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
+		$sql .= " , fk_accounting_category = '" . $this->account_category . "'";
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = '" . $this->active . "'";
 		
@@ -452,5 +466,62 @@ class AccountingAccount extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
+	}
+	
+	
+	/**
+	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut($this->status,$mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	    $langs->load('users');
+	
+	    if ($mode == 0)
+	    {
+	        $prefix='';
+	        if ($statut == 1) return $langs->trans('Enabled');
+	        if ($statut == 0) return $langs->trans('Disabled');
+	    }
+	    if ($mode == 1)
+	    {
+	        if ($statut == 1) return $langs->trans('Enabled');
+	        if ($statut == 0) return $langs->trans('Disabled');
+	    }
+	    if ($mode == 2)
+	    {
+	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+	    }
+	    if ($mode == 3)
+	    {
+	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
+	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
+	    }
+	    if ($mode == 4)
+	    {
+	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+	    }
+	    if ($mode == 5)
+	    {
+	        if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+	        if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+	    }
 	}
 }

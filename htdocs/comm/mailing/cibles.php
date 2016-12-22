@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -38,11 +38,12 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
@@ -121,9 +122,10 @@ if (GETPOST('clearlist'))
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
-
+	/* Avoid this to allow reposition
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
+	*/
 }
 
 if ($action == 'delete')
@@ -181,28 +183,30 @@ if ($object->fetch($id) >= 0)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object,'id', $linkback);
 	print '</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 
 	// Errors to
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1);
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1);
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+	if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
+	print '</td></tr>';
 
 	// Nb of distinct emails
-	print '<tr><td width="25%">';
+	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td colspan="3">';
 	$nbemail = ($object->nbemail?$object->nbemail:'0');
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && ($conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2))
 	{
 		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 		print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -224,7 +228,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -367,11 +371,21 @@ if ($object->fetch($id) >= 0)
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
 	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
-	$sql .= $db->plimit($conf->liste_limit+1, $offset);
+
+	// Count total nb of records
+	$nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+	    $result = $db->query($sql);
+	    $nbtotalofrecords = $db->num_rows($result);
+	}
+	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
+	$sql .= $db->plimit($limit+1, $offset);
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+	    
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
@@ -385,12 +399,12 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		$cleartext='';
 		if ($allowaddtarget) {
-			$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
+		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-
-		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
-
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
+		
 		print '</form>';
 
 		print "\n<!-- Liste destinataires selectionnes -->\n";
@@ -399,7 +413,8 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		
 
 		if ($page)			$param.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
@@ -526,7 +541,7 @@ if ($object->fetch($id) >= 0)
 					print '</td>';
 				}
 
-				//Sreach Icon
+				// Search Icon
 				print '<td align="right">';
 				if ($obj->statut == 0)
 				{
@@ -542,7 +557,12 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="8">'.$langs->trans("NoTargetYet").'</td></tr>';
+			if ($object->statut < 2) 
+			{
+			    print '<tr '.$bc[false].'><td colspan="8" class="opacitymedium">';
+    			print $langs->trans("NoTargetYet");
+    			print '</td></tr>';
+			}
 		}
 		print "</table><br>";
 

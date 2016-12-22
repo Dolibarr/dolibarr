@@ -175,8 +175,14 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
     }
     exit;
 }
-$lockfile=DOL_DATA_ROOT.'/install.lock';
-if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
+
+$lockfile = DOL_DATA_ROOT . '/install.lock';
+if (constant('DOL_DATA_ROOT') === null) {
+	// We don't have a configuration file yet
+	// Try to detect any lockfile in the default documents path
+	$lockfile = '../../documents/install.lock';
+}
+if (@file_exists($lockfile))
 {
     print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
     if (! empty($dolibarr_main_url_root))
@@ -414,7 +420,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 /**
  * Print HTML footer of install pages
  *
- * @param 	integer	$nonext				1=No button "Next step", 2=Show button but disabled
+ * @param 	integer	$nonext				1=No button "Next step", 2=Show button but disabled with a link to enable
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
  * @param	integer	$withpleasewait		Add also please wait tags
@@ -433,7 +439,13 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
 
     if (! $nonext || ($nonext == '2'))
     {
-        print '<div class="nextbutton" id="nextbutton"><input type="submit" '.($nonext == '2' ? 'disabled="disabled" title="DisabledBecauseOfErrorAddParamignoreerrors"':'').'value="'.$langs->trans("NextStep").' ->"';
+        print '<div class="nextbutton" id="nextbutton">';
+        if ($nonext == '2')
+		{
+			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';	
+		}
+        
+        print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ':'').'value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
         if ($withpleasewait) print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';

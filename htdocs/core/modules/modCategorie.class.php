@@ -45,6 +45,7 @@ class modCategorie extends DolibarrModules
 		$this->numero = 1780;
 
 		$this->family = "technic";
+		$this->module_position = 20;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des categories (produits, clients, fournisseurs...)";
@@ -53,7 +54,7 @@ class modCategorie extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
+		$this->special = 0;
 		$this->picto = 'category';
 
 		// Data directories to create when module is enabled
@@ -64,7 +65,7 @@ class modCategorie extends DolibarrModules
 
 		// Config pages
 		$this->config_page_url = array('categorie.php@categories');
-		$this->langfiles = array("products","companies","categories");
+		$this->langfiles = array("products","companies","categories","members");
 
 		// Constants
 		$this->const = array();
@@ -181,7 +182,7 @@ class modCategorie extends DolibarrModules
 			'u.label' => "Label",
 			'u.description' => "Description",
 			'p.rowid' => 'ContactId',
-			'p.civility' => 'Civility',
+			'p.civility' => 'UserTitle',
 			'p.lastname' => 'LastName',
 			'p.firstname' => 'Firstname',
 			'p.address' => 'Address',

@@ -72,9 +72,7 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-    
-
-    
+        
 /*
  * View
  */
@@ -112,9 +110,15 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.=" AND d.amount='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
 
 $sql.= $db->order($sortfield,$sortorder);
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -124,18 +128,18 @@ if ($resql)
 	$i = 0;
 
 	$param = '&statut='.$statut;
-    if ($page > 0) $param.= '&page='.$page;
+    //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	if ($statut >= 0)
 	{
 	    $donationstatic->statut=$statut;
 	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	}
 
 
@@ -166,6 +170,7 @@ if ($resql)
 	}
 	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print "</tr>\n";
 
     // Filters lines
@@ -189,14 +194,17 @@ if ($resql)
         print '</td>';
     }
     print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+    print '<td class="liste_titre" align="right"></td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
 	$var=True;
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		$donationstatic->id=$objp->rowid;
@@ -224,7 +232,7 @@ if ($resql)
 		}
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
-
+        print '<td></td>';
 		print "</tr>";
 		$i++;
 	}

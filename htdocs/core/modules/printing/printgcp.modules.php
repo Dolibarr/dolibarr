@@ -25,7 +25,6 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-use OAuth\Common\Storage\Session;
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
@@ -58,7 +57,7 @@ class printing_printgcp extends PrintingDriver
      */
     function __construct($db)
     {
-        global $conf, $dolibarr_main_url_root;
+        global $conf, $langs, $dolibarr_main_url_root;
 
         // Define $urlwithroot
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -67,7 +66,7 @@ class printing_printgcp extends PrintingDriver
         $this->db = $db;
         
         if (!$conf->oauth->enabled) {
-            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'ModuleAuthNotActive', 'type'=>'info');
+            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"), 'type'=>'info');
         } else {
          
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
@@ -459,7 +458,7 @@ class printing_printgcp extends PrintingDriver
         else
         {
                 $html .= '<tr '.$bc[$var].'>';
-                $html .= '<td colspan="6">'.$langs->trans("None").'</td>';
+                $html .= '<td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';
         }
         $html .= '</table>';

@@ -1,0 +1,17 @@
+README
+------
+
+*** Demo
+
+Scripts in this directory can be used to reinit a demo database.
+WARNING: This will erase current database with data into initdemo.sql.
+
+Do a chmod 700 initdemo.sh
+then run ./initdemo.sh to launch Graphic User Interface.
+
+Install of package "dialog" is required.
+
+
+*** Other
+
+Other scripts into initdata can be used to load data test.

@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
@@ -64,7 +65,7 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($object->courant != 2)
+    if ($object->courant != Account::TYPE_CASH)
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
@@ -74,11 +75,13 @@ function bank_prepare_head(Account $object)
 
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/document.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("Documents");
-    if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'document';
     $h++;
 
@@ -108,6 +111,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
+
+    $head[$h][0] = DOL_URL_ROOT . '/admin/chequereceipts.php';
+    $head[$h][1] = $langs->trans("CheckReceiptShort");
+    $head[$h][2] = 'checkreceipts';
+    $h++;
 
 
 	// Show more tabs from modules

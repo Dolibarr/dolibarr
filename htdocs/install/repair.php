@@ -631,7 +631,7 @@ if (empty($actiondone))
 }
 
 
-print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 print $langs->trans("GoToDolibarr");
 print '</a></div>';
 

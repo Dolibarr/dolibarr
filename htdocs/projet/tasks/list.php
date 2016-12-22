@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,11 @@ $id=GETPOST('id','int');
 
 $search_all=GETPOST('search_all');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) $search_projectstatus=1;
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
+{
+    if ($search_all != '') $search_projectstatus=-1;
+    else $search_projectstatus=1;
+}
 else $search_projectstatus=GETPOST('search_projectstatus');
 $search_project_ref=GETPOST('search_project_ref');
 $search_project_title=GETPOST('search_project_title');
@@ -58,8 +62,8 @@ $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$contextpage='tasklist';
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
@@ -74,10 +78,10 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -146,6 +150,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $day='';
     $month='';
     $year='';
+    $search_array_options=array();
 }
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
 
@@ -213,12 +218,12 @@ else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update";
 $sql.= ", t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
-// Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -236,8 +241,8 @@ if ($search_task_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 }
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity IN (".getEntity('project').')';
-if (! $user->rights->projet->all->lire) $sql.=" p.rowid IN (".join(',',$projectsListId).")";    // public and assigned to projects, or restricted to company for external users
+$sql.= " AND p.entity IN (".getEntity('project',1).')';
+if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
@@ -303,7 +308,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
-
+//print $sql;
 
 dol_syslog("list allowed project", LOG_DEBUG);
 //print $sql;
@@ -314,7 +319,9 @@ if ($resql)
     $num = $db->num_rows($resql);
 
     $param='';
-	if ($sday)              		$param.='&sday='.$day;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
 	if ($syear)               		$param.='&syear=' .$syear;
 	if ($day)               		$param.='&day='.$day;
@@ -341,8 +348,6 @@ if ($resql)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     }
         
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
-    
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -352,12 +357,14 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
     
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+    
     // Show description of content
     if ($search_task_user == $user->id) print $langs->trans("MyTasksDesc").'<br><br>';
     else
     {
-        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-        else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksOnProjectsDesc").'<br><br>';
+        else print $langs->trans("TasksOnProjectsPublicDesc").'<br><br>';
     }
     
     if ($search_all)
@@ -533,8 +540,8 @@ if ($resql)
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
     print '</td>';
     print '</tr>';
     
@@ -549,12 +556,15 @@ if ($resql)
     	$projectstatic->title = $obj->projecttitle;
     	$projectstatic->public = $obj->public;
     	$projectstatic->statut = $obj->projectstatus;
+    	$projectstatic->datee = $db->jdate($obj->projectdatee);
     	
     	$taskstatic->id = $obj->id;
     	$taskstatic->ref = $obj->ref;
     	$taskstatic->label = $obj->label;
     	$taskstatic->fk_statut = $obj->fk_statut;
     	$taskstatic->progress = $obj->progress;
+    	$taskstatic->datee = $db->jdate($obj->date_end);	// deprecated
+    	$taskstatic->date_end = $db->jdate($obj->date_end);
     	
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
@@ -567,6 +577,7 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1, 'task');
+        		if ($projectstatic->hasDelay()) print img_warning("Late");
         		print '</td>';
         	}
     		// Title
@@ -604,6 +615,7 @@ if ($resql)
         	{
         	    print '<td>';
         	    print $taskstatic->getNomUrl(1,'withproject');
+        		if ($taskstatic->hasDelay()) print img_warning("Late");
         	    print '</td>';
         	}        	 
     	    // Label

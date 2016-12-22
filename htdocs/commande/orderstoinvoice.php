@@ -77,7 +77,7 @@ $extralabels=$extrafields->fetch_name_optionals_label('facture');
 
 if ($action == 'create')
 {
-	if (is_array($selected) == false)
+	if (! is_array($selected))
 	{
 		$error++;
 		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
@@ -228,7 +228,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							{
 								if ($closeOrders)
 								{
-									$objectsrc->classifyBilled();
+									$objectsrc->classifyBilled($user);
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
@@ -665,7 +665,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
-			print $generic_commande->getNomUrl(1,$objp->fk_statut);
+			print $generic_commande->getNomUrl(1,0);
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';

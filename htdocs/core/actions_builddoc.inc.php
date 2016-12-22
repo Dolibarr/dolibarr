@@ -51,20 +51,20 @@ if ($action == 'builddoc' && $permissioncreate)
         // Save last template used to generate document
     	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
     
-        // Special case for invoices
-        if (property_exists($object, 'fk_bank'))
-        {
+        // Special case to force bank account
+        //if (property_exists($object, 'fk_bank'))
+        //{
             if (GETPOST('fk_bank')) { // this field may come from an external module
                 $object->fk_bank = GETPOST('fk_bank');
-            } else {
+            } else if (! empty($object->fk_account)) {
                 $object->fk_bank = $object->fk_account;
             }
-        }
+        //}
 
         $outputlangs = $langs;
         $newlang='';
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->client->default_lang)) $newlang=$object->client->default_lang;  // for proposal, order, invoice, ...
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang=$object->thirdparty->default_lang;  // for proposal, order, invoice, ...
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang=$object->default_lang;                  // for thirdparty
         if (! empty($newlang))
         {

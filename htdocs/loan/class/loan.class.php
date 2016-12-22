@@ -72,7 +72,7 @@ class Loan extends CommonObject
     function fetch($id)
     {
         $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
-		$sql.= " l.paid";
+		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
 
@@ -84,17 +84,22 @@ class Loan extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
-                $this->datestart      = $this->db->jdate($obj->datestart);
-				$this->dateend	      = $this->db->jdate($obj->dateend);
-                $this->label          = $obj->label;
-                $this->capital        = $obj->capital;
-				$this->nbterm		  = $obj->nbterm;
-				$this->rate           = $obj->rate;
-                $this->note_private   = $obj->note_private;
-                $this->note_public    = $obj->note_public;
-				$this->paid           = $obj->paid;
+                $this->id             		= $obj->rowid;
+				$this->ref            		= $obj->rowid;
+                $this->datestart      		= $this->db->jdate($obj->datestart);
+				$this->dateend	      		= $this->db->jdate($obj->dateend);
+                $this->label          		= $obj->label;
+                $this->capital        		= $obj->capital;
+				$this->nbterm		  		= $obj->nbterm;
+				$this->rate           		= $obj->rate;
+                $this->note_private   		= $obj->note_private;
+                $this->note_public    		= $obj->note_public;
+				$this->paid           		= $obj->paid;
+
+				$this->account_capital		= $obj->accountancy_account_capital;
+				$this->account_insurance	= $obj->accountancy_account_insurance;
+				$this->account_interest		= $obj->accountancy_account_interest;
+				
 
                 return 1;
             }

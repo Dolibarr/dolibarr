@@ -41,6 +41,10 @@ create table llx_product_price
   tosell			tinyint DEFAULT 1,
   price_by_qty		integer NOT NULL DEFAULT 0,
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
-  import_key 		varchar(14)
+  import_key 		varchar(14),
+  
+  fk_multicurrency		integer,
+  multicurrency_code	varchar(255),
+  multicurrency_price	double(24,8) DEFAULT NULL
 )ENGINE=innodb;
 

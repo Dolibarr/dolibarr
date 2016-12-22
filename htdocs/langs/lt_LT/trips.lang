@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Išlaidų ataskaita
 ExpenseReports=Išlaidų ataskaitos
-Trip=Išlaidų ataskaita
 Trips=Išlaidų ataskaitos
 TripsAndExpenses=Išlaidų ataskaitos
 TripsAndExpensesStatistics=Išlaidų ataskaitų statistika
@@ -12,21 +11,18 @@ ListOfFees=Įmokų sąrašas
 ShowTrip=Rodyti išlaidų ataskaitą
 NewTrip=Nauja išlaidų ataskaita
 CompanyVisited=Aplankyta įmonė/organizacija
-Kilometers=Kilometrų
 FeesKilometersOrAmout=Suma arba Kilometrai
 DeleteTrip=Ištrinti išlaidų ataskaitą
 ConfirmDeleteTrip=Ar tikrai norite ištrinti šią išlaidų ataskaitą ?
 ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
 ListToApprove=Laukiama patvirtinimo
 ExpensesArea=Išlaidų ataskaitų sritis
-SearchATripAndExpense=Išlaidų ataskaitos paieška
 ClassifyRefunded=Klasifikuoti "Grąžinta"
 ExpenseReportWaitingForApproval=Nauja išlaidų ataskaita buvo pateikta patvirtinimui
 ExpenseReportWaitingForApprovalMessage=Nauja išlaidų ataskaita buvo pateikta ir laukia patvirtinimo.\n- Vartotojas: %s\n- Laikotarpis:%s \nSpauskite čia norėdami patvirtinti: %s
 TripId=Išlaidų ataskaitos ID
 AnyOtherInThisListCanValidate=Asmuo informuojamas patvirtinimui.
 TripSociete=Informacijos įmonė
-TripSalarie=Informacijos vartotojas
 TripNDF=Informacijos išlaidų ataskaiata
 PDFStandardExpenseReports=Standartinis šablonas PDF dokumento išlaidų ataskaitoje generavimui
 ExpenseReportLine=Išlaidų ataskaitos eilutė
@@ -43,13 +39,8 @@ TF_HOTEL=Viešbutis
 TF_TAXI=Taksi
 
 ErrorDoubleDeclaration=Jūs deklaravote kitą išlaidų ataskaitą panašiame laiko periode.
-AucuneNDF=Pagal šį kriterijų nerasta išlaidų ataskaitos
 AucuneLigne=Dar nėra deklaruotos išlaidų ataskaitos
-AddLine=Pridėti eilutę
-AddLineMini=Pridėti
 
-Date_DEBUT=Laikotarpio pradžia
-Date_FIN=Laikotarpio pabaiga
 ModePaiement=Mokėjimo būdas
 
 VALIDATOR=Vartotojas atsakingas už patvirtinimą
@@ -64,21 +55,15 @@ MOTIF_CANCEL=Priežastis
 
 DATE_REFUS=Atmetimo data
 DATE_SAVE=Patvirtinimo data
-DATE_VALIDE=Patvirtinimo data
 DATE_CANCEL=Nutraukimo data
 DATE_PAIEMENT=Mokėjimo data
 
-TO_PAID=Mokėti
 BROUILLONNER=Atidaryti iš naujo
-SendToValid=Išsiųstas patvirtinimui
-ModifyInfoGen=Redaguoti
 ValidateAndSubmit=Įvertinti ir pateikti tvirtinimui
 ValidatedWaitingApproval=Pripažintas (laukia patvirtinimo)
 
-NOT_VALIDATOR=Jums neleidžiama patvirtinti šią išlaidų ataskaitą
 NOT_AUTHOR=Jūs nesate šios išlaidų ataskaitos autorius. Operacija nutraukta.
 
-RefuseTrip=Atmesti išlaidų ataskaitą
 ConfirmRefuseTrip=Ar tikrai norite atmesti šią išlaidų ataskaitą ?
 
 ValideTrip=Patvirtinti išlaidų ataskaitą
@@ -87,7 +72,6 @@ ConfirmValideTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
 PaidTrip=Apmokėti išlaidų ataskaitą
 ConfirmPaidTrip=Ar tikrai norite pakeisti šios išlaidų ataskaitos būklę į "Apmokėta" ?
 
-CancelTrip=Nutraukti išlaidų ataskaitą
 ConfirmCancelTrip=Ar tikrai norite nutraukti šią išlaidų ataskaitą ?
 
 BrouillonnerTrip=Grąžinti išlaidų ataskaitos būklę į "Projektas"

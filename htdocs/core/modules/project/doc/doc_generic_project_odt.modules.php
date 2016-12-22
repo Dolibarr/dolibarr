@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,25 +108,26 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs)
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
 		global $conf;
 
 		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_title'=>$object->title,
-		'object_description'=>$object->description,
-		'object_date_creation'=>dol_print_date($object->date_c,'day'),
-		'object_date_modification'=>dol_print_date($object->date_m,'day'),
-		'object_date_start'=>dol_print_date($object->date_start,'day'),
-		'object_date_end'=>dol_print_date($object->date_end,'day'),
-		'object_note_private'=>$object->note_private,
-		'object_note_public'=>$object->note_public,
-		'object_public'=>$object->public,
-		'object_statut'=>$object->getLibStatut()
+		    $array_key.'_id'=>$object->id,
+            $array_key.'_ref'=>$object->ref,
+            $array_key.'_title'=>$object->title,
+            $array_key.'_description'=>$object->description,
+            $array_key.'_date_creation'=>dol_print_date($object->date_c,'day'),
+            $array_key.'_date_modification'=>dol_print_date($object->date_m,'day'),
+            $array_key.'_date_start'=>dol_print_date($object->date_start,'day'),
+            $array_key.'_date_end'=>dol_print_date($object->date_end,'day'),
+            $array_key.'_note_private'=>$object->note_private,
+            $array_key.'_note_public'=>$object->note_public,
+            $array_key.'_public'=>$object->public,
+            $array_key.'_statut'=>$object->getLibStatut()
 		);
 
 		// Retrieve extrafields
@@ -356,7 +358,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->PROJECT_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -465,6 +485,22 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				dol_mkdir($conf->projet->dir_temp);
 
+				// If PROJECTLEADER contact defined on project, we use it
+				$usecontact=false;
+				$arrayidcontact=$object->getIdContact('external','PROJECTLEADER');
+				if (count($arrayidcontact) > 0)
+				{
+					$usecontact=true;
+					$result=$object->fetch_contact($arrayidcontact[0]);
+				}
+
+				// Recipient name
+				if (! empty($usecontact))
+				{
+        			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
+        			$contactobject = $object->contact;
+				}
+
 				$socobject=$object->thirdparty;
 
 				// Make substitution
@@ -473,6 +509,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
+				// Call the ODTSubstitution hook
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
@@ -507,11 +546,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
+                // retrieve contact information for use in project as contact_xxx tags
+        		$array_project_contact = array();
+        		if ($usecontact)
+            			$array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				foreach($tmparray as $key=>$value)
 				{
@@ -696,9 +739,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 				catch(OdfException $e)
 				{
-					$this->error=$e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					$ExceptionTrace=$e->getTrace();
+					// no segment defined on ODT is not an error
+					if($ExceptionTrace[0]['function'] != 'setSegment')
+					{
+						$this->error=$e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace tags of project files
@@ -958,7 +1006,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 
@@ -979,7 +1027,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						return -1;
 					}
 				}
-
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))

@@ -109,7 +109,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function getExample($langs,$objproduct=0)
 	{
-		$examplebarcode = $this->getNextValue($objproduct,0);
+		$examplebarcode = $this->getNextValue($objproduct,'');
 		if (! $examplebarcode)
 		{
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -127,10 +127,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return next value
 	 *
 	 * @param	Product		$objproduct     Object product
-	 * @param	string		$type       	type of barcode (EAN, ISBN, ...)
+	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
 	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct,$type='')
+	function getNextValue($objproduct=null,$type='')
 	{
 		global $db,$conf;
 

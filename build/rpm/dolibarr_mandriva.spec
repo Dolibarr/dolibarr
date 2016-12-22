@@ -33,7 +33,7 @@ AutoReqProv: no
 
 
 %description
-An easy to use CRM & ERP open source/free software for small  
+An easy to use CRM & ERP open source/free software package for small  
 and medium companies, foundations or freelances. It includes different 
 features for Enterprise Resource Planning (ERP) and Customer Relationship 
 Management (CRM) but also for different other activities.
@@ -189,6 +189,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
+%_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
@@ -203,6 +204,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/webservices
+%_datadir/dolibarr/htdocs/websites
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

@@ -29,7 +29,7 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once 'class/resource.class.php';
+require_once 'class/dolresource.class.php';
 require_once 'class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
@@ -56,7 +56,7 @@ if ($user->societe_id > 0)
 if( ! $user->rights->resource->read)
 	accessforbidden();
 
-$object = new Resource($db);
+$object = new Dolresource($db);
 
 $hookmanager->initHooks(array('resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
@@ -152,7 +152,7 @@ $formresource = new FormResource($db);
 
 if ( $object->fetch($id) > 0 )
 {
-	$head=resourcePrepareHead($object);
+	$head=resource_prepare_head($object);
 
 
 	if ($action == 'edit' )
@@ -168,22 +168,22 @@ if ( $object->fetch($id) > 0 )
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
 
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
 		print '<td><input size="12" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
 
 		// Type
-		print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
+		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
 		$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
 		print '</td></tr>';
 
 		// Description
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
 		print '</td></tr>';
@@ -201,7 +201,7 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
 
 		// Confirm deleting resource line
 	    if ($action == 'delete')
@@ -215,7 +215,7 @@ if ( $object->fetch($id) > 0 )
 		 */
 		print '<table width="100%" class="border">';
 
-		print '<tr><td style="width:35%">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
 		$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
 		print $form->showrefnav($object, 'id', $linkback,1,"rowid");
 		print '</td>';

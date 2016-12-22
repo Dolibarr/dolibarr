@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2016	   Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ function marges_admin_prepare_head()
 function marges_prepare_head()
 {
 	global $langs, $conf, $user;
-	$langs->load("marges@marges");
+	$langs->load("margins");
 
 	$h = 0;
 	$head = array();
@@ -86,6 +87,14 @@ function marges_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/margin/agentMargins.php";
 	$head[$h][1] = $langs->trans($title);
 	$head[$h][2] = 'agentMargins';
+
+	
+	if ($user->rights->margins->creer) {
+		$h++;
+		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
+		$head[$h][1] = $langs->trans('CheckMargins');
+		$head[$h][2] = 'checkMargins';
+	}
 
 	return $head;
 }

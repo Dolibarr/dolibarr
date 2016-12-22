@@ -57,6 +57,8 @@ $search_email=GETPOST("search_email");
 $search_skype=GETPOST("search_skype");
 $search_priv=GETPOST("search_priv");
 $search_categ=GETPOST("search_categ",'int');
+$search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
+$search_categ_supplier=GETPOST("search_categ_supplier",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
 if ($search_status=='') $search_status=1; // always display activ customer first
@@ -67,16 +69,15 @@ $optioncss = GETPOST('optioncss','alpha');
 $type=GETPOST("type");
 $view=GETPOST("view");
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $langs->load("companies");
@@ -192,6 +193,10 @@ if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter.x') || GETP
     $search_skype="";
     $search_priv="";
     $search_status=-1;
+    $search_categ='';
+    $search_categ_thirdparty='';
+    $search_categ_supplier='';
+    $search_array_options=array();
 }
 if ($search_priv < 0) $search_priv='';
 
@@ -221,7 +226,9 @@ $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ_thirdparty)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";       // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ_supplier)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
@@ -244,8 +251,12 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ == -2) $sql.= " AND cc.fk_categorie IS NULL";
+if ($search_categ_thirdparty > 0)   $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ_thirdparty);
+if ($search_categ_thirdparty == -2) $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ_supplier > 0)   $sql.= " AND cs2.fk_categorie = ".$db->escape($search_categ_supplier);
+if ($search_categ_supplier == -2) $sql.= " AND cs2.fk_categorie IS NULL";
 
 if ($search_firstlast_only) {
     $sql .= natural_search(array('p.lastname','p.firstname'), $search_firstlast_only);
@@ -333,6 +344,16 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+// Add order
+if ($view == "recent")
+{
+    $sql.= $db->order("p.datec","DESC");
+}
+else
+{
+    $sql.= $db->order($sortfield,$sortorder);
+}
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -341,17 +362,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 
-// Add order and limit
-if($view == "recent")
-{
-    $sql.= $db->order("p.datec","DESC");
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
-}
-else
-{
-    $sql.= $db->order($sortfield,$sortorder);
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
-}
+$sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
 dol_syslog("contact/list.php", LOG_DEBUG);
@@ -361,12 +372,18 @@ if ($result)
 	$num = $db->num_rows($result);
     $i = 0;
 
-	$param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view);
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
+    if (!empty($search_categ_thirdparty)) $param.='&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
+    if (!empty($search_categ_supplier)) $param.='&search_categ_supplier='.urlencode($search_categ_supplier);
     if ($sall != '') $param.='&amp;sall='.urlencode($sall);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
+    if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
     if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
     if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
     if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
@@ -386,8 +403,6 @@ if ($result)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
-    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_companies.png');
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -395,6 +410,8 @@ if ($result)
     print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
 
     if ($sall)
     {
@@ -413,6 +430,22 @@ if ($result)
 		$moreforfilter.=$langs->trans('Categories'). ': ';
     	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
     	$moreforfilter.='</div>';
+    	if (empty($type) || $type == 'c' || $type == 'p')
+    	{
+	        $moreforfilter.='<div class="divsearchfield">';
+	        if ($type == 'c') $moreforfilter.=$langs->trans('CustomersCategoriesShort'). ': ';
+	    	else if ($type == 'p') $moreforfilter.=$langs->trans('ProspectsCategoriesShort'). ': ';
+	    	else $moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort'). ': ';
+	    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ_thirdparty,'search_categ_thirdparty',1);
+	    	$moreforfilter.='</div>';
+    	}
+    	if (empty($type) || $type == 'f')
+    	{
+	    	$moreforfilter.='<div class="divsearchfield">';
+			$moreforfilter.=$langs->trans('SuppliersCategoriesShort'). ': ';
+	    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ_supplier,'search_categ_supplier',1);
+	    	$moreforfilter.='</div>';
+    	}
     }
     if ($moreforfilter)
     {
@@ -474,7 +507,7 @@ if ($result)
         print '<input class="flat" type="text" name="search_lastname" size="6" value="'.dol_escape_htmltag($search_lastname).'">';
         print '</td>';
     }
-    if (! empty($arrayfields['p.lastname']['checked']))
+    if (! empty($arrayfields['p.firstname']['checked']))
     {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
@@ -740,10 +773,10 @@ if ($result)
 
     print "</table>";
 
+    if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit, 1);
+    
     print '</form>';
-
-    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-
+    
     $db->free($result);
 }
 else

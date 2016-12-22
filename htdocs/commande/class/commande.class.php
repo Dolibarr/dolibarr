@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -30,10 +30,11 @@
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
  */
-include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
-require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT .'/core/class/commonorder.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 
 /**
  *  Class to manage customers orders
@@ -140,10 +141,14 @@ class Commande extends CommonOrder
 	 */
 	var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_tx;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
+	
     /**
      * ERR Not enough stock
      */
@@ -162,9 +167,13 @@ class Commande extends CommonOrder
 	 */
 	const STATUS_VALIDATED = 1;
 	/**
-	 * Accepted/On process not managed for customer orders
+	 * Accepted (supplier orders)
 	 */
 	const STATUS_ACCEPTED = 2;
+	/**
+	 * Shipment on process (customer orders)
+	 */
+	const STATUS_SHIPMENTONPROCESS = 2;
 	/**
 	 * Closed (Sent/Received, billed or not)
 	 */
@@ -195,7 +204,7 @@ class Commande extends CommonOrder
 	 */
     function getNextNumRef($soc)
     {
-        global $db, $langs, $conf;
+        global $langs, $conf;
         $langs->load("order");
 
         if (! empty($conf->global->COMMANDE_ADDON))
@@ -230,7 +239,7 @@ class Commande extends CommonOrder
             }
             else
 			{
-            	dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            	dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return "";
             }
         }
@@ -267,7 +276,7 @@ class Commande extends CommonOrder
         if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
-            $this->error='ErrorPermissionDenied';
+            $this->error='NotEnoughPermissions';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
@@ -440,6 +449,8 @@ class Commande extends CommonOrder
             // If stock is decremented on validate order, we must reincrement it
             if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
+                $result = 0;
+                
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
@@ -451,27 +462,25 @@ class Commande extends CommonOrder
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
                         $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
-                        if ($result < 0) { $error++; }
+                        if ($result < 0) { $error++; $this->error=$mouvP->error; break; }
                     }
-                }
-
-                if (!$error)
-                {
-                    $this->statut=self::STATUS_DRAFT;
-                    $this->db->commit();
-                    return $result;
-                }
-                else
-                {
-                    $this->error=$mouvP->error;
-                    $this->db->rollback();
-                    return $result;
                 }
             }
 
-            $this->statut=self::STATUS_DRAFT;
-            $this->db->commit();
-            return 1;
+            if (!$error) {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_SETDRAFT',$user);
+            	if ($result < 0) $error++;
+            }
+            
+            if (!$error) {
+           		$this->statut=self::STATUS_DRAFT;
+            	$this->db->commit();
+            	return 1;
+            }else {
+            	$this->db->rollback();
+            	return -1;
+            }
         }
         else
         {
@@ -491,7 +500,6 @@ class Commande extends CommonOrder
      */
     function set_reopen($user)
     {
-        global $conf,$langs;
         $error=0;
 
         if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED)
@@ -551,7 +559,7 @@ class Commande extends CommonOrder
      */
     function cloture($user)
     {
-        global $conf, $langs;
+        global $conf;
 
         $error=0;
 
@@ -688,12 +696,22 @@ class Commande extends CommonOrder
      */
     function create($user, $notrigger=0)
     {
-        global $conf,$langs,$mysoc,$hookmanager;
+        global $conf,$langs;
         $error=0;
 
         // Clean parameters
         $this->brouillon = 1;		// set command as draft
-
+		
+		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = $conf->currency;
+			$this->fk_multicurrency = 0;
+			$this->multicurrency_tx = 1;
+		}
+		
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
@@ -739,6 +757,9 @@ class Commande extends CommonOrder
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
+        $sql.= ", fk_multicurrency";
+        $sql.= ", multicurrency_code";
+        $sql.= ", multicurrency_tx";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
         $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
@@ -764,6 +785,9 @@ class Commande extends CommonOrder
         $sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
+		$sql.= ", ".(int) $this->fk_multicurrency;
+		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql.= ", ".(double) $this->multicurrency_tx;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -946,7 +970,7 @@ class Commande extends CommonOrder
      */
     function createFromClone($socid=0)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $user,$hookmanager;
 
         $error=0;
 
@@ -1036,7 +1060,7 @@ class Commande extends CommonOrder
      */
     function createFromProposal($object)
     {
-        global $db, $conf,$user,$langs,$hookmanager;
+        global $conf,$user,$hookmanager;
 
 		dol_include_once('/core/class/extrafields.class.php');
 
@@ -1109,7 +1133,7 @@ class Commande extends CommonOrder
         // get extrafields from original line
 		$object->fetch_optionals($object->id);
 
-		$e = new ExtraFields($db);
+		$e = new ExtraFields($this->db);
 		$element_extrafields = $e->fetch_name_optionals_label($this->element);
 
 		foreach($object->array_options as $options_key => $value) {
@@ -1206,7 +1230,8 @@ class Commande extends CommonOrder
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
         if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-
+        if (empty($this->fk_multicurrency)) $this->fk_multicurrency=0;
+        
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
@@ -1256,14 +1281,20 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
 
+			// MultiCurrency
+			$multicurrency_total_ht  = $tabprice[16];
+            $multicurrency_total_tva = $tabprice[17];
+            $multicurrency_total_ttc = $tabprice[18];
+			
             // Rang to use
             $rangtouse = $rang;
             if ($rangtouse == -1)
@@ -1321,6 +1352,14 @@ class Commande extends CommonOrder
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
 
+			// Multicurrency
+			$this->line->fk_multicurrency			= $this->fk_multicurrency;
+			$this->line->multicurrency_code			= $this->multicurrency_code;
+			$this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+
             // TODO Ne plus utiliser
             $this->line->price=$price;
             $this->line->remise=$remise;
@@ -1356,6 +1395,11 @@ class Commande extends CommonOrder
                 return -2;
             }
         }
+        else
+        {
+            dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+            return -3;
+        }
     }
 
 
@@ -1384,15 +1428,16 @@ class Commande extends CommonOrder
             $prod=new Product($this->db);
             $prod->fetch($idproduct);
 
-            $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
-            $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
+
+            $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
+            $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
-            $price = $prod->multiprices[$this->client->price_level];
+            if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
+            $price = $prod->multiprices[$this->thirdparty->price_level];
             else
             $price = $prod->price;
 
@@ -1455,7 +1500,6 @@ class Commande extends CommonOrder
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
-        global $conf;
 
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
@@ -1470,6 +1514,7 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', c.fk_incoterms, c.location_incoterms';
+		$sql.= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
         $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
@@ -1497,6 +1542,7 @@ class Commande extends CommonOrder
                 $this->id					= $obj->rowid;
                 $this->ref					= $obj->ref;
                 $this->ref_client			= $obj->ref_client;
+                $this->ref_customer			= $obj->ref_client;
                 $this->ref_ext				= $obj->ref_ext;
                 $this->ref_int				= $obj->ref_int;
                 $this->socid				= $obj->fk_soc;
@@ -1543,6 +1589,14 @@ class Commande extends CommonOrder
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 
+				// Multicurrency
+				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->multicurrency_code 		= $obj->multicurrency_code;
+				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->lines				= array();
@@ -1672,7 +1726,9 @@ class Commande extends CommonOrder
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 	    $sql.= ' l.fk_unit,';
-        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
+		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+        $sql.= ' p.weight, p.weight_units, p.volume, p.volume_units';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1731,10 +1787,23 @@ class Commande extends CommonOrder
                 $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 	            $line->fk_unit          = $objp->fk_unit;
+	            
+	            $line->weight           = $objp->weight;
+	            $line->weight_units     = $objp->weight_units;
+	            $line->volume           = $objp->volume;
+	            $line->volume_units     = $objp->volume_units;
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
                 $line->date_end         = $this->db->jdate($objp->date_end);
 
+				// Multicurrency
+				$line->fk_multicurrency 		= $objp->fk_multicurrency;
+				$line->multicurrency_code 		= $objp->multicurrency_code;
+				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+			
                 $this->lines[$i] = $line;
 
                 $i++;
@@ -1783,12 +1852,11 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Load array this->expeditions of nb of products sent by line in order
-     *
-     *	@param      int		$filtre_statut      Filter on status
+     *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
+     *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
+     *   
+     *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
-     *
-     *	TODO deprecate, move to Shipping class
      */
     function loadExpeditions($filtre_statut=-1)
     {
@@ -1803,6 +1871,7 @@ class Commande extends CommonOrder
         if ($filtre_statut >= 0) $sql.= ' ed.fk_expedition = e.rowid AND';
         $sql.= ' ed.fk_origin_line = cd.rowid';
         $sql.= ' AND cd.fk_commande =' .$this->id;
+        if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
         if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
@@ -1856,21 +1925,6 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Return a array with sendings by line
-     *
-     *	@param      int		$filtre_statut      Filtre sur statut
-     *	@return     int                 		0 si OK, <0 si KO
-     *
-     *	TODO  deprecate, move to Shipping class
-     */
-    function livraison_array($filtre_statut=self::STATUS_CANCELED)
-    {
-        $delivery = new Livraison($this->db);
-        $deliveryArray = $delivery->livraison_array($filtre_statut);
-        return $deliveryArray;
-    }
-
-    /**
      *	Return a array with the pending stock by product
      *
      *	@param      int		$filtre_statut      Filtre sur statut
@@ -1918,7 +1972,6 @@ class Commande extends CommonOrder
      */
     function deleteline($lineid)
     {
-        global $user;
 
         if ($this->statut == self::STATUS_DRAFT)
         {
@@ -2197,7 +2250,7 @@ class Commande extends CommonOrder
      */
     function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
     {
-        global $conf,$user;
+        global $user;
 
         $ga = array();
 
@@ -2360,11 +2413,12 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param      User    $user       Object user making the change
+	 * @return     int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled()
+	function classifyBilled(User $user)
 	{
-		global $conf, $user, $langs;
+		global $user;
         $error = 0;
 
 		$this->db->begin();
@@ -2416,9 +2470,10 @@ class Commande extends CommonOrder
 	 */
 	function classer_facturee()
 	{
+	    global $user;
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-		return $this->classifyBilled();
+		return $this->classifyBilled($user);
 	}
 
 	/**
@@ -2534,17 +2589,30 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
 
+			// MultiCurrency
+			$multicurrency_total_ht  = $tabprice[16];
+            $multicurrency_total_tva = $tabprice[17];
+            $multicurrency_total_ttc = $tabprice[18];
+			
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
-            $subprice = $pu;
+			if ($price_base_type == 'TTC') 
+			{
+				$subprice = $tabprice[5];
+			} 
+			else 
+			{
+				$subprice = $pu;
+			}
             $remise = 0;
             if ($remise_percent > 0)
             {
@@ -2618,6 +2686,12 @@ class Commande extends CommonOrder
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
 
+			// Multicurrency
+			$this->line->multicurrency_subprice		= price2num($subprice * $this->multicurrency_tx);
+			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			
             // TODO deprecated
             $this->line->price=$price;
             $this->line->remise=$remise;
@@ -2663,7 +2737,6 @@ class Commande extends CommonOrder
 	 */
 	function update($user=null, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -2904,7 +2977,7 @@ class Commande extends CommonOrder
      */
     function load_board($user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $clause = " WHERE";
 
@@ -3182,11 +3255,12 @@ class Commande extends CommonOrder
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs;
 
         dol_syslog(get_class($this)."::initAsSpecimen");
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -3243,9 +3317,12 @@ class Commande extends CommonOrder
                 $line->total_tva=19.6;
                 $line->remise_percent=0;
             }
-            $prodid = rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
-
+            if ($num_prods > 0)
+            {
+            	$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
+            
             $this->lines[$xnbp]=$line;
 
             $this->total_ht       += $line->total_ht;
@@ -3264,7 +3341,7 @@ class Commande extends CommonOrder
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array();
         $clause = "WHERE";
@@ -3306,77 +3383,6 @@ class Commande extends CommonOrder
     function getLinesArray()
     {
         return $this->fetch_lines();
-        /*
-        $lines = array();
-
-        $sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
-        $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
-        $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
-        $sql.= ' l.date_start, l.date_end,';
-	    $sql.= ' l.fk_unit,';
-        $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-        $sql.= ' p.description as product_desc, p.stock as stock_reel,';
-        $sql.= ' p.entity';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
-        $sql.= ' WHERE l.fk_commande = '.$this->id;
-        $sql.= ' ORDER BY l.rang ASC, l.rowid';
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
-
-				$this->lines[$i]					= new OrderLine($this->db);
-                $this->lines[$i]->id				= $obj->rowid;
-                $this->lines[$i]->label 			= $obj->custom_label;
-                $this->lines[$i]->description 		= $obj->description;
-                $this->lines[$i]->fk_product		= $obj->fk_product;
-                $this->lines[$i]->ref				= $obj->ref;
-                $this->lines[$i]->entity            = $obj->entity;         // Product entity
-                $this->lines[$i]->product_label		= $obj->product_label;
-                $this->lines[$i]->product_desc		= $obj->product_desc;
-                $this->lines[$i]->fk_product_type	= $obj->fk_product_type;
-                $this->lines[$i]->product_type		= $obj->product_type;
-                $this->lines[$i]->qty				= $obj->qty;
-                $this->lines[$i]->subprice			= $obj->subprice;
-                $this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
-                $this->lines[$i]->remise_percent	= $obj->remise_percent;
-                $this->lines[$i]->tva_tx			= $obj->tva_tx;
-                $this->lines[$i]->info_bits			= $obj->info_bits;
-                $this->lines[$i]->total_ht			= $obj->total_ht;
-                $this->lines[$i]->total_tva			= $obj->total_tva;
-                $this->lines[$i]->total_ttc			= $obj->total_ttc;
-                $this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
-                $this->lines[$i]->special_code		= $obj->special_code;
-				$this->lines[$i]->stock				= $obj->stock_reel;
-                $this->lines[$i]->rang				= $obj->rang;
-                $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
-                $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
-				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
-				$this->lines[$i]->pa_ht				= $marginInfos[0];
-				$this->lines[$i]->marge_tx			= $marginInfos[1];
-				$this->lines[$i]->marque_tx			= $marginInfos[2];
-	            $this->lines[$i]->fk_unit			= $obj->fk_unit;
-
-                $i++;
-            }
-
-            $this->db->free($resql);
-
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }*/
     }
 
 	/**
@@ -3447,6 +3453,22 @@ class Commande extends CommonOrder
         $now = dol_now();
 
         return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+    }
+    
+    /**
+     * Show the customer delayed info
+     *
+     * @return string       Show delayed information
+     */
+    public function showDelay()
+    {
+        global $conf, $langs;
+    
+        if (empty($this->date_livraison)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+        else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');
+        $text.=' '.($conf->commande->client->warning_delay>0?'+':'-').' '.round(abs($conf->commande->client->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+            
+        return $text;
     }
 }
 
@@ -3527,6 +3549,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 	    $sql.= ' cd.fk_unit,';
+		$sql.= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -3576,6 +3599,13 @@ class OrderLine extends CommonOrderLine
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
+
+			$this->fk_multicurrency			= $objp->fk_multicurrency;
+			$this->multicurrency_code		= $objp->multicurrency_code;
+			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
 
             $this->db->free($result);
 
@@ -3700,7 +3730,9 @@ class OrderLine extends CommonOrderLine
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
         $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
-	    $sql.= ' fk_unit)';
+	    $sql.= ' fk_unit';
+		$sql.= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql.= ')';
         $sql.= " VALUES (".$this->fk_commande.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -3731,6 +3763,12 @@ class OrderLine extends CommonOrderLine
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql.= ", ".$this->fk_multicurrency;
+		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql.= ", ".$this->multicurrency_subprice;
+		$sql.= ", ".$this->multicurrency_total_ht;
+		$sql.= ", ".$this->multicurrency_total_tva;
+		$sql.= ", ".$this->multicurrency_total_ttc;
         $sql.= ')';
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -3858,6 +3896,13 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , fk_parent_line=".(! empty($this->fk_parent_line)?$this->fk_parent_line:"null");
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
 		$sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		
+		// Multicurrency
+		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

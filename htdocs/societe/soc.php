@@ -108,7 +108,7 @@ if (empty($reshook))
             exit;
         }    
     }
-    
+
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
 		$object->fetch($socid);
@@ -168,6 +168,7 @@ if (empty($reshook))
 					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
 					{
 						$errors++;
+						setEventMessages($db->lasterror(), null, 'errors');
 					}
 				}
 
@@ -202,6 +203,7 @@ if (empty($reshook))
 				} 
 				else 
 				{
+				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
@@ -338,6 +340,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
+		
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled))
+		{
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+		}
+		
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -477,13 +486,8 @@ if (empty($reshook))
                                 }
                                 else
                                 {
-                                    // Create small thumbs for company (Ratio is near 16/9)
-                                    // Used on logon for example
-                                    $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-                                    // Create mini thumbs for company (Ratio is near 16/9)
-                                    // Used on menu or for setup page for example
-                                    $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                                    // Create thumbs
+                                    $object->addThumbs($newfile);
                                 }
                             }
                         }
@@ -735,7 +739,7 @@ if ($socid > 0 && empty($object->id))
 }
 
 $title=$langs->trans("ThirdParty");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Card');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
@@ -791,10 +795,14 @@ else
         $modCodeFournisseur = new $module;
 
         // Define if customer/prospect or supplier status is set or not
-        if (GETPOST("type")!='f' && empty($conf->global->THIRDPARTY_NOTCUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
-        if (GETPOST("type")=='c')  { $object->client=1; }
+        if (GETPOST("type")!='f')
+        {
+            $object->client=-1;
+            if (! empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
+        }
+        if (GETPOST("type")=='c')  { $object->client=3; }   // Prospect / Customer
         if (GETPOST("type")=='p')  { $object->client=2; }
-        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || (GETPOST("type")=='' && empty($conf->global->THIRDPARTY_NOTSUPPLIER_BY_DEFAULT))))  { $object->fournisseur=1; }
+        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || (GETPOST("type")=='' && ! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT))))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('name', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
@@ -868,13 +876,8 @@ else
                     }
                     else
                     {
-                        // Create small thumbs for company (Ratio is near 16/9)
-                        // Used on logon for example
-                        $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-                        // Create mini thumbs for company (Ratio is near 16/9)
-                        // Used on menu or for setup page for example
-                        $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                        // Create thumbs
+                        $object->addThumbs($newfile);
                     }
                 }
             }
@@ -968,7 +971,7 @@ else
         print '<table class="border" width="100%">';
 
         // Name, firstname
-	    print '<tr><td>';
+	    print '<tr><td class="titlefieldcreate">';
         if ($object->particulier || $private)
         {
 	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('LastName','name').'</span>';
@@ -989,11 +992,11 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
-	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
-            print '<td colspan=2>&nbsp;</td></tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td>';
+	        print '<td colspan="3"><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+            print '</tr>';
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3">';
             print $formcompany->select_civility($object->civility_id).'</td>';
-            print '<td colspan=2>&nbsp;</td></tr>';
+            print '</tr>';
         }
 
         // Alias names (commercial, trademark or alias names)
@@ -1001,9 +1004,10 @@ else
 	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Prospect/Customer
-        print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	    print '<td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
-        $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+        print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
+	    print '<td class="maxwidthonsmartphone">';
+	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+        print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1"></option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
@@ -1011,7 +1015,7 @@ else
         print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
 
-        print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
+        print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
 		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
@@ -1027,7 +1031,9 @@ else
             // Supplier
             print '<tr>';
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            $default = -1;
+            if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
+            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -1056,7 +1062,7 @@ else
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1113,12 +1119,9 @@ else
                 if (($j % 2) == 0) print '<tr>';
 
                 $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-               	if(empty($conf->global->$idprof_mandatory))
-                	print '<td>'.fieldLabel($idprof,$key).'</td><td>';
-                else
-                    print '<td>'.fieldLabel($idprof,$key,1).'</td><td>';
+                print '<td>'.fieldLabel($idprof,$key, (empty($conf->global->$idprof_mandatory)?0:1)).'</td><td>';
 
-                print $formcompany->get_input_id_prof($i,$key,$object->$key,$object->country_code);
+                print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
                 print '</td>';
                 if (($j % 2) == 1) print '</tr>';
                 $j++;
@@ -1162,11 +1165,12 @@ else
         print '</tr>';
 
         // Type - Size
-        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
-        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
+        $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
-        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
@@ -1263,6 +1267,16 @@ else
 					null, "90%");
 				print "</td></tr>";
 			}
+		}
+
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td colspan="3" class="maxwidthonsmartphone">';
+	        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+			print '</td></tr>';
 		}
 
         // Other attributes
@@ -1495,7 +1509,7 @@ else
 			}
 			
             // Name
-            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
@@ -1520,8 +1534,8 @@ else
             }
 
             // Prospect/Customer
-            print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	        print '<td width="25%"><select class="flat" name="client" id="customerprospect">';
+            print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
+	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
@@ -1557,7 +1571,7 @@ else
             if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
-                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
+                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
@@ -1602,7 +1616,7 @@ else
 
             // Address
             print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	        print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -1758,17 +1772,17 @@ else
             }
 
             // Type - Size
-            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>';
+            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
-            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td class="maxwidthonsmartphone" colspan="3">';
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
@@ -1815,6 +1829,16 @@ else
 					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 					print "</td></tr>";
 				}
+			}
+
+			// Multicurrency
+			if (! empty($conf->multicurrency->enabled))
+			{
+				print '<tr>';
+				print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		        print '<td colspan="3" class="maxwidthonsmartphone">';
+		        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+				print '</td></tr>';
 			}
 
             // Other attributes
@@ -1910,8 +1934,9 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
         
-        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
         
         print '<div class="fichecenter">';
@@ -1921,7 +1946,7 @@ else
         print '<table class="border tableforfield" width="100%">';
 
     	// Prospect/Customer
-    	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 	    
@@ -2159,7 +2184,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -2223,6 +2248,16 @@ else
             print '</td></tr>';
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td>';
+	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
+			print '</td></tr>';
+		}
+		
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2408,10 +2443,7 @@ else
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-			{
-				$formmail->trackid='thi'.$object->id;
-			}
+			$formmail->trackid='thi'.$object->id;
 			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 			{
 				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -2430,6 +2462,8 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Tableau des substitutions
+			//$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';

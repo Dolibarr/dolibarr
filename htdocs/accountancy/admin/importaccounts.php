@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/importaccounts.php
- * \ingroup Accounting Expert
- * \brief Page import accounting account
+ * \file 		htdocs/accountancy/admin/importaccounts.php
+ * \ingroup		Advanced accountancy
+ * \brief 		Page import accounting account
  */
 require '../../main.inc.php';
 
@@ -138,7 +138,7 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		
 		print '<td align="left">';
 		print $objp->accounting;

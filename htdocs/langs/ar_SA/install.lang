@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=فقط اتبع التعليمات خطوة بخطوة.
 MiscellaneousChecks=التحقق من الشروط الأساسية
-DolibarrWelcome=مرحبا بكم في Dolibarr
 ConfFileExists=ملف الإعداد <b>%s</b> موجود  مسبقاً
-ConfFileDoesNotExists=ملف الإعداد <b>%s</b> غير موجود
 ConfFileDoesNotExistsAndCouldNotBeCreated=ملف الإعداد <b>%s</b> مفقود ولا يمكن إنشائه.
 ConfFileCouldBeCreated=يمكن إنشاء ملف الإعداد <b>%s</b>
 ConfFileIsNotWritable=لا يمكن الكتابة الى ملف الإعداد <b>%s</b>. تحقق من الصلاحيات. اذا كان هذا التنصيب هو الأول، تحقق من أن السيرفر قادر ولديه جميع صلاحيات الكتابة والقراءة خلال عملية التنصيب، مثال: (chmod 666) لمستخدمي سيرفرات يونكس.
@@ -27,14 +25,12 @@ ErrorFailedToCreateDatabase=فشل إنشاء قاعدة بيانات '٪ ق.
 ErrorFailedToConnectToDatabase=فشل في الاتصال بقاعدة البيانات '٪ ق.
 ErrorDatabaseVersionTooLow=إصدار قاعدة البيانات  (s%) قديمة جدا. مطلوب نسخة s% أو أعلى
 ErrorPHPVersionTooLow=PHP نسخة قديمة جدا. النسخة ٪ ق هو مطلوب.
-WarningPHPVersionTooLow=PHP نسخة قديمة جدا. ومن المتوقع %s نسخة أو أكثر. وينبغي أن تسمح هذه النسخة تثبيت ولكن لم يتم اعتماد.
 ErrorConnectedButDatabaseNotFound=خادم الصدد الى قاعدة البيانات ولكن النجاح في '٪ ق' لم يتم العثور عليه.
 ErrorDatabaseAlreadyExists=قاعدة البيانات '٪ ق' موجود بالفعل.
 IfDatabaseNotExistsGoBackAndUncheckCreate=إذا كان لا وجود قاعدة بيانات ، والتأكد من العودة الخيار "إنشاء قاعدة بيانات".
 IfDatabaseExistsGoBackAndCheckCreate=إذا كانت قاعدة البيانات موجود بالفعل ، من العودة وإلغاء "إنشاء قاعدة بيانات" الخيار.
 WarningBrowserTooOld=نسخة قديمة جدا من المتصفح. ننصحك جيدا بترقية متصفحك إلى نسخة حديثة عن فايرفوكس، كروم أو أوبرا
 PHPVersion=PHP الإصدار
-YouCanContinue=يمكنك الاستمرار...
 License=الترخيص باستعمال
 ConfigurationFile=ملفات
 WebPagesDirectory=الدليل حيث يتم تخزين صفحات الويب
@@ -43,7 +39,6 @@ URLRoot=عنوان روت
 ForceHttps=اتصالات آمنة قوة ([هتبس)
 CheckToForceHttps=تحقق هذا الخيار لفرض اتصالات آمنة ([هتبس). <br> وهذا يتطلب أن يتم تكوين خادم الويب مع شهادة خدمة تصميم المواقع.
 DolibarrDatabase=قاعدة بيانات Dolibarr
-DatabaseChoice=اختيار قاعدة البيانات
 DatabaseType=قاعدة بيانات من نوع
 DriverType=سائق نوع
 Server=الخادم
@@ -63,7 +58,6 @@ CheckToCreateUser=المربع اذا ادخل لا وجود له ، ويجب ت
 DatabaseRootLoginDescription=ادخل يسمح للمستخدم لإنشاء قواعد بيانات جديدة أو المستخدمين الجدد ، وإذا كانت غير مجدية وقاعدة البيانات وقاعدة البيانات ادخل موجود بالفعل (مثل عندما كنت استضافته استضافة ويب).
 KeepEmptyIfNoPassword=ترك فارغا إذا لم المستخدم كلمة السر (تجنب هذا؟)
 SaveConfigurationFile=إنقاذ القيم
-ConfigurationSaving=إنقاذ ملفات
 ServerConnection=اتصال الخادم
 DatabaseCreation=إنشاء قاعدة بيانات
 UserCreation=إنشاء مستخدم
@@ -82,7 +76,7 @@ SetupEnd=نهاية الإعداد
 SystemIsInstalled=هذا التثبيت الكامل.
 SystemIsUpgraded=وقد تم تطوير Dolibarr بنجاح.
 YouNeedToPersonalizeSetup=عليك تكوين Dolibarr لتناسب احتياجاتك (ظهور مقالات...). لذلك ، يرجى اتباع الوصلة التالية :
-AdminLoginCreatedSuccessfuly=مدير Dolibarr ادخل <b>'٪ ق'</b> إنشاء بنجاح.
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfully.
 GoToDolibarr=الذهاب إلى Dolibarr
 GoToSetupArea=الذهاب إلى Dolibarr (مجال الإعداد)
 MigrationNotFinished=نسخة من قاعدة البيانات الخاصة بك لا يصل تماما حتى الآن ، لذلك سيكون لديك لتشغيل عملية الترقية مرة أخرى.
@@ -92,10 +86,9 @@ DirectoryRecommendation=وrecommanded به لاستخدام دليل خارج ا
 LoginAlreadyExists=موجود بالفعل
 DolibarrAdminLogin=ادخل Dolibarr مشرف
 AdminLoginAlreadyExists=Dolibarr حساب مشرف <b>'٪ ق'</b> موجود بالفعل.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=تحذير ، لأسباب أمنية ، بعد تثبيت أو تحديث كاملة ، يجب إزالة <b>تثبيت أو إعادة تسمية الدليل على install.lock من أجل تجنب استخدام الخبيثة.</b>
-ThisPHPDoesNotSupportTypeBase=PHP هذا النظام لا يدعم أي واجهة للحصول على قاعدة بيانات من نوع ق ٪
 FunctionNotAvailableInThisPHP=لا تتوفر على هذا PHP
-MigrateScript=تهاجر سكريبت
 ChoosedMigrateScript=اختار الهجرة سكريبت
 DataMigration=بيانات الهجرة
 DatabaseMigration=هيكل قاعدة بيانات الهجرة
@@ -113,22 +106,12 @@ AlreadyDone=بالفعل هاجر
 DatabaseVersion=قاعدة بيانات النسخة
 ServerVersion=خادم قاعدة البيانات النسخة
 YouMustCreateItAndAllowServerToWrite=يجب إنشاء هذا الدليل ، والسماح لخادم الويب أن يكتبوا فيه.
-CharsetChoice=اختيار مجموعة حروف
-CharacterSetClient=مجموعة الحروف المستخدمة في توليدها صفحات هتمل
-CharacterSetClientComment=اختيار الطابع المحدد لعرضها على الإنترنت. <br/> واقترحت مجموعة الطابع الافتراضي هو واحد من قاعدة البيانات.
 DBSortingCollation=طابع الفرز بغية
-DBSortingCollationComment=اختر صفحة المدونة التي تحدد طبيعة النظام 'sفرز قاعدة البيانات التي تستخدمها. هذا هو المعلم كما دعا 'مقارنتها' بعض قواعد البيانات. <br/> هذا المعلم لا يمكن أن يعرف إذا كانت قاعدة البيانات موجودة بالفعل.
-CharacterSetDatabase=الطابع المحدد لقاعدة البيانات
-CharacterSetDatabaseComment=اختيار مجموعة حروف تريد لإنشاء قاعدة بيانات. <br/> هذا المعلم لا يمكن أن يعرف إذا كانت قاعدة البيانات موجودة بالفعل.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=كنت أسأل لإنشاء قاعدة بيانات <b>٪ ق</b> ، ولكن لهذا ، Dolibarr الحاجة الى الاتصال بخادم <b>٪ ق</b> السوبر مع المستخدم أذونات <b>٪ ق.</b>
 YouAskLoginCreationSoDolibarrNeedToConnect=كنت أسأل لإنشاء قاعدة بيانات ادخل <b>٪ ق</b> ، ولكن لهذا ، Dolibarr الحاجة الى الاتصال بخادم <b>٪ ق</b> السوبر مع أذونات المستخدم <b>٪ ق.</b>
 BecauseConnectionFailedParametersMayBeWrong=كما فشلت الصدد ، أو استضافة السوبر معالم المستخدم يجب أن يكون على خطأ.
 OrphelinsPaymentsDetectedByMethod=Orphelins من اكتشاف طريقة الدفع ق ٪
 RemoveItManuallyAndPressF5ToContinue=إزالته يدويا واضغط F5 للمتابعة.
-KeepDefaultValuesWamp=استخدام معالج الإعداد DoliWamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
-KeepDefaultValuesDeb=يمكنك استخدام معالج الإعداد Dolibarr من أوبونتو أو حزمة ديبيان ، لذلك القيم المقترحة هنا هي الأمثل بالفعل. يجب أن تكتمل إلا كلمة السر للمالك قاعدة البيانات لإنشاء. تغيير معلمات أخرى إلا إذا كنت تعرف ما تفعله.
-KeepDefaultValuesMamp=استخدام معالج الإعداد DoliMamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
-KeepDefaultValuesProxmox=يمكنك استخدام معالج إعداد Dolibarr من الأجهزة الظاهرية Proxmox، بحيث يتم تحسين بالفعل القيم المقترحة هنا. تغييرها إلا إذا كنت تعرف ما تفعله.
 FieldRenamed=تغيير اسم الحقل
 IfLoginDoesNotExistsCheckCreateUser=اذا ادخل لا يوجد حتى الآن ، يجب عليك التحقق من خيار "تكوين المستخدم"
 ErrorConnection=الخادم <b>"٪ ل"</b> اسم قاعدة بيانات <b>"٪ ل"</b> ادخل <b>"٪ ل"</b> أو كلمة سر قاعدة البيانات قد تكون خاطئة أو PHP العميل نسخة قديمة جدا ويمكن مقارنة مع قاعدة البيانات نسخة.
@@ -159,7 +142,7 @@ MigrationSupplierOrder=بيانات الهجرة من أجل الموردين أ
 MigrationProposal=بيانات الهجرة لأغراض تجارية اقتراحات
 MigrationInvoice=بيانات الهجرة لعملاء الفواتير
 MigrationContract=بيانات الهجرة للحصول على عقود
-MigrationSuccessfullUpdate=تحديث ناجحة
+MigrationSuccessfullUpdate=Upgrade successfull
 MigrationUpdateFailed=فشلت عملية تحديث
 MigrationRelationshipTables=بيانات الهجرة للجداول العلاقة (%s)
 MigrationPaymentsUpdate=تصحيح بيانات الدفع
@@ -173,7 +156,7 @@ MigrationContractsLineCreation=عقد إنشاء خط لعقد المرجع ق �
 MigrationContractsNothingToUpdate=لا أكثر مما ينبغي فعله
 MigrationContractsFieldDontExist=الحقل fk_facture لا وجود بعد الآن. لا يمكن تنفيذ اي شيء.
 MigrationContractsEmptyDatesUpdate=عقد فارغ تصحيح التاريخ
-MigrationContractsEmptyDatesUpdateSuccess=تصحيح تاريخ العقد emtpy عمله بنجاح
+MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfully
 MigrationContractsEmptyDatesNothingToUpdate=أي عقد حتى الآن لتصحيح فارغة
 MigrationContractsEmptyCreationDatesNothingToUpdate=إنشاء أي عقد لتصحيح التاريخ
 MigrationContractsInvalidDatesUpdate=سوء قيمة العقد تصحيح التاريخ
@@ -181,7 +164,7 @@ MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting
 MigrationContractsInvalidDatesNumber=ق ٪ العقود المعدلة
 MigrationContractsInvalidDatesNothingToUpdate=اي موعد مع سوء قيمة تصحيح
 MigrationContractsIncoherentCreationDateUpdate=سوء إنشاء قيمة العقد تصحيح التاريخ
-MigrationContractsIncoherentCreationDateUpdateSuccess=سوء إنشاء قيمة العقد حتى الآن تصحيح ذلك بنجاح
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done successfully
 MigrationContractsIncoherentCreationDateNothingToUpdate=ليس سيئا بالنسبة للقيمة العقد إنشاء لتصحيح التاريخ
 MigrationReopeningContracts=أغلقت العقود المفتوحة خطأ
 MigrationReopenThisContract=اعادة فتح العقد ق ٪
@@ -205,3 +188,4 @@ MigrationEvents=الترحيل من الأحداث لإضافة مالك الح�
 MigrationReloadModule=إعادة تحديث الوحدات %s
 ShowNotAvailableOptions=عرض خيارات غير متوفرة
 HideNotAvailableOptions=إخفاء خيارات غير متوفرة
+ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

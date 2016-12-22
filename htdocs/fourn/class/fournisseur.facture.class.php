@@ -32,7 +32,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  *	Class to manage suppliers invoices
@@ -119,6 +119,14 @@ class FactureFournisseur extends CommonInvoice
 
     var $extraparams=array();
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_tx;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
+	
     /**
 	 *	Constructor
 	 *
@@ -163,6 +171,16 @@ class FactureFournisseur extends CommonInvoice
         $amount = $this->amount;
         $remise = $this->remise;
 
+		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = $conf->currency;
+			$this->fk_multicurrency = 0;
+			$this->multicurrency_tx = 1;
+		}
+
         $this->db->begin();
 
         if (! $remise) $remise = 0 ;
@@ -185,6 +203,9 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", fk_user_author";
         $sql.= ", date_lim_reglement";
 		$sql.= ", fk_incoterms, location_incoterms";
+        $sql.= ", fk_multicurrency";
+        $sql.= ", multicurrency_code";
+        $sql.= ", multicurrency_tx";
         $sql.= ")";
         $sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -204,6 +225,9 @@ class FactureFournisseur extends CommonInvoice
         $sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
 		$sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql.= ", ".(int) $this->fk_multicurrency;
+		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql.= ", ".(double) $this->multicurrency_tx;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -376,7 +400,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
         $sql.= ' s.nom as socnom, s.rowid as socid,';
         $sql.= ' t.fk_incoterms, t.location_incoterms,';
-        $sql.= " i.libelle as libelle_incoterms";
+        $sql.= " i.libelle as libelle_incoterms,";
+        $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
@@ -446,6 +471,14 @@ class FactureFournisseur extends CommonInvoice
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 
+				// Multicurrency
+				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->multicurrency_code 		= $obj->multicurrency_code;
+				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
@@ -497,6 +530,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
+		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
@@ -548,6 +582,14 @@ class FactureFournisseur extends CommonInvoice
                     $line->rang       		= $obj->rang;
                     $line->fk_unit           = $obj->fk_unit;
 
+					// Multicurrency
+					$line->fk_multicurrency 		= $obj->fk_multicurrency;
+					$line->multicurrency_code 		= $obj->multicurrency_code;
+					$line->multicurrency_subprice 	= $obj->multicurrency_subprice;
+					$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+					$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+					$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				
 	                $this->lines[$i] = $line;
 
                     $i++;
@@ -942,7 +984,7 @@ class FactureFournisseur extends CommonInvoice
         }
         else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
         {
-            $num = $this->getNextNumRef($this->client);
+            $num = $this->getNextNumRef($this->thirdparty);
         }
         else
 		{
@@ -1177,10 +1219,10 @@ class FactureFournisseur extends CommonInvoice
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
-
+        $ref=''; // Ref of supplier price when we add line
+        
         // Check parameters
         if ($type < 0) return -1;
-
 
         $this->db->begin();
 
@@ -1281,7 +1323,7 @@ class FactureFournisseur extends CommonInvoice
         $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc, $this->thirdparty);
         $vatrate = preg_replace('/\s*\(.*\)/','',$vatrate);  // Remove code into vatrate.
         
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1290,6 +1332,12 @@ class FactureFournisseur extends CommonInvoice
         $pu_ttc = $tabprice[5];
         $total_localtax1 = $tabprice[9];
         $total_localtax2 = $tabprice[10];
+		
+		// MultiCurrency
+		$multicurrency_total_ht  = $tabprice[16];
+        $multicurrency_total_tva = $tabprice[17];
+        $multicurrency_total_ttc = $tabprice[18];
+			
         if (empty($info_bits)) $info_bits=0;
 
         if ($idproduct)
@@ -1330,6 +1378,12 @@ class FactureFournisseur extends CommonInvoice
 	    $line->info_bits = $info_bits;
 	    $line->fk_unit = $fk_unit;
 	    $line->array_options = $array_options;
+
+		// Multicurrency
+		$line->multicurrency_subprice	= price2num($line->subprice * $this->multicurrency_tx);
+		$line->multicurrency_total_ht 	= $multicurrency_total_ht;
+        $line->multicurrency_total_tva 	= $multicurrency_total_tva;
+        $line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
 	    $res = $line->update($notrigger);
 
@@ -1384,7 +1438,7 @@ class FactureFournisseur extends CommonInvoice
     function info($id)
     {
         $sql = 'SELECT c.rowid, datec, tms as datem, ';
-        $sql.= ' fk_user_author, fk_user_valid';
+        $sql.= ' fk_user_author, fk_user_modif, fk_user_valid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
         $sql.= ' WHERE c.rowid = '.$id;
 
@@ -1407,8 +1461,14 @@ class FactureFournisseur extends CommonInvoice
                     $vuser->fetch($obj->fk_user_valid);
                     $this->user_validation = $vuser;
                 }
-                $this->date_creation     = $obj->datec;
-                $this->date_modification = $obj->datem;
+                if ($obj->fk_user_modif)
+                {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+                $this->date_creation     = $this->db->idate($obj->datec);
+                $this->date_modification = $this->db->idate($obj->datem);
                 //$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
             }
             $this->db->free($result);
@@ -1428,7 +1488,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function load_board($user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
@@ -1588,7 +1648,8 @@ class FactureFournisseur extends CommonInvoice
 
         $now = dol_now();
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
 
         $sql = "SELECT rowid";
@@ -1649,8 +1710,11 @@ class FactureFournisseur extends CommonInvoice
     			$line->remise_percent=0;
 			}
 
-			$prodid = rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
+            if ($num_prods > 0)
+            {
+				$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
             $line->product_type=0;
 
             $this->lines[$xnbp]=$line;
@@ -1891,12 +1955,14 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $product_ref;
+
 	/**
-	 * Reference product supplier
-	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
+	 * Supplier reference of price when we added the line. May have been changed after line was added. 
+	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields into updateline
 	 * @var string
 	 */
 	public $ref_supplier;
+
 	/**
 	 * @deprecated
 	 * @see label
@@ -1982,6 +2048,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $localtax1_type;
 	public $localtax2_type;
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_subprice;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
 
 	/**
      *	Constructor
@@ -2174,6 +2247,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ", product_type = ".$this->product_type;
 		$sql.= ", info_bits = ".$this->info_bits;
 		$sql.= ", fk_unit = ".$fk_unit;
+		
+		// Multicurrency
+		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+        
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

@@ -27,10 +27,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("other");
+$langs->load("compta");
+$langs->load("banks");
+$langs->load("bills");
+
 $localTaxType=GETPOST('localTaxType', 'int');
 
-$year=$_GET["year"];
-if ($year == 0 ) {
+$year=GETPOST("year","int");
+if ($year == 0)
+{
     $year_current = strftime("%Y",time());
     $year_start = $year_current;
 } else {
@@ -122,25 +127,24 @@ if($localTaxType==1) {
 $textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'title_accountancy.png');
 
 print $langs->trans("LTReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
 print '<br>';
 
-print '<table width="100%" class="nobordernopadding">';
-print '<tr><td>';
-print load_fiche_titre($langs->transcountry($LTSummary,$mysoc->country_code));
-
-print '</td><td width="5">&nbsp;</td><td>';
-print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code));
+print '<table width="100%" class="notopnoleftnoright">';
+print '<tr><td class="notopnoleft width="50%">';
+print load_fiche_titre($langs->transcountry($LTSummary,$mysoc->country_code), '', '');
+print '</td><td>&nbsp;</td><td>';
+print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code), '', '');
 print '</td></tr>';
 
-print '<tr><td width="50%" valign="top">';
+print '<tr><td class="notopnoleft" width="50%" valign="top">';
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="30%">'.$langs->trans("Year")." ".$y."</td>";
 if($CalcLT==0) {
     print "<td align=\"right\">".$langs->transcountry($LTCustomer,$mysoc->country_code)."</td>";
     print "<td align=\"right\">".$langs->transcountry($LTSupplier,$mysoc->country_code)."</td>";

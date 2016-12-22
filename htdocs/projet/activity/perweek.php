@@ -100,8 +100,10 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
-if ($action == 'assign')
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
+    $action = 'assigntask';
+    
     if ($taskid > 0)
     {
 		$result = $object->fetch($taskid, $ref);
@@ -174,7 +176,7 @@ if ($action == 'assign')
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
@@ -183,9 +185,10 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     }
 	else
 	{
-		foreach($timetoadd as $taskid => $value)
+		foreach($timetoadd as $taskid => $value)     // Loop on each task
 	    {
-			foreach($value as $key => $val)
+	        $updateoftaskdone=0;
+			foreach($value as $key => $val)          // Loop on each day
 			{
 				$amountoadd=$timetoadd[$taskid][$key];
 		    	if (! empty($amountoadd))
@@ -199,7 +202,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 		        	if ($newduration > 0)
 		        	{
 		       	        $object->fetch($taskid);
-					    $object->progress = GETPOST($taskid . 'progress', 'int');
+		       	        $object->progress = GETPOST($taskid . 'progress', 'int');
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
@@ -211,8 +214,27 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 							$error++;
 							break;
 						}
+						
+						$updateoftaskdone++;
 		        	}
 		        }
+			}
+			
+			if (! $updateoftaskdone)  // Check to update progress if no update were done on task.
+			{
+			    $object->fetch($taskid);
+                //var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;			    
+			    if ($object->progress != GETPOST($taskid . 'progress', 'int'))
+			    {
+			        $object->progress = GETPOST($taskid . 'progress', 'int');
+			        $result=$object->update($user);
+			        if ($result < 0)
+			        {
+			            setEventMessages($object->error, $object->errors, 'errors');
+			            $error++;
+			            break;
+			        }
+			    }
 			}
 	    }
 
@@ -269,7 +291,7 @@ $param=($mode?'&amp;mode='.$mode:'');
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week." </span>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
@@ -327,7 +349,24 @@ print "\n";
 */
 
 
-print '<div align="right">'.$nav.'</div>';
+// Add a new project/task
+//print '<br>';
+//print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+//print '<input type="hidden" name="action" value="assigntask">';
+//print '<input type="hidden" name="mode" value="'.$mode.'">';
+//print '<input type="hidden" name="year" value="'.$year.'">';
+//print '<input type="hidden" name="month" value="'.$month.'">';
+//print '<input type="hidden" name="day" value="'.$day.'">';
+print '<div class="float">';
+print $langs->trans("AssignTaskToMe").'<br>';
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
+print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+//print '</form>';
+print '</div>';
+
+print '<div class="floatright">'.$nav.'</div>';
+print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
 print '<table class="noborder" width="100%">';
@@ -405,22 +444,6 @@ while ($i < 7)
 }
 print "});";
 print '</script>';
-
-
-// Add a new project/task
-print '<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="action" value="assign">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<input type="hidden" name="year" value="'.$year.'">';
-print '<input type="hidden" name="month" value="'.$month.'">';
-print '<input type="hidden" name="day" value="'.$day.'">';
-print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
-print '</form>';
-
 
 
 llxFooter();

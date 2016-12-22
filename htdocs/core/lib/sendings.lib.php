@@ -62,11 +62,16 @@ function shipping_prepare_head($object)
 		}
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("ContactsAddresses");
-	$head[$h][2] = 'contact';
-	$h++;
-
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+    	$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+    	$head[$h][2] = 'contact';
+    	$h++;
+	}
+	
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
@@ -233,7 +238,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);

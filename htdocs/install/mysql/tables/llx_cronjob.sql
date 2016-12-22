@@ -40,12 +40,13 @@ CREATE TABLE llx_cronjob
   	datelastresult  datetime,						-- date last run end
   	lastresult      text,
   	lastoutput      text,
-  	unitfrequency	integer NOT NULL DEFAULT 0,
+  	unitfrequency	varchar(255) NOT NULL DEFAULT '3600',
   	frequency 		integer NOT NULL DEFAULT 0,
     maxrun          integer NOT NULL DEFAULT 0,		-- set this to 1 for a job queued for on run only
 	nbrun			integer,						-- nb of run complete (failed or not)
     autodelete      integer DEFAULT 0,				-- 0=Job is kept unchanged once nbrun > maxrun or date > dateend, 2=Job must be archived (archive = status 2) once nbrun > maxrun or date > dateend 
   	status 			integer NOT NULL DEFAULT 1,		-- 0=disabled, 1=enabled, 2=archived
+  	test		    varchar(255) DEFAULT '1',
   	fk_user_author 	integer DEFAULT NULL,
   	fk_user_mod 	integer DEFAULT NULL,
     fk_mailing      integer DEFAULT NULL,		-- id of emailing if job was queued to send mass emailing

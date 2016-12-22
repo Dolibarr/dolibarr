@@ -200,13 +200,13 @@ if ($result)
         {
             print img_picto($langs->trans("Active"),'tick');
             print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove#'.$objMod->getName().'">'.img_edit_remove().'</a>';
+            print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
         }
         else
         {
             print '&nbsp;';
             print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=add#'.$objMod->getName().'">'.img_edit_add().'</a>';
+            print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
         }
 
         print '</td></tr>';

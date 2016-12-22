@@ -53,7 +53,7 @@ class modAgenda extends DolibarrModules
 		$this->module_position = 15;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion de l'agenda et des actions";
+		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -76,24 +76,23 @@ class modAgenda extends DolibarrModules
 		// Constants
 		//-----------
 		$this->const = array();
-		$this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_SENTBYMAIL","chaine","1");
-		$this->const[0]  = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE","chaine","1");
-        $this->const[1]  = array("MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE","chaine","1");
-        $this->const[2]  = array("MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE","chaine","1");
-        $this->const[3]  = array("MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL","chaine","1");
-        $this->const[4]  = array("MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE","chaine","1");
-        $this->const[5]  = array("MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL","chaine","1");
-        $this->const[6]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE","chaine","1");
-        $this->const[7]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_PAYED","chaine","1");
-        $this->const[8]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_CANCEL","chaine","1");
-        $this->const[9]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL","chaine","1");
-        $this->const[10] = array("MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE","chaine","1");
-        $this->const[11] = array("MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE","chaine","1");
-        $this->const[12] = array("MAIN_AGENDA_ACTIONAUTO_SHIPPING_VALIDATE","chaine","1");
-        $this->const[13] = array("MAIN_AGENDA_ACTIONAUTO_SHIPPING_SENTBYMAIL","chaine","1");
-        $this->const[14] = array("MAIN_AGENDA_ACTIONAUTO_BILL_UNVALIDATE","chaine","1");
-        $this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_UNVALIDATE","chaine","1");
-
+		$sqlreadactions="SELECT code, label, description FROM ".MAIN_DB_PREFIX."c_action_trigger ORDER by rang";
+		$resql = $this->db->query($sqlreadactions);
+		if ($resql)
+		{
+		    while ($obj = $this->db->fetch_object($sqlreadactions))
+		    {
+		        if (preg_match('/_CREATE$/',$obj->code) && ($obj->code != 'COMPANY_CREATE')) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty creation because there is no validation). 
+		        if (preg_match('/^PROJECT_/',$obj->code)) continue;   // We don't track such events by default.
+		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
+		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");
+		    }
+		}
+		else 
+		{
+		    dol_print_error($this->db->lasterror());
+		}
+		
 		// New pages on tabs
 		// -----------------
 		$this->tabs = array();
@@ -400,4 +399,5 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
 
 	}
+	
 }

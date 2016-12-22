@@ -95,7 +95,7 @@ class box_factures_fourn extends ModeleBoxes
 				$num = $db->num_rows($result);
 
 				$line = 0;
-				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
@@ -189,11 +189,12 @@ class box_factures_fourn extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

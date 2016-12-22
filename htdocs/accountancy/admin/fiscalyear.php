@@ -27,6 +27,18 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
 $action = GETPOST('action');
 
+// Load variable for pagination
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield="f.rowid"; // Set here default search field
+if (! $sortorder) $sortorder="ASC";
+
 $langs->load("admin");
 $langs->load("compta");
 
@@ -57,6 +69,8 @@ $object = new Fiscalyear($db);
  * Actions
  */
 
+
+
 /*
  * View
  */
@@ -66,14 +80,23 @@ $max = 100;
 $form = new Form($db);
 
 $title = $langs->trans('FiscalYears');
-
-llxHeader('', $title, LOG_ERR);
-
-print load_fiche_titre($langs->trans('FiscalYears'));
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
 $sql .= " WHERE f.entity = " . $conf->entity;
+$sql.=$db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}	
+
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) {
@@ -81,6 +104,9 @@ if ($result) {
 	$num = $db->num_rows($result);
 	
 	$i = 0;
+
+	$title = $langs->trans('FiscalYears');
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit, 1);
 	
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
@@ -109,7 +135,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	
 	print '</table>';

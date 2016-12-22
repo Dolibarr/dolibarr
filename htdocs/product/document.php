@@ -110,8 +110,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Action sending file
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+	// Action submit/delete file/link
+	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 }
 
@@ -166,7 +166,21 @@ if ($action=='filemerge')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -195,7 +209,9 @@ if ($object->id)
 	}
 
 
-    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    
+	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
     print '<div class="fichecenter">';
     
@@ -211,7 +227,6 @@ if ($object->id)
     
     dol_fiche_end();
 
-    $modulepart = 'produit';
     $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
@@ -264,43 +279,11 @@ if ($object->id)
 
     			print  '<tr class="liste_titre"><td>';
 
-    			$delauft_lang = (empty($lang_id)) ? $langs->getDefaultLang() : $lang_id;
+    			$delauft_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
 
     			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
-    			print  '<select class="flat" id="lang_id" name="lang_id">';
-
-    			asort($langs_available);
-
-    			$uncompletelanguages = array (
-    					'da_DA',
-    					'fi_FI',
-    					'hu_HU',
-    					'is_IS',
-    					'pl_PL',
-    					'ro_RO',
-    					'ru_RU',
-    					'sv_SV',
-    					'tr_TR',
-    					'zh_CN'
-    			);
-    			foreach ( $langs_available as $key => $value )
-    			{
-    				if ($showwarning && in_array($key, $uncompletelanguages))
-    				{
-    					// $value.=' - '.$langs->trans("TranslationUncomplete",$key);
-    				}
-    				if ($filter && is_array($filter)) {
-    					if (! array_key_exists($key, $filter)) {
-    						print  '<option value="' . $key . '">' . $value . '</option>';
-    					}
-    				} else if ($delauft_lang == $key) {
-    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
-    				} else {
-    					print  '<option value="' . $key . '">' . $value . '</option>';
-    				}
-    			}
-    			print  '</select>';
+			    print Form::selectarray('lang_id', $langs_available, $delauft_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
     			if ($conf->global->MAIN_MULTILANGS) {
     				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';

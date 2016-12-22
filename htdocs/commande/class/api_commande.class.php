@@ -102,16 +102,17 @@ class CommandeApi extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param string	$societe	Societe filter field
      *
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
         global $db, $conf;
         
         $obj_ret = array();
-        
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        // case of external user, $societe param is ignored and replaced by user's socid
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
             
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
@@ -159,6 +160,7 @@ class CommandeApi extends DolibarrApi
         
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {
@@ -178,6 +180,22 @@ class CommandeApi extends DolibarrApi
         }
 		return $obj_ret;
     }
+
+    /**
+     * List orders for specific thirdparty
+     * 
+     * Get a list of orders
+     * 
+     * @param int	$socid Id of customer
+     *
+     * @url     GET     /customer/{socid}/order/list
+     * @url     GET     /thirdparty/{socid}/order/list
+     * @return  array   Array of order objects
+     */
+    function getListForSoc($socid = 0) {
+      return getList(0,"s.rowid","ASC",0,0,$socid);
+    }
+
     
     /**
      * Create order object
@@ -190,24 +208,208 @@ class CommandeApi extends DolibarrApi
      */
     function post($request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
-		}
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+			  throw new RestException(401, "Insuffisant rights");
+		  }
         // Check mandatory fields
         $result = $this->_validate($request_data);
-        
+
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
         }
+        if (isset($request_data["lines"])) {
+          $lines = array();
+          foreach ($request_data["lines"] as $line) {
+            array_push($lines, (object) $line);
+          }
+          $this->commande->lines = $lines;
+        }
         if(! $this->commande->create(DolibarrApiAccess::$user) ) {
-            throw new RestException(401);
+            throw new RestException(500, "Error while creating order");
         }
         
-        return $this->commande->ref;
+        return $this->commande->id;
+    }
+    /**
+     * Get lines of an order
+     *
+     *
+     * @param int   $id             Id of order
+     * 
+     * @url	GET order/{id}/line/list
+     * 
+     * @return int 
+     */
+    function getLines($id) {
+      if(! DolibarrApiAccess::$user->rights->commande->lire) {
+		  	throw new RestException(401);
+		  }
+        
+      $result = $this->commande->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Commande not found');
+      }
+		
+		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      $this->commande->getLinesArray();
+      $result = array();
+      foreach ($this->commande->lines as $line) {
+        array_push($result,$this->_cleanObjectDatas($line));
+      }
+      return $result;
+    }
+    /**
+     * Add a line to given order
+     *
+     *
+     * @param int   $id             Id of commande to update
+     * @param array $request_data   Orderline data   
+     * 
+     * @url	POST order/{id}/line
+     * 
+     * @return int 
+     */
+    function postLine($id, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
+        
+      $result = $this->commande->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Commande not found');
+      }
+		
+		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+			$request_data = (object) $request_data;
+      $updateRes = $this->commande->addline(
+                        $request_data->desc,
+                        $request_data->subprice,
+                        $request_data->qty,
+                        $request_data->tva_tx,
+                        $request_data->localtax1_tx,
+                        $request_data->localtax2_tx,
+                        $request_data->fk_product,
+                        $request_data->remise_percent,
+                        $request_data->info_bits,
+                        $request_data->fk_remise_except,
+                        'HT',
+                        0,
+                        $request_data->date_start,
+                        $request_data->date_end,
+                        $request_data->product_type,
+                        $request_data->rang,
+                        $request_data->special_code,
+                        $fk_parent_line,
+                        $request_data->fk_fournprice,
+                        $request_data->pa_ht,
+                        $request_data->label,
+                        $request_data->array_options,
+                        $request_data->fk_unit,
+                        $this->element,
+                        $request_data->id
+      );
+
+      if ($updateRes > 0) {
+        return $this->get($id)->line->rowid;
+
+      }
+      return false;
+    }
+    /**
+     * Update a line to given order
+     *
+     *
+     * @param int   $id             Id of commande to update
+     * @param int   $lineid         Id of line to update
+     * @param array $request_data   Orderline data   
+     * 
+     * @url	PUT order/{id}/line/{lineid}
+     * 
+     * @return object 
+     */
+    function putLine($id, $lineid, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
+        
+      $result = $this->commande->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Commande not found');
+      }
+		
+		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+			$request_data = (object) $request_data;
+      $updateRes = $this->commande->updateline(
+                        $lineid,
+                        $request_data->desc,
+                        $request_data->subprice,
+                        $request_data->qty,
+                        $request_data->remise_percent,
+                        $request_data->tva_tx,
+                        $request_data->localtax1_tx,
+                        $request_data->localtax2_tx,
+                        'HT',
+                        $request_data->info_bits,
+                        $request_data->date_start,
+                        $request_data->date_end,
+                        $request_data->product_type,
+                        $request_data->fk_parent_line,
+                        0,
+                        $request_data->fk_fournprice,
+                        $request_data->pa_ht,
+                        $request_data->label,
+                        $request_data->special_code,
+                        $request_data->array_options,
+                        $request_data->fk_unit
+      );
+
+      if ($updateRes > 0) {
+        $result = $this->get($id);
+        unset($result->line);
+        return $this->_cleanObjectDatas($result);
+      }
+      return false;
+    }
+    /**
+     * Delete a line to given order
+     *
+     *
+     * @param int   $id             Id of commande to update
+     * @param int   $lineid         Id of line to delete
+     * 
+     * @url	DELETE order/{id}/line/{lineid}
+     * 
+     * @return int 
+     */
+    function delLine($id, $lineid) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
+        
+      $result = $this->commande->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Commande not found');
+      }
+		
+		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+			$request_data = (object) $request_data;
+      $updateRes = $this->commande->deleteline($lineid);
+      if ($updateRes == 1) {
+        return $this->get($id);
+      }
+      return false;
     }
 
     /**
-     * Update order
+     * Update order general fields (won't touch lines of order)
      *
      * @param int   $id             Id of commande to update
      * @param array $request_data   Datas   
@@ -216,11 +418,10 @@ class CommandeApi extends DolibarrApi
      * 
      * @return int 
      */
-    function put($id, $request_data = NULL)
-    {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
-		}
+    function put($id, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
         
         $result = $this->commande->fetch($id);
         if( ! $result ) {
@@ -230,13 +431,12 @@ class CommandeApi extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
         }
         
         if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
-            return $this->get ($id);
+            return $this->get($id);
         
         return false;
     }
@@ -329,6 +529,7 @@ class CommandeApi extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $commande[$field] = $data[$field];
+            
         }
         return $commande;
     }

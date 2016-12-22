@@ -49,6 +49,7 @@ $product_static = new Product($db);
  */
 
 $transAreaType = $langs->trans("ProductsAndServicesArea");
+
 $helpurl='';
 if (! isset($_GET["type"]))
 {
@@ -66,7 +67,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
+llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
 print load_fiche_titre($transAreaType,$linkback,'title_products.png');
@@ -95,7 +96,7 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 		print '</tr>';
 		$i++;
@@ -307,7 +308,8 @@ if ($result)
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
 			{
-                if (!empty($objp->fk_price_expression)) {
+                if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
+                {
                 	$product = new Product($db);
                 	$product->fetch($objp->rowid);
                     $priceparser = new PriceParser($db);

@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,26 +47,24 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct(DoliDB $db)
     {
         $this->db = $db;
 
         $this->socid = 0;
-        $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
         $this->default_rib = 0;
-        return 1;
     }
 
 
     /**
      * Create bank information record
      *
-     * @param   Object   $user		User
+     * @param   User   $user		User
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create($user='')
+    function create(User $user = null)
     {
         $now=dol_now();
 
@@ -103,7 +102,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	Object user
      *	@return	int				<=0 if KO, >0 if OK
      */
-    function update($user='')
+    function update(User $user = null)
     {
     	global $conf;
 
@@ -206,7 +205,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	User deleting
      *  @return int         	<0 if KO, >0 if OK
      */
-    function delete($user='')
+    function delete(User $user = null)
     {
         global $conf;
 
@@ -224,79 +223,27 @@ class CompanyBankAccount extends Account
         }
     }
 
-    /**
-     * Return RIB
-     *
-     * @param   boolean     $displayriblabel     Prepend or Hide Label
-     * @return	string		RIB
-     */
-    function getRibLabel($displayriblabel = true)
-    {
-    	global $langs,$conf;
+	/**
+	 * Return RIB
+	 *
+	 * @param   boolean     $displayriblabel     Prepend or Hide Label
+	 * @return	string		RIB
+	 */
+	public function getRibLabel($displayriblabel = true)
+	{
+		$rib = '';
 
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
-            if ($this->label && $displayriblabel) $rib = $this->label." : ";
+		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
 
-    		// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+			if ($this->label && $displayriblabel) {
+				$rib = $this->label." : ";
 			}
-			$fieldlistsarray=explode(' ',$fieldlists);
 
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_banque.'&nbsp;';
-					}
-				}
+			$rib .= (string) $this;
+		}
 
-				if ($val == 'DeskCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_guichet.'&nbsp;';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 2)
-			        {
-			            $rib.=$this->code_banque.'&nbsp;';
-			        }
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					$rib.=$this->number.'&nbsp;';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($this->useDetailedBBAN() == 1)
-					{
-						$rib.=$this->cle_rib.'&nbsp;';
-					}
-				}
-			}
-    	}
-    	else
-    	{
-    		$rib='';
-    	}
-
-    	return $rib;
-    }
+		return $rib;
+	}
 
     /**
      * Set RIB as Default

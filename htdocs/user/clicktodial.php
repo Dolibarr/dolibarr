@@ -90,6 +90,12 @@ if ($id > 0)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
+
+	
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+	
 	dol_fiche_head($head, 'clicktodial', $title, 0, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
@@ -101,11 +107,8 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-        print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<table class="border" width="100%">';
-
+	   print '<table class="border" width="100%">';
+        
         if ($user->admin)
         {
         	print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
@@ -140,13 +143,6 @@ if ($id > 0)
         print "</tr>\n";
 
         print '</table>';
-
-        print '<br><div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
-        print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
-        print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</div>';
-
-        print '</form>';
     }
     else	// View mode
     {
@@ -188,8 +184,17 @@ if ($id > 0)
     }
 
     dol_fiche_end();
-    
 
+    if ($action == 'edit')
+    {
+        print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+        print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
+        print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</div>';
+    }    
+    
+    print '</form>';
+    
     /*
      * Barre d'actions
      */

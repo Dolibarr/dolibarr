@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->supplier_proposal->enabled))  require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (! empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
@@ -66,6 +67,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);
 if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
+if (! empty($conf->supplier_proposal->enabled)) $supplierproposalstatic=new SupplierProposal($db);
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
@@ -85,6 +87,11 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$listofsearchfields['search_customer_order']=array('text'=>'CustomerOrder');
 }
+// Search supplier proposal
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+{
+    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
+}
 // Search supplier order
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 {
@@ -98,12 +105,7 @@ if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 // Search contract
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-    $listofsearchfields['search_contract']=array('text'=>'Contrat');
-}
-// Search contract
-if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
-{
-    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
+    $listofsearchfields['search_contract']=array('text'=>'Contract');
 }
 
 if (count($listofsearchfields))
@@ -116,8 +118,8 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
 		print '</tr>';
 		$i++;
 	}
@@ -195,7 +197,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoProposal").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -205,6 +207,86 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		dol_print_error($db);
 	}
+}
+
+
+
+/*
+ * Draft supplier proposals
+ */
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+{
+    $langs->load("supplier_proposal");
+
+    $sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.code_client";
+    $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE p.fk_statut = 0";
+    $sql.= " AND p.fk_soc = s.rowid";
+    $sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid)	$sql.= " AND s.rowid = ".$socid;
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $total = 0;
+        $num = $db->num_rows($resql);
+         
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+
+        if ($num > 0)
+        {
+            $i = 0;
+            $var=true;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td  class="nowrap">';
+                $supplierproposalstatic->id=$obj->rowid;
+                $supplierproposalstatic->ref=$obj->ref;
+                $supplierproposalstatic->total_ht = $obj->total_ht;
+                $supplierproposalstatic->total_tva = $obj->total_tva;
+                $supplierproposalstatic->total_ttc = $obj->total_ttc;
+                print $supplierproposalstatic->getNomUrl(1);
+                print '</td>';
+                print '<td class="nowrap">';
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->name;
+                $companystatic->client=$obj->client;
+                $companystatic->code_client = $obj->code_client;
+                $companystatic->code_fournisseur = $obj->code_fournisseur;
+                $companystatic->canvas=$obj->canvas;
+                print $companystatic->getNomUrl(1,'customer',16);
+                print '</td>';
+                print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+                $i++;
+                $total += $obj->total_ht;
+            }
+            if ($total>0)
+            {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+            }
+        }
+        else
+        {
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
+        }
+        print "</table><br>";
+
+        $db->free($resql);
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 
@@ -275,7 +357,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -356,7 +438,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         else
         {
 			$var=!$var;
-            print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoSupplierOrder").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 
@@ -435,7 +517,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -489,7 +571,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

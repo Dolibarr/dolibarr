@@ -47,7 +47,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 
 /*
@@ -157,7 +157,7 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
@@ -196,17 +196,20 @@ if ($id > 0 || ! empty($ref))
 	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
-	// Opportunity status
-	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-	if ($code) print $langs->trans("OppStatus".$code);
-	print '</td></tr>';
-
-	// Opportunity Amount
-	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
-	print '</td></tr>';
-
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	// Opportunity status
+    	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+    	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+    	if ($code) print $langs->trans("OppStatus".$code);
+    	print '</td></tr>';
+    
+    	// Opportunity Amount
+    	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+    	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+    	print '</td></tr>';
+    }
+    
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);

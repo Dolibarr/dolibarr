@@ -108,7 +108,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -137,7 +137,7 @@ if ($object->id > 0)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("Ref");
 		print '</td><td>';
 		// Define a complementary filter for search of next/prev ref.
@@ -198,7 +198,7 @@ if ($object->id > 0)
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="30%">';
+	print '<tr><td class="titlefield">';
 	print $langs->trans("Ref");
 	print '</td><td colspan="3">';
 	if (empty($withproject) || empty($projectstatic->id))

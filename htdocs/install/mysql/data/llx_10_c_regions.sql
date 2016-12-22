@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
@@ -258,6 +258,11 @@ INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) v
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1215, '', 0, 'Laâyoune-Boujdour-Sakia el Hamra', 1);
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1216, '', 0, 'Oued Ed-Dahab Lagouira', 1);
 
+-- Regions (districts) Luxembourg (id country=140)
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14001, '', 0, 'Diekirch', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14002, '', 0, 'Grevenmacher', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14003, '', 0, 'Luxembourg', 1);
+
 -- Regions Mauritius (id country=152)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  152, 15201, '', 0, 'Rivière Noire', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  152, 15202, '', 0, 'Flacq', 1);
@@ -289,3 +294,33 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23208, '', 0, 'Nor-Oriental', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23209, '', 0, 'Zuliana', 1);
 
+-- Regions Peru (id country=181)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18101, '', 0, 'Amazonas', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18102, '', 0, 'Ancash', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18103, '', 0, 'Apurimac', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18104, '', 0, 'Arequipa', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18105, '', 0, 'Ayacucho', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18106, '', 0, 'Cajamarca', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18107, '', 0, 'Callao', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18108, '', 0, 'Cuzco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18109, '', 0, 'Huancavelica', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18110, '', 0, 'Huanuco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18111, '', 0, 'Ica', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18112, '', 0, 'Junin', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18113, '', 0, 'La Libertad', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18114, '', 0, 'Lambayeque', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18115, '', 0, 'Lima Metropolitana', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18116, '', 0, 'Lima', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18117, '', 0, 'Loreto', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18118, '', 0, 'Madre de Dios', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18119, '', 0, 'Moquegua', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18120, '', 0, 'Pasco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18121, '', 0, 'Piura', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18122, '', 0, 'Puno', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18123, '', 0, 'San Martín', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18124, '', 0, 'Tacna', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18125, '', 0, 'Tumbes', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18126, '', 0, 'Ucayali', 1);
+
+-- Regions Panama (id country=178)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  178, 17801, '', 0, 'Panama', 1);

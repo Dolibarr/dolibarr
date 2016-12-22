@@ -139,6 +139,7 @@ else:
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 	$sql.= " WHERE d.fk_statut = 6";
+    $sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
 	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);
@@ -165,7 +166,7 @@ else:
 				while($i<$num):
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
-						print "<tr $bc[$var]>";
+						print '<tr'. $bc[$var].'>';
 							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.dol_print_date($db->jdate($objp->date_valid),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';

@@ -3,8 +3,9 @@ namespace Luracast\Restler\UI;
 
 use Luracast\Restler\CommentParser;
 use Luracast\Restler\Data\ApiMethodInfo;
-use Luracast\Restler\Data\String;
+use Luracast\Restler\Data\Text;
 use Luracast\Restler\Data\ValidationInfo;
+use Luracast\Restler\Data\Validator;
 use Luracast\Restler\Defaults;
 use Luracast\Restler\Format\UploadFormat;
 use Luracast\Restler\Format\UrlEncodedFormat;
@@ -28,7 +29,7 @@ use Luracast\Restler\Util;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Forms implements iFilter
 {
@@ -190,6 +191,9 @@ class Forms implements iFilter
             static::$fileUpload = false;
             $t['enctype'] = 'multipart/form-data';
         }
+        if (isset($m[CommentParser::$embeddedDataName])) {
+            $t += $m[CommentParser::$embeddedDataName];
+        }
         if (!$dataOnly) {
             $t = Emmet::make(static::style('form', $m), $t);
             $t->prefix = $prefix;
@@ -292,14 +296,14 @@ class Forms implements iFilter
                 $options[] = $option;
             }
         } elseif ($p->type == 'boolean' || $p->type == 'bool') {
-            if (String::beginsWith($type, 'radio')) {
+            if (Text::beginsWith($type, 'radio') || Text::beginsWith($type, 'select')) {
                 $options[] = array('name' => $p->name, 'text' => ' Yes ',
                     'value' => 'true');
                 $options[] = array('name' => $p->name, 'text' => ' No ',
                     'value' => 'false');
                 if ($p->value || $p->default)
                     $options[0]['selected'] = true;
-            } else {
+            } else { //checkbox
                 $r = array(
                     'tag' => $tag,
                     'name' => $name,
@@ -311,6 +315,9 @@ class Forms implements iFilter
                 $r['text'] = 'Yes';
                 if ($p->default) {
                     $r['selected'] = true;
+                }
+                if (isset($p->rules)) {
+                    $r += $p->rules;
                 }
             }
         }
@@ -325,16 +332,25 @@ class Forms implements iFilter
                 'options' => & $options,
                 'multiple' => $multiple,
             );
+            if (isset($p->rules)) {
+                $r += $p->rules;
+            }
         }
         if ($type == 'file') {
             static::$fileUpload = true;
-            $r['accept'] = implode(', ', UploadFormat::$allowedMimeTypes);
+            if (empty($r['accept'])) {
+                $r['accept'] = implode(', ', UploadFormat::$allowedMimeTypes);
+            }
+        }
+        if (!empty(Validator::$exceptions[$name]) && static::$info->url == Scope::get('Restler')->url) {
+            $r['error'] = 'has-error';
+            $r['message'] = Validator::$exceptions[$p->name]->getMessage();
         }
 
         if (true === $p->required)
-            $r['required'] = true;
+            $r['required'] = 'required';
         if (isset($p->rules['autofocus']))
-            $r['autofocus'] = true;
+            $r['autofocus'] = 'autofocus';
         /*
         echo "<pre>";
         print_r($r);
@@ -411,7 +427,7 @@ class Forms implements iFilter
             if (empty($exclude)) {
                 if ($url == $exclude)
                     return true;
-            } elseif (String::beginsWith($url, $exclude)) {
+            } elseif (Text::beginsWith($url, $exclude)) {
                 return true;
             }
         }

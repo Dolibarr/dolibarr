@@ -22,6 +22,5 @@ FormatDateHourText=%d %B %Y %H:%M
 ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux de taxe défini pour le pays '%s'.
 AmountVAT=Montant TSS
 TotalVAT=Total TSS
-IncludedVAT=Dont TSS
 VAT=TSS
 VATRate=Taux TSS

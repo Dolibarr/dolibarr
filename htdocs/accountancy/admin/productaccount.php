@@ -20,9 +20,9 @@
  */
 
 /**
- * \file 	htdocs/accountancy/admin/productaccount.php
- * \ingroup Accounting Expert
- * \brief 	To define accounting account on product / service
+ * \file		htdocs/accountancy/admin/productaccount.php
+ * \ingroup		Advanced accountancy
+ * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
 
@@ -42,10 +42,14 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
-if (!$user->admin) accessforbidden();
-if (empty($conf->accounting->enabled)) accessforbidden();
- 
-// Search & action GETPOST
+if (! $user->admin) {
+	accessforbidden();
+}
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+	
+// search & action GETPOST
 $action = GETPOST('action');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
@@ -77,11 +81,13 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->
 }
 $offset = $limit * $page;
 
-if (! $sortfield)
+if (! $sortfield) {
 	$sortfield = "p.ref";
-if (! $sortorder)
+}
+if (! $sortorder) {
 	$sortorder = "ASC";
-
+}
+	
 // Sales or Purchase mode ?
 if ($action == 'update') {
 	if (! empty($btn_changetype)) {
@@ -177,8 +183,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 /*
  * View
  */
- 
-llxHeader('', $langs->trans("Accounts"));
+
+llxHeader('', $langs->trans("InitAccountancy"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -234,12 +240,13 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-
-	print load_fiche_titre($langs->trans("InitAccountancy"),'','title_setup');
+	
+	print_barre_liste($langs->trans("ModulesSystemTools"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br>';
-	print $langs->trans("InitAccountancyDesc").'<br>';
+	
+	print $langs->trans("InitAccountancyDesc") . '<br>';
 	print '<br>';
-
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="update">';
@@ -256,9 +263,9 @@ if ($result) {
 	
 	print "</table>\n";
 	
-	print '<br /><div align="right"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="changetype"></div>';
+	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
-	print "<br>\n";
+	print "<br><br>\n";
 	
 	if (! empty($msg)) {
 		print $msg;
@@ -270,14 +277,14 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	/*
-	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-		print '<th align="left">' . $langs->trans("Accountancy_code_buy") . '</td>';
-	} else {
-		print '<th align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
-	}
-	*/
+	 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+	 print_liste_field_titre($langs->trans("Accountancy_code_buy"));
+	 } else {
+	 print_liste_field_titre($langs->trans("Accountancy_code_sell"));
+	 }
+	 */
 	print_liste_field_titre($langs->trans("AccountAccounting"));
-	print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>','','','','','align="center"');
+	print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
@@ -321,10 +328,10 @@ if ($result) {
 		
 		$product_static = new Product($db);
 		
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		
 		print "</tr>";
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
@@ -342,7 +349,7 @@ if ($result) {
 		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 64;
 		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		
-		// Accounting account
+		// Accounting account buy
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 			// print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
 			// TODO: replace by select

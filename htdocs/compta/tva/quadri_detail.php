@@ -104,7 +104,7 @@ foreach($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $form=new Form($db);
 
@@ -418,7 +418,7 @@ else
 						print $langs->trans("NotUsedForGoods");
 					}
 					else {
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';
@@ -479,7 +479,7 @@ else
 
 	//print table headers for this quadri - expenses now
 	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
 	if ($modetax == 0)
@@ -569,7 +569,7 @@ else
 					}
 					else
 					{
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';

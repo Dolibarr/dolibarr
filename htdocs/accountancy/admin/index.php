@@ -23,20 +23,22 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/index.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file		htdocs/accountancy/admin/index.php
+ * \ingroup		Advanced accountancy
+ * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
+$langs->load("salaries");
 
 // Security check
 if (! $user->admin)
@@ -44,23 +46,29 @@ if (! $user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTING_*
+// Parameters ACCOUNTING_* and others
 $list = array (
 		'ACCOUNTING_LIMIT_LIST_VENTILATION',
 		'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
 		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 		'ACCOUNTING_LENGTH_GACCOUNT',
-		'ACCOUNTING_LENGTH_AACCOUNT',
-		'ACCOUNTING_ACCOUNT_CUSTOMER',
+		'ACCOUNTING_LENGTH_AACCOUNT' 
+);
+
+$list_account = array (
 		'ACCOUNTING_ACCOUNT_SUPPLIER',
+		'ACCOUNTING_ACCOUNT_CUSTOMER',
+		'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 		'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
 		'ACCOUNTING_VAT_BUY_ACCOUNT',
 		'ACCOUNTING_VAT_SOLD_ACCOUNT',
+		'ACCOUNTING_VAT_PAY_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
-		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
+		'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
+		'DONATION_ACCOUNTINGACCOUNT'
 );
 
 /*
@@ -107,6 +115,14 @@ if ($action == 'update') {
 		}
 	}
 	
+	foreach ( $list_account as $constname ) {
+		$constvalue = GETPOST($constname, 'alpha');
+		
+		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	}
+	
 	if (! $error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -114,6 +130,7 @@ if ($action == 'update') {
 	}
 }
 
+// TO DO Mutualize code for yes/no constants
 if ($action == 'setlistsorttodo') {
 	$setlistsorttodo = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
@@ -139,6 +156,30 @@ if ($action == 'setlistsortdone') {
 	}
 }
 
+if ($action == 'setmanagezero') {
+	$setmanagezero = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisabledirectinput') {
+	$setdisabledirectinput = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 /*
  * View
  */
@@ -146,6 +187,7 @@ if ($action == 'setlistsortdone') {
 llxHeader();
 
 $form = new Form($db);
+$formaccountancy = new FormVentilation($db);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
@@ -254,6 +296,22 @@ foreach ( $list as $key ) {
 	print '</td></tr>';
 }
 
+foreach ( $list_account as $key ) {
+	$var = ! $var;
+	
+	print '<tr ' . $bc[$var] . ' class="value">';
+	
+	// Param
+	$label = $langs->trans($key);
+	print '<td><label for="' . $key . '">' . $label . '</label></td>';
+	
+	// Value
+	print '<td>';
+	print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	print '</td></tr>';
+}
+
+// TO DO Mutualize code for yes/no constants
 $var = ! $var;
 print "<tr " . $bc[$var] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
@@ -277,6 +335,34 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '</a></td>';
 } else {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+$var = ! $var;
+print "<tr " . $bc[$var] . ">";
+print '<td width="80%">' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+$var = ! $var;
+print "<tr " . $bc[$var] . ">";
+print '<td width="80%">' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }

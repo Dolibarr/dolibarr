@@ -198,7 +198,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';
@@ -265,7 +265,12 @@ if ($id > 0 || ! empty($ref))
 
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
-		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
+		print '<td colspan="2">';
+		print dol_print_date($commande->date,'daytext');
+		if ($commande->hasDelay() && empty($commande->date_livraison)) {
+		    print ' '.img_picto($langs->trans("Late").' : '.$commande->showDelay(), "warning");
+		}
+		print '</td>';
 		print '</tr>';
 
 		// Delivery date planned
@@ -289,6 +294,9 @@ if ($id > 0 || ! empty($ref))
 		else
 		{
 			print dol_print_date($commande->date_livraison,'daytext');
+			if ($commande->hasDelay() && ! empty($commande->date_livraison)) {
+			    print ' '.img_picto($langs->trans("Late").' : '.$commande->showDelay(), "warning");
+			}
 		}
 		print '</td>';
 		// Note on several rows
@@ -522,7 +530,7 @@ if ($id > 0 || ! empty($ref))
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$commande->client->default_lang;
+						if (empty($newlang)) $newlang=$commande->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);
@@ -701,7 +709,13 @@ if ($id > 0 || ! empty($ref))
 
 
         // Bouton expedier avec gestion des stocks
-        if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
+
+        if (! empty($conf->stock->enabled) && $commande->statut == Commande::STATUS_DRAFT)
+        {
+            print $langs->trans("ValidateOrderFirstBeforeShipment");
+        }
+        
+		if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 		{
 			if ($user->rights->expedition->creer)
 			{
@@ -721,12 +735,9 @@ if ($id > 0 || ! empty($ref))
 
 				if (! empty($conf->stock->enabled))
 				{
-					$warehousecanbeselectedlater=1;
-					if (! empty($conf->productbatch->enabled)) $warehousecanbeselectedlater=0;
-
-					print '<td'.($warehousecanbeselectedlater?'':' class="fieldrequired"').'>'.$langs->trans("WarehouseSource").'</td>';
+					print '<td>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
-					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1,'entrepot_id','',1);
+					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';

@@ -12,16 +12,25 @@
         "irc": "irc://chat.freenode.net/dolibarr",
         "source": "https://github.com/Dolibarr/dolibarr"
     },
+    "config": {
+        "vendor-dir": "htdocs/includes"
+    },
     "require": {
         "php": ">=5.3.0",
         "ext-curl": "*",
-        "ccampbell/chromephp": "^4.1",
-        "ckeditor/ckeditor": "dev-full/4.3.x#0b7c3f1",
-        "mike42/escpos-php": "dev-master",
+        "ccampbell/chromephp": "4.1.0",
+        "ckeditor/ckeditor": "dev-full/stable",
+        "mike42/escpos-php": "1.2.1",
         "mobiledetect/mobiledetectlib": "2.8.17",
         "phpoffice/phpexcel": "1.8.1",
-        "restler/framework": "^3.0",
+        "restler/framework": "3.0.0-RC6",
         "tecnickcom/tcpdf": "6.2.12"
+    },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "^0",
+        "jakub-onderka/php-console-highlighter": "^0",
+        "phpunit/phpunit": "^4",
+        "squizlabs/php_codesniffer": "^2"
     },
     "suggest": {
         "ext-mysqlnd": "To use with MySQL or MariaDB",
@@ -39,8 +48,5 @@
         "ext-xml": "Excel support",
         "firephp/firephp-core": "Logging to Firebug console support",
         "raven/raven": "Sentry logging server support"
-    },
-    "config": {
-        "vendor-dir": "htdocs/includes"
     }
 }

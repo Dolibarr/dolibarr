@@ -323,7 +323,7 @@ if ($action == 'add')
 		$db->begin();
 
 		// On cree l'action
-		$idaction=$object->add($user);
+		$idaction=$object->create($user);
 
 		if ($idaction > 0)
 		{
@@ -654,14 +654,14 @@ if ($action == 'create')
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
-		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
+		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
 		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
@@ -669,7 +669,7 @@ if ($action == 'create')
 	// Date start
 	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
-	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
+	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
@@ -689,7 +689,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
 	if (isset($_GET['status']) || isset($_POST['status'])) $percent=GETPOST('status');
@@ -748,7 +748,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Societe, contact
-	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
+	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
@@ -839,7 +839,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="button" class="button" name="cancel" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>";
@@ -946,7 +946,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
 
 		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -960,7 +960,7 @@ if ($id > 0)
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
 
         // Full day event
-        print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
@@ -1099,7 +1099,7 @@ if ($id > 0)
 		// Thirdparty - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events=array();
@@ -1124,7 +1124,7 @@ if ($id > 0)
 
 			$langs->load("projects");
 
-			print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td colspan="3">';
 			$numprojet=$formproject->select_projects($object->socid, $object->fk_project, 'projectid');
 			if ($numprojet==0)
 			{
@@ -1134,7 +1134,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefield nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -1454,7 +1454,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+		print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1463,7 +1463,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewday" value="'.$langs->trans("ViewDay").'">';
+		print img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewday" value="'.$langs->trans("ViewDay").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1472,7 +1472,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+		print img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
 

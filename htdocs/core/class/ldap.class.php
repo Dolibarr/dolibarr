@@ -826,7 +826,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|false|array					<0 or false if KO, array if OK
+	 *	@return	int|array			<0 or false if KO, array if OK
 	 */
 	function getAttribute($dn,$filter)
 	{
@@ -851,7 +851,7 @@ class Ldap
 		{
 			$this->ldapErrorCode = -1;
 			$this->ldapErrorText = "Couldn't find entry";
-			return false;  // Couldn't find entry...
+			return 0;  // Couldn't find entry...
 		}
 
 		// Get values
@@ -859,7 +859,7 @@ class Ldap
 		{
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
-			return false; // No matching attributes
+			return 0; // No matching attributes
 		}
 
 		// Return an array containing the attributes.

@@ -34,7 +34,7 @@
  */
 function product_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -132,12 +132,19 @@ function product_prepare_head($object)
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-    $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
+        if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
+        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    }
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -335,7 +342,7 @@ function show_stats_for_company($product,$socid)
  *	@param	int		$unit                Unit key (-3,0,3,98,99...)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
- * 	@see	load_measuring_units
+ * 	@see	formproduct->load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')
 {
@@ -344,41 +351,41 @@ function measuring_units_string($unit,$measuring_style='')
 	$measuring_units=array();
 	if ($measuring_style == 'weight')
 	{
-		$measuring_units[3] = $langs->trans("WeightUnitton");
-		$measuring_units[0] = $langs->trans("WeightUnitkg");
-		$measuring_units[-3] = $langs->trans("WeightUnitg");
-		$measuring_units[-6] = $langs->trans("WeightUnitmg");
-        $measuring_units[99] = $langs->trans("WeightUnitpound");
+		$measuring_units[3] = $langs->transnoentitiesnoconv("WeightUnitton");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
+        $measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{
-		$measuring_units[0] = $langs->trans("SizeUnitm");
-		$measuring_units[-1] = $langs->trans("SizeUnitdm");
-		$measuring_units[-2] = $langs->trans("SizeUnitcm");
-		$measuring_units[-3] = $langs->trans("SizeUnitmm");
-        $measuring_units[98] = $langs->trans("SizeUnitfoot");
-		$measuring_units[99] = $langs->trans("SizeUnitinch");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("SizeUnitm");
+		$measuring_units[-1] = $langs->transnoentitiesnoconv("SizeUnitdm");
+		$measuring_units[-2] = $langs->transnoentitiesnoconv("SizeUnitcm");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("SizeUnitmm");
+        $measuring_units[98] = $langs->transnoentitiesnoconv("SizeUnitfoot");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("SizeUnitinch");
 	}
 	else if ($measuring_style == 'surface')
 	{
-		$measuring_units[0] = $langs->trans("SurfaceUnitm2");
-		$measuring_units[-2] = $langs->trans("SurfaceUnitdm2");
-		$measuring_units[-4] = $langs->trans("SurfaceUnitcm2");
-		$measuring_units[-6] = $langs->trans("SurfaceUnitmm2");
-        $measuring_units[98] = $langs->trans("SurfaceUnitfoot2");
-		$measuring_units[99] = $langs->trans("SurfaceUnitinch2");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("SurfaceUnitm2");
+		$measuring_units[-2] = $langs->transnoentitiesnoconv("SurfaceUnitdm2");
+		$measuring_units[-4] = $langs->transnoentitiesnoconv("SurfaceUnitcm2");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("SurfaceUnitmm2");
+        $measuring_units[98] = $langs->transnoentitiesnoconv("SurfaceUnitfoot2");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("SurfaceUnitinch2");
 	}
 	else if ($measuring_style == 'volume')
 	{
-		$measuring_units[0] = $langs->trans("VolumeUnitm3");
-		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-        $measuring_units[88] = $langs->trans("VolumeUnitfoot3");
-        $measuring_units[89] = $langs->trans("VolumeUnitinch3");
-		$measuring_units[97] = $langs->trans("VolumeUnitounce");
-		$measuring_units[98] = $langs->trans("VolumeUnitlitre");
-        $measuring_units[99] = $langs->trans("VolumeUnitgallon");
+		$measuring_units[0] = $langs->transnoentitiesnoconv("VolumeUnitm3");
+		$measuring_units[-3] = $langs->transnoentitiesnoconv("VolumeUnitdm3");
+		$measuring_units[-6] = $langs->transnoentitiesnoconv("VolumeUnitcm3");
+		$measuring_units[-9] = $langs->transnoentitiesnoconv("VolumeUnitmm3");
+        $measuring_units[88] = $langs->transnoentitiesnoconv("VolumeUnitfoot3");
+        $measuring_units[89] = $langs->transnoentitiesnoconv("VolumeUnitinch3");
+		$measuring_units[97] = $langs->transnoentitiesnoconv("VolumeUnitounce");
+		$measuring_units[98] = $langs->transnoentitiesnoconv("VolumeUnitlitre");
+        $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
 	}
 
 	return $measuring_units[$unit];

@@ -17,6 +17,5 @@ printEatby=تناول الطعام عن طريق:٪ الصورة
 printSellby=بيع عن طريق:٪ الصورة
 printQty=الكمية:٪ د
 AddDispatchBatchLine=إضافة سطر لالصلاحية إيفاد
-BatchDefaultNumber=غير محدد
 WhenProductBatchModuleOnOptionAreForced=عندما وحدة لوط / المسلسل على، وزيادة / نقصان تضطر وضع الأسهم إلى الخيار الاخير ولا يمكن تحريرها. خيارات أخرى يمكن تعريفها على النحو الذي تريد.
 ProductDoesNotUseBatchSerial=هذا المنتج لا يستخدم الكثير / الرقم التسلسلي

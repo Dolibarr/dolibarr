@@ -1,20 +1,16 @@
 # Dolibarr language file - Source file is en_US - cashdesk
-CashDesks=Ponto de vendas
 CashdeskShowServices=Serviços de venda
 CashDeskStock=Estoque
 CashDeskOn=ligar
-CashdeskDashboard=Acesso ao ponto de venda
 NewSell=Nova venda
 BackOffice=Voltar ao escritório
 AddThisArticle=Adicionar esse artigo
 RestartSelling=Voltar na venda
 SellFinished=Venda terminada
 PrintTicket=Imprimir ticket
-ProductsFound=produtos encontrado
 TotalTicket=Total do ticket
 NoVAT=Nenhum ICMS para essa venda
 Change=Excesso recebido
-CashDeskSetupStock=Você pediu para diminuir o estoque na criação de fatura mas o armazém para isso não está definido<br>Altere a configuração do módulo de estoque, ou escolha um armazém
 BankToPay=Cobrar conta
 ShowCompany=Mostar Empresa
 DeleteArticle=Clique para remover esse artigo

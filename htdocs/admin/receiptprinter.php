@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,10 +243,12 @@ if ($mode == 'config' && $user->admin)
     print '<th></th>';
     print "</tr>\n";
     $ret = $printer->listprinters();
+    $nbofprinters = count($printer->listprinters);
+    
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < count($printer->listprinters); $line++) {
+        for ($line=0; $line < $nbofprinters; $line++) {
             $var = !$var;
             print '<tr '.$bc[$var].'>';
             if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
@@ -282,16 +285,21 @@ if ($mode == 'config' && $user->admin)
         }
     }
 
-    if ($action!='editprinter') {
-        print '<tr class="liste_titre">';
-        print '<th>'.$langs->trans("Name").'</th>';
-        print '<th>'.$langs->trans("Type").'</th>';
-        print '<th>'.$langs->trans("Profile").'</th>';
-        print '<th>'.$langs->trans("Parameters").'</th>';
-        print '<th></th>';
-        print '<th></th>';
-        print '<th></th>';
-        print "</tr>\n";
+    if ($action!='editprinter') 
+    {
+        if ($nbofprinters > 0)
+        {
+            print '<tr class="liste_titre">';
+            print '<th>'.$langs->trans("Name").'</th>';
+            print '<th>'.$langs->trans("Type").'</th>';
+            print '<th>'.$langs->trans("Profile").'</th>';
+            print '<th>'.$langs->trans("Parameters").'</th>';
+            print '<th></th>';
+            print '<th></th>';
+            print '<th></th>';
+            print "</tr>\n";
+        }
+        
         print '<tr>';
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
@@ -307,6 +315,7 @@ if ($mode == 'config' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
+    
     if ($action!='editprinter') {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {
@@ -315,7 +324,9 @@ if ($mode == 'config' && $user->admin)
     print '</form>';
 
     print '<div><p></div>';
+    
     dol_fiche_head();
+    
     print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
     print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
@@ -325,7 +336,9 @@ if ($mode == 'config' && $user->admin)
     //print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
+
     print '<div><p></div>';
+    
     dol_fiche_head();
     print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
@@ -365,7 +378,8 @@ if ($mode == 'template' && $user->admin)
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < count($printer->listprinterstemplates); $line++) {
+        $max = count($printer->listprinterstemplates);
+        for ($line=0; $line < $max; $line++) {
             $var = !$var;
             print '<tr '.$bc[$var].'>';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
@@ -410,7 +424,8 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
-    for ($tag=0; $tag < count($printer->tags); $tag++) {
+    $max = count($printer->tags);
+    for ($tag=0; $tag < $max; $tag++) {
         $var = !$var;
         print '<tr '.$bc[$var].'>';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
@@ -423,13 +438,13 @@ if ($mode == 'template' && $user->admin)
 }
 
 // to remove after test
+$object=new stdClass();
 $object->date_time = '2015-11-02 22:30:25';
 $object->id = 1234;
 $object->customer_firstname  = 'John';
 $object->customer_lastname  = 'Deuf';
 $object->vendor_firstname  = 'Jim';
 $object->vendor_lastname  = 'Big';
-
 $object->barcode = '3700123862396';
 //$printer->sendToPrinter($object, 1, 16);
 //setEventMessages($printer->error, $printer->errors, 'errors');

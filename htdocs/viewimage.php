@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,15 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
-// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
+// Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
+if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN"))
+{
+	define("NOLOGIN",'1');
+	// For multicompany
+	$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+	if (is_numeric($entity)) define("DOLENTITY", $entity);
+}
 
 /**
  * Header empty
@@ -62,7 +69,7 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-
+if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 
 /*
@@ -95,7 +102,7 @@ $type = 'application/octet-stream';
 if (! empty($_GET["type"])) $type=$_GET["type"];
 else $type=dol_mimetype($original_file);
 
-// Suppression de la chaine de caractere ../ dans $original_file
+// Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
 
 // Find the subdirectory name as the reference

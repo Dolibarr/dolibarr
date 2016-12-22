@@ -39,6 +39,8 @@ $label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
 $type='invoice';
 
+if (empty($conf->global->PAYMENT_ADDON)) $conf->global->PAYMENT_ADDON = 'mod_payment_cicada.php';
+
 
 /*
  * Actions
@@ -62,10 +64,12 @@ if ($action == 'updateMask')
     }
 }
 
-    if ($action == 'setmod')
+if ($action == 'setmod')
 {
     dolibarr_set_const($db, "PAYMENT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
+
+
 
 /*
  * View
@@ -88,7 +92,7 @@ dol_fiche_head($head, 'payment', $langs->trans("Invoices"), 0, 'invoice');
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("PaymentsNumberingModule"));
+print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

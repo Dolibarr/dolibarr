@@ -72,7 +72,7 @@ $modulepart='don';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -81,7 +81,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("Donations"));
+llxHeader("",$langs->trans("Donation"));
 
 
 if ($object->id)
@@ -104,10 +104,10 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/don/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 

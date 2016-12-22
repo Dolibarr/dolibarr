@@ -138,6 +138,7 @@ $list = array (
                 'OAUTH_GOOGLE_NAME',
                 'OAUTH_GOOGLE_ID',
                 'OAUTH_GOOGLE_SECRET',
+                'OAUTH_GOOGLE_DESC',
             ),
             array(
                 'OAUTH_HUBIC_NAME',
@@ -323,7 +324,11 @@ foreach ($list as $key)
     print '<tr class="liste_titre">';
     // Api Name
     $label = $langs->trans($key[0]); 
-    print '<td colspan="2">'.$label.'</td></tr>';
+    print '<td>'.$label.'</td>';
+    print '<td>';
+    if (! empty($key[3])) print $langs->trans($key[3]);
+    print '</td>';
+    print '</tr>';
 
     if ($supported)
     {

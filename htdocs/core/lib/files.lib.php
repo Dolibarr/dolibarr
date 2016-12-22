@@ -1049,7 +1049,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We renamed them.
 		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file))
+		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -1177,6 +1177,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					else $ok=unlink($filename);
 					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+					// TODO Failure to remove can be because file was already removed or because of permission
+					// If error because of not exists, we must can return true but we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_WARNING);
@@ -1187,7 +1189,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 			if ($nophperrors) $ok=@unlink($file_osencoded);
 			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);      
 		}
 
 		return $ok;
@@ -1356,7 +1358,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->thirdparty->name . " " . $object->thirdparty->address . " " . $object->thirdparty->zip . " " . $object->thirdparty->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1390,12 +1392,14 @@ function dol_meta_create($object)
 
 
 /**
- * Init $_SESSION with uploaded files
+ * Scan a directory and init $_SESSION to manage uploaded files with list of all found files.
+ * Note: Only email module seems to use this. Other feature initialize the $_SESSION doing $formmail->clear_attached_files(); $formmail->add_attached_files()
  *
  * @param	string	$pathtoscan				Path to scan
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_init_file_process($pathtoscan='')
+function dol_init_file_process($pathtoscan='', $trackid='')
 {
 	$listofpaths=array();
 	$listofnames=array();
@@ -1411,9 +1415,10 @@ function dol_init_file_process($pathtoscan='')
 			$listofmimes[]=dol_mimetype($val['name']);
 		}
 	}
-	$_SESSION["listofpaths"]=join(';',$listofpaths);
-	$_SESSION["listofnames"]=join(';',$listofnames);
-	$_SESSION["listofmimes"]=join(';',$listofmimes);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
 }
 
 
@@ -1428,9 +1433,10 @@ function dol_init_file_process($pathtoscan='')
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
 {
 	global $db,$user,$conf,$langs;
 
@@ -1439,64 +1445,82 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			// Define $destpath (path to file including filename) and $destfile (only filename)
-			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
-			$destfile=$_FILES[$varfiles]['name'];
-
-			$savingdocmask = dol_sanitizeFileName($savingdocmask);
-
-			if ($savingdocmask)
+			$TFile = $_FILES[$varfiles];
+			if (!is_array($TFile['name']))
 			{
-				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+				foreach ($TFile as $key => &$val)
+				{
+					$val = array($val);
+				}
 			}
+			
+			$nbfile = count($TFile['name']);
+			
+			for ($i = 0; $i < $nbfile; $i++)
+			{
+				// Define $destpath (path to file including filename) and $destfile (only filename)
+				$destpath=$upload_dir . "/" . $TFile['name'][$i];
+				$destfile=$TFile['name'][$i];
+	
+				$savingdocmask = dol_sanitizeFileName($savingdocmask);
+	
+				if ($savingdocmask)
+				{
+					$destpath=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+					$destfile=preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+				}
 
-			// lowercase extension
-			$info = pathinfo($destpath);
-			$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
-			$info = pathinfo($destfile);
-			$destfile = $info['filename'].'.'.strtolower($info['extension']);
+				// lowercase extension
+				$info = pathinfo($destpath);
+				$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
+				$info = pathinfo($destfile);
+				$destfile = $info['filename'].'.'.strtolower($info['extension']);
+				    
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
+				if (is_numeric($resupload) && $resupload > 0)
+				{
+					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 				
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-				global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
-				
-				if (empty($donotupdatesession))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-					$formmail->add_attached_files($destpath, $destfile, $_FILES[$varfiles]['type']);
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+					if (empty($donotupdatesession))
+					{
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail = new FormMail($db);
+						$formmail->trackid = $trackid;
+						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
+					}
+					if (image_format_supported($destpath) == 1)
+					{
+						// Create thumbs
+						// We can't use $object->addThumbs here because there is no $object known
+						
+						// Used on logon for example
+						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+						// Create mini thumbs for image (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+					}
+	
+					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 				}
-				if (image_format_supported($destpath) == 1)
+				else
 				{
-					// Create small thumbs for image (Ratio is near 16/9)
-					// Used on logon for example
-					$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs", IMAGETYPE_PNG);
-					// Create mini thumbs for image (Ratio is near 16/9)
-					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs", IMAGETYPE_PNG);
+					$langs->load("errors");
+					if ($resupload < 0)	// Unknown error
+					{
+						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+					}
+					else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+					{
+						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+					}
+					else	// Known error
+					{
+						setEventMessages($langs->trans($resupload), null, 'errors');
+					}
 				}
-
-				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
+			
 		}
 	} elseif ($link) {
 		if (dol_mkdir($upload_dir) >= 0) {
@@ -1531,9 +1555,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param	int		$filenb					File nb to delete
  * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1,$trackid='')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -1543,9 +1568,10 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 	$listofpaths=array();
 	$listofnames=array();
 	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
 
 	if ($keytodelete >= 0)
 	{
@@ -1564,6 +1590,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
+				$formmail->trackid = $trackid;
 				$formmail->remove_attached_files($keytodelete);
 			}
 		}
@@ -1963,14 +1990,13 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
-
-	else if ($modulepart == 'unpaid')
+	else if ($modulepart == 'massfilesarea_facture')
 	{
 		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/unpaid/temp/'.$original_file;
+		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 
 	// Wrapping pour les fiches intervention
@@ -2194,8 +2220,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for import module
 	else if ($modulepart == 'import')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->import->dir_temp.'/'.$original_file;
 	}
@@ -2203,13 +2227,19 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping pour l'editeur wysiwyg
 	else if ($modulepart == 'editor')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 	}
-
-	// Wrapping pour les backups
+	
+	// Wrapping for miscellaneous medias files
+	elseif ($modulepart == 'medias')
+	{
+	    $accessallowed=1;
+	    global $dolibarr_main_data_root;
+	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	}
+	
+	// Wrapping for backups
 	else if ($modulepart == 'systemtools')
 	{
 		if ($fuser->admin)

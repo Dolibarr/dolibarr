@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,13 +83,13 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
 
 if ($user->rights->banque->modifier && $action == 'class')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$_POST["cat1"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST('cat1', 'int');
     if (! $db->query($sql))
     {
         dol_print_error($db);
     }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$_POST["cat1"].")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".GETPOST('cat1', 'int').")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -102,7 +103,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	$ac = new Account($db);
 	$ac->fetch($id);
 
-	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
+	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -205,24 +206,13 @@ $form = new Form($db);
 
 llxHeader();
 
-// The list of categories is initialized
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " ORDER BY label";
-$result = $db->query($sql);
-if ($result)
-{
-    $var=True;
-    $num = $db->num_rows($result);
-    $i = 0;
-    $options = "<option value=\"0\" selected>&nbsp;</option>";
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
-        $i++;
-    }
-    $db->free($result);
+// Load bank groups
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
+
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
 }
 
 $var=false;
@@ -322,8 +312,11 @@ if ($result)
                 }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowCompany'),'company').' ';
-                    print $links[$key]['label'];
+                    //print img_object($langs->trans('ShowCompany'),'company').' ';
+                    $societe=new Societe($db);
+                    $societe->fetch($links[$key]['url_id']);
+                    //print $links[$key]['label'];
+                    print $societe->getNomUrl(1);
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
@@ -541,7 +534,7 @@ if ($result)
         if ($user->rights->banque->modifier)
         {
             print '<td colspan="3">';
-            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->currency);
+            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
             print '</td>';
         }
         else
@@ -626,7 +619,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
 if ($user->rights->banque->modifier)
 {
-    print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
+    print Form::selectarray('cat1', $options, '', 1).' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 }
 print '</tr>';

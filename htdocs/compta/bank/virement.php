@@ -93,7 +93,7 @@ if ($action == 'add')
 			// By default, electronic transfert from bank to bank
 			$typefrom='PRE';
 			$typeto='VIR';
-			if ($accountto->courant == 2 || $accountfrom->courant == 2)
+			if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
 			{
 				// This is transfert of change
 				$typefrom='LIQ';
@@ -152,7 +152,7 @@ if($error)
 	$amount = GETPOST('amount','int');
 }
 
-print load_fiche_titre($langs->trans("BankTransfer"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
 
 print $langs->trans("TransferDesc");
 print "<br><br>";

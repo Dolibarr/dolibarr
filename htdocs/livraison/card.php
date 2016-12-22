@@ -255,7 +255,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -300,213 +300,7 @@ $formfile = new FormFile($db);
 if ($action == 'create')    // Seems to no be used
 {
 
-	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
-
-	if ($mesg)
-	{
-		print $mesg.'<br>';
-	}
-
-	$commande = new Commande($db);
-	$commande->livraison_array();
-
-	if ($commande->fetch(GETPOST("commande_id")))
-	{
-		$soc = new Societe($db);
-		$soc->fetch($commande->socid);
-		$author = new User($db);
-		$author->fetch($commande->user_author_id);
-
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			$entrepot = new Entrepot($db);
-		}
-
-		/*
-		 *   Commande
-		 */
-		print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
-		}
-		print '<table class="border" width="100%">';
-		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->name.'</a></b></td>';
-
-		print '<td width="50%" colspan="2">';
-
-		print "</td></tr>";
-
-		print "<tr><td>".$langs->trans("Date")."</td>";
-		print "<td>".dol_print_date($commande->date,'dayhourtext')."</td>\n";
-
-		print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
-		print "</td></tr>\n";
-
-		print '<tr>';
-
-		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
-		{
-			print '<td>'.$langs->trans("Warehouse").'</td>';
-			print '<td>';
-			$ents = $entrepot->list_array();
-			print '<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-			print '</td>';
-		}
-
-		print "<td>".$langs->trans("Author")."</td><td>".$author->getFullName($langs)."</td>\n";
-
-		if ($commande->note)
-		{
-			print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
-		}
-		print "</table>";
-
-		/*
-		 * Lignes de commandes
-		 */
-		print '<br><table class="noborder" width="100%">';
-
-		$commande->fetch_lines(1);
-		$lines = $commande->lines;
-
-		// Lecture des livraisons deja effectuees
-		$commande->livraison_array();
-
-		$num = count($commande->lines);
-		$i = 0;
-
-		if ($num)
-		{
-			print '<tr class="liste_titre">';
-			print '<td width="54%">'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-			print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
-			if (! empty($conf->stock->enabled))
-			{
-				print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
-			}
-			print "</tr>\n";
-		}
-		$var=true;
-		while ($i < $num)
-		{
-			$product = new Product($db);
-
-			$line = $commande->lines[$i];
-			$var=!$var;
-			print "<tr ".$bc[$var].">\n";
-			if ($line->fk_product > 0)
-			{
-				$product->fetch($line->fk_product);
-				$product->load_stock();
-
-				// Define output language
-				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-				{
-					$commande->fetch_thirdparty();
-					$outputlangs = $langs;
-					$newlang='';
-					if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if (empty($newlang)) $newlang=$commande->client->default_lang;
-					if (! empty($newlang))
-					{
-						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-
-					$label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $product->label;
-				}
-				else
-					$label = (! empty($line->label)?$line->label:$product->label);
-
-				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$label;
-				if ($line->description) print nl2br($line->description);
-				print '</td>';
-			}
-			else
-			{
-				print "<td>";
-				if ($line->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
-
-				if (! empty($line->label)) {
-					$text.= ' <strong>'.$line->label.'</strong>';
-					print $form->textwithtooltip($text,$line->description,3,'','',$i);
-				} else {
-					print $text.' '.nl2br($line->description);
-				}
-
-				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
-				print "</td>\n";
-			}
-
-			print '<td align="center">'.$line->qty.'</td>';
-			/*
-			 *
-			 */
-			print '<td align="center">';
-			$quantite_livree = $commande->livraisons[$line->id];
-			print $quantite_livree;
-			print '</td>';
-
-			$quantite_commandee = $line->qty;
-			$quantite_a_livrer = $quantite_commandee - $quantite_livree;
-
-			if (! empty($conf->stock->enabled))
-			{
-				$stock = $product->stock_warehouse[$_GET["entrepot_id"]]->real;
-				$stock+=0;  // Convertit en numerique
-
-				// Quantite a livrer
-				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';
-				print '</td>';
-
-				// Stock
-				if ($stock < $quantite_a_livrer)
-				{
-					print '<td align="center">'.$stock.' '.img_warning().'</td>';
-				}
-				else
-				{
-					print '<td align="center">'.$stock.'</td>';
-				}
-			}
-			else
-			{
-				// Quantite a livrer
-				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
-				print '</td>';
-			}
-
-			print "</tr>\n";
-
-			$i++;
-			$var=!$var;
-		}
-
-		/*
-		 *
-		 */
-
-		print '<tr><td align="center" colspan="4"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-		print "</table>";
-		print '</form>';
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+	
 }
 else
 /* *************************************************************************** */
@@ -755,7 +549,7 @@ else
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
+ * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,9 +103,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_vat = '';
 }
 
+
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Ventilation"));
 
 print '<script type="text/javascript">
@@ -123,7 +126,7 @@ print '<script type="text/javascript">
 				    });
 			    });
 			});
-			 </script>';
+		</script>';
 
 /*
  * Action
@@ -185,7 +188,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND fk_code_ventilation <= 0";
+$sql .= " AND l.fk_code_ventilation <= 0";
 $sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 
@@ -228,9 +231,6 @@ if ($result) {
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
-	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder);
-	print '&nbsp;&nbsp;';
-	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -305,11 +305,12 @@ if ($result) {
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
 
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
+		$facture_static->type = $objp->ftype;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 		// Ref Product
 		$product_static->ref = $objp->product_ref;

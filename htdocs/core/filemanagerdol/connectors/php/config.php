@@ -23,6 +23,7 @@
  */
 
 global $Config ;
+global $website;
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
@@ -44,13 +45,17 @@ $Config['Enabled'] = true ;
 
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=fckeditor&file=' ;
+$extEntity=(empty($entity) ? 1 : $entity); // For multicompany with external access
+
+$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website)?'':'_'.$website).'&entity='.$extEntity.'&file=' ;
+$Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/' . $entity : '') . '/medias/') : ('/websites/'.$website));
+
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Useful if you are using a virtual directory, symbolic
 // link or alias. Examples: 'C:\\MySite\\userfiles\\' or '/root/mysite/userfiles/'.
 // Attention: The above 'UserFilesPath' must point to the same directory.
-$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root . (!empty($entity) ? '/' . $entity : '') . '/fckeditor/';
+$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root . $Config['UserFilesAbsolutePathRelative'];
 
 // Due to security issues with Apache modules, it is recommended to leave the
 // following setting enabled.
@@ -64,7 +69,7 @@ $Config['SecureImageUploads'] = true;
 $Config['ConfigAllowedCommands'] = array('QuickUpload', 'FileUpload', 'GetFolders', 'GetFoldersAndFiles', 'CreateFolder');
 
 // Allowed Resource Types.
-$Config['ConfigAllowedTypes'] = array('File', 'Image', 'Flash', 'Media');
+$Config['ConfigAllowedTypes'] = array('File', 'Image', 'Media');
 
 // For security, HTML is allowed in the first Kb of data for files having the
 // following extensions only.
@@ -75,11 +80,19 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js");
 // If possible, it is recommended to set more restrictive permissions, like 0755.
 // Set to 0 to disable this feature.
 // Note: not needed on Windows-based servers.
-$Config['ChmodOnUpload'] = 0775 ;
+$newmask = '0644';
+if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+$Config['ChmodOnUpload'] = $newmask;
 
 // See comments above.
 // Used when creating folders that does not exist.
-$Config['ChmodOnFolderCreate'] = 0775 ;
+$newmask = '0755';
+$dirmaskdec=octdec($newmask);
+if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+$newmask = decoct($dirmaskdec);
+
+$Config['ChmodOnFolderCreate'] = $newmask;
 
 /*
 	Configuration settings for each Resource Type

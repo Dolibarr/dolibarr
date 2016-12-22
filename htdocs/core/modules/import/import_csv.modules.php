@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2012       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ class ImportCsv extends ModeleImports
 
 	var $separator;
 
+	var $file;      // Path of file
 	var $handle;    // Handle fichier
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
@@ -83,76 +84,6 @@ class ImportCsv extends ModeleImports
 
 		$this->datatoimport=$datatoimport;
 		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
-	}
-
-	/**
-	 * getDriverId
-	 *
-	 * @return string		Id
-	 */
-	function getDriverId()
-	{
-		return $this->id;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label
-	 */
-	function getDriverLabel()
-	{
-		return $this->label;
-	}
-
-	/**
-	 *	getDriverDesc
-	 *
-	 *	@return string	Description
-	 */
-	function getDriverDesc()
-	{
-		return $this->desc;
-	}
-
-	/**
-	 * getDriverExtension
-	 *
-	 * @return string	Driver suffix
-	 */
-	function getDriverExtension()
-	{
-		return $this->extension;
-	}
-
-	/**
-	 *	getDriverVersion
-	 *
-	 *	@return string	Driver version
-	 */
-	function getDriverVersion()
-	{
-		return $this->version;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label of external lib
-	 */
-	function getLibLabel()
-	{
-		return $this->label_lib;
-	}
-
-	/**
-	 * getLibVersion
-	 *
-	 *	@return string	Version of external lib
-	 */
-	function getLibVersion()
-	{
-		return $this->version_lib;
 	}
 
 
@@ -235,6 +166,19 @@ class ImportCsv extends ModeleImports
 
 		return $ret;
 	}
+
+	
+	/**
+	 * 	Return nb of records. File must be closed.
+	 *
+	 *	@param	string	$file		Path of filename
+	 * 	@return		int		<0 if KO, >=0 if OK
+	 */
+	function import_get_nb_of_lines($file)
+	{
+	   return dol_count_nb_of_line($file);
+    }
+    
 
 	/**
 	 * 	Input header line from file
@@ -319,7 +263,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->import_tables_array, objimport->import_fields_array, objimport->import_convertvalue_array, ...)
+	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
@@ -401,7 +345,7 @@ class ImportCsv extends ModeleImports
 						// Make some tests on $newval
 
 						// Is it a required field ?
-						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ($newval==''))
+						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ((string) $newval==''))
 						{
 							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
 							$this->errors[$error]['type']='NOTNULL';
@@ -420,7 +364,13 @@ class ImportCsv extends ModeleImports
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
                                 	)
                                 {
-                                    if (! is_numeric($newval) && $newval != '')    // If value into input import file is not a numeric, we apply the function defined into descriptor
+                                    // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
+                                    $isidorref='id';
+                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
+                                    $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
+                                    //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+                                    
+                                    if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
                                         $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -503,6 +453,10 @@ class ImportCsv extends ModeleImports
                                         //print 'code_compta_fournisseur='.$newval;
                                     }
                                     if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
+                                {
+                                    $newval = price2num($newval);
                                 }
 
                                 //print 'Val to use as insert is '.$newval.'<br>';

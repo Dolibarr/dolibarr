@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  *
@@ -37,13 +37,13 @@ $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_la
 $sall=GETPOST("sall","alpha");
 $search_status=GETPOST("search_status","int");
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());
@@ -58,6 +58,21 @@ $fieldstosearchall = array(
     'e.town'=>'Town',
 );
 
+
+/*
+ * Actions
+ */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref="";
+    $sall="";
+    $search_label="";
+    $search_status="";
+    $search_array_options=array();
+}
 
 
 /*
@@ -107,20 +122,22 @@ if ($result)
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("ListOfWarehouses"),$help_url);
 
-	$param = '';
+	$param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($search_ref)	$param.="&search_ref=".$search_ref;
 	if ($search_label)	$param.="&search_label=".$search_label;
 	if ($search_status)	$param.="&search_status=".$search_status;
 	if ($sall)			$param.="&sall=".$sall;
-
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines);
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, '', '', $limit);
+	
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -159,10 +176,10 @@ if ($result)
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 
-	print '<td class="liste_titre nowrap" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
 	print '</tr>';
 

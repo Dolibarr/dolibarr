@@ -100,7 +100,13 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if (empty($_FILES['userfile']['tmp_name']))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
+			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
+		}
+		else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
+
 	}
 
 	if (! $error)
@@ -201,8 +207,11 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
+
     $ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
@@ -371,7 +380,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        32
+        ,   north__size:        36
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340

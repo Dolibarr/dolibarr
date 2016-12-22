@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
@@ -56,7 +56,7 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	var $ref_customer;
-	
+
 	/**
 	 * Supplier reference of the contract
 	 * @var string
@@ -536,7 +536,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    Load a contract from database
 	 *
@@ -904,6 +904,7 @@ class Contrat extends CommonObject
 		}
 		if (! $paramsok) return -1;
 
+		
 		$this->db->begin();
 
 		$now=dol_now();
@@ -1134,6 +1135,16 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
 		if (! $error)
 		{
 			// We remove directory
@@ -1179,7 +1190,6 @@ class Contrat extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
@@ -1197,14 +1207,11 @@ class Contrat extends CommonObject
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
-
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
 		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
 		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
@@ -1225,8 +1232,6 @@ class Contrat extends CommonObject
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
 		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
-
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -1300,19 +1305,20 @@ class Contrat extends CommonObject
 			$this->db->begin();
 
 			// Clean parameters
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (! $qty) $qty=1;
-			if (! $info_bits) $info_bits=0;
-			if (! $pu_ht)  $pu_ht=0;
-			if (! $pu_ttc) $pu_ttc=0;
-
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$pa_ht=price2num($pa_ht);
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (empty($qty)) $qty=1;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
+			if (empty($pu_ttc)) $pu_ttc=0;
+            if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
+            if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
 			{
@@ -1333,7 +1339,7 @@ class Contrat extends CommonObject
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
 			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-					
+
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1356,9 +1362,9 @@ class Contrat extends CommonObject
 
 		    if (empty($pa_ht)) $pa_ht=0;
 
-			
+
 			// if buy price not defined, define buyprice as configured in margin admin
-			if ($this->pa_ht == 0) 
+			if ($this->pa_ht == 0)
 			{
 				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0)
 				{
@@ -1380,15 +1386,17 @@ class Contrat extends CommonObject
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
 			$sql.= ", fk_unit";
-			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
+			$sql.= ") VALUES (";
+			$sql.= $this->id.", '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
-			$sql.= " '".$qty."',";
-			$sql.= " '".$txtva."',";
-			$sql.= " '".$txlocaltax1."',";
-			$sql.= " '".$txlocaltax2."',";
+			$sql.= " ".$qty.",";
+			$sql.= " ".$txtva.",";
+			$sql.= " ".$txlocaltax1.",";
+			$sql.= " ".$txlocaltax2.",";
 			$sql.= " '".$localtax1_type."',";
 			$sql.= " '".$localtax2_type."',";
-			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
+			$sql.= " ".price2num($remise_percent).",";
+			$sql.= " ".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num($remise).",";
@@ -1515,7 +1523,7 @@ class Contrat extends CommonObject
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/','',$tvatx);  // Remove code into vatrate.
-		
+
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -1539,7 +1547,7 @@ class Contrat extends CommonObject
 	    if (empty($pa_ht)) $pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
 			{
@@ -1953,7 +1961,7 @@ class Contrat extends CommonObject
 	 */
 	function load_board($user,$mode)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -2037,7 +2045,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->contrat->activer && !$user->societe_id)
+		if (!$user->rights->contrat->lire && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2098,6 +2106,8 @@ class Contrat extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -2116,8 +2126,6 @@ class Contrat extends CommonObject
 			}
 		}
 
-
-
 		// Initialise parametres
 		$this->id=0;
 		$this->specimen=1;
@@ -2127,6 +2135,7 @@ class Contrat extends CommonObject
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->statut= 0;
+		$this->date_creation = (dol_now() - 3600 * 24 * 7);
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
@@ -2147,8 +2156,11 @@ class Contrat extends CommonObject
 			$line->total_ht=90;
 			$line->total_ttc=107.64;	// 90 * 1.196
 			$line->total_tva=17.64;
-			$prodid = rand(1, $num_prods);
-			$line->fk_product=$prodids[$prodid];
+            if ($num_prods > 0)
+            {
+				$prodid = mt_rand(1, $num_prods);
+				$line->fk_product=$prodids[$prodid];
+            }
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
@@ -2217,18 +2229,18 @@ class Contrat extends CommonObject
  */
 class ContratLigne extends CommonObjectLine
 {
-
+    public $element='contratdet';
+    public $table_element='contratdet';
+    
 	var $id;
 	var $ref;
 	var $tms;
+
 	var $fk_contrat;
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
+	var $type;                     // 0 for product, 1 for service
 	var $label;
-
-	public $element='contratdet';
-	public $table_element='contratdet';
-
 	/**
 	 * @var string
 	 * @deprecated Use $label instead
@@ -2237,6 +2249,10 @@ class ContratLigne extends CommonObjectLine
 	public $libelle;
 
 	var $description;
+	
+	var $product_ref;
+	var $product_label;
+	
 	var $date_commande;
 	var $date_ouverture_prevue;		// date start planned
 	var $date_ouverture;			// date start real
@@ -2376,16 +2392,17 @@ class ContratLigne extends CommonObjectLine
 
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
-
+        if (empty($label)) $label=$this->description;
+        
         $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='contract';
-
+		$picto='service';
+		if ($this->type == 0) $picto='product';
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->label.$linkend;
+		if ($withpicto != 2) $result.=$link.($this->product_ref?$this->product_ref.' ':'').($this->label?$this->label:$this->description).$linkend;
 		return $result;
 	}
 
@@ -2398,7 +2415,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	function fetch($id, $ref='')
 	{
-		global $langs,$user;
 
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
@@ -2414,6 +2430,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " p.ref as product_ref,";
 		$sql.= " p.label as product_label,";
 		$sql.= " p.description as product_desc,";
+		$sql.= " p.fk_product_type as product_type,";
 		$sql.= " t.description,";
 		$sql.= " t.date_commande,";
 		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";
@@ -2464,6 +2481,7 @@ class ContratLigne extends CommonObjectLine
 				$this->product_ref = $obj->product_ref;
 				$this->product_label = $obj->product_label;
 				$this->product_description = $obj->product_description;
+				$this->product_type = $obj->product_type;
 				$this->label = $obj->label;					// deprecated. We do not use this field. Only ref and label of product, and description of contract line
 				$this->description = $obj->description;
 				$this->date_commande = $this->db->jdate($obj->date_commande);
@@ -2571,7 +2589,7 @@ class ContratLigne extends CommonObjectLine
 	    if (empty($this->pa_ht)) $this->pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{

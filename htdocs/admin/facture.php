@@ -42,7 +42,7 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='invoice';
 
 
@@ -262,11 +262,11 @@ if ($action == 'setforcedate')
     }
 }
 
-if ($action == 'set_FAC_AUTO_FILLJS')
+if ($action == 'set_INVOICE_AUTO_FILLJS')
 {
-	$freetext = GETPOST('FAC_AUTO_FILLJS');	// No alpha here, we want exact string
+	$freetext = GETPOST('INVOICE_AUTO_FILLJS');	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "FAC_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "INVOICE_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -380,7 +380,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -566,7 +566,7 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -578,7 +578,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"),'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -754,11 +754,11 @@ print '</form>';
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
+print '<input type="hidden" name="action" value="set_INVOICE_AUTO_FILLJS" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("JSOnPaimentBill");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
+print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

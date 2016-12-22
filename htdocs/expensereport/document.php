@@ -72,7 +72,7 @@ $modulepart='trip';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -81,7 +81,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("TripCard"));
+llxHeader("",$langs->trans("ExpenseReport"));
 
 
 if ($object->id)
@@ -107,7 +107,7 @@ if ($object->id)
     $linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 

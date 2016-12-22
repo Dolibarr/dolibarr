@@ -41,6 +41,8 @@ class Mailing extends CommonObject
 	var $bgcolor;
 	var $bgimage;
 
+	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+	
 	var $email_from;
 	var $email_replyto;
 	var $email_errorsto;
@@ -80,7 +82,7 @@ class Mailing extends CommonObject
 		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
-		$this->statut_dest[3] = 'MailingStatusNotContact';
+		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe';    // Read but ask to not be contacted anymore
 
 	}
 
@@ -477,6 +479,38 @@ class Mailing extends CommonObject
 		}
 	}
 
+	
+	/**
+	 *  Count number of target with status
+	 *
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error) 
+	 *  @return int        		Nb of target with status
+	 */
+	function countNbOfTargets($mode)
+	{
+	    $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+	    $sql.= " WHERE fk_mailing = ".$this->id;
+	    if ($mode == 'alreadysent') $sql.= " AND statut <> 0";
+	    else 
+	    {
+	        $this->error='BadValueForParameterMode';
+	        return -2;
+	    }
+	     
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $obj = $this->db->fetch_object($resql);
+	        if ($obj) return $obj->nb;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->lasterror();
+	        return -1;
+	    }
+	    return 0;
+	}
+	
 
 	/**
 	 *  Retourne le libelle du statut d'un mailing (brouillon, validee, ...

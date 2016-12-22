@@ -193,8 +193,9 @@ if (GETPOST("action") == 'create')
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
-	$sql.= " WHERE p.fk_expensereport = ".$chid;
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
+	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{

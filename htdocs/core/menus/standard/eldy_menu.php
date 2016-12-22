@@ -105,13 +105,15 @@ class MenuManager
         $menuArbo = new Menubase($this->db,'eldy');
         $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
         $this->tabMenu=$tabMenu;
+        
+        //if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
     }
 
 
     /**
      *  Show menu
      *
-     *	@param	string	$mode			'top', 'left', 'jmobile'
+     *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile'
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
      */
@@ -132,26 +134,27 @@ class MenuManager
 
         if (empty($conf->global->MAIN_MENU_INVERT))
         {
-        	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
         	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
         }
         else
 		{
         	$conf->global->MAIN_SHOW_LOGO=0;
         	if ($mode == 'top')  print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
-        	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
 		}
 
 		if ($mode == 'topnb')
 		{
-		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);  // no output
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
 		    
         if ($mode == 'jmobile')
         {
-            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
 
+            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
+            
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
@@ -169,8 +172,9 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
-	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
-        			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
+        		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu);exit; }
+	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
@@ -185,11 +189,16 @@ class MenuManager
         				print '<a href="'.$relurl.'"';
         				//print ' data-ajax="false"';
         				print '>';
-        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
+        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation 
+        				{
+        				    if ($val['mainmenu'] == 'cashdesk') print $langs->trans("Access");
+        				    else print $langs->trans("Dashboard");	
+        				}
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";
         			}
+        			
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu']
        				{
 						$showmenu=true;

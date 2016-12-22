@@ -85,7 +85,7 @@ $arrayfields=array(
     'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
     'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
     'u.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
-    'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>0),
+    'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>($mode=='employee'?1:0)),
     'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
     'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
     'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
@@ -124,6 +124,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Default search
 if ($search_statut == '') $search_statut='1';
+if ($mode == 'employee') $search_employee=1;
 
 
 
@@ -193,7 +194,6 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
-if ($mode == "employee") $sql.= " AND u.employee = 1";
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
@@ -229,6 +229,15 @@ $sql.=$hookmanager->resPrint;
 $sql.=$db->order($sortfield,$sortorder);
 //$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
+/*$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1, $offset);
+*/
 $result = $db->query($sql);
 if ($result)
 {
@@ -236,6 +245,8 @@ if ($result)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($sall != '') $param.='&sall='.urlencode($sall);
     if ($search_user != '') $param.="&search_user=".$search_user;
     if ($search_login != '') $param.="&search_login=".$search_login;
@@ -413,10 +424,10 @@ if ($result)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	
     print "</tr>\n";
 

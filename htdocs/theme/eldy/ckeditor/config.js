@@ -32,14 +32,12 @@ CKEDITOR.editorConfig = function( config )
 	    ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
-	    '/',
 	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink','Anchor'],
 	    ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
-	    '/',
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	    ['Maximize', 'ShowBlocks','-','About']
@@ -48,7 +46,7 @@ CKEDITOR.editorConfig = function( config )
 	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
-	 	['Source','Maximize'],
+	 	['Source','Maximize','Preview'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],

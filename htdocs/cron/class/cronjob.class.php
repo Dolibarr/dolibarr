@@ -107,7 +107,8 @@ class Cronjob extends CommonObject
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
 		if (isset($this->libname)) $this->libname = trim($this->libname);
-
+		if (isset($this->test)) $this->test = trim($this->test);
+		
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
@@ -175,12 +176,11 @@ class Cronjob extends CommonObject
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_mod,";
 		$sql.= "note,";
-		$sql.= "nbrun";
-		$sql .= ",libname";
-
-
+		$sql.= "nbrun,";
+		$sql.= "maxrun,";
+		$sql.= "libname,";
+		$sql.= "test";
 		$sql.= ") VALUES (";
-
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(! isset($this->jobtype)?'NULL':"'".$this->db->escape($this->jobtype)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
@@ -191,7 +191,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->params)?'NULL':"'".$this->db->escape($this->params)."'").",";
 		$sql.= " ".(! isset($this->md5params)?'NULL':"'".$this->db->escape($this->md5params)."'").",";
 		$sql.= " ".(! isset($this->module_name)?'NULL':"'".$this->db->escape($this->module_name)."'").",";
-		$sql.= " ".(! isset($this->priority)?'NULL':"'".$this->priority."'").",";
+		$sql.= " ".(! isset($this->priority)?'0':$this->priority).",";
 		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':$this->db->idate($this->datelastrun)).",";
 		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':$this->db->idate($this->datenextrun)).",";
 		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':$this->db->idate($this->dateend)).",";
@@ -200,17 +200,16 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':$this->db->idate($this->datelastresult)).",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
 		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
-		$sql.= " ".(! isset($this->frequency)?'NULL':"'".$this->frequency."'").",";
-		$sql.= " ".(! isset($this->status)?'0':"'".$this->status."'").",";
+		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
+		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
-		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
-		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'")."";
-
-
+		$sql.= " ".(! isset($this->nbrun)?'0':$this->db->escape($this->nbrun)).",";
+		$sql.= " ".(empty($this->maxrun)?'0':$this->db->escape($this->maxrun)).",";
+		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'").",";
+		$sql.= " ".(! isset($this->test)?'NULL':"'".$this->db->escape($this->test)."'")."";
 		$sql.= ")";
-
 
 		$this->db->begin();
 
@@ -291,10 +290,10 @@ class Cronjob extends CommonObject
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.fk_user_mod,";
 		$sql.= " t.note,";
-		$sql.= " t.nbrun";
-		$sql .= ", t.libname";
-
-
+		$sql.= " t.nbrun,";
+		$sql.= " t.maxrun,";
+		$sql.= " t.libname,";
+		$sql.= " t.test";
         $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
         $sql.= " WHERE t.rowid = ".$id;
 
@@ -335,8 +334,9 @@ class Cronjob extends CommonObject
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note = $obj->note;
 				$this->nbrun = $obj->nbrun;
+				$this->maxrun = $obj->maxrun;
 				$this->libname = $obj->libname;
-
+				$this->test = $obj->test;
             }
             $this->db->free($resql);
 
@@ -363,8 +363,12 @@ class Cronjob extends CommonObject
     function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='')
     {
     	global $langs;
+    	
+    	$this->lines=array();
+    	
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
+    	$sql.= " t.entity,";
     	$sql.= " t.tms,";
     	$sql.= " t.datec,";
     	$sql.= " t.jobtype,";
@@ -390,16 +394,19 @@ class Cronjob extends CommonObject
     	$sql.= " t.fk_user_author,";
     	$sql.= " t.fk_user_mod,";
     	$sql.= " t.note,";
-    	$sql.= " t.nbrun";
-    	$sql .= ", t.libname";
-
+    	$sql.= " t.nbrun,";
+    	$sql.= " t.libname,";
+    	$sql.= " t.test";
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
-    	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
-    		foreach($filter as $key => $value) {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    		foreach($filter as $key => $value) 
+    		{
+    		    if ($key == 't.rowid') $sql.= ' AND '.$key.' = '.$this->db->escape($value);
+   				else $sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     		}
     	}
 
@@ -426,8 +433,6 @@ class Cronjob extends CommonObject
 
     		if ($num)
     		{
-    			$this->lines=array();
-
 	    		while ($i < $num)
 	    		{
 
@@ -438,6 +443,7 @@ class Cronjob extends CommonObject
 	    			$line->id    = $obj->rowid;
 	    			$line->ref = $obj->rowid;
 
+	    			$line->entity = $obj->entity;
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->datec = $this->db->jdate($obj->datec);
 	    			$line->label = $obj->label;
@@ -464,7 +470,8 @@ class Cronjob extends CommonObject
 	    			$line->fk_user_mod = $obj->fk_user_mod;
 	    			$line->note = $obj->note;
 	    			$line->nbrun = $obj->nbrun;
-        			$line->libname = $obj->libname;
+	    			$line->libname = $obj->libname;
+	    			$line->test = $obj->test;
 	    			$this->lines[]=$line;
 
 	    			$i++;
@@ -499,7 +506,6 @@ class Cronjob extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->jobtype)) $this->jobtype=trim($this->jobtype);
 		if (isset($this->command)) $this->command=trim($this->command);
@@ -517,12 +523,14 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
+		if (empty($this->maxrun)) $this->maxrun=0;
         if (isset($this->libname)) $this->libname = trim($this->libname);
-
+        if (isset($this->test)) $this->test = trim($this->test);
+        
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronDtStart'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronDtStart'));
 			$error++;
 		}
 		if ((dol_strlen($this->datestart)!=0) && (dol_strlen($this->dateend)!=0) && ($this->dateend<$this->datestart)) {
@@ -530,32 +538,32 @@ class Cronjob extends CommonObject
 			$error++;
 		}
 		if (empty($this->label)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLabel'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronLabel'));
 			$error++;
 		}
 		if (empty($this->unitfrequency)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronFrequency'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronFrequency'));
 			$error++;
 		}
 		if (($this->jobtype=='command') && (empty($this->command))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronCommand'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronCommand'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->classesname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronClass'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronClass'));
 			$error++;
 		}
 		if (($this->jobtype=='method' || $this->jobtype == 'function') && (empty($this->methodename))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronMethod'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronMethod'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->objectname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronObject'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronObject'));
 			$error++;
 		}
 
 		if (($this->jobtype=='function') && (empty($this->libname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLib'));
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->transnoentitiesnoconv('CronLib'));
 			$error++;
 		}
 
@@ -585,13 +593,13 @@ class Cronjob extends CommonObject
 		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
-		$sql.= " nbrun=".(isset($this->nbrun)?$this->nbrun:"null");
-		$sql.= ", libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
+		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
+		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"0").",";
+		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null").",";
+		$sql.= " test=".(isset($this->test)?"'".$this->db->escape($this->test)."'":"null");
+		$sql.= " WHERE rowid=".$this->id;
 
-
-        $sql.= " WHERE rowid=".$this->id;
-
-		$this->db->begin();
+        $this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -786,6 +794,7 @@ class Cronjob extends CommonObject
 		$this->fk_user_mod='';
 		$this->note='';
 		$this->nbrun='';
+		$this->maxrun=100;
         $this->libname = '';
 	}
 
@@ -828,10 +837,10 @@ class Cronjob extends CommonObject
 
 	/**
 	 * Run a job.
-	 * Once job is finished, status and nb of of run is updated. 
+	 * Once job is finished, status and nb of run is updated. 
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs 
 	 *
-	 * @param  string		$userlogin    	User login
+	 * @param   string		$userlogin    	User login
 	 * @return	int					 		<0 if KO, >0 if OK
 	 */
 	function run_jobs($userlogin)
@@ -839,6 +848,8 @@ class Cronjob extends CommonObject
 		global $langs, $conf;
 
 		$now=dol_now();
+		$error = 0;
+		$retval = '';
 
 		$langs->load('cron');
 
@@ -870,7 +881,6 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
-
 		// Increase limit of time. Works only if we are not in safe mode
 		$ExecTimeLimit=600;
 		if (!empty($ExecTimeLimit))
@@ -886,13 +896,13 @@ class Cronjob extends CommonObject
 			@ini_set('memory_limit', $MemoryLimit);
 		}
 
-
-		// Update last run date (to track launch)
+		// Update last run date start (to track running jobs)
 		$this->datelastrun=$now;
+		$this->datelastresult=null;
 		$this->lastoutput='';
 		$this->lastresult='';
 		$this->nbrun=$this->nbrun + 1;
-		$result = $this->update($user);
+		$result = $this->update($user);       // This include begin/commit
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
@@ -902,49 +912,84 @@ class Cronjob extends CommonObject
 		if ($this->jobtype=='method')
 		{
 			// load classes
-			$file = "/".$this->module_name."/class/".$this->classesname;
-			$ret=dol_include_once($file,$this->objectname);
-			if ($ret===false)
+			if (! $error)
 			{
-				$this->error=$langs->trans('CronCannotLoadClass',$file,$this->objectname);
-				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-				return -1;
+    			$ret=dol_include_once($this->classesname);
+    			if ($ret===false || (! class_exists($this->objectname)))
+    			{
+    			    $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+    				$this->lastoutput = $this->error;
+    				$this->lastresult = -1;
+                    $retval = $this->lastresult;
+                    $error++;
+    			}
 			}
 
+			// test if method exists
+			if (! $error)
+			{
+			    if (! method_exists($this->objectname, $this->methodename))
+			    {
+			        $this->error=$langs->trans('CronMethodDoesNotExists',$this->objectname,$this->methodename);
+    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+    				$this->lastoutput = $this->error;
+    				$this->lastresult = -1;
+    				$retval = $this->lastresult;
+    				$error++;
+			    }
+			}
+			
 			// Load langs
-			$result=$langs->load($this->module_name.'@'.$this->module_name);
-			if ($result<0)
+			if (! $error)
 			{
-				dol_syslog(get_class($this)."::run_jobs Cannot load module langs".$langs->error, LOG_ERR);
-				return -1;
+				$result=$langs->load($this->module_name.'@'.$this->module_name);
+				if ($result < 0)
+				{
+					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
+					$this->error = $langs->error;
+					$this->lastoutput = $this->error;
+					$this->lastresult = -1;
+	                $retval = $this->lastresult;
+	                $error++;
+				}
 			}
-
-			dol_syslog(get_class($this)."::run_jobs ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
-
-			// Create Object for the call module
-			$object = new $this->objectname($this->db);
-
-			$params_arr = explode(", ",$this->params);
-			if (!is_array($params_arr))
+			
+			if (! $error)
 			{
-				$result = call_user_func(array($object, $this->methodename), $this->params);
-			}
-			else
-			{
-				$result = call_user_func_array(array($object, $this->methodename), $params_arr);
-			}
-
-			if ($result===false)
-			{
-				dol_syslog(get_class($this)."::run_jobs ".$object->error, LOG_ERR);
-				return -1;
-			}
-			else
-			{
-				$this->lastoutput=var_export($result,true);
-				$this->lastresult=var_export($result,true);
-			}
-
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+	
+				// Create Object for the call module
+				$object = new $this->objectname($this->db);
+	
+				$params_arr = explode(", ",$this->params);
+				if (!is_array($params_arr))
+				{
+					$result = call_user_func(array($object, $this->methodename), $this->params);
+				}
+				else
+				{
+					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
+				}
+			
+				if ($result===false || $result != 0)
+				{
+				    $langs->load("errors");
+					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
+				    $this->error = $object->error?$object->error:$langs->trans('ErrorUnknown');
+					$this->lastoutput = ($object->output?$object->output."\n":"").$this->error;
+					$this->lastresult = is_numeric($result)?$result:-1;
+		            $retval = $this->lastresult;
+		            $error++;
+				}
+				else
+				{
+					dol_syslog(get_class($this)."::run_jobs END");
+				    $this->lastoutput=$object->output;
+					$this->lastresult=var_export($result,true);
+					$retval = $this->lastresult;
+				}
+			}		
 		}
 
 		if($this->jobtype == 'function')
@@ -976,15 +1021,21 @@ class Cronjob extends CommonObject
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
-			if ($result === false)
+			if ($result === false || $result != 0)
 			{
-				dol_syslog(get_class($this) . "::run_jobs " . $object->error, LOG_ERR);
-				return -1;
+			    $langs->load("errors");
+			    dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
+			    $this->error = $langs->trans('ErrorUnknown');
+			    $this->lastoutput = $this->error;
+			    $this->lastresult = is_numeric($result)?$result:-1;
+			    $retval = $this->lastresult;
+			    $error++;
 			}
 			else
 			{
                 $this->lastoutput=var_export($result,true);
-                $this->lastresult=var_export($result,true);
+                $this->lastresult=var_export($result,true);	// Return code
+                $retval = $this->lastresult;
 			}
 		}
 
@@ -1003,6 +1054,16 @@ class Cronjob extends CommonObject
 			if ($execmethod == 1)
 			{
 				exec($command, $output_arr, $retval);
+				if ($retval != 0)
+				{
+				    $langs->load("errors");
+				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
+				    $this->error = 'Error '.$retval;
+				    $this->lastoutput = '';     // Will be filled later
+				    $this->lastresult = $retval;
+				    $retval = $this->lastresult;
+				    $error++;				    
+				}
 			}
 			if ($execmethod == 2)
 			{
@@ -1024,22 +1085,24 @@ class Cronjob extends CommonObject
 				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
 
-			dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
-
 			// Update with result
-			$this->lastoutput='';
-			if (is_array($output_arr) && count($output_arr)>0)
-			{
-				foreach($output_arr as $val)
-				{
-					$this->lastoutput.=$val."\n";
-				}
-			}
-			$this->lastresult=$retval;
+    		if (is_array($output_arr) && count($output_arr)>0)
+    		{
+    			foreach($output_arr as $val)
+    			{
+    				$this->lastoutput.=$val."\n";
+    			}
+    		}
+    		
+    		$this->lastresult=$retval;
+		
+    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
-
+		
+		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
+		
 		$this->datelastresult=dol_now();
-		$result = $this->update($user);
+		$result = $this->update($user);       // This include begin/commit
 		if ($result < 0)
 		{
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1047,7 +1110,7 @@ class Cronjob extends CommonObject
 		}
 		else
 		{
-			return 1;
+			return $error?-1:1;
 		}
 
 	}
@@ -1087,23 +1150,25 @@ class Cronjob extends CommonObject
 		
 		if (empty($this->datenextrun)) 
 		{
-			$this->datenextrun = $now + $this->frequency;
+			if (empty($this->datestart)) $this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+			else $this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+		}
+
+		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) 
+		{
+		    // Loop until date is after future
+		    while ($this->datenextrun < $now)
+		    {
+		        $this->datenextrun += ($this->frequency * $this->unitfrequency);
+		        
+		        // TODO For exact frequency (every month, every year, ...), use instead a dol_time_plus_duree($time, $duration_value, $duration_unit)
+		    }
 		}
 		else 
 		{
-			if ($this->datenextrun < $now && $this->frequency > 0) 
-			{
-			    // Loop until date is after future
-			    while ($this->datenextrun < $now)
-			    {
-			        $this->datenextrun += $this->frequency;
-			    }
-			}
-			else 
-			{
-				//$this->datenextrun=$this->datenextrun+$this->frequency;
-			}
+			//$this->datenextrun=$this->datenextrun + ($this->frequency * $this->unitfrequency);
 		}
+
 
 		// Archive job
 		if ($this->autodelete == 2)
@@ -1112,7 +1177,7 @@ class Cronjob extends CommonObject
 		        || ($this->dateend && ($this->datenextrun > $this->dateend)))
 		    {
 		        $this->status = 2;
-		        dol_syslog(get_class($this)."::reprogram_jobs Job must be set to archived", LOG_ERR);
+		        dol_syslog(get_class($this)."::reprogram_jobs Job will be set to archived", LOG_ERR);
 		    }
 		}
 		

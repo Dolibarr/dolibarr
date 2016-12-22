@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2015	   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,15 +133,15 @@ llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss
 
 print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
-//debut du formulaire
+// debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";
 
 dol_fiche_head();
 
-//Affichage des différents champs textes a remplir
+// Affichage des différents champs textes a remplir
 print '<table class="border" width="100%">'."\n";
 
-print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
+print '<tr><td class="titlefieldcreate fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
@@ -180,7 +180,7 @@ if ($_SESSION['allow_comments']) $allow_comments = 'checked';
 if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked':'';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br />'."\n";
 
-if ($_SESSION['allow_spy']) $allow_spy = 'checed';
+if ($_SESSION['allow_spy']) $allow_spy = 'checked';
 if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked':'';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
 
@@ -193,7 +193,7 @@ if (GETPOST('choix_sondage'))
 }
 else
 {
-	//affichage des boutons pour choisir sondage date ou autre
+	// affichage des boutons pour choisir sondage date ou autre
 	print '<br><table>'."\n";
 	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";

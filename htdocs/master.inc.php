@@ -61,6 +61,7 @@ if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE'
 // Set properties specific to conf file
 $conf->file->main_limit_users			= $dolibarr_main_limit_users;
 $conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
+$conf->file->mailing_limit_sendbycli	= $dolibarr_mailing_limit_sendbycli;
 $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;	// Identification mode
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
@@ -187,6 +188,18 @@ if (! defined('NOREQUIREDB'))
 if (! empty($conf->file->mailing_limit_sendbyweb))
 {
 	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
+}
+if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+{
+    $conf->global->MAILING_LIMIT_SENDBYWEB = 25;
+}
+if (! empty($conf->file->mailing_limit_sendbycli))
+{
+    $conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
+}
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
+{
+    $conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.

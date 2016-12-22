@@ -280,7 +280,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					// Add line
-					if ($conf->global->MAIN_PDF_DASH_BETWEEN_LINES && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -543,20 +543,20 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetXY($blSocX,$blSocY+4);
 		$pdf->MultiCell(80, 2, $carac_emetteur, 0, 'L');
 
 
-		if ($object->client->code_client)
+		if ($object->thirdparty->code_client)
 		{
 			$Yoff+=3;
 			$posy=$Yoff;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
 		// Date Expedition
@@ -629,12 +629,12 @@ class pdf_merou extends ModelePdfExpedition
 		if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 			$thirdparty = $object->contact;
 		} else {
-			$thirdparty = $object->client;
+			$thirdparty = $object->thirdparty;
 		}
 
 		$carac_client_name=pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails',$object);
 
 		$blDestX=$blExpX+55;
 		$blW=54;

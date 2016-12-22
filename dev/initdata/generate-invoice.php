@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       dev/intdata/generate-invoice.php
+ *      \file       dev/initdata/generate-invoice.php
  *		\brief      Script example to inject random customer invoices (for load tests)
  */
 
@@ -90,7 +90,7 @@ $result=0;
 while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 {
 	$i++;
-	$socid = rand(1, $num_socs);
+	$socid = mt_rand(1, $num_socs);
 
 	print "Invoice ".$i." for socid ".$socid;
 
@@ -105,14 +105,14 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		$result=$facture->validate($user);
 		if ($result)
 		{
-			$nbp = rand(2, 5);
+			$nbp = mt_rand(2, 5);
 			$xnbp = 0;
 			while ($xnbp < $nbp)
 			{
-				$prodid = rand(1, $num_prods);
+				$prodid = mt_rand(1, $num_prods);
 				$product=new Product($db);
 				$result=$product->fetch($prodids[$prodid]);
-				$result=$facture->addline($product->description, $product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+				$result=$facture->addline($product->description, $product->price, mt_rand(1,5), 0, 0, 0, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 			    if ($result < 0)
                 {
                     dol_print_error($db,$propal->error);

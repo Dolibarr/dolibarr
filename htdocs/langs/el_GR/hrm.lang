@@ -1,20 +1,17 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail για αποτροπή εξωτερικών υπηρεσιών στο HRM
+Establishments=Εγκαταστάσεις
+Establishment=Εγκατάσταση
+NewEstablishment=Νέα εγκατάσταση
+DeleteEstablishment=Διαγραφή εγκατάστασης
+ConfirmDeleteEstablishment=Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την εγκατάσταση;
+OpenEtablishment=Άνοιγμα εγκατάστασης
+CloseEtablishment=Κλείσιμο εγκατάστασης
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryDepartment=HRM - Λίστα διαμερισμάτων
+DictionaryFunction=HRM - Λίστα συναρτλησεων
 # Module
-ListOfEmployees=Λίστα  εργαζομένων
 Employees=Εργαζόμενοι
 Employee=Υπάλληλος
-Employe=Employe
 NewEmployee=Νέος εργαζόμενος
-EmployeeCard=Κάρτα υπαλλήλου

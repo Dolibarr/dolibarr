@@ -617,13 +617,14 @@ else if ($id || $ref)
  * 	@param		Object		$object				Object we want to see categories it can be classified into
  * 	@param		int			$typeid				Type of category (0, 1, 2, 3)
  *  @param		int			$socid				Id thirdparty
- *  @param		int		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
+ *  @param		int		    $showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
  *  @return		int			0
  */
 function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 {
 	global $user,$langs,$form,$bc;
 
+	$title='NotDefined';
 	if ($typeid == Categorie::TYPE_PRODUCT)     $title = $langs->trans("ProductsCategoriesShort");
 	if ($typeid == Categorie::TYPE_SUPPLIER)    $title = $langs->trans("SuppliersCategoriesShort");
 	if ($typeid == Categorie::TYPE_CUSTOMER)    $title = $langs->trans("CustomersProspectsCategoriesShort");

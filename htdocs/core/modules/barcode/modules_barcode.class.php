@@ -87,8 +87,8 @@ abstract class ModeleNumRefBarCode
     /**
      *  Return next value available
      *
-     *	@param	Societe		$objproduct	Object Product
-     *	@param	int			$type		Type
+     *	@param	Product		$objproduct	Object Product
+     *	@param	string		$type		Type of barcode (EAN, ISBN, ...)
      *  @return string      			Value
      */
     function getNextValue($objproduct,$type='')
@@ -165,7 +165,7 @@ abstract class ModeleNumRefBarCode
         $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
         $s.='<br>';
 
-        $nextval=$this->getNextValue($soc,0);
+        $nextval=$this->getNextValue($soc,'');
         if (empty($nextval)) $nextval=$langs->trans("Undefined");
         $s.=$langs->trans("NextValue").': <b>'.$nextval.'</b><br>';
 

@@ -44,13 +44,13 @@ class modHRM extends DolibarrModules
 		
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace ( '/^mod/i', '', get_class ( $this ) );
-		$this->description = "Gestion des ressources humaines";
+		$this->name = preg_replace( '/^mod/i', '', get_class($this));
+		$this->description = "Management of employees carrier and feelings";
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		
-		$this->const_name = 'MAIN_MODULE_' . strtoupper ( $this->name );
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
 		// $this->picto = '';
 		
@@ -77,52 +77,14 @@ class modHRM extends DolibarrModules
 		); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array (
 			3,
-			8 
+			9 
 		); // Minimum version of Dolibarr required by module
 		$this->langfiles = array (
 			"hrm" 
 		);
 
 		// Dictionnaries
-		$this->dictionnaries=array(
-			'langs'=>'hrm',
-			'tabname'=>array(
-				MAIN_DB_PREFIX."c_hrm_department",
-				MAIN_DB_PREFIX."c_hrm_function"
-			),
-			'tablib'=>array(
-				"DictionaryDepartment",
-				"DictionaryFunction"
-			),
-			'tabsql'=>array(
-				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
-				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_function'
-			),
-			'tabsqlsort'=>array(
-				'rowid ASC',
-				'rowid ASC'
-			),
-			'tabfield'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabfieldvalue'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabfieldinsert'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabrowid'=>array(
-				"rowid",
-				"rowid"
-			),
-			'tabcond'=>array(
-				'$conf->hrm->enabled',
-				'$conf->hrm->enabled'
-			)
-		);
+		$this->dictionnaries=array();
 
 		// Constantes
 		$this->const = array ();

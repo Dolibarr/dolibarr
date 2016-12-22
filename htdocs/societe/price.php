@@ -42,6 +42,7 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action = GETPOST('action', 'alpha');
+$search_prod = GETPOST('search_prod');
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -66,6 +67,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    {
+        $search_prod = '';
+    }
+    
     if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
     
     	$update_child_soc = GETPOST('updatechildprice');
@@ -145,17 +151,14 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
 
-dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
-
-// Alias names (commercial, trademark or alias names)
-print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-print $object->name_alias;
-print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
@@ -212,7 +215,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		't.fk_soc' => $object->id
 	);
 
-	$search_prod = GETPOST('search_prod');
 	if (! empty($search_prod)) {
 		$filter ['prod.ref'] = $search_prod;
 	}
@@ -416,7 +418,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print "<tr $bc[$var]>";
+				print '<tr'. $bc[$var].'>';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -501,18 +503,21 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<td>&nbsp;</td>';
         print '</tr>';
         
-        if (count($prodcustprice->lines) > 0)
+        if (count($prodcustprice->lines) > 0 || $search_prod)
         {
-            
             print '<tr class="liste_titre">';
 			print '<td><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            print $searchpitco;
             print '</td>';
             print '</tr>';
-            
+        }
+        
+        if (count($prodcustprice->lines) > 0)
+        {
             $var = False;
             
             foreach ($prodcustprice->lines as $line)
@@ -539,7 +544,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print $userstatic->getLoginUrl(1);
                 print '</td>';
                 
-                // Todo Edit or delete button
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
@@ -560,9 +564,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 
                 print "</tr>\n";
             }
-        } else
+        }
+        else
         {
-            print '<tr ' . $bc[false] . '><td colspan="10">' . $langs->trans('NoPriceSpecificToCustomer') . '</td></tr>';
+            $colspan=9;
+            if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;            
+            print '<tr ' . $bc[false] . '><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
         }
         
         print "</table>";

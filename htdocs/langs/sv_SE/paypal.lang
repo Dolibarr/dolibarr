@@ -3,7 +3,6 @@ PaypalSetup=PayPal-modul installation
 PaypalDesc=Denna modul erbjuder sidor för att möjliggöra betalning på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Detta kan användas för en fri betalning eller en betalning på en viss Dolibarr objekt (faktura, beställning, ...)
 PaypalOrCBDoPayment=Betala med kreditkort eller Paypal
 PaypalDoPayment=Betala med Paypal
-PaypalCBDoPayment=Betala med kreditkort
 PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
 PAYPAL_API_PASSWORD=API-lösenord
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal endast
 PAYPAL_CSS_URL=Optionnal Url av CSS-formatmall om betalning sidan
 ThisIsTransactionId=Detta är id transaktion: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lägg till URL Paypal betalning när du skickar ett dokument per post
-PAYPAL_IPN_MAIL_ADDRESS=E-postadress att omedelbart anmälan av betalning (IPN)
 PredefinedMailContentLink=Du kan klicka på den säkra länken nedan för att göra din betalning (PayPal), om det inte redan är gjort.\n\n %s\n\n
 YouAreCurrentlyInSandboxMode=Du är för närvarande i &quot;sandlåda&quot;-läget
 NewPaypalPaymentReceived=Nya Paypal mottagen betalning

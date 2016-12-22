@@ -83,7 +83,7 @@ $langs->load("bills");
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
 
 			} else {
 

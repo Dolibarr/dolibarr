@@ -151,7 +151,7 @@ if ($id > 0)
 
 	if (GETPOST('error','alpha')!='')
 	{
-		print '<div class="error">'.$bon->ReadError(GETPOST('error','alpha')).'</div>';
+		print '<div class="error">'.$bon->getErrorString(GETPOST('error','alpha')).'</div>';
 	}
 
 	/*if ($action == 'credite')

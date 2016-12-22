@@ -3,7 +3,6 @@ PaypalSetup=PayPal modul beállítása
 PaypalDesc=Ez a modul ajánlat oldalakat, hogy fizetést <a href="http://www.paypal.com" target="_blank">PayPal</a> ügyfelek. Ezt fel lehet használni a szabad fizetés vagy a fizetés egy adott Dolibarr objektum (számla, megrendelés, ...)
 PaypalOrCBDoPayment=Fizessen hitelkártyával vagy Paypal
 PaypalDoPayment=Fizetés Paypal
-PaypalCBDoPayment=Fizess bankkártyával
 PAYPAL_API_SANDBOX=Üzemmódban végzett vizsgálat / homokozó
 PAYPAL_API_USER=API felhasználónév
 PAYPAL_API_PASSWORD=API jelszó
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal Url a CSS stíluslap a fizetési oldalon
 ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
-PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Ön jelenleg a &quot;sandbox&quot; mód
 NewPaypalPaymentReceived=New Paypal payment received

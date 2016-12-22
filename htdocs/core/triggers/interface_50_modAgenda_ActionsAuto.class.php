@@ -43,13 +43,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
-	 * Following properties must be filled:
+	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
 	 *      $object->sendtoid (id of contact)
 	 *      $object->socid
-	 *      Optionnal:
+	 *      $object->fk_project
 	 *      $object->fk_element
 	 *      $object->elementtype
 	 *
@@ -431,6 +431,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
 		}
+		elseif ($action == 'ORDER_SUPPLIER_CREATE')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
             $langs->load("other");
@@ -467,7 +479,31 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-        elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
+		elseif ($action == 'ORDER_SUPPLIER_SUBMIT')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_RECEIVE')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {
             $langs->load("other");
             $langs->load("bills");
@@ -483,6 +519,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+        }
+		elseif ($action == 'ORDER_SUPPLIER_CLASSIFY_BILLED')
+        {
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("orders");
+
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
+
+            $object->sendtoid=0;
         }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
@@ -624,7 +676,33 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-
+        elseif($action == 'PROJECT_CREATE') {
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+        
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
+        elseif($action == 'PROJECT_MODIFY') {
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
 		// Project tasks
 		elseif($action == 'TASK_CREATE') {
 			$langs->load("other");
@@ -678,12 +756,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Add entry in event table
 		$now=dol_now();
 
-		if (isset($_SESSION['listofnames']))
+		if (isset($_SESSION['listofnames-'.$object->trackid]))
 		{
-			$attachs=$_SESSION['listofnames'];
+			$attachs=$_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action,'SENTBYMAIL'))
 			{
-				 $object->actionmsg.="\n".$langs->transnoentities("AttachedFiles").': '.$attachs;
+                $object->actionmsg=dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
 			}
 		}
 
@@ -701,6 +779,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
+		$actioncomm->fk_project  = isset($object->fk_project)?$object->fk_project:0;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
@@ -712,7 +791,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-        // Fields when action is en email (coentent should be into note)
+        // Fields when action is en email (content should be added into note)
 		$actioncomm->email_msgid = $object->email_msgid;
 		$actioncomm->email_from  = $object->email_from;
 		$actioncomm->email_sender= $object->email_sender;
@@ -725,7 +804,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;
 
-		$ret=$actioncomm->add($user);       // User creating action
+		$ret=$actioncomm->create($user);       // User creating action
 		
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		

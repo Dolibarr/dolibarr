@@ -299,7 +299,7 @@ if ($id)
                 // Own permission by group
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+                    print '<td align="center"><a class="reposition" href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
                 print '<td align="center">';
                 print img_picto($langs->trans("Active"),'tick');
@@ -310,7 +310,7 @@ if ($id)
                 // Do not own permission
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                    print '<td align="center"><a class="reposition" href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
                 }
                 print '<td>&nbsp</td>';
             }

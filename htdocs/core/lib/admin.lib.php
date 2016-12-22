@@ -43,7 +43,11 @@ function versiontostring($versionarray)
 
 /**
  *	Compare 2 versions (stored into 2 arrays).
- *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 alpha or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
+ *  Alternative way to compare: if ((float) DOL_VERSION >= 4.0) is true if version is 4.0 alpha or higher (works only to compare first and second level)
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -343,7 +347,8 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
 					'DB_ERROR_NO_INDEX_TO_DROP',
 					'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
 					'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
+					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+            		'DB_ERROR_22P02'
 				);
                 if ($okerror == 'none') $okerrors=array();
 
@@ -932,7 +937,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
                                 if (! empty($objMod->dictionaries['tabhelp']))       foreach($objMod->dictionaries['tabhelp'] as $val)       { $nbtabhelp++; $tabhelp[] = $val; }
                                 if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
-                                
+
                                 if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
                                 {
                                     print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';

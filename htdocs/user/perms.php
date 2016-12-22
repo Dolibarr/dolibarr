@@ -74,6 +74,7 @@ $object->getrights();
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
+
 /**
  * Actions
  */
@@ -261,7 +262,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToLi
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
-print '<div class="underbanner clearboth"></div>';
+//print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users

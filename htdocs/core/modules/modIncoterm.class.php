@@ -51,7 +51,7 @@ class modIncoterm extends DolibarrModules
 		$this->rights_class = 'incoterm';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		$this->family = "products";
+		$this->family = "srm";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Incoterm management";
 		$this->version = 'dolibarr';

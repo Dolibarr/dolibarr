@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/core/js/timepicker.js.php
+ * \file       htdocs/core/js/select2_locale.js.php
  * \brief      File that include javascript functions for timepicker
  */
 
@@ -52,7 +52,10 @@ else header('Cache-Control: no-cache');
     $.fn.select2.locales['xx'] = {
         formatMatches: function (matches) { return matches + " <?php echo dol_escape_js($langs->trans("Select2ResultFoundUseArrows")); ?>"; },
         formatNoMatches: function () { return "<?php echo dol_escape_js($langs->trans("Select2NotFound")); ?>"; },
-        formatInputTooShort: function (input, min) { var n = min - input.length; return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacters")); ?>"; },
+        formatInputTooShort: function (input, min) { var n = min - input.length; 
+        	if (n > 1) return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacters")); ?>"; 
+        	else return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacter")); ?>"
+        	},
         formatLoadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->trans("Select2LoadingMoreResults")); ?>"; },
         formatSearching: function () { return "<?php echo dol_escape_js($langs->trans("Select2SearchInProgress")); ?>"; }
     };

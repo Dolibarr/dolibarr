@@ -35,7 +35,7 @@
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array 
+ *  @param	array	$ajaxoptions		Multiple options array
  *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                          Ex: array('disabled'=>
  *                                          Ex: array('show'=>
@@ -61,8 +61,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					$("input#search_'.$htmlname.'").keydown(function() {
 						$("#'.$htmlname.'").val("");
 					});
-						    
-					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code 
+
+					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code
 						$("input#search_'.$htmlname.'").change(function() {
 					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
 						$("#'.$htmlname.'").trigger("change");
@@ -136,7 +136,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
     						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
-    					    $("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+    					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
+    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
     							if (ui.item.disabled) {
@@ -179,7 +180,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 									}
     							});
     						}
-    						console.log("ajax_autocompleter new value selected, we trigger change on original component");
+    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
@@ -290,14 +291,15 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 								    	needtotrigger="#" + fields[i];
 									}
 								}
-							}
-							if (needtotrigger != "")	// To force select2 to refresh visible content
-							{
-								// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
-								// This is required for example when changing zip with autocomplete that change the country
-								jQuery(needtotrigger).delay(500).queue(function() {
-    								jQuery(needtotrigger).trigger("change");
-								});
+
+								if (needtotrigger != "")	// To force select2 to refresh visible content
+								{
+									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
+									// This is required for example when changing zip with autocomplete that change the country
+									jQuery(needtotrigger).delay(500).queue(function() {
+	    								jQuery(this).trigger("change");
+									});
+								}
 							}
     					}
 					});
@@ -320,7 +322,8 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 {
 	global $langs;
 
-	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
+	$newtitle=dol_textishtml($title)?dol_string_nohtmltag($title,1):$title;
+	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg.= $message;
 	$msg.= '</div>'."\n";
     $msg.= '<script type="text/javascript">
@@ -353,9 +356,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
+ * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0)
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
 
@@ -372,7 +376,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
-        			width: \'resolve\',		/* off or resolve */
+        			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';

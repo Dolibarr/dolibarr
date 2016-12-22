@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,16 +37,16 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $search_ref=GETPOST('search_ref','int');
 $search_label=GETPOST('search_label','alpha');
@@ -60,6 +61,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_label="";
 	$search_amount="";
 }
+
 
 /*
  *	View
@@ -83,12 +85,14 @@ if ($filtre) {
 }
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
-$numall = 0;
+
+$nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
-    $numall = $db->num_rows($result);
+    $nbtotalofrecords = $db->num_rows($result);
 }
+
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -99,23 +103,32 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-    $param="";
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_ref) $param.="&amp;search_ref=".$search_ref;
     if ($search_label) $param.="&amp;search_label=".$search_user;
     if ($search_amount) $param.="&amp;search_amount=".$search_amount_ht;
     if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
-    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $numall,'title_generic.png');
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    
+    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Capital"),$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("LoanCapital"),$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
     print "</tr>\n";
 
 	// Filters lines
@@ -124,6 +137,7 @@ if ($resql)
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td></td>';
 	print '<td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -154,6 +168,8 @@ if ($resql)
 
 		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
+		print '<td></td>';
+		
         print "</tr>\n";
 
 		$i++;
@@ -167,6 +183,7 @@ else
 {
     dol_print_error($db);
 }
+
 llxFooter();
 
 $db->close();

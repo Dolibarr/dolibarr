@@ -17,6 +17,5 @@ printEatby=Spotřeba: %s
 printSellby=Prodej: %s
 printQty=Qty: %d
 AddDispatchBatchLine=Přidat řádek pro dispečink  skladovatelnosti
-BatchDefaultNumber=Nedefinováno
 WhenProductBatchModuleOnOptionAreForced=Když modul množství/série je zapnut, zvýšení/snížení ve skladovém režimu je vyhrazeno poslední volbě a nelze jej upravovat. Další možnosti lze definovat, jak požadujete
 ProductDoesNotUseBatchSerial=Tento produkt nepoužívá šarže/sériové číslo

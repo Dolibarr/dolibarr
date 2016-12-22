@@ -12,3 +12,4 @@ ListOfSupportedOauthProviders=Saisissez ici le crédit fourni par votre fourniss
 OAUTH_GOOGLE_NAME=API Google
 OAUTH_GOOGLE_ID=ID API Google
 OAUTH_GOOGLE_SECRET=API Google Secrète
+OAUTH_GOOGLE_DESC=Allez sur <a href="https://console.developers.google.com/" target="_blank">cette page</a> puis Identitifaction pour créer des informations d'identification OAuth

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-CronListActive=Lijst van geactiveerde/geplande taken
 EnabledAndDisabled=Geactiveerd en gedeactiveerd
 CronDtStart=Niet voor
 CronDtEnd=Niet na

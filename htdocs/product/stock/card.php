@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,7 @@ $result=restrictedArea($user,'stock');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('warehousecard','globalcard'));
 
+$object = new Entrepot($db);
 
 /*
  * Actions
@@ -61,8 +63,6 @@ $hookmanager->initHooks(array('warehousecard','globalcard'));
 // Ajout entrepot
 if ($action == 'add' && $user->rights->stock->creer)
 {
-	$object = new Entrepot($db);
-
 	$object->ref         = GETPOST("ref");
 	$object->libelle     = GETPOST("libelle");
 	$object->description = GETPOST("desc");
@@ -107,7 +107,6 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
-	$object = new Entrepot($db);
 	$object->fetch($_REQUEST["id"]);
 	$result=$object->delete($user);
 	if ($result > 0)
@@ -125,7 +124,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 // Modification entrepot
 if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 {
-	$object = new Entrepot($db);
 	if ($object->fetch($id))
 	{
 		$object->libelle     = GETPOST("libelle");
@@ -187,7 +185,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 
@@ -199,7 +197,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
@@ -211,15 +209,24 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
-
+	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	print '<select name="statut" class="flat">';
-	print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
-	print '<option value="1" selected>'.$langs->trans("WarehouseOpened").'</option>';
+	foreach ($object->statuts as $key => $value)
+	{
+		if ($key == 1)
+		{
+			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
+		}
+		else
+		{
+			print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
+		}
+	}
 	print '</select>';
 	print '</td></tr>';
 
@@ -227,7 +234,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -384,7 +395,7 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
@@ -396,7 +407,7 @@ else
 			$totalvalue=$totalvaluesell=0;
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
-			$sql.= " ps.pmp, ps.reel as value";
+			$sql.= " ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
 			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
@@ -539,7 +550,7 @@ else
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 
@@ -558,8 +569,17 @@ else
 
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
-			print '<option value="0" '.($object->statut == 0?'selected':'').'>'.$langs->trans("WarehouseClosed").'</option>';
-			print '<option value="1" '.($object->statut == 0?'':'selected').'>'.$langs->trans("WarehouseOpened").'</option>';
+			foreach ($object->statuts as $key => $value)
+			{
+				if ($key == $object->statut)
+				{
+					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
+				}
+				else
+				{
+					print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
+				}
+			}
 			print '</select>';
 			print '</td></tr>';
 

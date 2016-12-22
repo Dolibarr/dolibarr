@@ -29,7 +29,7 @@ create table llx_mailing_cibles
   email				varchar(160) NOT NULL,
   other				varchar(255) NULL,
   tag				varchar(128) NULL,
-  statut			smallint NOT NULL DEFAULT 0,
+  statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
   source_url		varchar(160),
   source_id			integer,
   source_type		varchar(16),

@@ -50,15 +50,16 @@ $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
 $companystatic=new Societe($db);
 
-$search_ref=GETPOST("search_ref","int");
+$search_ref=GETPOST("search_ref","alpha");
 $search_account=GETPOST("search_account","int");
 $search_paymenttype=GETPOST("search_paymenttype");
 $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
+
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
@@ -66,6 +67,15 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('paymentlist'));
+$extrafields = new ExtraFields($db);
+
+
+/*
+ * Actions
+ */
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -79,10 +89,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $year='';
     $month='';
 }
-
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('paymentlist'));
-$extrafields = new ExtraFields($db);
 
 
 
@@ -167,11 +173,11 @@ else
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }
-    if ($search_ref)       		    $sql .=natural_search('p.ref', $search_ref);
+    if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
-    if ($search_payment_num != '')  $sql .=" AND p.num_paiement = '".$db->escape($search_payment_num)."'";
-    if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
+    if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1); 
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
 	$parameters=array();
@@ -179,41 +185,62 @@ else
 	$sql.=$hookmanager->resPrint;
 }
 $sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
-
 if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $paramlist='';
-    $paramlist.=(GETPOST("orphelins")?"&orphelins=1":"");
-    $paramlist.=($search_ref?"&search_ref=".$search_ref:"");
-    $paramlist.=($search_company?"&search_company=".$search_company:"");
-    $paramlist.=($search_amount?"&search_amount=".$search_amount:"");
-
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num,'','title_accountancy.png');
-
-    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param.=(GETPOST("orphelins")?"&orphelins=1":"");
+    $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
+    $param.=($search_company?"&search_company=".urlencode($search_company):"");
+    $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
+    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+    if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+    
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
+    
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$paramlist,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled))
+    {
+    	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    }
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -236,14 +263,18 @@ if ($resql)
     print '<td align="left">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
     print '</td>';
-    print '<td>';
-    $form->select_comptes($search_account,'search_account',0,'',1);
-    print '</td>';
+    if (! empty($conf->banque->enabled))
+    {
+	    print '<td>';
+	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    print '</td>';
+    }
     print '<td align="right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
-	print '</td><td align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
@@ -265,9 +296,10 @@ if ($resql)
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
+        // Date
         print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
-        // Company
+        // Thirdparty
         print '<td>';
         if ($objp->socid)
         {
@@ -278,16 +310,26 @@ if ($resql)
         else print '&nbsp;';
         print '</td>';
 
-        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td><td>'.$objp->num_paiement.'</td>';
-        print '<td>';
-        if ($objp->bid)
-        {
-            $accountstatic->id=$objp->bid;
-            $accountstatic->label=$objp->label;
-            print $accountstatic->getNomUrl(1);
-        }
-        else print '&nbsp;';
-        print '</td>';
+        // Type
+        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
+        
+        // Payment number
+        print '<td>'.$objp->num_paiement.'</td>';
+
+        // Account
+	    if (! empty($conf->banque->enabled))
+	    {
+	        print '<td>';
+	        if ($objp->bid)
+	        {
+	            $accountstatic->id=$objp->bid;
+	            $accountstatic->label=$objp->label;
+	            print $accountstatic->getNomUrl(1);
+	        }
+	        else print '&nbsp;';
+	        print '</td>';
+	    }
+	    // Amount
         print '<td align="right">'.price($objp->amount).'</td>';
 
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))

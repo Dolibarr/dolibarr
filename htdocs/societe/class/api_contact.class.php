@@ -17,7 +17,7 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
  * API class for contact object
@@ -100,6 +100,7 @@ class ContactApi extends DolibarrApi
 	 * @url	GET /contact/list
 	 * @url	GET /contact/list/{socid}
 	 * @url	GET	/thirdparty/{socid}/contacts
+	 * @url	GET	/customer/{socid}/contacts
      * 
 	 * @throws RestException
 	 */
@@ -113,6 +114,7 @@ class ContactApi extends DolibarrApi
 			$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 		}
 
+		$search_sale = 0;
 		// If the internal user must only see his customers, force searching by him
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid)
 			$search_sale = DolibarrApiAccess::$user->id;
@@ -163,7 +165,8 @@ class ContactApi extends DolibarrApi
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$i = 0;
+		    $num = $db->num_rows($result);
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -249,8 +252,8 @@ class ContactApi extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  array
-     * 
+	 * @return  integer
+   * 
 	 * @url	DELETE contact/{id}
 	 */
 	function delete($id) {

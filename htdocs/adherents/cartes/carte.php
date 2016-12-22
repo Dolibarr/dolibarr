@@ -190,7 +190,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     		{
     			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
     		}
-        	if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
+        	if (! $mesg) $result=doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
         }
 
     	if ($result <= 0)

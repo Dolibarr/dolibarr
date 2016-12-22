@@ -1,0 +1,10 @@
+# Remove warning, we want to keep both standard and minified sources.
+dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jquery/*
+dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jsgantt/*
+dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jstz/*
+# Those are false positives, the files are their own sources since
+# they are not minified
+source-is-missing htdocs/includes/jsgantt/jsgantt.js *
+source-is-missing htdocs/includes/jquery/plugins/colorpicker/jquery.colorpicker.js *
+source-is-missing htdocs/includes/jquery/plugins/select2/select2.js *
+source-is-missing htdocs/includes/jquery/plugins/select2/select2_locale_ar.js *

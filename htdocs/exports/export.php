@@ -34,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
 $langs->load("users");
+$langs->load("companies");
+$langs->load("projects");
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -65,7 +67,8 @@ $entitytoicon = array(
     'shipment_line'=> 'sending',
     'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
-    'contract_line' => 'contract'
+    'contract_line' => 'contract',
+    'translation'  => 'generic'
 );
 
 // Translation code
@@ -105,7 +108,8 @@ $entitytolang = array(
 	'expensereport'=> 'ExpenseReport',
 	'expensereport_line'=> 'ExpenseReportLine',
     'contract'     => 'Contract',
-    'contract_line'=> 'ContractLine'
+    'contract_line'=> 'ContractLine',
+    'translation'  => 'Translation'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -557,6 +561,8 @@ if ($step == 2 && $datatoexport)
 
         print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
+        //print $code.'-'.$label.'-'.$entity;
+        
         $tmparray=explode(':',$entityicon);
         if (count($tmparray) >=2)
         {
@@ -1183,15 +1189,16 @@ exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 
  */
 function getablenamefromfield($code,$sqlmaxforexport)
 {
+	$alias=preg_replace('/\.(.*)$/i','',$code);         // Keep only 'Alias' and remove '.Fieldname'
+	$regexstring='/([a-zA-Z_]+) as '.preg_quote($alias).'[, \)]/i';
+    
 	$newsql=$sqlmaxforexport;
-	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);
-	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// We must keep the ' ' before WHERE
-	$alias=preg_replace('/\.(.*)$/i','',$code);
-	//print $newsql.' '.$alias;
-	$regexstring='/([a-zA-Z_]+) as '.$alias.'[, \)]/i';
+	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);  // Remove part before the FROM
+	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
+	
 	if (preg_match($regexstring,$newsql,$reg))
 	{
-		return $reg[1];
+		return $reg[1];   // The tablename
 	}
 	else return '';
 }

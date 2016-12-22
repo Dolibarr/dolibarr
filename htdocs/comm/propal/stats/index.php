@@ -33,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
+$mode=GETPOST("mode")?GETPOST("mode"):'customer';
+if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
+if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
+
 $object_statut=GETPOST('propal_statut');
 
 $userid=GETPOST('userid','int');
@@ -50,7 +54,10 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$mode=GETPOST('mode');
+$langs->load('orders');
+$langs->load('companies');
+$langs->load('other');
+$langs->load('suppliers');
 
 
 /*
@@ -64,16 +71,26 @@ $langs->load('propal');
 $langs->load('other');
 $langs->load("companies");
 
-llxHeader('', $langs->trans("ProposalsStatistics"));
+if ($mode == 'customer')
+{
+    $title=$langs->trans("ProposalsStatistics");
+    $dir=$conf->propale->dir_temp;
+}
+if ($mode == 'supplier')
+{
+    $title=$langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
+    $dir=$conf->supplier_proposal->dir_temp;
+}
 
-print load_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
+llxHeader('', $title);
 
-$dir=$conf->propal->dir_temp;
+print load_fiche_titre($title,'','title_commercial.png');
+
 
 dol_mkdir($dir);
 
 
-$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
+$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
 if ($object_statut != '' && $object_statut >= 0) $stats->where .= ' AND p.fk_statut IN ('.$object_statut.')';
 
 // Build graphic number of object
@@ -161,7 +178,7 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, $filter);
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg='';
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -248,7 +265,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-	$formpropal->selectProposalStatus($object_statut,0,1);
+	$formpropal->selectProposalStatus($object_statut,0,1,1,$mode);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
@@ -266,12 +283,12 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfProposals").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
-print '<td align="center">%</td>';
+print '<td align="right">'.$langs->trans("NbOfProposals").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;

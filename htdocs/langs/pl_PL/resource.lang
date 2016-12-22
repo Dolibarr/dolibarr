@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Zasoby
 MenuResourceAdd=Nowe zasoby
-MenuResourcePlanning=Planowanie zasobów
 DeleteResource=Usuń zasoby
 ConfirmDeleteResourceElement=Potwierdz usunięcie zasobów dla tego elementu
 NoResourceInDatabase=Brak zasobów w bazie danych
@@ -18,8 +17,6 @@ ResourceFormLabel_description=Opis zasobów
 ResourcesLinkedToElement=Zasaby połączone z elementem
 
 ShowResource=Pokaż źródło
-ShowResourcePlanning=Pokaż zasoby planowane
-GotoDate=Idz do daty
 
 ResourceElementPage=Element zasobów
 ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
@@ -27,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
 RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
 ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
 
-TitleResourceCard=Karta zasobów
 ConfirmDeleteResource=Potwierdz by usunąc te zasoby
 RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
 DictionaryResourceType=Typ zasobów

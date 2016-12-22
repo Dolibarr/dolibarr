@@ -119,19 +119,19 @@ function create_script_table($list)
     global $sortby,$bc,$langs;
     $var=true;
 
-    if (isset($_GET['order']) && ($_GET['order'] == "asc" || $_GET['order'] =="desc")) {
-        $order = $_GET['order'];
+    if (GETPOT('order') == "asc" || GETPOST('order') =="desc") {
+        $order = GETPOST('order');
     } else {
         $order = "asc";
     }
 
-    if (isset($_GET['sort'])) {
-        switch ($_GET['sort']) {
+    if (GETPOST('order')) {
+        switch (GETPOST('order')) {
             case "mtime":
             case "size":
             case "reloads":
             case "hits":
-                $sortby = $_GET['sort'];
+                $sortby = GETPOST('sort');
                 ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
                 break;
             default:

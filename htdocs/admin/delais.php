@@ -40,7 +40,17 @@ $modules=array(
 						'img' => 'action'
 				)
 		),
-		'propal' => array(
+		'projet' => array(
+				array(
+						'code' => 'MAIN_DELAY_PROJECT_TO_CLOSE',
+						'img' => 'project'
+				),
+				array(
+						'code' => 'MAIN_DELAY_TASKS_TODO',
+						'img' => 'task'
+				)
+		),
+        'propal' => array(
 				array(
 						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
 						'img' => 'propal'
@@ -256,24 +266,24 @@ $text=''; $options='height="60px"';
 print '<table>';
 print '<tr>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clear.png',$options);
+print img_weather($text,'weather-clear.png',$options);
 print '</td><td>= '.$level0.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-few-clouds.png',$options);
+print img_weather($text,'weather-few-clouds.png',$options);
 print '</td><td>&lt;= '.$level1.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clouds.png',$options);
+print img_weather($text,'weather-clouds.png',$options);
 print '</td><td>&lt;= '.$level2.'</td>';
 print '</tr>';
 
 print '<tr><td>';
-print img_picto_common($text,'weather/weather-many-clouds.png',$options);
+print img_weather($text,'weather-many-clouds.png',$options);
 print '</td><td>&lt;= '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-storm.png',$options);
+print img_weather($text,'weather-storm.png',$options);
 print '</td><td>&gt; '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';

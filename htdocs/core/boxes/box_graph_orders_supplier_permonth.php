@@ -89,7 +89,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 		if ($user->rights->fournisseur->commande->lire)
 		{
 		    $langs->load("orders");
-		    
+
 		    $param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
@@ -262,11 +262,12 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

@@ -107,7 +107,7 @@ class modDon  extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "DONATION_ACCOUNTINGACCOUNT";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "7581";
+		$this->const[$r][2] = "758";
 		$this->const[$r][3] = 'Compte comptable de remise des versements ou dons';
 		$this->const[$r][4] = 0;
 

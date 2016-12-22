@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup Accounting Expert
- * \brief Balance by month
+ * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
+ * \ingroup		Advanced accountancy
+ * \brief		Balance by month
  */
 require '../../main.inc.php';
 

@@ -12,9 +12,6 @@ CloseEtablishment=Затвори обект
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module
-ListOfEmployees=Списък на служителите
 Employees=Служители
 Employee=Служител
-Employe=Employe
 NewEmployee=Нов служител
-EmployeeCard=Служител досие

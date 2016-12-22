@@ -173,7 +173,7 @@ class ActionComm extends CommonObject
      *
      *      @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct(DoliDB $db)
     {
         $this->db = $db;
 
@@ -189,7 +189,7 @@ class ActionComm extends CommonObject
      *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
      *    @return   int 		        	Id of created event, < 0 if KO
      */
-    function add($user,$notrigger=0)
+    public function create(User $user, $notrigger = 0)
     {
         global $langs,$conf,$hookmanager;
 
@@ -395,6 +395,20 @@ class ActionComm extends CommonObject
 
     }
 
+	/**
+	 *    Add an action/event into database.
+	 *    $this->type_id OR $this->type_code must be set.
+	 *
+	 *    @param	User	$user      		Object user making action
+	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
+	 *    @return   int 		        	Id of created event, < 0 if KO
+	 * @deprecated Use create instead
+	 */
+	public function add(User $user, $notrigger = 0)
+	{
+		return $this->create($user, $notrigger);
+	}
+
     /**
      *		Load an object from its id and create a new one in database
      *
@@ -436,7 +450,7 @@ class ActionComm extends CommonObject
 		}
 
         // Create clone
-        $result=$this->add($fuser);
+        $result=$this->create($fuser);
         if ($result < 0) $error++;
 
         if (! $error)
@@ -896,7 +910,7 @@ class ActionComm extends CommonObject
      */
     function load_board($user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
@@ -918,6 +932,7 @@ class ActionComm extends CommonObject
 	        $response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	        if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	        $response->img = img_object($langs->trans("Actions"),"action");
 
             // This assignment in condition is not a bug. It allows walking the results.
@@ -981,7 +996,7 @@ class ActionComm extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
+                if (! empty($obj->fk_user_mod)) $this->date_modification = $this->db->jdate($obj->datem);
             }
             $this->db->free($result);
         }

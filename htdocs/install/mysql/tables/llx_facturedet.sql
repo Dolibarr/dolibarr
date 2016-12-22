@@ -54,15 +54,23 @@ create table llx_facturedet
   buy_price_ht					double(24,8) DEFAULT 0,				-- buying price
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
-  fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
+  fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
+  
   special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
   rang							integer    DEFAULT 0,				-- position of line
+  fk_contract_line  integer NULL,									-- id of contract line when invoice comes from contract lines
   import_key					varchar(14),
 
   situation_percent real,   -- % progression of lines invoicing
   fk_prev_id        integer, -- id of the line in the previous situation,
-  fk_unit           integer DEFAULT NULL -- id of the unit code¡
+  fk_unit           integer DEFAULT NULL, -- id of the unit code¡
 
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

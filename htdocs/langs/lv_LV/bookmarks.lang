@@ -14,6 +14,5 @@ BehaviourOnClick=Uzvedība kad URL ir noklikšķinājuši
 CreateBookmark=Izveidot grāmatzīmi
 SetHereATitleForLink=Uzstādīt grāmatzīmes nosaukumu
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Izmantojiet ārējo http URL vai relatīvo Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izvēlieties, ja lapu atvērt saiti jāparādās kārtējā vai jauna loga
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Grāmatzīmju vadība
-ListOfBookmarks=Saraksts grāmatzīmes

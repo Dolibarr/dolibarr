@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,8 +59,8 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$text=$langs->trans("Projects");
-if ($mine) $text=$langs->trans("MyProjects");
+$text=$langs->trans("ProjectsArea");
+if ($mine) $text=$langs->trans("MyProjectsArea");
 
 print load_fiche_titre($text,'','title_project.png');
 
@@ -114,7 +114,7 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 		print '</tr>';
 		$i++;
@@ -193,13 +193,15 @@ else
 }
 print "</table>";
 
-
-print '<br>';
-
-
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,1,$listofoppstatus);
-
-
+if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
+{
+    // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
+    // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    
+    print '<br>';
+    
+    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
+}
 
 print '</div></div></div>';
 

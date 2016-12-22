@@ -449,7 +449,7 @@ class Menubase
 
         		if (empty($val['fk_leftmenu']))
         		{
-        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
+        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         			//var_dump($this->newmenu->liste);
         		}
         		else
@@ -478,7 +478,7 @@ class Menubase
         				}
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
-        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         		}
         	}
         }

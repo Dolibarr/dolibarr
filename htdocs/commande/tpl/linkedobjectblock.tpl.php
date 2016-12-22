@@ -27,22 +27,8 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
 $langs->load("orders");
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedCustomerOrders'), '', '');
 
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("RefCustomer"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
 $var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
@@ -50,6 +36,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	$var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
+    <td><?php echo $langs->trans("CustomerOrder"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td align="center"><?php echo $objectlink->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
@@ -59,21 +46,19 @@ foreach($linkedObjectBlock as $key => $objectlink)
 			echo price($objectlink->total_ht);
 		} ?></td>
 	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+	<td align="right">
+		<?php
+		// For now, shipments must stay linked to order, so link is not deletable
+		if($object->element != 'shipping') {
+			?>
+			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a>
+			<?php
+		}
+		?>
+	</td>
 </tr>
 <?php
 }
-
 ?>
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php
-		if ($user->rights->commande->lire) {
-			echo price($total);
-		} ?></td>
-	<td></td>
-	<td></td>
-</tr>
-</table>
 
 <!-- END PHP TEMPLATE -->

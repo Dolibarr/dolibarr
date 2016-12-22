@@ -48,4 +48,3 @@ class SegmentIterator implements RecursiveIterator
     }
 }
 
-?>

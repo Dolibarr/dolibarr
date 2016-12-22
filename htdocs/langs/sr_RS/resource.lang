@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resursi
 MenuResourceAdd=Novi resurs
-MenuResourcePlanning=Planiranje resursa
 DeleteResource=Obriši resurs
 ConfirmDeleteResourceElement=Potvrdi brisanje resursa za ovaj element
 NoResourceInDatabase=Nema resursa u bazi.
@@ -18,8 +17,6 @@ ResourceFormLabel_description=Opis resursa
 ResourcesLinkedToElement=Resursi vezani za elemenat
 
 ShowResource=Prikaži resurs
-ShowResourcePlanning=Prikaži planing resursa
-GotoDate=Idi na datum
 
 ResourceElementPage=Resursi elementa
 ResourceCreatedWithSuccess=Resurs uspešno kreiran
@@ -27,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Linija resursa uspešno obrisana
 RessourceLineSuccessfullyUpdated=Linija resursa uspešno ažurirana
 ResourceLinkedWithSuccess=Resurs uspešno povezan
 
-TitleResourceCard=Kartica resursa
 ConfirmDeleteResource=Potvrdi brisanje ovog resursa
 RessourceSuccessfullyDeleted=Resurs uspešno obrisan
 DictionaryResourceType=Tip resursa

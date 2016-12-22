@@ -161,13 +161,14 @@ class Translate
 	{
 		global $conf,$db;
 
+		// Load $this->tab_translate[] from database
 		if (count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
 
 		// Check parameters
 		if (empty($domain))
 		{
 			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
-			exit;
+			return -1;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
 
@@ -241,7 +242,7 @@ class Translate
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))
 					{
-				        $this->tab_translate+=$tmparray;	// Faster than array_merge($tmparray,$this->tab_translate). Note: If a valuer already exists into tab_translate, value into tmparaay is not added.
+				        $this->tab_translate+=$tmparray;	// Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
 						//print $newdomain."\n";
 						//var_dump($this->tab_translate);
 						if ($alt == 2) $fileread=1;
@@ -261,7 +262,8 @@ class Translate
 							{
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
-								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
+								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
+								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
@@ -278,6 +280,7 @@ class Translate
 									else
 									{
 										$this->tab_translate[$key]=$value;
+										//if ($domain == 'orders') print "$tab[0] value $value<br>";
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -735,7 +738,7 @@ class Translate
 	 *
 	 * 	@param	string	$langdir		Directory to scan
 	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
-	 *  @param	int		$usecode		Show code instead of country name for language variant
+	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
@@ -751,9 +754,13 @@ class Translate
 			{
 				$this->load("languages");
 
-				if ($usecode || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				if ($usecode == 2)
 				{
-					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
+				    $langs_available[$dir] = $dir;
+				}
+				if ($usecode == 1 || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				{
+				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}
 				else
 				{
@@ -853,9 +860,10 @@ class Translate
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
 		// Check if a translation is available (this can call getTradFromKey)
-		if ($this->transnoentitiesnoconv($key) != $key)
+		$tmp=$this->transnoentitiesnoconv($key);
+		if ($tmp != $key && $tmp != 'ErrorBadValueForParamNotAString')
 		{
-			return $this->transnoentitiesnoconv($key);    // Found in language array
+			return $tmp;    // Found in language array
 		}
 
 		// Check in cache
@@ -904,7 +912,8 @@ class Translate
 	}
 
 	/**
-	 *	Return a currency code into its symbol
+	 *	Return a currency code into its symbol. 
+	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.

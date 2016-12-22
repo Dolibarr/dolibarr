@@ -219,7 +219,7 @@ class modExpenseReport extends DolibarrModules
 		$this->menu = array();			// List of menus to add
 		$r=0;
 
-		// Example to declare a Left Menu entry: fk_mainmenu=home,fk_leftmenu=modulesadmintools
+		// Example to declare a Left Menu entry: fk_mainmenu=home,fk_leftmenu=admintools
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'TripsAndExpenses',
@@ -338,7 +338,7 @@ class modExpenseReport extends DolibarrModules
 
 		$sql = array(
 				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','deplacement',".$conf->entity.")"
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);

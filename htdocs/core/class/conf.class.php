@@ -123,8 +123,6 @@ class Conf
 	 */
 	function setValues($db)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
@@ -205,6 +203,19 @@ class Conf
 
 		    $db->free($resql);
 		}
+		
+        // Include other local consts.php files and fetch their values to the corresponding database constants
+        if (! empty($this->global->LOCAL_CONSTS_FILES)) {
+            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
+            foreach ($filesList as $file) {
+                $file=dol_sanitizeFileName($file);
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
+                foreach ($file2bddconsts as $key=>$value) {
+                    $this->global->$key=constant($value);
+                }
+            }
+        }
+
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts['theme']);
 
@@ -331,6 +342,19 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			
+			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
+			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
+			{
+    			$this->supplier_order=new stdClass();
+    			$this->supplier_order->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
+    			$this->supplier_invoice=new stdClass();
+    			$this->supplier_invoice->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/facture";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/facture/temp";
+			}
 		}
 
 		// Module product/service
@@ -354,6 +378,8 @@ class Conf
 
 		// Set some default values
 
+		$this->global->MAIN_ACTIVATE_HTML5=1;
+		
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
@@ -374,11 +400,12 @@ class Conf
 			unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 		}
 
-		if (! empty($conf->productbatch->enabled))
+		if (! empty($this->productbatch->enabled))
 		{
 			$this->global->STOCK_CALCULATE_ON_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
@@ -395,14 +422,14 @@ class Conf
         $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
         // MAIN_HTML_TITLE
-        if (! isset($conf->global->MAIN_HTML_TITLE)) $conf->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+        if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
         
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
 		// conf->product->limit_size = constante de taille maximale des select de produit
-		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=100;
+		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=1000;
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// conf->theme et $this->css
@@ -422,7 +449,7 @@ class Conf
 		// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
-		if (! isset($conf->global->MAIN_EMAIL_ADD_TRACK_ID)) $conf->global->MAIN_EMAIL_ADD_TRACK_ID=1;
+		if (! isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID=1;
 		
         // Format for date (used by default when not found or not searched in lang)
         $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)
@@ -476,7 +503,14 @@ class Conf
 		    $this->adherent->cotisation			= new stdClass();
             $this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
-        if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->projet)) 
+		{
+		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
+		    $this->projet->task                 = new StdClass();
+		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_TASKS_TODO:7)*24*60*60;
+		}
+		
         if (isset($this->commande)) {
             $this->commande->client				= new stdClass();
     		$this->commande->fournisseur		= new stdClass();
@@ -548,7 +582,7 @@ class Conf
         		throw new Exception('Log handler does not extend LogHandlerInterface');
         	}
 
-        	if (empty($conf->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
+        	if (empty($this->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
         }
 	}
 }

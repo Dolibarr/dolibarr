@@ -26,6 +26,7 @@
  *
  */
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+if (! defined("NOCSRFCHECK"))        define("NOCSRFCHECK",'1');
 
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
@@ -55,12 +56,10 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
-use \Luracast\Restler\Defaults;
 
 $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
-$api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -123,9 +122,9 @@ foreach ($modulesdir as $dir)
                                 $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
                                 $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
-                                if (class_exists($classname)) 
+                                if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);    
+                                    dol_syslog("Found API classname=".$classname);
                                     $api->r->addAPIClass($classname,'');
                                     $listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
                                 }
@@ -141,8 +140,6 @@ foreach ($modulesdir as $dir)
 
 // TODO If not found, redirect to explorer
 
+
+// Call API (we suppose we found it)
 $api->r->handle();
-
-
-
-

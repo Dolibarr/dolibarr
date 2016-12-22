@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +20,15 @@
  * 	\defgroup   api     Module DolibarrApi
  *  \brief      API loader
  *				Search files htdocs/<module>/class/api_<module>.class.php
- *  \file       htdocs/api/indexphp
- *
- *	@todo	User authentication with api_key
- *
- *
+ *  \file       htdocs/api/admin/explorer.php
  */
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+
+$langs->load("admin");
 
 
 /*
@@ -39,19 +38,16 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
-    $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
 
-use \Luracast\Restler\Defaults;
 
 $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
-$api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -149,17 +145,54 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
+// Show message
+print '<br>';
+$message='';
+$url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
+$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message.=img_picto('','object_globe.png').' '.$url;
+print $message;
+print '<br>';
+print '<br>';
+
+$oldclass='';
+
+print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
+    if ($key == 'login') continue;
+    if ($key == 'index') continue;
+    
     if ($key)
     {
-        //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
-        $url=DOL_MAIN_URL_ROOT.'/api/index.php/'.$key;
-        print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-        
+        foreach($val as $method => $val2)
+        {
+            $newclass=$val2['className'];
+
+            if (preg_match('/restler/i', $newclass)) continue;
+            
+            if ($oldclass != $newclass) 
+            {
+                print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
+                $oldclass = $newclass;
+            }
+            //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
+            $url=$urlwithroot.'/api/index.php/'.$key;
+            $url.='?api_key=token';
+            print img_picto('','object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+        }        
     }
 }
+
+print '<br>';
+print '<br>';
+print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules.php');
+
 
 llxFooter();
 $db->close();

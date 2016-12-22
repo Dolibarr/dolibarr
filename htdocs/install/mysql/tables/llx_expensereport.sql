@@ -53,6 +53,13 @@ CREATE TABLE llx_expensereport (
   fk_bank_account 	integer DEFAULT NULL,
   model_pdf 		varchar(50) DEFAULT NULL,
   
+  fk_multicurrency        integer,
+  multicurrency_code      varchar(255),
+  multicurrency_tx        double(24,8) DEFAULT 1,
+  multicurrency_total_ht  double(24,8) DEFAULT 0,
+  multicurrency_total_tva double(24,8) DEFAULT 0,
+  multicurrency_total_ttc double(24,8) DEFAULT 0,
+
   import_key			varchar(14),
   extraparams			varchar(255)							-- for other parameters with json format
 ) ENGINE=innodb;

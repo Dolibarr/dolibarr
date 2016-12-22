@@ -53,6 +53,10 @@ $result=restrictedArea($user,'adherent',$rowid,'','cotisation');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 $errmsg='';
 $errmsgs=array();
 
@@ -379,6 +383,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                $invoice->socid=$object->fk_soc;
 	                $invoice->date=$datecotisation;
 
+	                // Possibility to add external linked objects with hooks
+	                $invoice->linked_objects['subscription'] = $crowid;
+	                if (! empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects']))
+	                {
+	                    $invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+	                }
+	                 
 	                $result=$invoice->create($user);
 	                if ($result <= 0)
 	                {
@@ -580,11 +591,11 @@ if ($rowid > 0)
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
-		print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 	}
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
 	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
@@ -619,7 +630,7 @@ if ($rowid > 0)
     print '<table class="border tableforfield" width="100%">';
 	
 	// Birthday
-	print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
 	// Public
 	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
@@ -641,6 +652,30 @@ if ($rowid > 0)
 		print $object->showOptionals($extrafields, 'view', $parameters);
 	}
 
+	// Date end subscription
+	print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+	if ($object->datefin)
+	{
+	    print dol_print_date($object->datefin,'day');
+	    if ($object->hasDelay()) {
+	        print " ".img_warning($langs->trans("Late"));
+	    }
+	}
+	else
+	{
+	    if (! $adht->cotisation)
+	    {
+	        print $langs->trans("SubscriptionNotRecorded");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
+	    else
+	    {
+	        print $langs->trans("SubscriptionNotReceived");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
+	}
+	print '</td></tr>';
+	
 	// Third party Dolibarr
 	if (! empty($conf->societe->enabled))
 	{
@@ -710,30 +745,6 @@ if ($rowid > 0)
 		else print $langs->trans("NoDolibarrAccess");
 	}
 	print '</td></tr>';
-
-    // Date end subscription
-    print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-    if ($object->datefin)
-    {
-        print dol_print_date($object->datefin,'day');
-        if ($object->hasDelay()) {
-            print " ".img_warning($langs->trans("Late"));
-        }
-    }
-    else
-    {
-	    if (! $adht->cotisation)
-	    {
-	     	print $langs->trans("SubscriptionNotRecorded");
-	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-	    }
-	    else
-	    {
-	    	print $langs->trans("SubscriptionNotReceived");
-	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-	    }
-    }
-    print '</td></tr>';
 
     print "</table>\n";
 

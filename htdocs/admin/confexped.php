@@ -87,14 +87,14 @@ else if ($action == 'disable_delivery')
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $form=new Form($db);
 
-llxHeader("","");
+llxHeader("",$langs->trans("SendingsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("ModuleSetup"), 0, 'sending');
+dol_fiche_head($head, 'general', $langs->trans("Sendings"), 0, 'sending');
 
 /*
  * Formulaire parametres divers
@@ -131,7 +131,10 @@ print '</tr>';
 // Bon de livraison activation/desactivation
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
+print '<td>';
+print $langs->trans("DeliveriesOrderAbility");
+print '<br>'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1);
+print '</td>';
 print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
@@ -150,8 +153,6 @@ print '</tr>';
 print '</table>';
 
 print '</div>';
-
-print info_admin($langs->trans("NoNeedForDeliveryReceipts"));
 
 llxFooter();
 $db->close();

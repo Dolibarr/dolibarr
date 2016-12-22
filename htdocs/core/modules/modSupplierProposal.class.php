@@ -23,6 +23,7 @@
 /**
  *	\defgroup   supplier_proposal     Module supplier_proposal
  *	\brief      Module to request supplier price proposals
+ *
  *	\file       htdocs/core/modules/modSupplierProposal.class.php
  *	\ingroup    supplier_proposal
  *	\brief      File to describe and activate module SupplierProposal
@@ -48,11 +49,11 @@ class modSupplierProposal extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 1120;
 
-		$this->family = "products";
+		$this->family = "srm";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "supplier_proposalDESC";
 
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -114,15 +115,13 @@ class modSupplierProposal extends DolibarrModules
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Validate supplier proposals'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = '';
-		$this->rights[$r][5] = 'validate';
+		$this->rights[$r][4] = 'validate_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = '';
-        $this->rights[$r][5] = 'send_advance';
+        $this->rights[$r][4] = 'send_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
@@ -142,7 +141,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'SupplierProposalShort',
+			'titre'=>'SupplierProposalsShort',
 			'leftmenu'=>'supplier_proposalsubmenu',
 			'url'=>'/supplier_proposal/index.php',
 			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -157,7 +156,7 @@ class modSupplierProposal extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
 			'titre'=>'SupplierProposalNew',
-			'url'=>'/supplier_proposal/card.php?action=create',
+			'url'=>'/supplier_proposal/card.php?action=create&amp;leftmenu=supplier_proposals',
 			'langs'=>'supplier_proposal',
 			'enabled'=>'$conf->supplier_proposal->enabled',
 			'perms'=>'$user->rights->supplier_proposal->creer',
@@ -170,12 +169,25 @@ class modSupplierProposal extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
 			'titre'=>'List',
-			'url'=>'/supplier_proposal/list.php',
+			'url'=>'/supplier_proposal/list.php?leftmenu=supplier_proposals',
 			'langs'=>'supplier_proposal',
 			'enabled'=>'$conf->supplier_proposal->enabled',
 			'perms'=>'$user->rights->supplier_proposal->lire',
 			'user'=>2,
             'position'=>302
+		);
+		$r++;
+		
+		$this->menu[$r]=array(
+		    'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
+		    'type'=>'left',
+		    'titre'=>'Statistics',
+		    'url'=>'/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier',
+		    'langs'=>'supplier_proposal',
+		    'enabled'=>'$conf->supplier_proposal->enabled',
+		    'perms'=>'$user->rights->supplier_proposal->lire',
+		    'user'=>2,
+		    'position'=>303
 		);
 		$r++;
 	}

@@ -94,7 +94,22 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     else
     {
         $result = $object->fetch($id,$ref);
-        llxHeader("",$langs->trans("CardProduct".$object->type));
+        
+		$title = $langs->trans('ProductServiceCard');
+		$helpurl = '';
+		$shortlabel = dol_trunc($object->label,16);
+		if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+		{
+			$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Statistics');
+			$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		}
+		if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+		{
+			$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Statistics');
+			$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		}
+
+		llxHeader('', $title, $helpurl);
     }
 	
     
@@ -106,7 +121,9 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
 		dol_fiche_end();
 	}
@@ -144,7 +161,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		// Choice of type of product
     		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
     
-    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0">';
+    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0'.($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("Products");
     		if ((string) $type != '0') print '</a>';
@@ -152,7 +169,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
     		else print ' &nbsp; / &nbsp; ';
     
-    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1">';
+    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1'.($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("Services");
     		if ((string) $type != '1') print '</a>';
@@ -160,7 +177,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
     		else print ' &nbsp; / &nbsp; ';
     
-    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'">';
+    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("ProductsAndServices");
     		if ((string) $type == '0' || (string) $type == '1') print '</a>';
@@ -170,7 +187,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		print '<br>';
 	    }
 	    
-		// Choice of stats
+		// Choice of stats mode (byunit or bynumber)
 		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
 		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=byunit">';
@@ -193,9 +210,9 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 		//print '<table width="100%">';
 
 		// Generation des graphs
+    	$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
 		if ($object->id > 0)  // We are on statistics for a dedicated product
 		{
-    		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
     		if (! file_exists($dir.'/'.$object->id))
     		{
     			if (dol_mkdir($dir.'/'.$object->id) < 0)

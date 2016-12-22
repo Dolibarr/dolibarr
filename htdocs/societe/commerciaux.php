@@ -114,7 +114,9 @@ if (! empty($socid))
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
 	print '<div class="fichecenter">';
 
@@ -122,7 +124,7 @@ if (! empty($socid))
 	print '<table class="border centpercent">';
 
 	print '<tr>';
-    print '<td class="titlefield" width="25%">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print '<td class="titlefield">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
     print $object->code_client;
     if ($object->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';
@@ -137,7 +139,7 @@ if (! empty($socid))
 	print '<tr><td>'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname";
+	$sql = "SELECT DISTINCT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
@@ -164,6 +166,8 @@ if (! empty($socid))
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		$tmpuser = new User($db);
+		
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -175,10 +179,20 @@ if (! empty($socid))
 				null; // actions in normal case
       		}
 
-			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
+      		$tmpuser->id = $obj->rowid;
+      		$tmpuser->firstname = $obj->firstname;
+      		$tmpuser->lastname = $obj->lastname;
+      		$tmpuser->statut = $obj->statut;
+      		$tmpuser->login = $obj->login;
+      		$tmpuser->entity = $obj->entity;
+      		$tmpuser->societe_id = $obj->fk_soc;
+      		print $tmpuser->getNomUrl(1);
+      		
+			/*print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-			print '</a>&nbsp;';
+			print '</a>';*/
+			print '&nbsp;';
 			if ($user->rights->societe->creer)
 			{
 			    print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;delcommid='.$obj->rowid.'">';
@@ -215,7 +229,7 @@ if (! empty($socid))
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 		{
@@ -242,21 +256,29 @@ if (! empty($socid))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td>'.$langs->trans("Login").'</td>';
+			print '<td>'.$langs->trans("Status").'</td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
 
 			$var=True;
-
+			$tmpuser=new User($db);
+				
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),"user").' ';
-				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-				print '</a>';
-				print '</td><td>'.$obj->login.'</td>';
+				$tmpuser->id=$obj->rowid;
+				$tmpuser->firstname=$obj->firstname;
+				$tmpuser->lastname=$obj->lastname;
+				$tmpuser->statut=$obj->statut;
+				$tmpuser->login=$obj->login;
+				$tmpuser->email=$obj->email;
+				$tmpuser->societe_id=$obj->fk_soc;
+				print $tmpuser->getNomUrl(1);
+				print '</td>';
+				print '<td>'.$obj->login.'</td>';
+				print '<td>'.User::LibStatut($obj->statut,0).'</td>';
 				print '<td><a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 
 				print '</tr>'."\n";

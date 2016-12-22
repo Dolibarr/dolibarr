@@ -57,17 +57,17 @@ function societe_prepare_head(Societe $object)
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
-    }
-    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)))
-    {
-    	$langs->load("products");
-	    // price
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("CustomerPrices");
-	    $head[$h][2] = 'price';
-	    $h++;
-    }
 
+        if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+        {
+            $langs->load("products");
+            // price
+            $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+            $head[$h][1] = $langs->trans("CustomerPrices");
+            $head[$h][2] = 'price';
+            $h++;
+        }
+    }
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
@@ -86,17 +86,30 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
-     {
-    	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-    	$head[$h][1] = $langs->trans("Agenda");
-    	$head[$h][2] = 'agenda';
-    	$h++;
-    }
     if (! empty($conf->projet->enabled) && (!empty($user->rights->projet->lire) ))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Projects");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."projet as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'project';
     	$h++;
     }
@@ -172,27 +185,40 @@ function societe_prepare_head(Societe $object)
         if(!empty($object->note_private)) $nbNote++;
 		if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
-        $head[$h][1] = $langs->trans("Note");
+        $head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
 
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $upload_dir = $conf->societe->dir_output . "/" . $object->id;
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $nbLinks=Link::count($db, $object->element, $object->id);
+        
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
-		if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
         $head[$h][2] = 'document';
         $h++;
     }
 
+    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+    $head[$h][1].= $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$h][1].= '/';
+        $head[$h][1].= $langs->trans("Agenda");
+    }
+    $head[$h][2] = 'agenda';
+    $h++;
+    
     // Log
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
+    /*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
-    $h++;
+    $h++;*/
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty','remove');
 
@@ -547,7 +573,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -762,7 +788,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     else
 	{
         print "<tr ".$bc[! $var].">";
-        print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+        print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
         print "</tr>\n";
     }
     print "\n</table>\n";

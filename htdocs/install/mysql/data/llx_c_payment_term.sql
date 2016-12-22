@@ -27,7 +27,7 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception de facture','Réception de facture',0,1);
+insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'Due Upon Receipt','Due Upon Receipt',0,1);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','Réglement à 30 jours',0,30);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','Réglement à 60 jours',0,60);
