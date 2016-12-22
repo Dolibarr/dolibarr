@@ -78,17 +78,28 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 print '<tbody>';
 print '<tr class="liste_titre">';
-
-print '<td class="liste_titre">'.$langs->trans('ID').'</td>';
-print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
-print '<td class="liste_titre">'.$langs->trans('ActionByCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('UserUpdateCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
-print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
-print '<td class="liste_titre" align="right">'.$langs->trans('PrevSoldeCP').'</td>';
-print '<td class="liste_titre" align="right">'.$langs->trans('NewSoldeCP').'</td>';
-
+print_liste_field_titre($langs->trans('ID'));
+print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+print_liste_field_titre($langs->trans('ActionByCP'));
+print_liste_field_titre($langs->trans('UserUpdateCP'));
+print_liste_field_titre($langs->trans('Description'));
+print_liste_field_titre($langs->trans('Type'));
+print_liste_field_titre($langs->trans('PrevSoldeCP'), $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
+print_liste_field_titre($langs->trans('NewSoldeCP'), $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
 print '</tr>';
+
+print '<tr class="liste_titre">';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '</tr>';
+
+
 $var=true;
 
 foreach($cp->logs as $logs_CP)
