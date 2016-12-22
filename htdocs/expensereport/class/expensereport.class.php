@@ -1705,13 +1705,13 @@ class ExpenseReport extends CommonObject
                 
 	            if ($option == 'toapprove')
 	            {
-	                if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->approve->warning_delay)) {
+	                if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
 	                    $response->nbtodolate++;
 	                }
 	            }
 	            else
 	            {
-                    if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->payment->warning_delay)) {
+                    if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->payment->warning_delay)) {
     	                $response->nbtodolate++;
                     }
 	            }
