@@ -257,32 +257,33 @@ class Translate
 					{
 						if ($usecachekey) $tabtranslatedomain=array();	// To save lang content in cache
 
-						while ($line = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
-						{
-							if ($line[0] != "\n" && $line[0] != " " && $line[0] != "#")
-							{
-								$tab=explode('=',$line,2);
-								$key=trim($tab[0]);
+						/**
+						 * Read each lines until a '=' (with any combination of spaces around it)
+						 * and split the rest until a line feed.
+						 * This is more efficient than fgets + explode + trim by a factor of ~2.
+						 */
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) {
+							if (isset($line[1])) {
+								list($key, $value) = $line;
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
-								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
-								{
-									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
-
-									if ($key == 'DIRECTION')	// This is to declare direction of language
-									{
-										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
-										{
-                                            $this->tab_translate[$key]=$value;
-											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
-											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
+								if (empty($this->tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
+									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
+									if ($key == 'DIRECTION') { // This is to declare direction of language
+										if ($alt < 2 || empty($this->tab_translate[$key])) { // We load direction only for primary files or if not yet loaded
+											$this->tab_translate[$key] = $value;
+											if ($stopafterdirection) {
+												break; // We do not save tab if we stop after DIRECTION
+											} elseif ($usecachekey) {
+												$tabtranslatedomain[$key] = $value;
+											}
 										}
-									}
-									else
-									{
-										$this->tab_translate[$key]=$value;
+									} else {
+										$this->tab_translate[$key] = $value;
 										//if ($domain == 'orders') print "$tab[0] value $value<br>";
-										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
+										if ($usecachekey) {
+											$tabtranslatedomain[$key] = $value;
+										} // To save lang content in cache
 									}
 								}
 							}
