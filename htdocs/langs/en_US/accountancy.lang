@@ -121,10 +121,8 @@ SellsJournal=Sells journal
 PurchasesJournal=Purchases journal
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash	
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -168,3 +166,17 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In Tiers
+EnabledVat=In Vat

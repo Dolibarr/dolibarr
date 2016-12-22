@@ -130,7 +130,7 @@ class pdf_agrume extends ModelePDFFactures
 			$this->posxqty=145;
 		}
 		$this->posxdiscount=162;
-		$this->posxprogress=174; // Only displayed for situation invoices
+		$this->posxprogress=162; // Only displayed for situation invoices
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_UNITPRICE)) $this->posxup = $this->posxqty;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
@@ -314,8 +314,9 @@ class pdf_agrume extends ModelePDFFactures
 					$this->posxqty -= $progress_width;
 					$this->posxdiscount -= $progress_width;
 					$this->posxunit -= $progress_width;
-					$this->posxprogress -= $progress_width;
+					//$this->posxprogress -= $progress_width;
 					$this->posxpicture -= $progress_width;
+					$this->postotalht += 8;
 				}
 
 				// New page
@@ -635,7 +636,7 @@ class pdf_agrume extends ModelePDFFactures
 					{
                         $pdf->SetXY($this->posxdiscount-2, $curY);
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
+						$pdf->MultiCell($this->posxprogress-$this->posxdiscount, 3, $remise_percent, 0, 'R');
 					}
 
 					if ($this->situationinvoice)
@@ -1739,31 +1740,42 @@ class pdf_agrume extends ModelePDFFactures
 					'C');
 			}
 		}
-
-		if ($this->situationinvoice)
-		{
-			$pdf->line($this->posxprogress - 2, $tab_top, $this->posxprogress - 2, $tab_top + $tab_height);
-			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxunit - 2, $tab_top + 1);
-				$pdf->MultiCell($this->posxunit - $this->posxprogress - 1, 2, $outputlangs->transnoentities("Progress"), '',
-					'C');
-			}
-			
-			$pdf->line($this->posxprogress+16, $tab_top, $this->posxprogress+16, $tab_top + $tab_height);
-		}
-		else 
-		{
-			$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		}
-
+		
+		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			if ($this->atleastonediscount)
 			{
 				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+				$pdf->MultiCell($this->posxprogress-$this->posxdiscount,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 			}
 		}
+		
+		/*
+var_dump('VAT : '.$this->posxup. ' - '.$this->posxtva);
+var_dump('PriceUHT : '.$this->posxqty. ' - '.$this->posxup);
+var_dump('Qty : '.$this->posxdiscount. ' - '.$this->posxqty);
+exit;
+*/
+//var_dump($this->posxdiscount, $this->posxprogress);exit;
+		if ($this->situationinvoice)
+		{
+			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
+			if (empty($hidetop)) {
+				$pdf->SetXY($this->posxprogress-1, $tab_top + 1);
+				if($conf->global->PRODUCT_USE_UNITS) 
+				{
+					$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Progress"), '', 'C');
+				}
+				else
+				{
+					$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Progress"), '', 'C');	
+				}
+			}
+			//var_dump($this->posxprogress, $this->posxqty);exit;
+		
+		}
+		
 		if ($this->atleastonediscount)
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
@@ -1771,7 +1783,7 @@ class pdf_agrume extends ModelePDFFactures
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
-			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
+			$pdf->MultiCell(22,2, $outputlangs->transnoentities("TotalHT"),'','C');
 		}
 	}
 

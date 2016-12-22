@@ -299,9 +299,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_marginRate");
-			});
 			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_marginRate");
@@ -311,9 +308,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
-			});
 			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_markRate");
@@ -326,6 +320,7 @@ if (! empty($conf->margin->enabled))
 
 	/* If margin rate field empty, do nothing. */
 	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
+	/* TODO This function seems no more used */
 	function checkEditLine(e, npRate)
 	{
 		var buying_price = $("input[name='buying_price']:first");
@@ -341,7 +336,7 @@ if (! empty($conf->margin->enabled))
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
+		if (npRate == "np_markRate" && rate.val() > 100)
 		{
 			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
@@ -362,7 +357,7 @@ if (! empty($conf->margin->enabled))
 				price = ((bpjs * (1 + (ratejs / 100))) / (1 - remisejs / 100));
 			else if (npRate == "np_markRate")
 			{
-				if (ratejs != 100)
+				if (ratejs != 100)	// If markRate is 100, it means buying price is 0, so it is not possible to retreive price from it and markRate. We keep it unchange
 				{
 					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
 				}

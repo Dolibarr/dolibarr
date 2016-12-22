@@ -184,10 +184,17 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
+	$lastRef = $object->ref;
 	$result = $object->setValidate($user);
-
+	$newRef = $object->ref;
+	
+	//echo $lastRef." ".$newRef;exit;
+	
 	if ($result > 0)
 	{
+		//Rename du répertoire PROV avec la ref définitive
+		rename(DOL_DATA_ROOT.'/expensereport/'.$lastRef,DOL_DATA_ROOT.'/expensereport/'.$newRef);
+		
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
@@ -805,7 +812,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 	}
 }
 
-if ($action == "addline")
+if ($action == "addline" && $user->rights->expensereport->creer)
 {
 	$error = 0;
 
@@ -896,7 +903,7 @@ if ($action == "addline")
 	$action='';
 }
 
-if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
+if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -939,7 +946,7 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	}
 }
 
-if ($action == "updateligne" )
+if ($action == "updateligne" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -1647,7 +1654,7 @@ else
 							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 						}
 						// Ajout des boutons de modification/suppression
-						if ($object->fk_statut < 2 || $object->fk_statut==99)
+						if (($object->fk_statut < 2 || $object->fk_statut==99) && $user->rights->expensereport->creer)
 						{
 							print '<td style="text-align:right;"></td>';
 						}
@@ -1690,7 +1697,7 @@ else
 								}
 
 								// Ajout des boutons de modification/suppression
-								if($object->fk_statut<2 OR $object->fk_statut==99)
+								if(($object->fk_statut<2 OR $object->fk_statut==99) && $user->rights->expensereport->creer)
 								{
 									print '<td style="text-align:right;" class="nowrap">';
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
@@ -1720,7 +1727,7 @@ else
 
 									// Select type
 									print '<td style="text-align:center;">';
-									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
+									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees', 0);
 									print '</td>';
 
 									// Add comments
@@ -1770,7 +1777,7 @@ else
 					//print '</div>';
 
 					// Add a line
-					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
+					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print_fiche_titre($langs->trans("AddLine"),'','');
 
@@ -1805,7 +1812,7 @@ else
 
 						// Select type
 						print '<td>';
-						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',1);
+						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',0);
 						print '</td>';
 
 						// Add comments

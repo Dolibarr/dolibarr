@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -319,8 +319,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 									$label = $lines[$i]->product_label;
 								}
 
-								if ($conf->global->PRODUIT_DESC_IN_FORM)
-									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
+								$desc = ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 							}
 							else {
 							    $desc = dol_htmlentitiesbr($lines[$i]->desc);
@@ -697,6 +696,11 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
     $result = $object->validate($user);
+}
+
+else if ($action == 'reopen' && $user->rights->contrat->creer)
+{
+    $result = $object->reopen($user);
 }
 
 // Close all lines
@@ -1638,9 +1642,11 @@ else
                     {
                         $tmpaction='activateline';
                         if ($objp->statut == 4) $tmpaction='unactivateline';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$tmpaction.'">';
-                        print img_edit();
-                        print '</a>';
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) {
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print img_edit();
+							print '</a>';
+						}
                     }
                 }
                 print '</td>';
@@ -1839,7 +1845,12 @@ else
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
-
+            if ($object->statut == 1 && $nbofservices)
+            {
+                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
+            }
+            
             if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
@@ -1899,6 +1910,12 @@ else
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'contract', $socid);
+        
+        
         print '</div></div></div>';
     }
 }

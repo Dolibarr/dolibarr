@@ -321,8 +321,11 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
                 $object->status_batch	        = GETPOST('status_batch');
+                // removed from update view
+                /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
+                */
                 $object->duration_value         = GETPOST('duration_value');
                 $object->duration_unit          = GETPOST('duration_unit');
                 $object->canvas                 = GETPOST('canvas');
@@ -412,8 +415,6 @@ if (empty($reshook))
             if ($object->id > 0)
             {
                 $object->ref = GETPOST('clone_ref');
-                $object->status = 0;
-                $object->status_buy = 0;
                 $object->id = null;
                 $object->barcode = -1;
 
@@ -1569,7 +1570,6 @@ else
     }
     else if ($action != 'create')
     {
-        header("Location: index.php");
         exit;
     }
 }

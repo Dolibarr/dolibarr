@@ -858,7 +858,7 @@ $sql .= " WHERE fk_product = " . $object->id;
 $sql .= " AND p.entity IN (" . getEntity('productprice', 1) . ")";
 $sql .= " AND p.fk_user_author = u.rowid";
 if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql .= " AND p.price_level = " . $soc->price_level;
-$sql .= " ORDER BY p.date_price DESC, p.price_level ASC, p.rowid DESC";
+$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);
@@ -1256,7 +1256,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Count total nb of records
 		$nbtotalofrecords = 0;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all($sortfield, $sortorder, 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetch_all($sortorder, $sortfield, 0, 0, $filter);
 		}
 
 		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);

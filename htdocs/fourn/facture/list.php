@@ -8,7 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@ $year = GETPOST("year","int");
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
+$filter = GETPOST("filtre");
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
@@ -93,6 +94,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$search_status="";
 	$year="";
 	$month="";
+	$day="";
+	$year_lim="";
+	$month_lim="";
+	$day_lim="";
 }
 
 /*
@@ -202,9 +207,18 @@ if ($search_amount_all_tax != '')
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
-if ($search_status != '')
+if ($search_status != '' && $search_status>=0)
 {
 	$sql.= " AND fac.fk_statut = ".$search_status;
+}
+if ($filter && $filter != -1)
+{
+	$aFilter = explode(',', $filter);
+	foreach ($aFilter as $fil)
+	{
+		$filt = explode(':', $fil);
+		$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+	}
 }
 
 $nbtotalofrecords = 0;
@@ -230,8 +244,12 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
+	if ($day) 					$param.='&day='.urlencode($day);
 	if ($month) 				$param.='&month='.urlencode($month);
 	if ($year)  				$param.='&year=' .urlencode($year);
+	if ($day_lim) 				$param.='&day_lim='.urlencode($day_lim);
+	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
+	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
 	if ($search_ref_supplier) 	$param.='&search_ref_supplier'.urlencode($search_ref_supplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
@@ -296,7 +314,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print $form->selectarray('filtre', $liststatus, $search_status, 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -324,7 +342,8 @@ if ($resql)
 		print $facturestatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
 		$filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
-		print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
+		$subdir = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
+		print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
 		print "</td>\n";
 
 		// Ref supplier

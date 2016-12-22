@@ -49,13 +49,13 @@ if (! empty($conf->syslog->enabled))
 if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
 	$filesarray=array();
-
+	
 	if ($choice=='tempfiles')
 	{
 		// Delete temporary files
 		if ($dolibarr_main_data_root)
 		{
-			$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'\/temp$');
+			$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$');
 		}
 	}
 
@@ -76,7 +76,6 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 	$count=0;
 	if (count($filesarray))
 	{
-
 		foreach($filesarray as $key => $value)
 		{
 			//print "x ".$filesarray[$key]['fullname']."<br>\n";

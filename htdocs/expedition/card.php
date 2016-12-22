@@ -8,6 +8,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,7 +238,7 @@ if (empty($reshook))
 						$ret=$object->addline_batch($batch_line[$i]);
 						if ($ret < 0)
 						{
-							$mesg='<div class="error">'.$object->error.'</div>';
+							$mesg='<div class="error">'.$object->errorsToString().'</div>';
 							$error++;
 						}
 					}
@@ -881,7 +882,7 @@ if ($action == 'create')
 							if ($defaultqty<=0) {
 								$defaultqty=0;
 							} else {
-								$defaultqty -= min($defaultqty,$substock);
+								$defaultqty -= ($substock > 0 ? min($defaultqty,$substock) : 0);
 							}
 							$subj++;
 						}

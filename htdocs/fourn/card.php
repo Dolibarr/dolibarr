@@ -407,6 +407,17 @@ if ($object->id > 0)
 		}
 
 		// TODO move to DAO class
+		$sql  = "SELECT count(p.rowid) as total";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+		$sql.= " WHERE p.fk_soc =".$object->id;
+		$sql.= " AND p.entity =".$conf->entity;
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$object_count = $db->fetch_object($resql);
+			$num = $object_count->total;
+		}
+		
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
@@ -417,7 +428,6 @@ if ($object->id > 0)
 		if ($resql)
 		{
 			$i = 0 ;
-			$num = $db->num_rows($resql);
 
 			if ($num > 0)
 			{
@@ -433,7 +443,7 @@ if ($object->id > 0)
 			}
 
 			$var = True;
-			while ($i < $num && $i <= $MAXLIST)
+			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;

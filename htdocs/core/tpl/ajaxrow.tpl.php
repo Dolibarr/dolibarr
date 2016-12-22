@@ -40,6 +40,7 @@ $(document).ready(function(){
     $(".tdlineupdown").css("background-repeat","no-repeat");
     $(".tdlineupdown").css("background-position","center center");
 
+	var TExtrafields = new Array;
     $("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
@@ -58,17 +59,39 @@ $(document).ready(function(){
 						if (reloadpage == 1) {
 							location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
 						} else {
+							for (var i=TExtrafields.length; i>=0; i--)
+							{
+								$(row).after(TExtrafields[i]);
+							}
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {
 										$(this).removeClass("pair impair");
 										if (intIndex % 2 == 0) $(this).addClass('impair');
 										if (intIndex % 2 == 1) $(this).addClass('pair');
 									});
+									
+							$("#<?php echo $tagidfortablednd; ?>").trigger('tableDnD_endDrop', [fk_element, element_id, table, row]);
 						}
 					});
 		},
 		onDragClass: "dragClass",
-		dragHandle: "tdlineupdown"
+		dragHandle: "tdlineupdown",
+		onDragStart: function(table, row) {
+			TExtrafields = [];
+			var current_element = $(row).parent();
+			while (next_element = $(current_element).next())
+			{
+				if (next_element.is('tr'))
+				{
+					var id = $(next_element).attr('id');
+					if (typeof id != 'undefined' && id.indexOf('row-') !== -1) break;
+					else if ($(next_element).hasClass('liste_titre')) break;
+					else TExtrafields.push(next_element);
+				}
+				
+				current_element = next_element;
+			}
+		}
 	});
     $(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
     	function() { $(this).removeClass('showDragHandle'); }

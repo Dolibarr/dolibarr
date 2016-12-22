@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,16 @@
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 

@@ -9,7 +9,7 @@ beta version of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in ChangeLog. 
-To generate a changelog of a major new version x.y.0, you can do "cd ~/git/dolibarr_x.y; git log `git rev-list --boundary x.y..origin/develop | grep ^- | cut -c2- | head -n`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a major new version x.y.0, you can do "cd ~/git/dolibarr_x.y; git log `git rev-list --boundary x.y..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
 To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Commit all changes.
@@ -31,7 +31,7 @@ complete release of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in ChangeLog. 
-To generate a changelog of a major new version x.y.0, you can do "cd ~/git/dolibarr_x.y; git log `git rev-list --boundary x.y..origin/develop | grep ^- | cut -c2- | head -n`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a major new version x.y.0, you can do "cd ~/git/dolibarr_x.y; git log `git rev-list --boundary x.y..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
 To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
 - Update version number with x.y.z in htdocs/filefunc.inc.php
 - Commit all changes.

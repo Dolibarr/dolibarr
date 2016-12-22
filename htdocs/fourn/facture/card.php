@@ -238,8 +238,11 @@ if (empty($reshook))
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
-	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
-	    if ($result < 0) dol_print_error($db, $object->error);
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+		
+		if ($object->update($user) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// conditions de reglement
@@ -447,7 +450,7 @@ if (empty($reshook))
 	                            'HT',
 	                            $product_type,
 	                        	$lines[$i]->rang,
-	                        	1,
+	                        	0,
 	                        	$lines[$i]->array_options,
 	                        	$lines[$i]->fk_unit
 	                        );
@@ -458,6 +461,9 @@ if (empty($reshook))
 	                            break;
 	                        }
 	                    }
+	                    
+	                    // Now reload line
+	                    $object->fetch_lines();
 	                }
 	                else
 	                {
@@ -1311,7 +1317,6 @@ if ($action == 'create')
         $datedue=($datetmp==''?-1:$datetmp);
     }
 
-    dol_fiche_head();
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1319,6 +1324,8 @@ if ($action == 'create')
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1651,12 +1658,6 @@ else
             if ($objectref == 'PROV')
             {
                 $savdate=$object->date;
-                if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
-                {
-                    $object->date=dol_now();
-                    //TODO: Possibly will have to control payment information into suppliers
-                    //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
-                }
                 $numref = $object->getNextNumRef($societe);
             }
             else
@@ -2215,7 +2216,11 @@ else
 	            // Delete
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    if ($object->getSommePaiement()) {
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+                    } else {
+    	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    }
 	            }
 	            print '</div>';
 	            print '<br>';

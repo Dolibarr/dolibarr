@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,10 +90,39 @@ class Commande extends CommonOrder
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $fk_account;
+    /**
+     * It holds the label of the payment mode. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $mode_reglement;
+
+    /**
+     * Payment mode id
+     * @var int
+     */
     var $mode_reglement_id;
+
+    /**
+     * Payment mode code
+     * @var string
+     */
     var $mode_reglement_code;
+    /**
+     * Availability delivery time id
+     * @var int
+     */
     var $availability_id;
+    /**
+     * Availability delivery time code
+     * @var string
+     */
     var $availability_code;
+    /**
+     * Label of availability delivery time. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $availability;
+
     var $demand_reason_id;
     var $demand_reason_code;
     var $fk_delivery_address;
@@ -988,7 +1018,7 @@ class Commande extends CommonOrder
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
-
+		
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
@@ -1470,7 +1500,7 @@ class Commande extends CommonOrder
         $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
-        $sql.= ', ca.code as availability_code';
+        $sql.= ', ca.code as availability_code, ca.label as availability_label';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
@@ -1527,6 +1557,7 @@ class Commande extends CommonOrder
                 $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
+                $this->availability	    	= $obj->availability_label;
                 $this->demand_reason_id		= $obj->fk_input_reason;
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
@@ -1672,7 +1703,7 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
         if ($only_product) $sql .= ' AND p.fk_product_type = 0';
-        $sql .= ' ORDER BY l.rang';
+        $sql .= ' ORDER BY l.rang, l.rowid';
 
         dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -1693,6 +1724,7 @@ class Commande extends CommonOrder
                 $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
                 $line->desc             = $objp->description;
+                $line->description      = $objp->description;		// Description line
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -2443,7 +2475,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
-        global $conf, $mysoc;
+        global $conf, $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2497,6 +2529,26 @@ class Commande extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new OrderLine($this->db);
             $line->fetch($rowid);
+
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                $product_type=$product->type;
+
+                if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
+                {
+                    $this->error=$langs->trans('ErrorStockIsNotEnough');
+                    dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+                    $this->db->rollback();
+                    unset($_POST['productid']);
+                    unset($_POST['tva_tx']);
+                    unset($_POST['price_ht']);
+                    unset($_POST['qty']);
+                    unset($_POST['buying_price']);
+                    return self::STOCK_NOT_ENOUGH_FOR_ORDER;
+                }
+            }
 
             $staticline = clone $line;
 
@@ -2858,7 +2910,7 @@ class Commande extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
@@ -2917,7 +2969,7 @@ class Commande extends CommonOrder
      */
     function LibStatut($statut,$billed,$mode)
     {
-        global $langs;
+        global $langs, $conf;
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {
@@ -3203,12 +3255,14 @@ class Commande extends CommonOrder
     }
 
     /**
-     * 	Return an array of order lines
-     *
-     * @return	array		Lines of order
+	 * 	Create an array of order lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
      */
     function getLinesArray()
     {
+        return $this->fetch_lines();
+        /*
         $lines = array();
 
         $sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
@@ -3278,7 +3332,7 @@ class Commande extends CommonOrder
         {
             $this->error=$this->db->error();
             return -1;
-        }
+        }*/
     }
 
 	/**

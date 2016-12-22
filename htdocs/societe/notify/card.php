@@ -56,65 +56,78 @@ if (! $sortfield) $sortfield="c.lastname";
 
 $now=dol_now();
 
+$object = new Societe($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartynotification','globalcard'));
+
+
 
 /*
  * Actions
  */
 
-// Add a notification
-if ($action == 'add')
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-    $error=0;
-
-    if (empty($contactid))
+    // Add a notification
+    if ($action == 'add')
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
-        $error++;
-    }
-    if ($actionid <= 0)
-    {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
-        $error++;
-    }
-
-    if (! $error)
-    {
-        $db->begin();
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-        $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
-        if ($db->query($sql))
+        $error=0;
+    
+        if (empty($contactid))
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-            $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
-
-            if (! $db->query($sql))
-            {
-                $error++;
-                dol_print_error($db);
-            }
+    	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
+            $error++;
         }
-        else
+        if ($actionid <= 0)
         {
-            dol_print_error($db);
+    	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+            $error++;
         }
-
+    
         if (! $error)
         {
-            $db->commit();
-        }
-        else
-        {
-            $db->rollback();
+            $db->begin();
+    
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+            $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
+            if ($db->query($sql))
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
+                $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
+    
+                if (! $db->query($sql))
+                {
+                    $error++;
+                    dol_print_error($db);
+                }
+            }
+            else
+            {
+                dol_print_error($db);
+            }
+    
+            if (! $error)
+            {
+                $db->commit();
+            }
+            else
+            {
+                $db->rollback();
+            }
         }
     }
-}
-
-// Remove a notification
-if ($action == 'delete')
-{
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
-    $db->query($sql);
+    
+    // Remove a notification
+    if ($action == 'delete')
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
+        $db->query($sql);
+    }
 }
 
 
@@ -150,7 +163,7 @@ if ($result > 0)
     print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 

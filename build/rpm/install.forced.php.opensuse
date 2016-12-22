@@ -31,5 +31,3 @@ $force_dolibarr_lib_TCPDF_PATH='';
 //$force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
 //$force_dolibarr_js_JQUERY_FLOT='/javascript/flot';
 $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/DejaVuSans-Bold.ttf';
-
-?>

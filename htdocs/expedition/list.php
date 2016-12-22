@@ -30,6 +30,7 @@ $langs->load("sendings");
 $langs->load("deliveries");
 $langs->load('companies');
 
+$socid=GETPOST('socid','int');
 // Security check
 $expeditionid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;

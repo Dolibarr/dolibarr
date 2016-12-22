@@ -286,7 +286,7 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Si on a selectionne une propal a copier, on realise la copie
+			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
 				if ($object->fetch(GETPOST('copie_propal')) > 0) {
@@ -314,7 +314,8 @@ if (empty($reshook))
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
-					$id = $object->create_from($user);
+					// the create is done below and further more the existing create_from function is quite hilarating
+					//$id = $object->create_from($user);
 				} else {
 					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), 'errors');
 				}
@@ -561,15 +562,6 @@ if (empty($reshook))
 		}
 	}
 
-	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
-	{
-		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
-			$object->reopen($user, 1);
-		}
-	}
-
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
 	{
@@ -590,17 +582,6 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer)
-	{
-		$result=$object->cloture($user, 4, '');
-		if ($result < 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-			$error++;
-		}
-	}
-
 	// Reopen proposal
 	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
 	{
@@ -612,20 +593,6 @@ if (empty($reshook))
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
-			}
-		}
-	}
-
-	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
-	{
-		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
-			$action = 'statut';
-		} else {
-			// prevent browser refresh from closing proposal several times
-			if ($object->statut == Propal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
 			}
 		}
 	}
@@ -744,6 +711,7 @@ if (empty($reshook))
 				// If prices fields are update
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+					//echo $tva_tx.'<br>';
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -756,8 +724,10 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						//echo $object->thirdparty->price_level;
+						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level]) && $tva_tx != 0) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level]) && $tva_npr != 0) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						//echo "test".$tva_tx.'<br>';
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -864,6 +834,7 @@ if (empty($reshook))
 			$date_end = dol_mktime(0, 0, 0, GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
 
 			// Local Taxes
+			//echo $tva_tx;exit;
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 

@@ -372,18 +372,12 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	jQuery(document).ready(function() {
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-			$('#addline').click(function (e) {
-				return checkFreeLine(e, "np_marginRate");
-			});
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 		}
 		if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-			$('#addline').click(function (e) {
-				return checkFreeLine(e, "np_markRate");
-			});
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
 			});
@@ -557,7 +551,7 @@ jQuery(document).ready(function() {
 
 	      		/* Define default price at loading */
 	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
+			    $("#buying_price").val(defaultprice);
 
 	      		$("#fournprice_predef").change(function() {
 		      		console.log("change on fournprice_predef");

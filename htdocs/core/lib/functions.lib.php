@@ -7,7 +7,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
@@ -431,7 +431,7 @@ function dol_size($size,$type='')
  */
 function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
-	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"','°');
 	return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
@@ -1892,11 +1892,12 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 {
 	global $conf;
 
-	if (empty($stringencoding)) $stringencoding='UTF-8';
-
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 	// reduce for small screen
-    if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+	if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+
 	// We go always here
 	if ($trunc == 'right')
 	{
@@ -3169,7 +3170,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	{
 		if ($local == 1)
 		{
-			if(! $mysoc->localtax1_assuj) return 0;
+			if(! $mysoc->localtax1_assuj || $tva=="0") return 0;
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
@@ -3182,7 +3183,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 		if ($local == 2)
 		{
-			if(! $mysoc->localtax2_assuj) return 0;
+			if(! $mysoc->localtax2_assuj  || $tva=="0") return 0;
 			if ($thirdparty_seller->id==$mysoc->id )
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
@@ -3762,7 +3763,9 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing');
+	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';	
+	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);

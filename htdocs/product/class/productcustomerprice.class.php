@@ -346,6 +346,8 @@ class Productcustomerprice extends CommonObject
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
 				} elseif ($key == 'soc.nom') {
 					$sql .= ' AND ' . $key . ' LIKE \'%' . $value . '%\'';
+				} elseif ($key == 'prod.ref') {
+					$sql .= ' AND ' . $key . ' LIKE \'%' . $value . '%\'';
 				} else {
 					$sql .= ' AND ' . $key . ' = ' . $value;
 				}

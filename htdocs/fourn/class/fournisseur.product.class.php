@@ -277,7 +277,7 @@ class ProductFournisseur extends Product
 		                $error++;
 		            }
 
-		            if (! $error  && !empty($cong->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
+		            if (! $error  && !empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
 		            {
 		                // Add record into log table
 		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
@@ -666,7 +666,7 @@ class ProductFournisseur extends Product
     {
         global $langs;
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        $out=($showunitprice?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent/100) + $this->fourn_unitcharges - $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
 

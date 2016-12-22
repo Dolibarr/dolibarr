@@ -127,6 +127,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$amount = - price2num($_POST["debit"]);
 	}
 
+	$fk_soc = GETPOST('fk_soc', 'int');
 	$dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
 	$operation=$_POST["operation"];
 	$num_chq=$_POST["num_chq"];
@@ -152,6 +153,16 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
+			if (!empty($fk_soc))
+			{
+				$societe = new Societe($db);
+				if ($societe->fetch($fk_soc) > 0)
+				{
+					// Si fournisseur  ->add_url_line($insertid, $fk_soc, DOL_URL_ROOT.'/fourn/card.php?socid=', $societe->name, 'company');
+					$object->add_url_line($insertid, $fk_soc, DOL_URL_ROOT.'/comm/card.php?socid=', $societe->name, 'company');	
+				}
+			}
+			
 			setEventMessage($langs->trans("RecordSaved"));
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
@@ -480,6 +491,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="2">'.$langs->trans("Description").'</td>';
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
+		print '<td>'.$langs->trans("Company").'</td>';
 		print '<td colspan="2" align="center">&nbsp;</td>';
 		print '</tr>';
 
@@ -500,6 +512,11 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
 		print '<td align=right><input name="credit" class="flat" type="text" size="4" value="'.GETPOST("credit").'"></td>';
+		
+		// Tiers
+		print '<td>'.$form->select_thirdparty_list('', 'fk_soc', '', 1).'</td>';
+		
+		
 		print '<td colspan="2" align="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';

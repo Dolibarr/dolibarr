@@ -158,7 +158,7 @@ class Translate
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
-	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
+	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
 		global $conf;
 

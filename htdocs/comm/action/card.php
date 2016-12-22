@@ -61,8 +61,14 @@ $originid=GETPOST('originid','int');
 $confirm = GETPOST('confirm', 'alpha');
 
 $fulldayevent=GETPOST('fullday');
-$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+
+$aphour = GETPOST('aphour');
+$apmin = GETPOST('apmin');
+$p2hour = GETPOST('p2hour');
+$p2min = GETPOST('p2min');
+
+$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
+$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -91,7 +97,6 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('actioncard','globalcard'));
-
 
 /*
  * Actions
@@ -843,6 +848,10 @@ if ($id > 0)
 	$result5=$object->fetch_optionals($id,$extralabels);
 
 	if($listUserAssignedUpdated || $donotclearsession) {
+		$aphour	= GETPOST('aphour', 'int');
+		$apmin	= GETPOST('apmin', 'int');
+		$p2hour	= GETPOST('p2hour', 'int');
+		$p2min	= GETPOST('p2min', 'int');
 		
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);

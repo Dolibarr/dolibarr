@@ -164,6 +164,7 @@ ProjectsWithThisUserAsContact=Projects with this user as contact
 TasksWithThisUserAsContact=Tasks assigned to this user
 ResourceNotAssignedToProject=Not assigned to project
 ResourceNotAssignedToTask=Not assigned to task
+ResourceNotAssignedToTheTask=Not assigned to the task
 AssignTaskToMe=Assign task to me
 AssignTask=Assign
 ProjectOverview=Overview

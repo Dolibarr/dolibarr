@@ -84,7 +84,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier,";
 $sql .= " fd.rowid as fdid, fd.description, fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur, s.fournisseur,";
 $sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -135,7 +135,7 @@ if ($result) {
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
 		$tabfac[$obj->rowid]["date"] = $obj->df;
-		$tabfac[$obj->rowid]["ref"] = $obj->ref;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier.' ('.$obj->ref.')';
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
 		$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
@@ -183,7 +183,7 @@ if ($action == 'writebookkeeping') {
 			$result = $bookkeeping->create();
 			if ($result < 0) {
 				$error ++;
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -213,7 +213,7 @@ if ($action == 'writebookkeeping') {
 					$result = $bookkeeping->create();
 					if ($result < 0) {
 						$error ++;
-						setEventMessage($object->errors, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
@@ -244,14 +244,14 @@ if ($action == 'writebookkeeping') {
 				$result = $bookkeeping->create();
 				if ($result < 0) {
 					$error ++;
-					setEventMessage($object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
+		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
 }
 

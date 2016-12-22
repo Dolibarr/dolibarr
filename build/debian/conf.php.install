@@ -226,5 +226,3 @@ $dolibarr_main_prod='0';
 # Default value: 0 (use database value if exist)
 # Examples:
 # $dolibarr_mailing_limit_sendbyweb='0';
-
-?>

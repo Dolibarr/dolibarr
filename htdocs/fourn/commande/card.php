@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -712,7 +712,16 @@ if (empty($reshook))
 	    $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) 
+	        {
+               	$outputlangs = $langs;
+	        	$newlang = '';
+	        	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	        	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	        	if (! empty($newlang)) {
+	        		$outputlangs = new Translate("", $conf);
+	        		$outputlangs->setDefaultLang($newlang);
+	        	}
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
 	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -853,137 +862,6 @@ if (empty($reshook))
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
        	}
-
-       	if (! $error)
-       	{
-			// If creation from another object of another module (Example: origin=askpricesupplier, originid=1)
-			if (! empty($origin) && ! empty($originid))
-			{
-				$element = 'comm/askpricesupplier';
-				$subelement = 'askpricesupplier';
-
-				$object->origin = $origin;
-				$object->origin_id = $originid;
-
-				// Possibility to add external linked objects with hooks
-				$object->linked_objects[$object->origin] = $object->origin_id;
-				$other_linked_objects = GETPOST('other_linked_objects', 'array');
-				if (! empty($other_linked_objects)) {
-					$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
-				}
-
-				$object_id = $object->create($user);
-
-				if ($object_id > 0)
-				{
-					$id = $object_id; //Askpricesupplier - Compatibility
-					dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-					$classname = ucfirst($subelement);
-					$srcobject = new $classname($db);
-					$srcobject->fetch($object->origin_id);
-
-					$object->set_date_livraison($user, $srcobject->date_livraison);
-					$object->set_id_projet($user, $srcobject->fk_project);
-
-					dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-					$result = $srcobject->fetch($object->origin_id);
-					if ($result > 0)
-					{
-						$lines = $srcobject->lines;
-						if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
-						{
-							$srcobject->fetch_lines();
-							$lines = $srcobject->lines;
-						}
-
-						$fk_parent_line = 0;
-						$num = count($lines);
-
-						$productsupplier = new ProductFournisseur($db);
-
-						for($i = 0; $i < $num; $i ++)
-						{
-
-							if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
-								continue;
-
-							$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-							$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-							$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
-
-							// Reset fk_parent_line for no child products and special product
-							if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
-								$fk_parent_line = 0;
-							}
-
-							// Extrafields
-							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
-							                                                                                                      // trigger used
-							{
-								$lines [$i]->fetch_optionals($lines [$i]->rowid);
-								$array_option = $lines [$i]->array_options;
-							}
-
-							$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
-							$res = $productsupplier->fetch($idprod);
-
-							$result = $object->addline(
-								$desc,
-								$lines [$i]->subprice,
-								$lines [$i]->qty,
-								$lines [$i]->tva_tx,
-								$lines [$i]->localtax1_tx,
-								$lines [$i]->localtax2_tx,
-								$lines [$i]->fk_product,
-								$productsupplier->product_fourn_price_id,
-								$productsupplier->ref_fourn,
-								$lines [$i]->remise_percent,
-								'HT',
-								0,
-								$lines [$i]->product_type,
-								'',
-								'',
-								null,
-								null
-							);
-
-							if ($result < 0) {
-								$error ++;
-								break;
-							}
-
-							// Defined the new fk_parent_line
-							if ($result > 0 && $lines [$i]->product_type == 9) {
-								$fk_parent_line = $result;
-							}
-						}
-
-						// Hooks
-						$parameters = array('objFrom' => $srcobject);
-						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-						                                                                               // modified by hook
-						if ($reshook < 0)
-							$error ++;
-					} else {
-						setEventMessage($srcobject->error, 'errors');
-						$error ++;
-					}
-				} else {
-					setEventMessage($object->error, 'errors');
-					$error ++;
-				}
-			}
-			else
-			{
-	       		$id = $object->create($user);
-	        	if ($id < 0)
-	        	{
-	        		$error++;
-		        	setEventMessage($langs->trans($object->error), 'errors');
-	        	}
-			}
-        }
 
 		if (! $error)
 		{
@@ -2841,10 +2719,24 @@ elseif (! empty($object->id))
 				// Reopen
 				if (in_array($object->statut, array(2)))
 				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
-					}
+				    $buttonshown=0;
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				            $buttonshown++;
+				        }
+				    }
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				        }
+				    }
 				}
 				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
 				{

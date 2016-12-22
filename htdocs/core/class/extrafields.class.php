@@ -258,7 +258,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) and count($param) > 0)
+			if(is_array($param) && count($param) > 0)
 			{
 				$params = $this->db->escape(serialize($param));
 			}
@@ -818,7 +818,7 @@ class ExtraFields
 				}
 				else 
 				{
-					$sqlwhere.= ' WHERE 1';
+					$sqlwhere.= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
 				$sql.=$sqlwhere;
@@ -986,7 +986,7 @@ class ExtraFields
 						$sqlwhere .= ' WHERE ' . $InfoFieldList[4];
 					}
 				} else {
-					$sqlwhere .= ' WHERE 1';
+					$sqlwhere .= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0], array (
 						'tablewithentity'
@@ -1086,7 +1086,7 @@ class ExtraFields
 			$InfoFieldList = explode(":", $param_list[0]);
 			dol_include_once($InfoFieldList[1]);
 			$object = new $InfoFieldList[0]($this->db);
-			$object->fetch($value);
+			if (!empty($value)) $object->fetch($value); // [PH] Fix error display because value is null
 			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
 
 		}

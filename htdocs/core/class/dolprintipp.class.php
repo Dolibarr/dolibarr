@@ -66,7 +66,7 @@ class dolprintIPP
      */
     function list_jobs($module)
     {
-        global $conf, $db, $bc;
+        global $conf, $db, $bc, $langs;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/printipp.log','file',3); // logging very verbose
@@ -96,7 +96,8 @@ class dolprintIPP
         }
         catch(Exception $e)
         {
-			print $e->getMessage();
+            setEventMessage('[printipp] '.$langs->trans('CoreErrorMessage'), 'errors');
+            dol_syslog($e->getMessage(), LOG_ERR);
         }
 
         print '<table width="100%" class="noborder">';

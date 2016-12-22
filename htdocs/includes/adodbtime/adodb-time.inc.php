@@ -1006,7 +1006,7 @@ function adodb_tz_offset($gmt,$isphp5)
 		return sprintf('%s%02d%02d',($gmt<=0)?'+':'-',floor($zhrs),($zhrs-$hrs)*60);
 	else
 		return sprintf('%s%02d%02d',($gmt<0)?'+':'-',floor($zhrs),($zhrs-$hrs)*60);
-	break;
+	//break;
 }
 
 

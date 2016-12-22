@@ -324,7 +324,7 @@ if (empty($reshook))
 							for($i = 0; $i < $num; $i ++)
 							{
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Dates
@@ -637,10 +637,10 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->client->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->client->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
-						$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_tva_tx[$object->client->price_level]) && $tva_tx !=0 ) $tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->client->price_level]) && $tva_npr !=0 ) $tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+						//$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						//$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -1165,9 +1165,9 @@ if (empty($reshook))
 
 
 
-	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) 
+	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
 	{
-		if ($action == 'addcontact') 
+		if ($action == 'addcontact')
 		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
@@ -1188,7 +1188,7 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut') 
+		else if ($action == 'swapstatut')
 		{
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
@@ -1198,7 +1198,7 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact') 
+		else if ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact($lineid);
 
@@ -1241,7 +1241,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	$projectid = 0;
 	$remise_absolue = 0;
-		
+
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1252,7 +1252,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		if ($element == 'project') {
 			$projectid = $originid;
-			
+
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
@@ -1444,7 +1444,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '</td></tr>';
 
 	// TODO How record was recorded OrderMode (llx_c_input_method)
-	
+
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
@@ -1542,7 +1542,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			default:
 				$newclassname = $classname;
 		}
-		
+
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -2021,7 +2021,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td></tr>';
 
     	// TODO How record was recorded OrderMode (llx_c_input_method)
-		
+
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -2377,6 +2377,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$ref = dol_sanitizeFileName($object->ref);
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file = $fileparams['fullname'];
 
 			// Define output language

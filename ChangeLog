@@ -8,6 +8,247 @@ You may also experience troubles with Mysql 5.5.41 with error "Lost connection" 
 Upgrading to any other version or any other database system is abolutely required BEFORE trying
 make a Dolibarr upgrade.
 
+***** ChangeLog for 3.8.5 compared to 3.8.4 *****
+FIX: #3815 Call to undefined function local_by_date().
+FIX: #4424 Missing email of user popup in supplier orders area
+FIX: #4442 Missing translation in Banks menu
+FIX: #4448 $filebonprev is not used, $this->filename now
+FIX: #4455
+FIX: #4737 Bank transacion type selector translation is cropped
+FIX: #4742 Able to delete a supplier invoice with a registered payment
+FIX: #4743 UI glitch in project summary page
+FIX: #4747 Missing UI background when registering a supplier invoice payment
+FIX: #4748 Supplier invoice payment confirmation amount is not translated
+FIX: #4749
+FIX: #4756
+FIX: #4766 VAT not shown in supplier invoice popup
+FIX: #4809 - Duplicate functions with different content
+FIX: #4851 Project selector in supplier invoices shows the project label twice
+FIX: #4870
+FIX: #5008 SQL error when editing the reference of a supplier invoice that already exists
+FIX: #5048 Product supplier list display only one produc
+FIX: #5170 tva sign with INVOICE_POSITIVE_CREDIT_NOTE option
+FIX: #5203
+FIX: #5207
+FIX: #5338 use of not initialized var $aphour, $apmin, etc
+FIX: #5380
+FIX: #5383 bad object id on don delete
+FIX: #5474 Country_id of "Don" object is still empty
+FIX: Accountancy - 3.8 - Chart of accounts are limited on only one country
+FIX: Bad include and param for project numbering module call
+FIX: Box disabled because bugged
+FIX: bug on email template
+FIX: Can correct stock of lot using eatby or sell by date
+FIX: Can make a movement on "out of sell" products
+FIX: Can't create thirdparty or validate invoice if profid is mandatory and profid does not exists for other countries
+FIX: can't fetch by siret or siren because of first "if"
+FIX: Check stock of product by warehouse if $entrepot_id defined on shippings
+FIX: correct display of minimum buying price
+FIX: Creation of thumb image for size "small" was not done.
+FIX: Direction of movement lost if an error occurs
+FIX: dont retrieve new buying price on margin display
+FIX: Duplicate records into export
+FIX: Email templates not compatible with Multicompany
+FIX: end of select when no fournprice
+FIX: finished parameters not used
+FIX: hook on group card called but not initialized
+FIX: It doesn't check if there is enough stock to update the lines of orders/invoices
+FIX: large expense note
+FIX: missing column when module was installed before standard integration
+FIX: Missing database escaping on supplier price insert/update
+FIX: Not filtering correctly when come from dashboard
+FIX: PROPAL_MERGE_PDF with PRODUCT_USE_OLD_PATH
+FIX: real min buying price
+FIX: receiving link never works
+FIX: same page added several times on mergepropal option
+FIX: search on date into supplier invoice list dont work because of status -1
+FIX: Search supplier ref on contract
+FIX: SQL error function on getAvailableDiscounts function, on bill create mode if socid is empty
+FIX: systematic rounding causes prices to be updated without reason
+FIX: task ODT company object not correctly retrieved
+FIX: Template email must take care of positino column
+FIX: VAT rate can be negative. Example spain selling to morroco.
+
+***** ChangeLog for 3.8.4 compared to 3.8.3 *****
+FIX: #3694
+FIX: #3798 #2519 Cron jobs would never be executed
+FIX: #4155 Search Categories error
+FIX: #4239
+FIX: #4272 Error when trying to print the page "Linked objects" of a Thirdparty
+FIX: #4291 Correctly filter bank card GETPOSTs
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4394 Untranslated label in list of expense reports
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4418
+FIX: #4425 Missing "VAT" translation in supplier order popup
+FIX: #4434 Weird behaviour when enabling multiprices
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: #4453 SEPA Direct Debit generated XML shows a trailing comma in RmtInf field
+FIX: #4528
+FIX: #4556 desiredstock and seuil_stock_alerte cleared on modify product card
+FIX: #4580
+FIX: #4583 Incorrect call of Categories::containing throws a DoliDB error
+FIX: #4649 Wrong parameters order
+FIX: #4768
+FIX: #4785
+FIX: Add a test to show bugged module with a bad declaration of dictionaries to avoid to see clean module to be breaked.
+FIX: add Croatia into list of country in EEC
+FIX: add missing global def for ttc column
+FIX: ajax error with multicompany module
+FIX: Avoid errors when batch stock is negative
+FIX: bad field in select
+FIX: bad path
+FIX: bad transaction level due to code of situation invoices
+FIX: best sql request
+FIX: bookmark's user change after update if the user hasn't superadmin right
+FIX: call trigger LINEBILL_SUPPLIER_CREATE
+FIX: Can not disabled an opened service line in a contract
+FIX: can't clone event
+FIX: can't send mail to thirdparty contact if no mail defined on thirdparty card
+FIX: Check stock of batch on shippment
+FIX: code corrupting database
+FIX: compatibility with multicompany transversal mode
+FIX: compatibility with multicompany transversal mode and more security issue
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Deadlock situation. Can't edit anymore contract. FIX: List of automatic events was not visible.
+FIX: disable main.inc.php hooks
+FIX: do not show warning if account defined
+FIX: don't see the sales representative of anothers entities
+FIX: duration format
+FIX: Correct problem of rights beetween tax and salaries module
+FIX: Email templates not compatible with Multicompany
+FIX: $fileparams is not defined
+FIX: filter by socid if from customer card
+FIX: for avoid conflict with "global $m" in memory.lib.php
+FIX: for avoid division by 0
+FIX: hover css
+FIX: If option to hide automatic ECM is on, dont show menu.
+FIX: if we dont use SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE the hour is displayed on pdf
+FIX: Introduce hidden option to disable feature than hangs when too much data
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: issue when bank module is disabled FIX: missing entity filter for lines of payment
+FIX: list of leave request was not showing label correctly.
+FIX: MAIN_THIRDPARTY_CREATION_INDIVIDUAL syntax error in name
+FIX: markRate can be 100
+FIX: minor css error (pixel size must have "px"). Compatibility with old behaviour.
+FIX: missing field "label"
+FIX: missing signature and uniformize code between card and script
+FIX: missing traduction
+FIX: missing translation
+FIX: missing translation key
+FIX: nblignes not calculated after hook and hook can't modify this value. Usefull for modules
+FIX: no database structure change is allowed into minor versions
+FIX: no transaction in this place
+FIX: Noway to validate a leave request for some uer even if they have permission for.
+FIX: Option to disable meteo was not set correctly in edit mode
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: path to copyrighted files
+FIX: php unit to work both with old and new setup
+FIX: Purge of temp files was broken
+FIX: Relative discount decimals are not saved
+FIX: Removed a bugged list. Fixed another one to not count data of previous year.
+FIX: retrieve correct pu_ttc (set by printObjectLine function) like in 3.7
+FIX: search product in customer product prices doesn't work
+FIX: Some filters are lost when paging
+FIX: sql injection #4341
+FIX: sql injection even when code is on several lines
+FIX: sql request and total for time spen for current month
+FIX: Sql syntax error in doc_generic_task_odt
+FIX: Status filter don't work
+FIX: Strict Standards: Only variables should be passed by reference
+FIX: The part added with hidden option MAIN_DOC_USE_TIMING was included with a . instead of -. This make os think it is part of extension instead of file name.
+FIX: The third dashboard don't consider user permissions
+FIX: the view my task must show only task you are assigned to
+FIX: to allow phpunit of migration process for 3.4 to 3.5
+FIX: to allow phpunit of migration process for 3.5 to 3.6
+FIX: userlocaltax
+FIX: view of product image when using old path 
+FIX: size of image uploaded on user.
+FIX: We must ue the "small" size of imge to show on card pages.
+FIX: When we make a direct assignement on a task to a user, we must check he is also assigned to project (and if not assign it)
+FIX: wrong fk_parent_line in credit note with invoiceAvoirWithLines option
+FIX: wrong modelpdf var name
+FIX: wrong object name
+
+***** ChangeLog for 3.8.3 compared to 3.8.2 *****
+FIX: #3805
+FIX: #3231 [Members] Public subscription page displays GeoIP error
+FIX: #3240
+FIX: #3293 Login page form icons not shown
+FIX: #3508 Useless tooltip in 3.8 boxes
+FIX: #3661 Margin is not selected correctly when adding a product
+FIX: #3679 Error when deleting a Localtax2 special payment
+FIX: #3707 Thirdparty bank account page table has a glitch
+FIX: #3726 When upload file, don't test if PRODUCT_USE_OLD_PATH_FOR_PHOTO variable is empty or not
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3836 Unable to upload a document to an invoice under some circunstances
+FIX: #3878 Storing and deleting files on emailing was done at wrong place
+FIX: #3880
+FIX: #3882
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3912
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3953 Don't round supplier price
+FIX: #3953 rounding of buying price
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #3987 Undefined variable $newref in CommandeFournisseur::approve
+FIX: #3988 Undefined variable $conf and $error in CommandeFournisseur::addline
+FIX: #3989 Undefined variable $conf in CommandeFournisseur::getNomUrl
+FIX: #3990
+FIX: #3992 CommandeFournisseur::ref is marked as deprecated and it shouldn't be
+FIX: #3996 Dictionnary hooks are not working in 3.8
+FIX: #3997 Wrong permission key used for Margins > Read all
+FIX: #4016 User link is not correctly formed in emailing receivers
+FIX: #4018 SQL error if trying to access the mailing/card.php page without an ID defined
+FIX: #4036 Direct printing module without any driver configured, shows an unformatted error message
+FIX: #4043 Incorrect translation in error mesage in menu creation admin page
+FIX: #4049 PHP warning when trying to access a non-existing product/service
+FIX: #4055 SQL error when trying to access a non-existing expedition
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4182 SQL error when deleting an unexisting bank entry
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: #4281
+FIX: #4282 Defined shipping time were not shown in Customer order's PDF documents
+FIX: #4285 SQL query shown when accessing an unexisting invoice
+FIX: #4287 SQL error when accessing an unexisting proposal
+FIX: #4302 Undefined variable $conf in Commande::LibStatut
+FIX: Allow to search on alias name into select
+FIX: Add a protection to not make release if ChangeLog was not generated.
+FIX: autofocus on input search product
+FIX: bad calculation for stock value
+FIX: Better compatibility for users that used the not supported option MAIN_USE_JQUERY_MULTISELECT set to 1.
+FIX: Bug: $this is not accessible in static context in Mailing::libStatutDest #4050
+FIX: can not have access to the new ids or propal lines on PROPAL_CLONE
+FIX: Can't update line's duration
+FIX: Can use formated float number on old expense report module.
+FIX: change object statut on close shipping and remove erratic db commit
+FIX: change order date on clone (as everywhere else)
+FIX: event's data lost on user assign update
+FIX: export propal and order with extrafields
+FIX: export with category contact extrafields
+FIX: jquery select of project generate js error on change event
+FIX: label of line is set in description field if empty
+FIX: loss data also if update was cancel by error of ended state with no end date, try a generic patch
+FIX: mail isn't display in title on event in mode view
+FIX: Missing to set context into workflow actions, so triggers can't know we are creating an invoice from order or an order from a proposal.
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: only active customer should be available into select list thirdparty on invoice creation
+FIX: only active customer should be return into new invoice creation select list
+FIX: AWP calculation
+FIX: product link in project box
+FIX: Remove  column creation for table llx_product_fournisseur_price, the column use un calss is fk_supplier_price_expression, and fk_price_expression does not exist into lx_product_fournisseur_price sql file declaration
+FIX: Show category selector if we have permission to view products or services
+FIX: showrefnav htmlspecialchar instead of < >
+FIX: The label hidden was not supported when using jmobile
+FIX: Too many information were hidden. A lot of users still need bank account on PDF.
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
 
 ***** ChangeLog for 3.8.2 compared to 3.8.1 *****
 FIX: Add a protection to not make release if ChangeLog was not generated.
@@ -352,6 +593,42 @@ Dolibarr better:
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 
+***** ChangeLog for 3.7.4 compared to 3.7.3 *****
+FIX: #3694
+FIX: #4239
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: add missing global def for ttc column
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Email templates not compatible with Multicompany
+Fix: for avoid division by 0
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: sql injection even when code is on several lines
+FIX: The third dashboard don't consider user permissions
+
+***** ChangeLog for 3.7.3 compared to 3.7.2 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Can use formated float number on old expense report module.
+FIX: Change object statut when closing shipment and remove erratic db commit
+FIX: Export with category contact extrafields
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: Product link in project box
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
@@ -660,6 +937,22 @@ Dolibarr better:
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
 
+
+***** ChangeLog for 3.6.7 compared to 3.6.6 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: CVE CVE-2015-8685
+
+***** ChangeLog for 3.6.6 compared to 3.6.5 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Add a protection to not make release if ChangeLog was not generated. Prepare package 3.6.5
+FIX: export with category contact extrafields
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
@@ -900,6 +1193,17 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is not used anymore by core code.
 
+
+***** ChangeLog for 3.5.8 compared to 3.5.7 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: bad calculation for stock value
+FIX: bad stock valo
+FIX: change order date on clone (as everywhere else)
+FIX: CVE CVE-2015-8685
+FIX: The hours of date filter aren't correct
+FIX: #3442 Remove useless syslog
+FIX: #3448 Pass expected date format
+FIX: #3471 3.5 Rounding issue when dispatching non-integer
 
 ***** ChangeLog for 3.5.7 compared to 3.5.6 *****
 Fix: Paypal link were broken due to SSL v3 closed.

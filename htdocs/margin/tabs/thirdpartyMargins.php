@@ -49,6 +49,21 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
+$object = new Societe($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartymargins','globalcard'));
+
+
+/*
+ * Actions
+ */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+
 
 /*
  * View
@@ -137,7 +152,7 @@ if ($socid > 0)
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut > 0";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";

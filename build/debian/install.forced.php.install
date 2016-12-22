@@ -42,5 +42,3 @@ $force_install_lockinstall='444';
 //$force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
 //$force_dolibarr_js_JQUERY_FLOT='/javascript/flot';
 //$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf';
-
-?>

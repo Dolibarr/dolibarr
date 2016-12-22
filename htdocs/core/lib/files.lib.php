@@ -1127,6 +1127,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+				
 				if (empty($donotupdatesession))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1137,10 +1139,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				{
 					// Create small thumbs for image (Ratio is near 16/9)
 					// Used on logon for example
-					$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
+					$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 					// Create mini thumbs for image (Ratio is near 16/9)
 					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
+					$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
 				}
 
 				setEventMessage($langs->trans("FileTransferComplete"));

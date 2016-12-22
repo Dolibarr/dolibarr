@@ -252,7 +252,7 @@ if (empty($reshook))
 	        $object->name_alias   = GETPOST('name_alias');
         }
 
-        $object->address               = GETPOST('address', 'alpha');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
         $object->country_id            = GETPOST('country_id', 'int');
@@ -363,7 +363,7 @@ if (empty($reshook))
             // Only for companies
 	        if (!($object->particulier || $private))
         	{
-	        	for ($i = 1; $i < 5; $i++)
+	        	for ($i = 1; $i <= 6; $i++)
 	        	{
 	        	    $slabel="idprof".$i;
 	    			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -378,15 +378,18 @@ if (empty($reshook))
 						}
 					}
 
-					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-					{
-						$langs->load("errors");
-						$error++;
-						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-						$action = (($action=='add'||$action=='create')?'create':'edit');
-					}
+            		// Check for mandatory prof id (but only if country is than than ours)
+					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
+            		{
+    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+    					{
+    						$langs->load("errors");
+    						$error++;
+    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+    						$action = (($action=='add'||$action=='create')?'create':'edit');
+    					}
+            		}
 	        	}
         	}
         }
@@ -763,7 +766,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
@@ -1863,7 +1866,7 @@ else
         /*
          * View
          */
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -2335,8 +2338,13 @@ else
             $result=$adh->fetch('','',$object->id);
             if ($result > 0)
             {
+            	if ($adh->morphy=='mor'){
+            		$adh->ref=$adh->company;
+					print $adh->getNomUrl(1);
+            	}else{
+            	//var_dump($adh);
                 $adh->ref=$adh->getFullName($langs);
-                print $adh->getNomUrl(1);
+                print $adh->getNomUrl(1);}
             }
             else
             {
@@ -2366,7 +2374,18 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-	        if (! empty($object->email))
+			$at_least_one_email_contact = false;
+			$TContact = $object->contact_array_objects();
+			foreach ($TContact as &$contact)
+			{
+				if (!empty($contact->email)) 
+				{
+					$at_least_one_email_contact = true;
+					break;
+				}
+			}
+			
+	        if (! empty($object->email) || $at_least_one_email_contact)
 	        {
 	        	$langs->load("mails");
 	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';

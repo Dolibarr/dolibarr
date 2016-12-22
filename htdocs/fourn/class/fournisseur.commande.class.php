@@ -53,12 +53,10 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * TODO: Remove
-	 * @deprecated
-	 * @see product_ref
+	 * Supplier invoice reference
+	 * @var string
 	 */
     var $ref;
-    var $product_ref;
     var $ref_supplier;
     var $brouillon;
     var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -246,7 +244,8 @@ class CommandeFournisseur extends CommonOrder
             $this->fetch_optionals($this->id,$extralabels);
 
             if ($this->statut == 0) $this->brouillon = 1;
-
+				
+				$this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
@@ -575,7 +574,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option='')
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
@@ -586,7 +585,7 @@ class CommandeFournisseur extends CommonOrder
         if (! empty($this->total_ht))
             $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
@@ -698,7 +697,8 @@ class CommandeFournisseur extends CommonOrder
 
             // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus=true;
-
+			$comment='';
+			
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel))	// standard or first level approval
@@ -707,7 +707,11 @@ class CommandeFournisseur extends CommonOrder
     	        $sql.= " fk_user_approve = ".$user->id;
     	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
     	        {
-    	        	if (empty($this->user_approve_id2)) $movetoapprovestatus=false;		// second level approval not done
+    	        	if (empty($this->user_approve_id2)) 
+    	        	{
+    	        	    $movetoapprovestatus=false;		// second level approval not done
+    	        	    $comment=' (first level)';
+    	        	}
     	        }
 			}
 			else	// request a second level approval
@@ -715,6 +719,7 @@ class CommandeFournisseur extends CommonOrder
             	$sql.= " date_approve2='".$this->db->idate($now)."',";
             	$sql.= " fk_user_approve2 = ".$user->id;
     	        if (empty($this->user_approve_id)) $movetoapprovestatus=false;		// first level approval not done
+    	        $comment=' (second level)';
 			}
 			// If double approval is required and first approval, we keep status to 1 = validated
 			if ($movetoapprovestatus) $sql.= ", fk_statut = 2";
@@ -724,7 +729,7 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->db->query($sql))
             {
-                $this->log($user, 2, time());	// Statut 2
+                $this->log($user, 2, time(), $comment);	// Statut 2
 
             	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
 	            {
@@ -768,7 +773,8 @@ class CommandeFournisseur extends CommonOrder
 
                 if (! $error)
                 {
-                	$this->ref=$newref;
+                	$this->ref = $this->newref;
+                	
                 	if ($movetoapprovestatus) $this->statut = 2;
 					else $this->statut = 1;
            			if (empty($secondlevel))	// standard or first level approval
@@ -945,6 +951,8 @@ class CommandeFournisseur extends CommonOrder
             {
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
+				$this->date_commande = $date;
+				$this->methode_commande = $methode;
             }
             else
             {
@@ -1214,7 +1222,9 @@ class CommandeFournisseur extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null)
     {
-        global $langs,$mysoc;
+        global $langs,$mysoc, $conf;
+
+        $error = 0;
 
         dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2312,7 +2322,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))

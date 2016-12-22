@@ -127,7 +127,7 @@ class FormProjets
 		// Search all projects
 		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('project', 1).")";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
@@ -148,7 +148,7 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+	           	$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             	$minmax='minwidth100 maxwidth300';
@@ -180,7 +180,7 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18).' - '.$obj->title;
+						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
@@ -422,9 +422,10 @@ class FormProjets
 	 *    @param	string		$table_element		Table of the element to update
 	 *    @param	int			$socid				If of thirdparty to use as filter
 	 *    @param	string		$morecss			More CSS
+	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid=0, $morecss='')
+	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2)
 	{
 		global $conf, $langs;
 
@@ -433,7 +434,9 @@ class FormProjets
 		$linkedtothirdparty=false;
 		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
 
+		$sqlfilter='';
 		$projectkey="fk_projet";
+		//print $table_element;
 		switch ($table_element)
 		{
 			case "facture":
@@ -443,7 +446,8 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "commande_fourn":
-				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
+			case "commande_fournisseur":
+			    $sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "facture_rec":
 				$sql = "SELECT t.rowid, t.titre as ref";
@@ -457,6 +461,11 @@ class FormProjets
 				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
 				$projectkey="fk_projet";
 				break;*/
+		    case "commande":
+		    case "contrat":
+			case "fichinter":
+			    $sql = "SELECT t.rowid, t.ref";
+			    break;
 			default:
 				$sql = "SELECT t.rowid, t.ref";
 				break;
@@ -468,6 +477,7 @@ class FormProjets
 		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
 		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity='.getEntity('project');
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
+		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);

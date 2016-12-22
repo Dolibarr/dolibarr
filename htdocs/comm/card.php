@@ -592,7 +592,7 @@ if ($id > 0)
                 if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
                     print " ".img_warning();
                 }
-				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$i++;
@@ -673,7 +673,7 @@ if ($id > 0)
                 $commande_static->total_tva = $objp->total_tva;
                 $commande_static->total_ttc = $objp->total_ttc;
                 print $commande_static->getNomUrl(1);
-				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
 				$i++;
@@ -737,7 +737,7 @@ if ($id > 0)
                 print $sendingstatic->getNomUrl(1);
                 print '</td>';
                 if ($objp->date_creation > 0) {
-                    print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
+                    print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
                 } else {
                     print '<td align="right"><b>!!!</b></td>';
                 }
@@ -762,7 +762,7 @@ if ($id > 0)
 	{
 		$contratstatic=new Contrat($db);
 
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc, c.date_contrat as dcon, c.ref_supplier as refsup";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -779,7 +779,7 @@ if ($id > 0)
 		        print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
+				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
 				print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").' <span class="badge">'.$num.'</span></a></td></tr></table></td>';
 				print '</tr>';
 			}
@@ -796,7 +796,9 @@ if ($id > 0)
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				print $contrat->getNomUrl(1,12);
 				print "</td>\n";
-				print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
+				print '<td class="nowrap">'.dol_trunc($objp->refsup,12)."</td>\n";
+				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
+				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dcon),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
 				print '<td align="right" class="nowrap">';
 				$contrat->fetch_lines();
@@ -853,9 +855,9 @@ if ($id > 0)
 
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
-                //print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
-				print '<td align="right" width="120">'.convertSecondToTime($objp->duration).'</td>'."\n";
-				print '<td align="right" width="100">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
+                //print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
+				print '<td align="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
+				print '<td align="right" class="nowrap" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -905,7 +907,7 @@ if ($id > 0)
 
 			    $tableaushown=1;
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -927,15 +929,24 @@ if ($id > 0)
 				print '</td>';
 				if ($objp->df > 0)
 				{
-					print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->df),'day').'</td>';
+					print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->df),'day').'</td>';
 				}
 				else
 				{
 					print '<td align="right"><b>!!!</b></td>';
 				}
-				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
+				print '<td align="right" style="min-width: 60px">';
+				print price($objp->total_ht);
+				print '</td>';
 
-				print '<td align="right" class="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES))
+				{
+    				print '<td align="right" style="min-width: 60px">';
+    				print price($objp->total_ttc);
+    				print '</td>';
+				}
+				
+				print '<td align="right" class="nowrap" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
 			}

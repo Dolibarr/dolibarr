@@ -880,7 +880,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-    			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
+			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -1650,7 +1650,7 @@ class Product extends CommonObject
 						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
 						$sql.= " AND price_level=".$i;
 						$sql.= " AND fk_product = '".$this->id."'";
-						$sql.= " ORDER BY date_price DESC";
+						$sql.= " ORDER BY date_price DESC, rowid DESC";
 						$sql.= " LIMIT 1";
 						$resql = $this->db->query($sql);
 						if ($resql)
@@ -1711,7 +1711,7 @@ class Product extends CommonObject
 					$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 					$sql.= " WHERE fk_product = '".$this->id."'";
-					$sql.= " ORDER BY date_price DESC";
+					$sql.= " ORDER BY date_price DESC, rowid DESC";
 					$sql.= " LIMIT 1";
 					$resql = $this->db->query($sql);
 					if ($resql)
@@ -2502,12 +2502,34 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
-		
+		if ($ref_fourn)
+		{
+    		$sql = "SELECT rowid, fk_product";
+    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+    		$sql.= " WHERE fk_soc = ".$id_fourn;
+    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
+    		$sql.= " AND fk_product != ".$this->id;
+    		$sql.= " AND entity = ".$conf->entity;
+
+    		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
+    		$resql=$this->db->query($sql);
+    		if ($resql)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+                if ($obj)
+                {
+        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
+                    $this->product_id_already_linked = $obj->fk_product;
+    				return -3;
+    			}
+                $this->db->free($resql);
+    		}
+		}
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
@@ -2536,7 +2558,7 @@ class Product extends CommonObject
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
-				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", '".$this->db->escape($ref_fourn)."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ", 0";
@@ -3058,7 +3080,7 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
+		if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{
@@ -3293,23 +3315,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 

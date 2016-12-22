@@ -587,9 +587,11 @@ function listOfSessions()
                 if(! @is_dir($fullpath) && is_readable($fullpath))
                 {
                     $sessValues = file_get_contents($fullpath);	// get raw session data
-
+                    // Example of possible value
+                    //$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";dol_login|s:5:"admin";dol_authmode|s:8:"dolibarr";dol_tz|s:1:"1";dol_tz_string|s:13:"Europe/Berlin";dol_dst|i:0;dol_dst_observed|s:1:"1";dol_dst_first|s:0:"";dol_dst_second|s:0:"";dol_screenwidth|s:4:"1920";dol_screenheight|s:3:"971";dol_company|s:12:"MyBigCompany";dol_entity|i:1;mainmenu|s:4:"home";leftmenuopened|s:10:"admintools";idmenu|s:0:"";leftmenu|s:10:"admintools";';
+                    
                     if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
-                    preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
+                        (preg_match('/dol_entity\|i:'.$conf->entity.';/i',$sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i',$sessValues)) && // limit to current entity
                     preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
                     {
                         $tmp=explode('_', $file);
@@ -744,17 +746,24 @@ function activateModule($value,$withdeps=1)
         if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
         {
             // Activation des modules dont le module depend
+            $TError=array();
             $num = count($objMod->depends);
             for ($i = 0; $i < $num; $i++)
             {
+            	$activate = false;
             	foreach ($modulesdir as $dir)
             	{
             		if (file_exists($dir.$objMod->depends[$i].".class.php"))
             		{
             			activateModule($objMod->depends[$i]);
+						$activate = true;
             		}
             	}
+				
+				if (!$activate) $TError[] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
             }
+            
+            setEventMessages('', $TError, 'errors');
         }
 
         if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
@@ -980,21 +989,29 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 //var_dump($objMod->dictionaries['tabname']);
                                 $taborder[] = 0;
                                 $tabfieldcheck[] = array(); $tabhelp[] = array();
+                                $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
                                 foreach($objMod->dictionaries['tabname'] as $val)
                                 {
                                     $taborder[] = count($tabname)+1;
+                                    $nbtabname++;
                                     $tabname[] = $val;
                                 }
-                                foreach($objMod->dictionaries['tablib'] as $val) $tablib[] = $val;
-                                foreach($objMod->dictionaries['tabsql'] as $val) $tabsql[] = $val;
-                                foreach($objMod->dictionaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
-                                foreach($objMod->dictionaries['tabfield'] as $val) $tabfield[] = $val;
-                                foreach($objMod->dictionaries['tabfieldvalue'] as $val) $tabfieldvalue[] = $val;
-                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
-                                foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
-                                foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
-                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
-                                if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
+                                foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
+                                foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
+                                foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
+                                foreach($objMod->dictionaries['tabfield'] as $val)       { $nbtabfield++; $tabfield[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldvalue'] as $val)  { $nbtabfieldvalue++; $tabfieldvalue[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) { $nbtabfieldinsert++; $tabfieldinsert[] = $val; }
+                                foreach($objMod->dictionaries['tabrowid'] as $val)       { $nbtabrowid++; $tabrowid[] = $val; }
+                                foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
+                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
+                                if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val)             { $nbtabhelp++; $tabhelp[] = $val; }
+                                
+                                if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
+                                {
+                                    print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';   
+                                    //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
+                                }
                                 //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
                                 //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
                                 //var_dump($tabcond);

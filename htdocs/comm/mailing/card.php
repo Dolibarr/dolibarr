@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,6 +222,8 @@ if (empty($reshook))
 	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
+
 	                    // Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
 						$substitutionarray=array(
 								'__ID__' => $obj->source_id,
@@ -234,6 +236,7 @@ if (empty($reshook))
 								'__OTHER3__' => $other3,
 								'__OTHER4__' => $other4,
 								'__OTHER5__' => $other5,
+								'__SIGNATURE__' => $signature,	// Signature is empty when ran from command line or taken from user in parameter)
 								'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 								'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
 						);
@@ -1093,10 +1096,10 @@ else
 			}
 
 			print '</table>';
-			
+
 			dol_fiche_end();
-			
-			
+
+
 
 			print "\n";
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
@@ -1108,7 +1111,7 @@ else
 			print_fiche_titre($langs->trans("EMail"),'','');
 
 			dol_fiche_head();
-			
+
 			print '<table class="border" width="100%">';
 
 			// Subject
@@ -1175,7 +1178,7 @@ else
 			print '</table>';
 
 			dol_fiche_end();
-			
+
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="save">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';

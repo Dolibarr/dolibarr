@@ -381,7 +381,7 @@ abstract class CommonObject
      */
     function errorsToString()
     {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
     }
 
     /**
@@ -2727,7 +2727,7 @@ abstract class CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+			$sql.= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
             $sql.= " WHERE rowid = " . $this->id;
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -2756,6 +2756,7 @@ abstract class CommonObject
 
     /**
      *  Return if a country is inside the EEC (European Economic Community)
+     *  TODO Add a field into dictionary
      *
      *  @return     boolean		true = country inside EEC, false = country outside EEC
      */
@@ -2777,7 +2778,8 @@ abstract class CommonObject
     			'FR',	// France
     			'GB',	// United Kingdom
     			'GR',	// Greece
-    			'NL',	// Holland
+    			'HR',   // Croatia
+                'NL',	// Holland
     			'HU',	// Hungary
     			'IE',	// Ireland
     			'IM',	// Isle of Man - Included in UK
@@ -2787,7 +2789,7 @@ abstract class CommonObject
     			'LV',	// Latvia
     			'MC',	// Monaco - Included in France
     			'MT',	// Malta
-        //'NO',	// Norway
+                //'NO',	// Norway
     			'PL',	// Poland
     			'PT',	// Portugal
     			'RO',	// Romania
@@ -3052,6 +3054,8 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
+			
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3075,7 +3079,7 @@ abstract class CommonObject
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
 			else $placeholder=' title="'.$langs->trans("Label").'"';
 
-			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3747,8 +3751,11 @@ abstract class CommonObject
 						$object = new $InfoFieldList[0]($this->db);
 						if ($value)
 						{
-							$object->fetch(0,$value);
-							$this->array_options[$key]=$object->id;
+							if (GETPOST('action', 'alpha') != 'confirm_clone')
+							{
+								$object->fetch(0,$value);
+								$this->array_options[$key]=$object->id;
+							}
 						}
 						break;
                	}
