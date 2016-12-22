@@ -192,7 +192,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
-$sql.= " d.date_debut, d.date_fin, d.date_valid, d.date_create, d.tms as date_modif,";
+$sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.statut, u.photo";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -510,11 +510,13 @@ if ($resql)
 			$expensereportstatic->ref=$obj->ref;
 			$expensereportstatic->status=$obj->status;
 			$expensereportstatic->valid=$obj->date_valid;
-			$expensereportstatic->date_debut=$obj->date_debut;
-			$expensereportstatic->date_fin=$obj->date_fin;
-			$expensereportstatic->date_create=$obj->date_create;
-			$expensereportstatic->date_modif=$obj->date_modif;
-
+			$expensereportstatic->date_debut=$db->jdate($obj->date_debut);
+			$expensereportstatic->date_fin=$db->jdate($obj->date_fin);
+			$expensereportstatic->date_create=$db->jdate($obj->date_create);
+			$expensereportstatic->date_modif=$db->jdate($obj->date_modif);
+			$expensereportstatic->date_valid=$db->jdate($objp->date_valid);
+			$expensereportstatic->date_approve=$db->jdate($objp->date_approve);
+				
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 			if (! empty($arrayfields['d.ref']['checked'])) {
