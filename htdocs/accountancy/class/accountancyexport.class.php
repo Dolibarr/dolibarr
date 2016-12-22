@@ -353,7 +353,7 @@ class AccountancyExport
 			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_compte, 20), 20);
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
-			$Tab['montant'] = str_pad(abs($data->montant) * 100, 12, '0', STR_PAD_LEFT); // TODO manage negative amount
+			$Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 			if (! empty($data->date_echeance))
 				$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
