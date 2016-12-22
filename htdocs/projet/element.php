@@ -751,6 +751,11 @@ foreach ($listofreferent as $key => $value)
 					}
 
 					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
+					
+					// Show supplier ref
+					if (! empty($element->ref_supplier)) print ' - '.$element->ref_supplier;
+					// Show customer ref
+					if (! empty($element->ref_customer)) print ' - '.$element->ref_customer;
 				}
 
 				print "</td>\n";
