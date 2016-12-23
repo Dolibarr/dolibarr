@@ -144,7 +144,7 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 
 
 -- Fix: delete orphelin actioncomm_resources
-delete from llx_actioncomm_resources where fk_actioncomm not in (select id from llx_actioncomm);
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
