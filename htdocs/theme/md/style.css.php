@@ -1016,12 +1016,13 @@ div.attacharea {
 	padding-bottom: 10px;
 }
 div.arearef {
-	/*border-bottom: 1px solid #bbb;*/
 	padding-top: 2px;
 	padding-bottom: 5px;
-	/*padding-right: 3px;
-	padding-left: 2px;*/
 	margin-bottom: 10px;
+}
+div.arearefnobottom {
+	padding-top: 2px;
+	padding-bottom: 4px;
 }
 div.heightref {
 	min-height: 80px; 
@@ -2377,6 +2378,13 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 }
 table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
+}
+
+table.liste td, table.noborder td, div.noborder form div {
+	padding: 8px 2px 8px 3px;			/* t r b l */
+}
+div.liste_titre_bydiv .divsearchfield {
+	padding: 2px 1px 2px 0px;			/* t r b l */
 }
 
 table.nobordernopadding {
