@@ -99,7 +99,7 @@ if (! $sortfield) $sortfield='c.ref';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage context to save list fields
-$contextpage='orderlist';
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'orderlist';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
@@ -653,6 +653,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
