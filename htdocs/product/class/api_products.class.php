@@ -182,9 +182,8 @@ class Products extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->product->$field = $value;
         }
-        $result = $this->product->create(DolibarrApiAccess::$user);
-        if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+        if ($this->product->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
         }
         
         return $this->product->id;

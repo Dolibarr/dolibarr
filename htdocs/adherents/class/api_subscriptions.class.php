@@ -162,8 +162,8 @@ class Subscriptions extends DolibarrApi
         foreach($request_data as $field => $value) {
             $subscription->$field = $value;
         }
-        if($subscription->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create subscription : '.$subscription->error);
+        if ($subscription->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
         }
         return $subscription->id;
     }

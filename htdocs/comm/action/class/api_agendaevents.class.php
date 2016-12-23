@@ -194,9 +194,8 @@ class AgendaEvents extends DolibarrApi
           }
           $this->expensereport->lines = $lines;
         }*/
-        if ($this->actioncomm->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->actioncomm->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating actioncomm");
+        if ($this->actioncomm->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
         }
         
         return $this->actioncomm->id;

@@ -195,9 +195,8 @@ class Orders extends DolibarrApi
           }
           $this->commande->lines = $lines;
         }*/
-        if ($this->commande->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->commande->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->commande->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
         }
 
         return $this->commande->id;

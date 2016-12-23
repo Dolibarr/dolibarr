@@ -192,7 +192,10 @@ class Thirdparties extends DolibarrApi
       foreach($request_data as $field => $value) {
           $this->company->$field = $value;
       }
-      return $this->company->create(DolibarrApiAccess::$user);
+      if ($this->company->create(DolibarrApiAccess::$user) < 0)
+          throw new RestException(503, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
+      
+      return $this->company->id;
     }
 
     /**
