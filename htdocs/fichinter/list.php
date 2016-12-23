@@ -407,10 +407,11 @@ if ($result)
     			print $warnornote;
     			print '</td>';
     		}
+
     		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);
-    		$filedir=$conf->fichinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+    		$filedir=$conf->ficheinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
     		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
     		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
     		print '</td></tr></table>';
