@@ -1,0 +1,28 @@
+# Dolibarr server configuration sample for NGinx
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /path/to/your/htdocs;
+
+        # Optionnal
+        error_log /path/to/your/log/directory/nginx.error.log;
+	    access_log /path/to/your/log/directory/nginx.access.log;
+
+        index index.php index.html index.htm;
+
+        # Optionnal
+        server_name your-fqdn.tld;
+
+        location / {
+                try_files $uri $uri/ /index.php;
+        }
+
+        location ~ [^/]\.php(/|$) {
+                try_files $uri =404;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_read_timeout 600;
+                include fastcgi_params;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+        }
+}
