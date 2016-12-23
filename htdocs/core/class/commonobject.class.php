@@ -597,11 +597,11 @@ abstract class CommonObject
             dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT");
             return -3;
         }
-            
+
         $datecreate = dol_now();
 
         $this->db->begin();
-        
+
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -1230,19 +1230,19 @@ abstract class CommonObject
     function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='', $trigkey='')
     {
         global $user,$langs,$conf;
-        
+
         if (empty($table)) 	  $table=$this->table_element;
         if (empty($id))    	  $id=$this->id;
 		if (empty($format))   $format='text';
 		if (empty($id_field)) $id_field='rowid';
 
 		$error=0;
-		
+
         $this->db->begin();
 
         // Special case
         if ($table == 'product' && $field == 'note_private') $field='note';
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
@@ -1517,7 +1517,7 @@ abstract class CommonObject
 						if($mode == 1) {
 							$line->subprice = 0;
 						}
-						
+
 						switch ($this->element) {
 							case 'propal':
 								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
@@ -2153,7 +2153,7 @@ abstract class CommonObject
         // Special cas
         //var_dump($this->table_element);exit;
 		if ($this->table_element == 'product') $suffix='';
-            
+
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
@@ -2163,7 +2163,7 @@ abstract class CommonObject
     	{
     		if ($suffix == '_public') $this->note_public = $note;
     		else if ($suffix == '_private') $this->note_private = $note;
-    		else 
+    		else
     		{
     		    $this->note = $note;      // deprecated
     		    $this->note_private = $note;
@@ -2412,7 +2412,7 @@ abstract class CommonObject
     	// Special case
     	if ($origin == 'order') $origin='commande';
     	if ($origin == 'invoice') $origin='facture';
-    	
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -2899,7 +2899,7 @@ abstract class CommonObject
     function isObjectUsed($id=0)
     {
         if (empty($id)) $id=$this->id;
-        
+
         // Check parameters
         if (! isset($this->childtables) || ! is_array($this->childtables) || count($this->childtables) == 0)
         {
@@ -3341,9 +3341,9 @@ abstract class CommonObject
 				if ($conf->global->MARGIN_TYPE == "1")
 					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 				else
-					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';	
+					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 			}
-			
+
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
@@ -3875,7 +3875,7 @@ abstract class CommonObject
 		if ($filefound)
 		{
 			global $db;  // Required to solve a conception default in commonstickergenerator.class.php making an include of code using $db
-		    
+
 			require_once $file;
 
 			$obj = new $classname($this->db);
@@ -3934,7 +3934,7 @@ abstract class CommonObject
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
 
-			if (in_array(get_class($this), array('Adherent'))) 
+			if (in_array(get_class($this), array('Adherent')))
 			{
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
@@ -4195,7 +4195,7 @@ abstract class CommonObject
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
-            
+
             //Eliminate copied source object extra_fields that do not exist in target object
             $new_array_options=array();
             foreach ($this->array_options as $key => $value) {
@@ -4244,7 +4244,7 @@ abstract class CommonObject
     						{
     							if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
-								
+
     							if ($res > 0) $this->array_options[$key]=$object->id;
     							else
     							{
@@ -4503,7 +4503,7 @@ abstract class CommonObject
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var val = $("select[name="+parent_list+"]").val();
 				    		var parentVal = parent_list + ":" + val;
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
@@ -4518,7 +4518,7 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+								$("select[name="+parent_list+"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
 					    	});
