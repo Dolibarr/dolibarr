@@ -84,7 +84,7 @@ class pdf_agrume extends ModelePDFFactures
 
 		$this->db = $db;
 		$this->name = "agrume";
-		$this->description = $langs->trans('PDFAgrumeDescription');
+		$this->description = $langs->trans('PDFCrevetteDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -406,7 +406,7 @@ class pdf_agrume extends ModelePDFFactures
 					}
 			
 					$top = $tab_top;
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationInvoiceTitle'), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFCrevetteSituationInvoiceTitle'), 0, 1);
 					
 					$pdf->SetFont('','', $default_font_size - 2);
 					$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
@@ -417,7 +417,7 @@ class pdf_agrume extends ModelePDFFactures
 					
 					$nexY = $pdf->GetY();
 					$tab_top = $nexY+1;
-					$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationInvoiceLineDecompte'), 0, 1);
+					$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFCrevetteSituationInvoiceLineDecompte'), 0, 1);
 					$price_display = price(abs($total_decompte));
 					$pdf->writeHTMLCell(90, 3, $this->posxdesc+100, $tab_top, $price_display, 0, 1, false, true, 'R');
 					
@@ -429,7 +429,7 @@ class pdf_agrume extends ModelePDFFactures
 						{
 							$nexY = $pdf->GetY();
 							$tab_top = $nexY+1;
-							$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationInvoiceLine', $prev_invoice->situation_counter, $prev_invoice->ref, dol_print_date($prev_invoice->date)), 0, 1);
+							$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFCrevetteSituationInvoiceLine', $prev_invoice->situation_counter, $prev_invoice->ref, dol_print_date($prev_invoice->date)), 0, 1);
 							
 							$price_display = -1 * abs($prev_invoice->total_ht);
 							$price_display = price($price_display);
@@ -450,13 +450,12 @@ class pdf_agrume extends ModelePDFFactures
 					
 					// Affiche zone infos
 					$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
-					
 					// Affiche zone totaux
 					foreach ($object->lines as $line)
 					{
 						$vatrate=(string) $line->tva_tx;
 						
-						$prev_progress = $line->get_prev_progress();
+						$prev_progress = $line->get_prev_progress($object->id);
 						if ($prev_progress > 0) $tvaligne = $line->total_tva * ($line->situation_percent - $prev_progress) / $line->situation_percent;
 						else $tvaligne = $line->total_tva;
 	
@@ -653,7 +652,7 @@ class pdf_agrume extends ModelePDFFactures
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress();
+					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0) // Compute progress from previous situation
 					{
 						$tvaligne = $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -1991,7 +1990,8 @@ exit;
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$object->fetch_thirdparty();
+				$thirdparty = $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
