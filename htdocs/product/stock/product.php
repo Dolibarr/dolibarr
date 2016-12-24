@@ -613,14 +613,16 @@ if ($id > 0 || $ref)
         print '<tr><td>';
         print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
         print '</td>';
-		print '<td>'.$object->stock_reel;
+		print '<td>'.price2num($object->stock_reel, 'MS');
 		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
+		$stocktheo = price2num($object->stock_theorique, 'MS');
+		
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-        print "<td>".(empty($object->stock_theorique)?0:$object->stock_theorique);
+        print "<td>".(empty($stocktheo)?0:$stocktheo);
         if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
@@ -683,7 +685,7 @@ if ($id > 0 || $ref)
 		{
 			dol_print_error($db);
 		}
-		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td colspan="3">';
 		if ($lastmovementdate)
 		{
 		    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -703,44 +705,19 @@ if ($id > 0 || $ref)
 		dol_fiche_end();
 	}
 
-	/*
-	 * Correct stock
-	 */
+	// Correct stock
 	if ($action == "correction")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
 		print '<br><br>';
 	}
 
-	/*
-	 * Transfer of units
-	 */
+	// Transfer of units
 	if ($action == "transfert")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br><br>';
 	}
-
-	/*
-	 * Set initial stock
-	 */
-	/*
-	if ($_GET["action"] == "definir")
-	{
-		print load_fiche_titre($langs->trans("SetStock"));
-		print "<form action=\"product.php?id=$object->id\" method=\"post\">\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="create_stock">';
-		print '<table class="border" width="100%"><tr>';
-		print '<td width="15%">'.$langs->trans("Warehouse").'</td><td width="40%">';
-		print $formproduct->selectWarehouses('','id_entrepot','',1);
-		print '</td><td width="15%">'.$langs->trans("NumberOfUnit").'</td><td width="15%"><input name="nbpiece" size="10" value=""></td></tr>';
-		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
-		print '</table>';
-		print '</form>';
-	}
-	*/
 }
 else
 {
@@ -785,8 +762,10 @@ if (empty($reshook))
  * Stock detail (by warehouse). May go down into batch details.
  */
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
+print '<tr class="liste_titre">';
+print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
 print '<td align="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
@@ -829,7 +808,7 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
-		$stock_real = round($obj->reel, 10);
+		$stock_real = price2num($obj->reel, 'MS');
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
@@ -860,8 +839,10 @@ if ($resql)
 			{
 			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
-			        print "\n".'<tr><td colspan="9">';
-			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
+			        print "\n".'<tr>';
+			        print '<td colspan="9">';
+			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			        print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 			        print '<td align="center" width="10%">';
 			        $form->select_date($pdluo->eatby,'eatby','','',1,'',1,0,1);
@@ -872,7 +853,8 @@ if ($resql)
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
 		            print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-			        print '</table></form>';
+			        print '</table>';
+			        print '</form>';
 			        print '</td></tr>';
 			    }
 			    else
@@ -899,7 +881,7 @@ if ($resql)
 else dol_print_error($db);
 
 print '<tr class="liste_total"><td align="right" class="liste_total" colspan="4">'.$langs->trans("Total").':</td>';
-print '<td class="liste_total" align="right">'.$total.'</td>';
+print '<td class="liste_total" align="right">'.price2num($total, 'MS').'</td>';
 print '<td class="liste_total" align="right">';
 print ($totalwithpmp?price(price2num($totalvalue/$totalwithpmp,'MU')):'&nbsp;');	// This value may have rounding errors
 print '</td>';
@@ -918,10 +900,11 @@ else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
 print "</table>";
+print '</div>';
 
 if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	
-	print '<br /><br />';
+	print '<br><br>';
 	print_titre($langs->trans('AddNewProductStockWarehouse'));
 	//print '<br />';
 	

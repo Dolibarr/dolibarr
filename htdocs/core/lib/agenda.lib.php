@@ -239,7 +239,7 @@ function show_array_actions_to_do($max=5)
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 
 		$var = true;
@@ -336,7 +336,7 @@ function show_array_last_actions_done($max=5)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 		$var = true;
 		$i = 0;

@@ -135,6 +135,8 @@ function societe_prepare_head(Societe $object)
     // Bank accounrs
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
+        $langs->load("banks");
+
         $nbBankAccount=0;
         $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("BankAccounts");
@@ -711,12 +713,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         print '</td>';
     
         // Address / Phone
-        print '<td>';
+        print '<td class="liste_titre">';
         //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
         // Email
-        print '<td>&nbsp;</td>';
+        print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
         print '<td class="liste_titre maxwidthonsmartphone">';
@@ -727,7 +729,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
         	$colspan++;
-            print '<td>&nbsp;</td>';
+            print '<td class="liste_titre">&nbsp;</td>';
         }
     
     	// Edit
@@ -1146,7 +1148,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        if ($objcon && get_class($objcon) == 'Contact' && get_class($filterobj) == 'Societe')
+        {
+            $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+        }
+        else
+        {
+            $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        }
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
@@ -1177,18 +1186,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.='<tr class="liste_titre">';
 		if ($donetodo)
 		{
-            $out.='<td></td>';
+            $out.='<td class="liste_titre"></td>';
 		}
-		$out.='<td></td>';
-		$out.='<td class="maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out.='<td></td>';
-		$out.='<td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
 		$out.='</td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
     	// Action column
     	$out.='<td class="liste_titre" align="middle">';
     	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
@@ -1390,7 +1399,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	{
 		$socstatic = new Societe($db);
 
-		print load_fiche_titre($langs->trans("Subsidiaries"));
+		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
 		print "\n".'<table class="noborder" width="100%">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';

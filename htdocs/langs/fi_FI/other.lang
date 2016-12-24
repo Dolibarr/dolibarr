@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Suojakoodi
-Calendar=Kalenteri
 NumberingShort=N°
 Tools=Työkalut
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Toimitus postitse
 Notify_MEMBER_VALIDATE=Jäsen validoitu
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=Jäsen merkitty
-Notify_MEMBER_RESILIATE=Jäsen resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Jäsen poistettu
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Kokonaiskoosta liitettyjen tiedostojen / asiakirjat
 MaxSize=Enimmäiskoko
 AttachANewFile=Liitä uusi tiedosto / asiakirjan
 LinkedObject=Linkitettyä objektia
-Miscellaneous=Miscellaneous
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Tämä on testi postitse. \\ NOsoitteen kaksi riviä välissä rivinvaihto.
 PredefinedMailTestHtml=Tämä on <b>testi</b> postitse (sana testi on lihavoitu). <br> Kaksi riviä välissä rivinvaihto.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Vienti
 ExportsArea=Vienti alueen
 AvailableFormats=Saatavilla olevat muodot
-LibraryUsed=Librairy käytetään
-LibraryVersion=Version
+LibraryUsed=Librairie
+LibraryVersion=Library version
 ExportableDatas=Exportable datas
 NoExportableData=Ei vietävä tiedot (ei moduulien kanssa vietävä tiedot ladattu tai puuttuvat oikeudet)
-NewExport=Uusia vientimahdollisuuksia
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Titteli
+WEBSITE_DESCRIPTION=Kuvaus
 WEBSITE_KEYWORDS=Keywords

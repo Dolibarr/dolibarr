@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Κωδικός ασφαλείας
-Calendar=Ημερολόγιο
 NumberingShort=N°
 Tools=Εργαλεία
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Αποστολές αποστέλλονται με τ
 Notify_MEMBER_VALIDATE=Επικυρωθεί μέλη
 Notify_MEMBER_MODIFY=Το μέλος τροποποιήθηκε
 Notify_MEMBER_SUBSCRIPTION=Εγγραφεί μέλος
-Notify_MEMBER_RESILIATE=Resiliated μέλη
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Διαγράφεται μέλη
 Notify_PROJECT_CREATE=Δημιουργία έργου
 Notify_TASK_CREATE=Η εργασία δημιουργήθηκε
@@ -55,14 +54,13 @@ TotalSizeOfAttachedFiles=Συνολικό μέγεθος επισυναπτώμ�
 MaxSize=Μέγιστο μέγεθος
 AttachANewFile=Επισύναψη νέου αρχείου/εγγράφου
 LinkedObject=Συνδεδεμένα αντικείμενα
-Miscellaneous=Διάφορα
 NbOfActiveNotifications=Αριθμός κοινοποιήσεων (Αριθμός emails παραλήπτη)
 PredefinedMailTest=Δοκιμαστικο mail.\nΟι δύο γραμμές είναι χωρισμένες με carriage return.
 PredefinedMailTestHtml=Αυτό είναι ένα μήνυμα <b>δοκιμής</b> (η δοκιμή λέξη πρέπει να είναι με έντονα γράμματα). <br> Οι δύο γραμμές που χωρίζονται με ένα χαρακτήρα επαναφοράς.
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε το τιμολόγιο __REF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe would like to warn you that the invoice  __REF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε την προσφορά __PROPREF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
-PredefinedMailContentSendSupplierProposal=__CONTACTCIVNAME__\n\nYou will find here the price request __ASKREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε το αίτημα των τιμών __ASKREF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε τη παραγγελία __ORDERREF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε την παραγγελία μας __ORDERREF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
 PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__\n\nΕδώ θα βρείτε το τιμολόγιο __REF__\n\n__PERSONALIZED__Με εκτίμηση\n\n__SIGNATURE__
@@ -201,33 +199,13 @@ IfAmountHigherThan=Εάν το ποσό υπερβαίνει <strong>%s</strong>
 SourcesRepository=Αποθετήριο για τις πηγές
 Chart=Γράφημα
 
-##### Calendar common #####
-NewCompanyToDolibarr=Εταιρεία %s προστέθηκε
-ContractValidatedInDolibarr=Συμβόλαιο %s επικυρώθηκε
-PropalClosedSignedInDolibarr=Πρόσφορα %s υπεγράφη
-PropalClosedRefusedInDolibarr=Πρόσφορα %s απορρίφθηκε
-PropalValidatedInDolibarr=Πρόσφορα %s επικυρώθηκε
-PropalClassifiedBilledInDolibarr=Πρόταση %s ταξινομούνται χρεωθεί
-InvoiceValidatedInDolibarr=Τιμολόγιο %s επικυρωθεί
-InvoicePaidInDolibarr=Τιμολόγιο %s άλλαξε σε καταβληθεί
-InvoiceCanceledInDolibarr=Τιμολόγιο %s ακυρώθηκε
-MemberValidatedInDolibarr=Μέλος %s επικυρωθεί
-MemberResiliatedInDolibarr=Μέλος %s resiliated
-MemberDeletedInDolibarr=Μέλος %s διαγράφηκε
-MemberSubscriptionAddedInDolibarr=Συνδρομή για το μέλος %s προστέθηκε
-ShipmentValidatedInDolibarr=Η αποστολή %s επικυρώθηκε
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
 ##### Export #####
-Export=Εξαγωγή
 ExportsArea=Exports area
 AvailableFormats=Available formats
-LibraryUsed=Librairy used
-LibraryVersion=Version
+LibraryUsed=Library used
+LibraryVersion=Library version
 ExportableDatas=Exportable data
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
-NewExport=New export
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=Σύνδεσμος URL της σελίδας

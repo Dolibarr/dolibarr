@@ -86,6 +86,20 @@ class modExpenseReport extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to approve';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS_TO_PAY";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to pay';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
@@ -100,7 +114,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[1][0] = 771;
 		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[3][0] = 772;

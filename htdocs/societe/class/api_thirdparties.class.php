@@ -102,25 +102,27 @@ class Thirdparties extends DolibarrApi
         
         $obj_ret = array();
         
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        // case of external user, we force socids
+        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
             
         // If the internal user must only see his customers, force searching by him
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        $search_sale = 0;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
         
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE t.fk_stcomm = st.id";
         if ($mode == 1) $sql.= " AND t.client IN (1, 3)";
         if ($mode == 2) $sql.= " AND t.client IN (2, 3)";
         if ($mode == 3) $sql.= " AND t.client IN (0)";
         $sql.= ' AND t.entity IN ('.getEntity('societe', 1).')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";
         //if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
-        if ($socid) $sql.= " AND t.rowid = ".$socid;
+        if ($socid) $sql.= " AND t.rowid IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0)
@@ -159,13 +161,13 @@ class Thirdparties extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);
                 if($soc_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($soc_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($soc_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve thirdparties : ' . $sql);
+            throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'Thirdparties not found');
@@ -190,7 +192,10 @@ class Thirdparties extends DolibarrApi
       foreach($request_data as $field => $value) {
           $this->company->$field = $value;
       }
-      return $this->company->create(DolibarrApiAccess::$user);
+      if ($this->company->create(DolibarrApiAccess::$user) < 0)
+          throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
+      
+      return $this->company->id;
     }
 
     /**

@@ -352,14 +352,14 @@ if ($usevirtualstock)
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
-	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('supplier_order', 1).")";
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
 
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
 	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
-	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('supplier_order', 1).")";
 	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
 	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
 
@@ -552,7 +552,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock();
+		$prod->load_stock('warehouseopen, warehouseinternal');
 
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))

@@ -62,6 +62,12 @@ if ($user->societe_id > 0) accessforbidden();
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 
+// Update sold
+if (! empty($conf->holiday->enabled))
+{
+    $result = $holiday->updateBalance();
+}
+
 $childids = $user->getAllChildIds();
 $childids[]=$user->id;
 

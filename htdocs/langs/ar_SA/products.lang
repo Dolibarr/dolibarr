@@ -32,8 +32,8 @@ ServicesOnSellAndOnBuy=خدمات للبيع والشراء
 LastModifiedProductsAndServices=Latest %s modified products/services
 LastRecordedProducts=Latest %s recorded products
 LastRecordedServices=Latest %s recorded services
-CardProduct0=Product card
-CardProduct1=Service card
+CardProduct0=منتجات البطاقات
+CardProduct1=بطاقة الخدمة
 Stock=الأسهم
 Stocks=الاسهم
 Movements=حركات
@@ -89,20 +89,21 @@ NoteNotVisibleOnBill=علما) على الفواتير غير مرئي ، واق
 ServiceLimitedDuration=إذا كان المنتج هو خدمة لفترة محدودة :
 MultiPricesAbility=Several segment of prices per product/service (each customer is in one segment)
 MultiPricesNumPrices=عدد من السعر
-AssociatedProductsAbility=تفعيل ميزة حزمة
-AssociatedProducts=المنتج حزمة
-AssociatedProductsNumber=عدد من المنتجات التي يتألف منها هذا المنتج حزمة
+AssociatedProductsAbility=Activate the feature to manage virtual products
+AssociatedProducts=المنتجات
+AssociatedProductsNumber=عدد المنتجات
 ParentProductsNumber=عدد الوالد منتجات التعبئة والتغليف
 ParentProducts=Parent products
-IfZeroItIsNotAVirtualProduct=إذا 0، هذا المنتج غير منتج حزمة
-IfZeroItIsNotUsedByVirtualProduct=إذا 0، لا يستخدم هذا المنتج من قبل أي منتج حزمة
+IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 Translation=الترجمة
 KeywordFilter=الكلمة الرئيسية فلتر
 CategoryFilter=فئة فلتر
 ProductToAddSearch=إضافة إلى البحث عن المنتج
 NoMatchFound=العثور على أي مباراة
+ListOfProductsServices=List of products/services
 ProductAssociationList=قائمة المنتجات / الخدمات التي هي مكون من مكونات هذا المنتج الظاهري / حزمة
-ProductParentList=قائمة منتجات / خدمات الحزمة مع هذا المنتج كمكون
+ProductParentList=قائمة من المنتجات / الخدمات مع هذا المنتج كعنصر
 ErrorAssociationIsFatherOfThis=واحد من اختيار المنتج الأم الحالية المنتج
 DeleteProduct=حذف المنتجات / الخدمات
 ConfirmDeleteProduct=هل أنت متأكد من حذف هذه المنتجات / الخدمات؟
@@ -135,7 +136,7 @@ ListServiceByPopularity=قائمة الخدمات حسب الشهرة
 Finished=المنتجات المصنعة
 RowMaterial=المادة الأولى
 CloneProduct=استنساخ المنتجات أو الخدمات
-ConfirmCloneProduct=هل أنت متأكد من أن المنتج أو الخدمة استنساخ <b>٪ ق؟</b>
+ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=استنساخ جميع المعلومات الرئيسية من المنتجات / الخدمات
 ClonePricesProduct=استنساخ الرئيسية معلومات والأسعار
 CloneCompositionProduct=استنساخ حزم المنتج / الخدمة
@@ -204,7 +205,7 @@ DefinitionOfBarCodeForProductNotComplete=تعريف نوع أو قيمة الر�
 DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar code non complete for third party %s.
 BarCodeDataForProduct=معلومات الباركود من الناتج٪ الصورة:
 BarCodeDataForThirdparty=Barcode information of third party %s :
-ResetBarcodeForAllRecords=تحديد قيمة الباركود لكافة السجلات (هذه القيمة الباركود سيتم إعادة تعيين أيضا يعرف بالفعل مع القيم الجديدة)
+ResetBarcodeForAllRecords=Define barcode value for all record (this will also reset barcode value already defined with new values)
 PriceByCustomer=Different prices for each customer
 PriceCatalogue=A single sell price per product/service
 PricingRule=Rules for sell prices
@@ -242,7 +243,7 @@ PropalMergePdfProductChooseFile=اختر ملفات PDF
 IncludingProductWithTag=بما في ذلك المنتجات / الخدمات مع العلامة
 DefaultPriceRealPriceMayDependOnCustomer=سعر افتراضي، السعر الحقيقي قد تعتمد على العملاء
 WarningSelectOneDocument=يرجى تحديد وثيقة واحدة على الأقل
-DefaultUnitToShow=Unit
+DefaultUnitToShow=وحدة
 NbOfQtyInProposals=Qty in proposals
 ClinkOnALinkOfColumn=Click on a link of column %s to get a detailed view...
 TranslatedLabel=Translated label

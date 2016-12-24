@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Оставете празно, ако потребител
 SaveConfigurationFile=Регистрация на конфигурационния файл
 ServerConnection=Свързване със сървъра
 DatabaseCreation=Създаване на база данни
-UserCreation=Създаване на потребител
 CreateDatabaseObjects=Създаване на обекти в базата данни
 ReferenceDataLoading=Зареждане на референтни данни
 TablesAndPrimaryKeysCreation=Създаване на таблици и първични ключове
@@ -133,12 +132,12 @@ MigrationFinished=Миграцията завърши
 LastStepDesc=<strong>Последна стъпка</strong>: Определете тук потребителско име и парола, които планирате да използвате, за да се свързвате със софтуера. Не ги губете, тъй като това е профил за администриране на всички останали.
 ActivateModule=Активиране на модул %s
 ShowEditTechnicalParameters=Натиснете тук за да покажете/редактирате параметрите за напреднали (експертен режим)
-WarningUpgrade=Внимание:\nНаправихте ли резервно копие на базата данни първо?\nТова е силно препоръчително: например, поради някой бъгове в системите на базата данни (например mysql версия 5.5.40/41/42/43), част от информацията или таблиците може да бъдат изгубени по-време на този процес, за това е много препоръчително да имате пълен dump на вашата база данни преди започването на миграцията.\n\nКликнете OK за започване на миграционния процес...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Вашата база данни е с версия %s. Тя има критичен бъг, причинявайки загуба на информация ако направите структурна промяна на вашата база данни, а подобна е задължителна при миграционния процес. Поради тази причина, миграцията не е позволена, докато не обновите вашата база данни до по-нова коригирана версия (списък на познати версии с бъгове: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Вие използвате помощника за настройка на Dolibarr от DoliWamp, така че стойностите, предложени тук вече са оптимизирани. Променете ги само ако знаете какво правите.
+KeepDefaultValuesDeb=Вие използвате помощника за настройка на Dolibarr от пакет за Linux (Ubuntu, Debian, Fedora ...), така че стойностите, предложени тук вече са оптимизирани. Само създаването на парола на собственика на базата данни трябва да бъде завършена. Променяйте други параметри, само ако знаете какво правите.
+KeepDefaultValuesMamp=Вие използвате помощника за настройка на Dolibarr от DoliMamp, така че стойностите, предложени тук вече са оптимизирани. Променете ги само ако знаете какво правите.
+KeepDefaultValuesProxmox=Вие използвате помощника за настройка на Dolibarr от Proxmox виртуална машина, така че стойностите, предложени тук вече са оптимизирани. Променете ги само ако знаете какво правите.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Отворен договор затворен по 
 MigrationReopenThisContract=Ново отваряне на договор %s
 MigrationReopenedContractsNumber=%s договори са променени
 MigrationReopeningContractsNothingToUpdate=Няма затворен договор за отваряне
-MigrationBankTransfertsUpdate=Актуализиране на връзките между банкова транзакция и банков превод
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Всички връзки са актуални
 MigrationShipmentOrderMatching=Актуализация на експедиционни бележки
 MigrationDeliveryOrderMatching=Актуализация на обратни разписки

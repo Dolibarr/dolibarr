@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Ler trabalho agendado
+Permission23102 = Criar/atualizar trabalho agendado
+Permission23103 = Apagar Trabalho Agendado
+Permission23104 = Executar Trabalho Agendado
 # Admin
 CronSetup= Configuração da gestão de tarefas agendadas
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -20,11 +20,11 @@ EnabledAndDisabled=Enabled and disabled
 CronLastOutput=Resultado da última execução
 CronLastResult=Last result code
 CronCommand=Comando
-CronList=Scheduled jobs
+CronList=Tarefas agendadas
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Tarefa
 CronNone=Nenhuma
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Próximo execução
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Frequência
 CronClass=Class
 CronMethod=Método
 CronModule=Módulo
-CronNoJobs=Nenhuma tarefa registada
+CronNoJobs=Nenhumas tarefas registadas
 CronPriority=Prioridade
-CronLabel=Label
+CronLabel=Etiqueta
 CronNbRun=N.º de Execução
 CronMaxRun=Max nb. launch
 CronEach=Every

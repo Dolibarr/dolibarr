@@ -1194,16 +1194,16 @@ else if ($id > 0 || ! empty($ref))
 	
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
-	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', 0, 1);
+	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->commande->creer)
+	    if ($user->rights->ficheinter->creer)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -1395,10 +1395,12 @@ else if ($id > 0 || ! empty($ref))
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td align="center">'.$langs->trans('Date').'</td>';
-				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
-				print '<td width="48" colspan="3">&nbsp;</td>';
+				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
+				print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
+				print '<td class="liste_titre" align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
 			$var=true;

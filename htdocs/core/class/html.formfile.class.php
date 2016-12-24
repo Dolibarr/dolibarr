@@ -140,10 +140,8 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    //$out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
                     $out .= ' ';
-                    $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    //$out .= ')';
+                    $out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
                 }
             }
             else
@@ -549,7 +547,7 @@ class FormFile
             $buttonlabeltoshow=$buttonlabel;
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-            if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   # So we switch to form after a generation
+            if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -807,7 +805,7 @@ class FormFile
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
-    	    
+
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
@@ -830,7 +828,7 @@ class FormFile
     			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
     			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
     			else $this->infofiles['extensions'][$ext]++;
-    			
+
     			// Preview
     			$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
     		    if ($urladvanced) $tmpout.= '<li><a data-ajax="false" href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
@@ -840,9 +838,8 @@ class FormFile
     			if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
     			$tmpout.= '>';
     			$tmpout.=img_mime($relativepath, $file["name"]).' ';
-    			$tmpout.= $langs->trans("Download ".$ext);
+    			$tmpout.= $langs->trans("Download").' '.$ext;
     			$tmpout.= '</a></li>'."\n";
-    			
     		}
     		$out.=$tmpout;
     		$out.='</ul></div></dd>
@@ -935,7 +932,8 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+			print '<table width="100%" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
+			
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -971,6 +969,7 @@ class FormFile
 					
 					$editline=0;
 					
+			        print '<!-- Line list_of_documents '.$key.' -->'."\n";
 					print '<tr '.$bc[$var].'>';
 					print '<td class="tdoverflow">';
 					
@@ -1088,7 +1087,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'" class="opacitymedium">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'5').'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1131,7 +1130,7 @@ class FormFile
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="nobordernopadding">';
+        print '<table width="100%" class="noborder">'."\n";
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
@@ -1140,7 +1139,7 @@ class FormFile
         print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre('','','');
-        print '</tr>';
+        print '</tr>'."\n";
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
@@ -1276,6 +1275,7 @@ class FormFile
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
                 $var=!$var;
+                print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');

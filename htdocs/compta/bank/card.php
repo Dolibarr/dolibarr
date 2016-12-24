@@ -50,7 +50,7 @@ $cancel = GETPOST('cancel', 'alpha');
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+	$id = isset($_GET["id"])?GETPOST("id"):(isset($_GET["ref"])?GETPOST("ref"):'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -93,7 +93,7 @@ if ($action == 'add')
     $object->iban            = trim($_POST["iban"]);
     $object->domiciliation   = trim($_POST["domiciliation"]);
 
-    $object->proprio 	      = trim($_POST["proprio"]);
+    $object->proprio 	     = trim($_POST["proprio"]);
     $object->owner_address   = trim($_POST["owner_address"]);
 
 	$account_number 		 = GETPOST('account_number','alpha');
@@ -105,12 +105,12 @@ if ($action == 'add')
 
     $object->currency_code   = trim($_POST["account_currency_code"]);
 
-    $object->state_id  	  = $_POST["account_state_id"];
+    $object->state_id  	     = $_POST["account_state_id"];
     $object->country_id      = $_POST["account_country_id"];
 
     $object->min_allowed     = GETPOST("account_min_allowed",'int');
     $object->min_desired     = GETPOST("account_min_desired",'int');
-    $object->comment         = trim($_POST["account_comment"]);
+    $object->comment         = trim(GETPOST("account_comment"));
 
     $object->fk_user_author  = $user->id;
     
@@ -172,7 +172,7 @@ if ($action == 'update')
 
     // Update account
     $object = new Account($db);
-    $object->fetch($_POST["id"]);
+    $object->fetch(GETPOST("id"));
 
     $object->ref             = dol_string_nospecial(trim($_POST["ref"]));
     $object->label           = trim($_POST["label"]);
@@ -190,7 +190,7 @@ if ($action == 'update')
     $object->iban            = trim($_POST["iban"]);
     $object->domiciliation   = trim($_POST["domiciliation"]);
 
-    $object->proprio 	      = trim($_POST["proprio"]);
+    $object->proprio 	     = trim($_POST["proprio"]);
     $object->owner_address   = trim($_POST["owner_address"]);
 
 	$account_number 		 = GETPOST('account_number', 'int');
@@ -204,7 +204,7 @@ if ($action == 'update')
 
     $object->min_allowed     = GETPOST("account_min_allowed",'int');
     $object->min_desired     = GETPOST("account_min_desired",'int');
-    $object->comment         = trim($_POST["account_comment"]);
+    $object->comment         = trim(GETPOST("account_comment"));
 
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
     {
@@ -251,7 +251,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 {
     // Delete
     $object = new Account($db);
-    $object->fetch($_GET["id"]);
+    $object->fetch(GETPOST("id","int"));
     $object->delete();
 
     header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
@@ -367,7 +367,7 @@ if ($action == 'create')
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td>';
-	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
+	print '<td colspan="3"><input class="minwidth300" type="text" class="flat" name="url" value="'.GETPOST("url").'"></td></tr>';
 
     // Tags-Categories
     if ($conf->categorie->enabled) 
@@ -603,7 +603,7 @@ else
 		print '<td>'.$object->label.'</td></tr>';*/
 
 		// Type
-		print '<tr><td>'.$langs->trans("AccountType").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
 
 		// Currency
@@ -683,12 +683,12 @@ else
 		
         // Categories
         if ($conf->categorie->enabled) {
-            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
             print $form->showCategories($object->id,'account',1);
             print "</td></tr>";
         }
 
-		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
+		print '<tr><td class="tdtop titlefield">'.$langs->trans("Comment").'</td>';
 		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
 
 		print '</table>';
@@ -836,11 +836,11 @@ else
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?$_POST["ref"]:$object->ref).'"></td></tr>';
+		print '<td><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
 
 		// Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input type="text" class="flat minwidth300" name="label" value="'.(isset($_POST["label"])?$_POST["label"]:$object->label).'"></td></tr>';
+        print '<td><input type="text" class="flat minwidth300" name="label" value="'.(isset($_POST["label"])?GETPOST("label"):$object->label).'"></td></tr>';
 
         // Type
         print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -902,14 +902,14 @@ else
 
         // Balance
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"])?$_POST["account_min_allowed"]:$object->min_allowed).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"])?GETPOST("account_min_allowed"):$object->min_allowed).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-		print '<td ><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"])?$_POST["account_min_desired"]:$object->min_desired).'"></td></tr>';
+		print '<td ><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"])?GETPOST("account_min_desired"):$object->min_desired).'"></td></tr>';
 
 		// Web
         print '<tr><td>'.$langs->trans("Web").'</td>';
-        print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
+        print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?GETPOST("url"):$object->url).'">';
         print '</td></tr>';
 
         // Tags-Categories
@@ -970,7 +970,7 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
 		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$object->accountancy_journal).'"></td></tr>';
+		    print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?GETPOST("accountancy_journal"):$object->accountancy_journal).'"></td></tr>';
 		}
 		
 		print '</table>';

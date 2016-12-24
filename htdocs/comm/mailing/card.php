@@ -681,9 +681,9 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
-	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth200" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
 	$parameters=array();
@@ -697,7 +697,7 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
@@ -756,10 +756,12 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
+				// MAILING_NO_USING_PHPMAIL may be defined or not
+				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0, MAILING_LIMIT_SENDBYCLI may be defined ot not.
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
-					// You ensure that every user is using its own SMTP server.
+					// You ensure that every user is using its own SMTP server when using the mass emailing module.
 					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
 					$linktoadminemailend='</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
@@ -767,19 +769,27 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-					// on affiche donc juste un message
-					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+					// The feature is forbidden from GUI, we show just message to use from command line.
+				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
+					if ($conf->file->mailing_limit_sendbyweb != '-1')  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.
+					{
+					   setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');  // You can send online with constant...
+					}
 					$_GET["action"]='';
 				}
 				else
 				{
-					$text='';
-                    if ($conf->file->mailing_limit_sendbyweb == 0)
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    
+				    $text='';
+				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
                     	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';

@@ -186,7 +186,7 @@ else
 }
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -248,30 +248,30 @@ if ($resql)
 
     // Lines for filters fields
     print '<tr class="liste_titre">';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-    print '<td align="center">';
+    print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
     print '</td>';
-    print '<td>';
+    print '<td class="liste_titre">';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
     print '</td>';
     if (! empty($conf->banque->enabled))
     {
-	    print '<td>';
+	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account,'search_account',0,'',1);
 	    print '</td>';
     }
-    print '<td align="right">';
+    print '<td class="liste_titre" align="right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
     print '<td class="liste_titre" align="right">';
@@ -280,7 +280,7 @@ if ($resql)
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
-        print '<td align="right">';
+        print '<td class="liste_titre" align="right">';
         print '</td>';
     }
     print "</tr>\n";

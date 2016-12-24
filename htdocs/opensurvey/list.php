@@ -105,14 +105,14 @@ print_liste_field_titre('');
 print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
-print '<td></td>';
-print '<td><input type="text" class="maxwidth100onsmartphone" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
-print '<td></td>';
-print '<td></td>';
-print '<td></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 $arraystatus=array(''=>'&nbsp;','expired'=>$langs->trans("Expired"),'opened'=>$langs->trans("Opened"));
-print '<td align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
-print '<td></td>';
+print '<td class="liste_titre" align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
+print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
@@ -124,7 +124,7 @@ $sql.= " u.login, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

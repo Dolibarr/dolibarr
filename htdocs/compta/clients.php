@@ -97,35 +97,36 @@ $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=$stcomm";
+	$sql.= " AND s.fk_stcomm=".$stcomm;
 }
 if ($socname)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($socname)."%'";
+	$sql.= natural_search("s.nom", $socname);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 if ($_GET["search_nom"])
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($_GET["search_nom"])."%'";
+	$sql.= natural_search("s.nom", GETPOST("search_nom"));
 }
 if ($_GET["search_compta"])
 {
-	$sql.= " AND s.code_compta LIKE '%".$db->escape($_GET["search_compta"])."%'";
+	$sql.= natural_search("s.code_compta", GETPOST("search_compta"));
 }
 if ($_GET["search_code_client"])
 {
-	$sql.= " AND s.code_client LIKE '%".$db->escape($_GET["search_code_client"])."%'";
+	$sql.= natural_search("s.code_client", GETPOST("search_code_client"));
 }
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom LIKE '".$db->escape($begin)."'";
+	$sql.= natural_search("s.nom", $begin);
 }
 if ($socid)
 {
 	$sql.= " AND s.rowid = ".$socid;
 }
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);

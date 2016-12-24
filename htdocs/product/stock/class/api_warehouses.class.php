@@ -142,7 +142,7 @@ class Warehouses extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve warehouse list : '.$warehouse_static->error);
+            throw new RestException(503, 'Error when retrieve warehouse list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No warehouse found');
@@ -169,8 +169,8 @@ class Warehouses extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->warehouse->$field = $value;
         }
-        if($this->warehouse->create(DolibarrApiAccess::$user) <= 0) {
-            throw new RestException(503, 'Error when create warehouse : '.$this->warehouse->error);
+        if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating warehouse", array_merge(array($this->warehouse->error), $this->warehouse->errors));
         }
         return $this->warehouse->id;
     }
@@ -246,9 +246,6 @@ class Warehouses extends DolibarrApi
      *
      * @param   Entrepot  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     

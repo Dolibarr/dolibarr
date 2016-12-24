@@ -456,7 +456,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -791,7 +791,7 @@ if ($resql)
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-        print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
+        print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
         print '</td>';
     }
     if (! empty($arrayfields['m.fk_user_author']['checked'])) 

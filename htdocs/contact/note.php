@@ -74,25 +74,31 @@ if ($id > 0)
     $head = contact_prepare_head($object);
 
     dol_fiche_head($head, 'note', $title,0,'contact');
-
-
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
     
     $cssclass='titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
     
     print '<div class="fichecenter">';
-    
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+	print '<table class="border centpercent">';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -148,13 +154,13 @@ if ($id > 0)
 
     print "</table>";
 
-    //print '<div>';
+    print '<br>';
     
-    //print '<br>';
+	$cssclass="titlefield";
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
-
+	print '</div>';
+	
     dol_fiche_end();
 }
 

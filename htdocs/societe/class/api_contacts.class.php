@@ -84,41 +84,40 @@ class Contacts extends DolibarrApi
 	 * 
 	 * Get a list of contacts
 	 * 
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param int		$socid		ID of thirdparty to filter list
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @return array                Array of contact objects
+	 * @param string	$sortfield	        Sort field
+	 * @param string	$sortorder	        Sort order
+	 * @param int		$limit		        Limit for list
+	 * @param int		$page		        Page number
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return array                        Array of contact objects
      * 
 	 * @throws RestException
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid = 0, $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
 		global $db, $conf;
 
 		$obj_ret = array();
 
-		if (!$socid)
-		{
-			$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
-		}
+        // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid)
+		$search_sale = 0;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)
 			$search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON t.fk_soc = s.rowid";
 		$sql.= ' WHERE t.entity IN (' . getEntity('socpeople', 1) . ')';
-		if ($socid) $sql.= " AND t.fk_soc = " . $socid;
+		if ($socids) $sql.= " AND t.fk_soc IN (" . $socids . ")";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0)
 			$sql.= " AND t.fk_soc = sc.fk_soc";
 		if ($search_sale > 0)
 			$sql.= " AND s.rowid = sc.fk_soc";  // Join for the needed table to filter by sale
@@ -160,7 +159,7 @@ class Contacts extends DolibarrApi
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
-					$obj_ret[] = parent::_cleanObjectDatas($contact_static);
+					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
 				$i++;
 			}
@@ -193,7 +192,10 @@ class Contacts extends DolibarrApi
 		{
 			$this->contact->$field = $value;
 		}
-		return $this->contact->create(DolibarrApiAccess::$user);
+		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
+		    throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
+		}
+		return $this->contact->id;
 	}
 
 	/**

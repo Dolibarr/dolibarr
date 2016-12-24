@@ -1240,11 +1240,15 @@ if ($action == 'create')
 	print '<td>';
 	$object = new ExpenseReport($db);
 	$include_users = $object->fetch_users_approver_expensereport();
-	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
-	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;
-	if (GETPOST('fk_user_validator') > 0) $defaultselectuser=GETPOST('fk_user_validator');
-	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
-	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+	if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
+	else
+	{
+    	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+    	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
+    	if (GETPOST('fk_user_validator') > 0) $defaultselectuser=GETPOST('fk_user_validator');
+    	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
+    	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+	}
 	print '</td>';
 	print '</tr>';
 	
@@ -1346,9 +1350,9 @@ else
 					print '<input type="hidden" name="action" value="update">';
 				}
 
-				print '<table class="border" style="width:100%;">';
-
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+				print '<table class="border" style="width:100%;">';
 
 				print '<tr>';
 				print '<td>'.$langs->trans("User").'</td>';
@@ -1423,26 +1427,6 @@ else
 				// Other attributes
 				//$cols = 3;
 				//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
-				
-				// Public note
-				print '<tr>';
-				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-				print '<td valign="top">';
-
-				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-				print $doleditor->Create(1);
-				print '</td></tr>';
-
-				// Private note
-				if (empty($user->societe_id)) {
-					print '<tr>';
-					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-					print '<td valign="top">';
-
-					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-					print $doleditor->Create(1);
-					print '</td></tr>';
-				}
 
 				print '</table>';
 
@@ -1580,12 +1564,6 @@ else
 				
 				print '<table class="border centpercent">';
 
-            	// Ref
-            	/*
-            	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
-            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-            	print '</td></tr>';*/
-
 				// Author
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -1602,7 +1580,7 @@ else
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
-				print get_date_range($object->date_debut,$object->date_fin,'',$langs,0);
+				print get_date_range($object->date_debut,$object->date_fin,'day',$langs,0);
 				print '</td>';
 				print '</tr>';
 				if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1612,22 +1590,7 @@ else
 					print '<td>'.$object->libelle_paiement.'</td>';
 					print '</tr>';
 				}
-				// Status
-				/*
-				print '<tr>';
-				print '<td>'.$langs->trans("Statut").'</td>';
-				print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
-				print '</tr>';
-				*/
 
-				print '<tr>';
-				print '<td>'.$langs->trans("NotePublic").'</td>';
-				print '<td>'.$object->note_public.'</td>';
-				print '</tr>';
-				print '<tr>';
-				print '<td>'.$langs->trans("NotePrivate").'</td>';
-				print '<td>'.$object->note_private.'</td>';
-				print '</tr>';
 				// Amount
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
@@ -1654,17 +1617,17 @@ else
 				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_create,'dayhour');
+				print '<td>'.dol_print_date($object->date_valid,'dayhour');
 				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
 				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
 				print '</td></tr>';
 				print '</tr>';
 
-				// User to inform
+				// User to inform for approval
 				if ($object->fk_statut < 3)	// informed
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("VALIDATOR").'</td>';
+					print '<td>'.$langs->trans("VALIDATOR").'</td>';   // approver
 					print '<td>';
 					if ($object->fk_user_validator > 0)
 					{
@@ -2225,7 +2188,8 @@ if ($action != 'create' && $action != 'edit')
 	// If bank module is not used	
 	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == 5)
 	{
-		if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+		if ($object->paid == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
@@ -2275,7 +2239,7 @@ print '<div class="fichehalfleft">';
  * Generate documents
  */
 
-if($user->rights->expensereport->export && $action != 'edit')
+if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
 {
 	$filename	=	dol_sanitizeFileName($object->ref);
 	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);

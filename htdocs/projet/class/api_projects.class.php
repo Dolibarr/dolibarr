@@ -102,10 +102,12 @@ class Projects extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
-        // case of external user, $thirdpartyid param is ignored and replaced by user's socid
+        
+        // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
@@ -162,7 +164,7 @@ class Projects extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve project list');
+            throw new RestException(503, 'Error when retrieve project list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No project found');
@@ -194,9 +196,8 @@ class Projects extends DolibarrApi
           }
           $this->project->lines = $lines;
         }*/
-        if ($this->project->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->project->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating project");
+        if ($this->project->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
         }
 
         return $this->project->id;
@@ -531,9 +532,6 @@ class Projects extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     

@@ -640,9 +640,14 @@ foreach ($listofreferent as $key => $value)
 		$addform='';
 
 		$idtofilterthirdparty=0;
-		if (! in_array($tablename, array('facture_fourn', 'commande_fournisseur'))) $idtofilterthirdparty=$object->thirdparty->id;
+		$array_of_element_linkable_with_different_thirdparty = array('facture_fourn', 'commande_fournisseur');
+		if (! in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) 
+		{
+		    $idtofilterthirdparty=$object->thirdparty->id;
+		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0)
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty)
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
@@ -877,6 +882,8 @@ foreach ($listofreferent as $key => $value)
 				$warning='';
 				if (empty($value['disableamount']))
 				{
+				    $total_ht_by_line=null;
+				    $othermessage='';
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
@@ -893,7 +900,7 @@ foreach ($listofreferent as $key => $value)
 					    }
 					    else
 					    {
-					        print $langs->trans("ModuleDisabled");
+					        $othermessage=$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
 					else
@@ -901,9 +908,13 @@ foreach ($listofreferent as $key => $value)
 						$total_ht_by_line=$element->total_ht;
 					}
 					print '<td align="right">';
-					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
-					if (! $qualifiedfortotal) print '</strike>';
+					if ($othermessage) print $othermessage;
+					if (isset($total_ht_by_line))
+					{
+					   if (! $qualifiedfortotal) print '<strike>';
+					   print price($total_ht_by_line);
+					   if (! $qualifiedfortotal) print '</strike>';
+					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
@@ -912,20 +923,33 @@ foreach ($listofreferent as $key => $value)
                 // Amount inc tax
 				if (empty($value['disableamount']))
 				{
+				    $total_ttc_by_line=null;
 					if ($tablename == 'don') $total_ttc_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
-						$defaultvat = get_default_tva($mysoc, $mysoc);
-						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
+					    if (! empty($conf->salaries->enabled))
+					    {
+					        // TODO Permission to read daily rate
+    						$defaultvat = get_default_tva($mysoc, $mysoc);
+    						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
+					    }
+					    else
+					    {
+					        $othermessage=$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
+					    }					    
 					}
 					else
 					{
 						$total_ttc_by_line=$element->total_ttc;
 					}
 					print '<td align="right">';
-					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
-					if (! $qualifiedfortotal) print '</strike>';
+					if ($othermessage) print $othermessage;
+					if (isset($total_ttc_by_line))
+					{
+					   if (! $qualifiedfortotal) print '<strike>';
+					   print price($total_ttc_by_line);
+					   if (! $qualifiedfortotal) print '</strike>';
+					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
@@ -988,15 +1012,25 @@ foreach ($listofreferent as $key => $value)
 
 			if ($breakline) print $breakline;
 
+			// Total
 			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
-			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
-			else print '<td></td>';
+			print '<td align="right">';
+			if (empty($value['disableamount'])) 
+			{
+			    if (! empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+			}
+			print '</td>';
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
 			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="100"></td>';
-			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
-			else print '<td></td>';
+			print '<td align="right">';
+			if (empty($value['disableamount'])) 
+			{
+			    
+			    if (! empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
+			}
+			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

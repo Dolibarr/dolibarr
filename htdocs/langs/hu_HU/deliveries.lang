@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Kézbesítés
 DeliveryRef=Szállító ref.
-DeliveryCard=Kézbesítés kártya
+DeliveryCard=Receipt card
 DeliveryOrder=Szállítólevél
 DeliveryDate=Kézbesítés dátuma
-CreateDeliveryOrder=Szállítólevél generálása
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Szállítási állapot mentve
 SetDeliveryDate=Szállítási dátum beállítása
 ValidateDeliveryReceipt=Szállítási bizonylat hitelesítése
-ValidateDeliveryReceiptConfirm=Biztos hitelesíteni akarja a szállítási bizonylatot?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Átvételi elismervény törlése
-DeleteDeliveryReceiptConfirm=Biztos benne, hogy törli a(z) <b>%s</b> átvételi elismervényt?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Szállítási mód
 TrackingNumber=Nyomonkövetési szám
 DeliveryNotValidated=A szállítás nincs jóváhagyva

@@ -69,7 +69,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 		exit;
 	}
 
-	if ($action == 'update') $bookmark->fetch($_POST["id"]);
+	if ($action == 'update') $bookmark->fetch(GETPOST("id",'int'));
 	// Check if null because user not admin can't set an user and send empty value here.
 	if(!empty($userid))
 		$bookmark->fk_user=$userid;
@@ -217,7 +217,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
 	print '<tr><td>';
 	if ($action == 'edit') {
@@ -231,7 +231,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
+	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title",'',2):$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
@@ -301,6 +301,8 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 
+	// Buttons
+	
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit

@@ -303,6 +303,7 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
 
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
@@ -326,7 +327,7 @@ if (empty($reshook))
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
-	    if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='' && $price_ht_devise === '') // Unit price can be 0 but not ''
 	    {
 	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
@@ -428,7 +429,7 @@ if (empty($reshook))
 	    		setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 	    	}
 	    }
-	    else if ((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))
+	    else if (empty($error))
 		{
 			$pu_ht = price2num($price_ht, 'MU');
 			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -459,7 +460,9 @@ if (empty($reshook))
 	    		$price_base_type = 'HT';
 	    	}
 
-			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
+			$pu_ht_devise = price2num($price_ht_devise, 'MU');
+
+			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 	    //print "xx".$tva_tx; exit;
@@ -559,6 +562,8 @@ if (empty($reshook))
 	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
 	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
 
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
+
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
@@ -586,7 +591,8 @@ if (empty($reshook))
 	        $date_start,
 	        $date_end,
 	    	$array_options,
-		    $_POST['units']
+		    $_POST['units'],
+		    $pu_ht_devise
 	    );
 	    unset($_POST['qty']);
 	    unset($_POST['type']);
@@ -1419,7 +1425,7 @@ if ($action=='create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
+		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) $currency_code = $societe->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
@@ -1612,6 +1618,8 @@ if ($action=='create')
 }
 elseif (! empty($object->id))
 {
+	$result = $object->fetch($id, $ref);
+
     $societe = new Fournisseur($db);
     $result=$societe->fetch($object->socid);
     if ($result < 0) dol_print_error($db);
@@ -1831,7 +1839,7 @@ elseif (! empty($object->id))
 
 	// Author
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
-	print '<td>'.$author->getNomUrl(1).'</td>';
+	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
 	// Conditions de reglement par defaut
@@ -1903,10 +1911,18 @@ elseif (! empty($object->id))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editmulticurrencyrate') {
+		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+			if($action == 'actualizemulticurrencyrate') {
+				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+			}
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+			if($object->statut == 0) {
+				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+				print '</div>';
+			}
 		}
 		print '</td></tr>';
 	}
@@ -2094,6 +2110,7 @@ elseif (! empty($object->id))
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form
@@ -2122,7 +2139,7 @@ elseif (! empty($object->id))
 		}
 	}
 	print '</table>';
-
+    print '</div>';
 	print '</form>';
 
 	dol_fiche_end();
@@ -2689,15 +2706,13 @@ elseif (! empty($object->id))
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
-			/*
-			 * Commander (action=commande)
-			 */
+			// Set status to ordered (action=commande)
 			print '<!-- form to record supplier order -->'."\n";
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
 			print load_fiche_titre($langs->trans("ToOrder"),'','');
-			print '<table class="border" width="100%">';
+			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
@@ -2717,15 +2732,14 @@ elseif (! empty($object->id))
 
 		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
 		{
-			/*
-			 * Receptionner (action=livraison)
-			 */
+			// Set status to received (action=livraison)
 			print '<!-- form to record supplier order received -->'."\n";
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
 			print load_fiche_titre($langs->trans("Receive"),'','');
-			print '<table class="border" width="100%">';
+
+			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
 			print $form->select_date('','',1,1,'',"commande",1,0,1);

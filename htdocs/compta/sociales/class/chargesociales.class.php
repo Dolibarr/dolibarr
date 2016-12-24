@@ -34,7 +34,8 @@ class ChargeSociales extends CommonObject
     public $element='chargesociales';
     public $table='chargesociales';
     public $table_element='chargesociales';
-
+    public $picto = 'bill';
+    
     /**
      * {@inheritdoc}
      */
@@ -152,6 +153,8 @@ class ChargeSociales extends CommonObject
     {
     	global $conf;
 
+        $now=dol_now();
+
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
@@ -161,17 +164,18 @@ class ChargeSociales extends CommonObject
 			 return -2;
 		}
 
-
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity, fk_user_author, date_creation)";
         $sql.= " VALUES (".$this->type;
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
-        $sql.= ", '".$this->db->escape($this->lib)."',";
-        $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
-        $sql.= " '".price2num($newamount)."',";
-        $sql.= " ".$conf->entity;
+        $sql.= ", '".$this->db->escape($this->lib)."'";
+        $sql.= ", '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."'";
+        $sql.= ", '".price2num($newamount)."'";
+        $sql.= ", ".$conf->entity;
+        $sql.= ", ".$user->id;
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -275,10 +279,11 @@ class ChargeSociales extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
-        $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."',";
-        $sql.= " amount='".price2num($this->amount,'MT')."'";
+        $sql.= " SET libelle='".$this->db->escape($this->lib)."'";
+        $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
+        $sql.= ", periode='".$this->db->idate($this->periode)."'";
+        $sql.= ", amount='".price2num($this->amount,'MT')."'";
+        $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -371,7 +376,7 @@ class ChargeSociales extends CommonObject
     /**
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
-     *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
@@ -384,7 +389,7 @@ class ChargeSociales extends CommonObject
      *  Renvoi le libelle d'un statut donne
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
@@ -428,7 +433,13 @@ class ChargeSociales extends CommonObject
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
-
+        if ($mode == 6)
+        {
+            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+        }
+        
         return "Error, mode/status not found";
     }
 
@@ -498,8 +509,9 @@ class ChargeSociales extends CommonObject
      */
     function info($id)
     {
-        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
+        $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
+        $sql.= " fk_user_author, fk_user_modif, fk_user_valid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
         dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -515,7 +527,13 @@ class ChargeSociales extends CommonObject
                 if ($obj->fk_user_author) {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
+                    $this->user_creation = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
                 }
 
                 if ($obj->fk_user_valid) {
@@ -525,7 +543,7 @@ class ChargeSociales extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
+                if (! empty($obj->fk_user_modif))	$this->date_modification = $this->db->jdate($obj->datem);
                 $this->date_validation   = $this->db->jdate($obj->datev);
                 $this->import_key        = $obj->import_key;
             }

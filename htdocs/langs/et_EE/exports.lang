@@ -26,8 +26,6 @@ FieldTitle=Välja nimi
 NowClickToGenerateToBuildExportFile=Nüüd vali liitboksis faili formaat ja klõpsa "Loo" nupul ekspordifaili loomiseks...
 AvailableFormats=Saadaval olevad formaadid
 LibraryShort=Teek
-LibraryUsed=Kasutatav teek
-LibraryVersion=Versioon
 Step=Samm
 FormatedImport=Importimise assistent
 FormatedImportDesc1=See ala võimaldab assistendi abil isikustatud andmete importimist sügavaid tehnilisi teadmisi omamata.
@@ -87,7 +85,7 @@ TooMuchWarnings=On veel <b>%s</b> muud rida hoiatustega, kuid väljundit on piir
 EmptyLine=Tühi rida (ära visata)
 CorrectErrorBeforeRunningImport=Enne lõpliku impordi käivitamist pead esmalt parandama kõik vead.
 FileWasImported=Fail on imporditud numbriga <b>%s</b>.
-YouCanUseImportIdToFindRecord=Kõik imporditud kirjed leiad andmebaasist kasutades filtreerimiseks välja <b>import_key='%s'</b>.
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Hoiatuste ja vigadeta ridu: <b>%s</b>.
 NbOfLinesImported=Edukalt imporditud ridu: <b>%s</b>.
 DataComeFromNoWhere=Sisestavat väärtust ei ole mitte kuskil lähtefailis.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> faili formaat (.csv).<br>See on tekst
 Excel95FormatDesc=<b>Excel</b> faili formaat (.xls)<br>Excel 95 formaat (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> faili formaat (.xlsx)<br>Excel 2007 formaat (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> faili formaat (.tsv)<br>See on tekstifaili formaat, kus väljad on eraldatud tabulaatoriga [tab].
-ExportFieldAutomaticallyAdded=Väli <b>%s</b> lisati automaatselt. See võimaldab vältida sarnaste väljade kohtlemist topeltkirjetena (kui see väli on lisatud, siis on kõigil ridadel oma ID ja nad on erinevad).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=CSV lisavalikud
 Separator=Eraldaja
 Enclosure=Aedik

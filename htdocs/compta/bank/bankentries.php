@@ -501,7 +501,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -576,7 +576,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
-	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
+	if (GETPOST('bid')) print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
 	
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile')
@@ -832,7 +832,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$form->select_comptes($account,'account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
     	print '</td>';
 	}
@@ -850,7 +850,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
     	print $form->textwithpicto('', $htmltext, 1);
     	print '</td>';

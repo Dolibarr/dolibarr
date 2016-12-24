@@ -45,7 +45,8 @@ class Contrat extends CommonObject
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='contract';
+    
 	/**
 	 * {@inheritdoc}
 	 */
@@ -1150,6 +1151,16 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
 		if (! $error)
 		{
 			// We remove directory
@@ -2050,7 +2061,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->contrat->activer && !$user->societe_id)
+		if (!$user->rights->contrat->lire && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

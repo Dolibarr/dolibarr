@@ -288,7 +288,7 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -488,7 +488,7 @@ if ($resql)
     }    
     if (! empty($arrayfields['sale_representative']['checked']))
     {
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     }
     if (! empty($arrayfields['c.date_contrat']['checked']))
     {

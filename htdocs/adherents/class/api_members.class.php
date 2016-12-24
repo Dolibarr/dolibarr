@@ -143,7 +143,7 @@ class Members extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve member list : '.$member->error);
+            throw new RestException(503, 'Error when retrieve member list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No member found');
@@ -170,8 +170,8 @@ class Members extends DolibarrApi
         foreach($request_data as $field => $value) {
             $member->$field = $value;
         }
-        if($member->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create member : '.$member->error);
+        if ($member->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
         }
         return $member->id;
     }
@@ -289,9 +289,6 @@ class Members extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 

@@ -85,7 +85,7 @@ $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

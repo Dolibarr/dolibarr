@@ -94,7 +94,7 @@ class AgendaEvents extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.date_creation:<:'20160101')"
      * @return  array               Array of Agenda Events objects
      */
     function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
@@ -102,13 +102,19 @@ class AgendaEvents extends DolibarrApi
         
         $obj_ret = array();
 
-        // case of external user, $societe param is ignored and replaced by user's socid
-        //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+        // case of external user
+        $socid = 0;
+        if (! empty(DolibarrApiAccess::$user->societe_id)) $socid = DolibarrApiAccess::$user->societe_id;
+        
+        // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        
         $sql = "SELECT t.id as rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('agenda', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
+        if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter
         if ($search_sale > 0)
         {
@@ -146,13 +152,13 @@ class AgendaEvents extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);
                 if($actioncomm_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($actioncomm_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve Agenda Event list');
+            throw new RestException(503, 'Error when retrieve Agenda Event list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Agenda Event found');
@@ -188,9 +194,8 @@ class AgendaEvents extends DolibarrApi
           }
           $this->expensereport->lines = $lines;
         }*/
-        if ($this->actioncomm->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->actioncomm->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating actioncomm");
+        if ($this->actioncomm->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
         }
         
         return $this->actioncomm->id;

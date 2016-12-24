@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -175,7 +175,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -237,6 +237,12 @@ if ($user->rights->banque->supprimer) $arrayofmassactions['delete']=$langs->tran
 if ($massaction == 'presend') $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->banque->configurer)
+{
+	$newcardbutton.='<a class="butAction" href="card.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+}
+
 
 // Lines of title fields
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -248,7 +254,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_bank.png',0,'','',$limit, 1);
+print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_bank.png',0,$newcardbutton,'',$limit, 1);
 
 
 if ($sall)
@@ -404,7 +410,7 @@ if (! empty($arrayfields['b.clos']['checked']))
 // Balance
 if (! empty($arrayfields['balance']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 // Action column
 print '<td class="liste_titre" align="middle">';
@@ -415,10 +421,12 @@ print '</tr>';
 
 
 
-$total = array(); $found = 0; $i=0;
+$total = array(); $found = 0; $i=0; $lastcurrencycode='';
 $var=true;
 foreach ($accounts as $key=>$type)
 {
+	if ($i >= $limit) break;
+	
     $found++;
 
 	$acc = new Account($db);
@@ -427,6 +435,15 @@ foreach ($accounts as $key=>$type)
 	$var = !$var;
 	$solde = $acc->solde(1);
 
+	if (! empty($lastcurrencycode) && $lastcurrencycode != $acc->currency_code)
+	{
+		$lastcurrencycode='various';	// We found several different currencies
+	}
+	if ($lastcurrencycode != 'various')
+	{
+		$lastcurrencycode=$acc->currency_code;
+	}
+	
 	print '<tr '.$bc[$var].'>';
 
     // Ref
@@ -485,7 +502,6 @@ foreach ($accounts as $key=>$type)
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
     
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -565,7 +581,7 @@ foreach ($accounts as $key=>$type)
 if (! $found) print '<tr '.$bc[$var].'><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 
 // Show total line
-if (isset($totalarray['totalbalancefield']))
+if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
 {
     print '<tr class="liste_total">';
     $i=0;
@@ -577,7 +593,7 @@ if (isset($totalarray['totalbalancefield']))
             if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
-        elseif ($totalarray['totalbalancefield'] == $i) print '<td align="right">'.price($totalarray['totalbalance'], 0, $langs, 0, 0, -1, $key).'</td>';
+        elseif ($totalarray['totalbalancefield'] == $i) print '<td align="right">'.price($totalarray['totalbalance'], 0, $langs, 0, 0, -1, $lastcurrencycode).'</td>';
         else print '<td></td>';
     }
     print '</tr>';
@@ -587,18 +603,6 @@ print '</table>';
 print "</div>";
 
 print "</form>";
-
-
-/*
- * Buttons actions
- */
-
-print '<div class="tabsAction">'."\n";
-if ($user->rights->banque->configurer)
-{
-	print '<a class="butAction" href="card.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
-}
-print '</div>';
 
 
 llxFooter();

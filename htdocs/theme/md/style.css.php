@@ -254,6 +254,7 @@ a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
+a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; } 
 
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
@@ -587,15 +588,21 @@ div.myavailability {
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
-.table-responsive {
+/*.table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
-}
+}*/
+/* Style used for most tables */ 
 .div-table-responsive {
     overflow-x: auto;
     min-height: 0.01%;
+}
+/* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
+div.fiche>form>div.div-table-responsive {
+    overflow-x: auto;
+    min-height: 350px;
 }
 
 
@@ -1010,12 +1017,13 @@ div.attacharea {
 	padding-bottom: 10px;
 }
 div.arearef {
-	/*border-bottom: 1px solid #bbb;*/
 	padding-top: 2px;
 	padding-bottom: 5px;
-	/*padding-right: 3px;
-	padding-left: 2px;*/
 	margin-bottom: 10px;
+}
+div.arearefnobottom {
+	padding-top: 2px;
+	padding-bottom: 4px;
 }
 div.heightref {
 	min-height: 80px; 
@@ -1479,7 +1487,7 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo {
+#img_logo, .img-logo {
 	max-width: 200px;
 	max-height: 100px;
 }
@@ -1940,6 +1948,7 @@ img.toolbarbutton {
 }
 
 .ecm-in-layout-south {
+    border-top: 0px !important;
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
@@ -2372,6 +2381,13 @@ table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
 }
 
+table.liste td, table.noborder td, div.noborder form div {
+	padding: 8px 2px 8px 3px;			/* t r b l */
+}
+div.liste_titre_bydiv .divsearchfield {
+	padding: 2px 1px 2px 0px;			/* t r b l */
+}
+
 table.nobordernopadding {
 	border-collapse: collapse !important;
 	border: 0px;
@@ -2705,6 +2721,10 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
+tr.liste_titre td.liste_titre {		/* For last line of table headers only */
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 div.liste_titre {
 	padding-left: 3px;
 }
@@ -2767,6 +2787,11 @@ div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
+}
+div .tdtop {
+    vertical-align: top !important;
+	padding-top: 5px !important;
+	padding-bottom: 0px;
 }
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
@@ -2944,14 +2969,14 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #302010;
+  color: #303035;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFBF9A;
-  -moz-border-radius:3px;
-  -webkit-border-radius: 3px;
-  border-radius:3px;
-  background: #EFCFAA;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #E0EAE4;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 

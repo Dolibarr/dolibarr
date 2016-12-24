@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Ponechte prázdné, pokud uživatel nemá heslo (nedoporu�
 SaveConfigurationFile=Uložit hodnoty
 ServerConnection=Připojení k serveru
 DatabaseCreation=Vytvoření databáze
-UserCreation=Vytvoření uživatele
 CreateDatabaseObjects=Tvorba databázových objektů
 ReferenceDataLoading=Načítání referenčních dat
 TablesAndPrimaryKeysCreation=Vytváření tabulek a tvorba primárních klíčů
@@ -133,12 +132,12 @@ MigrationFinished=Migrace dokončena
 LastStepDesc=<strong>Poslední krok:</strong> Definujte zde přihlašovací jméno a heslo které budete používat pro připojení k softwaru. Toto heslo neztraťte - jedná se o jediný administrátorský účet.
 ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
-WarningUpgrade=Varování:\nProvedli jste zálohu databáze jako první? \nPokud ji neprovede, můžete kvůli některým chybám v databázových systémech (například mysql verze 5.5.40/41/42/43) přijít o data, proto vám doporučujeme mít zálohu před spuštěním migrace.\n\nStiskněte OK pro spuštění migrace...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Vaše verze databáze  je %s. Ta bohužel obsahuje kritickou chybu mající zásadní vliv na ztrátu dat, pokud provedete změnu struktury ve vaší databázi, stejně jako je to vyžadováno v procesu migrace. Z tohoto důvodu nebude migrace povolena, dokud neprovedete upgrade databáze na vyšší fixní verzi (seznam známých chybných verzí: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Používáte instalaci Dolibarr pomocí DoliWamp, tedy tyto hodnoty jsou již optimalizované pro Váš stroj. Změňte je pouze tehdy, pokud víte přesně co děláte.
+KeepDefaultValuesDeb=Používáte instalaci Dolibarr z Linux-ového balíčku (Ubuntu, Debian, Fedora ...), takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Vyplňte pouze heslo vlastníka databáze. Ostatní parametry měňte jen pokud skutečně víte co děláte.
+KeepDefaultValuesMamp=Používáte instalaci Dolibarr pomocí DoliMamp, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
+KeepDefaultValuesProxmox=Používáte instalaci Dolibarr pomocí Proxmox, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Otevřít chybně uzavřenou smlouvu
 MigrationReopenThisContract=Znovuotevření smlouvy %s
 MigrationReopenedContractsNumber=%s smluv změněno
 MigrationReopeningContractsNothingToUpdate=Žádné uzavřené smlouvy k otevření
-MigrationBankTransfertsUpdate=Aktualizace propojení mezi bankovním transakcí a bankovním převodem
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Všechny odkazy jsou aktuální
 MigrationShipmentOrderMatching=Aktualizace odesílaného dokladu
 MigrationDeliveryOrderMatching=Aktualizace přijímaného dokladu

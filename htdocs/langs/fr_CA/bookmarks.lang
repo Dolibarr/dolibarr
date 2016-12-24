@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Placer cette page dans les marques-pages
+Bookmark=Marque-page
+Bookmarks=Marque-pages
+NewBookmark=Nouveau marque-page
+ShowBookmark=Afficher marque-page
+OpenANewWindow=Ouvrir une nouvelle fenêtre
+ReplaceWindow=Remplacer fenêtre courante
+BookmarkTargetNewWindowShort=Nouvelle fenêtre
+BookmarkTargetReplaceWindowShort=Fenêtre courante
+BookmarkTitle=Titre du marque-page
+UrlOrLink=URL
+BehaviourOnClick=Comportement sur clic de l'URL
+CreateBookmark=Créer marque-page
+SetHereATitleForLink=Saisir ici un titre pour le marque-page
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL HTTP externe ou une URL Dolibarr relative
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=Gestion des marque-pages

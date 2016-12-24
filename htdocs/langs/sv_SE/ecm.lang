@@ -32,13 +32,13 @@ ECMDocsByProducts=Dokument med koppling till produkter
 ECMDocsByProjects=Handlingar som är kopplade till projekt
 ECMDocsByUsers=Dokument länkade till användare
 ECMDocsByInterventions=Dokument länkade till ärenden
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Ingen katalog skapas
 ShowECMSection=Visa katalog
 DeleteSection=Ta bort katalog
-ConfirmDeleteSection=Kan du bekräfta att du vill ta bort katalogen <b>%s?</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Relativ katalog för filer
 CannotRemoveDirectoryContainsFiles=Flyttat inte möjligt eftersom det innehåller några filer
 ECMFileManager=Filhanteraren
 ECMSelectASection=Välj en katalog på vänster träd ...
 DirNotSynchronizedSyncFirst=Denna katalog verkar skapas eller ändras utanför ECM-modulen. Du måste klicka på "Uppdatera" knappen först att synkronisera disk och databas för att få innehållet i den här katalogen.
-

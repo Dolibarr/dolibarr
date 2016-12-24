@@ -157,7 +157,7 @@ class Categories extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -209,7 +209,7 @@ class Categories extends DolibarrApi
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -243,7 +243,7 @@ class Categories extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -269,8 +269,8 @@ class Categories extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->category->$field = $value;
         }
-        if($this->category->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create category : '.$this->category->error);
+        if ($this->category->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
         }
         return $this->category->id;
     }
@@ -346,9 +346,6 @@ class Categories extends DolibarrApi
      *
      * @param   Categorie  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
     

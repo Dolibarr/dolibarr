@@ -341,6 +341,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
+
+print '<div class="div-table-responsive">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
@@ -378,16 +380,16 @@ print '</td>';
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" size="6" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50onsmartphone" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw, 'id_sw', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Out warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw, 'id_tw', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
 print '</td>';
 // Qty
 print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
@@ -428,6 +430,7 @@ foreach($listofdata as $key => $val)
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -354,56 +354,56 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['u.login']['checked']))
 {
-    print '<td><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
 }
 if (! empty($arrayfields['u.lastname']['checked']))
 {
-    print '<td><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
 }
 if (! empty($arrayfields['u.firstname']['checked']))
 {
-    print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
 }
 if (! empty($arrayfields['u.gender']['checked']))
 {
-    print '<td>';
+    print '<td class="liste_titre">';
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
     print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
     print '</td>';
 }
 if (! empty($arrayfields['u.employee']['checked']))
 {
-    print '<td>';
+    print '<td class="liste_titre">';
     print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
     print '</td>';
 }
 if (! empty($arrayfields['u.accountancy_code']['checked']))
 {
-    print '<td><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
 }
 if (! empty($arrayfields['u.email']['checked']))
 {
-    print '<td><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
 }
 if (! empty($arrayfields['u.fk_soc']['checked']))
 {
-    print '<td><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
 }
 if (! empty($arrayfields['u.entity']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.fk_user']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.datelastlogin']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))

@@ -245,7 +245,7 @@ if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AN
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -368,7 +368,7 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);

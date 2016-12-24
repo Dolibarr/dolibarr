@@ -39,7 +39,7 @@ $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -178,12 +178,11 @@ if ($modecompta != 'CREANCES-DETTES')
 	}
 }
 
+$moreforfilter='';
 
-/*
- * Show result array
- */
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -433,6 +432,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print "</tr>\n";
 print "</table>";
+print '</div>';
 
 
 /*

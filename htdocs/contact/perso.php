@@ -233,7 +233,20 @@ else
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
     
     
     print '<div class="fichecenter">';
@@ -242,6 +255,7 @@ else
     print '<table class="border centpercent">';
 
     // Company
+    /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
         if ($object->socid > 0)
@@ -258,7 +272,7 @@ else
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
         }
-    }
+    }*/
 
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';

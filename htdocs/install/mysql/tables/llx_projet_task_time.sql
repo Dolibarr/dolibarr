@@ -29,5 +29,5 @@ create table llx_projet_task_time
   invoice_id       integer DEFAULT NULL,				-- If we need to invoice each line of timespent, we can save invoice id here
   invoice_line_id  integer DEFAULT NULL,                -- If we need to invoice each line of timespent, we can save invoice line id here
   import_key	   varchar(14),					-- Import key
-  note             text,
+  note             text
 )ENGINE=innodb;

@@ -196,7 +196,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/compta/expensereport/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/expensereport/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;

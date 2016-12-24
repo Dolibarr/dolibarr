@@ -8,6 +8,7 @@
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To set a DEFAULT value:  ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT (0|NULL|...);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
 -- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
@@ -19,7 +20,6 @@
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
--- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
@@ -31,6 +31,8 @@ UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHE
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
+
+ALTER TABLE llx_societe ALTER COLUMN fk_stcomm SET DEFAULT 0;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN picto varchar(48);
 
@@ -64,6 +66,10 @@ ALTER TABLE llx_website ADD COLUMN virtualhost varchar(255) after fk_default_hom
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_account integer after fk_type;
 ALTER TABLE llx_chargesociales ADD COLUMN fk_mode_reglement integer after fk_account;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_author		integer;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_modif         integer;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user_valid			integer;
+
 
 ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover; 
 
@@ -215,6 +221,16 @@ create table llx_user_employment
 )ENGINE=innodb;
 
 
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_debut (date_debut);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_date_fin (date_fin);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_statut (fk_statut);
+
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_author (fk_user_author);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_approve (fk_user_approve);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_approve);
+
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
 drop table tmp_links_double;
@@ -226,8 +242,13 @@ drop table tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
+ALTER TABLE llx_expensereport ADD UNIQUE INDEX idx_expensereport_uk_ref (ref, entity);
+
 UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
 ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
+
+ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
+
 
 -- Product attributes
 CREATE TABLE llx_product_attribute

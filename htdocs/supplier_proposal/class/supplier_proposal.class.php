@@ -11,6 +11,7 @@
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1632,24 +1633,11 @@ class SupplierProposal extends CommonObject
             	$trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
 				$modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
 
-                // The connected company is classified as a client
-                $soc=new Societe($this->db);
-                $soc->id = $this->socid;
-                $result=$soc->set_as_client();
-                
-                if ($result < 0)
+                if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
                 {
-                    $this->error=$this->db->error();
-                    $this->db->rollback();
-                    return -2;
+                    $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-				else
-				{
-				    if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
-				    {
-                        $result = $this->updateOrCreatePriceFournisseur($user);
-				    }
-				}
+
             }
             if ($statut == 4)
             {

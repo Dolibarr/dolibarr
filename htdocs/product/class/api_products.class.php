@@ -151,13 +151,13 @@ class Products extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
                 if($product_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve product list');
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -182,9 +182,8 @@ class Products extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->product->$field = $value;
         }
-        $result = $this->product->create(DolibarrApiAccess::$user);
-        if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+        if ($this->product->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
         }
         
         return $this->product->id;
@@ -268,6 +267,21 @@ class Products extends DolibarrApi
         return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
     }
 
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        unset($object->regeximgext);
+        
+        return $object;
+    }
+    
     /**
      * Validate fields before create or update object
      * 
