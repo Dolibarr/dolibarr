@@ -538,25 +538,28 @@ class CMailFile
 				}
 				else
 				{
-					$bounce = '';	// By default
+					$additionnalparam = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
 						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
 						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
-						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
+						// Having this variable defined may create problems with some sendmail (option -f refused)
+						// Having this variable not defined may create problems with some other sendmail (option -f required)
+						$additionnalparam .= ($additionnalparam?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
                     if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
                     {
-                        $bounce .= ($bounce?' ':'').'-ba';
+                        $additionnalparam .= ($additionnalparam?' ':'').'-ba';
                     }
-                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$bounce, LOG_DEBUG);
+                    if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam?' ':'').'-U '.$additionnalparam; // Use -U to add additionnal params
+                    
+                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
                     
 					$this->message=stripslashes($this->message);
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if (! empty($additionnalparam)) $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers, $additionnalparam);
 					else $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers);
 
 					if (! $res)
