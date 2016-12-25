@@ -12,6 +12,52 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 4.0.3 to 4.0.2 *****
+FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
+FIX: #5958 no discount on supplier command made by replenishment
+FIX: #5966 Bug: getNomUrl tooltips show Proposal info even if user has no rights to read them
+FIX: #5972 #5734
+FIX: #6007
+FIX: #6010
+FIX: #6029
+FIX: #6043 - Payment mode not visible on supplier invoice list
+FIX: #6051
+FIX: #6062
+FIX: #6088
+FIX: A draft can be deleted by a user with create permission.
+FIX: bad permission to see contract on home page
+FIX: bad permission to see contract statistics
+FIX: Bcc must not appears to recipient when using SMTPs lib
+FIX: Consistent description for add or edit product
+FIX: delete contract extrafields on contract deletion
+FIX: Deposits and credit notes weren't added in the received and pending columns
+FIX: export extrafields must not include separe type
+FIX: Export of opportunity status must be code, not id.
+FIX: False positive on services not activated
+FIX: Filter was wrong or lost during navigation
+FIX: HT and TTC price should always be displayed together
+FIX: if a supplier price reference is changed after creating an order, we can't clone order.
+FIX: in export. Error when using a separate extrafields.
+FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
+FIX: javascript error when using on mobile/smartphone
+FIX: javascript xss injection and a translation
+FIX: Label of project is in field title not label.
+FIX: List of people able to validate an expense report was not complete.
+FIX: Missing field
+FIX: Module gravatar was not triggered on thirdparty and contact card
+FIX: Must use external link into a forged email content.
+FIX: Pb in management of date end of projects
+FIX: Regression when deleting product
+FIX: rendering of output of estimated amount on project overview page.
+FIX: Sanitize title of ajax_dialog
+FIX: Security to restrict email sending was not efficient
+FIX: Setting supplier as client when accept a supplier proposal
+FIX: Some statistics not compatible with multicompany module.
+FIX: the time spent on project was not visible in its overwiew
+FIX: Update intervention lline crash with PgSQL
+FIX: wrong test on dict.php
+FIX: wrong var name
+
 ***** ChangeLog for 4.0.2 compared to 4.0.1 *****
 FIX: #5340
 FIX: #5779
