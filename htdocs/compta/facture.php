@@ -3723,7 +3723,7 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('ExcessReceived');
         print ' :</td>';
-        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':$cssforamountpaymentcomplete).'>' . price($resteapayeraffiche) . '</td>';
+        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"').'>' . price($resteapayeraffiche) . '</td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
     } 
     else // Credit note
