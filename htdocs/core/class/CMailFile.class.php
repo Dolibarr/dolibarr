@@ -488,28 +488,35 @@ class CMailFile
 
             // Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
             if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=10;
-            $tmparray = explode(',', $this->addr_to);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray1 = explode(',', $this->addr_to);
+            if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in to:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_cc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray2 = explode(',', $this->addr_cc);
+            if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in cc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_bcc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray3 = explode(',', $this->addr_bcc);
+            if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in bcc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-
+            if ((count($tmparray1)+count($tmparray2)+count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in to:, cc:, bcc:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+            
+                
 			// Action according to choosed sending method
 			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{
