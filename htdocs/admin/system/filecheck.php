@@ -148,11 +148,14 @@ if (GETPOST('target') == 'remote')
 
 if ($xml)
 {
+    $checksumconcat = array();
+
+    // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
-    	$file_list = array();
-        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0]);		// Fill array $file_list
-
+        $file_list = array();
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat);		// Fill array $file_list
+    
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("FilesMissing") . '</td>';
@@ -223,6 +226,29 @@ if ($xml)
         print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
         $error++;
     }
+
+
+    // Scan scripts
+    /*
+    if (is_object($xml->dolibarr_script_dir[0]))
+    {
+        $file_list = array();
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
+    }*/
+    
+    
+    asort($checksumconcat); // Sort list of checksum        
+    //var_dump($checksumconcat);
+    $checksumget = md5(join(',',$checksumconcat));
+    $checksumtoget = $xml->dolibarr_htdocs_dir_checksum;
+    if ($checksumtoget)
+    {
+        print '<br>';
+        print '<strong>'.$langs->trans("GlobalChecksum").'</strong><br>';
+        print $langs->trans("ExpectedChecksum").' = '.$checksumtoget.'<br>';
+        print $langs->trans("CurrentChecksum").' = '.$checksumget;
+    }
+    
 }
 
 
@@ -239,12 +265,14 @@ exit($error);
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param	array				$file_list	Array for response
- * @param   SimpleXMLElement	$dir    	SimpleXMLElement of files to test
- * @param   string   			$path   	Path of file
- * @return  array               			Array of filenames
+ * @param	array				$file_list	        Array for response
+ * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
+ * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
+ * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
+ * @param   array               $checksumconcat     Array of checksum
+ * @return  array               			        Array of filenames
  */
-function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '')
+function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
     $exclude = 'install';
 
@@ -252,20 +280,21 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '')
     {
         $filename = $path.$file['name'];
 
-        if (preg_match('#'.$exclude.'#', $filename)) continue;
+        //if (preg_match('#'.$exclude.'#', $filename)) continue;
 
-        if (!file_exists(DOL_DOCUMENT_ROOT.'/'.$filename))
+        if (!file_exists($pathref.'/'.$filename))
         {
             $file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
         }
         else
 		{
-            $md5_local = md5_file(DOL_DOCUMENT_ROOT.'/'.$filename);
+            $md5_local = md5_file($pathref.'/'.$filename);
             if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
-        }
+            $checksumconcat[] = $md5_local;
+		}
     }
 
-    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/');
+    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
 
     return $file_list;
 }
