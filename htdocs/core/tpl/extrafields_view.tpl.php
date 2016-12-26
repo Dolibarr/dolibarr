@@ -22,6 +22,9 @@
  *
  * $cols
  */
+?>
+<!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
+<?php
 
 //$res = $object->fetch_optionals($object->id, $extralabels);
 $parameters = array('colspan' => ' colspan="'.$cols.'"', 'cols' => $cols, 'socid' => $object->fk_soc);
@@ -47,7 +50,9 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			if (!empty($extrafields->attribute_hidden[$key])) print '<tr class="hideobject"><td>';
 			else print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td';
+			print '<table width="100%" class="nobordernopadding">';
+			print '<tr>';
+			print '<td';
 			//var_dump($action);exit;
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 			print '>' . $langs->trans($label) . '</td>';
@@ -100,3 +105,5 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		}
 	}
 }
+?>
+<!-- END PHP TEMPLATE admin_extrafields_view.tpl.php -->

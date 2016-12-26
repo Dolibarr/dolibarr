@@ -1071,6 +1071,12 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
 		$morehtmlstatus.=$tmptxt;
 	}
+	elseif ($object->element == 'loan')
+	{
+	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
+		$morehtmlstatus.=$tmptxt;
+	}
 	elseif ($object->element == 'contrat') 
 	{
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
@@ -1082,7 +1088,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlstatus.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
-	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
+	if ($object->element == 'product' && ! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+
 	if ($object->element != 'product') 
 	{
     	$morehtmlref.='<div class="refidno">';
@@ -1096,7 +1103,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.='</div>';
 	}
 	
-	print '<div class="'.($onlybanner?'':'arearef ').'heightref valignmiddle" width="100%">';
+	print '<div class="'.($onlybanner?'arearefnobottom ':'arearef ').'heightref valignmiddle" width="100%">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';

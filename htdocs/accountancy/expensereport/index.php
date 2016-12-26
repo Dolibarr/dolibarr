@@ -68,9 +68,9 @@ if ($action == 'validatehistory') {
 	$db->begin();
 
 	// First clean corrupted data
-	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sqlclean .= " SET fd.fk_code_ventilation = 0";
-	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+	$sqlclean .= " SET erd.fk_code_ventilation = 0";
+	$sqlclean .= ' WHERE erd.fk_code_ventilation NOT IN ';
 	$sqlclean .= '	(SELECT accnt.rowid ';
 	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
 	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
@@ -79,18 +79,18 @@ if ($action == 'validatehistory') {
 
 	// Now make the binding
 	if ($db->type == 'pgsql') {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facture_fourn_det.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
-		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
-		$sql1 .= " AND " . MAIN_DB_PREFIX . "facture_fourn_det.fk_code_ventilation = 0";
+		$sql1 .= " FROM " . MAIN_DB_PREFIX . "c_type_fees as t, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
+		$sql1 .= " AND " . MAIN_DB_PREFIX . "expensereport_det.fk_code_ventilation = 0";
 	} else {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE fd.fk_product = p.rowid AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
-		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
-		$sql1 .= " AND fd.fk_code_ventilation = 0";
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd, " . MAIN_DB_PREFIX . "c_type_fees as t, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
+		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
+		$sql1 .= " AND erd.fk_code_ventilation = 0";
 	}
 
 	$resql1 = $db->query($sql1);
@@ -106,9 +106,9 @@ if ($action == 'validatehistory') {
 	$error = 0;
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
-	$sql1 .= " SET fd.fk_code_ventilation = 0";
-	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+	$sql1 .= " SET erd.fk_code_ventilation = 0";
+	$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN ';
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
@@ -129,12 +129,12 @@ if ($action == 'validatehistory') {
 	$error = 0;
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
-	$sql1.= " SET fd.fk_code_ventilation = 0";
-	$sql1.= " WHERE fd.fk_facture_fourn IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-	$sql1.= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
-	$sql1.= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
-	$sql1.= " AND f.entity IN (" . getEntity("accountancy", 1) . ")";
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+	$sql1.= " SET erd.fk_code_ventilation = 0";
+	$sql1.= " WHERE erd.fk_expensereport IN ( SELECT er.rowid FROM " . MAIN_DB_PREFIX . "expensereport as er";
+	$sql1.= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
+	$sql1.= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
+	$sql1.= " AND er.entity IN (" . getEntity("accountancy", 1) . ")";
 	$sql1.=")";
 	
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
@@ -197,16 +197,17 @@ print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></
 $sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') ." AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
-    $sql .= "  SUM(" . $db->ifsql('MONTH(er.date_create)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+    $sql .= "  SUM(" . $db->ifsql('MONTH(er.date_debut)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
-$sql .= " WHERE er.date_create >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= " AND er.date_create <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+$sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND er.fk_statut > 0 ";
 $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
+$sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 
 dol_syslog('/accountancy/expensereport/index.php:: sql=' . $sql);
@@ -250,17 +251,17 @@ print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></
 $sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') ." AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
-    $sql .= "  SUM(" . $db->ifsql('MONTH(er.date_create)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+    $sql .= "  SUM(" . $db->ifsql('MONTH(er.date_debut)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
-$sql .= " WHERE er.date_create >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= " AND er.date_create <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+$sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND er.fk_statut > 0 ";
 $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
-$sql .= " AND aa.account_number IS NULL";
+$sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 
 dol_syslog('/accountancy/expensereport/index.php:: sql=' . $sql);
@@ -312,8 +313,8 @@ for($i = 1; $i <= 12; $i ++) {
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
-$sql .= " WHERE er.date_create >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= " AND er.date_create <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+$sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND er.fk_statut > 0 ";
 $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
 

@@ -282,6 +282,7 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
+		    //var_dump($module);
 			// For multicompany sharings
 			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
 			$this->$module->multidir_temp	= array($this->entity => $rootfordata."/".$module."/temp");

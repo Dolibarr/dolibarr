@@ -51,13 +51,13 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                     = GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$id                     = GETPOST('id','int');                          // resource id
+$element_id             = GETPOST('element_id','int');                  // element_id
+$element_ref            = GETPOST('ref','alpha');                       // element ref
+$element                = GETPOST('element','alpha');                   // element_type
 $action                 = GETPOST('action','alpha');
 $mode                   = GETPOST('mode','alpha');
 $lineid                 = GETPOST('lineid','int');
-$element                = GETPOST('element','alpha');                   // element_type
-$element_id             = GETPOST('element_id','int');
 $resource_id            = GETPOST('fk_resource','int');
 $resource_type          = GETPOST('resource_type','alpha');
 $busy                   = GETPOST('busy','int');
@@ -66,7 +66,7 @@ $cancel                 = GETPOST('cancel','alpha');
 $confirm                = GETPOST('confirm','alpha');
 $socid                  = GETPOST('socid','int');
 
-if ($socid > 0)
+if ($socid > 0) // Special for thirdparty
 {
     $element_id = $socid;
     $element = 'societe';
@@ -183,11 +183,11 @@ else
 
 
 	// Specific to agenda module
-	if ($element_id && $element == 'action')
+	if (($element_id || $element_ref) && $element == 'action')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$act = fetchObjectByElement($element_id,$element);
+		$act = fetchObjectByElement($element_id,$element, $element_ref);
 		if (is_object($act))
 		{
 
@@ -212,16 +212,10 @@ else
 
 			$linkback.=$out;
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', "&element=".$element);
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element='.$element, 0, '', '');
 
 			print '<div class="underbanner clearboth"></div>';
 
-			// Ref
-			/*print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-			print '</td></tr>';*/
-
-			// Affichage fiche action en mode visu
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -247,11 +241,6 @@ else
 			else print dol_print_date($act->datef,'day');
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 			print '</td></tr>';
-
-			// Status
-			/*print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
-			print $act->getLibStatut(4);
-			print '</td></tr>';*/
 
 			// Location
 			if (empty($conf->global->AGENDA_DISABLE_LOCATION))
@@ -301,9 +290,9 @@ else
 	}
 
     // Specific to thirdparty module
-	if ($element_id && $element == 'societe')
+	if (($element_id || $element_ref) && $element == 'societe')
 	{
-		$socstatic = fetchObjectByElement($element_id, $element);
+		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
 
 			$savobject = $object;
@@ -314,7 +303,7 @@ else
 
 			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
 
-			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
 			print '<div class="fichecenter">';
 
@@ -337,12 +326,12 @@ else
 	}
 
 	// Specific to fichinter module
-	if ($element_id && $element == 'fichinter')
+	if (($element_id || $element_ref) && $element == 'fichinter')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
         $fichinter = new Fichinter($db);
-        $fichinter->fetch($element_id);
+        $fichinter->fetch($element_id, $element_ref);
         $fichinter->fetch_thirdparty();
         
 		if (is_object($fichinter)) 
@@ -395,7 +384,7 @@ else
 			}
 			$morehtmlref.='</div>';
 			
-			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 			
 			dol_fiche_end();
 		}
@@ -403,7 +392,7 @@ else
 
 
 	// hook for other elements linked
-	$parameters=array('element'=>$element, 'element_id'=>$element_id );
+	$parameters=array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
 	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 

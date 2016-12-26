@@ -359,9 +359,10 @@ function conf($dolibarr_main_document_root)
  * @param 	string		$action    			Action code ('set' or 'upgrade')
  * @param 	string		$param				Param
  * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
+ * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
+function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
 {
     global $conf;
     global $langs;
@@ -406,10 +407,10 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<body>'."\n";
 
-    print '<div style="text-align:center">';
-    print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+    print '<div class="divlogoinstall" style="text-align:center">';
+    print '<img class="imglogoinstall" src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
     print DOL_VERSION;
-    print '</div><br><br>';
+    print '</div><br>';
 
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
     if ($subtitle) {
@@ -423,7 +424,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<table class="main" width="100%"><tr><td>'."\n";
 
-    print '<table class="main-inside" width="100%"><tr><td>'."\n";
+    print '<table class="'.$csstable.'" width="100%"><tr><td>'."\n";
 }
 
 /**

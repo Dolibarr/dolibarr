@@ -5633,18 +5633,18 @@ class Form
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
-     *    @param	object	$object			Object to show
-     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
-     *    @param	string	$morehtml  		More html content to output just before the nav bar
-     *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field)
+     *    @param	object	$object			Object to show.
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
+     *    @param	string	$morehtml  		More html content to output just before the nav bar.
+     *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field).
      *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
-     *    @param	string	$morehtmlref  	More html to show after ref
-     *    @param	string	$moreparam  	More param to add in nav link url.
-     *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     *	  @param	string	$morehtmlleft	More html code to show before ref
-     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
-     *	  @param	string	$morehtmlright	More html code to show after ref
+     *    @param	string	$morehtmlref  	More html to show after ref.
+     *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.
+     *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name.
+     *	  @param	string	$morehtmlleft	More html code to show before ref.
+     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place).
+     *	  @param	string	$morehtmlright	More html code to show after ref.
      * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
@@ -5657,7 +5657,7 @@ class Form
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-
+        
         //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
         //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
         $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
