@@ -188,10 +188,10 @@ if ($xml)
         print '<td align="right">' . $langs->trans("DateModification") . '</td>';
         print '</tr>'."\n";
         $var = true;
-        $tmpfilelist = dol_sort_array($file_list['updated'], 'filename');
-        if (is_array($tmpfilelist) && count($tmpfilelist))
+        $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
+        if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
-	        foreach ($tmpfilelist as $file)
+	        foreach ($tmpfilelist2 as $file)
 	        {
 	            $var = !$var;
 	            print '<tr ' . $bc[$var] . '>';
@@ -208,6 +208,15 @@ if ($xml)
             print '<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table>';
+        
+        if (empty($tmpfilelist) && empty($tmpfilelist2))
+        {
+            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+        }
+        else
+        {
+            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+        }
     }
     else
     {
