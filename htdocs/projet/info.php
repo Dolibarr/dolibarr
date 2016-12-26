@@ -48,7 +48,6 @@ $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
-$id = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
@@ -80,17 +79,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 $form = new Form($db);
 $object = new Project($db);
 
-$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
-$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$title,$help_url);
-
 if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
     $object->info($object->id);
 }
+
+$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("",$title,$help_url);
 
 $head = project_prepare_head($object);
 
@@ -162,6 +161,10 @@ print '</div>';
 
 if (!empty($object->id))
 {
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
     print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
     
     // List of actions on element

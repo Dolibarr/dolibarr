@@ -278,7 +278,7 @@ if ($action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby","int");
 	}
 
-	$object->note = trim($_POST["note"]);
+	$object->note = trim(GETPOST("note"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -289,11 +289,6 @@ if ($action == 'add')
 
 		$object->societe = $object->thirdparty;	// For backward compatibility
 	}
-
-	// Special for module webcal and phenix
-	// TODO external modules
-	if (! empty($conf->webcalendar->enabled) && GETPOST('add_webcal') == 'on') $object->use_webcal=1;
-	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $object->use_phenix=1;
 
 	// Check parameters
 	if (empty($object->userownerid) && empty($_SESSION['assignedtouser']))
