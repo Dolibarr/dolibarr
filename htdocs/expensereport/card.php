@@ -342,11 +342,11 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
     
     			// SUBJECT
-    			$subject = $langs->trans("ExpenseReportWaitingForApproval");
+    			$subject = $langs->transnoentities("ExpenseReportWaitingForApproval");
     
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    			$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
     
     			// Rebuild pdf
     			/*
@@ -436,81 +436,75 @@ if (empty($reshook))
     
     	if ($result > 0)
     	{
-    		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
-    		{
-    			// Send mail
+    		// Send mail
+
+   			// TO
+   			$destinataire = new User($db);
+   			$destinataire->fetch($object->fk_user_validator);
+   			$emailTo = $destinataire->email;
     
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_validator);
-    			$emailTo = $destinataire->email;
+   			if ($emailTo)
+   			{
+   				// FROM
+   				$expediteur = new User($db);
+   				$expediteur->fetch($object->fk_user_author);
+   				$emailFrom = $expediteur->email;
+
+    			// SUBJECT
+    			$subject = $langs->transnoentities("ExpenseReportWaitingForReApproval");
     
-    			if ($emailTo)
-    			{
-    				// FROM
-    				$expediteur = new User($db);
-    				$expediteur->fetch($object->fk_user_author);
-    				$emailFrom = $expediteur->email;
-    
-    				// SUBJECT
-    				$subject = "' ERP - Note de frais à re-approuver";
-    
-    				// CONTENT
-    				$dateRefusEx = explode(" ",$object->date_refuse);
-    
-    				$message = "Bonjour {$destinataire->firstname},\n\n";
-    				$message.= "Le {$dateRefusEx[0]} à {$dateRefusEx[1]} vous avez refusé d'approuver la note de frais \"{$object->ref}\". Vous aviez émis le motif suivant : {$object->detail_refuse}\n\n";
-    				$message.= "L'auteur vient de modifier la note de frais, veuillez trouver la nouvelle version en pièce jointe.\n";
-    				$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
-    				$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
-    				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    				$message.= "Bien cordialement,\n' SI";
-    
-    				// Génération du pdf avant attachement
-    				$object->setDocModel($user,"");
-    				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-    
-    				if($resultPDF)
-    				{
-    					// ATTACHMENT
-    					$filename=array(); $filedir=array(); $mimetype=array();
-    					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-    					array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
-    					array_push($mimetype,"application/pdf");
-    
-    					// PREPARE SEND
-    					$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-    
-    					if (! $mailfile->error)
-    					{
-    						// SEND
-    						$result=$mailfile->sendfile();
-    						if ($result)
-    						{
-    							Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    							exit;
-    						}
-    						else
-    						{
-    							$mesg=$mailfile->error;
-    							setEventMessages($mesg, null, 'errors');
-    						}
-    						// END - Send mail
-    					}
-    					else
-    					{
-    						dol_print_error($db,$resultPDF);
-    						exit;
-    					}
-    				}
-    			}
-    		}
-    	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    }
+    			// CONTENT
+    			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$dateRefusEx = explode(" ",$object->date_refuse);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $langs), $link);
+
+   				// Rebuild pdf
+				/*
+				$object->setDocModel($user,"");
+				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+   				if($resultPDF)
+   				{
+   					// ATTACHMENT
+   					$filename=array(); $filedir=array(); $mimetype=array();
+   					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+   					array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
+   					array_push($mimetype,"application/pdf");
+				}
+				*/
+
+				// PREPARE SEND
+				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+				if (! $mailfile->error)
+				{
+					// SEND
+					$result=$mailfile->sendfile();
+					if ($result)
+					{
+						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+						exit;
+					}
+					else
+					{
+						$mesg=$mailfile->error;
+						setEventMessages($mesg, null, 'errors');
+					}
+					// END - Send mail
+				}
+				else
+				{
+					dol_print_error($db,$resultPDF);
+					exit;
+				}
+   			}
+   		}
+   	}
+   	else
+   	{
+   		setEventMessages($object->error, $object->errors, 'errors');
+   	}
+}
     
     // Approve
     if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->approve)
