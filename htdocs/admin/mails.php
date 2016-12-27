@@ -619,6 +619,12 @@ else
 	print '</div>';
 
 
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+        $text = $langs->trans("WarningPHPMail");
+	    print info_admin($text);
+	}
+	    
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{

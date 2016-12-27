@@ -65,6 +65,8 @@ fputs($fp, '<checksum_list version="'.$release.'">'."\n");
 
 fputs($fp, '<dolibarr_htdocs_dir>'."\n");
 
+$checksumconcat=array();
+
 $dir_iterator1 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
 $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 // need to ignore document custom etc
@@ -81,12 +83,22 @@ foreach ($files as $file) {
         $needtoclose=1;
     }
     if (filetype($file)=="file") {
-        fputs($fp, '<md5file name="'.basename($file).'">'.md5_file($file).'</md5file>'."\n");
+        $md5=md5_file($file);
+        $checksumconcat[]=$md5;
+        fputs($fp, '<md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '</dir>'."\n");
 fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 
+asort($checksumconcat); // Sort list of checksum
+//var_dump($checksumconcat);
+fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
+fputs($fp, md5(join(',',$checksumconcat))."\n");
+fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n");
+
+
+$checksumconcat=array();
 
 fputs($fp, '<dolibarr_script_dir version="'.$release.'">'."\n");
 
@@ -106,12 +118,18 @@ foreach ($files as $file) {
         $needtoclose=1;
     }
     if (filetype($file)=="file") {
-        fputs($fp, '<md5file name="'.basename($file).'">'.md5_file($file).'</md5file>'."\n");
+        $md5=md5_file($file);
+        $checksumconcat[]=$md5;
+        fputs($fp, '<md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '</dir>'."\n");
 fputs($fp, '</dolibarr_script_dir>'."\n");
 
+asort($checksumconcat); // Sort list of checksum
+fputs($fp, '<dolibarr_script_dir_checksum>'."\n");
+fputs($fp, md5(join(',',$checksumconcat))."\n");
+fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
 
 fputs($fp, '</checksum_list>'."\n");
 fclose($fp);
