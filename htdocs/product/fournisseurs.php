@@ -587,7 +587,8 @@ if ($id > 0 || $ref)
 			if ($user->rights->fournisseur->lire)
 			{
 				// Suppliers list title
-				print '<table class="noborder" width="100%">';
+			    print '<div class="div-table-responsive">';
+			    print '<table class="noborder" width="100%">';
 				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
@@ -713,6 +714,7 @@ if ($id > 0 || $ref)
 				}
 
 				print '</table>';
+				print '</div>';
 			}
 		}
 	}

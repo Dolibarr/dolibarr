@@ -206,7 +206,7 @@ class modProjet extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 		
 		//Exports
 		//--------
@@ -215,101 +215,31 @@ class modProjet extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='ProjectsAndTasksLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("projet","export"));
-		$this->export_dependencies_array[$r]=array('task_time'=>'ptt.rowid');
+		$this->export_dependencies_array[$r]=array('projecttask'=>'pt.rowid', 'task_time'=>'ptt.rowid');
 
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
 		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
-		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','p.description'=>"Text",
-		'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Numeric",'pt.progress'=>"Numeric",'pt.description'=>"Text",
-		'ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)",'ptt.note'=>"Text");
+		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.title'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','cls.code'=>"Text",'p.opp_percent'=>'Numeric','p.description'=>"Text",
+		'pt.rowid'=>'Text','pt.label'=>'Text','pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Numeric",'pt.progress'=>"Numeric",'pt.description'=>"Text",
+		'ptt.rowid'=>'Numeric','ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)",'ptt.note'=>"Text");
 
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',
-		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
-		'p.rowid'=>"project",'p.ref'=>"project",'p.datec'=>"project",'p.dateo'=>"project",'p.datee'=>"project",'p.duree'=>"project",'p.fk_statut'=>"project",'p.description'=>"project");
+		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company');
 
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
-		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'Status','p.description'=>"Description");
+		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.title'=>'ProjectLabel', 'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'ProjectStatus','cls.code'=>'OpportunityStatus','p.opp_percent'=>'OpportunityProbability','p.description'=>"Description");
 
 		// Add fields for project
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array());
-		// Add extra fields
-        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet'";
-        $resql=$this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-        	while ($obj=$this->db->fetch_object($resql))
-        	{
-        		$fieldname='extra.'.$obj->name;
-        		$fieldlabel=ucfirst($obj->label);
-        		$typeFilter="Text";
-        		switch($obj->type)
-        		{
-        			case 'int':
-        			case 'double':
-        			case 'price':
-        				$typeFilter="Numeric";
-        				break;
-        			case 'date':
-        			case 'datetime':
-        				$typeFilter="Date";
-        				break;
-        			case 'boolean':
-        				$typeFilter="Boolean";
-        				break;
-        			case 'sellist':
-						$tmp='';
-						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
-						break;
-        		}
-        		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-        		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-        		$this->export_entities_array[$r][$fieldname]='project';
-        	}
-        }
-        // End add extra fields
-
+		$keyforselect='projet'; $keyforelement='project'; $keyforaliasextra='extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// Add fields for tasks
         $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('pt.rowid'=>'RefTask','pt.label'=>'LabelTask','pt.dateo'=>"TaskDateStart",'pt.datee'=>"TaskDateEnd",'pt.duration_effective'=>"DurationEffective",'pt.planned_workload'=>"PlannedWorkload",'pt.progress'=>"Progress",'pt.description'=>"TaskDescription"));
 		$this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('pt.rowid'=>'projecttask','pt.label'=>'projecttask','pt.dateo'=>"projecttask",'pt.datee'=>"projecttask",'pt.duration_effective'=>"projecttask",'pt.planned_workload'=>"projecttask",'pt.progress'=>"projecttask",'pt.description'=>"projecttask"));
         // Add extra fields
-        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet_task'";
-        $resql=$this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-        	while ($obj=$this->db->fetch_object($resql))
-        	{
-        		$fieldname='extra2.'.$obj->name;
-        		$fieldlabel=ucfirst($obj->label);
-        		$typeFilter="Text";
-        		switch($obj->type)
-        		{
-        			case 'int':
-        			case 'double':
-        			case 'price':
-        				$typeFilter="Numeric";
-        				break;
-        			case 'date':
-        			case 'datetime':
-        				$typeFilter="Date";
-        				break;
-        			case 'boolean':
-        				$typeFilter="Boolean";
-        				break;
-        			case 'sellist':
-						$tmp='';
-						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
-						break;
-        		}
-        		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-        		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-        		$this->export_entities_array[$r][$fieldname]='projecttask';
-        	}
-        }
+		$keyforselect='projet_task'; $keyforelement='projecttask'; $keyforaliasextra='extra2';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         // End add extra fields
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime','ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote"));
         $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time','ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
@@ -317,11 +247,46 @@ class modProjet extends DolibarrModules
         $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'projet as p';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls ON p.fk_opp_status = cls.rowid';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
+		
+		
+		// Import list of tasks
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+    		$r++;
+    		$this->import_code[$r]='tasksofprojects';
+    		$this->import_label[$r]='ImportDatasetTasks';
+    		$this->import_icon[$r]='task';
+    		$this->import_entities_array[$r]=array('t.fk_projet'=>'project');	// We define here only fields that use another icon that the one defined into import_icon
+    		$this->import_tables_array[$r]=array('t'=>MAIN_DB_PREFIX.'projet_task','extra'=>MAIN_DB_PREFIX.'projet_task_extrafields');	// List of tables to insert into (insert done in same order)
+    		$this->import_fields_array[$r]=array('t.fk_projet'=>'ProjectRef*','t.ref'=>'RefTask*','t.label'=>'LabelTask*','t.dateo'=>"DateStart",'t.datee'=>"DateEnd",'t.planned_workload'=>"PlannedWorkload",'t.progress'=>"Progress",'t.note_private'=>"NotePrivate",'t.note_public'=>"NotePublic",'t.datec'=>"DateCreation");
+    		// Add extra fields
+    		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet_task' AND entity = ".$conf->entity;
+    		$resql=$this->db->query($sql);
+    		if ($resql)    // This can fail when class is used on old database (during migration for example)
+    		{
+    		    while ($obj=$this->db->fetch_object($resql))
+    		    {
+    		        $fieldname='extra.'.$obj->name;
+    		        $fieldlabel=ucfirst($obj->label);
+    		        $this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
+    		    }
+    		}
+    		// End add extra fields
+    		$this->import_fieldshidden_array[$r]=array('t.fk_user_creat'=>'user->id','extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet_task');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+    		$this->import_convertvalue_array[$r]=array(
+    		    't.fk_projet'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project'),
+    		    't.ref'=>array('rule'=>'getrefifauto')
+    		);
+    		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+    		$this->import_regex_array[$r]=array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','t.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','t.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+    		$this->import_examplevalues_array[$r]=array('t.fk_projet'=>'MyProjectRef','t.ref'=>"auto or TK2010-1234",'t.label'=>"My task",'t.progress'=>"0 (not started) to 100 (finished)",'t.datec'=>'1972-10-10','t.note_private'=>"My private note",'t.note_public'=>"My public note");
+		}		
 	}
 
 

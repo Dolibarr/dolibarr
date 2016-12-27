@@ -104,10 +104,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	$solde = $object->solde(0);
 
-	/*
-	 * Affiche tableau des echeances a venir
-	 */
-	print '<table class="noborder centpercent">';
+	// Show next coming entries
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
@@ -121,7 +120,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	$var=true;
 
-	// Solde actuel
+	// Current balance
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
@@ -327,7 +326,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	print "</table>";
-
+    print "</div>";
 }
 else
 {

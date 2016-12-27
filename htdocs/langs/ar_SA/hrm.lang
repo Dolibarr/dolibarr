@@ -5,7 +5,7 @@ Establishments=وثائق
 Establishment=وثيقة
 NewEstablishment=وثيقة جديدة
 DeleteEstablishment=حذف وثيقة
-ConfirmDeleteEstablishment=هل أنت متأكد من حذف هذه الوثيقة
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=فتح وثيقة
 CloseEtablishment=إنشاء وثيقة
 # Dictionary

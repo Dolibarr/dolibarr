@@ -264,6 +264,8 @@ class FormMail extends Form
 		{
         	$out='';
 
+        	$disablebademails=1;
+
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
@@ -322,8 +324,8 @@ class FormMail extends Form
         	// Zone to select its email template
         	if (count($modelmail_array)>0)
         	{
-	        	$out.= '<div style="padding: 3px 0 3px 0">'."\n";
-	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
+        	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
@@ -336,7 +338,7 @@ class FormMail extends Form
         	        'invoice_supplier_send','thirdparty'
            	    )))
         	{
-        	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
@@ -392,7 +394,15 @@ class FormMail extends Form
                         }
                     } else {
                         $liste = array();
-                        $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
+                        if (empty($user->email))
+                        {
+                            $langs->load('errors');
+                            $liste['user'] = $user->getFullName($langs) . ' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
+                        }
+                        else
+                        {
+                            $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
+                        }
                         $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
                         // Add also email aliases if there is one
                         $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
@@ -413,7 +423,7 @@ class FormMail extends Form
                                 }
                             }
                         }
-                        $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0);
+                        $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
                     }
 
         			$out.= "</td></tr>\n";
@@ -510,7 +520,7 @@ class FormMail extends Form
         			if (! empty($this->withto) && is_array($this->withto))
         			{
         				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receiver", $this->withto, GETPOST("receiver"), 1);
+        				$out.= Form::selectarray("receiver", $this->withto, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
         			{
@@ -522,7 +532,7 @@ class FormMail extends Form
         					$liste[$key]=$value;
         				}
         				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receiver", $liste, GETPOST("receiver"), 1);
+        				$out.= Form::selectarray("receiver", $liste, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -544,7 +554,7 @@ class FormMail extends Form
         			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1);
+        				$out.= Form::selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         		}
         		$out.= "</td></tr>\n";

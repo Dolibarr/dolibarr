@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Reiseregning
 ExpenseReports=Reiseregninger
+ShowExpenseReport=Vis utgiftsrapport
 Trips=Reiseregninger
 TripsAndExpenses=Reiseregninger
 TripsAndExpensesStatistics=Reiseregninger - statistikk
@@ -8,6 +9,7 @@ TripCard=Skjema for reiseregninger
 AddTrip=Opprett reiseregning
 ListOfTrips=Liste over reiseregninger
 ListOfFees=Oversikt over avgifter
+TypeFees=Avgiftstyper
 ShowTrip=Vis utgiftsrapport
 NewTrip=Ny reiseregning
 CompanyVisited=Firma/organiasjon besøkt

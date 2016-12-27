@@ -494,12 +494,13 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
-	print '<table width="100%" class="nobordernopadding">';
+	print '<table width="100%" class="liste noborderbottom">'."\n";
 
-	print '<tr class="liste_titre">';
-    print '<td class="liste_titre" align="left" colspan="6">';
+	print '<!-- Title for manual directories -->'."\n";
+	print '<tr class="liste_titre">'."\n";
+    print '<th class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
-	print '</td></tr>';
+	print '</th></tr>';
 
     $showonrightsize='';
 
@@ -720,6 +721,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
+$url=DOL_URL_ROOT.'/ecm/index.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 

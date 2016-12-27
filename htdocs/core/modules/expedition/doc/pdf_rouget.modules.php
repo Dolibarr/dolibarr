@@ -580,8 +580,6 @@ class pdf_rouget extends ModelePdfExpedition
 			$this->error=$langs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->transnoentities("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**

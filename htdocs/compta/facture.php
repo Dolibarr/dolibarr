@@ -281,7 +281,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->facture->creer) {
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	}
 
 	else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
@@ -898,7 +898,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard or deposit or proforma invoice
+		// Standard or deposit or proforma invoice, not from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && GETPOST('fac_rec') <= 0)
 		{
 			if (GETPOST('socid', 'int') < 1)
@@ -1314,6 +1314,7 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -1348,7 +1349,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -1433,7 +1434,7 @@ if (empty($reshook))
 								$pu_ht = price($prodcustprice->lines[0]->price);
 								$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 								$price_base_type = $prodcustprice->lines[0]->price_base_type;
-								$prod->tva_tx = $prodcustprice->lines[0]->tva_tx;
+								$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							}
 						}
 					}
@@ -1505,6 +1506,7 @@ if (empty($reshook))
 				$desc = $product_desc;
 				$type = GETPOST('type');
 				$fk_unit= GETPOST('units', 'alpha');
+				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 			}
 
 			// Margin
@@ -1524,7 +1526,7 @@ if (empty($reshook))
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $_POST['progress'], '', $fk_unit);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $_POST['progress'], '', $fk_unit, $pu_ht_devise);
 
 				if ($result > 0)
 				{
@@ -1604,6 +1606,7 @@ if (empty($reshook))
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1685,10 +1688,23 @@ if (empty($reshook))
 
 		// Update line
 		if (! $error) {
+			if (empty($user->rights->margins->creer))
+			{
+				foreach ($object->lines as &$line)
+				{
+					if ($line->id == GETPOST('lineid'))
+					{
+						$fournprice = $line->fk_fournprice;
+						$buyingprice = $line->pa_ht;
+						break;
+					}
+				}
+			}
+			
 			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
 				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
-				$_POST['units']);
+				$_POST['units'],$pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2075,6 +2091,8 @@ if ($action == 'create')
 	}
 	print '</tr>' . "\n";
 
+	$exampletemplateinvoice=new FactureRec($db);
+	
 	// Overwrite value if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec','int') > 0)
 	{
@@ -2109,7 +2127,10 @@ if ($action == 'create')
 					$objp = $db->fetch_object($resql);
 					print '<option value="' . $objp->rowid . '"';
 					if (GETPOST('fac_rec') == $objp->rowid)
-						print ' selected';
+					{
+					    print ' selected';
+                        $exampletemplateinvoice->fetch(GETPOST('fac_rec'));
+					}
 					print '>' . $objp->titre . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
 				}
@@ -2387,9 +2408,10 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('DateInvoice') . '</td><td colspan="2">';
-	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';
 
@@ -2474,9 +2496,39 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	// Help of substitution key
+	$htmltext='';
+	if (GETPOST('fac_rec','int') > 0)
+	{
+    	$dateexample=($datefacture ? $datefacture : $dateinvoice);
+    	if (empty($dateexample)) $dateexample=dol_now();
+    	$substitutionarray=array(
+    	    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
+    	    '__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ttc).')',
+    	    '__INVOICE_PREVIOUS_MONTH__' => $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%m').')',
+    	    '__INVOICE_MONTH__' =>  $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%m').')',
+    	    '__INVOICE_NEXT_MONTH__' => $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'),'%m').')',
+    	    '__INVOICE_PREVIOUS_MONTH_TEXT__' => $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%B').')',
+    	    '__INVOICE_MONTH_TEXT__' =>  $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%B').')',
+    	    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')',
+    	    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'),'%Y').')',
+    	    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
+    	    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
+    	);
+    	
+    	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+    	foreach($substitutionarray as $key => $val)
+    	{
+    	    $htmltext.=$key.' = '.$langs->trans($val).'<br>';
+    	}
+    	$htmltext.='</i>';	
+	}
+	
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td class="border tdtop">';
+	print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
+	print '</td>';
 	print '<td valign="top" colspan="2">';
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -2485,7 +2537,9 @@ if ($action == 'create')
 	if (empty($user->societe_id))
 	{
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td class="border tdtop">';
+		print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
+		print '</td>';
 		print '<td valign="top" colspan="2">';
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -2936,7 +2990,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -3196,10 +3250,18 @@ else if ($id > 0 || ! empty($ref))
     			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
     		print '</tr></table>';
     		print '</td><td>';
-    		if ($action == 'editmulticurrencyrate') {
+    		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+    			if($action == 'actualizemulticurrencyrate') {
+    				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+    			}
     			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
     		} else {
     			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+				if($object->statut == 0) {
+					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+					print '</div>';
+				}
     		}
     		print '</td></tr>';
 		//}
@@ -3381,7 +3443,8 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</table>';
 
-	// List of payments
+	
+	// List of previous situation invoices
 
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
@@ -3492,9 +3555,11 @@ else if ($id > 0 || ! empty($ref))
             print '</table>';
     }
 
+    
+    // List of payments already done
+    
     print '<table class="noborder paymenttable" width="100%">';
 
-    // List of payments already done
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
     print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';
@@ -3726,6 +3791,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show global modifiers
@@ -3797,7 +3863,8 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print "</table>\n";
-
+    print "</div>";
+    
 	print "</form>\n";
 
 	dol_fiche_end();

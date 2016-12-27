@@ -189,6 +189,10 @@ if ($action == 'add') {
 			}
 		}
 
+		if ($array_query['type_of_target'] == 2 || $array_query['type_of_target'] == 4) {
+			$user_contact_query = true;
+		}
+
 		if (preg_match("/^type_of_target/", $key)) {
 			$array_query[$key] = GETPOST($key);
 		}
@@ -203,8 +207,8 @@ if ($action == 'add') {
 		$advTarget->thirdparty_lines = array ();
 	}*/
 
-	if ($user_contact_query && ($array_query['type_of_target'] == 1 || $array_query['type_of_target'] == 2)) {
-		$result = $advTarget->query_contact($array_query);
+	if ($user_contact_query && ($array_query['type_of_target'] == 1 || $array_query['type_of_target'] == 2 || $array_query['type_of_target'] == 4)) {
+		$result = $advTarget->query_contact($array_query, 1);
 		if ($result < 0) {
 			setEventMessage($advTarget->error, 'errors');
 		}
@@ -889,6 +893,11 @@ if ($object->fetch($id) >= 0) {
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label('socpeople');
+            foreach($extrafields->attribute_type as $key=>&$value) {
+                if($value == 'radio')$value = 'select';
+            }
+
+
 			foreach ( $extralabels as $key => $val ) {
 
 				print '<tr><td>' . $extrafields->attribute_label[$key];
@@ -900,8 +909,8 @@ if ($object->fetch($id) >= 0) {
 					print '<input type="text" name="options_' . $key . '_cnct"/></td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
-					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options' . $key . '_min_cnct"/>';
-					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options' . $key . '_max_cnct"/>';
+					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options_' . $key . '_min_cnct"/>';
+					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options_' . $key . '_max_cnct"/>';
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
@@ -966,12 +975,6 @@ if ($object->fetch($id) >= 0) {
 		print '</table>';
 		print '</form>';
 		print '<br>';
-	}
-
-
-	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3))
-	{
-	    // List of recipients (TODO Move code of page cibles.php into a .tpl.php file and make an include here to avoid duplicate content)
 	}
 }
 

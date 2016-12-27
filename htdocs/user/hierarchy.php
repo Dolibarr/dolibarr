@@ -146,10 +146,10 @@ print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearc
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 // Status
-print '<td align="right">';
+print '<td class="liste_titre" align="right">';
 print Form::selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right">';

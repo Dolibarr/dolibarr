@@ -49,8 +49,8 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
 	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
-    const TYPE_PROJECT = 6;
+    	const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
+    	const TYPE_PROJECT = 6;
 
 	/**
 	 * @var array ID mapping from type string
@@ -131,17 +131,17 @@ class Categorie extends CommonObject
 	public $element='category';
 	public $table_element='categories';
 
-	var $fk_parent;
-	var $label;
-	var $description;
+	public $fk_parent;
+	public $label;
+	public $description;
 	/**
 	 * @var string     Color
 	 */
-	var $color;
+	public $color;
 	/**
 	 * @var ???
 	 */
-	var $socid;
+	public $socid;
 	/**
 	 * @var int Category type
 	 *
@@ -154,10 +154,10 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PROJECT
 	 */
-	var $type;
+	public $type;
 
-	var $cats=array();			// Categories table in memory
-	var $motherof=array();
+	public $cats = array();			// Categories table in memory
+	public $motherof = array();
 
 	/**
 	 *	Constructor

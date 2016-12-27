@@ -250,7 +250,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records with no order and no limits
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
@@ -375,6 +375,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
+print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 print '<tr class="liste_titre">';
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -394,8 +395,8 @@ if (! empty($arrayfields['d.town']['checked']))           print_liste_field_titr
 if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['d.phone']['checked']))          print_liste_field_titre($arrayfields['d.phone']['label'],$_SERVER["PHP_SELF"],'d.phone','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['d.phone_perso']['checked']))          print_liste_field_titre($arrayfields['d.phone_perso']['label'],$_SERVER["PHP_SELF"],'d.phone_perso','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['d.phone_mobile']['checked']))          print_liste_field_titre($arrayfields['d.phone_mobile']['label'],$_SERVER["PHP_SELF"],'d.phone_mobile','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['d.phone_perso']['checked']))    print_liste_field_titre($arrayfields['d.phone_perso']['label'],$_SERVER["PHP_SELF"],'d.phone_perso','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['d.phone_mobile']['checked']))   print_liste_field_titre($arrayfields['d.phone_mobile']['label'],$_SERVER["PHP_SELF"],'d.phone_mobile','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.email']['checked']))          print_liste_field_titre($arrayfields['d.email']['label'],$_SERVER["PHP_SELF"],'d.email','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.datefin']['checked']))        print_liste_field_titre($arrayfields['d.datefin']['label'],$_SERVER["PHP_SELF"],'d.datefin','',$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
@@ -433,32 +434,32 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 if (! empty($arrayfields['d.ref']['checked']))
 {
     print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
 }
 
 if (! empty($arrayfields['d.firstname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_firstname" value="'.$search_firstname.'" size="6"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="6"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
 
 if (! empty($arrayfields['d.company']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_company" value="'.$search_company.'" size="6"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
 
 if (! empty($arrayfields['d.login']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="6"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
 
 if (! empty($arrayfields['d.morphy']['checked']))
@@ -478,24 +479,24 @@ if (! empty($arrayfields['t.libelle']['checked']))
 if (! empty($arrayfields['d.address']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_address" value="'.$search_address.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_address" value="'.$search_address.'"></td>';
 }
 
 if (! empty($arrayfields['d.zip']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_zip" value="'.$search_zip.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 }
 if (! empty($arrayfields['d.town']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_town" value="'.$search_town.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
 }
 // State
 if (! empty($arrayfields['state.nom']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+    print '<input class="flat searchstring maxwidth50" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
     print '</td>';
 }
 // Country
@@ -509,25 +510,25 @@ if (! empty($arrayfields['country.code_iso']['checked']))
 if (! empty($arrayfields['d.phone']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_phone" value="'.$search_phone.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_phone" value="'.$search_phone.'"></td>';
 }
 // Phone perso
 if (! empty($arrayfields['d.phone_perso']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_phone_perso" value="'.$search_phone_perso.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.$search_phone_perso.'"></td>';
 }
 // Phone mobile
 if (! empty($arrayfields['d.phone_mobile']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_phone_mobile" value="'.$search_phone_mobile.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_phone_mobile" value="'.$search_phone_mobile.'"></td>';
 }
 // Email
 if (! empty($arrayfields['d.email']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="5"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_email" value="'.$search_email.'"></td>';
 }
 
 if (! empty($arrayfields['d.datefin']['checked']))
@@ -596,7 +597,7 @@ print "</tr>\n";
 
 $var=True;
 $i = 0;
-while ($i < $num && $i < $conf->liste_limit)
+while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 
@@ -842,6 +843,7 @@ $reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // N
 print $hookmanager->resPrint;
 
 print "</table>\n";
+print "</div>";
 print '</form>';
 
 if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);

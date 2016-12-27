@@ -90,17 +90,19 @@ class Proposals extends DolibarrApi
      * @param int		$limit		        Limit for list
      * @param int		$page		        Page number
      * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposal of. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
      * @return  array                       Array of order objects
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
-        // case of external user, $thirdpartyid param is ignored and replaced by user's socid
+
+        // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
             
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
@@ -150,13 +152,13 @@ class Proposals extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $propal_static = new Propal($db);
                 if($propal_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($propal_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($propal_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve propal list');
+            throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No order found');
@@ -188,9 +190,8 @@ class Proposals extends DolibarrApi
           }
           $this->propal->lines = $lines;
         }*/
-        if ($this->propal->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->propal->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
         }
         
         return $this->propal->id;
@@ -396,6 +397,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->propal->$field = $value;
         }
         

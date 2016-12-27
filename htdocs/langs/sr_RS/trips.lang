@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Trošak
 ExpenseReports=Troškovi
+ShowExpenseReport=Prikaži trošak
 Trips=Troškovi
 TripsAndExpenses=Troškovi
 TripsAndExpensesStatistics=Statistike troškova
@@ -8,12 +9,13 @@ TripCard=Kartica troška
 AddTrip=Kreiraj trošak
 ListOfTrips=Lista troškova
 ListOfFees=Lista honorara
+TypeFees=Types of fees
 ShowTrip=Prikaži trošak
 NewTrip=Novi trošak
 CompanyVisited=Kompanija/fundacija koja je posećena
 FeesKilometersOrAmout=Broj kilometara
 DeleteTrip=Obriši trošak
-ConfirmDeleteTrip=Da li ste sigurni da želite da obrišete trošak
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Lista troškova
 ListToApprove=Čeka na odobrenje
 ExpensesArea=Oblast troškova
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Potvrđeno (čeka odobrenje)
 
 NOT_AUTHOR=Vi niste autor ovog troška. Operacija je otkazana.
 
-ConfirmRefuseTrip=Da li ste sigurni da želite da odbijete ovaj trošak ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Odobri trošak
-ConfirmValideTrip=Da li ste sigurni da želite da odobrite ovaj trošak ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Isplati trošak
-ConfirmPaidTrip=Da li ste sigurni da želite da izmenite status ovog troška u "Isplaćen" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Da li ste sigurni da želite da otkažete ovaj trošak ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Vrati trošak u status "Draft"
-ConfirmBrouillonnerTrip=Da li ste sigurni da želite da vratite ovaj trošak u status "Draft" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Odobri trošak
-ConfirmSaveTrip=Da li ste sigurni da želite da odobrite ovaj trošak ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Nema troškova za ovaj period.
 ExpenseReportPayment=Isplata troška

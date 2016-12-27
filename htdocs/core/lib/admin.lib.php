@@ -977,7 +977,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
                                 $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
-                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = count($tabname)+1; $tabname[] = $val; }
+                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = max($taborder)+1; $tabname[] = $val; }
                                 foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
                                 foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
                                 foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
@@ -1236,7 +1236,7 @@ function form_constantes($tableau,$strictw3c=0)
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_NOTIF_MAIL','ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-                    $doleditor=new DolEditor('constvalue_'.$const.(empty($strictw3c)?'':'[]'),$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor=new DolEditor('constvalue_'.$const.(empty($strictw3c)?'':'[]'),$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,ROWS_5,'90%');
                     $doleditor->Create();
                     print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="texte">';
                 }

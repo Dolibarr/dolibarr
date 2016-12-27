@@ -186,7 +186,11 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print '<table class="noborder" width="100%">'."\n";
+$moreforfilter = '';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['ty.label']['checked']))        print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"t.code","",$param,"",$sortfield,$sortorder);
@@ -250,62 +254,62 @@ print "</tr>\n";
 
 if ($ret)
 {
-        foreach ($object->lines as $resource)
-        {
-                $var=!$var;
+    foreach ($object->lines as $resource)
+    {
+            $var=!$var;
 
-                $style='';
-                if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
+            $style='';
+            if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
 
-                print '<tr '.$bc[$var].' '.$style.'>';
+            print '<tr '.$bc[$var].' '.$style.'>';
 
-                if (! empty($arrayfields['t.ref']['checked']))
-                {
-                	print '<td>';
-                	print $resource->getNomUrl(5);
-                	print '</td>';
-                }
+            if (! empty($arrayfields['t.ref']['checked']))
+            {
+            	print '<td>';
+            	print $resource->getNomUrl(5);
+            	print '</td>';
+            }
 
-                if (! empty($arrayfields['ty.label']['checked']))
-                {
-                	print '<td>';
-                	print $resource->type_label;
-                	print '</td>';
-                }
-                // Extra fields
-                if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-                {
-                	foreach($extrafields->attribute_label as $key => $val)
-                	{
-                		if (! empty($arrayfields["ef.".$key]['checked']))
-                		{
-                			print '<td';
-                			$align=$extrafields->getAlignFlag($key);
-                			if ($align) print ' align="'.$align.'"';
-                			print '>';
-                			$tmpkey='options_'.$key;
-                			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
-                			print '</td>';
-                		}
-                	}
-                	if (! $i) $totalarray['nbfield']++;
-                }
+            if (! empty($arrayfields['ty.label']['checked']))
+            {
+            	print '<td>';
+            	print $resource->type_label;
+            	print '</td>';
+            }
+            // Extra fields
+            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            {
+            	foreach($extrafields->attribute_label as $key => $val)
+            	{
+            		if (! empty($arrayfields["ef.".$key]['checked']))
+            		{
+            			print '<td';
+            			$align=$extrafields->getAlignFlag($key);
+            			if ($align) print ' align="'.$align.'"';
+            			print '>';
+            			$tmpkey='options_'.$key;
+            			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
+            			print '</td>';
+            		}
+            	}
+            	if (! $i) $totalarray['nbfield']++;
+            }
 
-                print '<td align="center">';
-                print '<a href="./card.php?action=edit&id='.$resource->id.'">';
-                print img_edit();
-                print '</a>';
-                print '&nbsp;';
-                print '<a href="./card.php?action=delete&id='.$resource->id.'">';
-                print img_delete();
-                print '</a>';
-                print '</td>';
+            print '<td align="center">';
+            print '<a href="./card.php?action=edit&id='.$resource->id.'">';
+            print img_edit();
+            print '</a>';
+            print '&nbsp;';
+            print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+            print img_delete();
+            print '</a>';
+            print '</td>';
 
-                print '</tr>';
-        }
+            print '</tr>';
+    }
 
-        print '</table>';
-        print "</form>\n";
+    print '</table>';
+    print "</form>\n";
 }
 else
 {

@@ -193,7 +193,7 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
 
-	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 		
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -204,7 +204,7 @@ if ($action == 'create')
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -289,30 +289,29 @@ else
 			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 			}
-			
+
 			// Print form confirm
 			print $formconfirm;
-				
+
 			// Warehouse card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
-			
+
 			$morehtmlref='<div class="refidno">';
 			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
         	$morehtmlref.='</div>';
-        	
+
         	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
-        	 
-        	
+
         	print '<div class="fichecenter">';
         	print '<div class="fichehalfleft">';
         	print '<div class="underbanner clearboth"></div>';
-        	
+
         	print '<table class="border" width="100%">';
 
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-				
+
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
@@ -324,31 +323,32 @@ else
 
 			$calcproductsunique=$object->nb_different_products();
 			$calcproducts=$object->nb_products();
-				
+
 			// Total nb of different products
 			print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
 			print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
 			print "</td></tr>";
-				
+
 			// Nb of products
 			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
-			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+            $valtoshow=price2num($calcproducts['nb'], 'MS');
+            print empty($valtoshow)?'0':$valtoshow;
 			print "</td></tr>";
-				
+
 			print '</table>';
-			
+
 			print '</div>';
 			print '<div class="fichehalfright">';
 			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
-			
+
 			print '<table class="border centpercent">';
-				
+
 			// Value
 			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
 			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
-			
+
 			// Last movement
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -374,15 +374,15 @@ else
 			    print $langs->trans("None");
 			}
 			print "</td></tr>";
-			
+
 			print "</table>";
 
 			print '</div>';
 			print '</div>';
 			print '</div>';
-			
+
 			print '<div class="clearboth"></div>';
-			
+
 			dol_fiche_end();
 
 
@@ -485,13 +485,19 @@ else
 					$productstatic->entity=$objp->entity;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
+
+					// Label
 					print '<td>'.$objp->produit.'</td>';
 
-					print '<td align="right">'.$objp->value.'</td>';
+					print '<td align="right">';
+					$valtoshow=price2num($objp->value, 'MS');
+					print empty($valtoshow)?'0':$valtoshow;
+					print '</td>';
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
 					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
+
                     // Total PMP
 					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
 					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
@@ -530,7 +536,10 @@ else
 				$db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total" align="right">'.$totalunit.'</td>';
+				print '<td class="liste_total" align="right">';
+				$valtoshow=price2num($totalunit, 'MS');
+				print empty($valtoshow)?'0':$valtoshow;
+				print '</td>';
 				print '<td class="liste_total">&nbsp;</td>';
                 print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -570,41 +579,42 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
-		
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+
 			// Parent entrepot
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1);
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+			print '<tr><td>'.$langs->trans('Address').'</td><td><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
 			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
-			print '</td><td>'.$langs->trans('Town').'</td><td>';
+			print '</td></tr>';
+			print '<tr><td>'.$langs->trans('Town').'</td><td>';
 			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Country').'</td><td>';
 			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select name="statut" class="flat">';
 			foreach ($object->statuts as $key => $value)
 			{

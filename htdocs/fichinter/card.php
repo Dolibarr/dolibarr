@@ -1017,7 +1017,7 @@ if ($action == 'create')
         print '<tr>';
         print '<td tdtop">'.$langs->trans('NotePublic').'</td>';
         print '<td colspan="2">';
-        $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
         print '</td></tr>';
@@ -1028,7 +1028,7 @@ if ($action == 'create')
         	print '<tr>';
         	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
         	print '<td colspan="2">';
-        	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         	print $doleditor->Create(1);
         	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
         	print '</td></tr>';
@@ -1194,16 +1194,16 @@ else if ($id > 0 || ! empty($ref))
 	
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
-	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', 0, 1);
+	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->commande->creer)
+	    if ($user->rights->ficheinter->creer)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -1241,16 +1241,6 @@ else if ($id > 0 || ! empty($ref))
     
     print '<table class="border" width="100%">';
     
-	// Ref
-	/*
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td></tr>';
-
-	// Third party
-	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1)."</td></tr>";
-    */
-    
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1282,37 +1272,6 @@ else if ($id > 0 || ! empty($ref))
 	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
 	print '</td>';
 	print '</tr>';
-
-	// Project
-	/*
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load('projects');
-		print '<tr>';
-		print '<td>';
-
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project');
-		print '</td>';
-		if ($action != 'classify')
-		{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
-			print img_edit($langs->trans('SetProject'),1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'classify')
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid', 0, 0, 1);
-		}
-		else
-		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none', 0, 0);
-		}
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Contrat
 	if ($conf->contrat->enabled)
@@ -1354,9 +1313,6 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 	}
-
-	// Statut
-	//print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
     $cols = 2;
@@ -1439,10 +1395,12 @@ else if ($id > 0 || ! empty($ref))
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td align="center">'.$langs->trans('Date').'</td>';
-				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
-				print '<td width="48" colspan="3">&nbsp;</td>';
+				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
+				print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
+				print '<td class="liste_titre" align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
 			$var=true;
@@ -1527,7 +1485,7 @@ else if ($id > 0 || ! empty($ref))
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+					$doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,'90%');
 					$doleditor->Create();
 					print '</td>';
 
@@ -1589,7 +1547,7 @@ else if ($id > 0 || ! empty($ref))
                 // editeur wysiwyg
                 if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
                     require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-                    $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, 70);
+                    $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
                     $doleditor->Create();
                 }
                 print '</td>';

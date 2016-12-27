@@ -89,7 +89,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("VATPayments"));
 
 $form = new Form($db);
 $formother=new FormOther($db);
@@ -97,7 +97,7 @@ $tva_static = new Tva($db);
 $accountstatic = new Account($db);
 
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
-$sql.= " ba.rowid as bid, ba.label as blabel";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
@@ -185,7 +185,7 @@ if ($result)
 	// Account
 	if (! empty($conf->banque->enabled))
     {
-	    print '<td>';
+	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account,'search_account',0,'',1);
 	    print '</td>';
     }
@@ -228,6 +228,10 @@ if ($result)
 	        {
 	        	//$accountstatic->fetch($obj->fk_bank);
 	            $accountstatic->id=$obj->bid;
+	            $accountstatic->ref=$obj->bref;
+	            $accountstatic->number=$obj->bnumber;
+	            $accountstatic->accountancy_number=$obj->account_number;
+	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
 	            $accountstatic->label=$obj->blabel;
 	            print $accountstatic->getNomUrl(1);
 	        }

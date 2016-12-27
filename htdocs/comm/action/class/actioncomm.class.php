@@ -870,7 +870,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= " WHERE a.entity IN (".getEntity('actioncomm', 1).")";
+        $sql.= " WHERE a.entity IN (".getEntity('agenda', 1).")";
         if (! empty($socid)) $sql.= " AND a.fk_soc = ".$socid;
         if (! empty($elementtype))
         {
@@ -921,7 +921,7 @@ class ActionComm extends CommonObject
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
         $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
-        $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
@@ -1113,15 +1113,26 @@ class ActionComm extends CommonObject
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 		
+		$label = $this->label;
+		if (empty($label)) $label=$this->libelle;   // For backward compatibility
+
 		$result='';
+		
+		// Set label of typ
+		$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
+		}
+		
 		
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-		$label = $this->label;
-		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 		if (! empty($label))
 			$tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $label;
+		if (! empty($labeltype))
+			$tooltip .= '<br><b>' . $langs->trans('Type') . ':</b> ' . $labeltype;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
 
@@ -1129,11 +1140,11 @@ class ActionComm extends CommonObject
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color) 
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
-		if (empty($notooltip) && $user->rights->propal->lire)
+		if (empty($notooltip))
 		{
 		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label=$langs->trans("ShowSupplierProposal");
+		        $label=$langs->trans("ShowAction");
 		        $linkclose.=' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 		    }
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
@@ -1166,13 +1177,13 @@ class ActionComm extends CommonObject
         if ($withpicto == 2)
         {
             $libelle=$label;
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$labeltype;
             $libelleshort='';
         }
         else
         {
             $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=$labeltype;
             if ($maxlength < 0) $libelleshort=$this->ref;
             else $libelleshort=dol_trunc($libelle,$maxlength);
         }
@@ -1270,7 +1281,7 @@ class ActionComm extends CommonObject
 			// We must filter on assignement table
 			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			$sql.= " WHERE a.fk_action=c.id";
-            $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
+            $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
             foreach ($filters as $key => $value)
             {
                 if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";

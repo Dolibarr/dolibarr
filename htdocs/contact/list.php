@@ -365,7 +365,7 @@ else
 }
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -483,7 +483,8 @@ if ($moreforfilter)
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 // Ligne des titres
 print '<tr class="liste_titre">';
@@ -795,6 +796,7 @@ while ($i < min($num,$limit))
 }
 
 print "</table>";
+print "</div>";
 
 if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit, 1);
 

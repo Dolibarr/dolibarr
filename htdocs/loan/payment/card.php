@@ -32,7 +32,7 @@ $langs->load('companies');
 $langs->load('loan');
 
 // Security check
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action");
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -120,7 +120,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
@@ -148,30 +148,27 @@ if ($action == 'valide')
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
+print '<td>';
 print $form->showrefnav($payment,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($payment->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
-
-// Number
-print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('LoanCapital').'</td><td colspan="3">'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td valign="top">'.$langs->trans('Insurance').'</td><td colspan="3">'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td valign="top">'.$langs->trans('Interest').'</td><td colspan="3">'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('LoanCapital').'</td><td>'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Insurance').'</td><td>'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note Private
-print '<tr><td valign="top">'.$langs->trans('NotePrivate').'</td><td colspan="3">'.nl2br($payment->note_private).'</td></tr>';
+print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_private).'</td></tr>';
 
 // Note Public
-print '<tr><td valign="top">'.$langs->trans('NotePublic').'</td><td colspan="3">'.nl2br($payment->note_public).'</td></tr>';
+print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_public).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
@@ -183,7 +180,7 @@ if (! empty($conf->banque->enabled))
 
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1,0,'showall');
     	print '</td>';
     	print '</tr>';
@@ -288,7 +285,7 @@ if (empty($action) && ! empty($user->rights->loan->delete))
 {
 	if (! $disable_delete)
 	{
-		print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

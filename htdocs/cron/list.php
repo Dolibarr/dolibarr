@@ -225,7 +225,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -313,20 +313,20 @@ print_liste_field_titre('');
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
 print '</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print Form::selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
 print '</td><td class="liste_titre" align="right">';

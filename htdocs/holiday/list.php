@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -289,8 +289,10 @@ if ($sall)
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
 
-print '<table class="noborder" width="100%;">';
-print "<tr class=\"liste_titre\">";
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
@@ -362,7 +364,7 @@ print Form::selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type
 print '</td>';
 
 // DUREE
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 
 // DATE DEBUT
 print '<td class="liste_titre" align="center">';
@@ -453,6 +455,7 @@ if($holiday_payes == '2')
 }
 
 print '</table>';
+print '</div>';
 print '</form>';
 
 /*if ($user_id == $user->id)

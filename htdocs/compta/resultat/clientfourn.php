@@ -52,6 +52,17 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='s.nom, s.rowid';
+if (! $sortorder) $sortorder='ASC';
+
 // Date range
 $year=GETPOST("year");
 if (empty($year))
@@ -155,12 +166,23 @@ if (! empty($conf->accounting->enabled))
 }
 
 // Show report array
+$param='&modecompta='.$modecompta;
+if ($date_startday) $param.='&date_startday='.$date_startday;
+if ($date_startmonth) $param.='&date_startmonth='.$date_startmonth;
+if ($date_startyear) $param.='&date_startyear='.$date_startyear;
+if ($date_endday) $param.='&date_endday='.$date_endday;
+if ($date_endmonth) $param.='&date_endmonth='.$date_endmonth;
+if ($date_endyear) $param.='&date_endyear='.$date_startyear;
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="10%">&nbsp;</td><td>&nbsp;</td>';
+print_liste_field_titre('');
+print_liste_field_titre($langs->trans("Name"), $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
 if ($modecompta == 'CREANCES-DETTES')
-	print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
+{
+	print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
+}
+print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 /*
@@ -202,7 +224,7 @@ else
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
-$sql.= " ORDER BY s.nom, s.rowid";
+$sql.= $db->order($sortfield, $sortorder);
 
 dol_syslog("get customer invoices", LOG_DEBUG);
 $result = $db->query($sql);
@@ -328,7 +350,7 @@ else
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY s.nom, s.rowid";
-$sql .= " ORDER BY s.nom, s.rowid";
+$sql.= $db->order($sortfield, $sortorder);
 
 print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 
@@ -413,7 +435,11 @@ else
 }
 $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, c.id";
-$sql.= " ORDER BY c.libelle, c.id";
+$newsortfield = $sortfield;
+if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'c.libelle, c.id';
+if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+$sql.= $db->order($newsortfield, $sortorder);
 
 dol_syslog("get social contributions deductible=0", LOG_DEBUG);
 $result=$db->query($sql);
@@ -473,8 +499,6 @@ if ($modecompta == 'CREANCES-DETTES')
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle, c.id";
-    $sql.= " ORDER BY c.libelle, c.id";
 }
 else
 {
@@ -488,9 +512,13 @@ else
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle, c.id";
-    $sql.= " ORDER BY c.libelle, c.id";
 }
+$sql.= " GROUP BY c.libelle, c.id";
+$newsortfield = $sortfield;
+if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'c.libelle, c.id';
+if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+$sql.= $db->order($newsortfield, $sortorder);
 
 dol_syslog("get social contributions deductible=1", LOG_DEBUG);
 $result=$db->query($sql);
@@ -534,7 +562,7 @@ if ($modecompta == 'CREANCES-DETTES')
 print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
 print '</tr>';
 
-if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
+if ($mysoc->tva_assuj == 'franchise')	// Non assujetti
 {
     // Total
     print '<tr>';
@@ -572,10 +600,14 @@ if (! empty($conf->salaries->enabled))
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-		
-	$sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
-	$sql.= " ORDER BY u.firstname";
 
+	$sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
+	$newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'u.firstname, u.lastname';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+	$sql.= $db->order($newsortfield, $sortorder);
+	
 	dol_syslog("get payment salaries");
 	$result=$db->query($sql);
 	$subtotal_ht = 0;
@@ -599,7 +631,7 @@ if (! empty($conf->salaries->enabled))
 	            $var = !$var;
 	            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-	            print "<td>".$langs->trans("Salaries")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+	            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 	            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
 	            print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -639,82 +671,85 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
 		$sql.= " AND p.fk_statut>=5";
-		
+
 		$column='p.date_valid';
-		
 	} else {
-		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht, sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
 		$sql.= " AND p.fk_statut>=5";
-		
+
 		$column='pe.datep';
 	}
 
 	print '<tr><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
-	
+
 	if (! empty($date_start) && ! empty($date_end))
+	{
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+	}
+	
+	$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'p.ref';
+    $sql.= $db->order($newsortfield, $sortorder);
 
-		$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
-		$sql.= " ORDER BY p.ref";
-
-		dol_syslog("get expense report outcome");
-		$result=$db->query($sql);
-		$subtotal_ht = 0;
-		$subtotal_ttc = 0;
-		if ($result)
+	dol_syslog("get expense report outcome");
+	$result=$db->query($sql);
+	$subtotal_ht = 0;
+	$subtotal_ttc = 0;
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$var=true;
+		if ($num)
 		{
-			$num = $db->num_rows($result);
-			$var=true;
-			if ($num)
+			while ($obj = $db->fetch_object($result))
 			{
-				while ($obj = $db->fetch_object($result))
-				{
-					$total_ht -= $obj->amount_ht;
-					$total_ttc -= $obj->amount_ttc;
-					$subtotal_ht += $obj->amount_ht;
-					$subtotal_ttc += $obj->amount_ttc;
+				$total_ht -= $obj->amount_ht;
+				$total_ttc -= $obj->amount_ttc;
+				$subtotal_ht += $obj->amount_ht;
+				$subtotal_ttc += $obj->amount_ttc;
 
-					$var = !$var;
-					print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-
-					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
-
-					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
-					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
-					print '</tr>';
-				}
-			}
-			else
-			{
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+
+				print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+
+				if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
+				print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
 				print '</tr>';
 			}
 		}
 		else
 		{
-			dol_print_error($db);
-		}
-		print '<tr class="liste_total">';
-		if ($modecompta == 'CREANCES-DETTES')
-			print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-			print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+			$var = !$var;
+			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+	print '<tr class="liste_total">';
+	if ($modecompta == 'CREANCES-DETTES')
+		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+		print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '</tr>';
 }
 
 /*
- * Donation
+ * Donations
  */
 
 if (! empty($conf->don->enabled))
 {
-	print '<tr><td colspan="4">'.$langs->trans("Donation").'</td></tr>';
+	print '<tr><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 	if ($modecompta == 'CREANCES-DETTES')
 	{
     	$sql = "SELECT p.societe as name, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
@@ -734,7 +769,11 @@ if (! empty($conf->don->enabled))
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
-	$sql.= " ORDER BY p.societe, p.firstname, p.lastname, dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'p.societe, p.firstname, p.lastname, dm';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+    $sql.= $db->order($newsortfield, $sortorder);
 
 	dol_syslog("get dunning");
 	$result=$db->query($sql);
@@ -809,7 +848,11 @@ if ($modecompta == 'CREANCES-DETTES')
     	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+    $sql.= $db->order($newsortfield, $sortorder);
 
     dol_syslog("get vat to pay", LOG_DEBUG);
     $result=$db->query($sql);
@@ -854,7 +897,11 @@ if ($modecompta == 'CREANCES-DETTES')
     	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+    $sql.= $db->order($newsortfield, $sortorder);
 
     dol_syslog("get vat received back", LOG_DEBUG);
     $result=$db->query($sql);
@@ -898,7 +945,11 @@ else
     	$sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
     $sql.= " AND t.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+    $sql.= $db->order($newsortfield, $sortorder);
 
     dol_syslog("get vat really paid", LOG_DEBUG);
     $result=$db->query($sql);
@@ -939,7 +990,11 @@ else
     	$sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
     $sql.= " AND t.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm";
+    $newsortfield = $sortfield;
+    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';
+    if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
+    if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
+    $sql.= $db->order($newsortfield, $sortorder);
 
     dol_syslog("get vat really received back", LOG_DEBUG);
     $result=$db->query($sql);
@@ -975,7 +1030,7 @@ else
 }
 
 
-if ($mysoc->tva_assuj != 'franchise')	// Assujeti
+if ($mysoc->tva_assuj != 'franchise')	// Assujetti
 {
     print '<tr class="liste_total">';
     if ($modecompta == 'CREANCES-DETTES')
@@ -995,7 +1050,7 @@ $hookmanager->initHooks(array('externalbalance'));
 $reshook=$hookmanager->executeHooks('addBalanceLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 
-if ($mysoc->tva_assuj != 'franchise')	// Assujeti
+if ($mysoc->tva_assuj != 'franchise')	// Assujetti
 {
     // Total
     print '<tr>';

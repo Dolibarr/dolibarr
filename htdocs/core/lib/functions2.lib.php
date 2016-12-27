@@ -228,14 +228,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_creation))
         {
-        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
+        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -264,14 +264,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_modification))
         {
-        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
+        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -300,14 +300,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_validation))
         {
-            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
+            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -336,14 +336,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_approve))
         {
-            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
+            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -372,7 +372,7 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         $userstatic=new User($db);
         $userstatic->fetch($object->user_approve_id2);
-        if ($userstatic->id) print $userstatic->getNomUrl(1);
+        if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         else print $langs->trans("Unknown");
         if ($usetable) print '</td></tr>';
         else print '<br>';
@@ -400,14 +400,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_cloture))
         {
-			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
+			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_cloture);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -436,14 +436,14 @@ function dol_print_object_info($object, $usetable=0)
         else print ': ';
         if (is_object($object->user_rappro))
         {
-			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_rappro);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         if ($usetable) print '</td></tr>';
@@ -2007,13 +2007,14 @@ function getElementProperties($element_type)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion classes is automatic
+ * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
+ * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type)
+function fetchObjectByElement($element_id, $element_type, $element_ref='')
 {
     global $conf;
 	global $db,$conf;
@@ -2023,11 +2024,11 @@ function fetchObjectByElement($element_id, $element_type)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objectstat = new $element_prop['classname']($db);
-		$ret = $objectstat->fetch($element_id);
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
 		if ($ret >= 0)
 		{
-			return $objectstat;
+			return $objecttmp;
 		}
 	}
 	return 0;

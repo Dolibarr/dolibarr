@@ -132,7 +132,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $actioncode='';
     $search_title='';
@@ -194,7 +194,29 @@ if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resour
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
-if ($actioncode) $sql.=" AND c.code IN ('".$db->escape($actioncode)."')";
+// Condition on actioncode
+if (! empty($actioncode))
+{
+    if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+        else
+        {
+            if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
+            if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+        }
+    }
+    else
+    {
+        if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+        elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+        else
+        {
+            $sql.=" AND c.code IN ('".implode("','", explode(',',$actioncode))."')";
+        }
+    }
+}
 if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
@@ -223,7 +245,7 @@ if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AN
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -313,9 +335,13 @@ if ($resql)
     
     print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
+    $moreforfilter='';
+    
     $i = 0;
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
@@ -332,11 +358,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
-	//{
-	    print '<td class="liste_titre"></td>';
-	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
-	//}
+    print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
@@ -345,9 +367,8 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	//print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
@@ -402,6 +423,7 @@ if ($resql)
 		{
     		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
     		else {
+    		    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
     		    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
     		    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
     		    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
@@ -476,7 +498,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-
+    print '</div>';
 	print '</form>';
 
 	$db->free($resql);

@@ -304,7 +304,7 @@ else
 	$sql.=$hookmanager->resPrint;
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
     $sql.= $db->order($sortfield,$sortorder);
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = -1;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);
@@ -439,7 +439,8 @@ else
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
             $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-            print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+            print '<div class="div-table-responsive">';
+            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
     		print '<tr class="liste_titre">';
     		if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
@@ -472,8 +473,8 @@ else
 		    print $hookmanager->resPrint;
 			if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 			if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-			if (! empty($arrayfields['p.tosell']['checked'])) print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"],"p.tosell","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['p.tobuy']['checked']))  print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"],"p.tobuy","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['p.tosell']['checked'])) print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"],"p.tosell","",$param,'align="right"',$sortfield,$sortorder);
+			if (! empty($arrayfields['p.tobuy']['checked']))  print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"],"p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 
@@ -574,13 +575,13 @@ else
 		    }
     		if (! empty($arrayfields['p.tosell']['checked']))
     		{
-	    		print '<td class="liste_titre" align="center">';
+	    		print '<td class="liste_titre" align="right">';
 	            print Form::selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
 	            print '</td >';
     		}
 			if (! empty($arrayfields['p.tobuy']['checked']))
     		{
-	            print '<td class="liste_titre" align="center">';
+	            print '<td class="liste_titre" align="right">';
 	            print Form::selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
 	            print '</td>';
     		}
@@ -808,7 +809,7 @@ else
                 // Status (to sell)
 		        if (! empty($arrayfields['p.tosell']['checked']))
         		{
-	                print '<td align="center" nowrap="nowrap">';
+	                print '<td align="right" nowrap="nowrap">';
 	                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 	                    print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 	                } else {
@@ -819,7 +820,7 @@ else
                 // Status (to buy)
 		        if (! empty($arrayfields['p.tobuy']['checked']))
         		{
-	        		print '<td align="center" nowrap="nowrap">';
+	        		print '<td align="right" nowrap="nowrap">';
 	                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 	                    print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 	                } else {
@@ -834,11 +835,10 @@ else
     			$i++;
     		}
 
-    		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', '', '', 'paginationatbottom');
-
     		$db->free($resql);
 
     		print "</table>";
+    		print "</div>";
     	}
     	print '</form>';
     }

@@ -288,12 +288,12 @@ if ($action == 'export_csv') {
 }
 
 $title_page = $langs->trans("Bookkeeping");
-if ($search_date_start || $search_date_end) $title_page .= ' ' . dol_print_date($search_date_start, 'day') . ' - ' . dol_print_date($search_date_end, 'day');
+
 llxHeader('', $title_page);
 
 // List
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 	if ($nbtotalofrecords < 0) {
@@ -306,6 +306,8 @@ $result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
+
+$num=count($object->lines);
 
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
@@ -354,19 +356,20 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+$button = '<a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
+if (count($filter)) $button.= $langs->trans("ExportFilteredList");
+else $button.= $langs->trans("ExportList");
+$button.= '</a>';
+
+$groupby = ' <a href="./listbyaccount.php">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby, '', $limit);
 
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '<div class="inline-block divButAction"><a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
-if (count($filter)) print $langs->trans("ExportFilteredList");
-else print $langs->trans("ExportList");
-print '</a></div>';
 print '<div class="inline-block divButAction"><a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a></div>';
 
 print '</div>';
-
-print ' <a href="./listbyaccount.php">' . $langs->trans("GroupByAccountAccounting") . '</a><br><br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -383,7 +386,7 @@ print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" al
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
+print '<td class="liste_titre center"><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
 print '<td class="liste_titre center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
@@ -391,15 +394,15 @@ print '<br>';
 print $langs->trans('to') . ': ';
 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</td>';
-print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
-print '<td>';
+print '<td class="liste_titre center"><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
+print '<td class="liste_titre center">';
 print $langs->trans('From');
 print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 print '<br>';
 print $langs->trans('to');
 print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 print '</td>';
-print '<td>';
+print '<td class="liste_titre center">';
 print $langs->trans('From');
 print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 print '<br>';
@@ -409,10 +412,10 @@ print '</td>';
 print '<td class="liste_titre">';
 print '<input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';
 print '</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td  align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
-print '<td align="right" class="liste_titre">';
+print '<td class="liste_titre center">&nbsp;</td>';
+print '<td class="liste_titre center">&nbsp;</td>';
+print '<td class="liste_titre center" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre center" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';
@@ -448,7 +451,9 @@ foreach ($object->lines as $line ) {
 }
 
 print '<tr class="liste_total">';
-print '<td colspan="6"></td>';
+if ($num < $limit) print '<td align="left" colspan="6">'.$langs->trans("Total").'</td>';
+else print '<td align="left" colspan="6">'.$langs->trans("Totalforthispage").'</td>';
+print '</td>';
 print '<td  align="right">';
 print price($total_debit);
 print '</td>';

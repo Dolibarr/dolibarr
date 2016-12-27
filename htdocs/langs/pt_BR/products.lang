@@ -48,7 +48,6 @@ SoldAmount=Total vendido
 PurchasedAmount=Total comprado
 MinPrice=Preço de venda min.
 CantBeLessThanMinPrice=O preço de venda não deve ser inferior ao mínimo para este produto (%s ICMS)
-ContractStatusClosed=Encerrado
 ErrorProductBadRefOrLabel=O valor da referencia ou etiqueta é incorreto
 ErrorProductClone=Aconteceu um problema durante a clonação do produto ou serviço.
 ErrorPriceCantBeLowerThanMinPrice=Erro, o preço não pode ser inferior ao preço mínimo.

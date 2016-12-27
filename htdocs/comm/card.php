@@ -247,12 +247,6 @@ if ($id > 0)
 		print '</tr>';
 	}
 
-	// Skype
-  	if (! empty($conf->skype->enabled))
-  	{
-		print '<td>'.$langs->trans('Skype').'</td><td>'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
-  	}
-
 	// Assujeti a TVA ou pas
 	print '<tr>';
 	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td>';
@@ -592,7 +586,7 @@ if ($id > 0)
                 $propal_static->total_tva = $objp->total_tva;
                 $propal_static->total_ttc = $objp->total_ttc;
                 print $propal_static->getNomUrl(1);
-                if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
+                if ( ($db->jdate($objp->datelimite) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
                     print " ".img_warning();
                 }
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";

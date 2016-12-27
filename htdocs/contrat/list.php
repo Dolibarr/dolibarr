@@ -288,7 +288,7 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -393,7 +393,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
     if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
@@ -487,7 +488,7 @@ if ($resql)
     }    
     if (! empty($arrayfields['sale_representative']['checked']))
     {
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     }
     if (! empty($arrayfields['c.date_contrat']['checked']))
     {
@@ -723,6 +724,8 @@ if ($resql)
     $db->free($resql);
 
     print '</table>';
+    print '</div>';
+    
     print '</form>';
 }
 else

@@ -55,7 +55,7 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
-$viewstatut=$db->escape(GETPOST('viewstatut'));
+$search_status=GETPOST('viewstatut','alpha')?GETPOST('viewstatut','alpha'):GETPOST('search_status','int');
 $object_statut=$db->escape(GETPOST('supplier_proposal_statut'));
 
 $sall=GETPOST("sall");
@@ -89,11 +89,22 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='p.date_livraison';
+if (! $sortfield) $sortfield='sp.date_livraison';
 if (! $sortorder) $sortorder='DESC';
 
-if($object_statut != '')
-$viewstatut=$object_statut;
+if ($object_statut != '') $search_status=$object_statut;
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$contextpage='supplierproposallist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('supplierproposallist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('supplier_proposal');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -137,7 +148,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPO
     $monthvalid='';
     $year='';
     $month='';
-    $viewstatut='';
+    $search_status='';
     $object_statut='';
 }
 
@@ -196,13 +207,30 @@ $companystatic=new Societe($db);
 
 $now=dol_now();
 
-$sql = 'SELECT s.rowid as socid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_valid, p.date_livraison as dp,';
-if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
-$sql.= ' u.login';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'supplier_proposal as p';
-if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'supplier_proposaldet as pd ON p.rowid=pd.fk_supplier_proposal';
-$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
+$sql = 'SELECT';
+if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.client, s.code_client,';
+$sql.= " typent.code as typent_code,";
+$sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= ' sp.rowid, sp.note_private, sp.total_ht, sp.ref, sp.fk_statut, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
+$sql.= " p.rowid as project_id, p.ref as project_ref,";
+$sql.= " u.firstname, u.lastname, u.photo, u.login";
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+$sql.= ', '.MAIN_DB_PREFIX.'supplier_proposal as sp';
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as ef on (sp.rowid = ef.fk_object)";
+if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'supplier_proposaldet as pd ON sp.rowid=pd.fk_supplier_proposal';
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = sp.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -210,55 +238,54 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql.= ' WHERE p.fk_soc = s.rowid';
-$sql.= ' AND p.entity = '.$conf->entity;
+$sql.= ' WHERE sp.fk_soc = s.rowid';
+$sql.= ' AND sp.entity IN ('.getEntity('supplier_proposal', 1).')';
 if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
+if ($search_ref)     $sql .= natural_search('sp.ref', $search_ref);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_author)  $sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
-if ($search_montant_ht) $sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+if ($search_author)  $sql .= natural_search('u.login', $search_author);
+if ($search_montant_ht) $sql.= " AND sp.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '') $sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
+if ($search_status <> '') $sql.= ' AND sp.fk_statut IN ('.$search_status.')';
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
-    $sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    $sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else if ($year > 0 && ! empty($day))
-    $sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    $sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
-    $sql.= " AND date_format(p.date_livraison, '%m') = '".$month."'";
+    $sql.= " AND date_format(sp.date_livraison, '%m') = '".$month."'";
 }
 else if ($year > 0)
 {
-	$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($monthvalid > 0)
 {
     if ($yearvalid > 0 && empty($dayvalid))
-    $sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,$monthvalid,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,$monthvalid,false))."'";
+    $sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,$monthvalid,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,$monthvalid,false))."'";
     else if ($yearvalid > 0 && ! empty($dayvalid))
-    $sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $monthvalid, $dayvalid, $yearvalid))."' AND '".$db->idate(dol_mktime(23, 59, 59, $monthvalid, $dayvalid, $yearvalid))."'";
+    $sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $monthvalid, $dayvalid, $yearvalid))."' AND '".$db->idate(dol_mktime(23, 59, 59, $monthvalid, $dayvalid, $yearvalid))."'";
     else
-    $sql.= " AND date_format(p.date_valid, '%m') = '".$monthvalid."'";
+    $sql.= " AND date_format(sp.date_valid, '%m') = '".$monthvalid."'";
 }
 else if ($yearvalid > 0)
 {
-	$sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,1,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,12,false))."'";
+	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,1,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
-    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = sp.rowid AND c.fk_socpeople = ".$search_user;
 }
 
+$sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', sp.ref DESC';
 
-$sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
-
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -279,7 +306,7 @@ if ($result)
 		 $soc->fetch($socid);
 	}
 
-	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sall)				 $param.='&sall='.$sall;
@@ -291,7 +318,9 @@ if ($result)
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
-
+	if ($socid > 0)          $param.='&socid='.$socid;
+	if ($search_status != '') $param.='&search_status='.$search_status;
+	    
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -341,15 +370,16 @@ if ($result)
     }
 	
 
+    print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'sp.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Supplier'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.date_valid','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'sp.date_valid','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'sp.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'sp.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'sp.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -388,7 +418,7 @@ if ($result)
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$formpropal->selectProposalStatus($viewstatut,1,0,1,'supplier');
+	$formpropal->selectProposalStatus($search_status,1,0,1,'supplier','search_status');
 	print '</td>';
 	// Check boxes
 	print '<td class="liste_titre" align="right">';
@@ -514,7 +544,8 @@ if ($result)
 	}
 
 	print '</table>';
-
+    print '</div>';
+    
 	print '</form>';
 
 	$db->free($result);

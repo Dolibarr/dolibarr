@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -290,6 +290,13 @@ if (empty($reshook))
 		            $localtax2 = $obj->localtax2;
 		            $localtax1_type = $obj->localtax1_type;
 		            $localtax2_type = $obj->localtax2_type;
+
+		            // If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule
+		            if (in_array($mysoc->country_code, array('ES')))
+		            {
+    		            $localtax1 = get_localtax($tva_tx,1);
+	   	                $localtax2 = get_localtax($tva_tx,2);
+		            }
 		        }
 		    }
 			$pricestoupdate[0] = array(
@@ -959,7 +966,7 @@ else
 				}
 			}
 			if ($action != 'edit_price_by_qty') {
-				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';  // FIXME a form into a table is not allowed
 				print '<input type="hidden" name="action" value="update_price_by_qty">';
 				print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
 				print '<input type="hidden" value="0" name="rowid">';
@@ -1345,6 +1352,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"),'','','','','',$backbutton, 0, 0, 'title_accountancy.png');
     		else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
     
+    		print '<div class="div-table-responsive">';
     		print '<table class="noborder" width="100%">';
     
     		print '<tr class="liste_titre">';
@@ -1450,6 +1458,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		
     		$db->free($result);
     		print "</table>";
+    		print '</div>';
     		print "<br>";
     	}
     } else {
@@ -1659,7 +1668,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -1739,7 +1748,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// List of all prices by customers
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all($sortorder, $sortfield, 0, 0, $filter);
 		}

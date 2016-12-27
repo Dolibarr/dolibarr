@@ -106,7 +106,20 @@ foreach ($modulesdir as $dir)
                 elseif ($module == 'facture') {
                     $moduledirforclass = 'compta/facture';
                 }
-
+                elseif ($module == 'project') {
+                    $moduledirforclass = 'projet';
+                }
+                elseif ($module == 'task') {
+                    $moduledirforclass = 'projet';
+                }
+                elseif ($module == 'stock') {
+                    $moduledirforclass = 'product/stock';
+                }
+                elseif ($module == 'fournisseur') {
+                    $moduledirforclass = 'fourn';
+                }
+                //dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
+                
                 // Defined if module is enabled
                 $enabled=true;
                 if (empty($conf->$moduleforperm->enabled)) $enabled=false;
@@ -128,6 +141,8 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
+                            if ($file_searched == 'api_access.class.php') continue;
+                            
                             // Support of the deprecated API.
                             if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
@@ -135,18 +150,27 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
+                                    //dol_syslog("Found deprecated API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
                                     $api->r->addAPIClass($classname, '/');
+                                }
+                                else
+                                {
+                                    dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                 }
                             }
                             elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
                                 $classname = ucwords($reg[1]);
+                                $classname = str_replace('_', '', $classname);
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname." into ".$dir);
+                                    //dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
                                     $listofapis[] = $classname;
+                                }
+                                else
+                                {
+                                    dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                 }
                             }
                         }
@@ -161,17 +185,14 @@ foreach ($modulesdir as $dir)
 // shows the classes in the order they are added and it's a mess if they are
 // not sorted.
 sort($listofapis);
+//var_dump($listofapis);
 foreach ($listofapis as $classname)
 {
     $api->r->addAPIClass($classname);
 }
 
 // TODO If not found, redirect to explorer
-
+//var_dump($api);
 
 // Call API (we suppose we found it)
 $api->r->handle();
-
-
-
-

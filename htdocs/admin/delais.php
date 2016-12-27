@@ -112,7 +112,12 @@ $modules=array(
 				array(
 						'code' => 'MAIN_DELAY_EXPENSEREPORTS',
 						'img' => 'trip'
-				)
+				),
+    		    /* TODO Enable this
+		        array(
+    		        'code' => 'MAIN_DELAY_EXPENSEREPORTS_TO_PAY',
+    		        'img' => 'trip'
+    		    )*/
 		),
 );
 

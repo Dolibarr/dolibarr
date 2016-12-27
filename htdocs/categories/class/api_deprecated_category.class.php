@@ -121,10 +121,10 @@ class CategoryApi extends DolibarrApi
         
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -152,13 +152,13 @@ class CategoryApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -200,12 +200,12 @@ class CategoryApi extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -233,13 +233,13 @@ class CategoryApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -395,7 +395,7 @@ class CategoryApi extends DolibarrApi
             $this->category->$field = $value;
         }
         if($this->category->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create category : '.$this->category->error);
+            throw new RestException(500, 'Error when create category : '.$this->category->error);
         }
         return $this->category->id;
     }
@@ -425,6 +425,7 @@ class CategoryApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->category->$field = $value;
         }
         

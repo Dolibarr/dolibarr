@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - ldap
+DomainPassword=Wachtwoord voor het domein
+YouMustChangePassNextLogon=Wachtwoord voor de gebruiker <b>%s</b> op het domein <b>%s</b> dient te worden gewijzigd.
+UserMustChangePassNextLogon=Gebruiker dient het wachtwoord te wijzigen op het domein %s
+LDAPInformationsForThisContact=Informatie in LDAP database voor dit contact
+LDAPInformationsForThisUser=Informatie in LDAP database voor deze gebruiker
+LDAPInformationsForThisGroup=Informatie in LDAP database voor deze groep
+LDAPInformationsForThisMember=Informatie in LDAP database voor dit lid
+LDAPAttributes=LDAP-attributen
+LDAPCard=LDAP-kaart
+LDAPRecordNotFound=Tabelregel niet gevonden in de LDAP database
+LDAPUsers=Gebruikers in LDAP database
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Eerste inschrijvingsdatum
+LDAPFieldFirstSubscriptionAmount=Eerste inschrijvingsbedrag
+LDAPFieldLastSubscriptionDate=Laatste inschrijvingsdatum
+LDAPFieldLastSubscriptionAmount=Laatste inschrijvingsbedrag
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Gebruiker gesynchroniseerd
+GroupSynchronized=Groep gesynchroniseerd
+MemberSynchronized=Lidmaatschap gesynchroniseerd
+ContactSynchronized=Contact gesynchroniseerd
+ForceSynchronize=Forceer synchronisatie Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Kon niet lezen uit de LDAP-database. Controleer de instellingen van de LDAP module en database toegankelijkheid.

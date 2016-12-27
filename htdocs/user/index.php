@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -311,7 +311,10 @@ $moreforfilter='';
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
 if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
@@ -351,56 +354,56 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['u.login']['checked']))
 {
-    print '<td><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
 }
 if (! empty($arrayfields['u.lastname']['checked']))
 {
-    print '<td><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
 }
 if (! empty($arrayfields['u.firstname']['checked']))
 {
-    print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
 }
 if (! empty($arrayfields['u.gender']['checked']))
 {
-    print '<td>';
+    print '<td class="liste_titre">';
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
     print Form::selectarray('search_gender', $arraygender, $search_gender, 1);
     print '</td>';
 }
 if (! empty($arrayfields['u.employee']['checked']))
 {
-    print '<td>';
+    print '<td class="liste_titre">';
     print Form::selectyesno('search_employee', $search_employee, 1, false, 1);
     print '</td>';
 }
 if (! empty($arrayfields['u.accountancy_code']['checked']))
 {
-    print '<td><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
 }
 if (! empty($arrayfields['u.email']['checked']))
 {
-    print '<td><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
 }
 if (! empty($arrayfields['u.fk_soc']['checked']))
 {
-    print '<td><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
+    print '<td class="liste_titre"><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
 }
 if (! empty($arrayfields['u.entity']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.fk_user']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.datelastlogin']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 {
-    print '<td></td>';
+    print '<td class="liste_titre"></td>';
 }
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -655,9 +658,10 @@ $reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // N
 print $hookmanager->resPrint;
 
 print "</table>";
+print '</div>';
 print "</form>\n";
-$db->free($result);
 
+$db->free($result);
 
 llxFooter();
 $db->close();

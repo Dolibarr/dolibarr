@@ -1,10 +1,19 @@
 
-To test upgrade of a lib with composer:
+* To list packages 
 
-composer update --no-dev --no-autoloader --dry-run ccampbell/chromephp
+composer show -i
 
-To upgrade a lib with composer:
+* To test upgrade of a lib with composer:
 
-composer update --no-dev --no-autoloader ccampbell/chromephp
+Remove entry in composer.lock
+Edit composer.json to change version to "x.y.z"
+composer -v update --root-reqs --no-dev --no-autoloader --dry-run ccampbell/chromephp
+
+* To upgrade a lib with composer:
+
+Remove entry in composer.lock
+Edit composer.json to change version to "x.y.z"
+composer -v update --root-reqs --no-dev --no-autoloader ccampbell/chromephp
+
 
 
