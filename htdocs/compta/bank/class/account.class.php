@@ -1461,7 +1461,6 @@ class Account extends CommonObject
 
 		return $fieldlists;
 	}
-	}
 
 
     /**
