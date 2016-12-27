@@ -625,9 +625,9 @@ if ($id > 0 || ! empty($ref)) {
 		// Message if nothing to dispatch
 		if (! $nbproduct) {
 			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
-				print $langs->trans("NoPredefinedProductToDispatch");		// No predefined line at all
+				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
 			else 
-				print $langs->trans("NoMorePredefinedProductToDispatch");	// No predefined line that remain to be dispatched.
+				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';

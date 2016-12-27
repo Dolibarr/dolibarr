@@ -2007,13 +2007,14 @@ function getElementProperties($element_type)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion classes is automatic
+ * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
+ * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type)
+function fetchObjectByElement($element_id, $element_type, $element_ref='')
 {
     global $conf;
 	global $db,$conf;
@@ -2023,11 +2024,11 @@ function fetchObjectByElement($element_id, $element_type)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objectstat = new $element_prop['classname']($db);
-		$ret = $objectstat->fetch($element_id);
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
 		if ($ret >= 0)
 		{
-			return $objectstat;
+			return $objecttmp;
 		}
 	}
 	return 0;

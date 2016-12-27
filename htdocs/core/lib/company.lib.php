@@ -993,16 +993,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " u.login, u.rowid as user_id";
         if (get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         if (get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (get_class($filterobj) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-        if (get_class($filterobj) == 'Adherent' && $filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (get_class($filterobj) == 'Adherent') 
+        {
+            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
+        if (get_class($filterobj) == 'CommandeFournisseur')
+        {
+            $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         // Condition on actioncode
         if (! empty($actioncode))
@@ -1133,6 +1143,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
@@ -1142,9 +1153,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 
-        // TODO uniformize
+        // TODO mutualize/uniformize
         $propalstatic=new Propal($db);
         $orderstatic=new Commande($db);
+        $supplierorderstatic=new CommandeFournisseur($db);
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -1286,7 +1298,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
-            // TODO uniformize
+            // TODO mutualize/uniformize
             $out.='<td>';
             //var_dump($histo[$key]['elementtype']);
             if (isset($histo[$key]['elementtype']))

@@ -94,7 +94,7 @@ class AgendaEvents extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.date_creation:<:'20160101')"
      * @return  array               Array of Agenda Events objects
      */
     function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {

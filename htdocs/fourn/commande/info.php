@@ -27,6 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("orders");
 $langs->load("suppliers");
@@ -35,11 +36,44 @@ $langs->load('stocks');
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
+$action = GETPOST('action','alpha');
+
+if (GETPOST('actioncode','array'))
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
-$socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+$socid=0;
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'fournisseur',$id,'', 'commande');
+
+if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
+
+
+
+
+/*
+ *	Actions
+ */
+
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+    $search_agenda_label='';
+}
+
 
 
 /*
@@ -47,88 +81,142 @@ $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
  */
 
 $form =	new	Form($db);
-
-$now=dol_now();
+$object = new CommandeFournisseur($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$soc = new Societe($db);
-	$object = new CommandeFournisseur($db);
-
-	$result=$object->fetch($id,$ref);
-	if ($result >= 0)
-	{
-        $object->info($object->id);
-        
-	    $soc->fetch($object->socid);
-
-		$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-		llxHeader('',$langs->trans("Order"),$help_url);
-
-		$head = ordersupplier_prepare_head($object);
-
-		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'info', $title, 0, 'order');
-
-
-		/*
-		*   Commande
-		*/
-
-		print '<table class="border" width="100%">';
-
-		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="2">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Fournisseur
-		print '<tr><td>'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
-		print '</tr>';
-
-		// Statut
-		print '<tr>';
-		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">';
-		print $object->getLibStatut(4);
-		print "</td></tr>";
-
-		// Date
-		if ($object->methode_commande_id > 0)
-		{
-			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-			if ($object->date_commande)
-			{
-				print dol_print_date($object->date_commande,"dayhourtext")."\n";
-			}
-			print "</td></tr>";
-
-			if ($object->methode_commande)
-			{
-                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->getInputMethod().'</td></tr>';
-			}
-		}
-
-		print "</table>\n";
-		print "<br>";
-
-		print '<table width="100%"><tr><td>';
-		dol_print_object_info($object, 1);
-		print '</td></tr></table>';
-		
-		print '</div>';
-	}
-	else
-	{
-		/* Order not found */
-		print "OrderNotFound";
-	}
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+    $object->info($object->id);
 }
+
+$title=$langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('',$title,$help_url);
+
+$now=dol_now();
+
+$head = ordersupplier_prepare_head($object);
+
+
+dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), 0, 'order');
+
+
+// Supplier order card
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref='<div class="refidno">';
+// Ref supplier
+$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+// Thirdparty
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+// Project
+if (! empty($conf->projet->enabled))
+{
+    $langs->load("projects");
+    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+    if ($user->rights->fournisseur->commande->creer)
+    {
+        if ($action != 'classify')
+            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            $morehtmlref.=' : ';
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
+    } else {
+        if (! empty($object->fk_project)) {
+            $proj = new Project($db);
+            $proj->fetch($object->fk_project);
+            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+            $morehtmlref.=$proj->ref;
+            $morehtmlref.='</a>';
+        } else {
+            $morehtmlref.='';
+        }
+    }
+}
+$morehtmlref.='</div>';
+
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+dol_print_object_info($object, 1);
+
+print '</div>';
+
+print '<div class="clearboth"></div>';
+
+dol_fiche_end();
+
+
+
+
+// Actions buttons
+
+$out='';
+$permok=$user->rights->agenda->myactions->create;
+if ($permok)
+{
+    $out.='&originid='.$object->id.'&origin=order_supplier';
+}
+
+
+print '<div class="tabsAction">';
+
+if (! empty($conf->agenda->enabled))
+{
+    if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+    }
+    else
+    {
+        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+    }
+}
+
+print '</div>';
+
+
+if (!empty($object->id))
+{
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    
+    print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
+
+    // List of actions on element
+    /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+    $formactions=new FormActions($db);
+    $somethingshown=$formactions->showactions($object,'project',0);*/
+
+    // List of todo actions
+    //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+
+    // List of done actions
+    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+
+    // List of all actions
+    $filters=array();
+    $filters['search_agenda_label']=$search_agenda_label;
+    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+}
+
 
 
 llxFooter();

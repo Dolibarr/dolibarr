@@ -254,6 +254,7 @@ a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
+a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; } 
 
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FFF;
@@ -967,12 +968,13 @@ div.attacharea {
 }
 
 div.arearef {
-	/*border-bottom: 1px solid #bbb;*/
 	padding-top: 2px;
-	padding-bottom: 5px;
-	/*padding-right: 3px;
-	padding-left: 2px;*/
 	margin-bottom: 10px;
+	padding-bottom: 7px;
+}
+div.arearefnobottom {
+	padding-top: 2px;
+	padding-bottom: 4px;
 }
 div.heightref {
 	min-height: 80px;
@@ -1961,15 +1963,8 @@ div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
     padding-left: 0px; padding-right: 0px;
-    /*padding-left: 18px;
-    padding-right: 18px;*/
     padding-bottom: 14px;
     margin: 0px 0px 14px 0px;
-    /*-moz-border-radius:4px;
-    -webkit-border-radius: 4px;
-	border-radius: 4px;
-    border-right: 1px solid #AAA;
-    border-left: 1px solid #AAA; */
     border-top: 1px solid #BBB;
     border-bottom: 1px solid #AAA;
 	width: auto;
@@ -2456,11 +2451,16 @@ table.liste tr, table.noborder tr, div.noborder form {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 8px 2px 8px 3px;			/* t r b l */
 }
-tr.box_titre .nobordernopadding td { padding: 0px ! important; }
-table.liste td, table.noborder td, div.noborder form, div.noborder form div {
-	padding: 5px 2px 5px 3px;			/* t r b l */
+table.liste td, table.noborder td, div.noborder form div {
+	padding: 8px 2px 8px 3px;			/* t r b l */
+}
+div.liste_titre_bydiv .divsearchfield {
+	padding: 2px 1px 2px 0px;			/* t r b l */
 }
 
+tr.box_titre .nobordernopadding td { 
+	padding: 0px ! important; 
+}
 table.nobordernopadding {
 	border-collapse: collapse !important;
 	border: 0px;
@@ -2725,7 +2725,7 @@ tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair
     padding: 5px 2px 5px 3px;
     border-bottom: 1px solid #ddd;
 }
-tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
+form.tagtr:last-of-type div.tagtd, tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
 tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {
@@ -2737,26 +2737,18 @@ td.nobottom, td.nobottom {
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
-div.liste_titre {
+/*div.liste_titre {
 	box-shadow: 2px 2px 4px #CCC;
-}
+}*/
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
 	padding-top: 2px;
 	padding-bottom: 2px;
 
-	/*border-right-width: 1px;
-	border-right-color: #BBB;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #BBB;
-	border-left-style: solid;*/
-
-	border-top-width: 1px;
+/*	border-top-width: 1px;
 	border-top-color: #BBB;
-	border-top-style: solid;
+	border-top-style: solid;*/
 }
 div.liste_titre_bydiv {
 	border-top-width: <?php echo $borderwith ?>px;
@@ -2773,7 +2765,7 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
+div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
 	<?php if ($usegradienttitle) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
@@ -2791,11 +2783,11 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, tr.liste_titre td, th.liste_titre, form.liste_titre div, div.liste_titre
+tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
 	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
 {
     font-family: <?php print $fontlist ?>;
     font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
@@ -2819,7 +2811,7 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre td.liste_titre {		/* For last line of table headers only */
+tr.liste_titre td.liste_titre, form.liste_titre div.tagtd {				/* For last line of table headers only */
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
