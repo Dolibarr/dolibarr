@@ -976,6 +976,7 @@ class Product extends CommonObject
 			if (!$error) {
 
 				require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
 
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
