@@ -456,7 +456,7 @@ if (empty($reshook))
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$dateRefusEx = explode(" ",$object->date_refuse);
-    			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $langs), $link);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
    				// Rebuild pdf
 				/*
@@ -567,11 +567,11 @@ if (empty($reshook))
    			$emailFrom = $expediteur->email;
 
 			// SUBJECT
-   			$subject = $langs->transnoentities("ExpenseReportApproval");
+   			$subject = $langs->transnoentities("ExpenseReportApproved");
 
    			// CONTENT
    			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-   			$message = $langs->transnoentities("ExpenseReportApprovalMessage", $destinataire->getFullName($langs), $object->ref, $expediteur->getFullName($langs), '', $langs), $link);
+   			$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
    			// Rebuilt pdf
 			/*
@@ -588,53 +588,52 @@ if (empty($reshook))
 			}
 			*/
 
-        		// PREPARE SEND
-    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-    
-    			if ($mailfile)
-    			{
-    				// SEND
-    				$result=$mailfile->sendfile();
-    				if ($result)
-    				{
-    					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
-    					setEventMessages($mesg, null, 'mesgs');
-    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    					exit;
-    				}
-    				else
-    				{
-    					$langs->load("other");
-    					if ($mailfile->error)
-    					{
-    						$mesg='';
-    						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-    						$mesg.='<br>'.$mailfile->error;
-    						setEventMessages($mesg, null, 'errors');
-    					}
-    					else
-    					{
-    						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
-    					}
-    				}
-    			}
-    			else
-    			{
-    				setEventMessages($mailfile->error,$mailfile->errors,'errors');
-    				$action='';
-    			}
-    		}
-    		else
-    		{
-    			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-    			$action='';
-    		}
-    	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    }
+        	// PREPARE SEND
+    		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+   			if ($mailfile)
+   			{
+   				// SEND
+   				$result=$mailfile->sendfile();
+   				if ($result)
+   				{
+   					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+   					setEventMessages($mesg, null, 'mesgs');
+   					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+   					exit;
+   				}
+   				else
+   				{
+   					$langs->load("other");
+   					if ($mailfile->error)
+   					{
+   						$mesg='';
+   						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+   						$mesg.='<br>'.$mailfile->error;
+   						setEventMessages($mesg, null, 'errors');
+   					}
+   					else
+   					{
+   						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+   					}
+   				}
+   			}
+   			else
+   			{
+   				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+   				$action='';
+   			}
+   		}
+   		else
+   		{
+   			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+   			$action='';
+   		}
+   	}
+   	else
+   	{
+   		setEventMessages($object->error, $object->errors, 'errors');
+   	}
     
     if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->approve)
     {
@@ -677,16 +676,27 @@ if (empty($reshook))
     		$expediteur->fetch($object->fk_user_refuse);
     		$emailFrom = $expediteur->email;
     
-    		// SUBJECT
-    		$subject = "' ERP - Note de frais refusée";
+			// SUBJECT
+   			$subject = $langs->transnoentities("ExpenseReportRefused");
+
+   			// CONTENT
+   			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_refuse'], $link);
+
+   			// Rebuilt pdf
+			/*
+    		$object->setDocModel($user,"");
+    		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
     
-    		// CONTENT
-    		$message = "Bonjour {$destinataire->firstname},\n\n";
-    		$message.= "Votre note de frais \"{$object->ref}\" vient d'être refusée.\n";
-    		$message.= "- Refuseur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    		$message.= "- Motif de refus : {$_POST['detail_refuse']}\n";
-    		$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    		$message.= "Bien cordialement,\n' SI";
+    		if($resultPDF
+			{
+    			// ATTACHMENT
+    			$filename=array(); $filedir=array(); $mimetype=array();
+    			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($mimetype,"application/pdf");
+			}
+			*/
     
     		// PREPARE SEND
     		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
@@ -779,17 +789,28 @@ if (empty($reshook))
     			$expediteur->fetch($object->fk_user_cancel);
     			$emailFrom = $expediteur->email;
     
-    			// SUBJECT
-    			$subject = "' ERP - Note de frais annulée";
-    
-    			// CONTENT
-    			$message = "Bonjour {$destinataire->firstname},\n\n";
-    			$message.= "Votre note de frais \"{$object->ref}\" vient d'être annulée.\n";
-    			$message.= "- Annuleur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    			$message.= "- Motif d'annulation : {$_POST['detail_cancel']}\n";
-    			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    			$message.= "Bien cordialement,\n' SI";
-    
+				// SUBJECT
+				$subject = $langs->transnoentities("ExpenseReportCanceled");
+
+				// CONTENT
+				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_cancel'], $link);
+
+				// Rebuilt pdf
+				/*
+				$object->setDocModel($user,"");
+				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+		
+				if($resultPDF
+				{
+					// ATTACHMENT
+					$filename=array(); $filedir=array(); $mimetype=array();
+					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+					array_push($mimetype,"application/pdf");
+				}
+				*/
+
     			// PREPARE SEND
     			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
     
@@ -923,8 +944,12 @@ if (empty($reshook))
     		$expediteur->fetch($user->id);
     		$emailFrom = $expediteur->email;
     
-    		// SUBJECT
-    		$subject = "'ERP - Note de frais payée";
+			// SUBJECT
+			$subject = $langs->transnoentities("ExpenseReportPaid");
+
+			// CONTENT
+			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
     
     		// CONTENT
     		$message = "Bonjour {$destinataire->firstname},\n\n";
