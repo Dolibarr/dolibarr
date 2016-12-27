@@ -13,6 +13,20 @@
 -- flush privileges;
 
 
+-- Requests to change character set and collation of a column
+
+-- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- You can check with "show full columns from llx_accountingaccount";
+
+
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
+
+
 
 -- Requests to clean corrupted database
 
@@ -45,7 +59,7 @@ delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
-update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
+update llx_subscription set fk_bank = null where fk_bank not in (select rowid from llx_bank);
 
 update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
@@ -129,6 +143,10 @@ delete from llx_element_element where sourcetype='facture' and fk_source not in 
 delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
 
 
+-- Fix: delete orphelin actioncomm_resources
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
@@ -169,6 +187,7 @@ update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 update llx_opensurvey_sondage set tms = now();
 
+
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
 
@@ -176,12 +195,21 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
+-- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
+drop table tmp_links_double;
+--select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
+create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
+--select * from tmp_links_double;
+delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);	--update to avoid duplicate, delete to delete
+drop table tmp_links_double;
+
+
 -- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_product_double;
-update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
+update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);	--update to avoid duplicate, delete to delete
 drop table tmp_product_double;
 
 
@@ -263,6 +291,7 @@ delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or f
 
 delete from llx_menu where menu_handler = 'smartphone';
 
+update llx_expedition set date_valid = date_creation where fk_statut = 1 and date_valid IS NULL;
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
@@ -275,4 +304,20 @@ create table tmp_c_shipment_mode as (select code, tracking from llx_c_shipment_m
 DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking != '') AND (tracking IS NULL OR tracking = '');
 drop table tmp_c_shipment_mode;
 
+
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_fin = date_debut where DATE(STR_TO_DATE(date_fin, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_fin = date_debut where DATE(STR_TO_DATE(date_fin, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_valid = date_fin where DATE(STR_TO_DATE(date_valid, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_valid = date_fin where DATE(STR_TO_DATE(date_valid, '%Y-%m-%d')) IS NULL;
 

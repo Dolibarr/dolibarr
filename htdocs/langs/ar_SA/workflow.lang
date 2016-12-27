@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=سير العمل وحدة الإعداد
 WorkflowDesc=تم تصميم هذه الوحدة لتعديل السلوك من الإجراءات الآلية إلى التطبيق. افتراضيا، سير العمل مفتوح (يمكنك أن تفعل أشياء في النظام الذي تريد). يمكنك تفعيل الإجراءات الآلية كنت مهتما في.
 ThereIsNoWorkflowToModify=لا يوجد أي تعديلات سير العمل المتاحة مع وحدات تفعيلها.
@@ -9,3 +9,7 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تل�
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=تصنيف مقترح مصدر على صلة وصفت عند تعيين النظام العميل لدفع
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=تصنيف المصدر المرتبط النظام العميل (ق) إلى المنقار عند تعيين فاتورة العملاء لدفع
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=تصنيف ربط مصدر النظام العميل (ق) إلى المنقار عند التحقق من صحة الفاتورة العملاء
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

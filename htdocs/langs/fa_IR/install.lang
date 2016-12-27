@@ -11,12 +11,14 @@ PHPSupportSessions=این جلسات PHP پشتیبانی می کند.
 PHPSupportPOSTGETOk=این PHP پشتیبانی از متغیر های POST و GET.
 PHPSupportPOSTGETKo=این امکان وجود دارد راه اندازی PHP شما از متغیر های POST پشتیبانی نمی کند و / یا. بررسی کنید <b>variables_order</b> پارامتر خود را در php.ini.
 PHPSupportGD=این GD پشتیبانی از PHP توابع گرافیکی.
+PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=این پشتیبانی از PHP توابع UTF8.
 PHPMemoryOK=PHP حداکثر شما حافظه جلسه <b>به٪ s</b> تنظیم شده است. این باید به اندازه کافی باشد.
 PHPMemoryTooLow=PHP حداکثر شما حافظه را وارد نمایید <b>به٪ s</b> بایت تنظیم شده است. این باید بسیار کم باشد. تغییر <b>فایل php.ini</b> خود را به تنظیم پارامتر <b>memory_limit را</b> به <b>حداقل٪ s</b> بایت.
 Recheck=برای تست نشانگر بیشتر اینجا را کلیک کنید
 ErrorPHPDoesNotSupportSessions=نصب و راه اندازی PHP شما جلسات را پشتیبانی نمی کند. این ویژگی مورد نیاز است تا Dolibarr کار. راه اندازی PHP خود را چک کنید.
 ErrorPHPDoesNotSupportGD=نصب و راه اندازی PHP شما از عملکرد گرافیکی GD پشتیبانی نمی کند. بدون نمودار در دسترس خواهد بود.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=نصب و راه اندازی PHP شما توابع UTF8 را پشتیبانی نمی کند. Dolibarr نمی تواند به درستی کار می کنند. حل این قبل از نصب Dolibarr.
 ErrorDirDoesNotExists=شاخه٪ s وجود ندارد.
 ErrorGoBackAndCorrectParameters=برو به عقب و اصلاح پارامترهای اشتباه است.
@@ -60,7 +62,6 @@ KeepEmptyIfNoPassword=دیدگاهتان را خالی اگر کاربر هیچ 
 SaveConfigurationFile=صرفه جویی در مقدار
 ServerConnection=اتصال به سرور
 DatabaseCreation=ایجاد پایگاه داده
-UserCreation=ایجاد کاربر
 CreateDatabaseObjects=اشیاء پایگاه داده ایجاد
 ReferenceDataLoading=مرجع بارگذاری داده ها
 TablesAndPrimaryKeysCreation=جداول و کلید اولیه ایجاد
@@ -131,8 +132,12 @@ MigrationFinished=مهاجرت به پایان رسید
 LastStepDesc=<strong>آخرین مرحله:</strong> تعریف اینجا کاربری و رمز عبور شما قصد استفاده برای اتصال به نرم افزار. آیا این شل نیست آن را به عنوان حساب به اداره همه دیگران است.
 ActivateModule=فعال بخش٪ s
 ShowEditTechnicalParameters=برای نشان دادن پارامترهای پیشرفته / ویرایش اینجا را کلیک کنید (حالت کارشناسی)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+KeepDefaultValuesWamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliWamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr راه اندازی از یک بسته لینوکس (اوبونتو، دبیان، فدورا ...)، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تنها رمز صاحب پایگاه داده برای ایجاد باید پر شوند. تغییر پارامترهای دیگر تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
+KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 
 #########
 # upgrade
@@ -170,7 +175,7 @@ MigrationReopeningContracts=قرارداد باز کردن بسته های خط�
 MigrationReopenThisContract=بازگشایی قرارداد از٪ s
 MigrationReopenedContractsNumber=٪ s در قرارداد اصلاح شده
 MigrationReopeningContractsNothingToUpdate=بدون قرارداد بسته یا باز
-MigrationBankTransfertsUpdate=لینک به روز رسانی بین معامله بانک و انتقال بانکی
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=تمامی لینک ها به روز می باشد
 MigrationShipmentOrderMatching=Sendings به روز رسانی دریافت
 MigrationDeliveryOrderMatching=به روز رسانی رسید تحویل
@@ -185,6 +190,8 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationRemiseEntity=Update entity field value of llx_societe_remise
+MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست

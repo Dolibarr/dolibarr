@@ -41,7 +41,7 @@ $maxformassaction=1000;
 if (! empty($massaction) && count($toselect) < 1)
 {
     $error++;
-    setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+    setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
 if (! $error && count($toselect) > $maxformassaction)
 {
@@ -49,7 +49,10 @@ if (! $error && count($toselect) > $maxformassaction)
     $error++;
 }
 
-
+if (! $error && $massaction == 'confirm_presend' && GETPOST('modelselected'))  // If we change the template, we must not send email, but keep on send email form
+{
+    $massaction='presend';
+}
 if (! $error && $massaction == 'confirm_presend')
 {
     $resaction = '';

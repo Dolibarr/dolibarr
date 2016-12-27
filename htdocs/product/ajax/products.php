@@ -49,6 +49,9 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $price_by_qty_rowid = GETPOST('pbq', 'int');
 $finished = GETPOST('finished', 'int');
+$alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
+$warehouseStatus = GETPOST('warehousestatus', 'alpha');
+
 
 /*
  * View
@@ -61,7 +64,7 @@ dol_syslog(join(',', $_GET));
 
 if (! empty($action) && $action == 'fetch' && ! empty($id))
 {
-	require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 	$outjson = array();
 
@@ -157,7 +160,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	}
 
 	echo json_encode($outjson);
-} else {
+} 
+else
+{
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 	$langs->load("products");
@@ -181,9 +186,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, $finished, $outjson, $socid);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', 0, $warehouseStatus);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}
 
 	$db->close();

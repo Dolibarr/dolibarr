@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Note de frais
 ExpenseReports=Notes de frais
+ShowExpenseReport=Afficher la note de frais
 Trips=Note de frais
 TripsAndExpenses=Notes de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
@@ -8,6 +9,7 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+TypeFees=Types de déplacement et notes de frais
 ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée

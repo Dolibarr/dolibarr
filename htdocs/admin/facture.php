@@ -262,23 +262,6 @@ if ($action == 'setforcedate')
     }
 }
 
-if ($action == 'set_INVOICE_AUTO_FILLJS')
-{
-	$freetext = GETPOST('INVOICE_AUTO_FILLJS');	// No alpha here, we want exact string
-
-	$res = dolibarr_set_const($db, "INVOICE_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
 
 
 /*
@@ -655,7 +638,7 @@ if (! empty($conf->banque->enabled))
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
     $sql.= " WHERE clos = 0";
     $sql.= " AND courant = 1";
-    $sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND entity IN (".getEntity('bank', 1).")";
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -700,7 +683,7 @@ $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
-$sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND entity IN (".getEntity('bank', 1).")";
 $var=True;
 $resql=$db->query($sql);
 if ($resql)
@@ -745,20 +728,6 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print "</td></tr>\n";
-print '</form>';
-
-// Add js auto fill amount on paiement form
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_INVOICE_AUTO_FILLJS" />';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("JSOnPaimentBill");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

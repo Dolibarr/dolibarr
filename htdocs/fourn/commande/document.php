@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
@@ -74,6 +74,7 @@ if ($object->fetch($id,$ref) < 0)
 $upload_dir = $conf->fournisseur->dir_output.'/commande/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();
 
+
 /*
  * Actions
  */
@@ -92,6 +93,8 @@ if ($object->id > 0)
 	$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 	llxHeader('',$langs->trans("Order"),$help_url);
 
+	$object->fetch_thirdparty();
+
 	$author = new User($db);
 	$author->fetch($object->user_author_id);
 
@@ -108,59 +111,70 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
-
-	print '<table class="border" width="100%">';
+	// Supplier order card
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td>';
-	print '</tr>';
-
-	// Fournisseur
-	print '<tr><td>'.$langs->trans("Supplier")."</td>";
-	print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
-	print '</tr>';
-
-	// Statut
-	print '<tr>';
-	print '<td>'.$langs->trans("Status").'</td>';
-	print '<td colspan="2">';
-	print $object->getLibStatut(4);
-	print "</td></tr>";
-
-	// Date
-	if ($object->methode_commande_id > 0)
+	
+	$morehtmlref='<div class="refidno">';
+	// Ref supplier
+	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	// Project
+	if (! empty($conf->projet->enabled))
 	{
-		print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-		if ($object->date_commande)
-		{
-			print dol_print_date($object->date_commande,"dayhourtext")."\n";
-		}
-		print "</td></tr>";
-
-		if ($object->methode_commande)
-		{
-            print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->getInputMethod().'</td></tr>';
-		}
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    if ($user->rights->fournisseur->commande->creer)
+	    {
+	        if ($action != 'classify')
+	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.=' : ';
+	        	if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
 	}
+	$morehtmlref.='</div>';
+			
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
 
-	// Auteur
-	print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-	print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
-	print '</tr>';
-
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	
+	print '<table class="border" width="100%">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 	print "</table>\n";
 
 	print "</div>\n";
 
+	dol_fiche_end();
+	
+	
 	$modulepart = 'commande_fournisseur';
 	$permission = $user->rights->fournisseur->commande->creer;
+	$permtoedit = $user->rights->fournisseur->commande->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
@@ -168,6 +182,7 @@ if ($object->id > 0)
 else
 {
 	header('Location: index.php');
+	exit;
 }
 
 

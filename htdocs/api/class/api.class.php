@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +23,7 @@ use Luracast\Restler\Defaults;
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
- * Class for API
- *
+ * Class for API REST v1
  */
 class DolibarrApi
 {
@@ -54,6 +54,8 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode);
+        
+        $this->r->setAPIVersion(1);
     }
 
     /**
@@ -79,9 +81,6 @@ class DolibarrApi
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 
@@ -90,6 +89,39 @@ class DolibarrApi
         
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
+        
+        unset($object->lignes); // should be ->lines
+        unset($object->oldline);
+        
+        unset($object->error);
+        unset($object->errors);
+        
+        unset($object->ref_previous);
+        unset($object->ref_next);
+        unset($object->ref_int);
+        
+        unset($object->projet);     // Should be fk_project
+        unset($object->project);    // Should be fk_project
+        unset($object->author);     // Should be fk_user_author
+        unset($object->timespent_old_duration);
+        unset($object->timespent_id);
+        unset($object->timespent_duration);
+        unset($object->timespent_date);
+        unset($object->timespent_datehour);
+        unset($object->timespent_withhour);
+        unset($object->timespent_fk_user);
+        unset($object->timespent_note);
+        
+        unset($object->statuts);
+        unset($object->statuts_short);
+        unset($object->statuts_logo);
+        unset($object->statuts_long);
+        
+        unset($object->element);
+        unset($object->fk_element);
+        unset($object->table_element);
+        unset($object->table_element_line);
+        unset($object->picto);
         
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
@@ -155,4 +187,60 @@ class DolibarrApi
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
+	
+	/**
+	 * Return if a $sqlfilters parameter is valid
+	 * 
+	 * @param  string   $sqlfilters     sqlfilter string
+	 * @return boolean                  True if valid, False if not valid 
+	 */
+	function _checkFilters($sqlfilters)
+	{
+	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	    $tmp=$sqlfilters;
+	    $ok=0;
+	    $i=0; $nb=count($tmp);
+	    $counter=0;
+	    while ($i < $nb)
+	    {
+	        if ($tmp[$i]=='(') $counter++;
+	        if ($tmp[$i]==')') $counter--;
+            if ($counter < 0)
+            {
+	           $error="Bad sqlfilters=".$sqlfilters;
+	           dol_syslog($error, LOG_WARNING);
+	           return false;
+            }
+            $i++;
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Function to forge a SQL criteria
+	 * 
+	 * @param  array    $matches       Array of found string by regex search
+	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+	 */
+	static function _forge_criteria_callback($matches)
+	{
+	    global $db;
+	    
+	    //dol_syslog("Convert matches ".$matches[1]);
+	    if (empty($matches[1])) return '';
+	    $tmp=explode(':',$matches[1]);
+        if (count($tmp) < 3) return '';
+        
+	    $tmpescaped=$tmp[2];
+	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
+	    {
+	        $tmpescaped = "'".$db->escape($regbis[1])."'";
+	    }
+	    else
+	    {
+	        $tmpescaped = $db->escape($tmpescaped);
+	    }
+	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+	}	
 }

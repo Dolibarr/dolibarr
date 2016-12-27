@@ -36,7 +36,7 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 ### Advanced setup
 
-You can use a Web server and a supported database (MySQL recommended) to install the standard version.
+You can use a Web server and a supported database (MariaDb, MySql or Postgresql) to install the standard version.
 
 - Uncompress the downloaded archive
 - Copy directory "dolibarr" and all its files inside your web server root, or copy directory anywhere and set up your web server to use "dolibarr/htdocs" as root for a new web server virtual host (second choice need to be server administrator)
@@ -119,7 +119,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Can manage several currencies by adding external module multi-currency.
 - Very user friendly and easy to use
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-- Works with PHP 5.3+ and MySQL 4.1+ or PostgreSQL 8.1. (See requirements on the [Wiki](http://wiki.dolibarr.org/index.php/Prerequisite))
+- Works with PHP 5.3+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](http://wiki.dolibarr.org/index.php/Prerequisite))
 - Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
 - An easy to understand, maintain and code interfaces with your own information system (PHP with no heavy framework; trigger and hook architecture)
 - Support for country specific features:
@@ -147,7 +147,7 @@ These are features that Dolibarr does **not** yet fully support:
 
 ## DOCUMENTATION
 
-Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](http://wiki.dolibarr.org).
+Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](https://wiki.dolibarr.org).
 
 ## CONTRIBUTING
 

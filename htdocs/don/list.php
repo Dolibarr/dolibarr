@@ -72,9 +72,7 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-    
-
-    
+        
 /*
  * View
  */
@@ -115,6 +113,12 @@ if (trim($search_name) != '')
 if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
 
 $sql.= $db->order($sortfield,$sortorder);
+$nbtotalofrecords = -1;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -124,18 +128,18 @@ if ($resql)
 	$i = 0;
 
 	$param = '&statut='.$statut;
-    if ($page > 0) $param.= '&page='.$page;
+    //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	if ($statut >= 0)
 	{
 	    $donationstatic->statut=$statut;
 	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	}
 
 
@@ -153,7 +157,9 @@ if ($resql)
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
     
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
@@ -200,7 +206,7 @@ if ($resql)
 	$var=True;
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		$donationstatic->id=$objp->rowid;
@@ -233,6 +239,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
+	print '</div>';
     print "</form>\n";
     $db->free($resql);
 }

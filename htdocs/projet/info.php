@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,10 +26,25 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-
-if (!$user->rights->projet->lire)	accessforbidden();
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("projects");
+
+$id     = GETPOST('id','int');
+$ref    = GETPOST('ref','alpha');
+$socid  = GETPOST('socid','int');
+$action = GETPOST('action','alpha');
+
+if (GETPOST('actioncode','array'))
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
@@ -37,33 +52,135 @@ $id = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
+if (!$user->rights->projet->lire)	accessforbidden();
+
+
+
+/*
+ *	Actions
+ */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $actioncode='';
+    $search_agenda_label='';
+}
+
 
 
 /*
  * View
  */
 
+$form = new Form($db);
+$object = new Project($db);
+
 $title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$title,$help_url);
 
-$projet = new Project($db);
-$projet->fetch($id);
-$projet->info($id);
-$soc = new Societe($db);
-$soc->fetch($projet->socid);
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+    $object->info($object->id);
+}
 
-$head = project_prepare_head($projet);
+$head = project_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'agenda', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($projet);
-print '</td></tr></table>';
+// Project card
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref='<div class="refidno">';
+// Title
+$morehtmlref.=$object->title;
+// Thirdparty
+if ($object->thirdparty->id > 0)
+{
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+}
+$morehtmlref.='</div>';
+
+// Define a complementary filter for search of next/prev ref.
+if (! $user->rights->projet->all->lire)
+{
+    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+}
+
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+dol_print_object_info($object, 1);
 
 print '</div>';
+
+print '<div class="clearboth"></div>';
+
+dol_fiche_end();
+
+
+// Actions buttons
+
+$out='';
+$permok=$user->rights->agenda->myactions->create;
+if ($permok)
+{
+    $out.='&projectid='.$object->id;
+}
+
+
+print '<div class="tabsAction">';
+
+if (! empty($conf->agenda->enabled))
+{
+    if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+    }
+    else
+    {
+        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+    }
+}
+
+print '</div>';
+
+
+if (!empty($object->id))
+{
+    print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
+    
+    // List of actions on element
+    /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+    $formactions=new FormActions($db);
+    $somethingshown=$formactions->showactions($object,'project',0);*/
+    
+    // List of todo actions
+    //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+    
+    // List of done actions
+    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+    
+    // List of all actions
+    $filters=array();
+    $filters['search_agenda_label']=$search_agenda_label;
+    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+}
+
 
 llxFooter();
 $db->close();

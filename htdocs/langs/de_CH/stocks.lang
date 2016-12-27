@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - stocks
+WarehouseCard=Warenlagerkarte
 CancelSending=Lieferung abbrechen
 StockTransfer=Lagerumbuchung
 MassStockTransferShort=Massen Lagerumbuchungen
+StockLowerThanLimit=Bestand unterhalb des Sicherungsbestandes
 DeStockOnShipmentOnClosing=Verringere echten Bestände bei Lieferbestätigung
 ReStockOnDispatchOrder=Reale Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
 StockLimit=Sicherungsbestand für autom. Benachrichtigung
@@ -13,5 +15,3 @@ ReplenishmentOrdersDesc=Das ist eine Liste aller offenen Lieferantenbestellungen
 ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)
 OpenAll=Für alle Aktionen freigeben
 OpenInternal=Für interne Aktionen freigeben
-OpenShipping=Zur Auslieferung freigeben
-OpenDispatch=Zum Versenden freigeben

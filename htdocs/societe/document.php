@@ -109,7 +109,9 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
     print '<div class="fichecenter">';
     
@@ -154,6 +156,7 @@ if ($object->id)
 
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;
+	$permtoedit = $user->rights->societe->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

@@ -73,18 +73,6 @@ if (! empty($canvas))
 	$objcanvas->getCanvas('product','list',$canvas);
 }
 
-if (! empty($_POST["button_removefilter_x"]))
-{
-    $sref="";
-    $snom="";
-    $sall="";
-    $search_sale="";
-    $search_categ="";
-    $type="";
-    $catid='';
-    $toolowstock='';
-}
-
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
@@ -98,7 +86,17 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
  * Actions
  */
 
-// None
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+{
+    $sref="";
+    $snom="";
+    $sall="";
+    $search_sale="";
+    $search_categ="";
+    $type="";
+    $catid='';
+    $toolowstock='';
+}
 
 
 
@@ -180,7 +178,7 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall or $snom or $sref))
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall || $snom || $sref))
 	{
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");
@@ -248,8 +246,13 @@ if ($resql)
         print '</div>';
     }
 	
-
-	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref";
+	$param='';
+	if ($tosell)	$param.="&tosell=".$tosell;
+	if ($tobuy)		$param.="&tobuy=".$tobuy;
+	if ($type)		$param.="&type=".$type;
+	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
+	if ($snom)		$param.="&snom=".$snom;
+	if ($sref)		$param.="&sref=".$sref;
     
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -258,6 +261,7 @@ if ($resql)
 	$colspan_warehouse = 1;
 	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1; }
 	
+    print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
@@ -378,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)

@@ -10,21 +10,21 @@ print '<div class="tagtable centpercent noborder allwidth">';
 if($mode == 'edit' )
 {
     print '<form class="tagtr liste_titre">';
-    print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-    print '<div class="tagtd">'.$langs->trans('Type').'</div>';
-    print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
-    print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
-    print '<div class="tagtd"></div>';
+    print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';
+    print '<div class="tagtd liste_titre">'.$langs->trans('Type').'</div>';
+    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd liste_titre"></div>';
     print '</form>';
 }
 else
 {
     print '<form class="tagtr liste_titre">';
-    print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-    print '<div class="tagtd">'.$langs->trans('Type').'</div>';
-    print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
-    print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
-    print '<div class="tagtd"></div>';
+    print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';
+    print '<div class="tagtd liste_titre">'.$langs->trans('Type').'</div>';
+    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd liste_titre"></div>';
     print '</form>';
 }
 
@@ -66,7 +66,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);
-			print '</div class="tagtd">';
+			print '</div>';
 
 			print '<div class="tagtd">';
 			print $object_resource->type_label;
@@ -96,8 +96,13 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 }
 else {
-	print '<div class="tagtr '.($var==true?"pair":"impair").'"><div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div></div>';
-
+	print '<div class="tagtr '.($var==true?"pair":"impair").'">';
+	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '<div class="tagtd opacitymedium"></div>';
+	print '</div>';
 }
 
 print '</div>';

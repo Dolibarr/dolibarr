@@ -496,9 +496,9 @@ class Societe extends CommonObject
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::Create echec update ".$this->error." ".join(',',$this->errors), LOG_ERR);
                     $this->db->rollback();
-                    return -3;
+                    return -4;
                 }
             }
             else
@@ -520,7 +520,7 @@ class Societe extends CommonObject
 
         }
         else
-       {
+        {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
@@ -1166,7 +1166,7 @@ class Societe extends CommonObject
                 $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
 				$this->fk_account			= $obj->fk_account;
-				
+
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
@@ -1431,6 +1431,18 @@ class Societe extends CommonObject
                 }
             }
 
+            // Remove societe_remise
+            if (! $error)
+            {
+            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise";
+            	$sql.= " WHERE fk_soc = " . $id;
+            	if (! $this->db->query($sql))
+            	{
+            		$error++;
+            		$this->error = $this->db->lasterror();
+            	}
+            }
+
 		    // Remove societe_remise_except
             if (! $error)
             {
@@ -1542,7 +1554,7 @@ class Societe extends CommonObject
      */
     function set_remise_client($remise, $note, User $user)
     {
-        global $langs;
+        global $conf, $langs;
 
         // Nettoyage parametres
         $note=trim($note);
@@ -1574,8 +1586,8 @@ class Societe extends CommonObject
 
             // Ecrit trace dans historique des remises
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
-            $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+            $sql.= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
+            $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
@@ -1684,7 +1696,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email, u.statut, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
         {
@@ -1712,6 +1724,8 @@ class Societe extends CommonObject
                 $reparray[$i]['email']=$obj->email;
                 $reparray[$i]['statut']=$obj->statut;
                 $reparray[$i]['entity']=$obj->entity;
+                $reparray[$i]['login']=$obj->login;
+                $reparray[$i]['photo']=$obj->photo;
                 $i++;
             }
             return $reparray;
@@ -1814,16 +1828,16 @@ class Societe extends CommonObject
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier', 'project')
      *		@param	int		$maxlen			Max length of name
-     *      @param	integer	$notooltip		1=Disable tooltip
+     *      @param	int  	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
-        global $conf,$langs, $hookmanager;
+        global $conf, $langs, $hookmanager;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $name=$this->name?$this->name:$this->nom;
-
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
@@ -1839,56 +1853,46 @@ class Societe extends CommonObject
 	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
-        $link=''; $linkend='';
+        $linkstart=''; $linkend='';
 
         $label.= '<div width="100%">';
 
-        if ($option == 'customer' || $option == 'compta')
+        if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
            $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
-           $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+           $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
             $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
             $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'agenda')
         {
             $label.= '<u>' . $langs->trans("ShowAgenda") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
         }
         else if ($option == 'project')
         {
             $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
-        }
-        else if ($option == 'category')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
-        }
-        else if ($option == 'category_supplier')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
         }
         else if ($option == 'margin')
         {
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
         }
         
         // By default
-        if (empty($link))
+        if (empty($linkstart))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $link = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -1900,7 +1904,11 @@ class Societe extends CommonObject
             $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
         if (! empty($this->code_fournisseur) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
-
+        if (! empty($conf->accounting->enabled) && $this->client)
+            $label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
+        if (! empty($conf->accounting->enabled) && $this->fournisseur)
+            $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
+            
         if (! empty($this->logo))
         {
             $label.= '</br><div class="photointooltip">';
@@ -1911,7 +1919,8 @@ class Societe extends CommonObject
         $label.= '</div>';
 
         // Add type of canvas
-        $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkstart.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+
         $linkclose='';
         if (empty($notooltip))
         {
@@ -1922,24 +1931,23 @@ class Societe extends CommonObject
             }
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
-        
-         	if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('societedao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
+         	if (! is_object($hookmanager))
+    		{
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+    			$hookmanager=new HookManager($this->db);
+    		}
+    		$hookmanager->initHooks(array('societedao'));
+    		$parameters=array('id'=>$this->id);
+    		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
         }
-        $link.=$linkclose.'>';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+        if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }
@@ -1979,23 +1987,23 @@ class Societe extends CommonObject
         }
         if ($mode == 2)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5').' '.$langs->trans("ActivityCeased");
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
         }
         if ($mode == 3)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5');
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4');
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }
         if ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5').' '.$langs->trans("ActivityCeased");
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
         }
         if ($mode == 5)
         {
-            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5');
-            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4');
+            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }
     }
 
@@ -2177,7 +2185,7 @@ class Societe extends CommonObject
      *
      *  @param	int		$rowid      id of contact
      *  @param  string	$mode       'email' or 'mobile'
-     *  @return string  			email of contact
+     *  @return string  			Email of contact with format: "Full name <email>"
      */
     function contact_get_property($rowid,$mode)
     {
@@ -2760,7 +2768,7 @@ class Societe extends CommonObject
 
         $url='';
         $action = '';
-        
+
         $hookmanager->initHooks(array('idprofurl'));
         $parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
         $reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2773,14 +2781,14 @@ class Societe extends CommonObject
             //if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
             if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
             if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
-        
+
             if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
         }
         else
         {
             return $hookmanager->resPrint;
         }
-        
+
         return '';
     }
 
@@ -3404,29 +3412,43 @@ class Societe extends CommonObject
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
+	 *  @param  null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
+		if (! empty($moreparams) && ! empty($moreparams['use_companybankid']))
 		{
-			if (! empty($conf->global->COMPANY_ADDON_PDF))
-			{
-				$modele = $conf->global->COMPANY_ADDON_PDF;
-			}
-			else
-			{
-				print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
-                return 0;
-			}
+		    $modelpath = "core/modules/bank/doc/";
+
+		    include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		    $companybankaccount = new CompanyBankAccount($this->db);
+		    $result = $companybankaccount->fetch($moreparams['use_companybankid']);
+		    if (! $result) dol_print_error($this->db, $companybankaccount->error, $companybankaccount->errors);
+		    $result=$companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
-
-		$modelpath = "core/modules/societe/doc/";
-
-		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		else
+		{
+    		// Positionne le modele sur le nom du modele a utiliser
+    		if (! dol_strlen($modele))
+    		{
+    			if (! empty($conf->global->COMPANY_ADDON_PDF))
+    			{
+    				$modele = $conf->global->COMPANY_ADDON_PDF;
+    			}
+    			else
+    			{
+    				print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+                    return 0;
+    			}
+    		}
+    
+    		$modelpath = "core/modules/societe/doc/";
+		
+    		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 
 		return $result;
 	}
@@ -3508,9 +3530,9 @@ class Societe extends CommonObject
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
-		$sql = ' SELECT fk_user ';
-		$sql = ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
-		$sql = ' WHERE fk_soc = '.(int) $origin_id.') ';
+		$sql .= ' SELECT fk_user ';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
 		$query = $db->query($sql);
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015	    Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file      	htdocs/ecm/docdir.php
- *	\ingroup   	ecm
- *	\brief     	Main page for ECM section area
+ *	\file		htdocs/ecm/docdir.php
+ *	\ingroup	ecm
+ *	\brief		Main page for ECM section area
  */
 
 require '../main.inc.php';
@@ -117,8 +117,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		else
 		{
 			$langs->load("errors");
-			setEventMessages($langs->trans($ecmdir->error), null, 'errors');
-			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+			setEventMessages($langs->trans($ecmdir->error), $ecmdir->errors, 'errors');
 			$action = 'create';
 		}
 	}
@@ -160,7 +159,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
@@ -173,10 +172,8 @@ if ($action == 'create')
 	print '</textarea>';
 	print '</td></tr>'."\n";
 
-	print '</td></tr>'."\n";
+	print '</table>';
 
-	print '</table><br>';
-	
 	dol_fiche_end();
 
 	print '<div class="center">';

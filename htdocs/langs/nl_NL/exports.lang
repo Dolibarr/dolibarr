@@ -26,8 +26,6 @@ FieldTitle=Veldtitel
 NowClickToGenerateToBuildExportFile=Selecteer nu het bestandsformaat in de "combo box" en klik "Genereer" om een export bestand te maken
 AvailableFormats=Beschikbare formaten
 LibraryShort=Bibliotheek
-LibraryUsed=Gebruikte bibliotheek
-LibraryVersion=Versie
 Step=Stap
 FormatedImport=Importassistent
 FormatedImportDesc1=Dit deel laat het importeren van gepersonaliseerde gegevens toe. Het maakt gebruik van een assistent om u te helpen bij dit proces ook zonder technische kennis.
@@ -87,7 +85,7 @@ TooMuchWarnings=Er zijn nog steeds <b>%s</b> andere bronregels met waarschuwinge
 EmptyLine=Lege regel (wordt genegeerd)
 CorrectErrorBeforeRunningImport=U dient eerst alle fouten te corrigeren voordat de definitieve import kan worden uitgevoerd.
 FileWasImported=Het bestand werd geïmporteerd met het importnummer <b>%s</b>
-YouCanUseImportIdToFindRecord=U kunt alle geïmporteerde tabelregels in uw database vinden door te filteren op het veld <b>import_key='%s'</b>.
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Aantal regels zonder fouten of waarschuwingen: <b>%s</b>.
 NbOfLinesImported=Aantal regels succesvol geïmporteerd: <b>%s</b>.
 DataComeFromNoWhere=De waarde die ingevoegd moet worden komt nergens uit het bronbestand vandaan.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value-bestandsindeling</b> (. csv).<br>Dit is e
 Excel95FormatDesc=<b>Excel</b> bestandsvorm (.xls)<br>Dat is een eigen Excel 95 formaat (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> bestandsvorm (.xlsx)<br>Dit is een eigen Excel 2007 formaat (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> bestandsvorm (.tsv)<br>Dit is een tekst-bestand waarin velden van elkaar gescheiden zijn door een tab teken [tab].
-ExportFieldAutomaticallyAdded=Veld <b>%s</b> werd automatisch toegevoegd. Dat moet vermijden dat gelijkaardige lijnen beschouwd worden als dezelfde inhoud die dubbel voorkomt.  (met dit toegevoegd veld krijgen alle lijnen hun eigen identificatie, en zijn ze dus van elkaar te onderscheiden).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv opties
 Separator=Scheidingsteken
 Enclosure=Insluitingsteken

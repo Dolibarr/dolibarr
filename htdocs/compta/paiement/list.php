@@ -129,7 +129,7 @@ else
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
-    $sql.= " ba.rowid as bid, ba.label,";
+    $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -186,7 +186,7 @@ else
 }
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -222,14 +222,19 @@ if ($resql)
     
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
     
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled))
+    {
+    	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
@@ -243,27 +248,30 @@ if ($resql)
 
     // Lines for filters fields
     print '<tr class="liste_titre">';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-    print '<td align="center">';
+    print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
     print '</td>';
-    print '<td>';
+    print '<td class="liste_titre">';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
-    print '<td align="left">';
+    print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
     print '</td>';
-    print '<td>';
-    $form->select_comptes($search_account,'search_account',0,'',1);
-    print '</td>';
-    print '<td align="right">';
+    if (! empty($conf->banque->enabled))
+    {
+	    print '<td class="liste_titre">';
+	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    print '</td>';
+    }
+    print '<td class="liste_titre" align="right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
     print '<td class="liste_titre" align="right">';
@@ -272,7 +280,7 @@ if ($resql)
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
-        print '<td align="right">';
+        print '<td class="liste_titre" align="right">';
         print '</td>';
     }
     print "</tr>\n";
@@ -309,16 +317,25 @@ if ($resql)
         
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
-        
-        print '<td>';
-        if ($objp->bid)
-        {
-            $accountstatic->id=$objp->bid;
-            $accountstatic->label=$objp->label;
-            print $accountstatic->getNomUrl(1);
-        }
-        else print '&nbsp;';
-        print '</td>';
+
+        // Account
+	    if (! empty($conf->banque->enabled))
+	    {
+	        print '<td>';
+	        if ($objp->bid > 0)
+	        {
+	            $accountstatic->id=$objp->bid;
+	            $accountstatic->ref=$objp->bref;
+	            $accountstatic->label=$objp->blabel;
+	            $accountstatic->number=$objp->number;
+	            $accountstatic->account_number=$objp->account_number;
+	            $accountstatic->accountancy_journal=$objp->accountancy_journal;
+	            print $accountstatic->getNomUrl(1);
+	        }
+	        else print '&nbsp;';
+	        print '</td>';
+	    }
+	    // Amount
         print '<td align="right">'.price($objp->amount).'</td>';
 
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
@@ -336,6 +353,7 @@ if ($resql)
         $i++;
     }
     print "</table>\n";
+    print "</div>";
     print "</form>\n";
 }
 else

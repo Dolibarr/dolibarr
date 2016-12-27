@@ -1,87 +1,89 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense reports
-ListOfFees=List of fees
-ShowTrip=Show expense report
-NewTrip=New expense report
-CompanyVisited=Company/foundation visited
-FeesKilometersOrAmout=Amount or kilometers
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-ClassifyRefunded=Classify 'Refunded'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripNDF=Informations expense report
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
-TF_OTHER=Other
-TF_TRIP=Transportation
-TF_LUNCH=Lunch
+ExpenseReport=Izvještaj troška
+ExpenseReports=Izvještaji troška
+ShowExpenseReport=Prikaži izvještaj troška
+Trips=Izvještaji troška
+TripsAndExpenses=Izvještaji troškova
+TripsAndExpensesStatistics=Statistika izvještaja troška
+TripCard=Kartica izvještaja troška
+AddTrip=Kreiraj izvještaj troška
+ListOfTrips=Popis izvještaja troškova
+ListOfFees=Popis pristojbi
+TypeFees=Tipovi pristojbi
+ShowTrip=Prikaži izvještaj troška
+NewTrip=Novi izvještaj troška
+CompanyVisited=Tvrtka/zaklada posječena
+FeesKilometersOrAmout=Iznos ili kilometri
+DeleteTrip=Obriši izvještaj troška
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
+ListTripsAndExpenses=Popis izvještaja troškova
+ListToApprove=Čeka na odobrenje
+ExpensesArea=Sučelje izvještaja troška
+ClassifyRefunded=Označi 'Povrat'
+ExpenseReportWaitingForApproval=Novi izvještaj troška je predan za odobrenje
+ExpenseReportWaitingForApprovalMessage=Novi izvještaj troška je predan i čeka odobrenje.\n- Korisnik: %s\n- Period: %s\nKliknite ovdje za ovjeru: %s
+TripId=Izvještaj troška ID
+AnyOtherInThisListCanValidate=Osoba za obavjest za ovjeru.
+TripSociete=Više o tvrtci
+TripNDF=Informacije izvještaja troška
+PDFStandardExpenseReports=Standardni predložak za generiranje PDF dokumenta za izvještaje troškova
+ExpenseReportLine=Stavka izvještaja troška
+TF_OTHER=Ostalo
+TF_TRIP=Prijevoz
+TF_LUNCH=Ručak
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
+TF_TRAIN=Vlak
+TF_BUS=Autobus
+TF_CAR=Auto
+TF_PEAGE=Cestarina
+TF_ESSENCE=Gorivo
 TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-AucuneLigne=There is no expense report declared yet
+ErrorDoubleDeclaration=Objavili ste još jedan izvještaj troška u sličnom razdoblju.
+AucuneLigne=Još nije objavljen izvještaj troška
 
-ModePaiement=Payment mode
+ModePaiement=Način isplate
 
-VALIDATOR=User responsible for approval
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paid by
-REFUSEUR=Denied by
-CANCEL_USER=Deleted by
+VALIDATOR=Odgovorna osoba za odobrenje
+VALIDOR=Odobrio
+AUTHOR=Snimio
+AUTHORPAIEMENT=Platio
+REFUSEUR=Odbio
+CANCEL_USER=Obrisao
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Razlog
+MOTIF_CANCEL=Razlog
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Datum odbijanja
+DATE_SAVE=Datum ovjere
+DATE_CANCEL=Datum odustajanja
+DATE_PAIEMENT=Datum isplate
 
-BROUILLONNER=Reopen
-ValidateAndSubmit=Validate and submit for approval
-ValidatedWaitingApproval=Validated (waiting for approval)
+BROUILLONNER=Ponovo otvori
+ValidateAndSubmit=Ovjeri i predaj za odobrenje
+ValidatedWaitingApproval=Ovjereno (čeka odobrenje)
 
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_AUTHOR=Vi niste autor izvještaja troška. Operacija je prekinuta.
 
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Odobri izvještaj troška
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Isplati troškove
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
-BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Vrati izvještaj troška nazad na status "Skica"
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Ovjeri trošak
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
-NoTripsToExportCSV=No expense report to export for this period.
-ExpenseReportPayment=Expense report payment
+NoTripsToExportCSV=Nema izvještaja troška za izvoz u ovom razdoblju.
+ExpenseReportPayment=Isplata izvještaja troška
 
-ExpenseReportsToApprove=Expense reports to approve
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToApprove=Troškovi za odobrenje
+ExpenseReportsToPay=Troškovi za platiti

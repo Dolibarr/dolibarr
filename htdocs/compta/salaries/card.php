@@ -73,8 +73,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
 	
-	$object->accountid=GETPOST("accountid","int");
-	$object->fk_user=GETPOST("fk_user","int");
+	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
 	$object->amount=price2num(GETPOST("amount"));
@@ -82,7 +82,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->datesp=$datesp;
 	$object->dateep=$dateep;
 	$object->note=GETPOST("note");
-	$object->type_payment=GETPOST("paymenttype");
+	$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
 
@@ -113,7 +113,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
 	if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
 	
@@ -257,7 +257,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
@@ -275,14 +275,14 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td>';
 	print fieldLabel('Amount','amount',1).'</td><td>';
-	print '<input name="amount" id="amount" size="10" value="'.GETPOST("amount").'">';
+	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
-		print fieldLabel('Account','selectaccountid',1).'</td><td>';
+		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
@@ -415,7 +415,7 @@ if ($id)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

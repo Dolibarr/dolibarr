@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2012       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -204,328 +204,6 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	}
 }
 
-/**
- *  Scan a directory and return a array of files/directories from a selection.
- *  Content for string is UTF8 and dir separator is "/".
- *
- *  @param	int	$fk_soc        	select socid - for your selection in array
- *  @param	string	$module_get     Starting path from which to search
- *  @param	string	$sortorder	SORT_ASC or SORT_DESC
- *  @param	array		$excludefiles   Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
- *  @return	array		Array of array( filefolder=> array( filelabel=> array( file=> array('name'=>'xxx','date'=>'yyy','size'=>99,'type'=>'dir|file'))))
- */
-function get_soc_file_array($fk_soc, $module_get = false, $sortorder = false, $excludefiles = false) 
-{
-	global $user, $conf, $db;
-
-	$sortfield = "date";
-
-	if(!$sortorder){
-		$sorting = SORT_DESC;
-	}else{
-		$sorting = $sortorder;
-	}
-
-	$ar_modules_get = array();
-	if (is_array($module_get)) $ar_modules_get = $module_get;
-	elseif (strlen($module_get) > 0) $ar_modules_get[$module_get] = $module_get;
-	else
-	{
-		$ar_modules_get['company']	= 'company';
-		$ar_modules_get['dolimail']	= 'dolimail';
-		$ar_modules_get['actions']	= 'actions';
-		$ar_modules_get['invoice'] 	= 'invoice';
-		$ar_modules_get['order']   	= 'order';
-		$ar_modules_get['propal']  	= 'propal';
-		$ar_modules_get['contract']	= 'contract';
-		$ar_modules_get['project'] 	= 'project';
-		$ar_modules_get['invoice_supplier']	= 'invoice_supplier';
-		$ar_modules_get['order_supplier']	= 'order_supplier';
-	}
-
-	
-	// rights
-	if (count($ar_modules_get) > 0)
-	foreach($ar_modules_get as $curmodule)
-	{
-		switch($curmodule)
-		{
-			case 'company':
-			if (! empty($conf->societe->enabled))    // Recht Alle oder nur die Vertriebspartneradressen
-				$ar_modules_secure['company']['outputdir'] = $conf->societe->dir_output;
-			break;
-			case 'dolimail':
-			if (! empty($conf->dolimail->enabled) && ($user->rights->dolimail->read || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->dolimail->dir_output.'/attachments';
-			break;
-			case 'actions':
-			if (! empty($conf->agenda->enabled) || ($user->rights->agenda->allactions->read || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->agenda->dir_output;
-			break;
-			case 'invoice':
-			if (! empty($conf->facture->enabled) && ($user->rights->facture->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->facture->dir_output;
-			break;
-			case 'order':
-			if (!empty($conf->commande->enabled) && ($user->rights->commande->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->commande->dir_output;
-			break;
-			case 'propal':
-			if (!empty($conf->propal->enabled) && ($user->rights->propale->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->propal->dir_output;
-			break;
-			case 'project':
-			if (! empty($conf->projet->enabled) && ($user->rights->projet->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->projet->dir_output;
-			break;
-			case 'invoice_supplier':
-			if (! empty($conf->fournisseur->enabled) && ($user->rights->fournisseur->facture->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->fournisseur->dir_output.'/facture';
-			break;
-			case 'order_supplier':
-			if (! empty($conf->fournisseur->enabled) && ($user->rights->fournisseur->commande->lire || $user->admin))
-				$ar_modules_secure[$curmodule]['outputdir']=$conf->fournisseur->dir_output.'/commande';
-			break;
-		}
-	}
-			/* TODO make a outputdir*/
-			//unset($ar_modules_secure['dolimail']);
-			unset($ar_modules_secure['project']); // project (list with project) is "ref"
-			unset($ar_modules_secure['actions']);
-			unset($ar_modules_secure['contract']);
-			/* TODO make a outputdir*/
-			unset($curmodule);
-
-	if($fk_soc > 0)
-	$ar_modules_get = $ar_modules_secure;
-	
-	$xy=0;
-	if (count($ar_modules_get)>0)
-	foreach($ar_modules_get as $curmodule => $myarray)
-	{
-		if($fk_soc > 0 && $curmodule != "company")
-		{
-
-			// SQL to find documents (ref number)
-
-			if($curmodule == "invoice") 					$sql = "SELECT facnumber as refstr FROM ".MAIN_DB_PREFIX."facture";
-			elseif($curmodule == "order") 					$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."commande";
-			elseif($curmodule == "invoice_supplier") 		$sql = "SELECT rowid as refstr FROM ".MAIN_DB_PREFIX."facture_fourn";
-			elseif($curmodule == "order_supplier") 			$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-			elseif($curmodule == "propal") 					$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."propal";
-			elseif($curmodule == "contract") 				$sql = "SELECT ref as refstr FROM ".MAIN_DB_PREFIX."contrat";
-			elseif($curmodule == "dolimail")				$sql = "SELECT uid as refstr, subject FROM ".MAIN_DB_PREFIX."mails";
-
-			$sql.= ' WHERE entity IN ('.getEntity('societe', 1).')';
-			$sql.= " AND fk_soc = '".$fk_soc."'";
-			
-
-			$res = $db->query($sql);
-			if ($res && $db->num_rows($res) > 0)
-			{
-				while($obj = $db->fetch_object($res))
-				{
-					$ar_modules_secure[$curmodule]['socref'][] = $obj->refstr; 
-					if($curmodule == "dolimail") $ar_modules_secure['dolimail']['subject'][$obj->refstr] = $obj->subject; 						
-				}
-			}
-			else
-			{
-				unset($ar_modules_secure[$curmodule]);
-				continue;
-				$errors[]="SQL Error: ".$sql;
-				$error++;
-			}
-
-			
-		}else{
-			if($curmodule == "dolimail")				$sql = "SELECT uid as refstr, subject FROM ".MAIN_DB_PREFIX."mails";
-			
-			$res = $db->query($sql);
-			if ($res && $db->num_rows($res) > 0)
-			{
-				while($obj = $db->fetch_object($res))
-				{
-					if($curmodule == "dolimail") $ar_modules_secure['dolimail']['subject'][$obj->refstr] = $obj->subject; 
-				}
-			}
-		}
-
-		// Data in Array
-		// Get Array from ar_module
-
-		$output[$curmodule]=dol_dir_list($myarray['outputdir'],"files",1,'', $excludefiles, $sortfield, $sorting,1);
-		if($fk_soc > 0)
-		{
-			if($curmodule == "company")
-			{
-				foreach($output["company"] as $label => $filedata)
-				{
-					if($filedata['level1name'] != $fk_soc)
-					{
-						unset($output['company'][$label]);
-					}
-				}
-			}
-			
-			elseif($curmodule == "invoice")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // wenn no file exsit
-				foreach($output["invoice"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref']))
-					{
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($fac_supp_N_arr) array
-					}
-
-				}
-			}
-			elseif($curmodule == "invoice_supplier")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]);  } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["invoice_supplier"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($fac_supp_N_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "order")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["order"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_order_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "order_supplier")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["order_supplier"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_order_supp_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "propal")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["propal"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_propal_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "contract")
-			{
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["contract"] as $label => $filedata)
-				{
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_contract_arr) array
-					}
-				}
-			}
-			elseif($curmodule == "dolimail")
-			{
-
-				if (! is_array($ar_modules_secure[$curmodule]['socref'])) { unset($output[$curmodule]); continue; } // throw all ref number who are not in ($fac_invoice_arr) array
-				foreach($output["dolimail"] as $label => $filedata)
-				{
-					if($filedata['name'] == "winmail.dat" || $filedata['name'] == "smime.p7s") unset($output[$curmodule][$label]);
-					else
-					if (! in_array($filedata['level1name'], $ar_modules_secure[$curmodule]['socref'])) {
-						unset($output[$curmodule][$label]); // throw all ref number who are not in ($ref_propal_arr) array
-					}
-				}
-			}
-			// Error if ther isn't any File
-			if(count($output[$curmodule]) == 0)
-			{
-				$error++;
-				$errors[]="Error [404]: No File found for User: ".$fk_soc." in module: ".$curmodule;
-				unset($output[$curmodule]);
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "dolimail" && count($output["dolimail"])>0)
-		{
-			foreach($output["dolimail"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $ar_modules_secure['dolimail']['subject'][$filedata['level1name']];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "invoice" && count($output["invoice"])>0)
-		{
-			foreach($output["invoice"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "invoice_supplier" && count($output["invoice_supplier"])>0)
-		{
-			foreach($output["invoice_supplier"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}
-
-		// Extra for Mail attachments
-		if($curmodule == "contract" && count($output["contract"])>0)
-		{
-			foreach($output["contract"] as $label => $filedata)
-			{
-				$output[$curmodule][$label]['subject'] = $filedata['level1name'];
-			}
-		}		
-
-		$xy++;
-	}
-
-	if(count($output) > 0)
-	{
-		return $output;
-	}
-	else
-	{
-		return -1;
-	}
-}
-
-/**
- *  Calculate Bytes to kb, mb and translate it to current language
- *
- *  @param	int	$byt        	Bytes
- *  @return	string	calculated string
- */
-function calculate_byte($byt)
-{
-	global $langs;
-		
-	if ($byt < 1024) {
-		$unit = '&nbsp;'.$langs->trans("b");
-		$mailsize=$byt;
-	} else if ($byt / 1024 > 1024) {
-		$mailsize = $byt / 1024 / 1024;
-		$unit = '&nbsp;'.$langs->trans("Mb");
-	} else {
-		$mailsize = $byt / 1024;
-		$unit = '&nbsp;'.$langs->trans("Kb");
-	}
-
-	$val = number_format($mailsize, 2).$unit;
-
-	return $val;
-}
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
@@ -924,7 +602,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 		{
 			if (! class_exists('AntiVir')) {
-				require DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 			}
 			$antivir=new AntiVir($db);
 			$result = $antivir->dol_avscan_file($src_file);
@@ -939,7 +617,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We renamed them.
 		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file))
+		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -2015,7 +1693,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->bind->write || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -2063,7 +1741,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	}
 
 	// Wrapping pour les produits et services
-	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service')
+	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
 	{
 		if (($fuser->rights->produit->lire || $fuser->rights->service->lire) || preg_match('/^specimen/i',$original_file))
 		{
@@ -2101,7 +1779,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->banque->dir_output.'/bordereau/'.$original_file;		// original_file should contains relative path so include the get_exdir result
+		$original_file=$conf->bank->dir_output.'/checkdeposits/'.$original_file;		// original_file should contains relative path so include the get_exdir result
 	}
 
 	// Wrapping for bank

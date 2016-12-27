@@ -148,7 +148,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
 		if ($id <> $user->id) {
 			$object = new User($db);
-			$object->id = $id;
+			$object->fetch($id);
 			$result = $object->delete();
 			if ($result < 0) {
 				$langs->load("errors");
@@ -216,6 +216,8 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
 			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+			$object->dateemployment = $dateemployment;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -263,10 +265,7 @@ if (empty($reshook)) {
 			{
 				$langs->load("errors");
 				$db->rollback();
-				if (is_array($object->errors) && count($object->errors))
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -360,6 +359,8 @@ if (empty($reshook)) {
 					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
 					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+					$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+					$object->dateemployment = $dateemployment;
 
 					if (! empty($conf->multicompany->enabled))
 					{
@@ -732,7 +733,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
-        print '<input size="30" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
+        print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
     }
     print '</td></tr>';
 
@@ -746,20 +747,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
-        print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
+        print '<input class="minwidth100" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
     print '</td></tr>';
 
 	// Employee
     print '<tr>';
     print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print $form->selectyesno("employee",(GETPOST('employee')?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job
     print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
     print '<td>';
-    print '<input size="30" type="text" name="job" value="'.GETPOST('job').'">';
+    print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
     print '</td></tr>';
 
     // Gender
@@ -784,7 +785,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
-        print '<input size="20" maxsize="24" type="text" name="login" value="'.GETPOST('login').'">';
+        print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.GETPOST('login').'">';
     }
     print '</td></tr>';
 
@@ -996,7 +997,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
     print '<td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,90);
+    $doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
     print $doleditor->Create(1);
     print '</td></tr>';
 
@@ -1060,6 +1061,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
+	
+    // Date employment
+    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+    print '<td>';
+	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+	print '</td>';
+    print "</tr>\n";
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1094,7 +1102,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $langs->trans("Note");
     print '</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,90);
+    $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,'90%');
     $doleditor->Create();
     print "</td></tr>\n";
 
@@ -1131,6 +1139,10 @@ else
         $object->fetch($id);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
+		
+		// Check if user has rights
+		$object->getrights();
+		if(empty($object->nb_rights)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1414,6 +1426,13 @@ else
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td>';
 			}
+
+		    // Date employment
+		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+		    print '<td>';
+			print dol_print_date($object->dateemployment);
+		    print '</td>';
+		    print "</tr>\n";
 
 			print '</table>';
 
@@ -1765,15 +1784,6 @@ else
 
             dol_fiche_head($head, 'user', $title, 0, 'user');
 
-        	$rowspan=22;
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
-            if (! empty($conf->societe->enabled)) $rowspan++;
-            if (! empty($conf->adherent->enabled)) $rowspan++;
-			if (! empty($conf->skype->enabled)) $rowspan++;
-			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
-			if (! empty($conf->agenda->enabled)) $rowspan++;
-			if (! empty($conf->accounting->enabled)) $rowspan++;
-
             print '<table width="100%" class="border">';
 
             // Ref/ID
@@ -1792,7 +1802,7 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
+                print '<input class="minwidth100" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
             }
             else
             {
@@ -1800,12 +1810,6 @@ else
                 print $object->lastname;
             }
             print '</td>';
-
-            // Photo
-            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
-            print '</td>';
-
             print '</tr>';
 
             // Firstname
@@ -1813,7 +1817,7 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
+                print '<input class="minwidth100" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
             }
             else
             {
@@ -1821,6 +1825,14 @@ else
                 print $object->firstname;
             }
             print '</td></tr>';
+
+            // Photo
+            print '<tr>';
+            print '<td>'.$langs->trans("Photo").'</td>';
+            print '<td>';
+            print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
+            print '</td>';
+            print '</tr>';
 
             // Employee
             print '<tr>';
@@ -1890,7 +1902,7 @@ else
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
-                print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+                print '<input class="minwidth100" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
                 if (! empty($conf->use_javascript_ajax))
                     print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
                 print '</td></tr>';
@@ -1980,7 +1992,7 @@ else
             }
 
            	// Type
-           	print '<tr><td width="25%">'.$langs->trans("Type").'</td>';
+           	print '<tr><td>'.$langs->trans("Type").'</td>';
            	print '<td>';
            	if ($user->id == $object->id || ! $user->admin)
            	{
@@ -2023,7 +2035,7 @@ else
             // State
             if (empty($conf->global->USER_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td>';
+                print '<tr><td class="tdoverflow">'.fieldLabel('State','state_id').'</td><td>';
                 print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
                 print '</td></tr>';
             }
@@ -2092,7 +2104,7 @@ else
             print '<td>';
             if ($caneditfield  && empty($object->ldap_sid))
             {
-                print '<input size="40" type="text" name="email" class="flat" value="'.$object->email.'">';
+                print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
             }
             else
             {
@@ -2107,7 +2119,7 @@ else
             if ($caneditfield)
             {
 	            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	            $doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,72);
+	            $doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
 	            print $doleditor->Create(1);
             }
             else
@@ -2123,7 +2135,7 @@ else
                 print '<td>';
                 if ($caneditfield)
                 {
-                    print '<input size="40" type="url" name="openid" class="flat" value="'.$object->openid.'">';
+                    print '<input class="minwidth100" type="url" name="openid" class="flat" value="'.$object->openid.'">';
                 }
                 else
               {
@@ -2187,6 +2199,13 @@ else
 		    print '<td>';
 		    print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
 		    print '</td>';
+		    print "</tr>\n";
+
+		    // Date employment
+		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+		    print '<td>';
+			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print '</td>';
 		    print "</tr>\n";
 
 		    // Accountancy code

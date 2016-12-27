@@ -213,13 +213,13 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
-    $result=$object->setValueFrom('dated',$dated,'','','date');
+    $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km','int'));
+    $result=$object->setValueFrom('km', GETPOST('km','int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -279,7 +279,7 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8,'90%');
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -291,7 +291,7 @@ if ($action == 'create')
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -376,7 +376,7 @@ else if ($id)
             print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
             print $doleditor->Create(1);
 
             print "</td></tr>";
@@ -387,7 +387,7 @@ else if ($id)
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
-                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
                 print $doleditor->Create(1);
 
                 print "</td></tr>";

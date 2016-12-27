@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Код за сигурност
-Calendar=Календар
 NumberingShort=N°
 Tools=Инструменти
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Доставка изпращат по пощата
 Notify_MEMBER_VALIDATE=Члена е приет
 Notify_MEMBER_MODIFY=Членът е променен
 Notify_MEMBER_SUBSCRIPTION=Членът е абониран
-Notify_MEMBER_RESILIATE=Членът е изключен
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Членът е изтрит
 Notify_PROJECT_CREATE=Създаване на проект
 Notify_TASK_CREATE=Задачата е създадена
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Общ размер на прикачените фай�
 MaxSize=Максимален размер
 AttachANewFile=Прикачи нов файл/документ
 LinkedObject=Свързан обект
-Miscellaneous=Разни
 NbOfActiveNotifications=Брой уведомления (брой имейли на получатели)
 PredefinedMailTest=Това е тестов имейл.\nДвата реда са разделени с нов ред.\n\n__SIGNATURE__
 PredefinedMailTestHtml=Това е <b>тестов</b> имейл (думата тестов трябва да бъде с удебелен шрифт). <br>Двата реда са разделени с нов ред.<br><br> __SIGNATURE__
@@ -201,36 +199,16 @@ IfAmountHigherThan=Ако сумаta e по-висока от <strong>%s</strong
 SourcesRepository=Хранилище за източници
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Фирма %s е добавена
-ContractValidatedInDolibarr=Контакт %s е валидиран
-PropalClosedSignedInDolibarr=Предложение %s е подписано
-PropalClosedRefusedInDolibarr=Предложение %s е отказано
-PropalValidatedInDolibarr=Предложение %s е валидирано
-PropalClassifiedBilledInDolibarr=Предложение %s е класифицирано фактурирано
-InvoiceValidatedInDolibarr=Фактура %s е валидирана
-InvoicePaidInDolibarr=Фактура %s е променена на платена
-InvoiceCanceledInDolibarr=Фактура %s е отказана
-MemberValidatedInDolibarr=Член %s е валидиран
-MemberResiliatedInDolibarr=Член %s е завършен
-MemberDeletedInDolibarr=Член %s е изтрит
-MemberSubscriptionAddedInDolibarr=Абонамет за член %s е добавен
-ShipmentValidatedInDolibarr=Доставка %s е валидирана
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Доставка %s е изтрита
 ##### Export #####
-Export=Експорт
 ExportsArea=Секция за експорт
 AvailableFormats=Налични формати
-LibraryUsed=Използвана библиотека
-LibraryVersion=Версия
+LibraryUsed=Библиотека използва
+LibraryVersion=Library version
 ExportableDatas=Експортируеми данни
 NoExportableData=Няма експортируеми данни (няма модули със заредени експортируеми данни, или липсва разрешение)
-NewExport=Нов експорт
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Заглавие
+WEBSITE_DESCRIPTION=Описание
 WEBSITE_KEYWORDS=Keywords

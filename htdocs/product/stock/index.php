@@ -140,7 +140,7 @@ if ($resql)
 		print '<td>'.$langs->trans("SellByDate").'</td>';
 	}
 	print '<td>'.$langs->trans("Warehouse").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
+	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
 	print "</tr>\n";
 
 	$var=True;

@@ -21,8 +21,9 @@
  *	\ingroup    expedition
  *	\brief      Library for expedition module
  */
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 
 /**
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  */
 function shipping_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
 	$langs->load("sendings");
 	$langs->load("deliveries");
@@ -64,7 +65,13 @@ function shipping_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $objectsrc = $object;
+	    if ($object->origin == 'commande' && $object->origin_id > 0)
+	    {
+	        $objectsrc = new Commande($db);
+	        $objectsrc->fetch($object->origin_id);
+	    }
+	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -163,18 +170,20 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
-
-	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
-	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line";
-	$sql.= ", e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
+	$warehousestatic=new Entrepot($db);
+	
+	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
+	$sql.= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
+	$sql.= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
 	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
-	$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+	$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql.= ' p.description as product_desc';
 	$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 	$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
 	$sql.= ", ".MAIN_DB_PREFIX.$origin."det as obj";
 	//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
+	//TODO Add link to expeditiondet_batch
 	$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
 	$sql.= " AND obj.fk_".$origin." = ".$origin_id;
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
@@ -202,8 +211,18 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			print '<td align="left">'.$langs->trans("Description").'</td>';
 			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-			if ($conf->livraison_bon->enabled)
+			print '<td align="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
+			if (! empty($conf->stock->enabled))
+			{
+                print '<td>'.$langs->trans("Warehouse").'</td>';
+			}
+			/*TODO Add link to expeditiondet_batch
+			if (! empty($conf->productbatch->enabled))
+			{
+			    print '<td>';
+			    print '</td>';
+			}*/
+			if (! empty($conf->livraison_bon->enabled))
 			{
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
 				//print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
@@ -219,7 +238,9 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				print "<tr ".$bc[$var].">";
 
 				// Sending id
-				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
+				print '<td align="left" class="nowrap">';
+				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a>';
+				print '</td>';
 
 				// Description
 				if ($objp->fk_product > 0)
@@ -258,6 +279,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
+					$product_static->status_batch=$objp->product_tobatch;
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
@@ -303,6 +325,46 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				// Qty shipped
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
+				// Warehouse
+				if (! empty($conf->stock->enabled))
+				{
+				    print '<td>';
+    				if ($objp->warehouse_id > 0)
+    				{
+        				$warehousestatic->fetch($objp->warehouse_id);
+        				print $warehousestatic->getNomUrl(1);
+    				}
+    				print '</td>';
+				}
+				
+				// Batch number managment
+				/*TODO Add link to expeditiondet_batch
+				if (! empty($conf->productbatch->enabled))
+				{
+				    var_dump($objp->edrowid);
+				    $lines[$i]->detail_batch
+				    if (isset($lines[$i]->detail_batch))
+				    {
+				        print '<td>';
+				        if ($lines[$i]->product_tobatch)
+				        {
+				            $detail = '';
+				            foreach ($lines[$i]->detail_batch as $dbatch)
+				            {
+				                $detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+				            }
+				            print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
+				        }
+				        else
+				        {
+				            print $langs->trans("NA");
+				        }
+				        print '</td>';
+				    } else {
+				        print '<td></td>';
+				    }
+				}*/			
+				
 				// Informations on receipt
 				if (! empty($conf->livraison_bon->enabled))
 				{

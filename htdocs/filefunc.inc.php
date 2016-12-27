@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','5.0.0-alpha');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','5.0.0-beta');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -92,7 +92,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
         $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
         if (! preg_match('/\/$/', $path)) $path.='/';
     }
-    else if (preg_match('/index\.php', $_SERVER['PHP_SELF']))
+    else if (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
     {
         // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
         // when using apache alias like '/dolibarr/' that point to htdocs.
@@ -113,11 +113,11 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
     		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
             if ($TDir[$i] == 'dolibarr') break;
             if (substr($TDir[$i], -4, 4) == '.php') continue;
-    		
+
     		$path .= '../';
     	}
     }
-    
+
 	header("Location: ".$path."install/index.php");
 	exit;
 }
@@ -149,11 +149,12 @@ if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour comp
 if ($dolibarr_main_db_type == 'mysql') $dolibarr_main_db_type = 'mysqli';
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysqli'?'utf8':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_general_ci':'');	// Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_unicode_ci':'');	// Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
+if (empty($dolibarr_mailing_limit_sendbycli)) $dolibarr_mailing_limit_sendbycli=0;
 if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php strict mode
 // TODO Multicompany Remove this. Useless.
 if (empty($multicompany_transverse_mode)) $multicompany_transverse_mode=0;
@@ -162,9 +163,12 @@ if (empty($multicompany_force_entity)) $multicompany_force_entity=0; // To force
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET to allow direct link to access a particular page).
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
+// Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
+if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)
+    && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST'])
+    && (empty($_SERVER['HTTP_REFERER']) || ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER'])))
 {
-	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+	//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 	print "Access refused by CSRF protection in main.inc.php.\n";
 	print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
 	die;

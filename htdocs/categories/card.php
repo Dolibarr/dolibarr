@@ -58,6 +58,7 @@ if ($origin)
 	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
 	if ($type == Categorie::TYPE_MEMBER)      $idMemberOrigin   = $origin;
 	if ($type == Categorie::TYPE_CONTACT)     $idContactOrigin  = $origin;
+	if ($type == Categorie::TYPE_PROJECT)     $idProjectOrigin  = $origin;
 }
 
 if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
@@ -88,17 +89,17 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		}
 		else if ($idProdOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$type);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idCompanyOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&type='.$type);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idSupplierOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$type);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idMemberOrigin)
@@ -106,14 +107,14 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idCatOrigin)
-		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&type='.$type);
-			exit;
-		}
 		else if ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
+			exit;
+		}
+		else if ($idProjectOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
 		}
 		else
@@ -173,32 +174,32 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 		}
 		else if ($idProdOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
 		else if ($idCompanyOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
 		else if ($idSupplierOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
 		else if ($idMemberOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
-			exit;
-		}
-		else if ($idCatOrigin)
-		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
 		else if ($idContactOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
+		else if ($idProjectOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
 
@@ -215,7 +216,8 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+$helpurl='';
+llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -244,13 +246,13 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
+		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -258,7 +260,7 @@ if ($user->rights->categorie->creer)
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
 		print $formother->selectColor($color,'color');
 		print '</td></tr>';
-		
+
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);

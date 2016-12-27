@@ -151,7 +151,9 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
 
-dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
 print '<div class="fichecenter">';
 
@@ -377,7 +379,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		);
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -467,7 +469,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	    
 	    
         // Count total nb of records
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);

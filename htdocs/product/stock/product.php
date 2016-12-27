@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("products");
@@ -54,8 +55,8 @@ $stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
-$d_eatby=dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-$d_sellby=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+$d_eatby=dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+$d_sellby=dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 $pdluoid=GETPOST('pdluoid','int');
 
 // Security check
@@ -63,11 +64,96 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
 
 
+$object = new Product($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+if ($id > 0 || ! empty($ref))
+{
+    $result = $object->fetch($id, $ref);
+
+}
+$modulepart='product';
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
+$objcanvas=null;
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db,$action);
+    $objcanvas->getCanvas('stockproduct','card',$canvas);
+}
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('stockproductcard','globalcard'));
+
+
 /*
  *	Actions
  */
 
 if ($cancel) $action='';
+
+$parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if($action == 'addlimitstockwarehouse') {
+	
+	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+	$desiredstock = GETPOST('desiredstock');
+	
+	$maj_ok = true;
+	if($seuil_stock_alerte == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
+		$maj_ok = false;
+	}
+	if($desiredstock == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
+		$maj_ok = false;
+	}
+	
+	if($maj_ok) {
+		
+		$pse = new ProductStockEntrepot($db);
+		if($pse->fetch('', GETPOST('id'), GETPOST('fk_entrepot')) > 0) {
+			
+			// Update
+			$pse->seuil_stock_alerte = $seuil_stock_alerte;
+			$pse->desiredstock  	 = $desiredstock;
+			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
+			
+		} else {
+			
+			// Create
+			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
+			$pse->fk_product  	 	 = GETPOST('id');
+			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+			$pse->desiredstock  	 = GETPOST('desiredstock');
+			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
+			
+		}
+		
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id'));
+	exit;
+	
+}
+
+if($action == 'delete_productstockwarehouse')
+{
+	
+	$pse = new ProductStockEntrepot($db);
+	$pse->fetch(GETPOST('fk_productstockwarehouse'));
+	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
+	
+	$action = '';
+	
+}
 
 // Set stock limit
 if ($action == 'setseuil_stock_alerte')
@@ -367,8 +453,8 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
             }
             else
             {
-                $d_eatby=dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-                $d_sellby=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+                $d_eatby=dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+                $d_sellby=dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
                 $pdluo->batch=GETPOST("batch_number",'san_alpha');
                 $pdluo->eatby=$d_eatby;
                 $pdluo->sellby=$d_sellby;
@@ -409,8 +495,21 @@ if ($id > 0 || $ref)
 	
 	$object->load_stock();
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("CardProduct".$object->type),$help_url);
+	$title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader('', $title, $helpurl);
 
 	if ($result > 0)
 	{
@@ -492,7 +591,11 @@ if ($id > 0 || $ref)
         print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
-
+		
+		// Hook formObject
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+     
         // Desired stock
         print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1),'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
         print '</td><td colspan="2">';
@@ -510,14 +613,16 @@ if ($id > 0 || $ref)
         print '<tr><td>';
         print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
         print '</td>';
-		print '<td>'.$object->stock_reel;
+		print '<td>'.price2num($object->stock_reel, 'MS');
 		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
+		$stocktheo = price2num($object->stock_theorique, 'MS');
+		
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-        print "<td>".(empty($object->stock_theorique)?0:$object->stock_theorique);
+        print "<td>".(empty($stocktheo)?0:$stocktheo);
         if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
@@ -580,7 +685,7 @@ if ($id > 0 || $ref)
 		{
 			dol_print_error($db);
 		}
-		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td colspan="3">';
 		if ($lastmovementdate)
 		{
 		    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -600,44 +705,19 @@ if ($id > 0 || $ref)
 		dol_fiche_end();
 	}
 
-	/*
-	 * Correct stock
-	 */
+	// Correct stock
 	if ($action == "correction")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
 		print '<br><br>';
 	}
 
-	/*
-	 * Transfer of units
-	 */
+	// Transfer of units
 	if ($action == "transfert")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br><br>';
 	}
-
-	/*
-	 * Set initial stock
-	 */
-	/*
-	if ($_GET["action"] == "definir")
-	{
-		print load_fiche_titre($langs->trans("SetStock"));
-		print "<form action=\"product.php?id=$object->id\" method=\"post\">\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="create_stock">';
-		print '<table class="border" width="100%"><tr>';
-		print '<td width="15%">'.$langs->trans("Warehouse").'</td><td width="40%">';
-		print $formproduct->selectWarehouses('','id_entrepot','',1);
-		print '</td><td width="15%">'.$langs->trans("NumberOfUnit").'</td><td width="15%"><input name="nbpiece" size="10" value=""></td></tr>';
-		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
-		print '</table>';
-		print '</form>';
-	}
-	*/
 }
 else
 {
@@ -651,34 +731,41 @@ else
 /*                                                                            */
 /* ************************************************************************** */
 
+$parameters=array();
 
-if (empty($action) && $object->id)
+$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook))
 {
-    print "<div class=\"tabsAction\">\n";
 
-    if ($user->rights->stock->mouvement->creer)
-    {
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
-    }
-
-    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
-    if ($user->rights->stock->mouvement->creer)
+	if (empty($action) && $object->id)
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+	    print "<div class=\"tabsAction\">\n";
+	
+	    if ($user->rights->stock->mouvement->creer)
+	    {
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+	    }
+	
+	    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
+	    if ($user->rights->stock->mouvement->creer)
+		{
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+		}
+	
+		print '</div>';
 	}
 
-	print '</div>';
 }
-
-
 
 
 /*
  * Stock detail (by warehouse). May go down into batch details.
  */
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
+print '<tr class="liste_titre">';
+print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
 print '<td align="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
@@ -721,7 +808,7 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
-		$stock_real = round($obj->reel, 10);
+		$stock_real = price2num($obj->reel, 'MS');
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
@@ -752,8 +839,10 @@ if ($resql)
 			{
 			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
-			        print "\n".'<tr><td colspan="9">';
-			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
+			        print "\n".'<tr>';
+			        print '<td colspan="9">';
+			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			        print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 			        print '<td align="center" width="10%">';
 			        $form->select_date($pdluo->eatby,'eatby','','',1,'',1,0,1);
@@ -764,7 +853,8 @@ if ($resql)
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
 		            print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-			        print '</table></form>';
+			        print '</table>';
+			        print '</form>';
 			        print '</td></tr>';
 			    }
 			    else
@@ -791,7 +881,7 @@ if ($resql)
 else dol_print_error($db);
 
 print '<tr class="liste_total"><td align="right" class="liste_total" colspan="4">'.$langs->trans("Total").':</td>';
-print '<td class="liste_total" align="right">'.$total.'</td>';
+print '<td class="liste_total" align="right">'.price2num($total, 'MS').'</td>';
 print '<td class="liste_total" align="right">';
 print ($totalwithpmp?price(price2num($totalvalue/$totalwithpmp,'MU')):'&nbsp;');	// This value may have rounding errors
 print '</td>';
@@ -810,7 +900,51 @@ else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
 print "</table>";
+print '</div>';
 
+if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	
+	print '<br><br>';
+	print_titre($langs->trans('AddNewProductStockWarehouse'));
+	//print '<br />';
+	
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
+	print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
+	print '<table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td width="40%" colspan="4">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
+	print '<td align="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
+	print '<td align="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
+	print '<td align="right"><input type="submit" value="'.$langs->trans('Save').'" class="button" /></td>';
+	print '</tr>';
+	
+	$pse = new ProductStockEntrepot($db);
+	$lines = $pse->fetchAll(GETPOST('id'));
+	
+	if(!empty($lines)) {
+		
+		$var=false;
+		foreach($lines as $line) {
+			
+			$ent = new Entrepot($db);
+			$ent->fetch($line['fk_entrepot']);
+			print '<tr '.$bc[$var].'><td width="40%" colspan="4">'.$ent->getNomUrl(3).'</td>';
+			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
+			print '<td align="right">'.$line['desiredstock'].'</td>';
+			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
+			print '</tr>';
+			$var=!$var;
+			
+		}
+
+	}
+	
+	print "</table>";
+	
+	print '</form>';
+	
+}
 
 llxFooter();
 

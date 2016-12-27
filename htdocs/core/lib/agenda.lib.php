@@ -68,14 +68,14 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
 	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
-	print '<table class="nobordernopadding">';
+	print '<table class="nobordernopadding centpercent">';
 
 	if ($canedit)
 	{
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td class="maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
@@ -102,13 +102,13 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Type");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		$multiselect=0;
 		if (! empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), 0, $multiselect);
+        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
 		print '</td></tr>';
 	}
 
@@ -117,7 +117,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
 		print $form->select_company($socid, 'socid', '', 1);
 		print '</td></tr>';
 	}
@@ -130,7 +130,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
 		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
 		print '</td></tr>';
 	}
@@ -141,7 +141,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
@@ -151,7 +151,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		// Filter on hours
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("VisibleTimeRange").'</td>';
-		print "<td class='nowrap maxwidthonsmartphone'>";
+		print "<td class='nowrap'>";
 		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
@@ -164,7 +164,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
-		print "<td class='nowrap maxwidthonsmartphone'>";
+		print "<td class='nowrap'>";
 		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
@@ -186,7 +186,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
-	print '<table><tr><td align="center">';
+	print '<table class="centpercent"><tr><td align="center">';
 	print '<div class="formleftzone">';
 	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
 	print '</div>';
@@ -239,7 +239,7 @@ function show_array_actions_to_do($max=5)
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 
 		$var = true;
@@ -336,7 +336,7 @@ function show_array_last_actions_done($max=5)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 		$var = true;
 		$i = 0;

@@ -43,7 +43,7 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST('year','int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -64,9 +64,11 @@ if (! $user->rights->accounting->comptarapport->lire)
 
 $AccCat = new AccountancyCategory($db);
 
+
 /*
  * View
  */
+
 llxheader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
@@ -75,9 +77,12 @@ $form = new Form($db);
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print load_fiche_titre($langs->trans('ReportInOut') . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
+print load_fiche_titre($langs->trans('ReportInOut'), $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, 'title_accountancy');
 
-print '<table class="border" width="100%">';
+$moreforfilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 $months = array( $langs->trans("JanuaryMin"),
 				$langs->trans("FebruaryMin"),
@@ -93,7 +98,8 @@ $months = array( $langs->trans("JanuaryMin"),
 				$langs->trans("DecemberMin"),
 			);
 
-print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Account").'</th>';
+print '<tr class="liste_titre">';
+print '<th class="liste_titre">'.$langs->trans("Account").'</th>';
 print '<th class="liste_titre">'.$langs->trans("Description").'</th>';
 print '<th class="liste_titre" align="center">N-1</th>';
 print '<th class="liste_titre" align="center">'.$langs->trans("NReal").'</th>';
@@ -103,14 +109,17 @@ foreach($months as $k => $v){
 print	'</tr>';
 
 $cats = $AccCat->getCatsCpts();
+if ($cats < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
+
 $catsCalcule = $AccCat->getCatsCal();
+if ($catsCalcule < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
 
 $j=1;
 $sommes = array();
 
-if(!empty($cats))
+if (!empty($cats))
 {
-	foreach ( $cats as $name_cat => $cpts )
+	foreach ($cats as $name_cat => $cpts)
 	{
 		print "<tr class='liste_titre'>";
 		print '<td colspan="17">' . $name_cat . '</td>';
@@ -254,6 +263,7 @@ if(!empty($cats))
 }
 
 print "</table>";
+print '</div>';
 
 llxFooter();
 $db->close();

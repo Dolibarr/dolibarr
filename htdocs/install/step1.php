@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
@@ -66,7 +66,7 @@ $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir"
 // Alternative root directory name
 $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
-session_start(); // To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parameters)
+session_start();    // To be able to keep info into session (used for not losing password during navigation. The password must not transit through parameters)
 
 // Save a flag to tell to restore input value if we do back
 $_SESSION['dol_save_pass']=$db_pass;
@@ -129,7 +129,6 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("--- step1: entering step1.php page");
 
 $error = 0;
 
@@ -138,6 +137,7 @@ $error = 0;
  *	View
  */
 
+dolibarr_install_syslog("--- step1: entering step1.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"step2");
 
@@ -243,13 +243,13 @@ if (! $error) {
             dol_syslog("databasefortest=" . $databasefortest . " connected=" . $db->connected . " database_selected=" . $db->database_selected, LOG_DEBUG);
             //print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
-            if (empty($db_create_database) && $db->connected && !$db->database_selected) {
+			if (empty($db_create_database) && $db->connected && !$db->database_selected) {
                 print '<div class="error">'.$langs->trans("ErrorConnectedButDatabaseNotFound",$db_name).'</div>';
                 print '<br>';
                 if (! $db->connected) print $langs->trans("IfDatabaseNotExistsGoBackAndUncheckCreate").'<br><br>';
                 print $langs->trans("ErrorGoBackAndCorrectParameters");
                 $error++;
-            } elseif ($db->error && (empty($db_create_database) && $db->connected)) {
+            } elseif ($db->error && ! (! empty($db_create_database) && $db->connected)) {
             	// Note: you may experience error here with message "No such file or directory" when mysql was installed for the first time but not yet launched.
                 if ($db->error == "No such file or directory") print '<div class="error">'.$langs->trans("ErrorToConnectToMysqlCheckInstance").'</div>';
                 else print '<div class="error">'.$db->error.'</div>';
@@ -541,7 +541,14 @@ if (! $error && $db->connected && $action == "set")
             {
                 if ($db->connected)
                 {
-                    $result=$db->DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
+                    // Create user
+                    $tmpdolibarr_main_db_host = $dolibarr_main_db_host;
+                    if ($databasefortest == 'mysql')
+                    {
+                        if (! in_array($conf->db->host, array('127.0.0.1', 'localhost', 'localhost.local'))) $tmpdolibarr_main_db_host='%';
+                    }
+                    
+                    $result=$db->DDLCreateUser($tmpdolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
 
                     if ($result > 0)
                     {
@@ -991,4 +998,3 @@ function write_conf_file($conffile)
 
 	return $error;
 }
-

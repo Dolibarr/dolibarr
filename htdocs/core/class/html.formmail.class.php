@@ -264,11 +264,14 @@ class FormMail extends Form
 		{
         	$out='';
 
+        	$disablebademails=1;
+        	
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
         	$listofmimes=array();
             $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+            
         	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
         	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
         	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
@@ -321,8 +324,8 @@ class FormMail extends Form
         	// Zone to select its email template
         	if (count($modelmail_array)>0)
         	{
-	        	$out.= '<div style="padding: 3px 0 3px 0">'."\n";
-	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
+        	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
@@ -335,7 +338,7 @@ class FormMail extends Form
         	        'invoice_supplier_send','thirdparty'
            	    )))
         	{
-        	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
+	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
@@ -369,29 +372,60 @@ class FormMail extends Form
         			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
         			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
         			$out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
-        			if ($this->fromtype == 'user' && $this->fromid > 0)
-        			{
-        				$langs->load("users");
-        				$fuser=new User($this->db);
-        				$fuser->fetch($this->fromid);
-        				$out.= $fuser->getNomUrl(1);
-        			}
-        			else
-        			{
-        				$out.= $this->fromname;
-        			}
-        			if ($this->frommail)
-        			{
-        				$out.= " &lt;".$this->frommail."&gt;";
-        			}
-        			else
-        			{
-        				if ($this->fromtype)
-        				{
-        					$langs->load("errors");
-        					$out.= '<font class="warning"> &lt;'.$langs->trans("ErrorNoMailDefinedForThisUser").'&gt; </font>';
-        				}
-        			}
+
+                    if (! ($this->fromtype === 'user' && $this->fromid > 0)
+                        && ! ($this->fromtype === 'company')
+                        && ! preg_match('/user_aliases/', $this->fromtype)
+                        && ! preg_match('/global_aliases/', $this->fromtype))
+                    {
+                        // Use this->fromname and this->frommail or error if not defined
+                        $out.= $this->fromname;
+                        if ($this->frommail)
+                        {
+                            $out.= ' &lt;'.$this->frommail.'&gt;';
+                        }
+                        else
+                        {
+                            if ($this->fromtype)
+                            {
+                                $langs->load('errors');
+                                $out.= '<span class="warning"> &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt; </span>';
+                            }
+                        }
+                    } else {
+                        $liste = array();
+                        if (empty($user->email))
+                        {
+                            $langs->load('errors');
+                            $liste['user'] = $user->getFullName($langs) . ' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
+                        }
+                        else
+                        {
+                            $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
+                        }
+                        $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+                        // Add also email aliases if there is one
+                        $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                        foreach($listaliases as $typealias => $listalias)
+                        {
+                            $posalias=0;
+                            $listaliasarray=explode(',', $listalias);
+                            foreach ($listaliasarray as $listaliasval)
+                            {
+                                $posalias++;
+                                $listaliasval=trim($listaliasval);
+                                if ($listaliasval) 
+                                {
+                                    $listaliasval=preg_replace('/</', '&lt;', $listaliasval);
+                                    $listaliasval=preg_replace('/>/', '&gt;', $listaliasval);
+                                    if (! preg_match('/&lt;/', $listaliasval)) $listaliasval='&lt;'.$listaliasval.'&gt;';
+                                    $liste[$typealias.'_'.$posalias]=$listaliasval;
+                                }
+                            }
+                        }
+                        $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+                    }
+
         			$out.= "</td></tr>\n";
         			$out.= "</td></tr>\n";
         		}
@@ -486,7 +520,7 @@ class FormMail extends Form
         			if (! empty($this->withto) && is_array($this->withto))
         			{
         				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1);
+        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
         			{
@@ -498,7 +532,7 @@ class FormMail extends Form
         					$liste[$key]=$value;
         				}
         				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
+        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -520,7 +554,7 @@ class FormMail extends Form
         			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1);
+        				$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -642,7 +676,7 @@ class FormMail extends Form
 	        			if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) $out.= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
 						else $out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 	        			$out.= ' ';
-	        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+	        			$out.= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 	        		}
         		}
         		else

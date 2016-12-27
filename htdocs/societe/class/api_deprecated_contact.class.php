@@ -126,7 +126,7 @@ class ContactApi extends DolibarrApi
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
-		$sql.= ' WHERE  c.entity IN (' . getEntity('contact', 1) . ')';
+		$sql.= ' WHERE  c.entity IN (' . getEntity('socpeople', 1) . ')';
 		if ($socid)
 			$sql.= " AND c.fk_soc = " . $socid;
 
@@ -143,7 +143,7 @@ class ContactApi extends DolibarrApi
 			$sql .= " AND sc.fk_user = " . $search_sale;
 		}
 
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = -1;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $db->query($sql);
@@ -167,13 +167,13 @@ class ContactApi extends DolibarrApi
 		{
 			$i = 0;
 		    $num = $db->num_rows($result);
-			while ($i < $num)
+			while ($i < min($num, ($limit <= 0 ? $num : $limit)))
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
-					$obj_ret[] = parent::_cleanObjectDatas($contact_static);
+					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
 				$i++;
 			}
@@ -239,7 +239,8 @@ class ContactApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-			$this->contact->$field = $value;
+            if ($field == 'id') continue;
+		    $this->contact->$field = $value;
 		}
 
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
@@ -278,7 +279,7 @@ class ContactApi extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
      * 
-	 * @param   array $data Data to validate
+	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
 	 */

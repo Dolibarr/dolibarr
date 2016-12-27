@@ -49,6 +49,9 @@ if($action)
 	{
 		$res = dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", GETPOST('STOCK_USERSTOCK_AUTOCREATE','alpha'),'chaine',0,'',$conf->entity);
 	}
+	if ($action == 'STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') {
+		$res = dolibarr_set_const($db, "STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE", GETPOST('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE','alpha'),'chaine',0,'',$conf->entity);
+	}
 	if ($action == 'STOCK_ALLOW_NEGATIVE_TRANSFER')
 	{
 		$res = dolibarr_set_const($db, "STOCK_ALLOW_NEGATIVE_TRANSFER", GETPOST('STOCK_ALLOW_NEGATIVE_TRANSFER','alpha'),'chaine',0,'',$conf->entity);
@@ -321,27 +324,6 @@ else
     print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
 }
 print "</td>\n</tr>\n";
-
-if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("UseDispatchStatus").'</td>';
-	print '<td width="160" align="right">';
-	if (! empty($conf->fournisseur->enabled))
-	{
-		print "<form method=\"post\" action=\"stock.php\">";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
-		print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1,$disabled);
-		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
-		print "</form>\n";
-	}
-	else
-	{
-		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
-	}
-	print "</td>\n</tr>\n";
-}
 $found++;
 
 /*if (! $found)
@@ -458,16 +440,44 @@ print "  <td>".$langs->trans("Other")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
+if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    print '<td width="60%">'.$langs->trans("UseDispatchStatus").'</td>';
+    print '<td width="160" align="right">';
+    print "<form method=\"post\" action=\"stock.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
+    print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1);
+    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    print "</form>\n";
+    print "</td>\n</tr>\n";
+}
+
 $var=!$var;
 
 print "<tr ".$bc[$var].">";
 print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-
 print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
 print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+
+$var=!$var;
+
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
+
+print '<td width="160" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE\">";
+print $form->selectyesno("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE",$conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print "</td>\n";

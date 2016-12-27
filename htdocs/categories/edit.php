@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -147,7 +147,7 @@ dol_fiche_head('');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td class="fieldrequired" width="25%">';
+print '<tr><td class="titlefieldcreate fieldrequired">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
 print '</tr>';
@@ -157,7 +157,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
+$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,'90%');
 $doleditor->Create();
 print '</td></tr>';
 

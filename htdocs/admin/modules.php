@@ -75,10 +75,28 @@ if ($search_version) $param.='&search_version='.urlencode($search_version);
  * Actions
  */
 
+
+if (GETPOST('buttonreset'))
+{
+    $search_keyword='';
+    $search_status='';
+    $search_nature='';
+    $search_version='';
+}
+
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($value);
-    if ($result) setEventMessages($result, null, 'errors');
+    $resarray = activateModule($value);
+    if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
+	else
+	{
+	    //var_dump($resarray);exit;
+	    if ($resarray['nbperms'] > 0)
+	    {
+    		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+    		setEventMessages($msg, null, 'warnings');
+	    }
+	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
@@ -89,14 +107,6 @@ if ($action == 'reset' && $user->admin)
     if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
-}
-
-if (GETPOST('buttonreset'))
-{
-    $search_keyword='';
-    $search_status='';
-    $search_nature='';
-    $search_version='';
 }
 
 
@@ -276,23 +286,10 @@ if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>
 $h = 0;
 
 $categidx='common';    // Main
-//if (! empty($categ[$categidx]))
-//{
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("AvailableModules");
-	$head[$h][2] = 'common';
-	$h++;
-//}
-
-/*$categidx='expdev';
-if (! empty($categ[$categidx]))
-{
-	$categidx='expdev';
-    $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-    $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
-    $head[$h][2] = 'expdev';
-    $h++;
-}*/
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+$head[$h][1] = $langs->trans("AvailableModules");
+$head[$h][2] = 'common';
+$h++;
 
 $categidx='marketplace';
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -304,17 +301,18 @@ $h++;
 print "<br>\n";
 
 
-dol_fiche_head($head, $mode, '');
-
 $var=true;
 
 if ($mode != 'marketplace')
 {
+    
     print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    dol_fiche_head($head, $mode, '');
     
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
@@ -342,7 +340,7 @@ if ($mode != 'marketplace')
     $moreforfilter.=' ';
     $moreforfilter.='<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
     $moreforfilter.= '</div>';
-    
+
     if (! empty($moreforfilter))
     {
         //print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -351,14 +349,18 @@ if ($mode != 'marketplace')
         $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         //print '</div>';
-    }    
+    }
     
-    print '<br><br><br>';
+    //dol_fiche_end();
     
+    print '<div class="clearboth"></div><br>';
+    //print '<br><br><br><br>';
+
+    $moreforfilter='';
     
     // Show list of modules
-
-    print '<table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" summary="list_of_modules" id="list_of_modules" >'."\n";
 
     $oldfamily='';
 
@@ -370,7 +372,7 @@ if ($mode != 'marketplace')
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
     	$dirofmodule = $dirmod[$key];
-    	 
+
     	$special = $objMod->special;
 
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
@@ -383,9 +385,9 @@ if ($mode != 'marketplace')
         	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
       		continue;
         }
-        
+
         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-        
+
         // Check filters
         $modulename=$objMod->getName();
         $moduledesc=$objMod->getDesc();
@@ -494,12 +496,14 @@ if ($mode != 'marketplace')
         // Help
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
-        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
-        else $text.=$objMod->getDesc().'<br>';
-        
+        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
+        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
+
         $textexternal='';
+	$imginfo="info";
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
+ 	    $imginfo="info_black";
             $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
             if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
             if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
@@ -510,6 +514,11 @@ if ($mode != 'marketplace')
         {
             $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
         }
+        $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
+        if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+        else $text.=$langs->trans("Disabled");
+        $text.='<br>';
+
         $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
         if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
         {
@@ -522,7 +531,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
         if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
         {
@@ -534,7 +543,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
         if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
         {
@@ -553,14 +562,14 @@ if ($mode != 'marketplace')
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
         if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
         if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
         {
@@ -572,14 +581,14 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
         if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
         if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
         {
@@ -603,14 +612,14 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
+        if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
         if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
         {
@@ -622,7 +631,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
         if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
         {
@@ -634,28 +643,27 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
         $text.=$langs->trans("DetectionNotPossible");
-        
-        print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
-        // Picto warning 
-        $version=$objMod->getVersion(0);
-        $versiontrans=$objMod->getVersion(1);
-        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
-        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
-        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
-        
-        // Picto external
-        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
-        
-        
+        print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20');
+
         print '</td>';
-        
+
         // Version
         print '<td align="center" valign="top" class="nowrap">';
+
+        // Picto warning
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: left"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: left"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: left"');
+
+
         print $versiontrans;
+
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -751,9 +759,12 @@ if ($mode != 'marketplace')
 
     }
     print "</table>\n";
+    print '</div>';
 }
 else
 {
+    dol_fiche_head($head, $mode, '');
+    
     // Marketplace
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
     print "<tr class=\"liste_titre\">\n";
@@ -765,7 +776,7 @@ else
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
     $url='https://www.dolistore.com';
-    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
@@ -773,17 +784,17 @@ else
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
     $url='https://partners.dolibarr.org';
-    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
     print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
     print "</table>\n";
+
+    //dol_fiche_end();
 }
 
-
 dol_fiche_end();
-
 
 // Show warning about external users
 if ($mode != 'marketplace') print info_admin(showModulesExludedForExternal($modules))."\n";

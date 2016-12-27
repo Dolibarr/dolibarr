@@ -108,7 +108,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 	$langs->load('products');
 	$langs->load('main');
 	if (isset($_GET['orders_to_invoice'])) {
-		$orders_id = $_GET['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',1);
 		$n = count($orders_id);
 		$i = 0;
 
@@ -116,7 +116,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 		$_GET['originid'] = $orders_id[0];
 	}
 	if (isset($_POST['orders_to_invoice'])) {
-		$orders_id = $_POST['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',1);
 		$nn = count($orders_id);
 		$ii = 0;
 
@@ -149,10 +149,10 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 		}
 		if (! $error) {
-			$object->ref = $_POST['ref'];
-			$object->ref_supplier = $_POST['ref_supplier'];
-			$object->socid = $_POST['socid'];
-			$object->libelle = $_POST['libelle'];
+			$object->ref = GETPOST('ref');
+			$object->ref_supplier = GETPOST('ref_supplier');
+			$object->socid = GETPOST('socid','int');
+			$object->libelle = GETPOST('libelle');
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
 			$object->note_public = GETPOST('note_public');
@@ -178,7 +178,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 					foreach ( $orders_id as $origin => $origin_id ) {
 						$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
 
-						$object->add_object_linked($_POST['origin'], $origin_id);
+						$object->add_object_linked(GETPOST('origin'), $origin_id);
 					}
 
 					while ( $ii < $nn ) {
@@ -321,7 +321,7 @@ if ($action == 'create' && !$error) {
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
 	// Ref supplier
-	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . (isset($_POST['ref_supplier']) ? $_POST['ref_supplier'] : '') . '" type="text"></td>';
+	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier','alpha', 2) : '') . '" type="text"></td>';
 	print '</tr>';
 
 	// Third party
@@ -387,7 +387,7 @@ if ($action == 'create' && !$error) {
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
-	print '<textarea name="note_public" wrap="soft" cols="70" rows="' . ROWS_3 . '">';
+	print '<textarea name="note_public" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">';
 
 	print $langs->trans("Orders") . ": " . implode(', ', $listoforders);
 
@@ -422,7 +422,7 @@ if ($action == 'create' && !$error) {
 if (($action != 'create' && $action != 'add') && !$error) {
 	llxHeader();
 	?>
-<script type="text/javascript">
+	<script type="text/javascript">
 		jQuery(document).ready(function() {
 		jQuery("#checkall").click(function() {
 			jQuery(".checkformerge").prop('checked', true);
@@ -456,10 +456,10 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	if (! $user->rights->societe->client->voir && ! $socid)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . $user->id;
 	if ($sref) {
-		$sql .= " AND c.ref LIKE '%" . $db->escape($sref) . "%'";
+		$sql .= natural_search("c.ref", $sref);
 	}
 	if ($sall) {
-		$sql .= " AND (c.ref LIKE '%" . $db->escape($sall) . "%' OR c.note LIKE '%" . $db->escape($sall) . "%')";
+		$sql .= natural_search(array("c.ref","c.note"), $sall);
 	}
 
 	// Date filter
@@ -469,7 +469,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$sql .= " AND c.date_livraison >= '" . $db->idate($date_starty) . "' AND c.date_livraison <= '" . $db->idate($date_endy) . "'";
 
 	if (! empty($sref_client)) {
-		$sql .= ' AND c.ref_supplier LIKE \'%' . $db->escape($sref_client) . '%\'';
+		$sql .= natural_search('c.ref_supplier', $sref_client);
 	}
 	$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder;
 	dol_syslog('fourn/commande/ordertoinvoice.php sql=' . $sql);
@@ -495,7 +495,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			print '<h3>' . $companystatic->getNomUrl(1, 'customer') . '</h3>';
 		}
 		
-		print '<form method="get" action="orderstoinvoice.php">';
+		print '<form name="orders2invoice" method="GET" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -541,7 +541,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 
 		print '</td></tr>';
 
-		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
 		$var = True;
 		$generic_commande = new CommandeFournisseur($db);
 
@@ -607,7 +606,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<input type="submit" class="butAction" value="' . $langs->trans("GenerateBill") . '">';
 		print '</div>';
 		print '</div>';
+		
 		print '</form>';
+		
 		$db->free($resql);
 	} else {
 		print dol_print_error($db);

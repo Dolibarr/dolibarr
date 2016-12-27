@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Antoine Iauch        <aiauch@gpcsolutions.fr>
  *
@@ -162,6 +162,11 @@ if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
 
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 
 // Show array
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -255,8 +260,11 @@ if ($modecompta != 'CREANCES-DETTES') {
     }
 }
 
-$i = 0;
-print "<table class=\"noborder\" width=\"100%\">";
+$morefilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre(
 	$langs->trans("User"),
@@ -341,6 +349,8 @@ if (count($amount)) {
         $arrayforsort=$amount;
     }
 
+    $i = 0;
+    
     foreach($arrayforsort as $key => $value) {
         $var=!$var;
         print "<tr ".$bc[$var].">";
@@ -427,6 +437,8 @@ if (count($amount)) {
 }
 
 print "</table>";
+print '</div>';
+print '</form>';
 
 
 llxFooter();

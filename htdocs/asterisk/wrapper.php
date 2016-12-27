@@ -85,10 +85,10 @@ if (! isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY
 if (! isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY="2";
 
 
-$login = $_GET['login'];
-$password = $_GET['password'];
-$caller = $_GET['caller'];
-$called = $_GET['called'];
+$login = GETPOST('login');
+$password = GETPOST('password');
+$caller = GETPOST('caller');
+$called = GETPOST('called');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;

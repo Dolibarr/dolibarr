@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,24 +32,25 @@ class Loan extends CommonObject
     public $element='loan';
     public $table='loan';
     public $table_element='loan';
+    public $picto = 'bill';
 
-	var $rowid;
-    var $datestart;
-	var $dateend;
-    var $label;
-    var $capital;
-	var $nbterm;
-	var $rate;
-	var $paid;
-	var $account_capital;
-	var $account_insurance;
-	var $account_interest;
-    var $date_creation;
-    var $date_modification;
-    var $date_validation;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+    public $rowid;
+    public $datestart;
+    public $dateend;
+    public $label;
+    public $capital;
+    public $nbterm;
+    public $rate;
+    public $paid;
+    public $account_capital;
+    public $account_insurance;
+    public $account_interest;
+    public $date_creation;
+    public $date_modification;
+    public $date_validation;
+    public $fk_bank;
+    public $fk_user_creat;
+    public $fk_user_modif;
 
 
     /**
@@ -99,15 +100,15 @@ class Loan extends CommonObject
 				$this->account_capital		= $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
 				$this->account_interest		= $obj->accountancy_account_interest;
-				
 
-                return 1;
+                $this->db->free($resql);
+				return 1;
             }
             else
             {
+                $this->db->free($resql);
                 return 0;
             }
-            $this->db->free($resql);
         }
         else
         {
@@ -278,6 +279,7 @@ class Loan extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."loan";
         $sql.= " SET label='".$this->db->escape($this->label)."',";
+		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
         $sql.= " datestart='".$this->db->idate($this->datestart)."',";
         $sql.= " dateend='".$this->db->idate($this->dateend)."',";
 		$sql.= " fk_user_modif = ".$user->id;
@@ -373,6 +375,12 @@ class Loan extends CommonObject
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         if ($mode == 5)
+        {
+            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+        }
+        if ($mode == 6)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
@@ -482,13 +490,14 @@ class Loan extends CommonObject
 				if (empty($obj->fk_user_modif)) $obj->tms = "";
 				$this->date_modification = $this->db->jdate($obj->tms);
 
+			    $this->db->free($result);
 				return 1;
 			}
 			else
 			{
-				return 0;
+			    $this->db->free($result);
+			    return 0;
 			}
-			$this->db->free($result);
 		}
 		else
 		{

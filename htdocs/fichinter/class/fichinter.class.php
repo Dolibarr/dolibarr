@@ -38,7 +38,8 @@ class Fichinter extends CommonObject
 	public $table_element='fichinter';
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
-
+    public $picto = 'intervention';
+    
 	/**
 	 * {@inheritdoc}
 	 */
@@ -78,15 +79,15 @@ class Fichinter extends CommonObject
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
 		$this->statuts[2]='StatusInterInvoiced';
-		$this->statuts[3]='Close';
+		$this->statuts[3]='Done';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
-		$this->statuts_short[3]='Close';
+		$this->statuts_short[3]='Done';
 		$this->statuts_logo[0]='statut0';
 		$this->statuts_logo[1]='statut1';
 		$this->statuts_logo[2]='statut6';
-		$this->statuts_logo[3]='statut4';
+		$this->statuts_logo[3]='statut6';
 	}
 
 	/**
@@ -382,7 +383,7 @@ class Fichinter extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -426,7 +427,7 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
-     *  @param		int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function setValid($user, $notrigger=0)
@@ -552,7 +553,7 @@ class Fichinter extends CommonObject
 	 *	Returns the label of a statut
 	 *
 	 *	@param      int		$statut     id statut
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
 	function LibStatut($statut,$mode=0)
@@ -561,22 +562,20 @@ class Fichinter extends CommonObject
 
 		if ($mode == 0)
 			return $langs->trans($this->statuts[$statut]);
-
 		if ($mode == 1)
 			return $langs->trans($this->statuts_short[$statut]);
-
 		if ($mode == 2)
 			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
-
 		if ($mode == 3)
 			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
-
 		if ($mode == 4)
 			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
-
 		if ($mode == 5)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]);
-
+			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+		if ($mode == 6)
+		    return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+		
+		return '';
 	}
 
 	/**
@@ -1349,7 +1348,7 @@ class FichinterLigne extends CommonObjectLine
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
-		$sql.= ",date=".$this->db->idate($this->datei);
+		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= " WHERE rowid = ".$this->rowid;

@@ -7,7 +7,7 @@ Permission23103 = Planlı iş sil
 Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup= Planlı iş yönetimi ayarları
-URLToLaunchCronJobs=Gerekliyse, Cron işlerini denetleyen ve başlatan İnternet adresi
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
 KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Cron işlerini başlatacak komut satırı
@@ -76,3 +76,4 @@ UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Gi
 JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
 MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluştur
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

@@ -152,6 +152,7 @@ elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCateg
 elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
+elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -204,10 +205,10 @@ if ($action == 'edit')
 			print '<table class="border" width="100%">';
 			print '<tr><td class="fieldtitlecreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3,'90%');
 			$doleditor->Create();
 			print '</td></tr>';
-			
+
 			print '</tr>';
 			print '</table>';
 		}
@@ -276,7 +277,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="fieldtitlecreate fieldrequired">'.$langs->trans('Translation').'</td><td>';
@@ -284,7 +285,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

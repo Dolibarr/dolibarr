@@ -344,7 +344,7 @@ if ($result)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),'dayhour').'</td>';
 		//print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
 		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,0):'').'</td>';

@@ -273,11 +273,11 @@ else if ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
  * View
  */
 
+$form=new Form($db);
+
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader("",$langs->trans("OrdersSetup"));
-
-$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
@@ -554,7 +554,6 @@ print "<br>";
 
 /*
  * Other options
- *
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"),'','');

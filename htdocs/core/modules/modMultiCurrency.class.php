@@ -62,7 +62,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->description = "Module to enter elements with a foreign currency";
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -189,7 +189,7 @@ class modMultiCurrency extends DolibarrModules
 		// Example:
 		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		// $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
@@ -265,8 +265,14 @@ class modMultiCurrency extends DolibarrModules
 		$sql = array();
 
 		//$this->_load_tables('/multicurrency/sql/');
-
-		return $this->_init($sql, $options);
+		$res = $this->_init($sql, $options);
+		
+		if ($res)
+		{
+			$this->createFirstCurrency();
+		}
+		
+		return $res;
 	}
 
 	/**
@@ -284,5 +290,27 @@ class modMultiCurrency extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 
+	/**
+	 * Function called when module is enabled
+	 * Create the currency from general setting
+	 * 
+	 * @return 	int		1 if OK, 0 if KO
+	 */
+	private function createFirstCurrency()
+	{
+		global $conf,$user,$langs;
+		
+		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency))
+		{
+			$langs->loadCacheCurrencies('');
+			
+			$multicurrency = new MultiCurrency($this->db);
+			$multicurrency->code = $conf->currency;
+			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
+			$r = $multicurrency->create($user);
+			
+			if ($r > 0)	$multicurrency->addRate(1);
+		}
+	}
 }
 

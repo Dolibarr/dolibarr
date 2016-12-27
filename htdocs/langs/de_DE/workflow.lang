@@ -9,3 +9,7 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, 
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kennzeichne verknüpftes Angebot als in Rechnung gestellt, wenn der Kundenauftrag als bezahlt markiert wird
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung als bezahlt markiert wird
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung bestätigt wird
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kennzeichne das verknüpfte Angebot als abgerechnet, wenn die Kundenrechnung erstellt wurde.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

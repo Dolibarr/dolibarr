@@ -39,6 +39,7 @@ $langs->load("products");
 $langs->load("members");
 $langs->load("projects");
 $langs->load("hrm");
+$langs->load("agenda");
 
 if (! $user->admin) accessforbidden();
 
@@ -104,7 +105,7 @@ if ($action == 'update')
     else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
 	
     dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
@@ -172,7 +173,7 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Multilangual GUI
+	// Multilingual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
@@ -186,7 +187,7 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // Liste des zone de recherche permanantes supportees
+    // List of permanent supported search box
     if (! empty($searchform))
     {
         print '<table summary="search" class="noborder" width="100%">';
@@ -225,7 +226,7 @@ if ($action == 'edit')	// Edit
 
 	// Max size of short lists on customer card
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '"></td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	
@@ -408,7 +409,7 @@ else	// Show
 	print "</tr>";
 	
 	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 

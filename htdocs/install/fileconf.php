@@ -72,7 +72,7 @@ if (@file_exists($forcedfile)) {
 
 session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
 
-pHeader($langs->trans("ConfigurationFile"),"step1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
+pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -127,7 +127,7 @@ if (! empty($force_install_message))
 	?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_document_root ?>"
 			       name="main_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -158,7 +158,7 @@ if (! empty($force_install_message))
 		?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_data_root ?>"
 			       name="main_data_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -189,7 +189,7 @@ if (! empty($force_install_message))
 		</td>
 		<td valign="top" class="label">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
 				<?php if (!empty($force_install_noedit)) {
@@ -337,7 +337,7 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
+		<td valign="top" class="label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
 		</b></td>
 		<td valign="top" class="label">
 			<input type="text"
@@ -627,17 +627,7 @@ function jscheckparam()
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
 	}
-	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
-	{
-		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
-	}
 	// If create user asked
-	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
-	{
-		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
-	}
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;

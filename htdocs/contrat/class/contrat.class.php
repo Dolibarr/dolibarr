@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
@@ -45,7 +45,8 @@ class Contrat extends CommonObject
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='contract';
+    
 	/**
 	 * {@inheritdoc}
 	 */
@@ -56,7 +57,7 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	var $ref_customer;
-	
+
 	/**
 	 * Supplier reference of the contract
 	 * @var string
@@ -141,6 +142,12 @@ class Contrat extends CommonObject
 	 */
 	var $lines=array();
 
+	/**
+	 * Maps ContratLigne IDs to $this->lines indexes
+	 * @var int[]
+	 */
+	protected $lines_id_index_mapper=array();
+
 
 	/**
 	 *	Constructor
@@ -221,38 +228,7 @@ class Contrat extends CommonObject
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
-		global $langs,$conf;
-
-		$error=0;
-
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
-		$sql.= " date_ouverture = ".(dol_strlen($date)!=0?"'".$this->db->idate($date)."'":"null").",";
-		$sql.= " date_fin_validite = ".(dol_strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
-		$sql.= " fk_user_ouverture = ".$user->id.",";
-		$sql.= " date_cloture = null,";
-		$sql.= " commentaire = '".$this->db->escape($comment)."'";
-		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
-
-		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-            // Call trigger
-            $result=$this->call_trigger('CONTRACT_SERVICE_ACTIVATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
+		$this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
 	}
 
 
@@ -267,37 +243,7 @@ class Contrat extends CommonObject
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
-		global $langs,$conf;
-
-		$error=0;
-
-		// statut actif : 4
-
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
-		$sql.= " date_cloture = '".$this->db->idate($date_end)."',";
-		$sql.= " fk_user_cloture = ".$user->id.",";
-		$sql.= " commentaire = '".$this->db->escape($comment)."'";
-		$sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-            // Call trigger
-            $result=$this->call_trigger('CONTRACT_SERVICE_CLOSE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
+		$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
 	}
 
 
@@ -354,7 +300,7 @@ class Contrat extends CommonObject
 	 *
 	 * @param	User	$user      		Objet User
 	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
-     * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function validate($user, $force_number='', $notrigger=0)
@@ -536,7 +482,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    Load a contract from database
 	 *
@@ -748,6 +694,7 @@ class Contrat extends CommonObject
 				$line->fetch_optionals($line->id,$extralabelsline);
 
 				$this->lines[]			= $line;
+				$this->lines_id_index_mapper[$line->id] = key($this->lines);
 
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
@@ -852,6 +799,7 @@ class Contrat extends CommonObject
 
 
 				$this->lines[]        = $line;
+				$this->lines_id_index_mapper[$line->id] = key($this->lines);
 
 				$total_ttc+=$objp->total_ttc;
                 $total_vat+=$objp->total_tva;
@@ -904,6 +852,7 @@ class Contrat extends CommonObject
 		}
 		if (! $paramsok) return -1;
 
+
 		$this->db->begin();
 
 		$now=dol_now();
@@ -934,7 +883,7 @@ class Contrat extends CommonObject
 
 
 			// Load object modContract
-			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 			{
 				$module = substr($module, 0, dol_strlen($module)-4);
@@ -968,7 +917,7 @@ class Contrat extends CommonObject
 			        }
 			    }
 			}
-			
+
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			if (! $error)
 			{
@@ -986,58 +935,74 @@ class Contrat extends CommonObject
 			if (! $error)
 			{
     			// Add object linked
-    			if (is_array($this->linked_objects) && ! empty($this->linked_objects))
+    			if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
     			{
-    			    foreach($this->linked_objects as $origin => $origin_id)
+    			    foreach($this->linked_objects as $origin => $tmp_origin_id)
     			    {
-    			        $ret = $this->add_object_linked($origin, $origin_id);
-    			        if (! $ret)
+    			        if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
     			        {
-    			            dol_print_error($this->db);
-    			            $error++;
-    			        }			
-    
-            			if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-            			{
-            			    $originforcontact = $origin;
-            			    $originidforcontact = $origin_id;
-            			    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-            			    {
-            			        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-            			        $exp = new Expedition($db);
-            			        $exp->fetch($origin_id);
-            			        $exp->fetchObjectLinked();
-            			        if (count($exp->linkedObjectsIds['commande']) > 0)
-            			        {
-            			            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
-            			            {
-            			                $originforcontact = 'commande';
-            			                $originidforcontact = $value->id;
-            			                break; // We take first one
-            			            }
-            			        }
-            			    }
-            			    	
-            			    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-            			    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-            			    	
-            			    $resqlcontact = $this->db->query($sqlcontact);
-            			    if ($resqlcontact)
-            			    {
-            			        while($objcontact = $this->db->fetch_object($resqlcontact))
-            			        {
-            			            if ($objcontact->source == 'internal' && in_array($objcontact->code, array('SALESREPSIGN', 'SALESREPFOLL'))) continue;    // ignore this, already forced previously
-
-            			            //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
-            			            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
-            			        }
-            			    }
-            			    else dol_print_error($resqlcontact);
-            			}			
+    			            foreach($tmp_origin_id as $origin_id)
+    			            {
+    			                $ret = $this->add_object_linked($origin, $origin_id);
+    			                if (! $ret)
+    			                {
+    			                    dol_print_error($this->db);
+    			                    $error++;
+    			                }
+    			            }
+    			        }
+    			        else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+    			        {
+    			            $origin_id = $tmp_origin_id;
+    			            $ret = $this->add_object_linked($origin, $origin_id);
+    			            if (! $ret)
+    			            {
+    			                dol_print_error($this->db);
+    			                $error++;
+    			            }
+    			        }
     			    }
     			}
+
+    			if (! $error && $this->id && ! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && ! empty($this->origin) && ! empty($this->origin_id))   // Get contact from origin object
+    			{
+    			    $originforcontact = $this->origin;
+    			    $originidforcontact = $this->origin_id;
+    			    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+    			    {
+    			        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+    			        $exp = new Expedition($db);
+    			        $exp->fetch($this->origin_id);
+    			        $exp->fetchObjectLinked();
+    			        if (count($exp->linkedObjectsIds['commande']) > 0)
+    			        {
+    			            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+    			            {
+    			                $originforcontact = 'commande';
+    			                $originidforcontact = $value->id;
+    			                break; // We take first one
+    			            }
+    			        }
+    			    }
+
+    			    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+    			    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+
+    			    $resqlcontact = $this->db->query($sqlcontact);
+    			    if ($resqlcontact)
+    			    {
+    			        while($objcontact = $this->db->fetch_object($resqlcontact))
+    			        {
+    			            if ($objcontact->source == 'internal' && in_array($objcontact->code, array('SALESREPSIGN', 'SALESREPFOLL'))) continue;    // ignore this, already forced previously
+
+    			            //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+    			            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+    			        }
+    			    }
+    			    else dol_print_error($resqlcontact);
+    			}
 			}
-			
+
 			if (! $error)
 			{
                 // Call trigger
@@ -1186,6 +1151,16 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
 		if (! $error)
 		{
 			// We remove directory
@@ -1231,7 +1206,6 @@ class Contrat extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
@@ -1249,14 +1223,11 @@ class Contrat extends CommonObject
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
-
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
 		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
 		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
@@ -1277,8 +1248,6 @@ class Contrat extends CommonObject
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
 		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
-
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -1352,19 +1321,20 @@ class Contrat extends CommonObject
 			$this->db->begin();
 
 			// Clean parameters
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (! $qty) $qty=1;
-			if (! $info_bits) $info_bits=0;
-			if (! $pu_ht)  $pu_ht=0;
-			if (! $pu_ttc) $pu_ttc=0;
-
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$pa_ht=price2num($pa_ht);
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (empty($qty)) $qty=1;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
+			if (empty($pu_ttc)) $pu_ttc=0;
+            if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
+            if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
 			{
@@ -1385,7 +1355,7 @@ class Contrat extends CommonObject
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
 			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-					
+
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1408,9 +1378,9 @@ class Contrat extends CommonObject
 
 		    if (empty($pa_ht)) $pa_ht=0;
 
-			
+
 			// if buy price not defined, define buyprice as configured in margin admin
-			if ($this->pa_ht == 0) 
+			if ($this->pa_ht == 0)
 			{
 				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0)
 				{
@@ -1432,15 +1402,17 @@ class Contrat extends CommonObject
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
 			$sql.= ", fk_unit";
-			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
+			$sql.= ") VALUES (";
+			$sql.= $this->id.", '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
-			$sql.= " '".$qty."',";
-			$sql.= " '".$txtva."',";
-			$sql.= " '".$txlocaltax1."',";
-			$sql.= " '".$txlocaltax2."',";
+			$sql.= " ".$qty.",";
+			$sql.= " ".$txtva.",";
+			$sql.= " ".$txlocaltax1.",";
+			$sql.= " ".$txlocaltax2.",";
 			$sql.= " '".$localtax1_type."',";
 			$sql.= " '".$localtax2_type."',";
-			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
+			$sql.= " ".price2num($remise_percent).",";
+			$sql.= " ".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num($remise).",";
@@ -1567,7 +1539,7 @@ class Contrat extends CommonObject
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/','',$tvatx);  // Remove code into vatrate.
-		
+
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -1591,7 +1563,7 @@ class Contrat extends CommonObject
 	    if (empty($pa_ht)) $pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
 			{
@@ -2089,7 +2061,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->contrat->activer && !$user->societe_id)
+		if (!$user->rights->contrat->lire && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2179,6 +2151,7 @@ class Contrat extends CommonObject
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->statut= 0;
+		$this->date_creation = (dol_now() - 3600 * 24 * 7);
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
@@ -2264,6 +2237,120 @@ class Contrat extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+	/**
+	 * Load an object from its id and create a new one in database
+	 *
+	 * @param int $socid Id of thirdparty
+	 * @param int $notrigger	1=Does not execute triggers, 0= execute triggers
+	 * @return int New id of clone
+	 */
+	function createFromClone($socid = 0, $notrigger=0) {
+		global $db, $user, $langs, $conf, $hookmanager;
+
+		dol_include_once('/projet/class/project.class.php');
+
+		$this->context['createfromclone'] = 'createfromclone';
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->fetch($this->id);
+		// Load dest object
+		$clonedObj = clone $this;
+
+		$this->db->begin();
+
+		$objsoc = new Societe($this->db);
+
+		$objsoc->fetch($clonedObj->socid);
+
+		// $clonedObj->id=0;
+		$clonedObj->statut = 0;
+
+		if (empty($conf->global->CONTRACT_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT . "/core/modules/contract/" . $conf->global->CONTRACT_ADDON . ".php")) {
+			$this->error = 'ErrorSetupNotComplete';
+			dol_syslog($this->error);
+			return - 1;
+		}
+
+		// Set ref
+		require_once DOL_DOCUMENT_ROOT . "/core/modules/contract/" . $conf->global->CONTRACT_ADDON . '.php';
+		$obj = $conf->global->CONTRACT_ADDON;
+		$modContract = new $obj();
+		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
+
+		// get extrafields so they will be clone
+		foreach ( $this->lines as $line ) {
+			$line->fetch_optionals($line->rowid);
+		}
+
+		// Create clone
+		$result = $clonedObj->create($user);
+		if ($result < 0) {
+			$error ++;
+			$this->error = $clonedObj->error;
+			$this->errors[] = $clonedObj->error;
+		} else {
+			// copy internal contacts
+			if ($clonedObj->copy_linked_contact($this, 'internal') < 0)
+				$error ++;
+
+				// copy external contacts if same company
+			elseif ($this->socid == $clonedObj->socid) {
+				if ($clonedObj->copy_linked_contact($this, 'external') < 0)
+					$error ++;
+			}
+		}
+
+		if (! $error) {
+			foreach ( $this->lines as $line ) {
+				$result = $clonedObj->addline($line->desc, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
+				if ($result < 0) {
+					$error ++;
+					$this->error = $clonedObj->error;
+					$this->errors[] = $clonedObj->error;
+				}
+			}
+		}
+
+		if (! $error) {
+			// Hook of thirdparty module
+			if (is_object($hookmanager)) {
+				$parameters = array (
+						'objFrom' => $this,
+						'clonedObj' => $clonedObj
+				);
+				$action = '';
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+					$error ++;
+			}
+
+		}
+
+		if (! $notrigger && empty($error))
+		{
+			// Call trigger
+			$clonedObj->old_copy=$this;
+			$result = $clonedObj->call_trigger('CONTRACT_CLONE', $user);
+			if ($result < 0) {
+				$error ++;
+			}
+			// End call triggers
+		}
+
+		unset($this->context['createfromclone']);
+
+		// End
+		if (! $error) {
+			$this->db->commit();
+			return $clonedObj->id;
+		} else {
+			$this->db->rollback();
+			return - 1;
+		}
+	}
 }
 
 
@@ -2274,7 +2361,7 @@ class ContratLigne extends CommonObjectLine
 {
     public $element='contratdet';
     public $table_element='contratdet';
-    
+
 	var $id;
 	var $ref;
 	var $tms;
@@ -2292,10 +2379,10 @@ class ContratLigne extends CommonObjectLine
 	public $libelle;
 
 	var $description;
-	
+
 	var $product_ref;
 	var $product_label;
-	
+
 	var $date_commande;
 	var $date_ouverture_prevue;		// date start planned
 	var $date_ouverture;			// date start real
@@ -2436,7 +2523,7 @@ class ContratLigne extends CommonObjectLine
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
         if (empty($label)) $label=$this->description;
-        
+
         $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -2458,7 +2545,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	function fetch($id, $ref='')
 	{
-		global $langs,$user;
 
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
@@ -2633,7 +2719,7 @@ class ContratLigne extends CommonObjectLine
 	    if (empty($this->pa_ht)) $this->pa_ht=0;
 
 		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0) 
+		if ($this->pa_ht == 0)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
@@ -2832,6 +2918,108 @@ class ContratLigne extends CommonObjectLine
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error()." sql=".$sql;
+			return -1;
+		}
+	}
+
+	/**
+	 *  Activate a contract line
+	 *
+	 * @param    User $user Objet User who activate contract
+	 * @param  int $date Date d'ouverture
+	 * @param  int|string $date_end Date fin prevue
+	 * @param    string $comment A comment typed by user
+	 * @return int                    <0 if KO, >0 if OK
+	 */
+	function active_line($user, $date, $date_end = '', $comment = '')
+	{
+		global $langs, $conf;
+
+		// Update object
+		$this->date_ouverture = $date;
+		$this->date_fin_validite = $date_end;
+		$this->fk_user_ouverture = $user->id;
+		$this->date_cloture = null;
+		$this->commentaire = $comment;
+
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "contratdet SET statut = 4,";
+		$sql .= " date_ouverture = " . (dol_strlen($date) != 0 ? "'" . $this->db->idate($date) . "'" : "null") . ",";
+		$sql .= " date_fin_validite = " . (dol_strlen($date_end) != 0 ? "'" . $this->db->idate($date_end) . "'" : "null") . ",";
+		$sql .= " fk_user_ouverture = " . $user->id . ",";
+		$sql .= " date_cloture = null,";
+		$sql .= " commentaire = '" . $this->db->escape($comment) . "'";
+		$sql .= " WHERE rowid = " . $this->id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
+
+		dol_syslog(get_class($this) . "::active_line", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Call trigger
+			$result = $this->call_trigger('CONTRACT_SERVICE_ACTIVATE', $user);
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Close a contract line
+	 *
+	 * @param    User $user Objet User who close contract
+	 * @param  int $date_end Date end
+	 * @param    string $comment A comment typed by user
+	 * @return int                    <0 if KO, >0 if OK
+	 */
+	function close_line($user, $date_end, $comment = '')
+	{
+		global $langs, $conf;
+
+		// Update object
+		$this->date_cloture = $date_end;
+		$this->fk_user_cloture = $user->id;
+		$this->commentaire = $comment;
+
+		$error = 0;
+
+		// statut actif : 4
+
+		$this->db->begin();
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "contratdet SET statut = 5,";
+		$sql .= " date_cloture = '" . $this->db->idate($date_end) . "',";
+		$sql .= " fk_user_cloture = " . $user->id . ",";
+		$sql .= " commentaire = '" . $this->db->escape($comment) . "'";
+		$sql .= " WHERE rowid = " . $this->id . " AND statut = 4";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Call trigger
+			$result = $this->call_trigger('CONTRACT_SERVICE_CLOSE', $user);
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}

@@ -10,6 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016      Ferran Marcet	     <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +79,10 @@ $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
+
 $day=GETPOST("day","int");
-$year=GETPOST("year","int");
 $month=GETPOST("month","int");
+$year=GETPOST("year","int");
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -158,6 +160,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
+
+$object = new Propal($db);	// To be passed as parameter of executeHooks that need 
 
 
 /*
@@ -285,7 +289,7 @@ if ($sall) {
 }
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '')
+if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 }
@@ -329,7 +333,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.=', p.ref DESC';
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -362,6 +366,7 @@ if ($resql)
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)				 $param.='&sall='.$sall;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -438,10 +443,12 @@ if ($resql)
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	    $formmail = new FormMail($db);
 	    $formmail->withform=-1;
-	    $formmail->fromtype = 'user';
-	    $formmail->fromid   = $user->id;
-	    $formmail->fromname = $user->getFullName($langs);
-	    $formmail->frommail = $user->email;
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
 	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
 	    {
 	        $formmail->trackid='ord'.$object->id;
@@ -531,7 +538,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
 	$parameters=array();
@@ -549,6 +556,7 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
+    print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	// Fields title
@@ -605,11 +613,11 @@ if ($resql)
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 	    print '<td class="liste_titre" align="left">';
-    	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
+    	print '<input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
     if (! empty($arrayfields['state.nom']['checked']))
     {
@@ -738,14 +746,15 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+		
+    	$objectstatic->id=$obj->rowid;
+    	$objectstatic->ref=$obj->ref;
+    		
 		print '<tr '.$bc[$var].'>';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
     		print '<td class="nowrap">';
-    
-    		$objectstatic->id=$obj->rowid;
-    		$objectstatic->ref=$obj->ref;
     
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
@@ -753,15 +762,21 @@ if ($resql)
     		print $objectstatic->getNomUrl(1);
     		print '</td>';
             // Warning
-    		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            $warnornote='';
+    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
     		if (! empty($obj->note_private))
     		{
-    			print ' <span class="note">';
-    			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    			print '</span>';
+    			$warnornote.=($warnornote?' ':'');
+    			$warnornote.= '<span class="note">';
+    			$warnornote.= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    			$warnornote.= '</span>';
     		}
-    		print '</td>';
+    		if ($warnornote)
+    		{
+    			print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+    			print $warnornote;
+    			print '</td>';
+    		}
     		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);
@@ -989,6 +1004,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 				
 	print '</table>'."\n";
+    print '</div>'."\n";
 
 	print '</form>'."\n";
 	
@@ -1004,11 +1020,7 @@ if ($resql)
 	    $genallowed=$user->rights->propal->lire;
 	    $delallowed=$user->rights->propal->lire;
 	
-	    print '<br><a name="show_files"></a>';
-	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-	
-	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}
 	else
 	{

@@ -37,9 +37,22 @@ $id = GETPOST('id','int');
 $action = GETPOST("action");
 $confirm = GETPOST('confirm', 'alpha');
 
+$object = new Contact($db);
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$object->getCanvas($id);
+$objcanvas=null;
+$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('contact', 'contactcard', $canvas);
+}
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $id, '','');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -54,7 +67,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->societe->dir_output.'/contact/'.dol_sanitizeFileName($object->ref);
@@ -97,7 +109,19 @@ if ($object->id)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
         
     print '<div class="fichecenter">';
     
@@ -105,6 +129,7 @@ if ($object->id)
     print '<table class="border centpercent">';
 
     // Company
+    /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
     	if ($object->socid > 0)
@@ -121,7 +146,7 @@ if ($object->id)
     		print $langs->trans("ContactNotLinkedToCompany");
     		print '</td></tr>';
     	}
-    }
+    }*/
     
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
@@ -138,6 +163,7 @@ if ($object->id)
     
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;
+    $permtoedit = $user->rights->societe->contact->creer;
     $param = '&id=' . $object->id;
     include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 } else {

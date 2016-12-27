@@ -158,7 +158,7 @@ if (! empty($search_code_journal)) {
  * Mode List
  */
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0);
 	if ($nbtotalofrecords < 0) {
@@ -171,7 +171,7 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy');
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="liste_titre">';
@@ -197,7 +197,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_type", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
@@ -269,10 +269,10 @@ $var = True;
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
 
-	print '<tr'. $bc[$var].'>';
+	print '<tr '. $bc[$var].'>';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
-	print '<td>' . dol_print_date($line->doc_date) . '</td>';
+	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->code_tiers) . '</td>';

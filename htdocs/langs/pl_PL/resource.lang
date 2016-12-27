@@ -2,7 +2,7 @@
 MenuResourceIndex=Zasoby
 MenuResourceAdd=Nowe zasoby
 DeleteResource=Usuń zasoby
-ConfirmDeleteResourceElement=Potwierdz usunięcie zasobów dla tego elementu
+ConfirmDeleteResourceElement=Potwierdź usunięcie zasobów dla tego elementu
 NoResourceInDatabase=Brak zasobów w bazie danych
 NoResourceLinked=Brak podliknowanych zasobów
 
@@ -24,7 +24,7 @@ RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
 RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
 ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
 
-ConfirmDeleteResource=Potwierdz by usunąc te zasoby
+ConfirmDeleteResource=Potwierdź by usunąć te zasoby
 RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
 DictionaryResourceType=Typ zasobów
 

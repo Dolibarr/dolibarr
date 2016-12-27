@@ -77,7 +77,9 @@ if ($object->id > 0)
 
 	$langs->load("companies");
 
-	llxHeader("",$langs->trans("Agenda"),'');
+	$title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
+	$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+	llxHeader("",$title,$helpurl);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
@@ -118,6 +120,13 @@ if ($object->id > 0)
 
 	print '</table>';
 
+	
+	print '<br>';
+	
+	$object->info($id);
+	print dol_print_object_info($object, 1);
+	
+	
 	print '</div>';
 
 	dol_fiche_end();

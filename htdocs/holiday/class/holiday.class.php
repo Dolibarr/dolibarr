@@ -36,7 +36,8 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'holiday';
+    
 	/**
 	 * @deprecated
 	 * @see id
@@ -298,11 +299,17 @@ class Holiday extends CommonObject
         $sql.= " cp.detail_refuse,";
 
 		$sql.= " uu.lastname as user_lastname,";
-        $sql.= " uu.firstname as user_firstname,";
-
+		$sql.= " uu.firstname as user_firstname,";
+		$sql.= " uu.login as user_login,";
+		$sql.= " uu.statut as user_statut,";
+		$sql.= " uu.photo as user_photo,";
+		
         $sql.= " ua.lastname as validator_lastname,";
-        $sql.= " ua.firstname as validator_firstname";
-
+        $sql.= " ua.firstname as validator_firstname,";
+        $sql.= " ua.login as validator_login,";
+        $sql.= " ua.statut as validator_statut,";
+        $sql.= " ua.photo as validator_photo";
+        
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -360,10 +367,16 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['user_firstname'] = $obj->user_firstname;
                 $tab_result[$i]['user_lastname'] = $obj->user_lastname;
-
+                $tab_result[$i]['user_login'] = $obj->user_login;
+                $tab_result[$i]['user_statut'] = $obj->user_statut;
+                $tab_result[$i]['user_photo'] = $obj->user_photo;
+                
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-
+                $tab_result[$i]['validator_login'] = $obj->validator_login;
+                $tab_result[$i]['validator_statut'] = $obj->validator_statut;
+                $tab_result[$i]['validator_photo'] = $obj->validator_photo;
+                
                 $i++;
             }
 
@@ -412,10 +425,16 @@ class Holiday extends CommonObject
 
         $sql.= " uu.lastname as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
-
+        $sql.= " uu.login as user_login,";
+        $sql.= " uu.statut as user_statut,";
+        $sql.= " uu.photo as user_photo,";
+        
         $sql.= " ua.lastname as validator_lastname,";
-        $sql.= " ua.firstname as validator_firstname";
-
+        $sql.= " ua.firstname as validator_firstname,";
+        $sql.= " ua.login as validator_login,";
+        $sql.= " ua.statut as validator_statut,";
+        $sql.= " ua.photo as validator_photo";
+        
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
         $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -473,10 +492,16 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['user_firstname'] = $obj->user_firstname;
                 $tab_result[$i]['user_lastname'] = $obj->user_lastname;
-
+                $tab_result[$i]['user_login'] = $obj->user_login;
+                $tab_result[$i]['user_statut'] = $obj->user_statut;
+                $tab_result[$i]['user_photo'] = $obj->user_photo;
+                
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-
+                $tab_result[$i]['validator_login'] = $obj->validator_login;
+                $tab_result[$i]['validator_statut'] = $obj->validator_statut;
+                $tab_result[$i]['validator_photo'] = $obj->validator_photo;
+                
                 $i++;
             }
             // Retourne 1 et ajoute le tableau à la variable
@@ -761,7 +786,17 @@ class Holiday extends CommonObject
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-
+		if ($mode == 6)
+		{
+		    $pictoapproved='statut6';
+		    if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+		    if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+		    if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+		    if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+		    if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+		    if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+		}
+		
 		return $statut;
     }
 
@@ -825,25 +860,49 @@ class Holiday extends CommonObject
      *  Return value of a conf parameterfor leave module
      *  TODO Move this into llx_const table
      *
-     *  @param	string	$name       name of parameter
-     *  @return string      		value of parameter
+     *  @param	string	$name                 Name of parameter
+     *  @param  string  $createifnotfound     'stringvalue'=Create entry with string value if not found. For example 'YYYYMMDDHHMMSS'.
+     *  @return string      		          Value of parameter. Example: 'YYYYMMDDHHMMSS' or < 0 if error
      */
-    function getConfCP($name)
+    function getConfCP($name, $createifnotfound='')
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
         $sql.= " WHERE name = '".$name."'";
 
-        dol_syslog(get_class($this).'::getConfCP name='.$name.'', LOG_DEBUG);
+        dol_syslog(get_class($this).'::getConfCP name='.$name.' createifnotfound='.$createifnotfound, LOG_DEBUG);
         $result = $this->db->query($sql);
 
-        // Si pas d'erreur
         if($result) {
 
-            $objet = $this->db->fetch_object($result);
-            // Retourne la valeur
-            return $objet->value;
-
+            $obj = $this->db->fetch_object($result);
+            // Return value
+            if (empty($obj))
+            {
+                if ($createifnotfound)
+                {
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
+                    $sql.= " VALUES('".$name."', '".$createifnotfound."')";
+                    $result = $this->db->query($sql);
+                    if ($result) 
+                    {
+                        return $createifnotfound;
+                    }
+                    else 
+                    {
+                        $this->error=$this->db->lasterror();
+                        return -2;
+                    }
+                }
+                else
+                {
+                    return '';
+                }
+            }
+            else 
+            {
+                return $obj->value;
+            }
         } else {
 
             // Erreur SQL
@@ -872,11 +931,12 @@ class Holiday extends CommonObject
 			$now=dol_now();
 
             $month = date('m',$now);
-
+            $newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
+            
             // Get month of last update
-            $lastUpdate = $this->getConfCP('lastUpdate');
+            $lastUpdate = $this->getConfCP('lastUpdate', $newdateforlastupdate);
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;exit;
+			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
@@ -887,9 +947,8 @@ class Holiday extends CommonObject
 	            $nbUser = count($users);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-                $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
+                $sql.= " value = '".$newdateforlastupdate."'";
                 $sql.= " WHERE name = 'lastUpdate'";
-
                 $result = $this->db->query($sql);
 
 				$typeleaves=$this->getTypes(1,1);

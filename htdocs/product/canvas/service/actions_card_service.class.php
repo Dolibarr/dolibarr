@@ -308,9 +308,9 @@ class ActionsCardService
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		// We'll need this table joined to the select in order to filter by categ
 		if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-		if ($_GET["fourn_id"] > 0)
+		if (GETPOST("fourn_id",'int') > 0)
 		{
-			$fourn_id = $_GET["fourn_id"];
+			$fourn_id = GETPOST("fourn_id",'int');
 			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		}
 		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,13 @@ if (! empty($canvas))
 	$objcanvas->getCanvas('product','list',$canvas);
 }
 
-if (! empty($_POST["button_removefilter_x"]))
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $sref="";
     $snom="";
@@ -89,14 +96,6 @@ if (! empty($_POST["button_removefilter_x"]))
     $search_batch='';
     $search_warehouse='';
 }
-
-
-
-/*
- * Actions
- */
-
-// None
 
 
 /*
@@ -114,7 +113,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,';
 $sql.= ' ps.fk_entrepot,';
-$sql.= ' e.label as warehouse_label,';
+$sql.= ' e.label as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql.= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql.= ' pl.eatby, pl.sellby,';
 $sql.= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
@@ -159,7 +158,7 @@ $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.pr
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,";
 $sql.= " ps.fk_entrepot,";
-$sql.= " e.label,";
+$sql.= " e.label, e.lieu, e.fk_parent,";
 $sql.= " pb.batch, pb.eatby, pb.sellby,";
 $sql.= " pl.eatby, pl.sellby";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte";    // Not used yet
@@ -173,7 +172,7 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall or $snom or $sref))
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref))
 	{
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");
@@ -237,11 +236,21 @@ if ($resql)
         print $hookmanager->resPrint;
         print '</div>';
     }
-	
 
-	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref&batch=$batch&eatby=$eatby&sellby=$sellby";
 
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	$param='';
+	if ($tosell)		$param.="&tosell=".$tosell;
+	if ($tobuy)			$param.="&tobuy=".$tobuy;
+	if ($type)			$param.="&type=".$type;
+	if ($fourn_id)		$param.="&fourn_id=".$fourn_id;
+	if ($snom)			$param.="&snom=".$snom;
+	if ($sref)			$param.="&sref=".$sref;
+	if ($search_batch)	$param.="&search_batch=".$search_batch;
+	/*if ($eatby)		$param.="&eatby=".$eatby;
+	if ($sellby)	$param.="&sellby=".$sellby;*/
+
+    print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
@@ -257,8 +266,8 @@ if ($resql)
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -295,7 +304,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-
+		
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
@@ -313,16 +322,29 @@ if ($resql)
 			}
 		}
 
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td class="nowrap">';
+
 		$product_static->ref=$objp->ref;
 		$product_static->id=$objp->rowid;
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
+		
+		$warehousetmp->id=$objp->fk_entrepot;
+		$warehousetmp->ref=$objp->warehouse_ref;
+		$warehousetmp->label=$objp->warehouse_ref;
+		$warehousetmp->fk_parent=$objp->warehouse_parent;
+
+		$var=!$var;
+
+		print '<tr '.$bc[$var].'>';
+		
+		// Ref
+		print '<td class="nowrap">';
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
+		
+		// Label
 		print '<td>'.$objp->label.'</td>';
 
 		if (! empty($conf->service->enabled) && $type == 1)
@@ -342,9 +364,6 @@ if ($resql)
 		print '<td>';
 		if ($objp->fk_entrepot > 0)
 		{
-		    $warehousetmp->id=$objp->fk_entrepot;
-		    $warehousetmp->label=$objp->warehouse_label;
-    		//$warehousetmp->fetch($objp->fk_entrepot);
     		print $warehousetmp->getNomUrl(1);
 		}
 		print '</td>';
@@ -363,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)

@@ -100,8 +100,8 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
-	
-	
+
+
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
@@ -110,13 +110,13 @@ if ($socid > 0)
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	// Remise
+	// Discount
 	print '<tr><td class="titlefield">';
 	print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 
@@ -127,20 +127,20 @@ if ($socid > 0)
 
 	print '<table class="border centpercent">';
 
-	// Nouvelle valeur
+	// New value
 	print '<tr><td class="titlefield">';
-	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
+	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'">%</td></tr>';
 
 	// Motif/Note
 	print '<tr><td>';
-	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
+	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note")).'"></td></tr>';
 
 	print "</table>";
 
 	print '</div>';
-	
+
 	dol_fiche_end();
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
     if (! empty($backtopage))
@@ -161,7 +161,8 @@ if ($socid > 0)
 	$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 	$sql.= " u.login, u.rowid as user_id";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE rc.fk_soc =". $object->id;
+	$sql.= " WHERE rc.fk_soc = " . $object->id;
+	$sql.= " AND rc.entity = " . $conf->entity;
 	$sql.= " AND u.rowid = rc.fk_user_author";
 	$sql.= " ORDER BY rc.datec DESC";
 

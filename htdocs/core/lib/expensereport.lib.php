@@ -56,6 +56,18 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{
+	    $nbNote = 0;
+	    if(!empty($object->note_private)) $nbNote++;
+	    if(!empty($object->note_public)) $nbNote++;
+	    $head[$h][0] = DOL_URL_ROOT.'/expensereport/note.php?id='.$object->id;
+	    $head[$h][1] = $langs->trans('Notes');
+	    if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	    $head[$h][2] = 'note';
+	    $h++;
+	}
+	
 	$head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
@@ -93,11 +105,12 @@ function expensereport_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin');
 
-	/*$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
+    /*
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributesdet';

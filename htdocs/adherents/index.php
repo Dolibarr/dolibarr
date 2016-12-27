@@ -27,7 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 $langs->load("companies");
 $langs->load("members");
@@ -44,7 +44,7 @@ llxHeader('',$langs->trans("Members"),'EN:Module_Foundations|FR:Module_Adh&eacut
 
 $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
-$subscriptionstatic=new Cotisation($db);
+$subscriptionstatic=new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"));
 
@@ -59,14 +59,14 @@ $AdherentsResilies=array();
 $AdherentType=array();
 
 // Liste les adherents
-$sql = "SELECT t.rowid, t.libelle, t.cotisation,";
+$sql = "SELECT t.rowid, t.libelle, t.subscription,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " ON t.rowid = d.fk_adherent_type";
 $sql.= " AND d.entity IN (".getEntity().")";
 $sql.= " WHERE t.entity IN (".getEntity().")";
-$sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
+$sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
 $result = $db->query($sql);
@@ -80,7 +80,7 @@ if ($result)
 
 		$adhtype=new AdherentType($db);
 		$adhtype->id=$objp->rowid;
-		$adhtype->cotisation=$objp->cotisation;
+		$adhtype->subscription=$objp->subscription;
 		$adhtype->libelle=$objp->libelle;
 		$AdherentType[$objp->rowid]=$adhtype;
 
@@ -101,7 +101,7 @@ $now=dol_now();
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.entity IN (".getEntity().")";
-//$sql.= " AND d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= '".$db->idate($now)."')";
+//$sql.= " AND d.statut = 1 AND ((t.subscription = 0 AND d.datefin IS NULL) OR d.datefin >= '".$db->idate($now)."')";
 $sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
@@ -212,7 +212,7 @@ $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
-$sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
+$sql.= " ta.rowid as typeid, ta.libelle, ta.subscription";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.entity IN (".getEntity().")";
 $sql.= " AND a.fk_adherent_type = ta.rowid";
@@ -255,7 +255,7 @@ if ($resql)
 			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
-			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -275,8 +275,8 @@ $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql.= " datefin as date_end_subscription,";
-$sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";
+$sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.subscription";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE a.entity IN (".getEntity().")";
 $sql.= " AND c.fk_adherent = a.rowid";
 $sql.= $db->order("c.tms","DESC");
@@ -315,8 +315,8 @@ if ($resql)
 			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
 			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
-			print '<td align="right">'.price($obj->cotisation).'</td>';
-			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			print '<td align="right">'.price($obj->subscription).'</td>';
+			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '<td align="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec),'dayhour').'</td>';
 			print '</tr>';
 			$i++;
@@ -345,18 +345,18 @@ foreach ($AdherentType as $key => $adhtype)
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
-	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
-	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->subscription,0,3).'</td>';
+	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->subscription,0,3).'</td>';
+	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->subscription,$now,3).'</td>';
+	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->subscription,0,3).'</td>';
 	print "</tr>\n";
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-print '<td class="liste_total" align="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->subscription,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->subscription,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->subscription,$now,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->subscription,0,3).'</td>';
 print '</tr>';
 
 print "</table>\n";
@@ -369,8 +369,8 @@ $Number=array();
 $tot=0;
 $numb=0;
 
-$sql = "SELECT c.cotisation, c.dateadh as dateh";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+$sql = "SELECT c.subscription, c.dateadh as dateh";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE d.entity IN (".getEntity().")";
 $sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
@@ -386,9 +386,9 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$year=dol_print_date($db->jdate($objp->dateh),"%Y");
-		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
+		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->subscription;
 		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
-		$tot+=$objp->cotisation;
+		$tot+=$objp->subscription;
 		$numb+=1;
 		$i++;
 	}
@@ -408,7 +408,7 @@ foreach ($Total as $key=>$value)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print "<td><a href=\"cotisations.php?date_select=$key\">$key</a></td>";
+	print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
 	print "<td align=\"right\">".$Number[$key]."</td>";
 	print "<td align=\"right\">".price($value)."</td>";
 	print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";

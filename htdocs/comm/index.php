@@ -71,7 +71,7 @@ if (! empty($conf->supplier_proposal->enabled)) $supplierproposalstatic=new Supp
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
-llxHeader();
+llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 
@@ -118,7 +118,7 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
 		print '</tr>';
 		$i++;
@@ -611,7 +611,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 	$sql.= ", ".MAIN_DB_PREFIX."product as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity IN (".getEntity('contrat', 1).")";
+	$sql.= " AND c.entity IN (".getEntity('contract', 1).")";
 	$sql.= " AND c.fk_product = p.rowid";
 	if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;

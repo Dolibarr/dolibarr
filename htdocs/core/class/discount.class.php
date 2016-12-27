@@ -29,22 +29,22 @@
  */
 class DiscountAbsolute
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $id;					// Id discount
-    var $fk_soc;
-    var $amount_ht;				//
-    var $amount_tva;			//
-    var $amount_ttc;			//
-    var $tva_tx;				// Vat rate
-    var $fk_user;				// Id utilisateur qui accorde la remise
-    var $description;			// Description libre
-    var $datec;					// Date creation
-    var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
-    var $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
-    var $fk_facture_source;		// Id facture avoir a l'origine de la remise
-    var $ref_facture_source;	// Ref facture avoir a l'origine de la remise
+    public $id;					// Id discount
+    public $fk_soc;
+    public $amount_ht;				//
+    public $amount_tva;			//
+    public $amount_ttc;			//
+    public $tva_tx;				// Vat rate
+    public $fk_user;				// Id utilisateur qui accorde la remise
+    public $description;			// Description libre
+    public $datec;					// Date creation
+    public $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
+    public $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
+    public $fk_facture_source;		// Id facture avoir a l'origine de la remise
+    public $ref_facture_source;	// Ref facture avoir a l'origine de la remise
 
     /**
      *	Constructor
@@ -66,6 +66,8 @@ class DiscountAbsolute
      */
     function fetch($rowid,$fk_facture_source=0)
     {
+    	global $conf;
+
         // Check parameters
         if (! $rowid && ! $fk_facture_source)
         {
@@ -81,9 +83,9 @@ class DiscountAbsolute
         $sql.= " f.facnumber as ref_facture_source";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-        $sql.= " WHERE";
-        if ($rowid) $sql.= " sr.rowid=".$rowid;
-        if ($fk_facture_source) $sql.= " sr.fk_facture_source=".$fk_facture_source;
+        $sql.= " WHERE sr.entity = " . $conf->entity;
+        if ($rowid) $sql.= " AND sr.rowid=".$rowid;
+        if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -150,11 +152,11 @@ class DiscountAbsolute
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
-        $sql.= " (datec, fk_soc, fk_user, description,";
+        $sql.= " (entity, datec, fk_soc, fk_user, description,";
         $sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
         $sql.= " fk_facture_source";
         $sql.= ")";
-        $sql.= " VALUES ('".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
+        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
         $sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
         $sql.= ")";
@@ -343,10 +345,13 @@ class DiscountAbsolute
      */
     function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0)
     {
+    	global $conf;
+
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
         //        $sql  = "SELECT rc.amount_ttc as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-        $sql.= " WHERE (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
+        $sql.= " WHERE rc.entity = " . $conf->entity;
+        $sql.= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
         if (is_object($company)) $sql.= " AND rc.fk_soc = ".$company->id;
         if (is_object($user))    $sql.= " AND rc.fk_user = ".$user->id;
         if ($filter)   $sql.=' AND ('.$filter.')';

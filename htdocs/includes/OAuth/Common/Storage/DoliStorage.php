@@ -128,6 +128,7 @@ class DoliStorage implements TokenStorageInterface
     public function hasAccessToken($service)
     {
         // get from db
+        dol_syslog("hasAccessToken service=".$service);
         $sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$service."'";
         $resql = $this->db->query($sql);

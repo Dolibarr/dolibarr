@@ -44,7 +44,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate))
 {
 	// Increase date
 	$al = new AccountLine($db);
-	$al->fetch($_GET["rowid"]);
+    $al->fetch(GETPOST('rowid','int'));
 
 	if ($action == 'dvnext') {
 		$al->increaseValueDate();

@@ -69,8 +69,8 @@ ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
 ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "المركز الخاص لم تبدأ" اذا الحقل "الذي قام به" كما شغلها.
 ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
-ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
-ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
+ErrorPleaseTypeBankTransactionReportName=Please type bank statement name where entry is reported (Format YYYYMM or YYYYMMDD)
+ErrorRecordHasChildren=Failed to delete record since it has some childs.
 ErrorRecordIsUsedCantDelete=لا يمكن حذف السجلات. وبالفعل استخدامه أو نشره على كائن آخر.
 ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -> الإعداد -> العرض.
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
@@ -129,9 +129,9 @@ ErrorPHPNeedModule=خطأ، يجب PHP الخاص بتثبيت <b>وحدة٪ s �
 ErrorOpenIDSetupNotComplete=يمكنك إعداد Dolibarr ملف التكوين للسماح بالمصادقة رض، ولكن لم يتم تعريف URL الخدمة رض إلى المستمر٪ الصورة
 ErrorWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات
 ErrorBadFormat=شكل سيئة!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطأ، لا يرتبط هذا العضو حتى الآن أي مرشحين عن. عضو تصل إلى طرف ثالث القائمة أو إنشاء مرشحين عن الجديد قبل إنشاء الاشتراك مع الفاتورة.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=خطأ، وهناك بعض الولادات ترتبط هذه الشحنة. رفض الحذف.
-ErrorCantDeletePaymentReconciliated=لا يمكنك حذف الدفع التي قد ولدت المعاملات المصرفية التي تم التصالح
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank entry that was reconciled
 ErrorCantDeletePaymentSharedWithPayedInvoice=لا يمكنك حذف دفع تتقاسمها فاتورة واحدة على الأقل مع وضع سيولي
 ErrorPriceExpression1=لا يمكن تعيين إلى ثابت '٪ ق'
 ErrorPriceExpression2=لا يمكن إعادة تعريف المدمج في وظيفة '٪ ق'
@@ -168,12 +168,16 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=سيئة تعريف القائم
 ErrorSavingChanges=وقد ocurred لخطأ عند حفظ التغييرات
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
-ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorSupplierCountryIsNotDefined=لهذا البلد المورد غير محدد. تصحيح هذا أولا.
 ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
 ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorModuleNotFound=File of module was not found.
+ErrorFieldAccountNotDefinedForBankLine=Value for Accounting account not defined for source bank line %s
+ErrorBankStatementNameMustFollowRegex=Error, bank statement name must follow the following syntax rule %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.

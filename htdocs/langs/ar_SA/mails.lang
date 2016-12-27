@@ -42,22 +42,21 @@ MailingStatusNotContact=عدم الاتصال بعد الآن
 MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فارغة
 WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائمة المتلقي.
-ConfirmValidMailing=هل أنت متأكد أنك تريد إرساله عبر البريد الإلكتروني للتحقق من هذا؟
-ConfirmResetMailing=تحذير ، وإعادة تشغيل البريد الإلكتروني <b>ل ٪</b> ، يسمح لك أن الدمار إرسال هذه الرسالة مرة اخرى. هل أنت متأكد من أنك هذا هو ما تريد أن تفعل؟
-ConfirmDeleteMailing=هل أنت متأكد من أنك تريد حذف هذا emailling؟
+ConfirmValidMailing=Are you sure you want to validate this emailing?
+ConfirmResetMailing=Warning, by reinitializing emailing <b>%s</b>, you allow to make a mass sending of this email another time. Are you sure you this is what you want to do?
+ConfirmDeleteMailing=Are you sure you want to delete this emailling?
 NbOfUniqueEMails=ملاحظة : فريد من رسائل البريد الإلكتروني
 NbOfEMails=ملاحظة : رسائل البريد الإلكتروني
 TotalNbOfDistinctRecipients=عدد المستفيدين متميزة
 NoTargetYet=ولم يعرف بعد المستفيدين (الذهاب على تبويبة 'المتلقين)
 RemoveRecipient=إزالة المتلقية
-CommonSubstitutions=عام بدائل
 YouCanAddYourOwnPredefindedListHere=البريد الإلكتروني الخاص بك لإنشاء وحدة منتق ، انظر htdocs / تضم / وحدات / الرسائل / إقرأني.
 EMailTestSubstitutionReplacedByGenericValues=عند استخدام طريقة الاختبار ، واستبدال المتغيرات العامة الاستعاضة عن القيم
 MailingAddFile=يرفق هذا الملف
 NoAttachedFiles=ولا الملفات المرفقة
 BadEMail=قيمة سيئة للبريد الإلكتروني
 CloneEMailing=استنساخ الارسال بالبريد الالكتروني
-ConfirmCloneEMailing=هل أنت متأكد من استنساخ هذا البريد الإلكتروني؟
+ConfirmCloneEMailing=Are you sure you want to clone this emailing?
 CloneContent=استنساخ الرسالة
 CloneReceivers=شبيه المستفيدين
 DateLastSend=Date of latest sending
@@ -67,8 +66,9 @@ MailingStatusRead=قرأ
 YourMailUnsubcribeOK=البريد <b>الإلكتروني٪ s غير</b> unsubcribe بشكل صحيح من القائمة البريدية
 ActivateCheckReadKey=المفتاح المستخدم في تشفير URL المستخدمة ل "اقرأ استلام" و "Unsubcribe" ميزة
 EMailSentToNRecipients=البريد الإلكتروني المرسلة إلى المستلمين٪ الصورة.
+EMailSentForNElements=EMail sent for %s elements.
 XTargetsAdded=وأضاف <b>المتلقين٪ الصورة</b> إلى قائمة المستهدفين
-OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
+OnlyPDFattachmentSupported=If the PDF document was already generated for the object to send, it will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachment in mass sending in this version).
 AllRecipientSelected=جميع thirdparties اختيار وإذا تم تعيين بالبريد.
 ResultOfMailSending=نتيجة لإرسال البريد الإلكتروني الشامل
 NbSelected=ملحوظة مختارة
@@ -89,7 +89,7 @@ SendMailing=إرسال البريد الإلكتروني
 SendMail=إرسال بريد إلكتروني
 MailingNeedCommand=لأسباب أمنية، إرسال البريد الإلكتروني هو أفضل عندما يؤديها من سطر الأوامر. إذا كان لديك واحدة، اطلب من مسؤول الخادم الخاص بك لإطلاق الأمر التالي لإرسال إرساله عبر البريد الإلكتروني لجميع المستفيدين:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
-ConfirmSendingEmailing=إذا كنت لا تستطيع أو تفضل إرسالها مع متصفح الشبكة العالمية الخاصة بك، يرجى تأكيد كنت متأكدا من أنك تريد إرسال البريد الإلكتروني الآن من المتصفح؟
+ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser?
 LimitSendingEmailing=يتم إرسال من emailings من واجهة الويب في عدة مرات لأسباب أمنية ومهلة <b>والمستفيدين٪ الصورة</b> في وقت لكل دورة ارسال: ملاحظة.
 TargetsReset=لائحة واضحة
 ToClearAllRecipientsClickHere=من الواضح أن المستفيدين قائمة لهذا البريد الإلكتروني ، انقر على زر
@@ -97,12 +97,12 @@ ToAddRecipientsChooseHere=إضافة إلى المتلقين ، وتختار ف�
 NbOfEMailingsReceived=وتلقى كتلة emailings
 NbOfEMailingsSend=emailings الجماعية أرسلت
 IdRecord=رقم قياسي
-DeliveryReceipt=إيصال استلام
+DeliveryReceipt=Delivery Ack.
 YouCanUseCommaSeparatorForSeveralRecipients=يمكنك استخدام <b>الفاصلة</b> فاصل لتحديد عدد من المتلقين.
 TagCheckMail=افتتاح البريد المسار
 TagUnsubscribe=رابط إلغاء الاشتراك
 TagSignature=التوقيع إرسال المستعمل
-EMailRecipient=Recipient EMail
+EMailRecipient=البريد الإلكتروني المستلم
 TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=لا ترسل البريد الإلكتروني. مرسل سيئة أو البريد الإلكتروني المستلم. تحقق ملف تعريف المستخدم.
 # Module Notifications
@@ -118,6 +118,8 @@ MailSendSetupIs2=يجب عليك أولا الذهاب، مع حساب مشرف�
 MailSendSetupIs3=إذا كان لديك أي أسئلة حول كيفية إعداد ملقم SMTP الخاص بك، يمكنك أن تطلب إلى٪ s.
 YouCanAlsoUseSupervisorKeyword=يمكنك أيضا إضافة <strong>__SUPERVISOREMAIL__</strong> الكلمة أن يكون البريد الإلكتروني إرسالها إلى المشرف على المستخدم (يعمل فقط إذا تم تعريف بريد الكتروني لهذا المشرف)
 NbOfTargetedContacts=العدد الحالي من رسائل البريد الإلكتروني اتصال المستهدفة
+UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
+UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=Recipients (advanced selection)
 AdvTgtTitle=Fill input fields to preselect the thirdparties or contacts/addresses to target
 AdvTgtSearchTextHelp=Use %% as magic caracters. For exemple to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For exemple  <b>jean;joe;jim%%;!jimo;!jima%</b> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
@@ -127,7 +129,7 @@ AdvTgtMaxVal=Maximum value
 AdvTgtSearchDtHelp=Use interval to select date value
 AdvTgtStartDt=Start dt.
 AdvTgtEndDt=End dt.
-AdvTgtTypeOfIncudeHelp=Target Email of thirdparty and email of contact of the thridparty, or just thridparty email or just contact email
+AdvTgtTypeOfIncudeHelp=Target Email of third party and email of contact of the third party, or just third party email or just contact email
 AdvTgtTypeOfIncude=Type of targeted email
 AdvTgtContactHelp=Use only if you target contact into "Type of targeted email"
 AddAll=Add all

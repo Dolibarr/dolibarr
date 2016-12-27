@@ -35,9 +35,8 @@ class mailing_xinputuser extends MailingTargets
 	var $require_module=array();            // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
-
-	var $db;
-
+	var $tooltip='UseFormatInputEmailToTarget';
+	
 
 	/**
 	 *	Constructor
@@ -104,7 +103,7 @@ class mailing_xinputuser extends MailingTargets
 		global $langs;
 
 		$s='';
-		$s.='<input type="text" name="xinputuser" class="flat" size="40" value="'.GETPOST("xinputuser").'">';
+		$s.='<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
 		return $s;
 	}
 

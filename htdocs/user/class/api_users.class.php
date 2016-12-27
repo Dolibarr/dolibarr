@@ -49,6 +49,82 @@ class Users extends DolibarrApi
 		$this->useraccount = new User($this->db);
 	}
 
+	
+	/**
+	 * List Users
+	 *
+	 * Get a list of Users
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return  array               Array of User objects
+	 */
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
+	    global $db, $conf;
+	
+	    $obj_ret = array();
+	
+		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
+	       throw new RestException(401, "You are not allowed to read list of users");
+	    }
+	     
+	    // case of external user, $societe param is ignored and replaced by user's socid
+	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	
+	    $sql = "SELECT t.rowid";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
+	    $sql.= ' WHERE t.entity IN ('.getEntity('user', 1).')';
+	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
+	    // Add sql filters
+        if ($sqlfilters) 
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+	    
+	    $sql.= $db->order($sortfield, $sortorder);
+	    if ($limit)	{
+	        if ($page < 0)
+	        {
+	            $page = 0;
+	        }
+	        $offset = $limit * $page;
+	
+	        $sql.= $db->plimit($limit + 1, $offset);
+	    }
+	
+	    $result = $db->query($sql);
+	
+	    if ($result)
+	    {
+	        $num = $db->num_rows($result);
+	        while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+	        {
+	            $obj = $db->fetch_object($result);
+	            $user_static = new User($db);
+	            if($user_static->fetch($obj->rowid)) {
+	                $obj_ret[] = $this->_cleanObjectDatas($user_static);
+	            }
+	            $i++;
+	        }
+	    }
+	    else {
+	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
+	    }
+	    if( ! count($obj_ret)) {
+	        throw new RestException(404, 'No User found');
+	    }
+	    return $obj_ret;
+	}
+	
 	/**
 	 * Get properties of an user object
 	 *
@@ -98,19 +174,16 @@ class Users extends DolibarrApi
 	    if (!isset($request_data["lastname"]))
 	         throw new RestException(400, "lastname field missing");*/
 	    //assign field values
-        $xxx=var_export($request_data, true);
-        dol_syslog("xxx=".$xxx);
         foreach ($request_data as $field => $value)
 	    {
 	          $this->useraccount->$field = $value;
 	    }
-	    
-        $result = $this->useraccount->create(DolibarrApiAccess::$user);
-	    if ($result <=0) {
-	         throw new RestException(500, "User not created : ".$this->useraccount->error);
+
+	    if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
+             throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
 	    }
-	    return array('id'=>$result);
-    }                
+	    return $this->useraccount->id;
+    }
 	
     
 	/**
@@ -138,7 +211,8 @@ class Users extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-			$this->useraccount->$field = $value;
+            if ($field == 'id') continue;
+		    $this->useraccount->$field = $value;
 		}
 
 		if ($this->useraccount->update(DolibarrApiAccess::$user, 1))
@@ -201,7 +275,7 @@ class Users extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
      * 
-	 * @param   array $data Data to validate
+	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
 	 */

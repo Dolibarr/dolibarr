@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->langfiles = array("main","users","companies");
+		$this->langfiles = array("main","users","companies","members");
 
 		// Constants
 		$this->const = array();
@@ -134,7 +134,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][0] = 341;
 		$this->rights[$r][1] = 'Consulter ses propres permissions';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance';        // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'readperms';
 
@@ -142,7 +142,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][0] = 342;
 		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
 		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'creer';
 
@@ -150,7 +150,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][0] = 343;
 		$this->rights[$r][1] = 'Modifier son propre mot de passe';
 		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'password';
 
@@ -158,7 +158,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][0] = 344;
 		$this->rights[$r][1] = 'Modifier ses propres permissions';
 		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance';          // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'writeperms';
 
@@ -202,6 +202,13 @@ class modUser extends DolibarrModules
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'export';
 
+		
+        // Menus
+        //-------
+        
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

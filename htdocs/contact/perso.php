@@ -151,12 +151,12 @@ if ($action == 'edit')
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $object->id;
     print '</td>';
     
     // Photo
-    print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="5">';
+    print '<td align="center" class="hideonsmartphone" valign="middle" rowspan="6">';
     print $form->showphoto('contact',$object)."\n";
     if ($object->photo) print "<br>\n";
     
@@ -170,8 +170,8 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
+    print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td colspan="3">'.$object->lastname.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="3">'.$object->firstname.'</td>';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -233,7 +233,20 @@ else
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
     
     
     print '<div class="fichecenter">';
@@ -242,6 +255,7 @@ else
     print '<table class="border centpercent">';
 
     // Company
+    /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
         if ($object->socid > 0)
@@ -258,7 +272,7 @@ else
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
         }
-    }
+    }*/
 
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';

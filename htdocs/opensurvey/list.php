@@ -78,8 +78,6 @@ llxHeader();
 $param='';
 $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
 
-print '<div class="corps">'."\n";
-
 print load_fiche_titre($langs->trans("OpenSurveyArea"));
 
 // List of surveys into database
@@ -90,7 +88,11 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print '<table class="liste">'."\n";
+$moreforfilter = '';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.id_sondage",$param,"","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Title"), $_SERVER["PHP_SELF"], "p.titre",$param,"","",$sortfield,$sortorder);
@@ -103,14 +105,14 @@ print_liste_field_titre('');
 print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
-print '<td></td>';
-print '<td><input type="text" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
-print '<td></td>';
-print '<td></td>';
-print '<td></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 $arraystatus=array(''=>'&nbsp;','expired'=>$langs->trans("Expired"),'opened'=>$langs->trans("Opened"));
-print '<td align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
-print '<td></td>';
+print '<td class="liste_titre" align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
+print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
@@ -122,7 +124,7 @@ $sql.= " u.login, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = -1;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -197,10 +199,8 @@ while ($i < min($num,$limit))
 }
 
 print '</table>'."\n";
-
+print '</div>';
 print '</form>';
-
-print '</div>'."\n";
 
 llxFooter();
 

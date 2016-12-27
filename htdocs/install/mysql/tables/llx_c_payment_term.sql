@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@ create table llx_c_payment_term
   active          tinyint DEFAULT 1,
   libelle         varchar(255),
   libelle_facture text,
-  fdm             tinyint,    -- reglement fin de mois
+  type_cdr        tinyint,    			-- Type of change date reckoning. 1=Payment at end of current month, 2=the Nth of next month
   nbjour          smallint,
   decalage		  smallint,
   module          varchar(32) NULL

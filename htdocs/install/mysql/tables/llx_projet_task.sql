@@ -41,5 +41,6 @@ create table llx_projet_task
   note_private			text,
   note_public			text,
   rang                  integer DEFAULT 0,
-  model_pdf        		varchar(255)
+  model_pdf        		varchar(255),
+  import_key			varchar(14)						-- Import key
 )ENGINE=innodb;

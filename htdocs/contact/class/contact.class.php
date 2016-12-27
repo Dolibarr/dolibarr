@@ -123,15 +123,16 @@ class Contact extends CommonObject
 	
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (sp.fk_soc = s.rowid)";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
+		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= ' '.$clause.' s.entity IN ('.getEntity($this->element, 1).')';
-	
+		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+        if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
+        
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -554,8 +555,6 @@ class Contact extends CommonObject
 		    $this->db->rollback();
 		    return -$error;
 		}
-		
-		return $result;
 	}
 
 
@@ -1092,24 +1091,24 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
 		}
 	}
 

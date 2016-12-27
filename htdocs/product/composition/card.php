@@ -133,10 +133,6 @@ else if($action==='save_composed_product')
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $form = new Form($db);
@@ -177,10 +173,22 @@ if ($action == 'search')
 
 	$resql = $db->query($sql);
 }
-//print $sql;
 
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-llxHeader("", $langs->trans("CardProduct".$object->type), $helpurl);
+llxHeader('', $title, $helpurl);
 
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
@@ -197,14 +205,18 @@ if ($id > 0 || ! empty($ref))
 	{
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 	    
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 		
-		print '<table class="border tableforfield" width="100%">';
-
+        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
+        {
+    	    print '<div class="underbanner clearboth"></div>';	
+            print '<table class="border tableforfield" width="100%">';
+        }
+        
 		// Nature
-		if($object->type!=Product::TYPE_SERVICE)
+		if ($object->type!=Product::TYPE_SERVICE)
 		{
-			print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
 			print $object->getLibFinished();
 			print '</td></tr>';
 		}
@@ -236,11 +248,15 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
-		print '</table>';
+        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
+        {
+		  print '</table>';
+        }
 
 		dol_fiche_end();
 
-
+        print '<br>';
+        
 		$prodsfather = $object->getFather(); 		// Parent Products
 		$object->get_sousproduits_arbo();			// Load $object->sousprods
 		$prods_arbo=$object->get_arbo_each_prod();		

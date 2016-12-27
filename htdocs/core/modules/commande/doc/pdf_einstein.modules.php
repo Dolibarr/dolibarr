@@ -149,7 +149,7 @@ class pdf_einstein extends ModelePDFCommandes
      *  @param		int			$hidedetails		Do not show line details
      *  @param		int			$hidedesc			Do not show desc
      *  @param		int			$hideref			Do not show ref
-     *  @return     int             			1=OK, 0=KO
+     *  @return     int             			    1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
@@ -590,8 +590,6 @@ class pdf_einstein extends ModelePDFCommandes
 			$this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**

@@ -374,6 +374,14 @@ class pdf_azur extends ModelePDFPropales
 						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+				if (! empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0)
+				{
+				    $tmpuser=new User($this->db);
+				    $tmpuser->fetch($object->user_author_id);
+				    $notetoshow.='Affaire suivi par '.$tmpuser->getFullName($langs);
+				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
+				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
+				}				
 				if ($notetoshow)
 				{
 					$tab_top = 88 + $height_incoterms;
@@ -763,9 +771,6 @@ class pdf_azur extends ModelePDFPropales
 			$this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
 			return 0;
 		}
-
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**
@@ -1486,7 +1491,8 @@ class pdf_azur extends ModelePDFPropales
 		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
-		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		 		$labelbeforecontactname=($outputlangs->transnoentities("FromContactName")!='FromContactName'?$outputlangs->transnoentities("FromContactName"):$outputlangs->transnoentities("Name"));
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
 		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);

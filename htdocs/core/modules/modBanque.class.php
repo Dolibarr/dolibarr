@@ -70,7 +70,7 @@ class modBanque extends DolibarrModules
 
 		// Dependancies
 		$this->depends = array();
-		$this->requiredby = array("modComptabilite","modAccounting");
+		$this->requiredby = array("modComptabilite","modAccounting","modPrelevement");
 		$this->conflictwith = array();
 		$this->langfiles = array("banks","compta","bills","companies");
 
@@ -89,7 +89,7 @@ class modBanque extends DolibarrModules
 		$this->rights[$r][0] = 111; // id de la permission
 		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -135,7 +135,11 @@ class modBanque extends DolibarrModules
 		$this->rights[$r][4] = 'cheque';
 
 
-
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;
@@ -158,7 +162,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."bank_url as bu ON (bu.fk_bank = b.rowid AND bu.type = 'company')";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON bu.url_id = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account';
-		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank',1).')';
+		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account',1).')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
 
 		$r++;
@@ -185,7 +189,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account AND bch.rowid = b.fk_bordereau and bch.fk_bank_account=ba.rowid';
 		$this->export_sql_end[$r] .=" AND b.fk_type = 'CHQ'";
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
-		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank',1).')';
+		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account',1).')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
 
 	}

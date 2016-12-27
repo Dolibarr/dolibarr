@@ -108,28 +108,29 @@ if ($object->id)
 	}
 
 
-    print '<table class="border centpercent">';
-
-    $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
-
+	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+	
+	
+	print '<div class="fichecenter">';
+	//print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+	
+	print '<table class="border centpercent">';
+	
     print '<tr>';
-    print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
-    print '<td>';
-    print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
-    print '</td>';
-    print '</tr>';
-
-    print '<td>'.$langs->trans("User").'</td>';
-    print '<td>';
-    print $userRequest->getNomUrl(1);
-    print '</td></tr>';
+    print '<td class="titlefield">'.$langs->trans("User").'</td>';
+	print '<td>';
+	print $userRequest->getNomUrl(-1, 'leave');
+	print '</td></tr>';
 
     // Type
     print '<tr>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    $typeleaves=$object->getTypes(1,1);
-    print $typeleaves[$object->fk_type]['label'];
+    $typeleaves=$object->getTypes(1,-1);
+    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
     print '</td>';
     print '</tr>';
 
@@ -138,57 +139,52 @@ if ($object->id)
 
     if(!$edit)
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-    	print '<td>'.dol_print_date($object->date_debut,'day');
-    	print ' &nbsp; &nbsp; ';
-    	print $langs->trans($listhalfday[$starthalfday]);
-    	print '</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td>'.dol_print_date($object->date_debut,'day');
+        print ' &nbsp; &nbsp; ';
+        print $langs->trans($listhalfday[$starthalfday]);
+        print '</td>';
+        print '</tr>';
     }
     else
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-    	print '<td>';
-    	$form->select_date($object->date_debut,'date_debut_');
-    	print ' &nbsp; &nbsp; ';
-    	print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
-    	print '</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td>';
+        $form->select_date($object->date_debut,'date_debut_');
+        print ' &nbsp; &nbsp; ';
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+        print '</td>';
+        print '</tr>';
     }
 
     if (!$edit)
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-    	print '<td>'.dol_print_date($object->date_fin,'day');
-    	print ' &nbsp; &nbsp; ';
-    	print $langs->trans($listhalfday[$endhalfday]);
-    	print '</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td>'.dol_print_date($object->date_fin,'day');
+        print ' &nbsp; &nbsp; ';
+        print $langs->trans($listhalfday[$endhalfday]);
+        print '</td>';
+        print '</tr>';
     }
     else
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-    	print '<td>';
-    	$form->select_date($object->date_fin,'date_fin_');
-    	print ' &nbsp; &nbsp; ';
-    	print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
-    	print '</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td>';
+        $form->select_date($object->date_fin,'date_fin_');
+        print ' &nbsp; &nbsp; ';
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        print '</td>';
+        print '</tr>';
     }
     print '<tr>';
     print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
     print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
     print '</tr>';
 
-    // Status
-    print '<tr>';
-    print '<td>'.$langs->trans('StatutCP').'</td>';
-    print '<td>'.$object->getLibStatut(2).'</td>';
-    print '</tr>';
     if ($object->statut == 5)
     {
     	print '<tr>';
@@ -200,28 +196,97 @@ if ($object->id)
     // Description
     if (!$edit)
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DescCP').'</td>';
-    	print '<td>'.nl2br($object->description).'</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DescCP').'</td>';
+        print '<td>'.nl2br($object->description).'</td>';
+        print '</tr>';
     }
     else
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DescCP').'</td>';
-    	print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DescCP').'</td>';
+        print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
+        print '</tr>';
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    
+    print '</tbody>';
+    print '</table>'."\n";
+/*
+    print '</div>';
+    print '<div class="fichehalfright">';
+    print '<div class="ficheaddleft">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+	// Info workflow
+    print '<table class="border centpercent">'."\n";
+    print '<tbody>';
 
+    if (! empty($object->fk_user_create))
+    {
+    	$userCreate=new User($db);
+    	$userCreate->fetch($object->fk_user_create);
+        print '<tr>';
+        print '<td class="titlefield">'.$langs->trans('RequestByCP').'</td>';
+        print '<td>'.$userCreate->getNomUrl(-1).'</td>';
+        print '</tr>';
+    }
+
+    if (!$edit) {
+        print '<tr>';
+        print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+        print '<td>'.$valideur->getNomUrl(-1).'</td>';
+        print '</tr>';
+    } else {
+        print '<tr>';
+        print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+        print '<td>';
+		print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
+        print '</td>';
+        print '</tr>';
+    }
+
+    print '<tr>';
+    print '<td>'.$langs->trans('DateCreateCP').'</td>';
+    print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
+    print '</tr>';
+    if ($object->statut == 3) {
+        print '<tr>';
+        print '<td>'.$langs->trans('DateValidCP').'</td>';
+        print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
+        print '</tr>';
+    }
+    if ($object->statut == 4) {
+        print '<tr>';
+        print '<td>'.$langs->trans('DateCancelCP').'</td>';
+        print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
+        print '</tr>';
+    }
+    if ($object->statut == 5) {
+        print '<tr>';
+        print '<td>'.$langs->trans('DateRefusCP').'</td>';
+        print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';
+        print '</tr>';
+    }
+    print '</tbody>';
     print '</table>';
 
+    print '</div>';
+    print '</div>'; */
+    print '</div>';
+    
+    print '<div class="clearboth"></div>';
+    
     dol_fiche_end();
+    
+
 
     $modulepart = 'holiday';
     $permission = $user->rights->holiday->write;
+    $permtoedit = $user->rights->holiday->write;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

@@ -181,11 +181,13 @@ class MultiCurrency extends CommonObject
 	public function fetch($id, $code = null)
 	{
 		dol_syslog('Currency::fetch', LOG_DEBUG);
+		
+		global $conf;
 
 		$sql = 'SELECT';
 		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' AS c';
-		if (!empty($code)) $sql .= ' WHERE c.code = \''.$this->db->escape($code).'\'';
+		if (!empty($code)) $sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
 		else $sql .= ' WHERE c.rowid = ' . $id;
 
 		dol_syslog(__METHOD__,LOG_DEBUG);
@@ -449,7 +451,7 @@ class MultiCurrency extends CommonObject
 	}
 	 
 	 /**
-	 * Update rate in database 
+	 * Add new entry into llx_multicurrency_rate to historise
 	 * 
 	 * @param double	$rate	rate value
 	  * 
@@ -457,15 +459,7 @@ class MultiCurrency extends CommonObject
 	 */
 	 public function updateRate($rate)
 	 {
-	 	if (is_object($this->rate))
-		{
-			$this->rate->rate = $rate;
-			return $this->rate->update();
-		}
-		else 
-		{
-			return $this->addRate($rate);
-		}
+	 	return $this->addRate($rate);
 	 }
 	
 	/**
@@ -478,7 +472,7 @@ class MultiCurrency extends CommonObject
 	 	$sql = 'SELECT cr.rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
-		$sql.= ' AND cr.date_sync >= ALL (SELECT cr2.date_sync FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr.rowid = cr2.rowid)';
+		$sql.= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.$this->id.')';
 		
 		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -499,7 +493,9 @@ class MultiCurrency extends CommonObject
 	 */
 	 public static function getIdFromCode(&$db, $code)
 	 {
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\'';
+	 	global $conf;
+		
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
 	 	
 	 	dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $db->query($sql);

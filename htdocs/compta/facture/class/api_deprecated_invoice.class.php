@@ -89,12 +89,12 @@ class InvoiceApi extends DolibarrApi
      * 
      * Get a list of invoices
      * 
-     * @param int       $socid      Filter list with thirdparty ID
-     * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param int       $socid      Filter list with thirdparty ID
+     * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
      *
      * @return array Array of invoice objects
      *
@@ -103,14 +103,15 @@ class InvoiceApi extends DolibarrApi
      * @url GET thirdparty/{socid}/invoice/list
      * @url GET thirdparty/{socid}/invoice/list/{mode} 
      */
-    function getList($socid=0, $mode='', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $mode='') {
         global $db, $conf;
         
         $obj_ret = array();
         
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $socid;
             
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
@@ -137,7 +138,7 @@ class InvoiceApi extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = -1;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -160,18 +161,18 @@ class InvoiceApi extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $invoice_static = new Facture($db);
                 if($invoice_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($invoice_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($invoice_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve invoice list');
+            throw new RestException(503, 'Error when retrieve invoice list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No invoice found');
@@ -232,6 +233,7 @@ class InvoiceApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->invoice->$field = $value;
         }
         

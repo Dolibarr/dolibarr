@@ -99,7 +99,7 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][0] = 31; // id de la permission
 		$this->rights[$r][1] = 'Lire les produits'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
@@ -124,6 +124,10 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][4] = 'export';
         $r++;
 
+        // Menus
+        //-------
+        
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 		/* We can't enable this here because it must be enabled in both product and service module and this create duplicate insert
 		$r=0;
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -244,6 +248,7 @@ class modProduct extends DolibarrModules
 		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','p.recuperableonly'=>'^[0|1]$');
 		$import_sample=array('p.ref'=>"PREF123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31','p.recuperableonly'=>'0 or 1');
 		$this->import_examplevalues_array[$r]=array_merge($import_sample,$import_extrafield_sample);
+		$this->import_updatekeys_array[$r]=array('p.ref'=>'Ref','p.barcode'=>'BarCode');
 
 		if (! empty($conf->fournisseur->enabled))
 		{
@@ -272,6 +277,7 @@ class modProduct extends DolibarrModules
 					'sp.unitprice'=>'50',
 					'sp.remise_percent'=>'0'
 			);
+			$this->import_updatekeys_array[$r]=array('sp.fk_product'=>'ProductOrService','sp.ref_fourn'=>'SupplierRef');
 		}
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))

@@ -163,11 +163,21 @@ $result = $object->fetch($id,$ref);
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Translation');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Translation');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-llxHeader("", $langs->trans("Translation"), $help_url);
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
@@ -203,13 +213,13 @@ if ($action == 'edit')
 			print '<table class="border" width="100%">';
 			print '<tr><td valign="top" class="titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td valign="top">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
 			{
                 print '<tr><td valign="top">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
-                $doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+                $doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
                 $doleditor->Create();
 			}
 			print '</td></tr>';
@@ -236,6 +246,9 @@ else
     
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
+    print '<div class="underbanner clearboth"></div>';
+    
+    
     $cnt_trans = 0;
 	if (! empty($object->multilangs))
 	{
@@ -243,8 +256,8 @@ else
 		{
 			$cnt_trans++;
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
 			print '<table class="border" width="100%">';
+			print '<tr class="liste_titre"><td colspan="2">'.($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
@@ -292,7 +305,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" class="titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
@@ -300,14 +313,14 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</td></tr>';
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
     // Other field (not used)
     if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
     {
         print '<tr><td valign="top">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
-    	$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+    	$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
     	$doleditor->Create();
     	print '</td></tr>';
     }
