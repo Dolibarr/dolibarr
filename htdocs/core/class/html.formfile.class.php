@@ -1001,8 +1001,8 @@ class FormFile
     			        $rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filearray[$key]['fullname']);
     			        if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
     			        {
-        			        dol_syslog("list_of_documents We found a file not indexed into database. We add it");
-        			        include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+        			        dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
+        			        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
         			        $ecmfile=new EcmFiles($this->db);
         			        	
         			        // Add entry into database

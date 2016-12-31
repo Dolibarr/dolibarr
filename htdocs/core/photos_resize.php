@@ -143,7 +143,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
 		
-		include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile=new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0)   // If found
@@ -211,7 +211,7 @@ if ($action == 'confirm_crop')
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
 		
-		include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile=new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0)   // If found

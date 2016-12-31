@@ -244,6 +244,7 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
                 $level1name=(isset($reg[1])?$reg[1]:'');
                 $file_list[] = array(
                     "rowid" => $obj->rowid,
+                    "label" => $obj->label,         // md5
     				"name" => $obj->filename,
     				"path" => DOL_DATA_ROOT.'/'.$obj->filepath,
                     "level1name" => $level1name,
@@ -619,7 +620,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
                 //var_dump($rel_filetorenamebefore.' - '.$rel_filetorenameafter);
 
                 dol_syslog("Try to rename also entries in database for full relative path before = ".$rel_filetorenamebefore." after = ".$rel_filetorenameafter, LOG_DEBUG);
-                include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+                include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
                 $ecmfile=new EcmFiles($db);
                 $result = $ecmfile->fetch(0, '', $rel_filetorenamebefore);
                 if ($result > 0)   // If found
@@ -895,7 +896,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
     				        $rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
     				        
     				        dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
-        				    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+        				    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
         				    $ecmfile=new EcmFiles($db);
         				    $result = $ecmfile->fetch(0, '', $rel_filetodelete);
         				    if ($result >= 0)
@@ -1190,42 +1191,43 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			
 			for ($i = 0; $i < $nbfile; $i++)
 			{
-				// Define $destpath (path to file including filename) and $destfile (only filename)
-				$destpath=$upload_dir . "/" . $TFile['name'][$i];
+				// Define $destfull (path to file including filename) and $destfile (only filename)
+				$destfull=$upload_dir . "/" . $TFile['name'][$i];
 				$destfile=$TFile['name'][$i];
 	
 				$savingdocmask = dol_sanitizeFileName($savingdocmask);
 	
 				if ($savingdocmask)
 				{
-					$destpath=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+					$destfull=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
 					$destfile=preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
 				}
 
 				// lowercase extension
-				$info = pathinfo($destpath);
-				$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
+				$info = pathinfo($destfull);
+				$destfull = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
 				$info = pathinfo($destfile);
 				$destfile = $info['filename'].'.'.strtolower($info['extension']);
 
-				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
-				if (is_numeric($resupload) && $resupload > 0)
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
+				
+				if (is_numeric($resupload) && $resupload > 0)   // $resupload can be 'ErrorFileAlreadyExists'
 				{
 					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 				
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					
 					// Generate thumbs.
-					if (image_format_supported($destpath) == 1)
+					if (image_format_supported($destfull) == 1)
 					{
 					    // Create thumbs
 					    // We can't use $object->addThumbs here because there is no $object known
 					
 					    // Used on logon for example
-					    $imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+					    $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 					    // Create mini thumbs for image (Ratio is near 16/9)
 					    // Used on menu or for setup page for example
-					    $imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+					    $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
 					}
 					
 					// Update session
@@ -1234,24 +1236,25 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
-						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
+						$formmail->add_attached_files($destfull, $destfile, $TFile['type'][$i]);
 					}
 					
 					// Update table of files
 					if ($donotupdatesession) 
 					{
-					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $destfile);
-					    if (! preg_match('/[\\/]temp[\\/]/', $rel_dir))     // If not a tmp file
+					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+				    
+					    if (! preg_match('/[\\/]temp[\\/]/', $rel_dir))     // If not a tmp dir
 					    {
 					        $filename = basename($destfile);
 					        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 					        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
     					    
-    					    include DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    					    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
     					    $ecmfile=new EcmFiles($db);
     					    $ecmfile->filepath = $rel_dir;
     					    $ecmfile->filename = $filename;
-    					    $ecmfile->label = md5_file(dol_osencode($destpath));
+    					    $ecmfile->label = md5_file(dol_osencode($destfull));
     					    $ecmfile->fullpath_orig = $TFile['name'][$i];
     					    $ecmfile->gen_or_uploaded = 'uploaded';
     					    $ecmfile->description = '';    // indexed content

@@ -21,7 +21,7 @@ CREATE TABLE llx_ecm_files
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   label				varchar(64) NOT NULL,			-- label contains a md5
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
-  filepath    		varchar(750) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
+  filepath    		varchar(255) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
   fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
   description		text,
