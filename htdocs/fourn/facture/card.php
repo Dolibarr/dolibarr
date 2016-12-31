@@ -2269,7 +2269,7 @@ else
     	}
 
     	// Amount
-    	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+    	print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
     	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
     	if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
     	else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
