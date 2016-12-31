@@ -32,12 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load('bills');
 
-$id = GETPOST("facid",'int');
+$id = GETPOST("facid",'int')?GETPOST("facid",'int'):GETPOST("id",'int');
+$ref = GETPOST("ref",'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
+$object = new FactureFournisseur($db);
 
 
 /*
@@ -48,11 +50,12 @@ $title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
-$object = new FactureFournisseur($db);
-$object->fetch($id);
-$object->info($id);
-$soc = new Societe($db);
-$soc->fetch($object->socid);
+$object->fetch($id, $ref);
+$object->fetch_thirdparty();
+
+$object->info($object->id);
+
+$alreadypaid=$object->getSommePaiement();
 
 $head = facturefourn_prepare_head($object);
 $titre=$langs->trans('SupplierInvoice');
@@ -81,11 +84,11 @@ if (! empty($conf->projet->enabled))
    			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
    			$morehtmlref.='<input type="hidden" name="action" value="classin">';
    			$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-   			$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+   			$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
    			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
    			$morehtmlref.='</form>';
    		} else {
-   			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+   			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
    		}
    	} else {
    		if (! empty($object->fk_project)) {
@@ -101,9 +104,9 @@ if (! empty($conf->projet->enabled))
 }
 $morehtmlref.='</div>';
 
-$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

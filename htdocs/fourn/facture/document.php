@@ -90,7 +90,8 @@ if ($object->id > 0)
 {
 	$head = facturefourn_prepare_head($object);
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), 0, 'bill');
-    $totalpaye = $object->getSommePaiement();
+    
+	$totalpaye = $object->getSommePaiement();
 
     $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
@@ -137,7 +138,7 @@ if ($object->id > 0)
 
     $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';

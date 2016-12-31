@@ -134,6 +134,8 @@ if ($id > 0 || ! empty($ref))
 	{
 		$object->fetch_thirdparty();
 
+		$alreadypaid=$object->getSommePaiement();
+		
 		$head = facturefourn_prepare_head($object);
 
 		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), 0, 'bill');
@@ -181,10 +183,10 @@ if ($id > 0 || ! empty($ref))
 		}
 		$morehtmlref.='</div>';
 
-		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
-
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+		
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
@@ -233,10 +235,6 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
 		print $form->editfieldval("Label",'label',$object->label,$object,0);
 		print '</td></tr>';
-
-        // Status
-        $alreadypaid=$object->getSommePaiement();
-        print '<tr><td>'.$langs->trans('Status').'</td><td>'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
 
         // Amount
         print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';

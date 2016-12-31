@@ -75,6 +75,8 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 
+	$alreadypaid=$object->getSommePaiement();
+	
 	$head = facturefourn_prepare_head($object);
 	$titre=$langs->trans('SupplierInvoice');
 	dol_fiche_head($head, 'note', $titre, 0, 'bill');
