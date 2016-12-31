@@ -128,6 +128,12 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
+    /**
+     * Draft status
+     */
+    const STATUS_DRAFT = 0;
+    
+    
     
 	/**
      * 	Constructor

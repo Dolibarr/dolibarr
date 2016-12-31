@@ -101,7 +101,8 @@ function facturefourn_prepare_head($object)
  */
 function ordersupplier_prepare_head($object)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $user;
+	
 	$h = 0;
 	$head = array();
 
@@ -159,7 +160,12 @@ function ordersupplier_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
+	$head[$h][1].= $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+	    $head[$h][1].= '/';
+	    $head[$h][1].= $langs->trans("Agenda");
+	}
 	$head[$h][2] = 'info';
 	$h++;
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');

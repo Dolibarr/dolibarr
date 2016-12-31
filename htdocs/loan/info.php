@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,8 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0,
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
