@@ -88,7 +88,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	}
 
 	// $reshook may contain returns stacked by other modules
-	// $reshook is always empty with an array for can not lose returns stacked with other modules
+	// $reshook is always empty with an array to not lose returns stacked with other modules
 	// $hookmanager->resArray may contain array stacked by other modules
 	if (! $nohook && ! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
 	{
@@ -210,7 +210,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD'
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  *  @param	array|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")

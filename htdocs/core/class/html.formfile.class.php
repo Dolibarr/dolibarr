@@ -984,17 +984,20 @@ class FormFile
     			    {
     			        if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
     			        {
+    			            $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
     			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
     			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
     			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
     			            $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
+    			            $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
     			            $found=1;
     			            break;
     			        }
     			    }
-    			    if (! $found)
+    			    
+    			    if (! $found)    // This happen in transition towerd version 6, or if files were added manually into os dir.
     			    {
-    			        $filearray[$key]['position']=999999;     // File not indexed are at end. So if we add a file, it will not replace an existing position
+    			        $filearray[$key]['position']='999999';     // File not indexed are at end. So if we add a file, it will not replace an existing position
     			        $filearray[$key]['cover']=0;
     			        $filearray[$key]['acl']='';
 
@@ -1035,6 +1038,10 @@ class FormFile
     			    }
     			}
     
+    			/*var_dump($filearray);
+    			var_dump($sortfield);
+    			var_dump($sortorder);*/
+    			 
     			if ($sortfield && $sortorder)
     			{
         			$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
