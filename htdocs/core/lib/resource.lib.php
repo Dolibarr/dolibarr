@@ -444,7 +444,6 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
  * @param   string          $booker_type  Booker type
  * @return  int                           <0 if KO, 0 > if OK
  */
-
 function freeAllResources($object, $status, $booker_id=null, $booker_type=null)
 {
     global $langs, $hookmanager, $user, $db;

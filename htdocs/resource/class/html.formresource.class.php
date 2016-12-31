@@ -53,7 +53,6 @@ class FormResource
         return 1;
     }
 
-
     /**
      *  Output html form to select a resource
      *
@@ -65,6 +64,7 @@ class FormResource
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
      *  @param	int		$limit			Limit number of answers
+     *  @param	int		$offset			Start offset
      * 	@return	string					HTML string
      */
     function select_resource_list($selected='',$htmlname='fk_resource', $filter='',$showempty=0, $forcecombo=0, $event=array(), $outputmode=0, $limit=20, $offset = 0)

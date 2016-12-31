@@ -1707,7 +1707,7 @@ class ResourceLink extends CommonObject
                 //All childs are processed
                 if ($childs == 0) {
                     $status_priority = $tree[$id]['status_priority'];
-                    $child_lowest = null; #Lowest priority child, used for single modes
+                    $child_lowest = null; //Lowest priority child, used for single modes
                     $dependency = $data['link']->dependency;
                     $root_id = $data['root'];
                     //Set the initial satisfied status
@@ -1982,7 +1982,7 @@ class ResourceStatus
      */
     public static function colors($intensity)
     {
-        return array(                        #          R               G               B
+        return array(                        //         R               G               B
             ResourceStatus::UNKNOWN       => $intensity[0] . $intensity[0] . $intensity[0],
             ResourceStatus::NOT_AVAILABLE => $intensity[1] . $intensity[1] . $intensity[1],
             ResourceStatus::AVAILABLE     => $intensity[2] . $intensity[0] . $intensity[2],

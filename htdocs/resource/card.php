@@ -293,7 +293,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 	else
 	{
 		$head = resource_prepare_head($object);
-		dol_fiche_head($head, 'resource', $title ,0,'resource');
+		dol_fiche_head($head, 'resource', $title, 0,'resource');
 	}
 
 	if ($action == 'create' || $action == 'edit')
