@@ -105,7 +105,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 	}
 	if (! $error)
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue) VALUE ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."')";
 		$result = $db->query($sql);
 		if ($result > 0)
 		{
