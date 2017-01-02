@@ -28,6 +28,7 @@
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
 ALTER TABLE llx_ecm_files CHANGE COLUMN filepath filepath varchar(255);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;
+ALTER TABLE llx_ecm_files ADD COLUMN keyword varchar(750);
 ALTER TABLE llx_ecm_files CHANGE COLUMN keyword keyword varchar(750);
 
 ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
