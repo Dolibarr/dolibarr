@@ -859,7 +859,7 @@ foreach ($listofreferent as $key => $value)
 				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 				    print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
 				}
-				else print 'e'.dol_print_date($date,'day');
+				else print dol_print_date($date,'day');
 				print '</td>';
 
 				// Third party or user
