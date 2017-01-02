@@ -370,6 +370,18 @@ $listofreferent=array(
     'buttonnew'=>'AddDonation',
     'testnew'=>$user->rights->don->creer,
     'test'=>$conf->don->enabled && $user->rights->don->lire),
+'project_task'=>array(
+	'name'=>"TaskTimeValorised",
+	'title'=>"ListTaskTimeUserProject",
+	'class'=>'Task',
+	'margin'=>'minus',
+	'table'=>'projet_task',
+	'datefieldname'=>'task_date',
+	'disableamount'=>0,
+    'urlnew'=>DOL_URL_ROOT.'/projet/tasks.php?id='.$id,
+    'buttonnew'=>'AddTimeSpent',
+    'testnew'=>$user->rights->projet->creer,
+    'test'=>($conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
 'agenda'=>array(
 	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",
@@ -382,15 +394,6 @@ $listofreferent=array(
     'buttonnew'=>'AddEvent',
     'testnew'=>$user->rights->agenda->myactions->create,
     'test'=>$conf->agenda->enabled && $user->rights->agenda->myactions->read),
-'project_task'=>array(
-	'name'=>"TaskTimeValorised",
-	'title'=>"ListTaskTimeUserProject",
-	'class'=>'Task',
-	'margin'=>'minus',
-	'table'=>'projet_task',
-	'datefieldname'=>'task_date',
-	'disableamount'=>0,
-	'test'=>$conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS)),
 );
 
 $parameters=array('listofreferent'=>$listofreferent);
@@ -691,6 +694,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
 		// Date
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' align="center">';
+		if (in_array($tablename, array('projet_task'))) print $langs->trans("TimeSpent");
 		if (! in_array($tablename, array('projet_task'))) print $langs->trans("Date");
 		print '</td>';
 		// Thirdparty or user
@@ -784,9 +788,9 @@ foreach ($listofreferent as $key => $value)
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
 				}
 				print "</td>\n";
+				
 				// Ref
 				print '<td align="left">';
-
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);
@@ -822,10 +826,9 @@ foreach ($listofreferent as $key => $value)
 					// Show customer ref
 					if (! empty($element->ref_customer)) print ' - '.$element->ref_customer;
 				}
-
 				print "</td>\n";
 
-				// Date
+				// Date or TimeSpent
 				$date='';
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
@@ -851,7 +854,12 @@ foreach ($listofreferent as $key => $value)
 				    print dol_print_date($element->datep,'dayhour');
 				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef,'dayhour');
 				}
-				else print dol_print_date($date,'day');
+				else if (in_array($tablename, array('projet_task'))) 
+				{
+				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
+				    print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
+				}
+				else print 'e'.dol_print_date($date,'day');
 				print '</td>';
 
 				// Third party or user
@@ -885,14 +893,13 @@ foreach ($listofreferent as $key => $value)
 				    $total_ht_by_line=null;
 				    $othermessage='';
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
-					elseif ($tablename == 'projet_task')
+					elseif (in_array($tablename, array('projet_task')))
 					{
 					    if (! empty($conf->salaries->enabled))
 					    {
-					        // TODO Permission to read daily rate
-    					    $tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
-    						$total_ht_by_line = price2num($tmp['amount'],'MT');
-    						if ($tmp['nblinesnull'] > 0)
+        				    // TODO Permission to read daily rate to show value
+					        $total_ht_by_line = price2num($tmpprojtime['amount'],'MT');
+    						if ($tmpprojtime['nblinesnull'] > 0)
     						{
     							$langs->load("errors");
     							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
