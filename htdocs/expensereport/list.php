@@ -551,7 +551,7 @@ if ($resql)
     			$filename=dol_sanitizeFileName($obj->ref);
     			$filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($obj->ref);
     			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-    			print $formfile->getDocumentsLink($expensereport->element, $filename, $filedir);
+    			print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
     			print '</td>';
     			print '</tr></table>';
     			print '</td>';
