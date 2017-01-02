@@ -382,6 +382,7 @@ $listofreferent=array(
     'buttonnew'=>'AddTimeSpent',
     'testnew'=>$user->rights->projet->creer,
     'test'=>($conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
+/* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",
@@ -394,6 +395,7 @@ $listofreferent=array(
     'buttonnew'=>'AddEvent',
     'testnew'=>$user->rights->agenda->myactions->create,
     'test'=>$conf->agenda->enabled && $user->rights->agenda->myactions->read),
+*/
 );
 
 $parameters=array('listofreferent'=>$listofreferent);
