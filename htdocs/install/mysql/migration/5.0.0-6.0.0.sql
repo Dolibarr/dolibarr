@@ -30,6 +30,7 @@ ALTER TABLE llx_ecm_files CHANGE COLUMN filepath filepath varchar(255);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;
 ALTER TABLE llx_ecm_files ADD COLUMN keyword varchar(750);
 ALTER TABLE llx_ecm_files CHANGE COLUMN keyword keyword varchar(750);
+ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12);
 
 ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
