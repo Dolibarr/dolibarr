@@ -829,7 +829,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Date or TimeSpent
-				$date='';
+				$date=''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
@@ -858,6 +858,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 				    print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
+				    $total_time_by_line = $tmpprojtime['nbseconds'];
 				}
 				else print dol_print_date($date,'day');
 				print '</td>';
@@ -995,6 +996,8 @@ foreach ($listofreferent as $key => $value)
 
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
+					
+					$total_time = $total_time + $total_time_by_line;					
 				}
 
 				if (canApplySubtotalOn($tablename))
@@ -1020,7 +1023,17 @@ foreach ($listofreferent as $key => $value)
 			if ($breakline) print $breakline;
 
 			// Total
-			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
+			$colspan=4;
+			if (in_array($tablename, array('projet_task'))) $colspan=2;
+			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
+			if (in_array($tablename, array('projet_task')))
+			{
+    			print '<td align="center">';
+    			print convertSecondToTime($total_time, 'allhourmin');
+    			print '</td>';
+    			print '<td>';
+    			print '</td>';
+			}
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
 			print '<td align="right">';
