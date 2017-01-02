@@ -42,7 +42,7 @@ $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (! $sortfield) $sortfield="a.datep,a.id";
-if (! $sortorder) $sortorder="ASC";
+if (! $sortorder) $sortorder="DESC";
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
