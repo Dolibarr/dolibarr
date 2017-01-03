@@ -496,9 +496,9 @@ class Societe extends CommonObject
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::Create echec update ".$this->error." ".join(',',$this->errors), LOG_ERR);
                     $this->db->rollback();
-                    return -3;
+                    return -4;
                 }
             }
             else
@@ -520,7 +520,7 @@ class Societe extends CommonObject
 
         }
         else
-       {
+        {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;

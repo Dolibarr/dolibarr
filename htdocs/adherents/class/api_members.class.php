@@ -170,8 +170,8 @@ class Members extends DolibarrApi
         foreach($request_data as $field => $value) {
             $member->$field = $value;
         }
-        if($member->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create member : '.$member->error);
+        if ($member->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
         }
         return $member->id;
     }

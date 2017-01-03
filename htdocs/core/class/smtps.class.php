@@ -225,7 +225,8 @@ class SMTPs
 	var $log = '';
 	var $_errorsTo = '';
 	var $_deliveryReceipt = 0;
-    var $_trackId = '';
+	var $_trackId = '';
+	var $_moreInHeader = '';
 
 
     /**
@@ -261,15 +262,36 @@ class SMTPs
 	}
 
     /**
+     * Set moreInHeader
+     *
+     * @param	string		$_val		Value
+     * @return	void
+     */
+	function setMoreInHeader($_val = '')
+	{
+		$this->_moreinheader = $_val;
+	}
+	
+	/**
      * get trackid
      *
-     * @return	string		Delivery receipt
+     * @return	string		Track id
      */
 	function getTrackId()
 	{
 		return $this->_trackId;
 	}
 
+	/**
+	 * get moreInHeader
+	 *
+	 * @return	string		moreInHeader
+	 */
+	function getMoreInHeader()
+	{
+	    return $this->_moreinheader;
+	}
+	
     /**
      * Set errors to
      *
@@ -1195,6 +1217,8 @@ class SMTPs
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
+		$host=dol_getprefix('email').'-'.$host;
+		
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
 		$_header .= 'Date: '       . date("r")               . "\r\n";
@@ -1211,7 +1235,9 @@ class SMTPs
 		{
 			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
 		}
-
+		if ( $this->getMoreInHeader() )
+		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
+		
 		//$_header .=
 		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
 		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
@@ -1225,15 +1251,16 @@ class SMTPs
 
 		// DOL_CHANGE LDR
 		if ( $this->getDeliveryReceipt() )
-		$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
+		    $_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
-		$_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
+		    $_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
 		if ( $this->getReplyTo() )
-        $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
+		    $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
 
-		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)'                   . "\r\n"
-		.  'Mime-Version: 1.0'                            . "\r\n";
+		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)' . "\r\n";
+		$_header .= 'Mime-Version: 1.0' . "\r\n";
 
+		
 		return $_header;
 	}
 
@@ -1256,7 +1283,9 @@ class SMTPs
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
 
-		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));
+		// Make RFC2045 Compliant
+		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
+		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
 
 		$this->_msgContent[$strType] = array();
 

@@ -43,7 +43,7 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST('year','int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -64,9 +64,11 @@ if (! $user->rights->accounting->comptarapport->lire)
 
 $AccCat = new AccountancyCategory($db);
 
+
 /*
  * View
  */
+
 llxheader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);

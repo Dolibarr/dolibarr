@@ -275,7 +275,7 @@ class ProductApi extends DolibarrApi
         }
         $result = $this->product->create(DolibarrApiAccess::$user);
         if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+            throw new RestException(500,'Error when creating product : '.$this->product->error);
         }
         
         return $this->product->id;

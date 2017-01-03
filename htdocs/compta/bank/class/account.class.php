@@ -833,7 +833,7 @@ class Account extends CommonObject
      *      @param  string	$ref     	Ref of bank account to get
      *      @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
         global $conf;
 

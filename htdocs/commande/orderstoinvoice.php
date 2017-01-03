@@ -46,7 +46,7 @@ $langs->load('companies');
 if (! $user->rights->facture->creer)
 	accessforbidden();
 
-$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid"));  // For backward compatibility
+$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid","int"));  // For backward compatibility
 $ref			= GETPOST('ref','alpha');
 $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
@@ -112,7 +112,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	$langs->load('main');
 	if (isset($_GET['orders_to_invoice']))
 	{
-		$orders_id = $_GET['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',1);
 		$n        = count($orders_id);
 		$i        = 0;
 
@@ -122,7 +122,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	}
 	if (isset($_POST['orders_to_invoice']))
 	{
-		$orders_id = $_POST['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',1);
 		$nn        = count($orders_id);
 		$ii        = 0;
 

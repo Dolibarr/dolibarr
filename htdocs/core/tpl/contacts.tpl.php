@@ -59,12 +59,12 @@ $userstatic=new User($db);
 if ($permission) { 
 ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd">&nbsp;</div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php
@@ -140,12 +140,12 @@ if ($permission) {
 ?>
 
 	<form class="tagtr liste_titre liste_titre_add formnoborder">
-		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>
-		<div class="tagtd">&nbsp;</div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre" align="center"><?php echo $langs->trans("Status"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php $var=true; ?>

@@ -115,6 +115,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
+			$this->posxunit-=20;
 			$this->posxdiscount-=20;
 			$this->postotalht-=20;
 		}

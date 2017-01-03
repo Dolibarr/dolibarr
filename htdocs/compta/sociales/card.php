@@ -269,8 +269,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
 
+$title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Card");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$langs->trans("SocialContribution"),$help_url);
+llxHeader("",$title,$help_url);
 
 
 // Mode creation
@@ -555,34 +556,42 @@ if ($id > 0)
 		    print '<td>'.$langs->trans("Date").'</td>';
 		    print '<td>'.$langs->trans("Type").'</td>';
 		    print '<td align="right">'.$langs->trans("Amount").'</td>';
-		    print '<td>&nbsp;</td>';
 		    print '</tr>';
 		
-		    $var=True;
-		    while ($i < $num)
+		    $var=true;
+            if ($num > 0)
+            {
+    		    while ($i < $num)
+    		    {
+    		        $objp = $db->fetch_object($resql);
+    		        $var=!$var;
+    		        print "<tr ".$bc[$var]."><td>";
+    		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+    		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+    		        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
+    		        print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+    		        print '<td align="right">'.price($objp->amount)."</td>\n";
+    		        print "</tr>";
+    		        $totalpaye += $objp->amount;
+    		        $i++;
+    		    }
+            }
+            else
 		    {
-		        $objp = $db->fetch_object($resql);
 		        $var=!$var;
-		        print "<tr ".$bc[$var]."><td>";
-		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
-		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-		        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
-		        print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
-		        print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-		        print "</tr>";
-		        $totalpaye += $objp->amount;
-		        $i++;
+		        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
-		
+                
 		    if ($object->paye == 0)
 		    {
-		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
+		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
 		
 		        $resteapayer = $object->amount - $totalpaye;
-		
+		        $cssforamountpaymentcomplete = 'amountpaymentcomplete';
+		        
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-		        print "<td align=\"right\">".price($resteapayer)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
 		    }
 		    print "</table>";
 		    $db->free($resql);

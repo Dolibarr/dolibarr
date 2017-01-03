@@ -128,6 +128,12 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
+    /**
+     * Draft status
+     */
+    const STATUS_DRAFT = 0;
+    
+    
     
 	/**
      * 	Constructor
@@ -327,10 +333,10 @@ class CommandeFournisseur extends CommonOrder
                     $line->product_label       = $objp->product_label;
                     $line->product_desc        = $objp->product_desc;
 
-                    $line->ref                 = $objp->product_ref;
-                    $line->product_ref         = $objp->product_ref;
-                    $line->ref_fourn           = $objp->ref_supplier;
-                    $line->ref_supplier        = $objp->ref_supplier;
+                    $line->ref                 = $objp->product_ref;    // Ref of product
+                    $line->product_ref         = $objp->product_ref;    // Ref of product
+                    $line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+                    $line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
 
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
@@ -1160,7 +1166,7 @@ class CommandeFournisseur extends CommonOrder
 	                    $this->lines[$i]->localtax2_tx,
 	                    $this->lines[$i]->fk_product,
 	                    0,
-	                    $this->lines[$i]->ref_fourn,
+	                    $this->lines[$i]->ref_fourn,   // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
 	                    $this->lines[$i]->remise_percent,
 	                    'HT',
 	                    0,
@@ -1322,7 +1328,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param      float	$txlocaltax2        	Localtax2 tax
      *	@param      int		$fk_product      		Id product
      *  @param      int		$fk_prod_fourn_price	Id supplier price
-     *  @param      string	$fourn_ref				Supplier reference
+     *  @param      string	$fourn_ref				Supplier reference price
      *	@param      float	$remise_percent  		Remise
      *	@param      string	$price_base_type		HT or TTC
      *	@param		float	$pu_ttc					Unit price TTC
@@ -1369,7 +1375,8 @@ class CommandeFournisseur extends CommonOrder
             $pu=$pu_ttc;
         }
         $desc=trim($desc);
-
+        $ref_supplier=''; // Ref of supplier price when we add line
+        
         // Check parameters
         if ($qty < 1 && ! $fk_product)
         {
@@ -1391,15 +1398,28 @@ class CommandeFournisseur extends CommonOrder
                     $prod = new Product($this->db, $fk_product);
                     if ($prod->fetch($fk_product) > 0)
                     {
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, $fourn_ref);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref
+                        $product_type = $prod->type;
+                        $label = $prod->libelle;
+                        
+                        // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+                        // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
-                            $label = $prod->libelle;
-                            $pu    = $prod->fourn_pu;
-                            $ref_supplier = $prod->ref_supplier;
-                            $product_type = $prod->type;
+                            $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
                         }
-                        if ($result == 0 || $result == -1)
+                        if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+                        {
+                            $langs->load("errors");
+                            $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+                            $this->db->rollback();
+                            dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+                            //$pu    = $prod->fourn_pu;     // We do not overwrite unit price   
+                            //$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+                            return -1;
+                        }
+                        if ($result == -1)
                         {
                             $langs->load("errors");
                             $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
@@ -2899,15 +2919,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     // From llx_product_fournisseur_price
 
 	/**
-	 * Supplier ref
-	 * @var string
-	 * @deprecated Use ref_supplier
-	 * @see ref_supplier
-	 */
-	public $ref_fourn;
-
-	/**
-	 * Supplier reference
+	 * Supplier reference of price when we added the line. May have been changed after line was added.
 	 * @var string
 	 */
     public $ref_supplier;

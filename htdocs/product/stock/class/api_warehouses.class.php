@@ -169,8 +169,8 @@ class Warehouses extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->warehouse->$field = $value;
         }
-        if($this->warehouse->create(DolibarrApiAccess::$user) <= 0) {
-            throw new RestException(503, 'Error when create warehouse : '.$this->warehouse->error);
+        if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating warehouse", array_merge(array($this->warehouse->error), $this->warehouse->errors));
         }
         return $this->warehouse->id;
     }

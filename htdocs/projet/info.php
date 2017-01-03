@@ -35,6 +35,18 @@ $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield","alpha");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+if (! $sortfield) $sortfield="a.datep,a.id";
+if (! $sortorder) $sortorder="DESC";
+$offset = $limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
@@ -48,7 +60,6 @@ $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
-$id = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
@@ -80,17 +91,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 $form = new Form($db);
 $object = new Project($db);
 
-$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
-$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$title,$help_url);
-
 if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
     $object->info($object->id);
 }
+
+$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("",$title,$help_url);
 
 $head = project_prepare_head($object);
 
@@ -162,6 +173,10 @@ print '</div>';
 
 if (!empty($object->id))
 {
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
     print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
     
     // List of actions on element
@@ -178,7 +193,7 @@ if (!empty($object->id))
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
-    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 

@@ -305,7 +305,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" class="titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';

@@ -1498,7 +1498,7 @@ class Project extends CommonObject
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-		if ($TableName=="actioncomm")
+		if ($tableName == "actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
 			$sql.= " WHERE id=".$elementSelectId;

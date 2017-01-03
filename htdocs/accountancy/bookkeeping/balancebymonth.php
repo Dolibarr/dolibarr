@@ -38,7 +38,7 @@ $langs->load("other");
 $langs->load("accountancy");
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST("year",'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -47,9 +47,11 @@ if ($year == 0) {
 	$year_start = $year;
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Bookkeeping"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';

@@ -404,7 +404,7 @@ if ($action == 'edit')
     $var=!$var;
     $liste = array();
     $liste['user'] = $langs->trans('UserEmail');
-    $liste['company'] = $langs->trans('CompanyEmail');
+    $liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
 
     print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
     print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
@@ -619,6 +619,12 @@ else
 	print '</div>';
 
 
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+        $text = $langs->trans("WarningPHPMail");
+	    print info_admin($text);
+	}
+	    
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{

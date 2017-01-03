@@ -586,9 +586,10 @@ abstract class CommonDocGenerator
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
-					$object->array_options['options_'.$key] = dol_print_date($object->array_options['options_'.$key],'day');                                       // using company output language
-					$object->array_options['options_'.$key.'_locale'] = dol_print_date($object->array_options['options_'.$key],'day','tzserver',$outputlangs);     // using output language format
-					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($object->array_options['options_'.$key],'dayrfc');                             // international format
+					$date = $object->array_options['options_'.$key];
+					$object->array_options['options_'.$key] = dol_print_date($date,'day');                                       // using company output language
+					$object->array_options['options_'.$key.'_locale'] = dol_print_date($date,'day','tzserver',$outputlangs);     // using output language format
+					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date,'dayrfc');                             // international format
 				}
 				else
 				{
@@ -596,12 +597,17 @@ abstract class CommonDocGenerator
 					$object->array_options['options_'.$key.'_locale'] = '';
 					$object->array_options['options_'.$key.'_rfc'] = '';
 				}
+				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
 			else if($extrafields->attribute_type[$key] == 'datetime')
 			{
-				$object->array_options['options_'.$key] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
-				$object->array_options['options_'.$key.'_locale'] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour','tzserver',$outputlangs):'');    // using output language format
-				$object->array_options['options_'.$key.'_rfc'] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhourrfc'):'');                             // international format
+				$datetime = $object->array_options['options_'.$key];
+				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
+				$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour','tzserver',$outputlangs):'');    // using output language format
+				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhourrfc'):'');                             // international format
+				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
 			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}

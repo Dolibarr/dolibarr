@@ -359,9 +359,10 @@ function conf($dolibarr_main_document_root)
  * @param 	string		$action    			Action code ('set' or 'upgrade')
  * @param 	string		$param				Param
  * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
+ * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
+function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
 {
     global $conf;
     global $langs;
@@ -384,11 +385,11 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+    print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";  
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
@@ -406,10 +407,10 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<body>'."\n";
 
-    print '<div style="text-align:center">';
-    print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+    print '<div class="divlogoinstall" style="text-align:center">';
+    print '<img class="imglogoinstall" src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
     print DOL_VERSION;
-    print '</div><br><br>';
+    print '</div><br>';
 
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
     if ($subtitle) {
@@ -417,13 +418,13 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
     print '<table class="main" width="100%"><tr><td>'."\n";
 
-    print '<table class="main-inside" width="100%"><tr><td>'."\n";
+    print '<table class="'.$csstable.'" width="100%"><tr><td>'."\n";
 }
 
 /**

@@ -239,6 +239,11 @@ ProfId3RU=Id. prof.3 (KPP)
 ProfId4RU=Id. prof.4 (OKPO)
 ProfId5RU=-
 ProfId6RU=-
+ProfId1DZ=RC
+ProfId2DZ=Art.
+ProfId3DZ=NIF
+ProfId4DZ=NIS
+
 VATIntra=Numéro de TVA
 VATIntraShort=Num. TVA
 VATIntraSyntaxIsValid=Syntaxe valide

@@ -713,12 +713,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         print '</td>';
     
         // Address / Phone
-        print '<td>';
+        print '<td class="liste_titre">';
         //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
         // Email
-        print '<td>&nbsp;</td>';
+        print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
         print '<td class="liste_titre maxwidthonsmartphone">';
@@ -729,7 +729,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
         	$colspan++;
-            print '<td>&nbsp;</td>';
+            print '<td class="liste_titre">&nbsp;</td>';
         }
     
     	// Edit
@@ -965,7 +965,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  *      @return	mixed					           Return html part or void if noprint is 1
  *      TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep, a.id', $sortorder='DESC')
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep,a.id', $sortorder='DESC')
 {
     global $bc,$user,$conf;
     global $form;
@@ -993,16 +993,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " u.login, u.rowid as user_id";
         if (get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         if (get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (get_class($filterobj) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-        if (get_class($filterobj) == 'Adherent' && $filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (get_class($filterobj) == 'Adherent') 
+        {
+            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
+        if (get_class($filterobj) == 'CommandeFournisseur')
+        {
+            $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         // Condition on actioncode
         if (! empty($actioncode))
@@ -1133,6 +1143,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
@@ -1142,13 +1153,21 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 
-        // TODO uniformize
+        // TODO mutualize/uniformize
         $propalstatic=new Propal($db);
         $orderstatic=new Commande($db);
+        $supplierorderstatic=new CommandeFournisseur($db);
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        if ($objcon && get_class($objcon) == 'Contact' && get_class($filterobj) == 'Societe')
+        {
+            $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+        }
+        else
+        {
+            $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        }
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
@@ -1164,7 +1183,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		}
         $out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
         $out.='<td class="maxwidth100onsmartphone">'.$langs->trans("Label").'</td>';
-        $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep, a.id', '', $param, '', $sortfield, $sortorder);
+        $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder);
         $out.='<td>'.$langs->trans("Type").'</td>';
 		$out.='<td></td>';
 		$out.='<td></td>';
@@ -1179,18 +1198,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.='<tr class="liste_titre">';
 		if ($donetodo)
 		{
-            $out.='<td></td>';
+            $out.='<td class="liste_titre"></td>';
 		}
-		$out.='<td></td>';
-		$out.='<td class="maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out.='<td></td>';
-		$out.='<td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
 		$out.='</td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
     	// Action column
     	$out.='<td class="liste_titre" align="middle">';
     	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
@@ -1279,7 +1298,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
-            // TODO uniformize
+            // TODO mutualize/uniformize
             $out.='<td>';
             //var_dump($histo[$key]['elementtype']);
             if (isset($histo[$key]['elementtype']))

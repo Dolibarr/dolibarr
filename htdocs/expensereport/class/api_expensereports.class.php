@@ -177,9 +177,8 @@ class ExpenseReports extends DolibarrApi
           }
           $this->expensereport->lines = $lines;
         }*/
-        if ($this->expensereport->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->expensereport->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating expensereport");
+        if ($this->expensereport->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating expensereport", array_merge(array($this->expensereport->error), $this->expensereport->errors));
         }
         
         return $this->expensereport->id;

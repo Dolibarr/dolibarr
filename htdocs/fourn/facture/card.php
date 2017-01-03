@@ -386,13 +386,13 @@ if (empty($reshook))
 
 			if (! $error) {
 				// This is a replacement invoice
-				$result = $object->fetch($_POST['fac_replacement']);
+				$result = $object->fetch(GETPOST('fac_replacement'),'int');
 				$object->fetch_thirdparty();
 
-				$object->ref				= $_POST['ref'];
-				$object->ref_supplier		= $_POST['ref_supplier'];
-				$object->socid				= $_POST['socid'];
-				$object->libelle			= $_POST['label'];
+				$object->ref				= GETPOST('ref');
+				$object->ref_supplier		= GETPOST('ref_supplier','alpha');
+				$object->socid				= GETPOST('socid','int');
+				$object->libelle			= GETPOST('label');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public');
@@ -407,7 +407,7 @@ if (empty($reshook))
 				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture de remplacement
-				$object->fk_facture_source = $_POST['fac_replacement'];
+				$object->fk_facture_source = GETPOST('fac_replacement');
 				$object->type = FactureFournisseur::TYPE_REPLACEMENT;
 
 				$id = $object->createFromCurrent($user);
@@ -586,7 +586,7 @@ if (empty($reshook))
 				if (! $error && $_POST['origin'] && $_POST['originid'])
 				{
 					// Parse element/subelement (ex: project_task)
-					$element = $subelement = $_POST['origin'];
+					$element = $subelement = GETPOST('origin');
 					/*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
 					 {
 					$element = $regs[1];
@@ -610,8 +610,8 @@ if (empty($reshook))
 					{
 						$element = 'projet';
 					}
-					$object->origin    = $_POST['origin'];
-					$object->origin_id = $_POST['originid'];
+					$object->origin    = GETPOST('origin');
+					$object->origin_id = GETPOST('originid');
 
 					$id = $object->create($user);
 
@@ -623,7 +623,7 @@ if (empty($reshook))
 						if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
 						$srcobject = new $classname($db);
 
-						$result=$srcobject->fetch($_POST['originid']);
+						$result=$srcobject->fetch(GETPOST('originid','int'));
 						if ($result > 0)
 						{
 							$lines = $srcobject->lines;
@@ -2152,7 +2152,7 @@ else
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == 0) {
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
@@ -2269,7 +2269,7 @@ else
     	}
 
     	// Amount
-    	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+    	print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
     	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
     	if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
     	else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
