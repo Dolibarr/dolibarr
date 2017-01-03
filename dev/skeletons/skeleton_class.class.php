@@ -253,23 +253,19 @@ class Skeleton_Class extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
-
-		//$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new Skeleton_ClassLine();
+				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
 				$line->prop1 = $obj->field1;
 				$line->prop2 = $obj->field2;
-
-				//$this->lines[$line->id] = $line;
 				//...
 			}
 			$this->db->free($resql);
