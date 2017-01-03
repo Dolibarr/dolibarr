@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename);
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 
 --ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath); Disabled, mysql limits size of index

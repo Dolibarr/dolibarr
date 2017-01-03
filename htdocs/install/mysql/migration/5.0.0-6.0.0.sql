@@ -25,6 +25,7 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
 ALTER TABLE llx_ecm_files CHANGE COLUMN filepath filepath varchar(255);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;

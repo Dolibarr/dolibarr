@@ -232,7 +232,7 @@ class EcmFiles //extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param  int    $id          Id object
-	 * @param  string $ref         Ref = md5 = label
+	 * @param  string $ref         Not used yet. Will contains a hash id from filename+filepath
 	 * @param  string $fullpath    Full path of file (relative path to document directory)
 	 * @return int                 <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -242,6 +242,7 @@ class EcmFiles //extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
+		$sql .= " t.ref,";
 		$sql .= " t.label,";
 		$sql .= " t.entity,";
 		$sql .= " t.filename,";
@@ -260,14 +261,15 @@ class EcmFiles //extends CommonObject
 		$sql .= " t.acl";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
+		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		if (! empty($conf->multicompany->enabled)) {
 		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
-		}
+		}*/
 		if ($fullpath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($fullpath)) . "' AND t.filename = '".$this->db->escape(basename($fullpath))."'";
 		}
 		elseif (null !== $ref) {
-			$sql .= " AND t.label = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' AND t.rowid = ' . $id;
 		}
@@ -279,7 +281,7 @@ class EcmFiles //extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				
+				$this->ref = $obj->ref;
 				$this->label = $obj->label;
 				$this->entity = $obj->entity;
 				$this->filename = $obj->filename;
@@ -367,9 +369,10 @@ class EcmFiles //extends CommonObject
 			}
 		}
 		$sql.= ' WHERE 1 = 1';
+		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		if (! empty($conf->multicompany->enabled)) {
 		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
-		}
+		}*/
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
