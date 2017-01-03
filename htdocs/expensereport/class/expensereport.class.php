@@ -1207,15 +1207,14 @@ class ExpenseReport extends CommonObject
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
         $num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
 
-        $sql = 'SELECT de.ref_number_int';
+        $sql = 'SELECT MAX(de.ref_number_int) as max';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
-        $sql.= ' ORDER BY de.ref_number_int DESC';
-
+        
         $result = $this->db->query($sql);
 
         if($this->db->num_rows($result) > 0):
         $objp = $this->db->fetch_object($result);
-        $this->ref = $objp->ref_number_int;
+        $this->ref = $objp->max;
         $this->ref++;
         while(strlen($this->ref) < $num_car):
         $this->ref = "0".$this->ref;
