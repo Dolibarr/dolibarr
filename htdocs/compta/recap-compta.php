@@ -30,14 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
-// Security check
-$socid = GETPOST("socid",'int');
-if ($user->societe_id > 0)
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
 
+// Security check
+if ($user->societe_id) $id=$user->societe_id;
+$result = restrictedArea($user, 'societe', $id, '&societe');
+
+$object = new Societe($db);
+if ($id > 0) $object->fetch($id);
 
 
 /*
@@ -47,20 +47,21 @@ if ($user->societe_id > 0)
 $form = new Form($db);
 $userstatic=new User($db);
 
-llxHeader();
+$title=$langs->trans("ThirdParty").' - '.$langs->trans("Summary");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
-if ($socid > 0)
+llxHeader('',$title,$help_url);
+
+if ($id > 0)
 {
-	$societe = new Societe($db);
-	$societe->fetch($socid);
-
 	/*
 	 * Affichage onglets
 	 */
-	$head = societe_prepare_head($societe);
+	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	dol_fiche_end();
 	
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -86,7 +87,7 @@ if ($socid > 0)
 		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql.= " u.login, u.rowid as userid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_user_valid = u.rowid";
 		$sql.= " ORDER BY f.datef ASC";

@@ -1039,12 +1039,12 @@ class Task extends CommonObject
     }
 
     /**
-     *  Calculate value of time consumed using the thm (hourly amount value of work for user entering time)
+     *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
      *
      *	@param		User		$fuser		Filter on a dedicated user
      *  @param		string		$dates		Start date (ex 00:00:00)
      *  @param		string		$datee		End date (ex 23:59:59)
-     *  @return 	array	        		Array of info for task array('amount')
+     *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
      */
     function getSumOfAmount($fuser='', $dates='', $datee='')
     {
@@ -1055,6 +1055,7 @@ class Task extends CommonObject
         $result=array();
 
         $sql = "SELECT";
+        $sql.= " SUM(t.task_duration) as nbseconds,";
         $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
@@ -1081,6 +1082,7 @@ class Task extends CommonObject
             $obj = $this->db->fetch_object($resql);
 
             $result['amount'] = $obj->amount;
+            $result['nbseconds'] = $obj->nbseconds;
             $result['nblinesnull'] = $obj->nblinesnull;
 
             $this->db->free($resql);

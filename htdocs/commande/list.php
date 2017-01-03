@@ -1061,7 +1061,8 @@ if ($resql)
         $text_info='';
         $text_warning='';
         $nbprod=0;
-                
+        
+        // Ref
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';
@@ -1186,12 +1187,12 @@ if ($resql)
                 print '</td>';
             }
     
-            // Warning late icon
+            // Warning late icon and note
     		print '<td class="nobordernopadding nowrap">';
     		if ($generic_commande->hasDelay()) {
     			print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
     		}
-    		if(!empty($obj->note_private))
+    		if (!empty($obj->note_private) || !empty($obj->note_public))
     		{
     			print ' <span class="note">';
     			print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
