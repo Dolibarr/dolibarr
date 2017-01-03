@@ -111,8 +111,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
-			$this->posxqty=133;
-			$this->posxunit=150;
+			$this->posxqty=130;
+			$this->posxunit=147;
 		} else {
 			$this->posxtva=112;
 			$this->posxup=126;

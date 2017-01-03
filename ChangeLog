@@ -321,6 +321,61 @@ FIX: update limit stock on product stock
 FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
 FIX: wrong test on dict.php
 
+
+***** ChangeLog for 3.9.4 compared to 3.9.3 *****
+FIX: #2853
+FIX: #3128
+FIX: #4447
+FIX: #5128 if create method return duplicated code error not use GETPOST in order to get a new code
+FIX: #5340
+FIX: #5473
+FIX: #5474 Country_id of "Don" object is still empty
+FIX: #5534
+FIX: #5535 bad dependency.
+FIX: #5537 AJAX project search does not work properly
+FIX: #5540 getFormMail is not registered as addReplace hook
+FIX: #5544 Disabled Contact still appear in lists to send emails
+FIX: #5549 getNomUrl tooltips show Order info even if user has no rights to read them
+FIX: #5568
+FIX: #5594
+FIX: #5629 PgSQL Interger string stylish error
+FIX: #5651
+FIX: #5660
+FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
+FIX: #5907
+FIX: #5966 Bug: getNomUrl tooltips show Proposal info even if user has no rights to read them
+FIX: #6051
+FIX: #6088
+FIX: Can correct stock of lot using eatby or sell by date
+FIX: Can make a movement on "out of sell" products
+FIX: cannot update bank account on invoice if module order not activated
+FIX: Can't create withdrawal document
+FIX: delete contract extrafields on contract deletion
+FIX: Direction of movement lost if an error occurs
+FIX: Error when CATEGORIE_RECURSIV_ADD is enabled and new category is daughter of an already linked to object
+FIX: export extrafields must not include separe type
+FIX: External user must not be able to edit its discounts
+FIX: Failed to export contact categories with contact extra fields
+FIX: header title in commercial area
+FIX: HT and TTC price should always be displayed together
+FIX: incoterms
+FIX: incoterms do not output into crabe invoice PDF
+FIX: in PgSQL no quote "word style" is permitted around column name
+FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
+FIX: margin tab on customer card must filter on current entity invoices
+FIX: missing column into SQL on thridparty list
+FIX: only show projects of related third if external user
+FIX: PgSQL Module Ressource list crash #5637
+FIX: php Strict
+FIX: Regression when deleting product
+FIX: Security to restrict email sending was not efficient
+FIX: tag for date rfc in odt substitution
+FIX: Update intervention lline crash with PgSQL
+FIX: update limit stock on product stock
+FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
+FIX: wrong test on dict.php
+
+
 ***** ChangeLog for 3.9.3 compared to 3.9.2 *****
 FIX: #4383 $userid not defined
 FIX: #4448 $filebonprev is not used, $this->filename now
