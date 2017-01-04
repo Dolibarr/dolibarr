@@ -1515,17 +1515,17 @@ else
 				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_create,'dayhour');
+				print '<td>'.dol_print_date($object->date_valid,'dayhour');
 				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
 				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
 				print '</td></tr>';
 				print '</tr>';
 
-				// User to inform
+				// User to inform for approval
 				if ($object->fk_statut < 3)	// informed
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("VALIDATOR").'</td>';
+					print '<td>'.$langs->trans("VALIDATOR").'</td>';   // approver
 					print '<td>';
 					if ($object->fk_user_validator > 0)
 					{

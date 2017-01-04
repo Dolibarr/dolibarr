@@ -170,10 +170,10 @@ ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
 ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
 ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
-ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
-ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
-ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
-ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enough for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enough for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enough for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enough for product %s to add it into a new proposal.
 ErrorFailedToLoadLoginFileForMode=Failed to get the login key for mode '%s'.
 ErrorPhpMailDelivery=Check that you don't use a too high number of recipients and that your email content is not similar to a Spam. Ask also your administrator to check firewall and server logs files for a more complete information.
 

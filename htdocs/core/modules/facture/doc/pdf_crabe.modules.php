@@ -119,8 +119,8 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
-			$this->posxqty=133;
-			$this->posxunit=150;
+			$this->posxqty=130;
+			$this->posxunit=147;
 		}
 		else
 		{
@@ -135,12 +135,14 @@ class pdf_crabe extends ModelePDFFactures
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
-			$this->posxpicture-=20;
-			$this->posxtva-=20;
-			$this->posxup-=20;
-			$this->posxqty-=20;
-			$this->posxdiscount-=20;
-			$this->postotalht-=20;
+		    $this->posxpicture-=20;
+		    $this->posxtva-=20;
+		    $this->posxup-=20;
+		    $this->posxqty-=20;
+		    $this->posxunit-=20;
+		    $this->posxdiscount-=20;
+		    $this->posxprogress-=20;
+		    $this->postotalht-=20;
 		}
 
 		$this->tva=array();
@@ -297,7 +299,7 @@ class pdf_crabe extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))    // retreive space not used by discount
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -527,9 +529,9 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
+					// Situation progress
 					if ($this->situationinvoice)
 					{
-						// Situation progress
 						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxprogress, $curY);
 						$pdf->MultiCell($this->postotalht-$this->posxprogress, 3, $progress, 0, 'R');
