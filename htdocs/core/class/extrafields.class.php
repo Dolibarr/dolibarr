@@ -323,16 +323,40 @@ class ExtraFields
 
 		$table=$elementtype.'_extrafields';
 
+		$error=0;
+		
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
+			$result=$this->delete_label($attrname,$elementtype);
 			if ($result < 0)
 			{
-				$this->error=$this->db->lasterror();
+			    $this->error=$this->db->lasterror();
+			    $error++;
 			}
 
-			$result=$this->delete_label($attrname,$elementtype);
-
+			if (! $error)
+			{
+        		$sql = "SELECT COUNT(rowid) as nb";
+        		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
+        		$sql.= " WHERE elementtype = '".$elementtype."'";
+        		$sql.= " AND name = '".$attrname."'";
+        		//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
+                $resql = $this->db->query($sql);
+                if ($resql)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($obj->nb <= 0)
+                    {
+            			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
+            			if ($result < 0)
+            			{
+            				$this->error=$this->db->lasterror();
+            				$error++;
+            			}
+                    }
+                }
+			}
+			
 			return $result;
 		}
 		else
