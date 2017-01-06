@@ -299,7 +299,7 @@ class FormFile
         $headershown=0;
         $showempty=0;
         $i=0;
-
+		
         $titletoshow=$langs->trans("Documents");
         if (! empty($title)) $titletoshow=$title;
 
@@ -400,6 +400,33 @@ class FormFile
                 {
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
                     $modellist=ModelePDFProjects::liste_modeles($this->db);
+                }
+            }
+            elseif ($modulepart == 'product')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                }
+            }
+            elseif ($modulepart == 'user')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.php';
+                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                }
+            }
+            elseif ($modulepart == 'group')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_group.php';
+                    $modellist=ModelePDFProduct::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'project_task')

@@ -40,11 +40,48 @@ if (! $user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
+$type='user';
 
 /*
  * Action
  */
-if (preg_match('/set_(.*)/',$action,$reg))
+
+// Activate a model
+if ($action == 'set_default')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+	$res = true;
+}
+
+elseif ($action == 'del_default')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->USER_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USER_ADDON_PDF_ODT',$conf->entity);
+	}
+	$res = true;
+}
+
+// Set default model
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "USER_ADDON_PDF_ODT",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->PRODUCT_ADDON_PDF_ODT = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+	$res = true;
+}
+elseif (preg_match('/set_(.*)/',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -58,7 +95,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+elseif (preg_match('/del_(.*)/',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -72,7 +109,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
     }
 }
 //Set hide closed customer into combox or select
-if ($action == 'sethideinactiveuser')
+elseif ($action == 'sethideinactiveuser')
 {
 	$status = GETPOST('status','alpha');
 

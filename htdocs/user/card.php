@@ -35,6 +35,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -589,6 +590,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
+$formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -2275,8 +2277,41 @@ else
             print '</form>';
         }
 
+        print '<div class="fichecenter"><div class="fichehalfleft">';
+        /*
+         * Documents generes
+        */
+        $filename = dol_sanitizeFileName($object->ref);
+        $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+        $genallowed = $user->rights->user->creer;
+        $delallowed = $user->rights->user->supprimer;
+
+        $var = true;
+
+        $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object);
+		if ($linktoelem) print '<br>'.$linktoelem;
+
+
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'user', $socid);
+        
+        
+        print '</div></div></div>';
+
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close;
     }
+    
 }
 
 if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))

@@ -38,6 +38,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -517,6 +518,40 @@ if (empty($reshook))
             $action='';
         }
     }
+	if ($action == 'builddoc' && $user->rights->produit->creer) {
+		/*if (GETPOST('model')) {
+			$object->setDocModel($user, GETPOST('model'));
+		}*/
+	
+		// Define output language
+		$outputlangs = $langs;
+		if (! empty($conf->global->MAIN_MULTILANGS)) {
+			$outputlangs = new Translate("", $conf);
+			$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$ret = $object->fetch($id); // Reload to get new records
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if ($result <= 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
+		}
+	}
+	
+	// Remove file in doc form
+	if ($action == 'remove_file' && $user->rights->contrat->creer) {
+		if ($object->id > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	
+			$langs->load("other");
+			$upload_dir = $conf->contrat->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+		}
+	}
 
 
     // Add product into object
@@ -770,6 +805,7 @@ else $title = $langs->trans('ProductServiceCard');
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 
 
@@ -1827,6 +1863,40 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         print '</form>';
     }
 }
+
+
+print '<div class="fichecenter"><div class="fichehalfleft">';
+
+/*
+ * Documents generes
+*/
+$filename = dol_sanitizeFileName($object->ref);
+$filedir = $conf->produit->dir_output . "/" . dol_sanitizeFileName($object->ref);
+$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+$genallowed = $user->rights->produit->creer;
+$delallowed = $user->rights->produit->supprimer;
+
+$var = true;
+
+$somethingshown = $formfile->show_documents('product', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+
+// Linked object block
+$somethingshown = $form->showLinkedObjectBlock($object);
+
+// Show links to link elements
+$linktoelem = $form->showLinkToObjectBlock($object);
+if ($linktoelem) print '<br>'.$linktoelem;
+
+
+print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+// List of actions on element
+include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+$formactions = new FormActions($db);
+$somethingshown = $formactions->showactions($object, 'product', $socid);
+
+
+print '</div></div></div>';
 
 
 llxFooter();

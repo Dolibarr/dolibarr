@@ -317,6 +317,22 @@ abstract class CommonDocGenerator
 
     	return $array_other;
     }
+	
+	
+
+	function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+		foreach($object as $key => $value) {
+			if(!is_array($value) && !is_object($value)) {
+	    	$array_other['object_'.$key] = $value;
+			}
+			if(is_array($value) && $recursive){
+				foreach($value as $key2 => $val) {
+					$array_other[$key][$key2] = $this->get_substitutionarray_each_var_object($val,$outputlangs,false);
+				}
+			}
+	    }
+		return $array_other;
+	}
 
 
 
