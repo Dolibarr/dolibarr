@@ -1453,6 +1453,13 @@ form#login {
 
 	border-top:solid 1px f8f8f8;
 }
+.login_table input#username, .login_table input#password, .login_table input#securitycode{
+	border: none;
+	border-bottom: solid 1px rgba(180,180,180,.4);
+	padding: 5px;
+	margin-left: 18px;
+	margin-top: 5px;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 560px;
@@ -1567,7 +1574,8 @@ img.loginphoto {
 }
 
 .span-icon-user {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
+	background-repeat: no-repeat;
 }
 .span-icon-password {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);

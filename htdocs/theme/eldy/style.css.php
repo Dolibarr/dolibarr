@@ -337,9 +337,9 @@ input[type=checkbox] { background-color: transparent; border: none; box-shadow: 
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
-	background-color: #FBFFEA !important;
+	background-color: #FDFFF0 !important;
 	background-image:none !important;
-	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
+	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
@@ -1375,6 +1375,7 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
+	/* background: linear-gradient(to left top, rgb(255,255,255), rgb(240,240,240)) fixed; */
 }
 .login_vertical_align {
 	padding: 10px;
@@ -1406,12 +1407,23 @@ form#login {
 	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	
 	/*-moz-box-shadow: 3px 2px 20px #CCC;
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
-	border:solid 1px rgba(80,80,80,.4);
+	/*border-top:solid 1px rgba(180,180,180,.4);
+	border-left:solid 1px rgba(180,180,180,.4);
+	border-right:solid 1px rgba(180,180,180,.4);
+	border-bottom:solid 1px rgba(180,180,180,.4);*/
+}
+.login_table input#username, .login_table input#password, .login_table input#securitycode{
+	border: none;
+	border-bottom: solid 1px rgba(180,180,180,.4);
+	padding: 5px;
+	margin-left: 18px;
+	margin-top: 5px;
 }
 .login_main_message {
 	text-align: center;
@@ -1448,8 +1460,8 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 200px;
-	max-height: 100px;
+	max-width: 150px;
+	max-height: 80px;
 }
 
 div.login_block {
@@ -1523,18 +1535,18 @@ img.loginphoto {
     height: 16px;
 }
 .span-icon-user {
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>); */
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
 	background-repeat: no-repeat;
 }
 .span-icon-password {
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>); */
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
-
+/*
 .span-icon-user input, .span-icon-password input {
 	/* margin-left: 18px; */
 	margin-left: 0px;
-}
+}*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
