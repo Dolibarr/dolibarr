@@ -867,18 +867,20 @@ if ($resql)
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
-            $facturestatic->type=$obj->type;
             $facturestatic->note_public=$obj->note_public;
             $facturestatic->note_private=$obj->note_private;
+
+            $paiement = $facturestatic->getSommePaiement();
+            $totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
+            $totaldeposits = $facturestatic->getSumDepositsUsed();
+            $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
+            $remaintopay = $obj->total_ttc - $totalpay;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
-    
-                $paiement = $facturestatic->getSommePaiement();
-				$remaintopay = $obj->total_ttc - $paiement;
-    
+
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
                 print '<td class="nobordernopadding nowrap">';
@@ -1028,10 +1030,10 @@ if ($resql)
 
             if (! empty($arrayfields['dynamount_payed']['checked']))
             {
-                print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
+                print '<td align="right">'.(! empty($totalpay)?price($totalpay,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
-    		    $totalarray['totalam'] += $paiement;
+    		    $totalarray['totalam'] += $totalpay;
             }
 
             if (! empty($arrayfields['rtp']['checked']))

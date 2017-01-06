@@ -1929,7 +1929,10 @@ abstract class CommonObject
 	 */
 	function updateRangOfLine($rowid,$rang)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
+	    $fieldposition = 'rang';
+	    if ($this->table_element_line == 'ecm_files') $fieldposition = 'position';
+	    
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);

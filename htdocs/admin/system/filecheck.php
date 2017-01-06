@@ -75,9 +75,9 @@ $file_list = array('missing' => array(), 'updated' => array());
 
 // File to analyze
 //$xmlfile = DOL_DOCUMENT_ROOT.'/install/filelist-'.DOL_VERSION.'.xml';
-$xmlshortfile = '/install/filelist-'.DOL_VERSION.'.xml';
+$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
-$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
+$xmlremote = GETPOST('xmlremote')?GETPOST('xmlremote'):'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
 
 // Test if remote test is ok
@@ -87,21 +87,27 @@ if (preg_match('/beta|alpha/i', DOL_VERSION)) $enableremotecheck=False;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
+print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile))
 {
     print '<input type="radio" name="target" value="local"'.((! GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"':'').'"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.'<br>';
 }
 else
 {
-    print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span><br>';
+    print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile;
+    if (! GETPOST('xmlshortfile')) print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
+    print '<br>';
 }
+print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck)
 {
     print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'<br>';
 }
 else
 {
-    print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'  <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span><br>';
+    print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.$xmlremote;
+    if (! GETPOST('xmlremote')) print ' <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span>';
+    print '<br>';
 }
 print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
@@ -128,7 +134,8 @@ if (GETPOST('target') == 'remote')
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
         $xmlfile = $xmlarray['content'];
-        $xml = simplexml_load_file($xmlfile);
+        //print "eee".$xmlfile."eee";
+        $xml = simplexml_load_string($xmlfile);
     }
     else
     {
@@ -141,11 +148,14 @@ if (GETPOST('target') == 'remote')
 
 if ($xml)
 {
+    $checksumconcat = array();
+
+    // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
-    	$file_list = array();
-        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0]);		// Fill array $file_list
-
+        $file_list = array();
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat);		// Fill array $file_list
+    
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("FilesMissing") . '</td>';
@@ -181,10 +191,10 @@ if ($xml)
         print '<td align="right">' . $langs->trans("DateModification") . '</td>';
         print '</tr>'."\n";
         $var = true;
-        $tmpfilelist = dol_sort_array($file_list['updated'], 'filename');
-        if (is_array($tmpfilelist) && count($tmpfilelist))
+        $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
+        if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
-	        foreach ($tmpfilelist as $file)
+	        foreach ($tmpfilelist2 as $file)
 	        {
 	            $var = !$var;
 	            print '<tr ' . $bc[$var] . '>';
@@ -201,12 +211,44 @@ if ($xml)
             print '<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table>';
+        
+        if (empty($tmpfilelist) && empty($tmpfilelist2))
+        {
+            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+        }
+        else
+        {
+            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+        }
     }
     else
     {
         print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
         $error++;
     }
+
+
+    // Scan scripts
+    /*
+    if (is_object($xml->dolibarr_script_dir[0]))
+    {
+        $file_list = array();
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
+    }*/
+    
+    
+    asort($checksumconcat); // Sort list of checksum        
+    //var_dump($checksumconcat);
+    $checksumget = md5(join(',',$checksumconcat));
+    $checksumtoget = $xml->dolibarr_htdocs_dir_checksum;
+    if ($checksumtoget)
+    {
+        print '<br>';
+        print '<strong>'.$langs->trans("GlobalChecksum").'</strong><br>';
+        print $langs->trans("ExpectedChecksum").' = '.$checksumtoget.'<br>';
+        print $langs->trans("CurrentChecksum").' = '.$checksumget;
+    }
+    
 }
 
 
@@ -223,12 +265,14 @@ exit($error);
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param	array				$file_list	Array for response
- * @param   SimpleXMLElement	$dir    	SimpleXMLElement of files to test
- * @param   string   			$path   	Path of file
- * @return  array               			Array of filenames
+ * @param	array				$file_list	        Array for response
+ * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
+ * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
+ * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
+ * @param   array               $checksumconcat     Array of checksum
+ * @return  array               			        Array of filenames
  */
-function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '')
+function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
     $exclude = 'install';
 
@@ -236,20 +280,21 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '')
     {
         $filename = $path.$file['name'];
 
-        if (preg_match('#'.$exclude.'#', $filename)) continue;
+        //if (preg_match('#'.$exclude.'#', $filename)) continue;
 
-        if (!file_exists(DOL_DOCUMENT_ROOT.'/'.$filename))
+        if (!file_exists($pathref.'/'.$filename))
         {
             $file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
         }
         else
 		{
-            $md5_local = md5_file(DOL_DOCUMENT_ROOT.'/'.$filename);
+            $md5_local = md5_file($pathref.'/'.$filename);
             if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
-        }
+            $checksumconcat[] = $md5_local;
+		}
     }
 
-    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/');
+    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
 
     return $file_list;
 }

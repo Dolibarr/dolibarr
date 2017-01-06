@@ -18,9 +18,11 @@
  * or see http://www.gnu.org/
  */
 
-
 // Variable $upload_dir must be defined when entering here
 // Variable $upload_dirold may also exists.
+
+//var_dump($upload_dir);
+//var_dump($upload_dirold);
 
 // Submit file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -165,7 +167,11 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
                     
                     setEventMessages($langs->trans("FileRenamed"), null);
                 }
-                else setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+                else 
+                {
+                    $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+                    setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+                }
             }
         }
     }

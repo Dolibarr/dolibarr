@@ -230,6 +230,7 @@ ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_valid (fk_user
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_approve (fk_user_approve);
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_approve);
 
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
 drop table tmp_links_double;

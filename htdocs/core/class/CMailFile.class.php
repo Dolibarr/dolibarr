@@ -488,28 +488,35 @@ class CMailFile
 
             // Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
             if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=10;
-            $tmparray = explode(',', $this->addr_to);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray1 = explode(',', $this->addr_to);
+            if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in to:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_cc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray2 = explode(',', $this->addr_cc);
+            if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in cc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_bcc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            $tmparray3 = explode(',', $this->addr_bcc);
+            if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in bcc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-
+            if ((count($tmparray1)+count($tmparray2)+count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in to:, cc:, bcc:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+            
+                
 			// Action according to choosed sending method
 			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{
@@ -538,25 +545,28 @@ class CMailFile
 				}
 				else
 				{
-					$bounce = '';	// By default
+					$additionnalparam = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
 						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
 						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
-						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
+						// Having this variable defined may create problems with some sendmail (option -f refused)
+						// Having this variable not defined may create problems with some other sendmail (option -f required)
+						$additionnalparam .= ($additionnalparam?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
                     if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
                     {
-                        $bounce .= ($bounce?' ':'').'-ba';
+                        $additionnalparam .= ($additionnalparam?' ':'').'-ba';
                     }
-                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$bounce, LOG_DEBUG);
+                    if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam?' ':'').'-U '.$additionnalparam; // Use -U to add additionnal params
+                    
+                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
                     
 					$this->message=stripslashes($this->message);
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if (! empty($additionnalparam)) $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers, $additionnalparam);
 					else $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers);
 
 					if (! $res)
