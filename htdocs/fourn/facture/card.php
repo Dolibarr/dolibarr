@@ -317,7 +317,15 @@ if (empty($reshook))
 	{
 	    $object->fetch($id);
 	    $object->date=dol_mktime(12,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
-	    if ($object->date_echeance && $object->date_echeance < $object->date) $object->date_echeance=$object->date;
+	    $date_echence_calc=$object->calculate_date_lim_reglement();
+	    if (!empty($object->date_echeance) &&  $object->date_echeance < $date_echence_calc)
+	    {
+	    	$object->date_echeance = $date_echence_calc;
+	    }
+	    if ($object->date_echeance && $object->date_echeance < $object->date)
+	    {
+	    	$object->date_echeance=$object->date;
+	    }
 	    $result=$object->update($user);
 	    if ($result < 0) dol_print_error($db,$object->error);
 	}
@@ -995,7 +1003,7 @@ if (empty($reshook))
 			}
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
-			
+
 			$result=$object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise);
 	    }
 
@@ -1494,7 +1502,7 @@ if ($action == 'create')
 	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid))))
 	{
 		// Deposit
-		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT)) 
+		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT))
 		{
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '> ';
@@ -1524,12 +1532,12 @@ if ($action == 'create')
 		}
 	}
     */
-	
+
 	/* Not yet supporter for supplier
 	if ($societe->id > 0)
 	{
 		// Replacement
-		if (empty($conf->global->INVOICE_DISABLE_REPLACEMENT)) 
+		if (empty($conf->global->INVOICE_DISABLE_REPLACEMENT))
 		{
 			print '<!-- replacement line -->';
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
@@ -1579,7 +1587,7 @@ if ($action == 'create')
     	    if ($societe->id > 0)
     		{
     		    // Credit note
-    			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) 
+    			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE))
     			{
     				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
     				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
@@ -1615,12 +1623,12 @@ if ($action == 'create')
     				$text .= '</select>';
     				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
     				print $desc;
-    
+
     				print '<div id="credit_note_options" class="clearboth">';
     				print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
     				print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
     				print '</div>';
-    
+
     				print '</div></div>';
     			}
     		}
@@ -2008,7 +2016,7 @@ else
 
     	$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-    	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
+    	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
     	print '<div class="fichecenter">';
     	print '<div class="fichehalfleft">';
@@ -2152,7 +2160,7 @@ else
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == 0) {
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
@@ -2213,7 +2221,7 @@ else
             print '</tr>';
         }
 		*/
-		
+
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -2240,9 +2248,9 @@ else
     	// Other attributes
     	$cols = 2;
     	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-    
+
     	print '</table>';
-    	
+
     	print '</div>';
     	print '<div class="fichehalfright">';
     	print '<div class="ficheaddleft">';
@@ -2256,12 +2264,12 @@ else
     	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
     	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
     	    print '</tr>';
-    	
+
     	    // Multicurrency Amount VAT
     	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
     	    print '<td>' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
     	    print '</tr>';
-    	
+
     	    // Multicurrency Amount TTC
     	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
     	    print '<td>' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
@@ -2269,7 +2277,7 @@ else
     	}
 
     	// Amount
-    	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+    	print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
     	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
     	if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
     	else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
@@ -2299,7 +2307,7 @@ else
     	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
     	print '</table>';
- 
+
     	/*
     	 * List of payments
     	 */
@@ -2395,9 +2403,9 @@ else
     	    {
     	        print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right">'.price($totalpaye).'</td><td></td></tr>';
     	        print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
-    	
+
     	        $resteapayer = $object->total_ttc - $totalpaye;
-    	
+
     	        print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('RemainderToPay').' :</td>';
     	        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':'').'>'.price($resteapayer).'</td><td></td></tr>';
     	    }
@@ -2506,7 +2514,7 @@ else
 			print ' :</td>';
 			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':$cssforamountpaymentcomplete).'>' . price($resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
-		} 
+		}
 		else // Credit note
 		{
 			// Total already paid back
@@ -2538,9 +2546,9 @@ else
         print '</div>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="clearboth"></div><br>';
-        
+
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
         	$blocname = 'contacts';
