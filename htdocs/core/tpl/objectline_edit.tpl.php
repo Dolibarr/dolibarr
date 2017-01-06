@@ -170,7 +170,7 @@ $coldisplay=-1; // We remove first td
 		$coldisplay++;
 		print '<td align="right" class="nowrap"><input type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
 	}
-	if (! empty($usemargins))
+	if (! empty($usemargins) && !empty($user->rights->margins->liretous))
 	{
 	?>
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
@@ -208,6 +208,15 @@ $coldisplay=-1; // We remove first td
 
 	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
 	<td align="center" colspan="<?php echo $colspan; ?>" valign="middle"><?php $coldisplay+=4; ?>
+		<?php
+		if (empty($user->rights->margins->liretous))
+		{
+		?>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
+			<input type="hidden" id="buying_price" name="buying_price" value="<?php echo price($line->pa_ht,0,'',0); ?>">
+		<?php
+		}
+		?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>

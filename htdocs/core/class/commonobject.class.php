@@ -3293,7 +3293,7 @@ abstract class CommonObject
 			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 		}
 
-		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id) && !empty(($user->rights->margins->liretous)))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';

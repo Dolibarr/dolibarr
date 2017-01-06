@@ -82,7 +82,7 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 	if ($this->situation_cycle_ref) {
 		print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 	}
-	if (! empty($usemargins))
+	if (! empty($usemargins) && !empty(($user->rights->margins->liretous)))
 	{
 		?>
 		<td align="right" class="margininfos linecolmargin1">
@@ -273,7 +273,7 @@ else {
 		$coldisplay++;
 		print '<td class="nobottom nowrap" align="right"><input type="text" size="1" value="0" name="progress">%</td>';
 	}
-	if (! empty($usemargins))
+	if (! empty($usemargins) && !empty(($user->rights->margins->liretous)))
 	{
 		?>
 		<td align="right" class="nobottom margininfos linecolmargin">
@@ -308,6 +308,15 @@ else {
 	}
 	?>
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+		<?php
+		if (empty($user->rights->margins->liretous))
+		{
+		?>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
+			<input type="hidden" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+		<?php
+		}
+		?>
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
@@ -617,8 +626,16 @@ jQuery(document).ready(function() {
     
     	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
     
-    	      		$("#fournprice_predef").html(options).show();
-    	      		if (defaultkey != '')
+    	      		<?php
+    	    	    if (!empty($user->rights->margins->liretous))
+    				{
+    				?>
+    					$("#fournprice_predef").show();
+    				<?php
+    				}
+    				?>
+
+    	    	    if (defaultkey != '')
     				{
     		      		$("#fournprice_predef").val(defaultkey);
     		      	}
