@@ -2992,7 +2992,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #E0EAE4;
+  background: #EaE4Ea;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
