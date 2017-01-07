@@ -5737,9 +5737,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
             else    // $mode=0
 			{
 				$textcrit = '';
-				$tmpcrit = preg_replace('/\s+|/','|',$tmpcrit);
-				$tmpcrit = preg_replace('/|\s+/','|',$tmpcrit);
-				$tmpcrits = explode('|',$tmpcrit);
+				$tmpcrits = explode('|',$crit);
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
