@@ -318,7 +318,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             // Define a complementary filter for search of next/prev ref.
             if (! $user->rights->projet->all->lire)
             {
-                $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
                 $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
             }
             
