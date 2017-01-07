@@ -32,6 +32,7 @@ class Loan extends CommonObject
     public $element='loan';
     public $table='loan';
     public $table_element='loan';
+
     public $picto = 'bill';
 
     public $rowid;
@@ -51,6 +52,7 @@ class Loan extends CommonObject
     public $fk_bank;
     public $fk_user_creat;
     public $fk_user_modif;
+    public $fk_project;
 
 
     /**
@@ -73,7 +75,7 @@ class Loan extends CommonObject
     function fetch($id)
     {
         $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
-		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest";
+		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
 
@@ -100,6 +102,7 @@ class Loan extends CommonObject
 				$this->account_capital		= $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
 				$this->account_interest		= $obj->accountancy_account_interest;
+				$this->fk_project			= $obj->fk_project;
 
                 $this->db->free($resql);
 				return 1;
@@ -127,7 +130,7 @@ class Loan extends CommonObject
     function create($user)
     {
     	global $conf;
-		
+
 		$error=0;
 
         $now=dol_now();
@@ -142,6 +145,7 @@ class Loan extends CommonObject
 		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 
         // Check parameters
         if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
@@ -157,9 +161,9 @@ class Loan extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public";
-		$sql.= " ,accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity";
-		$sql.= " ,datec, fk_user_author)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public,";
+		$sql.= " accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity,";
+		$sql.= " datec, fk_projet, fk_user_author)";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
 		$sql.= " '".$this->db->escape($this->fk_bank)."',";
         $sql.= " '".price2num($newcapital)."',";
@@ -174,6 +178,7 @@ class Loan extends CommonObject
 		$sql.= " '".$this->db->escape($this->account_interest)."',";
         $sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->idate($now)."',";
+		$sql.= " ".(empty($this->fk_project)?'NULL':$this->fk_project).",";
 		$sql.= " ".$user->id;
         $sql.= ")";
 
@@ -282,6 +287,7 @@ class Loan extends CommonObject
 		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
         $sql.= " datestart='".$this->db->idate($this->datestart)."',";
         $sql.= " dateend='".$this->db->idate($this->dateend)."',";
+        $sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
 		$sql.= " fk_user_modif = ".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
@@ -345,7 +351,7 @@ class Loan extends CommonObject
         global $langs;
         $langs->load('customers');
         $langs->load('bills');
-        
+
         if ($mode == 0)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");
