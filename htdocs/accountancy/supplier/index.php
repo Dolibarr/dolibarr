@@ -289,58 +289,56 @@ print "</table>\n";
 
 
 
-
-print '<br>';
-print '<br>';
-
-
-print_fiche_titre($langs->trans("OtherInfo"), '', '');
-
-
-
-
-
-print "<br>\n";
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
-for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
+{
+    print '<br>';
+    print '<br>';
+    
+    print_fiche_titre($langs->trans("OtherInfo"), '', '');
+    
+    print "<br>\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
+    for($i = 1; $i <= 12; $i ++) {
+    	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+    }
+    print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+    
+    $sql = "SELECT '" . $langs->trans("CAHTF") . "' AS label,";
+    for($i = 1; $i <= 12; $i ++) {
+    	$sql .= "  SUM(" . $db->ifsql('MONTH(ff.datef)=' . $i, 'ffd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+    }
+    $sql .= "  ROUND(SUM(ffd.total_ht),2) as total";
+    $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
+    $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+    $sql .= " WHERE ff.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+    $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+    $sql .= "  AND ff.fk_statut > 0 ";
+    $sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
+    
+    dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
+    $resql = $db->query($sql);
+    if ($resql) {
+    	$num = $db->num_rows($resql);
+    
+    	while ( $row = $db->fetch_row($resql)) {
+    
+    
+    		print '<tr><td>' . $row[0] . '</td>';
+    			for($i = 1; $i <= 12; $i ++) {
+    			print '<td align="right">' . price($row[$i]) . '</td>';
+    		}
+    		print '<td align="right"><b>' . price($row[13]) . '</b></td>';
+    		print '</tr>';
+    	}
+    
+    	$db->free($resql);
+    } else {
+    	print $db->lasterror(); // Show last sql error
+    }
+    print "</table>\n";
 }
-print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT '" . $langs->trans("CAHTF") . "' AS label,";
-for($i = 1; $i <= 12; $i ++) {
-	$sql .= "  SUM(" . $db->ifsql('MONTH(ff.datef)=' . $i, 'ffd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
-}
-$sql .= "  ROUND(SUM(ffd.total_ht),2) as total";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= " WHERE ff.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-$sql .= "  AND ff.fk_statut > 0 ";
-$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";     // We don't share object for accountancy
-
-dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-
-	while ( $row = $db->fetch_row($resql)) {
-
-
-		print '<tr><td>' . $row[0] . '</td>';
-			for($i = 1; $i <= 12; $i ++) {
-			print '<td align="right">' . price($row[$i]) . '</td>';
-		}
-		print '<td align="right"><b>' . price($row[13]) . '</b></td>';
-		print '</tr>';
-	}
-
-	$db->free($resql);
-} else {
-	print $db->lasterror(); // Show last sql error
-}
-print "</table>\n";
 
 llxFooter();
 $db->close();

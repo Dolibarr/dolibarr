@@ -104,6 +104,11 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 $form = new Form($db);
 
 llxHeader('',$langs->trans("PrintingSetup"));
@@ -127,70 +132,179 @@ if ($mode == 'setup' && $user->admin)
         if (in_array($key[0], array_keys($supportedoauth2array))) $supported=1;
         if (! $supported) continue;     // show only supported
         
+        
+        $OAUTH_SERVICENAME='Unknown';
+        if ($key[0] == 'OAUTH_GITHUB_NAME')
+        {
+            $OAUTH_SERVICENAME='GitHub';
+            $urltorenew=$urlwithroot.'/core/modules/oauth/github_oauthcallback.php?state=user,public_repo&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete=$urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltocheckperms='https://github.com/settings/applications/';
+        }
+        if ($key[0] == 'OAUTH_GOOGLE_NAME')
+        {
+            $OAUTH_SERVICENAME='Google';
+            $urltorenew=$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete=$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltocheckperms='https://security.google.com/settings/security/permissions';
+        }
+        
+        // Show value of token
+        $tokenobj=null;
+        // Token
+        require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+        require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+        // Dolibarr storage
+        $storage = new DoliStorage($db, $conf);
+        try
+        {
+            $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+        }
+        catch(Exception $e)
+        {
+            // Return an error if token not found
+        }
+        
+        // Set other properties
+        $refreshtoken=false;
+        $expiredat='';
+        
+        $expire = false;
+        // Is token expired or will token expire in the next 30 seconds
+        if (is_object($tokenobj)) {
+            $expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
+        }
+        
+        if ($key[1] != '' && $key[2] != '') {
+            if (is_object($tokenobj)) {
+                $refreshtoken = $tokenobj->getRefreshToken();
+                
+                $endoflife = $tokenobj->getEndOfLife();
+                if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES)
+                {
+                    $expiredat = $langs->trans("Never");
+                }
+                elseif ($endoflife == $tokenobj::EOL_UNKNOWN)
+                {
+                    $expiredat = $langs->trans("Unknown");
+                }
+                else
+                {
+                    $expiredat=dol_print_date($endoflife, "dayhour");
+                }
+            }
+        }
+
+        $submit_enabled=0;
+        
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setconst">';
     
         
         print '<table class="noborder" width="100%">'."\n";
-        $var=true;
+        
+        $var=false;
         print '<tr class="liste_titre">';
-        print '<th>'.$langs->trans("Parameters").'</th>';
-        print '<th>'.$langs->trans("Value").'</th>';
-        print '<th>&nbsp;</th>';
+        print '<th class="titlefieldcreate">'.$langs->trans($key[0]).'</th>';
+        print '<th></th>';
+        print '<th></th>';
         print "</tr>\n";
-        $submit_enabled=0;
-    
+        
         print '<tr '.$bc[$var].'>';
-        print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
-        print '<td>'.$langs->trans($key['info']).'</td>';
+        print '<td'.($key['required']?' class="required"':'').'>';
+        //var_dump($key);
+        print $langs->trans("OAuthIDSecret").'</td>';
         print '<td>';
-        if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
-        {
-            // Delete remote tokens
-            if (! empty($key['delete'])) print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
-            // Request remote token
-            print '<a class="button" href="'.$key['renew'].'">'.$langs->trans('RequestAccess').'</a><br><br>';
-            // Check remote access
-            print $langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME_GOOGLE).': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
-        }
+        print $langs->trans("SeePreviousTab");
+        print '</td>';
+        print '<td>';
         print '</td>';
         print '</tr>'."\n";
         
-        // Show value of token
-        if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+        $var = ! $var;
+        print '<tr '.$bc[$var].'>';
+        print '<td'.($key['required']?' class="required"':'').'>';
+        //var_dump($key);
+        print $langs->trans("IsTokenGenerated");
+        print '</td>';
+        print '<td>';
+        if (is_object($tokenobj)) print $langs->trans("HasAccessToken");
+        else print $langs->trans("NoAccessToken");
+        print '</td>';
+        print '<td>';
+        // Links to delete/checks token
+        if (is_object($tokenobj))
         {
-            // Token
-            print '<tr '.$bc[$var].'>';
-            print '<td>'.$langs->trans("Token").'</td>';
-            print '<td>';
-            // Dolibarr storage
-            $storage = new DoliStorage($db, $conf);
-            try
-            {
-                $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
-            }
-            catch(Exception $e)
-            {
-                // Return an error if token not found
-            }
-            if (is_object($tokenobj))
-            {
-                //var_dump($tokenobj);
-                print $tokenobj->getAccessToken().'<br>';
-                //print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
-                //print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
-                //var_dump($tokenobj->getExtraParams());
-                /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
-                print ''.join(',',$tokenobj->getExtraParams());
-                print '</textarea>';*/
-            }
-            print '</td>';
-            print '<td>';
-            print '</td>';
-            print '</tr>'."\n";
+            //test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
+            print '<a class="button" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br><br>';
         }
+        // Request remote token
+        print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br><br>';
+        // Check remote access
+        if ($urltocheckperms)
+        {
+            print $langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
+        }
+        print '</td>';
+        print '</tr>';
+        
+        $var = ! $var;
+        print '<tr '.$bc[$var].'>';
+        print '<td'.($key['required']?' class="required"':'').'>';
+        //var_dump($key);
+        print $langs->trans("Token").'</td>';
+        print '<td colspan="2">';
+        if (is_object($tokenobj))
+        {
+            //var_dump($tokenobj);
+            print $tokenobj->getAccessToken().'<br>';
+            //print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
+            //print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
+            //var_dump($tokenobj->getExtraParams());
+            /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
+            print ''.join(',',$tokenobj->getExtraParams());
+            print '</textarea>';*/
+        }        
+        print '</td>';
+        print '</tr>'."\n";
+
+        if (is_object($tokenobj))
+        {
+            // Token refresh
+            $var = ! $var;
+            print '<tr '.$bc[$var].'>';
+            print '<td'.($key['required']?' class="required"':'').'>';
+            //var_dump($key);
+            print $langs->trans("TOKEN_REFRESH").'</td>';
+            print '<td colspan="2">';
+            print yn($refreshtoken);
+            print '</td>';
+            print '</tr>';
     
+            // Token expired
+            $var = ! $var;
+            print '<tr '.$bc[$var].'>';
+            print '<td'.($key['required']?' class="required"':'').'>';
+            //var_dump($key);
+            print $langs->trans("TOKEN_EXPIRED").'</td>';
+            print '<td colspan="2">';
+            print yn($expire);
+            print '</td>';
+            print '</tr>';
+            
+            // Token expired at
+            $var = ! $var;
+            print '<tr '.$bc[$var].'>';
+            print '<td'.($key['required']?' class="required"':'').'>';
+            //var_dump($key);
+            print $langs->trans("TOKEN_EXPIRE_AT").'</td>';
+            print '<td colspan="2">';
+            print $expiredat;
+            print '</td>';
+            print '</tr>';        
+        }
+        
         print '</table>';
 
         if (! empty($driver))
@@ -199,7 +313,8 @@ if ($mode == 'setup' && $user->admin)
                 print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
             }
         }
-    
+
+        
         print '</form>';
     }
     
