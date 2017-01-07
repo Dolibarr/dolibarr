@@ -261,7 +261,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input:focus, textarea:focus, button:focus, select:focus {
-    box-shadow: 0 0 4px #8091BF;
+    /* box-shadow: 0 0 4px #8091BF; */
+    border-bottom: 1px solid #8091BF !important;
 }
 textarea.cke_source:focus
 {
@@ -805,6 +806,7 @@ td.showDragHandle {
 <?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
+	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
@@ -1460,6 +1462,12 @@ form#login {
 	margin-left: 18px;
 	margin-top: 5px;
 }
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+	outline: none !important;
+	/* box-shadow: none;
+	-webkit-box-shadow: 0 0 0 50px #FFF inset;
+	box-shadow: 0 0 0 50px #FFF inset;*/
+}
 .login_main_message {
 	text-align: center;
 	max-width: 560px;
@@ -1495,8 +1503,8 @@ table.login_table_securitycode tr td {
 	border: 1px solid #f4f4f4;
 }
 #img_logo, .img-logo {
-	max-width: 200px;
-	max-height: 100px;
+	max-width: 170px;
+	max-height: 90px;
 }
 
 div.login_block {

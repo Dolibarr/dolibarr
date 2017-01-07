@@ -261,7 +261,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input:focus, textarea:focus, button:focus, select:focus {
-    box-shadow: 0 0 4px #8091BF;
+    /* box-shadow: 0 0 4px #8091BF; */
+    border-bottom: 1px solid #8091BF !important;
 }
 textarea.cke_source:focus
 {
@@ -790,6 +791,7 @@ td.showDragHandle {
 .side-nav {
 	display: table-cell;
 	border-right: 1px solid #d0d0d0;
+	box-shadow: 3px 0 6px -2px #eee;
 }
 div.blockvmenulogo
 {
@@ -1418,12 +1420,18 @@ form#login {
 	border-right:solid 1px rgba(180,180,180,.4);
 	border-bottom:solid 1px rgba(180,180,180,.4);*/
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode{
+.login_table input#username, .login_table input#password, .login_table input#securitycode {
 	border: none;
 	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
 	margin-left: 18px;
 	margin-top: 5px;
+}
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+	outline: none !important;
+	/* box-shadow: none;
+	-webkit-box-shadow: 0 0 0 50px #FFF inset;
+	box-shadow: 0 0 0 50px #FFF inset;*/
 }
 .login_main_message {
 	text-align: center;
@@ -1460,8 +1468,8 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 150px;
-	max-height: 80px;
+	max-width: 170px;
+	max-height: 90px;
 }
 
 div.login_block {
