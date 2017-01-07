@@ -998,7 +998,7 @@ TriggerAlwaysActive=Triggers in this file are always active, whatever are the ac
 TriggerActiveAsModuleActive=Triggers in this file are active as module <b>%s</b> is enabled.
 GeneratedPasswordDesc=Define here which rule you want to use to generate new password if you ask to have auto generated password
 DictionaryDesc=Insert all reference data. You can add your values to the default.
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=Limits/Precision setup
 LimitsDesc=You can define limits, precisions and optimisations used by Dolibarr here
