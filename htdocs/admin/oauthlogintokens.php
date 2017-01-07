@@ -175,18 +175,6 @@ if ($mode == 'setup' && $user->admin)
             $expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
         }
         
-        // Token expired so we refresh it
-        if (is_object($tokenobj) && $expire) {
-            try {
-                // il faut sauvegarder le refresh token car le provider ne le donne qu'une seule fois
-                $refreshtoken = $tokenobj->getRefreshToken();
-                $tokenobj = $apiService->refreshAccessToken($tokenobj);
-                $tokenobj->setRefreshToken($refreshtoken);
-                $storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
-            } catch (Exception $e) {
-                setEventMessages($e->getMessage(), null, 'errors');
-            }
-        }
         if ($key[1] != '' && $key[2] != '') {
             if (is_object($tokenobj)) {
                 $refreshtoken = $tokenobj->getRefreshToken();
