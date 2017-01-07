@@ -24,8 +24,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      Loan
- *		\brief      Class to manage loan
+/**
+ *      Loan
  */
 class Loan extends CommonObject
 {
@@ -404,7 +404,7 @@ class Loan extends CommonObject
      * 	@param	int		$maxlen			Label max length
      *	@return	string					Chaine with URL
      */
-    function getLinkUrl($withpicto=0,$maxlen=0)
+    function getNomUrl($withpicto=0,$maxlen=0)
     {
         global $langs;
 

@@ -47,7 +47,7 @@ if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compt
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->loan->enabled))         require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if (! empty($conf->loan->enabled))        require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -377,14 +377,14 @@ $listofreferent=array(
 	'title'=>"ListLoanAssociatedProject",
 	'class'=>'Loan',
 	'margin'=>'add',
-	'table'=>'Loan',
+	'table'=>'loan',
 	'datefieldname'=>'datestart',
 	'disableamount'=>0,
     'urlnew'=>DOL_URL_ROOT.'/loan/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'loan',
     'buttonnew'=>'AddLoan',
-    'testnew'=>$user->rights->loan->creer,
-    'test'=>$conf->loan->enabled && $user->rights->loan->lire),
+    'testnew'=>$user->rights->loan->write,
+    'test'=>$conf->loan->enabled && $user->rights->loan->read),
 'project_task'=>array(
 	'name'=>"TaskTimeValorised",
 	'title'=>"ListTaskTimeUserProject",
