@@ -54,6 +54,7 @@ $langs->load("loan");
 $langs->load("donations");
 $langs->load("trips");
 $langs->load("members");
+$langs->load("compta");
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
