@@ -234,16 +234,8 @@ if ($result)
 			$pv = $objp->selling_price;
 			$marge = $objp->marge;
 
-			if ($marge < 0)
-			{
-				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
-			}
-			else
-			{
-				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
-			}
+			$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+			$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 
 			$var=!$var;
 
