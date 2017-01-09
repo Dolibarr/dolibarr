@@ -4463,7 +4463,7 @@ border-top-right-radius: 6px;
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	: 54px;
+	padding-left: 54px;
 	font-size: 14px;
 	height: 38px;
 }
