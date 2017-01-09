@@ -22,9 +22,10 @@ $langs->load("bills");
 
 ?>
 
-<h3 class="titre1"><?php echo $langs->trans("SellFinished"); ?></h3><br>
+<div class="blocksellfinished">
 
 <div class="cadre_facturation">
+<h3 class="titre1"><?php echo $langs->trans("SellFinished"); ?></h3><br>
 
 <script type="text/javascript">
 
@@ -45,3 +46,6 @@ $langs->load("bills");
 <p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
 
 </div>
+</div>
+<br>
+
