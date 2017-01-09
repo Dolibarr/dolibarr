@@ -294,8 +294,8 @@ class Notify
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// Define some vars
-	    $application = $mysoc->name;
-	    //if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
+	    $application = 'Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
 	    $replyto = $conf->notification->email_from;
 	    $filename = basename($file);
         $mimefile = dol_mimetype($file);
@@ -356,7 +356,7 @@ class Notify
 	                		$outputlangs->setDefaultLang($obj->default_lang);
 	                	}
 
-	                	$subject = '['.$application.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+	                	$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
 	                	
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -524,7 +524,7 @@ class Notify
 		        $link = '';
 		        $num++;
 
-		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+		        $subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
 		        switch ($notifcode) {
 					case 'BILL_VALIDATE':
