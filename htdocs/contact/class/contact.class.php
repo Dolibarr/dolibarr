@@ -130,6 +130,7 @@ class Contact extends CommonObject
 			$clause = "AND";
 		}
 		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
         if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
         
 		$resql=$this->db->query($sql);
