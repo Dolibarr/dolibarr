@@ -278,12 +278,20 @@ class Notify
      */
     function send($notifcode, $object)
     {
-        global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
+        global $user,$conf,$langs,$mysoc;
+        global $hookmanager;
+        global $dolibarr_main_url_root;
 
 		if (! in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+	    if (! is_object($hookmanager))
+	    {
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	        $hookmanager=new HookManager($this->db);
+	    }
+	    $hookmanager->initHooks(array('notification'));
+	    
 	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
@@ -443,6 +451,14 @@ class Notify
 	                    $message.= $mesg;
 	                    if ($link) $message=dol_concatdesc($message,$urlwithroot.$link);
 
+	                    $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+	                    $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	                    if (empty($reshook))
+	                    {
+	                        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+	                        if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+	                    }
+	                     
 	                    $mailfile = new CMailFile(
 	                        $subject,
 	                        $sendto,
@@ -637,7 +653,15 @@ class Notify
 
 		        if ($sendto)
 		        {
-		        	$mailfile = new CMailFile(
+       		        $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+			        $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+			        if (empty($reshook))
+			        {
+		    	        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+		        	    if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+			        }
+		        
+		            $mailfile = new CMailFile(
 		        		$subject,
 		        		$sendto,
 		        		$replyto,

@@ -116,8 +116,8 @@ class HookManager
      * 	    @param		array	$parameters		Array of parameters
      * 		@param		Object	$object			Object to use hooks on
      * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For 'addreplace hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
-     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
+     * 		@return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results bu hook and set into ->resArray for caller.
      *                                          All types can also return some values into an array ->results.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
@@ -142,6 +142,7 @@ class HookManager
 				'formObjectOptions',
 				'formattachOptions',
 				'formBuilddocLineOptions',
+			    'formatNotificationMessage',
 			    'getFormMail',
 			    'getIdProfUrl',
 				'moveUploadedFile',
