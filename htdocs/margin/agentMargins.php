@@ -115,8 +115,8 @@ $sql = "SELECT";
 if ($agentid > 0) $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge" ;
+$sql.= " sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(d.total_ht) - sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE)?-1:$conf->global->AGENT_CONTACT_TYPE);
@@ -183,6 +183,8 @@ if ($result)
 		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
+	$cumul_achat = 0;
+	$cumul_vente = 0;
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
@@ -232,8 +234,30 @@ if ($result)
 			print "</tr>\n";
 
 			$i++;
+			$cumul_achat += $objp->buying_price;
+			$cumul_vente += $objp->selling_price;
 		}
 	}
+	// affichage totaux marges
+	$var=!$var;
+	$totalMargin = $cumul_vente - $cumul_achat;
+	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+	$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+
+	print '<tr class="liste_total">';
+	if ($client)
+	    print '<td colspan=2>';
+  	else
+    	print '<td>';
+  	print $langs->trans('TotalMargin')."</td>";
+	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+	print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+	print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
+		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+	print "</tr>\n";
 	print "</table>";
 }
 else
