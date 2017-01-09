@@ -82,7 +82,7 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 	if ($this->situation_cycle_ref) {
 		print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 	}
-	if (! empty($usemargins) && !empty(($user->rights->margins->liretous)))
+	if (! empty($usemargins) && !empty(($user->rights->margins->creer)))
 	{
 		?>
 		<td align="right" class="margininfos linecolmargin1">
@@ -273,7 +273,7 @@ else {
 		$coldisplay++;
 		print '<td class="nobottom nowrap" align="right"><input type="text" size="1" value="0" name="progress">%</td>';
 	}
-	if (! empty($usemargins) && !empty(($user->rights->margins->liretous)))
+	if (! empty($usemargins) && !empty(($user->rights->margins->creer)))
 	{
 		?>
 		<td align="right" class="nobottom margininfos linecolmargin">
@@ -309,7 +309,7 @@ else {
 	?>
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<?php
-		if (empty($user->rights->margins->liretous))
+		if (empty($user->rights->margins->creer))
 		{
 		?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
@@ -627,7 +627,7 @@ jQuery(document).ready(function() {
     	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
     
     	      		<?php
-    	    	    if (!empty($user->rights->margins->liretous))
+    	    	    if (!empty($user->rights->margins->creer))
     				{
     				?>
     					$("#fournprice_predef").show();
