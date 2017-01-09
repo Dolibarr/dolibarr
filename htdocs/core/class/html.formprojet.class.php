@@ -79,7 +79,7 @@ class FormProjets
 				$project->fetch($selected);
 				$selected_input_value=$project->ref;
 			}
-			$urloption='socid='.$socid.'&htmlname='.$htmlname;
+			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
 			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 //				'update' => array(
 //					'projectid' => 'id'
@@ -458,13 +458,16 @@ class FormProjets
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
 		$projectkey="fk_projet";
 		//print $table_element;
 		switch ($table_element)
 		{
+			case "loan":
+				$sql = "SELECT t.rowid, t.label as ref";
+				break;
 			case "facture":
 				$sql = "SELECT t.rowid, t.facnumber as ref";
 				break;

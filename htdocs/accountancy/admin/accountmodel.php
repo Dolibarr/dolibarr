@@ -888,18 +888,18 @@ if ($id)
             {
                 if ($value == 'country')
                 {
-                    print '<td>';
+                    print '<td class="liste_titre">';
                     print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
                     print '</td>';
                 }
                 else
                 {
-                    print '<td></td>';
+                    print '<td class="liste_titre"></td>';
                 }
             }
         }
         if ($id == 4) print '<td></td>';
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     	print '<td class="liste_titre" colspan="2" align="right">';
     	$searchpitco=$form->showFilterAndCheckAddButtons(0);
     	print $searchpitco;

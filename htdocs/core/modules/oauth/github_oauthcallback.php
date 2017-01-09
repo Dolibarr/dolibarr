@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/google_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/github_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -26,7 +26,7 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
+use OAuth\OAuth2\Service\GitHub;
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -45,7 +45,7 @@ $backtourl = GETPOST('backtourl', 'alpha');
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/google_oauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/github_oauthcallback.php');
 
 
 /**
@@ -65,8 +65,8 @@ $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
 $credentials = new Credentials(
-    $conf->global->OAUTH_GOOGLE_ID,
-    $conf->global->OAUTH_GOOGLE_SECRET,
+    $conf->global->OAUTH_GITHUB_ID,
+    $conf->global->OAUTH_GITHUB_SECRET,
     $currentUri->getAbsoluteUri()
 );
 
@@ -81,10 +81,10 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 /** @var $apiService Service */
-$apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
+$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
-$apiService->setAccessType('offline');
+//$apiService->setAccessType('offline');
 
 $langs->load("oauth");
 
@@ -96,7 +96,7 @@ $langs->load("oauth");
 
 if ($action == 'delete') 
 {
-    $storage->clearToken('Google');
+    $storage->clearToken('GitHub');
     
     setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
     
@@ -120,10 +120,15 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
     try {
         //var_dump($_GET['code']);
         //var_dump($state);
-        //var_dump($apiService);      // OAuth\OAuth2\Service\Google
+        //var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
         
-        $token = $apiService->requestAccessToken($_GET['code'], $state);
-        
+        //$token = $apiService->requestAccessToken($_GET['code'], $state);
+        $token = $apiService->requestAccessToken($_GET['code']);                
+        // Github is a service that does not need state yo be stored.
+        // Into constructor of GitHub, the call
+        // parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
+        // has not the ending parameter to true like the Google class constructor.
+
         setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
     } catch (Exception $e) {
         print $e->getMessage();

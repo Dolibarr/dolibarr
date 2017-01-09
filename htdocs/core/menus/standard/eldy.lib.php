@@ -111,13 +111,13 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 
 		$chaine="";
 		if (! empty($conf->product->enabled)) {
-			$chaine.=$langs->trans("Products");
+			$chaine.=$langs->trans("TMenuProducts");
 		}
 		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) {
-			$chaine.="/";
+			$chaine.=" | ";
 		}
 		if (! empty($conf->service->enabled)) {
-			$chaine.=$langs->trans("Services");
+			$chaine.=$langs->trans("TMenuServices");
 		}
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
@@ -261,7 +261,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$idsel='tools';
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("Tools"), $showmode, DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_text_menu_entry($langs->trans("TMenuTools"), $showmode, DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
 		$menu->add('/core/tools.php?mainmenu=tools&amp;leftmenu=', $langs->trans("Tools"), 0, $showmode, $atarget, "tools", '');
 	}

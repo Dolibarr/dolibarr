@@ -223,7 +223,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Categorisation dans projet
+	// Link to a project
 	else if ($action == 'classin' && $user->rights->commande->creer)
 	{
 		$object->setProject(GETPOST('projectid'));
