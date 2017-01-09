@@ -138,9 +138,9 @@ if ($id > 0 || ! empty($ref))
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
             $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
-            $sql.= " sum(d.qty) as qty,";
-            $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";					// always positive
-            $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// always positive
+            $sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
+		$sql.= " sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as buying_price,";
+		$sql.= " sum(d.total_ht) - sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as marge";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -229,16 +229,9 @@ if ($id > 0 || ! empty($ref))
                 // affichage totaux marges
                 $var=!$var;
                 $totalMargin = $cumul_vente - $cumul_achat;
-                if ($totalMargin < 0)
-                {
-                    $marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-                    $markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-                }
-                else
-                {
-                    $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-                    $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-                }
+                $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+                $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+                
                 print '<tr class="liste_total">';
                 print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
                 print '<td align="right">'.price($cumul_vente, null, null, null, null, $rounding)."</td>\n";

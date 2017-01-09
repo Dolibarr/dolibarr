@@ -149,9 +149,10 @@ if ($socid > 0)
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-    $sql.= " sum(d.total_ht) as selling_price,";						// may be negative or positive
-    $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";				// always positive
-    $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge";	// always positive
+    $sql.= " sum(d.total_ht) as selling_price,";
+	$sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
+	$sql.= " sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as buying_price,";
+	$sql.= " sum(d.total_ht) - sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as marge";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql.= ", ".MAIN_DB_PREFIX."facture as f";
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -227,23 +228,15 @@ if ($socid > 0)
     			print "</tr>\n";
     			$i++;
     			$cumul_vente += $objp->selling_price;
-    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
+    			$cumul_achat += $objp->buying_price;
     		}
     	}
 
     	// affichage totaux marges
     	$var=!$var;
     	$totalMargin = $cumul_vente - $cumul_achat;
-    	if ($totalMargin < 0)
-    	{
-    		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-    		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-    	}
-    	else
-    	{
-    		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-    		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-    	}
+    	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+    	$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	
     	// Total
     	print '<tr class="liste_total">';
