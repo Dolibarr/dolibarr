@@ -321,18 +321,7 @@ class Notify
 
 		// Check notification per user
         $sql.= "\nUNION\n";
-        /*
-		$sql.= "SELECT  1 as user, c.email, c.rowid as cid, c.lastname, c.firstname, '$langs->defaultlang' as default_lang,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
-        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-        $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-        $sql.= " ".MAIN_DB_PREFIX."element_contact as ec";
-        $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
-        $sql.= " AND n.fk_user = ec.fk_socpeople";
-        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-        $sql .= " AND ec.element_id = ".$object->id;*/
+
         $sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
         $sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
@@ -367,6 +356,8 @@ class Notify
 	                		$outputlangs->setDefaultLang($obj->default_lang);
 	                	}
 
+	                	$subject = '['.$application.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+	                	
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link='/compta/facture.php?facid='.$object->id;
@@ -445,8 +436,6 @@ class Notify
 						{
 							$filepdf = $pdf_path;
 						}
-
-	    				$subject = '['.$application.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
 
 	                	$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 	                	$message.= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
@@ -535,7 +524,9 @@ class Notify
 		        $link = '';
 		        $num++;
 
-				switch ($notifcode) {
+		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+
+		        switch ($notifcode) {
 					case 'BILL_VALIDATE':
 						$link='/compta/facture.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
@@ -621,8 +612,6 @@ class Notify
 				{
 					$filepdf = $pdf_path;
 				}
-
-		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
 		        $message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 		        $message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
