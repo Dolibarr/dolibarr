@@ -66,6 +66,7 @@ class printing_printgcp extends PrintingDriver
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
         $this->db = $db;
         
         if (!$conf->oauth->enabled) {
@@ -117,10 +118,28 @@ class printing_printgcp extends PrintingDriver
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
                 $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
                 if ($token_ok) {
+                    $expiredat='';
+                    
                     $refreshtoken = $token->getRefreshToken();
+                    
+                    $endoflife=$token->getEndOfLife();
+
+                    if ($endoflife == $token::EOL_NEVER_EXPIRES)
+                    {
+                        $expiredat = $langs->trans("Never");
+                    }
+                    elseif ($endoflife == $token::EOL_UNKNOWN)
+                    {
+                        $expiredat = $langs->trans("Unknown");
+                    }
+                    else
+                    {
+                        $expiredat=dol_print_date($endoflife, "dayhour");
+                    }
+                    
                     $this->conf[] = array('varname'=>'TOKEN_REFRESH',   'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'TOKEN_EXPIRED',   'info'=>($expire?'Yes':'No'), 'type'=>'info');
-                    $this->conf[] = array('varname'=>'TOKEN_EXPIRE_AT', 'info'=>(dol_print_date($token->getEndOfLife(), "dayhour")), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'TOKEN_EXPIRE_AT', 'info'=>($expiredat), 'type'=>'info');
                 }
                 /*
                 if ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)) {
