@@ -83,6 +83,8 @@ class FormVentilation extends Form
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
+		$out = '';
+		
     	$options = array();
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
@@ -109,7 +111,7 @@ class FormVentilation extends Form
     			return -1;
     		}
 
-    		$out = ajax_combobox($htmlname, $event);
+    		$out .= ajax_combobox($htmlname, $event);
 
     		$selected = 0;
     		while ($obj = $this->db->fetch_object($resql))

@@ -286,7 +286,6 @@ class Website extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
@@ -296,7 +295,6 @@ class Website extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
-		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -314,7 +312,7 @@ class Website extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -323,7 +321,7 @@ class Website extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new WebsiteLine();
+				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
 				
@@ -650,50 +648,3 @@ class Website extends CommonObject
 
 }
 
-/**
- * Class WebsiteLine
- */
-class WebsiteLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-	/**
-	 * @var int
-	 */
-	public $entity;
-	/**
-	 * @var string
-	 */
-	public $ref;
-	/**
-	 * @var string
-	 */
-	public $description;
-	/**
-	 * @var int
-	 */
-	public $status;
-	/**
-	 * @var int
-	 */
-	public $fk_default_home;
-	/**
-	 * @var string
-	 */
-	public $virtualhost;
-	/**
-	 * @var mixed
-	 */
-	public $date_creation;
-	/**
-	 * @var mixed
-	 */
-	public $date_modification;
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
-	
-}

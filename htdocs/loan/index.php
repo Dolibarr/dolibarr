@@ -157,7 +157,7 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';
+		print '<td>'.$loan_static->getNomUrl(1, 42).'</td>';
 
 		// Label
 		print '<td>'.dol_trunc($obj->label,42).'</td>';

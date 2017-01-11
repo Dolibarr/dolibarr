@@ -242,6 +242,7 @@ body {
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
+	line-height: 130%;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -599,6 +600,7 @@ div.myavailability {
 .div-table-responsive {
     overflow-x: auto;
     min-height: 0.01%;
+    line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
 div.fiche>form>div.div-table-responsive {
