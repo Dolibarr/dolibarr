@@ -64,9 +64,10 @@ class CompanyBankAccount extends Account
      * Create bank information record
      *
      * @param   User   $user		User
+     * @param   int    $notrigger   1=Disable triggers
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create(User $user = null)
+    function create(User $user = null, $notrigger=0)
     {
         $now=dol_now();
 
