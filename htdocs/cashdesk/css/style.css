@@ -214,6 +214,7 @@ p.titre {
 
 .blocksellfinished {
 	min-width: 215px;
+	margin-top: 8px;
 }
 .titre1 {
 	font-weight: bold;
