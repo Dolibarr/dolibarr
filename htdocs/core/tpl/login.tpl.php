@@ -89,7 +89,7 @@ $(document).ready(function () {
 
 <div id="login_right">
 
-<table class="left centpercent" title="Enter login details">
+<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 <!-- Login -->
 <tr>
 <td class="nowrap center valignmiddle">

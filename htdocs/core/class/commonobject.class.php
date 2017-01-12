@@ -2448,9 +2448,10 @@ abstract class CommonObject
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *  Possible usage for parameters:
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
-     *  - one couple id+type is provided -> this will set $justsource or $justtarget
-     *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
-     *
+     *  - source id+type -> will get target list linked to source 
+     *  - target id+type -> will get source list linked to target 
+     *  - source id+type + target type -> will get target list of the type 
+     *  - target id+type + target source -> will get source list of the type 
      *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)

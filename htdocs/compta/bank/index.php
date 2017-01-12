@@ -449,7 +449,7 @@ foreach ($accounts as $key=>$type)
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
     {
-        print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
+        print '<td>'.$acc->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
     
