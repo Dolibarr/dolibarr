@@ -99,17 +99,7 @@ if (empty($reshook))
     		$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
     		$capital 	= price2num(GETPOST('capital'));
     
-    		if (! $datestart)
-    		{
-    			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
-    			$action = 'create';
-    		}
-    		elseif (! $dateend)
-    		{
-    			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
-    			$action = 'create';
-    		}
-    		elseif (! $capital)
+    		if (! $capital)
     		{
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
     			$action = 'create';
@@ -155,13 +145,31 @@ if (empty($reshook))
     	if (! $cancel)
     	{
     		$result = $object->fetch($id);
-    		if ($result > 0)
+
+    		$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+    		$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+    		$capital 	= price2num(GETPOST('capital'));
+    
+    		if (! $capital)
     		{
-    			$object->datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-    			$object->dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
-    			$object->capital	= price2num(GETPOST("capital"));
+    			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
+    			$action = 'edit';
+    		}
+    		else
+    		{
+				$object->datestart	= $datestart;
+				$object->dateend	= $dateend;
+				$object->capital	= $capital;
     			$object->nbterm		= GETPOST("nbterm");
     			$object->rate		= GETPOST("rate");
+
+				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
+				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
+				$accountancy_account_interest	= GETPOST('accountancy_account_interest');
+	
+				if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
+				if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
+				if ($accountancy_account_interest <= 0) { $object->account_interest = ''; } else { $object->account_interest = $accountancy_account_interest; }
     		}
     
             $result = $object->update($user);
@@ -255,21 +263,21 @@ if ($action == 'create')
 
 	// Date Start
 	print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
+    print '<td>'.$langs->trans("DateStart").'</td><td>';
     print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Date End
 	print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
+    print '<td>'.$langs->trans("DateEnd").'</td><td>';
     print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Number of terms
-	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
+	print '<tr><td>'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
 
 	// Rate
-    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
+    print '<tr><td>'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
 
     // Project
     if (! empty($conf->projet->enabled))
@@ -308,19 +316,19 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		// Accountancy_account_capital
-        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td>';
 		print $formaccountancy->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
         print '</td></tr>';
 
 		// Accountancy_account_insurance
-        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+        print '<tr><td>'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
         print '<td>';
 		print $formaccountancy->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
         print '</td></tr>';
 
 		// Accountancy_account_interest
-        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+        print '<tr><td>'.$langs->trans("LoanAccountancyInterestCode").'</td>';
         print '<td>';
 		print $formaccountancy->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
         print '</td></tr>';
@@ -328,17 +336,17 @@ if ($action == 'create')
 	else // For external software 
 	{
         // Accountancy_account_capital
-        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
         print '</td></tr>';
 
 		// Accountancy_account_insurance
-        print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+        print '<tr><td>'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
         print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
         print '</td></tr>';
 
 		// Accountancy_account_interest
-        print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+        print '<tr><td>'.$langs->trans("LoanAccountancyInterestCode").'</td>';
         print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
         print '</td></tr>';
 	}
@@ -398,7 +406,7 @@ if ($id > 0)
 		// Ref loan
 		$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
-		    // Project
+		// Project
 	    if (! empty($conf->projet->enabled))
 	    {
 	        $langs->load("projects");
@@ -442,29 +450,10 @@ if ($id > 0)
 
 		print '<table class="border" width="100%">';
 
-		/*
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-		print $form->showrefnav($object,'id');
-		print "</td></tr>";
-
-		// Label
-		if ($action == 'edit')
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td>';
-			print '<input type="text" name="label" size="40" value="'.$object->label.'">';
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-		}
-		*/
-
 		// Capital
 		if ($action == 'edit')
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>';
+			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("LoanCapital").'</td><td>';
 			print '<input name="capital" size="10" value="' . $object->capital . '"></td></tr>';
 			print '</td></tr>';
 		}
@@ -500,19 +489,53 @@ if ($id > 0)
 		print "</td></tr>";
 
 		// Nbterms
-		print '<tr><td>'.$langs->trans("Nbterms").'</td><td>'.$object->nbterm.'</td></tr>';
+		print '<tr><td">'.$langs->trans("Nbterms").'</td>';
+		print '<td>';
+		if ($action == 'edit')
+		{
+			print '<input name="nbterm" size="4" value="' . $object->nbterm . '">';
+		}
+		else
+		{
+			print $object->nbterm;
+		}
+		print '</td></tr>';
 
 		// Rate
-		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.' %</td></tr>';
+		print '<tr><td">'.$langs->trans("Rate").'</td>';
+		print '<td>';
+		if ($action == 'edit')
+		{
+			print '<input name="rate" size="4" value="' . $object->rate . '">%';
+		}
+		else
+		{
+			print $object->rate . '%';
+		}
+		print '</td></tr>';
 
         // Accountancy account capital
 		print '<tr><td class="nowrap">';
         print $langs->trans("LoanAccountancyCapitalCode");
         print '</td><td>';
-		if (! empty($conf->accounting->enabled)) {
-			print length_accountg($object->account_capital);
-        } else {
-			print $object->account_capital;
+		if ($action == 'edit')
+		{
+			if (! empty($conf->accounting->enabled))
+			{
+				print $formaccountancy->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+			}
+			else
+			{
+				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
+			}
+		}
+		else
+		{
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->account_capital);
+			} else {
+				print $object->account_capital;
+			}
 		}
 		print '</td></tr>';
 
@@ -520,10 +543,24 @@ if ($id > 0)
 		print '<tr><td class="nowrap">';
         print $langs->trans("LoanAccountancyInsuranceCode");
         print '</td><td>';
-		if (! empty($conf->accounting->enabled)) {
-			print length_accountg($object->account_insurance);
-        } else {
-			print $object->account_insurance;
+		if ($action == 'edit')
+		{
+			if (! empty($conf->accounting->enabled))
+			{
+				print $formaccountancy->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+			}
+			else
+			{
+				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
+			}
+		}
+		else
+		{
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->account_insurance);
+			} else {
+				print $object->account_insurance;
+			}
 		}
 		print '</td></tr>';
 
@@ -531,16 +568,26 @@ if ($id > 0)
 		print '<tr><td class="nowrap">';
         print $langs->trans("LoanAccountancyInterestCode");
         print '</td><td>';
-		if (! empty($conf->accounting->enabled)) {
-			print length_accountg($object->account_interest);
-        } else {
-			print $object->account_interest;
+		if ($action == 'edit')
+		{
+			if (! empty($conf->accounting->enabled))
+			{
+				print $formaccountancy->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+			}
+			else
+			{
+				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
+			}
+		}
+		else
+		{
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->account_interest);
+			} else {
+				print $object->account_interest;
+			}
 		}
 		print '</td></tr>';
-
-		
-		// Status
-		// print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
 		print '</table>';
 
