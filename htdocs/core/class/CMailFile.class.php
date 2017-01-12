@@ -482,7 +482,7 @@ class CMailFile
             }
 
             // Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
-            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL=6;
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL=10;
             $tmparray1 = explode(',', $this->addr_to);
             if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)
             {
@@ -490,7 +490,7 @@ class CMailFile
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL=2;
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL=10;
             $tmparray2 = explode(',', $this->addr_cc);
             if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)
             {
@@ -498,7 +498,7 @@ class CMailFile
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL=2;
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL=10;
             $tmparray3 = explode(',', $this->addr_bcc);
             if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)
             {
