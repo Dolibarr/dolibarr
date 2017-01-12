@@ -447,6 +447,7 @@ DeletePicture=Picture delete
 ConfirmDeletePicture=Confirm picture deletion?
 Login=Login
 CurrentLogin=Current login
+EnterLoginDetail=Enter login details
 January=January
 February=February
 March=March
