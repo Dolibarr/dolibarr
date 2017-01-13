@@ -7,6 +7,7 @@
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,9 @@ class modAgenda extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("companies");
+
+		// Module parts
+        $this->module_parts = array('js' => array('/core/js/agenda_notification.js.php'));
 
 		// Constants
 		//-----------

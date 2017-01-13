@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  *
@@ -407,6 +407,34 @@ $tmplist=array('show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->tran
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
 
+// AGENDA NOTIFICATION
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+
+if (empty($conf->global->AGENDA_NOTIFICATION)) {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+    print '</td></tr>'."\n";
+} else {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+    print '</td></tr>'."\n";
+
+    print '<tr '.$bc[$var].'>'."\n";
+    print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
+    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td align="right">'."\n";
+
+
+    if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+    }
+
+    print '</td></tr>'."\n";
+}
+
 print '</table>';
 
 dol_fiche_end();
@@ -414,7 +442,6 @@ dol_fiche_end();
 print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
-
 
 print "<br>";
 
