@@ -1412,19 +1412,26 @@ class pdf_crabe extends ModelePDFFactures
 		
 		if ($this->situationinvoice) {
 			$pdf->line($this->posxprogress - 1, $tab_top, $this->posxprogress - 1, $tab_top + $tab_height);
-			$pdf->SetXY($this->posxprogress, $tab_top+1);
-			if($conf->global->PRODUCT_USE_UNITS)
-			{
-				$pdf->MultiCell($this->posxunit-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+			
+			if (empty($hidetop)) {
+				
+				$pdf->SetXY($this->posxprogress, $tab_top+1);
+				
+				if($conf->global->PRODUCT_USE_UNITS)
+				{
+					$pdf->MultiCell($this->posxunit-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+				else if ($this->atleastonediscount)
+				{
+					$pdf->MultiCell($this->posxdiscount-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+				else
+				{
+					$pdf->MultiCell($this->postotalht-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+			
 			}
-			else if ($this->atleastonediscount)
-			{
-				$pdf->MultiCell($this->posxdiscount-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
-			}
-			else
-			{
-				$pdf->MultiCell($this->postotalht-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
-			}
+			
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
