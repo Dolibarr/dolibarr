@@ -204,59 +204,80 @@ if ($action == "transfert_stock" && ! $cancel)
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-							$pdluoid=GETPOST('pdluoid','int');
-
-				if ($pdluoid>0)
+				$do_tranfer = true;
+					
+				if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
 				{
-				    $pdluo = new Productbatch($db);
-				    $result=$pdluo->fetch($pdluoid);
-
-				    if ($result>0 && $pdluo->id)
-				    {
-                        // Remove stock
-                        $result1=$product->correct_stock_batch(
-				            $user,
-				            $pdluo->warehouseid,
-				            GETPOST("nbpiece",'int'),
-				            1,
-				            GETPOST("label",'san_alpha'),
-				            $pricesrc,
-				            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
-				        );
-                        // Add stock
-                        $result2=$product->correct_stock_batch(
-                            $user,
-                            GETPOST("id_entrepot_destination",'int'),
-                            GETPOST("nbpiece",'int'),
-                            0,
-                            GETPOST("label",'san_alpha'),
-                            $pricedest,
-                            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
-                        );
-				    }
+					$fk_warehouse_source = GETPOST("id_entrepot_source");
+					$nb_unit = GETPOST("nbpiece",'int');
+					
+					if (empty($product->stock_warehouse[$fk_warehouse_source]->real) || $product->stock_warehouse[$fk_warehouse_source]->real < $nb_unit) 
+					{
+						$do_tranfer = false;
+						$result1 = $result2 = -1;
+						$action='';
+						$product->error = $langs->trans('qtyToTranferIsNotEnough');
+					}
 				}
-				else
+				
+				if ($do_tranfer)
 				{
-                    // Remove stock
-                    $result1=$product->correct_stock(
-                        $user,
-                        GETPOST("id_entrepot_source"),
-                        GETPOST("nbpiece"),
-                        1,
-                        GETPOST("label"),
-                        $pricesrc
-                    );
+					$pdluoid=GETPOST('pdluoid','int');
 
-                    // Add stock
-                    $result2=$product->correct_stock(
-                        $user,
-                        GETPOST("id_entrepot_destination"),
-                        GETPOST("nbpiece"),
-                        0,
-                        GETPOST("label"),
-                        $pricedest
-                    );
+					if ($pdluoid>0)
+					{
+					    $pdluo = new Productbatch($db);
+					    $result=$pdluo->fetch($pdluoid);
+	
+					    if ($result>0 && $pdluo->id)
+					    {
+	                        // Remove stock
+	                        $result1=$product->correct_stock_batch(
+					            $user,
+					            $pdluo->warehouseid,
+					            GETPOST("nbpiece",'int'),
+					            1,
+					            GETPOST("label",'san_alpha'),
+					            $pricesrc,
+					            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
+					        );
+	                        // Add stock
+	                        $result2=$product->correct_stock_batch(
+	                            $user,
+	                            GETPOST("id_entrepot_destination",'int'),
+	                            GETPOST("nbpiece",'int'),
+	                            0,
+	                            GETPOST("label",'san_alpha'),
+	                            $pricedest,
+	                            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
+	                        );
+					    }
+					}
+					else
+					{
+	                    // Remove stock
+	                    $result1=$product->correct_stock(
+	                        $user,
+	                        GETPOST("id_entrepot_source"),
+	                        GETPOST("nbpiece"),
+	                        1,
+	                        GETPOST("label"),
+	                        $pricesrc
+	                    );
+	
+	                    // Add stock
+	                    $result2=$product->correct_stock(
+	                        $user,
+	                        GETPOST("id_entrepot_destination"),
+	                        GETPOST("nbpiece"),
+	                        0,
+	                        GETPOST("label"),
+	                        $pricedest
+	                    );
+					}
+						
 				}
+				
 				if ($result1 >= 0 && $result2 >= 0)
 				{
 					$db->commit();

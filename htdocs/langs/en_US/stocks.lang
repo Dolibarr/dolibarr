@@ -123,3 +123,5 @@ StockMustBeEnoughForInvoice=Stock level must be enough to add product/service in
 StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
 StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
 WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=Source warehouse must be defined here when batch module is on. It will be used to list wich lot/serial is available for product that required lot/serial data for movement. If you want to send products from different warehouses, just make the shipment into several steps.
+WarehouseAllowNegativeTransfer=Allow transfer even without stock
+qtyToTranferIsNotEnough=You don't have enough stock from your source warehouse 
