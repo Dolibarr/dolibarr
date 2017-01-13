@@ -739,7 +739,7 @@ class ExtraFields
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.htmlentities($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
@@ -763,7 +763,7 @@ class ExtraFields
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.htmlentities($value).'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
