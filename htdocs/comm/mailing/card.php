@@ -755,7 +755,7 @@ else
 
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
 				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
-				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0=no limit).
+				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
@@ -769,8 +769,8 @@ else
 				}
 				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 					// The feature is forbidden from GUI, we show just message to use from command line.
 				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
@@ -783,8 +783,8 @@ else
 				}
 				else
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 				    $text='';
 				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
