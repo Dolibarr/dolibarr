@@ -6,7 +6,7 @@
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015-2007 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
  * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
@@ -434,6 +434,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	
@@ -797,7 +798,7 @@ if ($resql)
                 $thirdparty->name=$obj->name;
                 $thirdparty->client=$obj->client;
                 $thirdparty->code_client=$obj->code_client;
-                print $thirdparty->getNomUrl(1,'customer');
+                print $thirdparty->getNomUrl(1,'supplier');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
     		}
