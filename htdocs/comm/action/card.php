@@ -1338,13 +1338,26 @@ if ($id > 0)
 
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-
+           
+		    $filearray=dol_dir_list($filedir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+            $permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
+            
             $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
-
+            $delallowed=$user->rights->agenda->myactions->delete;
+            
             $var=true;
-
-            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+            
+            // $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+            
+			$formfile->list_of_documents(
+			    $filearray,
+			    $object,
+			    'actions',
+			    $param,
+			    0,
+			    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
+			    $permission
+			);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
