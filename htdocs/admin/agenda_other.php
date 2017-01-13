@@ -408,6 +408,7 @@ print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_
 print '</td></tr>'."\n";
 
 // AGENDA NOTIFICATION
+$var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
@@ -419,12 +420,11 @@ if (empty($conf->global->AGENDA_NOTIFICATION)) {
 } else {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
     print '</td></tr>'."\n";
-
+	$var=!$var;
     print '<tr '.$bc[$var].'>'."\n";
     print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right">'."\n";
-
 
     if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
