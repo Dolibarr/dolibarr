@@ -2412,6 +2412,9 @@ class Commande extends CommonOrder
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
@@ -2470,7 +2473,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
             $this->line->remise_percent=$remise_percent;
-            $this->line->subprice=$subprice;
+            $this->line->subprice=$pu_ht;
             $this->line->info_bits=$info_bits;
             $this->line->special_code=$special_code;
             $this->line->total_ht=$total_ht;
