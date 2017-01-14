@@ -130,4 +130,4 @@ if(!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTT
         });
         time_session += time_auto_update;
     }
-<?php } ?>
+<?php }
