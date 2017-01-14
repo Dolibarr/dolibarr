@@ -28,6 +28,5 @@ CREATE TABLE llx_website_page
 	content		  mediumtext,		-- text is not enough in size
     status        integer,
     date_creation     datetime,
-    date_modification datetime,
 	tms           timestamp
 ) ENGINE=innodb;

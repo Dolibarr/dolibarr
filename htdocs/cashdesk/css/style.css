@@ -115,7 +115,7 @@ li.menu_choix0 {
 		float: right;
 }
 
-/* ------------------- R�capitulatif des articles ------------------- */
+/* ------------------- Remind of products ------------------- */
 .liste_articles {
 	min-width: 215px;
 	float: right;
@@ -212,6 +212,9 @@ p.titre {
 	max-width: 900px;
 }
 
+.blocksellfinished {
+	min-width: 215px;
+}
 .titre1 {
 	font-weight: bold;
 	color: #ff9900;

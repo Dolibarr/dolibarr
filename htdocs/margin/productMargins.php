@@ -201,7 +201,7 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',0,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',$num,$num,'');
 
 	$moreforfilter='';
 	
@@ -301,16 +301,10 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	/*if ($totalMargin < 0)
-	{
-		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-	}
-	else
-	{*/
-		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-	//}
+
+	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+	$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+
 	print '<tr class="liste_total">';
 	if ($id > 0)
 		print '<td colspan=2>';

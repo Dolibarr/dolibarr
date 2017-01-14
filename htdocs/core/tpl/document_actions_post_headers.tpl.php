@@ -72,6 +72,9 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+$disablemove=1;
+if ($modulepart == 'produit') $disablemove=0;
+    
 // List of document
 $formfile->list_of_documents(
     $filearray,
@@ -79,7 +82,7 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
+    $relativepathwithnofile,		// relative path with no file. For example "0/1"
     $permission,
     0,
     '',
@@ -87,7 +90,11 @@ $formfile->list_of_documents(
     '',
     '',
     0,
-    $permtoedit
+    $permtoedit,
+    $upload_dir,
+    $sortfield,
+    $sortorder,
+    $disablemove
 );
 
 print "<br>";

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -830,6 +830,7 @@ class ExpenseReport extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
         $sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
+		$sql.= ' ORDER BY de.date ASC';
 
         dol_syslog('ExpenseReport::fetch_lines sql='.$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1207,15 +1208,14 @@ class ExpenseReport extends CommonObject
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
         $num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
 
-        $sql = 'SELECT de.ref_number_int';
+        $sql = 'SELECT MAX(de.ref_number_int) as max';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
-        $sql.= ' ORDER BY de.ref_number_int DESC';
-
+        
         $result = $this->db->query($sql);
 
         if($this->db->num_rows($result) > 0):
         $objp = $this->db->fetch_object($result);
-        $this->ref = $objp->ref_number_int;
+        $this->ref = $objp->max;
         $this->ref++;
         while(strlen($this->ref) < $num_car):
         $this->ref = "0".$this->ref;

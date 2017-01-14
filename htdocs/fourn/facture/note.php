@@ -75,6 +75,8 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 
+	$alreadypaid=$object->getSommePaiement();
+	
 	$head = facturefourn_prepare_head($object);
 	$titre=$langs->trans('SupplierInvoice');
 	dol_fiche_head($head, 'note', $titre, 0, 'bill');
@@ -82,23 +84,59 @@ if ($object->id > 0)
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	// Supplier invoice card
+    $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td class="titlefield nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	print '</td>';
-	print "</tr>\n";
+    $morehtmlref='<div class="refidno">';
+    // Ref supplier
+    $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    // Project
+    if (! empty($conf->projet->enabled))
+    {
+        $langs->load("projects");
+        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+    	if ($user->rights->fournisseur->commande->creer)
+    	{
+    	    if ($action != 'classify')
+    	        // $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+    	        $morehtmlref.=' : ';
+				if ($action == 'classify') {
+    	            //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+    	            $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+    	            $morehtmlref.='<input type="hidden" name="action" value="classin">';
+    	            $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	            $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+    	            $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+    	            $morehtmlref.='</form>';
+    	        } else {
+    	            $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+    	        }
+    	} else {
+    	    if (! empty($object->fk_project)) {
+    	        $proj = new Project($db);
+    	        $proj->fetch($object->fk_project);
+    	        $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+    	        $morehtmlref.=$proj->ref;
+    	        $morehtmlref.='</a>';
+    	    } else {
+    	        $morehtmlref.='';
+    	    }
+    	}
+    }
+    $morehtmlref.='</div>';
 
-	// Ref supplier
-	print '<tr><td class="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$object->ref_supplier.'</td>';
-	print "</tr>\n";
+    $object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	// Company
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
 	// Type
-	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
+	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 	print $object->getLibType();
 	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
 	{
@@ -137,38 +175,35 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
+	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
 	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td></tr>';
 
-	// Status
-	$alreadypaid=$object->getSommePaiement();
-	print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
-
 	// Amount
-	print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="3">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
 	if ($societe->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-		print '<td colspan="3">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 	}
 	if ($societe->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-		print '<td colspan="3">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 	}
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 	print "</table>";
 
 	print '<br>';
 
+	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

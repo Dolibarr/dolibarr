@@ -343,8 +343,8 @@ ul {
 
 
 .button {
-    background: #eee;
-    /*border: 1px solid #C0C0C0;*/
+    background: #fcfcfc;
+    border: 1px solid #d0d0d0;
     padding: 0.3em 0.7em;
     margin: 0 0.5em;
     -moz-border-radius:0 5px 0 5px;
