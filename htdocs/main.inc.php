@@ -1935,11 +1935,11 @@ if (! function_exists("llxFooter"))
                       var scrollBottom = $(window).scrollTop() + $(window).height();
                       //console.log(scrollBottom);
                       diffoutsidebottom = (posbottom - scrollBottom);
-                      console.log("diffoutsidebottom (positive = outside) = "+diffoutsidebottom);
+                      console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
                       if (diffoutsidebottom > 0)
                       {
-                            pix = "-"+diffoutsidebottom+"px";
-                            console.log(pix);
+                            pix = "-"+(diffoutsidebottom+8)+"px";
+                            console.log("We reposition top by "+pix);
                             $(this).parent().parent().find(\'dd\').css("top", pix);
                       }
                       // $(".dropdown dd ul").slideToggle(\'fast\');

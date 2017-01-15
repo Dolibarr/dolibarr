@@ -3184,7 +3184,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
+ *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtml			More html to show
@@ -3193,7 +3193,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 
@@ -3223,7 +3223,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines >= 0) print ' ('.$totalnboflines.')';
+	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center

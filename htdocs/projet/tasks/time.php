@@ -52,7 +52,7 @@ $search_value=GETPOST('search_value','int');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
@@ -170,7 +170,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 	}
 }
 
-if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
+if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->lire)
 {
 	$error=0;
 
@@ -183,7 +183,8 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 	if (! $error)
 	{
 		$object->fetch($id, $ref);
-
+		// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
+		
 		$object->timespent_id = $_POST["lineid"];
 		$object->timespent_note = $_POST["timespent_note_line"];
 		$object->timespent_old_duration = $_POST["old_duration"];
@@ -217,9 +218,10 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->creer)
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->lire)
 {
 	$object->fetchTimeSpent($_GET['lineid']);
+	// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 	$result = $object->delTimeSpent($user);
 
 	if ($result < 0)
@@ -789,6 +791,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$tasktmp = new Task($db);
 		
 		$i = 0;
+
+		$childids = $user->getAllChildIds();
+		
 		$total = 0;
 		$totalvalue = 0;
 		$totalarray=array();
@@ -933,17 +938,20 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
-			else if ($user->rights->projet->creer)
+			else if ($user->rights->projet->lire)    // Read project and enter time consumed on assigned tasks
 			{
-				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
-				print img_edit();
-				print '</a>';
-
-				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
-				print img_delete();
-				print '</a>';
+			    if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
+			    {
+    				print '&nbsp;';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+    				print img_edit();
+    				print '</a>';
+    
+    				print '&nbsp;';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+    				print img_delete();
+    				print '</a>';
+			    }
 			}
         	print '</td>';
         	if (! $i) $totalarray['nbfield']++;
