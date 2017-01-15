@@ -30,7 +30,7 @@ session_start();
 $time_update = 60;
 
 if (! empty($conf->global->AGENDA_NOTIFICATION)) {
-    if ($_SESSION['auto_check_events'] <= (int)$time) {
+    if ($_SESSION['auto_check_events'] <= (int) $time) {
         $_SESSION['auto_check_events'] = $time + $time_update;
 
         $eventos = array();
