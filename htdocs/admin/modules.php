@@ -203,7 +203,7 @@ foreach ($modulesdir as $dir)
 		    					    }
 		    					    ksort($arrayofnatures);
 		    					}
-		    					
+
 		    					// Define array $categ with categ with at least one qualified module
 		    					if ($modulequalified > 0)
 		    					{
@@ -319,7 +319,7 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1);
     $moreforfilter.= '</div>';
     if (! empty($conf->global->MAIN_FEATURES_LEVEL))
     {
@@ -398,7 +398,7 @@ if ($mode != 'marketplace')
         if ($search_keyword)
         {
             $qualified=0;
-            if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename) 
+            if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
@@ -417,7 +417,7 @@ if ($mode != 'marketplace')
             {
                 //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
                 $publisher=dol_escape_htmltag($objMod->getPublisher());
-                if ($reg[1] && $reg[1] != $publisher) continue;
+                if ($reg[1] && dol_escape_htmltag($reg[1]) != $publisher) continue;
                 if (! $reg[1] && ! empty($publisher)) continue;
             }
             if ($search_nature == 'core' && $objMod->isCoreOrExternalModule() == 'external') continue;
@@ -496,11 +496,12 @@ if ($mode != 'marketplace')
         // Help
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
+
         if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
         else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
 
         $textexternal='';
-	$imginfo="info";
+        $imginfo="info";
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
  	    $imginfo="info_black";
@@ -646,6 +647,7 @@ if ($mode != 'marketplace')
 
         $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
         $text.=$langs->trans("DetectionNotPossible");
+
 
         print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20');
 
