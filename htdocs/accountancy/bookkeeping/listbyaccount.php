@@ -162,7 +162,7 @@ llxHeader('', $title_page);
 
 // List
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
 	if ($nbtotalofrecords < 0) {

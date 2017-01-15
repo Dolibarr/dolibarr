@@ -407,7 +407,7 @@ if ($rowid > 0)
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 		// Count total nb of records
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$resql = $db->query($sql);

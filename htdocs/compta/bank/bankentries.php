@@ -502,7 +502,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
