@@ -105,7 +105,7 @@ if(!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTT
 
                             var title = "<?php print $langs->trans('Agenda') ?>";
                             var extra = {
-                                icon: "<?php print dol_buildpath('/theme/eldy/img/bell.png', 1); ?>",
+                                icon: "<?php print dol_buildpath('/theme/common/bell.png', 1); ?>",
                                 body: body,
                                 tag: value['id']
                             };
