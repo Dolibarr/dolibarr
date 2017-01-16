@@ -127,7 +127,8 @@ class Holiday extends CommonObject
         // Check parameters
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-
+        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameter"; return -1; }
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
         $sql.= "fk_user,";
@@ -150,7 +151,7 @@ class Holiday extends CommonObject
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
-        $sql.= " '".$this->fk_type."',";
+        $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;
         $sql.= ")";
