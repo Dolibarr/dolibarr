@@ -127,7 +127,8 @@ class Holiday extends CommonObject
         // Check parameters
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-
+        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0)  { $this->error="ErrorBadParameter"; return -1; }
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
         $sql.= "fk_user,";
@@ -150,7 +151,7 @@ class Holiday extends CommonObject
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
-        $sql.= " '".$this->fk_type."',";
+        $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;
         $sql.= ")";
@@ -281,7 +282,7 @@ class Holiday extends CommonObject
 
         $sql = "SELECT";
         $sql.= " cp.rowid,";
-
+        
         $sql.= " cp.fk_user,";
         $sql.= " cp.date_create,";
         $sql.= " cp.description,";
@@ -868,7 +869,7 @@ class Holiday extends CommonObject
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
-        $sql.= " WHERE name = '".$name."'";
+        $sql.= " WHERE name = '".$this->db->escape($name)."'";
 
         dol_syslog(get_class($this).'::getConfCP name='.$name.' createifnotfound='.$createifnotfound, LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -882,7 +883,7 @@ class Holiday extends CommonObject
                 if ($createifnotfound)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
-                    $sql.= " VALUES('".$name."', '".$createifnotfound."')";
+                    $sql.= " VALUES('".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
                     $result = $this->db->query($sql);
                     if ($result) 
                     {
@@ -947,7 +948,7 @@ class Holiday extends CommonObject
 	            $nbUser = count($users);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-                $sql.= " value = '".$newdateforlastupdate."'";
+                $sql.= " value = '".$this->db->escape($newdateforlastupdate)."'";
                 $sql.= " WHERE name = 'lastUpdate'";
                 $result = $this->db->query($sql);
 
@@ -1634,6 +1635,7 @@ class Holiday extends CommonObject
     	$this->date_fin=dol_now()+(24*3600);
     	$this->fk_validator=1;
     	$this->halfday=0;
+    	$this->fk_type=1;
     }
 
 }
