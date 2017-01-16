@@ -151,6 +151,8 @@ Dolibarr better:
   no more required, were also removed. Use this new one if you were using one of them.
 - The trigger that activate or close a contract line is run on a contract line, not on contract.
 
+Dolibarr 5.0 was frozen before PHP 7.1 was released. It is compatible with PHP 5.3 to 7.0 but not with PHP 7.1 (Dolibarr 6.0 will be).
+
 
 ***** ChangeLog for 4.0.3 to 4.0.2 *****
 FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
