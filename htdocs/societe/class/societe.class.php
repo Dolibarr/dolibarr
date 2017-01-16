@@ -1909,10 +1909,9 @@ class Societe extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
             
-        if (! empty($this->logo))
+        if (! empty($this->logo) && class_exists('Form'))
         {
             $label.= '</br><div class="photointooltip">';
-            //if (! is_object($form)) $form = new Form($db);
             $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
             $label.= '</div><div style="clear: both;"></div>';
         }
@@ -1945,6 +1944,13 @@ class Societe extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
+        global $user;
+        if (! $user->rights->societe->client->voir && $user->societe_id > 0 && $this->id != $user->societe_id)
+        {
+            $linkstart='';
+            $linkend='';
+        }
+        
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;

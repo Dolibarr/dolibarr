@@ -639,7 +639,7 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
     
-    $nbtotalofrecords = -1;
+    $nbtotalofrecords = '';
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     {
         $result = $db->query($sql);

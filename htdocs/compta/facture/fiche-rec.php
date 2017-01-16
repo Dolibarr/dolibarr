@@ -1575,7 +1575,7 @@ else
 		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
 		}
 
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
         	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         	{
         		$result = $db->query($sql);

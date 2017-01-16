@@ -51,6 +51,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
+  - php: 7.1
   - php: nightly
   # FIXME
   #- env: DB=postgresql
