@@ -60,6 +60,7 @@ if ($action == 'modify')
 }
 if ($action == 'create')
 {
+
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
     $bprev = new BonPrelevement($db);
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);

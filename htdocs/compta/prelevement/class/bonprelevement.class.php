@@ -813,7 +813,7 @@ class BonPrelevement extends CommonObject
                 dol_syslog(__METHOD__."::Read invoices error ".$this->db->error(), LOG_ERR);
             }
         }
-
+        
         if (! $error)
         {
             require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
@@ -834,7 +834,7 @@ class BonPrelevement extends CommonObject
                         {
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
-
+                        	
                             if ($bac->verif() >= 1)
                             //if (true)
                             {
@@ -867,7 +867,7 @@ class BonPrelevement extends CommonObject
         }
 
         $ok=0;
-
+        
         // Withdraw invoices in factures_prev array
         $out=count($factures_prev)." invoices will be withdrawn.";
         //print $out."\n";
