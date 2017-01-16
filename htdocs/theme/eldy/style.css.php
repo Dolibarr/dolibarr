@@ -241,6 +241,7 @@ body {
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
+	line-height: 130%;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -260,9 +261,22 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     background-color: #FFF;
 }
 
-input:focus, textarea:focus, button:focus, select:focus {
-    box-shadow: 0 0 4px #8091BF;
+textarea:focus, button:focus {
+    /* v6 box-shadow: 0 0 4px #8091BF; */
+	border: 1px solid #aaa !important;
 }
+input:focus, select:focus {
+    /* box-shadow: 0 0 4px #8091BF; */
+	border-bottom: 1px solid #666;
+}
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom: 1px solid #aaa !important;
+}
+
 textarea.cke_source:focus
 {
 	box-shadow: none;
@@ -271,16 +285,32 @@ textarea.cke_source:focus
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
+    
     border: 1px solid #C0C0C0;
+    /* v6 border: none;
+    border-bottom: 1px solid #C0C0C0;
+    outline: none !important;*/
     margin: 0px 0px 0px 0px;
 }
 
-input, textarea, select {
+input, select {
+	/* v6 border-bottom: solid 1px rgba(0,0,0,.2);*/
 	border-radius: 2px;
-	border:solid 1px rgba(0,0,0,.3);
+	border: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
+
+	padding:4px;
+	margin-left:0px;
+	margin-bottom:1px;
+	margin-top:1px;
+	}
+textarea {
+	border-radius: 2px;
+	border: solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.3);
+	border-bottom:solid 1px rgba(0,0,0,.2);
+	
 	padding:4px;
 	margin-left:0px;
 	margin-bottom:1px;
@@ -337,9 +367,9 @@ input[type=checkbox] { background-color: transparent; border: none; box-shadow: 
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
-	background-color: #FBFFEA !important;
+	background-color: #FDFFF0 !important;
 	background-image:none !important;
-	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
+	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
@@ -593,6 +623,7 @@ div.myavailability {
 .div-table-responsive {
     overflow-x: auto;
     min-height: 0.01%;
+    line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
 div.fiche>form>div.div-table-responsive {
@@ -790,6 +821,7 @@ td.showDragHandle {
 .side-nav {
 	display: table-cell;
 	border-right: 1px solid #d0d0d0;
+	box-shadow: 3px 0 6px -2px #eee;
 }
 div.blockvmenulogo
 {
@@ -1375,6 +1407,7 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
+	/* background: linear-gradient(to left top, rgb(255,255,255), rgb(240,240,240)) fixed; */
 }
 .login_vertical_align {
 	padding: 10px;
@@ -1406,12 +1439,29 @@ form#login {
 	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	
 	/*-moz-box-shadow: 3px 2px 20px #CCC;
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
-	border:solid 1px rgba(80,80,80,.4);
+	/*border-top:solid 1px rgba(180,180,180,.4);
+	border-left:solid 1px rgba(180,180,180,.4);
+	border-right:solid 1px rgba(180,180,180,.4);
+	border-bottom:solid 1px rgba(180,180,180,.4);*/
+}
+.login_table input#username, .login_table input#password, .login_table input#securitycode {
+	border: none;
+	border-bottom: solid 1px rgba(180,180,180,.4);
+	padding: 5px;
+	margin-left: 18px;
+	margin-top: 5px;
+}
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+	outline: none !important;
+	/* box-shadow: none;
+	-webkit-box-shadow: 0 0 0 50px #FFF inset;
+	box-shadow: 0 0 0 50px #FFF inset;*/
 }
 .login_main_message {
 	text-align: center;
@@ -1448,8 +1498,8 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 200px;
-	max-height: 100px;
+	max-width: 170px;
+	max-height: 90px;
 }
 
 div.login_block {
@@ -1523,18 +1573,18 @@ img.loginphoto {
     height: 16px;
 }
 .span-icon-user {
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>); */
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
 	background-repeat: no-repeat;
 }
 .span-icon-password {
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>); */
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
-
+/*
 .span-icon-user input, .span-icon-password input {
 	/* margin-left: 18px; */
 	margin-left: 0px;
-}
+}*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -3050,7 +3100,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #E0EAE4;
+  background: #EaE4Ea;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -4006,7 +4056,14 @@ div.dataTables_length select {
 	background: #FFFFFF !important;
 }
 
-.select2-choice,
+.select2-choice
+{
+	border: 1px solid #aaa;
+	/* v6 border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid #aaa;*/
+}
 .select2-drop.select2-drop-above.select2-drop-active,
 .select2-container-active .select2-choice,
 .select2-container-active .select2-choices,
@@ -4015,6 +4072,7 @@ div.dataTables_length select {
 .select2-container-multi.select2-container-active .select2-choices
 {
 	border: 1px solid #aaa;
+	/* v6 */
 }
 .select2-disabled
 {
@@ -4035,7 +4093,7 @@ a span.select2-chosen
 	line-height: 24px;
 }
 .select2-choices .select2-search-choice {
-  border: 1px solid #aaa !important;
+    /* border: 1px solid #aaa !important; */
 }
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
@@ -4443,7 +4501,7 @@ border-top-right-radius: 6px;
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	: 54px;
+	padding-left: 54px;
 	font-size: 14px;
 	height: 38px;
 }

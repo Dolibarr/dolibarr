@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -342,11 +342,11 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
     
     			// SUBJECT
-    			$subject = $langs->trans("ExpenseReportWaitingForApproval");
+    			$subject = $langs->transnoentities("ExpenseReportWaitingForApproval");
     
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    			$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
     
     			// Rebuild pdf
     			/*
@@ -436,74 +436,83 @@ if (empty($reshook))
     
     	if ($result > 0)
     	{
-    		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
-    		{
-    			// Send mail
+    		// Send mail
+
+   			// TO
+   			$destinataire = new User($db);
+   			$destinataire->fetch($object->fk_user_validator);
+   			$emailTo = $destinataire->email;
     
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_validator);
-    			$emailTo = $destinataire->email;
+   			if ($emailTo)
+   			{
+   				// FROM
+   				$expediteur = new User($db);
+   				$expediteur->fetch($object->fk_user_author);
+   				$emailFrom = $expediteur->email;
+
+    			// SUBJECT
+    			$subject = $langs->transnoentities("ExpenseReportWaitingForReApproval");
     
-    			if ($emailTo)
+    			// CONTENT
+    			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$dateRefusEx = explode(" ",$object->date_refuse);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
+
+   				// Rebuild pdf
+				/*
+				$object->setDocModel($user,"");
+				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+   				if($resultPDF)
+   				{
+   					// ATTACHMENT
+   					$filename=array(); $filedir=array(); $mimetype=array();
+   					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+   					array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
+   					array_push($mimetype,"application/pdf");
+				}
+				*/
+
+    			// PREPARE SEND
+    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    
+    			if ($mailfile)
     			{
-    				// FROM
-    				$expediteur = new User($db);
-    				$expediteur->fetch($object->fk_user_author);
-    				$emailFrom = $expediteur->email;
-    
-    				// SUBJECT
-    				$subject = "' ERP - Note de frais à re-approuver";
-    
-    				// CONTENT
-    				$dateRefusEx = explode(" ",$object->date_refuse);
-    
-    				$message = "Bonjour {$destinataire->firstname},\n\n";
-    				$message.= "Le {$dateRefusEx[0]} à {$dateRefusEx[1]} vous avez refusé d'approuver la note de frais \"{$object->ref}\". Vous aviez émis le motif suivant : {$object->detail_refuse}\n\n";
-    				$message.= "L'auteur vient de modifier la note de frais, veuillez trouver la nouvelle version en pièce jointe.\n";
-    				$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
-    				$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
-    				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    				$message.= "Bien cordialement,\n' SI";
-    
-    				// Génération du pdf avant attachement
-    				$object->setDocModel($user,"");
-    				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-    
-    				if($resultPDF)
+    				// SEND
+    				$result=$mailfile->sendfile();
+    				if ($result)
     				{
-    					// ATTACHMENT
-    					$filename=array(); $filedir=array(); $mimetype=array();
-    					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-    					array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
-    					array_push($mimetype,"application/pdf");
-    
-    					// PREPARE SEND
-    					$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-    
-    					if (! $mailfile->error)
+    					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    					setEventMessages($mesg, null, 'mesgs');
+    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    					exit;
+    				}
+    				else
+    				{
+    					$langs->load("other");
+    					if ($mailfile->error)
     					{
-    						// SEND
-    						$result=$mailfile->sendfile();
-    						if ($result)
-    						{
-    							Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    							exit;
-    						}
-    						else
-    						{
-    							$mesg=$mailfile->error;
-    							setEventMessages($mesg, null, 'errors');
-    						}
-    						// END - Send mail
+    						$mesg='';
+    						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+    						$mesg.='<br>'.$mailfile->error;
+    						setEventMessages($mesg, null, 'errors');
     					}
     					else
     					{
-    						dol_print_error($db,$resultPDF);
-    						exit;
+    						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
     					}
     				}
     			}
+    			else
+    			{
+    				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    				$action='';
+    			}
+    		}
+    		else
+    		{
+    			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+    			$action='';
     		}
     	}
     	else
@@ -542,80 +551,89 @@ if (empty($reshook))
     
     	if ($result > 0)
     	{
-    		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
-    		{
-    			// Send mail
+    		// Send mail
+
+  			// TO
+   			$destinataire = new User($db);
+   			$destinataire->fetch($object->fk_user_author);
+   			$emailTo = $destinataire->email;
+
+   			// CC
+   			$emailCC = $conf->global->NDF_CC_EMAILS;
+
+			// FROM
+   			$expediteur = new User($db);
+   			$expediteur->fetch($object->fk_user_valid);
+   			$emailFrom = $expediteur->email;
+
+			// SUBJECT
+   			$subject = $langs->transnoentities("ExpenseReportApproved");
+
+   			// CONTENT
+   			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+   			$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
+
+   			// Rebuilt pdf
+			/*
+    		$object->setDocModel($user,"");
+    		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
     
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_author);
-    			$emailTo = $destinataire->email;
-    
-    			// CC
-    			$emailCC = $conf->global->NDF_CC_EMAILS;
-    
-    			// FROM
-    			$expediteur = new User($db);
-    			$expediteur->fetch($object->fk_user_valid);
-    			$emailFrom = $expediteur->email;
-    
-    			// SUBJECT
-    			$subject = "' ERP - Note de frais validée";
-    
-    			// CONTENT
-    			$message = "Bonjour {$destinataire->firstname},\n\n";
-    			$message.= "Votre note de frais \"{$object->ref}\" vient d'être approuvé!\n";
-    			$message.= "- Approbateur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    			$message.= "Bien cordialement,\n' SI";
-    
-    			// Génération du pdf avant attachement
-    			$object->setDocModel($user,"");
-    			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-    
-    			if($resultPDF):
-    				// ATTACHMENT
-    				$filename=array(); $filedir=array(); $mimetype=array();
-    				array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-    				array_push($filedir, $conf->expensereport->dir_output.
-    					"/".
-    					dol_sanitizeFileName($object->ref) .
-    					"/".
-    					dol_sanitizeFileName($object->ref).
-    					".pdf"
-    					);
-    				array_push($mimetype,"application/pdf");
-    
-    				// PREPARE SEND
-    				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename,$emailCC);
-    
-    				if(!$mailfile->error):
-    
-    					// SEND
-    					$result=$mailfile->sendfile();
-    					if ($result):
-    						setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-    						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    						exit;
-    					else:
-    						setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
-    					endif;
-    
-    				else:
-    					setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
-    				endif;
-    				// END - Send mail
-    			else : // if ($resultPDF)
-    				dol_print_error($db,$resultPDF);
-    				exit;
-    			endif;
-    		}
-    	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    }
+    		if($resultPDF
+			{
+    			// ATTACHMENT
+    			$filename=array(); $filedir=array(); $mimetype=array();
+    			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($mimetype,"application/pdf");
+			}
+			*/
+
+        	// PREPARE SEND
+    		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+   			if ($mailfile)
+   			{
+   				// SEND
+   				$result=$mailfile->sendfile();
+   				if ($result)
+   				{
+   					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+   					setEventMessages($mesg, null, 'mesgs');
+   					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+   					exit;
+   				}
+   				else
+   				{
+   					$langs->load("other");
+   					if ($mailfile->error)
+   					{
+   						$mesg='';
+   						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+   						$mesg.='<br>'.$mailfile->error;
+   						setEventMessages($mesg, null, 'errors');
+   					}
+   					else
+   					{
+   						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+   					}
+   				}
+   			}
+   			else
+   			{
+   				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+   				$action='';
+   			}
+   		}
+   		else
+   		{
+   			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+   			$action='';
+   		}
+   	}
+   	else
+   	{
+   		setEventMessages($object->error, $object->errors, 'errors');
+   	}
     
     if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->approve)
     {
@@ -646,56 +664,85 @@ if (empty($reshook))
     
     	if ($result > 0)
     	{
-    		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
+    		// Send mail
+    
+    		// TO
+    		$destinataire = new User($db);
+    		$destinataire->fetch($object->fk_user_author);
+    		$emailTo = $destinataire->email;
+    
+    		// FROM
+    		$expediteur = new User($db);
+    		$expediteur->fetch($object->fk_user_refuse);
+    		$emailFrom = $expediteur->email;
+    
+			// SUBJECT
+   			$subject = $langs->transnoentities("ExpenseReportRefused");
+
+   			// CONTENT
+   			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_refuse'], $link);
+
+   			// Rebuilt pdf
+			/*
+    		$object->setDocModel($user,"");
+    		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+    
+    		if($resultPDF
+			{
+    			// ATTACHMENT
+    			$filename=array(); $filedir=array(); $mimetype=array();
+    			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+    			array_push($mimetype,"application/pdf");
+			}
+			*/
+    
+    		// PREPARE SEND
+    		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    
+    		if ($mailfile)
     		{
-    			// Send mail
-    
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_author);
-    			$emailTo = $destinataire->email;
-    
-    			// FROM
-    			$expediteur = new User($db);
-    			$expediteur->fetch($object->fk_user_refuse);
-    			$emailFrom = $expediteur->email;
-    
-    			// SUBJECT
-    			$subject = "' ERP - Note de frais refusée";
-    
-    			// CONTENT
-    			$message = "Bonjour {$destinataire->firstname},\n\n";
-    			$message.= "Votre note de frais \"{$object->ref}\" vient d'être refusée.\n";
-    			$message.= "- Refuseur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    			$message.= "- Motif de refus : {$_POST['detail_refuse']}\n";
-    			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    			$message.= "Bien cordialement,\n' SI";
-    
-    			// PREPARE SEND
-    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-    
-    			if(!$mailfile->error)
+    			// SEND
+    			$result=$mailfile->sendfile();
+    			if ($result)
     			{
-    				// SEND
-    				$result=$mailfile->sendfile();
-    				if ($result)
+    				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    				setEventMessages($mesg, null, 'mesgs');
+    				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    				exit;
+    			}
+    			else
+    			{
+    				$langs->load("other");
+    				if ($mailfile->error)
     				{
-    					setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
-    					Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    					exit;
+    					$mesg='';
+    					$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+    					$mesg.='<br>'.$mailfile->error;
+    					setEventMessages($mesg, null, 'errors');
     				}
     				else
     				{
-    					setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
+    					setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
     				}
-    				// END - Send mail
     			}
+    		}
+    		else
+    		{
+    			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    			$action='';
     		}
     	}
     	else
     	{
-    		setEventMessages($object->error, $object->errors, 'errors');
+    		setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+    		$action='';
     	}
+    }
+    else
+    {
+    	setEventMessages($object->error, $object->errors, 'errors');
     }
     
     //var_dump($user->id == $object->fk_user_validator);exit;
@@ -730,64 +777,85 @@ if (empty($reshook))
     
     		if ($result > 0)
     		{
-    			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))     // TODO Translate this so we can remove condition
+    			// Send mail
+    
+    			// TO
+    			$destinataire = new User($db);
+    			$destinataire->fetch($object->fk_user_author);
+    			$emailTo = $destinataire->email;
+    
+    			// FROM
+    			$expediteur = new User($db);
+    			$expediteur->fetch($object->fk_user_cancel);
+    			$emailFrom = $expediteur->email;
+    
+				// SUBJECT
+				$subject = $langs->transnoentities("ExpenseReportCanceled");
+
+				// CONTENT
+				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_cancel'], $link);
+
+				// Rebuilt pdf
+				/*
+				$object->setDocModel($user,"");
+				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+		
+				if($resultPDF
+				{
+					// ATTACHMENT
+					$filename=array(); $filedir=array(); $mimetype=array();
+					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+					array_push($mimetype,"application/pdf");
+				}
+				*/
+
+    			// PREPARE SEND
+    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    
+    			if ($mailfile)
     			{
-    				// Send mail
-    
-    				// TO
-    				$destinataire = new User($db);
-    				$destinataire->fetch($object->fk_user_author);
-    				$emailTo = $destinataire->email;
-    
-    				// FROM
-    				$expediteur = new User($db);
-    				$expediteur->fetch($object->fk_user_cancel);
-    				$emailFrom = $expediteur->email;
-    
-    				// SUBJECT
-    				$subject = "' ERP - Note de frais annulée";
-    
-    				// CONTENT
-    				$message = "Bonjour {$destinataire->firstname},\n\n";
-    				$message.= "Votre note de frais \"{$object->ref}\" vient d'être annulée.\n";
-    				$message.= "- Annuleur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    				$message.= "- Motif d'annulation : {$_POST['detail_cancel']}\n";
-    				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    				$message.= "Bien cordialement,\n' SI";
-    
-    				// PREPARE SEND
-    				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-    
-    				if(!$mailfile->error)
+    				// SEND
+    				$result=$mailfile->sendfile();
+    				if ($result)
     				{
-    					// SEND
-    					$result=$mailfile->sendfile();
-    					if ($result)
-    					{
-    						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    						exit;
-    					}
-    					else
-    					{
-    						$mesg="Impossible d'envoyer l'email.";
-    						setEventMessages($mesg, null, 'errors');
-    					}
-    					// END - Send mail
+    					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    					setEventMessages($mesg, null, 'mesgs');
+    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    					exit;
     				}
     				else
     				{
-    					setEventMessages($mail->error, $mail->errors, 'errors');
+    					$langs->load("other");
+    					if ($mailfile->error)
+    					{
+    						$mesg='';
+    						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+    						$mesg.='<br>'.$mailfile->error;
+    						setEventMessages($mesg, null, 'errors');
+    					}
+    					else
+    					{
+    						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+    					}
     				}
+    			}
+    			else
+    			{
+    				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    				$action='';
     			}
     		}
     		else
     		{
-    			setEventMessages($object->error, $object->errors, 'errors');
+    			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+    			$action='';
     		}
     	}
     	else
     	{
-    	    setEventMessages($langs->transnoentitiesnoconv("OnlyOwnerCanCancel"), '', 'errors');    // Should not happened
+    		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
     
@@ -864,68 +932,83 @@ if (empty($reshook))
     
     	if ($result > 0)
     	{
-    		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN)) // TODO Translate this so we can remove condition
+    		// Send mail
+    
+    		// TO
+    		$destinataire = new User($db);
+    		$destinataire->fetch($object->fk_user_author);
+    		$emailTo = $destinataire->email;
+    
+    		// FROM
+    		$expediteur = new User($db);
+    		$expediteur->fetch($user->id);
+    		$emailFrom = $expediteur->email;
+    
+			// SUBJECT
+			$subject = $langs->transnoentities("ExpenseReportPaid");
+
+			// CONTENT
+			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
+    
+    		// CONTENT
+    		$message = "Bonjour {$destinataire->firstname},\n\n";
+    		$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
+    		$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
+    		$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
+    		$message.= "Bien cordialement,\n' SI";
+    
+    		// Generate pdf before attachment
+    		$object->setDocModel($user,"");
+    		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+    
+    		// PREPARE SEND
+    		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    
+    		if ($mailfile)
     		{
-    			// Send mail
-    
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_author);
-    			$emailTo = $destinataire->email;
-    
-    			// FROM
-    			$expediteur = new User($db);
-    			$expediteur->fetch($user->id);
-    			$emailFrom = $expediteur->email;
-    
-    			// SUBJECT
-    			$subject = "'ERP - Note de frais payée";
-    
-    			// CONTENT
-    			$message = "Bonjour {$destinataire->firstname},\n\n";
-    			$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
-    			$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
-    			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-    			$message.= "Bien cordialement,\n' SI";
-    
-    			// Generate pdf before attachment
-    			$object->setDocModel($user,"");
-    			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-    
-    			// PREPARE SEND
-    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-    
-    			if(!$mailfile->error):
-    
     			// SEND
-    			$result=$mailfile->sendfile();
-    			if ($result):
-    
-    			// Retour
-    			if($result):
-    				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				$result=$mailfile->sendfile();
+    			if ($result)
+    			{
+    				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    				setEventMessages($mesg, null, 'mesgs');
+    				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     				exit;
-    			else:
-    				dol_print_error($db);
-    			endif;
-    
-    			else:
-    			dol_print_error($db,$acct->error);
-    			endif;
-    
-    			else:
-                    $mesg="Impossible d'envoyer l'email.";
-                    setEventMessages($mesg, null, 'errors');
-    			endif;
-    			// END - Send mail
+    			}
+    			else
+    			{
+					$langs->load("other");
+    				if ($mailfile->error)
+    				{
+    					$mesg='';
+    					$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+    					$mesg.='<br>'.$mailfile->error;
+    					setEventMessages($mesg, null, 'errors');
+    				}
+    				else
+    				{
+    					setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+    				}
+    			}
+    		}
+    		else
+    		{
+    			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    			$action='';
     		}
     	}
     	else
     	{
-    		setEventMessages($object->error, $object->errors, 'errors');
+    		setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+    		$action='';
     	}
     }
-    
+    else
+    {
+    	setEventMessages($object->error, $object->errors, 'errors');
+    }
+
     if ($action == "addline" && $user->rights->expensereport->creer)
     {
     	$error = 0;
@@ -1806,6 +1889,7 @@ else
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
+				$sql.= ' ORDER BY fde.date ASC';
 
 				print '<div style="clear: both;">';
 

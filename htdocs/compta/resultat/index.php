@@ -646,7 +646,7 @@ print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" colspan="2" class="borderrightlight">';
+	print '<td align="center" colspan="2" class="liste_titre borderrightlight">';
 	print '<a href="clientfourn.php?year='.$annee.'">';
 	print $annee;
 	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -656,8 +656,8 @@ print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center">'.$langs->trans("Outcome").'</td>';
-	print '<td align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("Outcome").'</td>';
+	print '<td class="liste_titre" align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
 }
 print '</tr>';
 
@@ -678,7 +678,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if($mois>12) {$annee_decalage=$annee+1;}
 		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
 
-		print '<td align="right">&nbsp;';
+		print '<td class="liste_titre" align="right">&nbsp;';
 		if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 		{
 			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
@@ -687,7 +687,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" class="borderrightlight">&nbsp;';
+		print '<td align="right" class="liste_titre borderrightlight">&nbsp;';
 		//if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		if (isset($encaiss_ttc[$case]))
 		{
@@ -704,7 +704,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 // Total
 $var=!$var;
 $nbcols=0;
-print '<tr class="liste_total"><td>'.$langs->trans("TotalTTC").'</td>';
+print '<tr class="liste_total impair"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
@@ -714,7 +714,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "</tr>\n";
 
 // Empty line
-print '<tr><td>&nbsp;</td>';
+print '<tr class="impair"><td>&nbsp;</td>';
 print '<td colspan="'.$nbcols.'">&nbsp;</td>';
 print "</tr>\n";
 

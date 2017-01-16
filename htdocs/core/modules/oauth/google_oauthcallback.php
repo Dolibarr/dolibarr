@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/getoauthcallback.php
+ *      \file       htdocs/core/modules/oauth/google_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -83,7 +83,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 /** @var $apiService Service */
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
-// access type needed for google refresh token
+// access type needed to have oauth provider refreshing token
 $apiService->setAccessType('offline');
 
 $langs->load("oauth");
@@ -104,7 +104,7 @@ if ($action == 'delete')
     exit();
 } 
 
-if (! empty($_GET['code']))     // We are coming from Google oauth page
+if (! empty($_GET['code']))     // We are coming from oauth provider page
 {
     //llxHeader('',$langs->trans("OAuthSetup"));
 
@@ -121,6 +121,7 @@ if (! empty($_GET['code']))     // We are coming from Google oauth page
         //var_dump($_GET['code']);
         //var_dump($state);
         //var_dump($apiService);      // OAuth\OAuth2\Service\Google
+        
         $token = $apiService->requestAccessToken($_GET['code'], $state);
         
         setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
@@ -138,6 +139,8 @@ else // If entry on page with no parameter, we arrive here
 {
     $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
     
+    // This may create record into oauth_state before the header redirect.
+    // Creation of record with state in this tables depend on the Provider used (see its constructor).
     if (GETPOST('state'))
     {
         $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
@@ -146,7 +149,8 @@ else // If entry on page with no parameter, we arrive here
     {
         $url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
     }
-    // we go on google authorization page
+    
+    // we go on oauth provider authorization page
     header('Location: ' . $url);
     exit();
 }

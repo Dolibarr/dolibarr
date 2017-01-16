@@ -320,8 +320,8 @@ x.y.z+dfsgw
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Update/fix debian/* files used to build package.
-At least, add an entry into debian/changelog
-> dch -v x.y.z+dfsgw-v "My comment" will add entry.
+At least, add an entry into debian/changelog with command
+> dch -v x.y.z+dfsgw-1 "My comment"
 For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increased for each new import)
 Then check/modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
@@ -332,7 +332,9 @@ Then check/modify also the user/date signature:
 To update dolibarr debian package when only files into debian has changed:
 
 * Change files and commit.
-* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
+* Add a line into changelog for version debian/x.y.z+dfsgw-v (increase the last v into 2, 3...)
+> dch -v x.y.z+dfsgw-v "My comment"
+* git tag will be added when package is pushed.
 
 
 To update dolibarr debian package when only files not into debian has changed:

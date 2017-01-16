@@ -242,6 +242,7 @@ body {
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
+	line-height: 130%;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -262,6 +263,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
+    /* TODO Remove shadow on focus. Use instead border-bottom: 1px solid #aaa !important; To disable with select2 too. */
 }
 textarea.cke_source:focus
 {
@@ -598,6 +600,7 @@ div.myavailability {
 .div-table-responsive {
     overflow-x: auto;
     min-height: 0.01%;
+    line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
 div.fiche>form>div.div-table-responsive {
@@ -805,6 +808,7 @@ td.showDragHandle {
 <?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
+	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
@@ -1453,6 +1457,19 @@ form#login {
 
 	border-top:solid 1px f8f8f8;
 }
+.login_table input#username, .login_table input#password, .login_table input#securitycode{
+	border: none;
+	border-bottom: solid 1px rgba(180,180,180,.4);
+	padding: 5px;
+	margin-left: 18px;
+	margin-top: 5px;
+}
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+	outline: none !important;
+	/* box-shadow: none;
+	-webkit-box-shadow: 0 0 0 50px #FFF inset;
+	box-shadow: 0 0 0 50px #FFF inset;*/
+}
 .login_main_message {
 	text-align: center;
 	max-width: 560px;
@@ -1488,8 +1505,8 @@ table.login_table_securitycode tr td {
 	border: 1px solid #f4f4f4;
 }
 #img_logo, .img-logo {
-	max-width: 200px;
-	max-height: 100px;
+	max-width: 170px;
+	max-height: 90px;
 }
 
 div.login_block {
@@ -1567,7 +1584,8 @@ img.loginphoto {
 }
 
 .span-icon-user {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
+	background-repeat: no-repeat;
 }
 .span-icon-password {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
@@ -2976,7 +2994,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #E0EAE4;
+  background: #EaE4Ea;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
