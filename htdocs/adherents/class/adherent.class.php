@@ -1818,18 +1818,16 @@ class Adherent extends CommonObject
     
         $langs->load("orders");
     
-        // Positionne le modele sur le nom du modele a utiliser
-        if (! dol_strlen($modele))
-        {
-            if (! empty($conf->global->ADHERENT_ADDON_PDF))
-            {
-                $modele = $conf->global->ADHERENT_ADDON_PDF;
-            }
-            else
-            {
-                $modele = 'standard';
-            }
-        }
+	    if (! dol_strlen($modele)) {
+
+		    $modele = 'standard';
+
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (! empty($conf->global->ADHERENT_ADDON_PDF)) {
+			    $modele = $conf->global->ADHERENT_ADDON_PDF;
+		    }
+	    }
     
         $modelpath = "core/modules/member/doc/";
     

@@ -3641,16 +3641,14 @@ class Commande extends CommonOrder
 
 		$langs->load("orders");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->COMMANDE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'einstein';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'einstein';
 			}
 		}
 

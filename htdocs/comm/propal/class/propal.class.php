@@ -3434,16 +3434,14 @@ class Propal extends CommonObject
 
 		$langs->load("propale");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROPALE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'azur';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROPALE_ADDON_PDF)) {
 				$modele = $conf->global->PROPALE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'azur';
 			}
 		}
 
