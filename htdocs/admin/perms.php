@@ -124,7 +124,7 @@ dol_fiche_head($head, 'default', $langs->trans("Security"));
 // Show warning about external users
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
 // Affiche lignes des permissions
@@ -215,8 +215,9 @@ if ($result)
 }
 
 print '</table>';
-
 print '</div>';
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();

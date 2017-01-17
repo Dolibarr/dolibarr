@@ -86,12 +86,12 @@ if ($sfurl)
     	}
     	print ')';
     }
-	print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
 }
 else
 {
-    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+    print ' ('.$langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b>)<br>';
 }
+print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
 
 
 print '</ul>';

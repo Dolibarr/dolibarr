@@ -182,6 +182,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -297,6 +298,7 @@ if ($result)
 
 
 print '</table>';
+print '</div>';
 
 if ($conf->use_javascript_ajax)
 {
@@ -310,6 +312,7 @@ if ($conf->use_javascript_ajax)
 }
 
 print "</form>\n";
+
 
 llxFooter();
 
