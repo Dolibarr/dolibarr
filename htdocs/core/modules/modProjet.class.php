@@ -218,18 +218,23 @@ class modProjet extends DolibarrModules
 		$this->export_dependencies_array[$r]=array('projecttask'=>'pt.rowid', 'task_time'=>'ptt.rowid');
 
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
-		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
-		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.title'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','cls.code'=>"Text",'p.opp_percent'=>'Numeric','p.description'=>"Text",
+		's.phone'=>'Text','s.email'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
+		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.title'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','cls.code'=>"Text",'p.opp_percent'=>'Numeric','p.description'=>"Text", 'p.entity'=>'Numeric',
 		'pt.rowid'=>'Text','pt.label'=>'Text','pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Numeric",'pt.progress'=>"Numeric",'pt.description'=>"Text",
 		'ptt.rowid'=>'Numeric','ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)",'ptt.note'=>"Text");
 
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',
-		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company');
+		's.phone'=>'company','s.email'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company');
 
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country',
-		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
+		's.phone'=>'Phone','s.email'=>'Email','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
 		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.title'=>'ProjectLabel', 'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'ProjectStatus','cls.code'=>'OpportunityStatus','p.opp_percent'=>'OpportunityProbability','p.description'=>"Description");
-
+        // Add multicompany field
+        if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT))
+        {
+            $nbofallowedentities=count(explode(',',getEntity('project')));    // If project are shared, nb will be > 1
+            if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('p.entity'=>'Entity');
+        }
 		// Add fields for project
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array());
 		$keyforselect='projet'; $keyforelement='project'; $keyforaliasextra='extra';
