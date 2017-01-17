@@ -817,33 +817,27 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
         if ($val == 'BankCode') {
             $name = 'code_banque';
             $size = 8;
-            $content = $account->code_banque;
         } elseif ($val == 'DeskCode') {
             $name = 'code_guichet';
             $size = 8;
-            $content = $account->code_guichet;
         } elseif ($val == 'BankAccountNumber') {
             $name = 'number';
             $size = 18;
-            $content = $account->number;
         } elseif ($val == 'BankAccountNumberKey') {
             $name = 'cle_rib';
             $size = 3;
-            $content = $account->cle_rib;
         } elseif ($val == 'IBAN') {
             $name = 'iban';
             $size = 30;
-            $content = $account->iban;
             if ($account->needIBAN()) $require=true;
         } elseif ($val == 'BIC') {
             $name = 'bic';
             $size = 12;
-            $content = $account->bic;
             if ($account->needIBAN()) $require=true;
         }
 
         print '<tr><td'.($require?' class="fieldrequired" ':'').'>'.$langs->trans($val).'</td>';
-        print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+        print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'"></td>';
         print '</tr>';
     }
 
