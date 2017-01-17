@@ -230,9 +230,9 @@ class modProjet extends DolibarrModules
 		's.phone'=>'Phone','s.email'=>'Email','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
 		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.title'=>'ProjectLabel', 'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'ProjectStatus','cls.code'=>'OpportunityStatus','p.opp_percent'=>'OpportunityProbability','p.description'=>"Description");
         // Add multicompany field
-        if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT))
+        if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
         {
-            $nbofallowedentities=count(explode(',',getEntity('project')));    // If project are shared, nb will be > 1
+            $nbofallowedentities=count(explode(',',getEntity('project',1)));    // If project are shared, nb will be > 1
             if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('p.entity'=>'Entity');
         }
 		// Add fields for project
