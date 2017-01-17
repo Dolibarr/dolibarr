@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,13 +95,13 @@ if (empty($reshook))
     	if (! GETPOST('label'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
-    		$action='update';
+    		$action='edit';
     		$error++;
     	}
     	if (! GETPOST('bank'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
-    		$action='update';
+    		$action='edit';
     		$error++;
     	}
     	if ($account->needIBAN() == 1)
@@ -108,13 +109,13 @@ if (empty($reshook))
     		if (! GETPOST('iban'))
     		{
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-    			$action='update';
+    			$action='edit';
     			$error++;
     		}
     		if (! GETPOST('bic'))
     		{
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-    			$action='update';
+    			$action='edit';
     			$error++;
     		}
     	}
@@ -809,41 +810,42 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
-    // BBAN
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
-        print '</tr>';
+    // Show fields of bank account
+    foreach ($account->getFieldsToShow(1) as $val) {
 
-        print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.GETPOST('code_guichet').'"></td>';
+        $require=false;
+        if ($val == 'BankCode') {
+            $name = 'code_banque';
+            $size = 8;
+            $content = $account->code_banque;
+        } elseif ($val == 'DeskCode') {
+            $name = 'code_guichet';
+            $size = 8;
+            $content = $account->code_guichet;
+        } elseif ($val == 'BankAccountNumber') {
+            $name = 'number';
+            $size = 18;
+            $content = $account->number;
+        } elseif ($val == 'BankAccountNumberKey') {
+            $name = 'cle_rib';
+            $size = 3;
+            $content = $account->cle_rib;
+        } elseif ($val == 'IBAN') {
+            $name = 'iban';
+            $size = 30;
+            $content = $account->iban;
+            if ($account->needIBAN()) $require=true;
+        } elseif ($val == 'BIC') {
+            $name = 'bic';
+            $size = 12;
+            $content = $account->bic;
+            if ($account->needIBAN()) $require=true;
+        }
+
+        print '<tr><td'.($require?' class="fieldrequired" ':'').'>'.$langs->trans($val).'</td>';
+        print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
         print '</tr>';
     }
-    if ($account->useDetailedBBAN() == 2)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
-        print '</tr>';
-    }
-
-    print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-    print '<td><input size="15" type="text" class="flat" name="number" value="'.GETPOST('number').'"></td>';
-    print '</tr>';
-
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-        print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.GETPOST('value').'"></td>';
-        print '</tr>';
-    }
-
-    // IBAN
-    print '<tr><td'.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
-
-    print '<tr><td'.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
