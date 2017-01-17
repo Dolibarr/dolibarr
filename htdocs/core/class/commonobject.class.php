@@ -2448,9 +2448,10 @@ abstract class CommonObject
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *  Possible usage for parameters:
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
-     *  - one couple id+type is provided -> this will set $justsource or $justtarget
-     *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
-     *
+     *  - source id+type -> will get target list linked to source 
+     *  - target id+type -> will get source list linked to target 
+     *  - source id+type + target type -> will get target list of the type 
+     *  - target id+type + target source -> will get source list of the type 
      *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
@@ -3019,9 +3020,16 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-
-            $totalOrdered+=$line->qty_asked;    // defined for shipment only
-            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            if (isset($line->qty_asked))   
+            {
+                if (empty($totalOrdered)) $totalOrdered=0;  // Avoid warning because $totalOrdered is ''
+                $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            }
+            if (isset($line->qty_shipped)) 
+            {
+                if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
+                $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }
 
             // Define qty, weight, volume, weight_units, volume_units
             if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
@@ -3036,8 +3044,11 @@ abstract class CommonObject
             if (! empty($weight_units)) $weightUnit = $weight_units;
             if (! empty($volume_units)) $volumeUnit = $volume_units;
 
+            if (empty($totalWeight)) $totalWeight=0;  // Avoid warning because $totalWeight is ''
+            if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
+            
             //var_dump($line->volume_units);
-            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 $trueWeightUnit=pow(10, $weightUnit);
                 $totalWeight += $weight * $qty * $trueWeightUnit;
@@ -3046,7 +3057,7 @@ abstract class CommonObject
             {
                 $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
             }
-            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
                 $trueVolumeUnit=pow(10, $volumeUnit);

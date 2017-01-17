@@ -278,12 +278,20 @@ class Notify
      */
     function send($notifcode, $object)
     {
-        global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
+        global $user,$conf,$langs,$mysoc;
+        global $hookmanager;
+        global $dolibarr_main_url_root;
 
 		if (! in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+	    if (! is_object($hookmanager))
+	    {
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	        $hookmanager=new HookManager($this->db);
+	    }
+	    $hookmanager->initHooks(array('notification'));
+	    
 	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
@@ -294,8 +302,8 @@ class Notify
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// Define some vars
-	    $application = $mysoc->name;
-	    //if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
+	    $application = 'Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
 	    $replyto = $conf->notification->email_from;
 	    $filename = basename($file);
         $mimefile = dol_mimetype($file);
@@ -321,18 +329,7 @@ class Notify
 
 		// Check notification per user
         $sql.= "\nUNION\n";
-        /*
-		$sql.= "SELECT  1 as user, c.email, c.rowid as cid, c.lastname, c.firstname, '$langs->defaultlang' as default_lang,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
-        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-        $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-        $sql.= " ".MAIN_DB_PREFIX."element_contact as ec";
-        $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
-        $sql.= " AND n.fk_user = ec.fk_socpeople";
-        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-        $sql .= " AND ec.element_id = ".$object->id;*/
+
         $sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
         $sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
@@ -367,6 +364,8 @@ class Notify
 	                		$outputlangs->setDefaultLang($obj->default_lang);
 	                	}
 
+	                	$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+	                	
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link='/compta/facture.php?facid='.$object->id;
@@ -446,14 +445,20 @@ class Notify
 							$filepdf = $pdf_path;
 						}
 
-	    				$subject = '['.$application.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
-
 	                	$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 	                	$message.= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
 	                	$message.= "\n";
 	                    $message.= $mesg;
 	                    if ($link) $message=dol_concatdesc($message,$urlwithroot.$link);
 
+	                    $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+	                    $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	                    if (empty($reshook))
+	                    {
+	                        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+	                        if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+	                    }
+	                     
 	                    $mailfile = new CMailFile(
 	                        $subject,
 	                        $sendto,
@@ -535,7 +540,9 @@ class Notify
 		        $link = '';
 		        $num++;
 
-				switch ($notifcode) {
+		        $subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+
+		        switch ($notifcode) {
 					case 'BILL_VALIDATE':
 						$link='/compta/facture.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
@@ -622,8 +629,6 @@ class Notify
 					$filepdf = $pdf_path;
 				}
 
-		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
-
 		        $message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 		        $message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
 		        $message.= "\n";
@@ -648,7 +653,15 @@ class Notify
 
 		        if ($sendto)
 		        {
-		        	$mailfile = new CMailFile(
+       		        $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+			        $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+			        if (empty($reshook))
+			        {
+		    	        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+		        	    if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+			        }
+		        
+		            $mailfile = new CMailFile(
 		        		$subject,
 		        		$sendto,
 		        		$replyto,

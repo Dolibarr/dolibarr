@@ -54,6 +54,7 @@ $langs->load("loan");
 $langs->load("donations");
 $langs->load("trips");
 $langs->load("members");
+$langs->load("compta");
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
@@ -501,7 +502,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {

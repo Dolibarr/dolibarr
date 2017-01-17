@@ -262,8 +262,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input:focus, textarea:focus, button:focus, select:focus {
-    /* box-shadow: 0 0 4px #8091BF; */
-    border-bottom: 1px solid #8091BF !important;
+    box-shadow: 0 0 4px #8091BF;
+    /* TODO Remove shadow on focus. Use instead border-bottom: 1px solid #aaa !important; To disable with select2 too. */
 }
 textarea.cke_source:focus
 {

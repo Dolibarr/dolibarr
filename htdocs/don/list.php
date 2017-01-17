@@ -113,7 +113,7 @@ if (trim($search_name) != '')
 if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
 
 $sql.= $db->order($sortfield,$sortorder);
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
