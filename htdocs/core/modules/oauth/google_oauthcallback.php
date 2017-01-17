@@ -84,7 +84,10 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
+// alos note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
+
+$apiService->setApprouvalPrompt('force');
 
 $langs->load("oauth");
 
