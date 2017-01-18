@@ -551,7 +551,7 @@ if ($id > 0 || ! empty($ref))
 				}
 	
 				// Delete
-				if ($user->rights->projet->supprimer && ! $object->hasChildren())
+				if ($user->rights->projet->supprimer && ! $object->hasChildren() && ! $object->hasTimeSpent())
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				}
