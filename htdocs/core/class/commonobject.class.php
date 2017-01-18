@@ -942,18 +942,26 @@ abstract class CommonObject
 
         $result=array();
         $i=0;
+        //cas particulier pour les expeditions
+        if($this->element=='shipping' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='commande';
+        } else {
+            $id=$this->id;
+            $element=$this->element;
+        }
 
         $sql = "SELECT ec.fk_socpeople";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
         if ($source == 'internal') $sql.= " ".MAIN_DB_PREFIX."user as c,";
         if ($source == 'external') $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-        $sql.= " WHERE ec.element_id = ".$this->id;
+        $sql.= " WHERE ec.element_id = ".$id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
         if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
         if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
-        $sql.= " AND tc.element = '".$this->element."'";
+        $sql.= " AND tc.element = '".$element."'";
         $sql.= " AND tc.source = '".$source."'";
         $sql.= " AND tc.code = '".$code."'";
         $sql.= " AND tc.active = 1";
