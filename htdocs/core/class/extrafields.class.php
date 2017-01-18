@@ -739,7 +739,7 @@ class ExtraFields
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
