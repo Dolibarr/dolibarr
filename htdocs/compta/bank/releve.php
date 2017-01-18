@@ -348,8 +348,10 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr ".$bc[$var]."><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$object->id."\">&nbsp;</a></td>";
-		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
+		print "<td align=\"right\" colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
+		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print "</tr>\n";
 
 		while ($i < $numrows)
 		{
@@ -552,7 +554,9 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"4\">&nbsp;</td><td align=\"right\" colspan=\"2\"><b>".$langs->trans("EndBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td align=\"right\" colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
+	print "</tr>\n";
 	print "</table></form>\n";
 }
 
