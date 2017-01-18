@@ -349,7 +349,7 @@ else
 
 		// Ligne Solde debut releve
 		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
-		print "<td align=\"right\" colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
+		print "<td colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
 		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
 		print "</tr>\n";
 
@@ -554,7 +554,7 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td align=\"right\" colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
 	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table></form>\n";
