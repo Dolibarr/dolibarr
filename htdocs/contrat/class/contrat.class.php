@@ -2199,20 +2199,18 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("contracts");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->CONTRACT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'strato';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->CONTRACT_ADDON_PDF)) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'strato';
 			}
 		}
 

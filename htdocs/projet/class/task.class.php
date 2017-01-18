@@ -1653,16 +1653,14 @@ class Task extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 
