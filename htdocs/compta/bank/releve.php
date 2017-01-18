@@ -299,6 +299,7 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
+    print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -557,7 +558,10 @@ else
 	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
 	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
-	print "</table></form>\n";
+	print "</table>";
+	print "</div>";
+	
+	print "</form>\n";
 }
 
 
