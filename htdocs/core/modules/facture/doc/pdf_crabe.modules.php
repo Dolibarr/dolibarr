@@ -309,6 +309,7 @@ class pdf_crabe extends ModelePDFFactures
 					//$this->postotalht;
 				}
 
+				$progress_width = 0;
 				// Situation invoice handling
 				if ($object->situation_cycle_ref)
 				{
