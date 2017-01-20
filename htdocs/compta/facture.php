@@ -3736,6 +3736,8 @@ else if ($id > 0 || ! empty($ref))
     } 
     else // Credit note
     {
+        $cssforamountpaymentcomplete='';
+        
         // Total already paid back
         print '<tr><td colspan="' . $nbcols . '" align="right">';
         print $langs->trans('AlreadyPaidBack');
@@ -3751,7 +3753,7 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('ExcessPaydBack');
         print ' :</td>';
-        print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
 
         // Sold credit note
