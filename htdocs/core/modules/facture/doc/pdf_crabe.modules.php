@@ -129,7 +129,7 @@ class pdf_crabe extends ModelePDFFactures
 			$this->posxqty=145;
 		}
 		$this->posxdiscount=162;
-		$this->posxprogress=174; // Only displayed for situation invoices
+		$this->posxprogress=126; // Only displayed for situation invoices
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
@@ -309,16 +309,20 @@ class pdf_crabe extends ModelePDFFactures
 					//$this->postotalht;
 				}
 
+				$progress_width = 0;
 				// Situation invoice handling
 				if ($object->situation_cycle_ref)
 				{
 					$this->situationinvoice = True;
-					$progress_width = 14;
+					$progress_width = 18;
 					$this->posxtva -= $progress_width;
 					$this->posxup -= $progress_width;
 					$this->posxqty -= $progress_width;
-					$this->posxdiscount -= $progress_width;
-					$this->posxprogress -= $progress_width;
+					if(empty($conf->global->PRODUCT_USE_UNITS)) {
+						$this->posxprogress += $progress_width;
+					}
+					/*$this->posxdiscount -= $progress_width;
+					$this->posxprogress -= $progress_width;*/
 				}
 
 				// New page
@@ -440,7 +444,7 @@ class pdf_crabe extends ModelePDFFactures
 					$curX = $this->posxdesc-1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX-$progress_width,3,$curX,$curY,$hideref,$hidedesc);
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -504,13 +508,37 @@ class pdf_crabe extends ModelePDFFactures
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
 					// Enough for 6 chars
-					if($conf->global->PRODUCT_USE_UNITS)
+					
+					if ($this->situationinvoice)
+					{
+						$pdf->MultiCell($this->posxprogress-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+					else if($conf->global->PRODUCT_USE_UNITS)
 					{
 						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
 					else
 					{
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+
+					// Situation progress
+					if ($this->situationinvoice)
+					{
+						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxprogress, $curY);
+						if($conf->global->PRODUCT_USE_UNITS)
+						{
+							$pdf->MultiCell($this->posxunit-$this->posxprogress-1, 3, $progress, 0, 'R');
+						}
+						else if ($this->atleastonediscount)
+						{
+							$pdf->MultiCell($this->posxdiscount-$this->posxprogress-1, 3, $progress, 0, 'R');
+						}
+						else
+						{
+							$pdf->MultiCell($this->postotalht-$this->posxprogress-1, 3, $progress, 0, 'R');
+						}
 					}
 
 					// Unit
@@ -526,15 +554,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
                         $pdf->SetXY($this->posxdiscount-2, $curY);
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
-					}
-
-					// Situation progress
-					if ($this->situationinvoice)
-					{
-						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
-						$pdf->SetXY($this->posxprogress, $curY);
-						$pdf->MultiCell($this->postotalht-$this->posxprogress, 3, $progress, 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
@@ -1374,7 +1394,12 @@ class pdf_crabe extends ModelePDFFactures
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			if($conf->global->PRODUCT_USE_UNITS)
+			
+			if($this->situationinvoice)
+			{
+				$pdf->MultiCell($this->posxprogress-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+			else if($conf->global->PRODUCT_USE_UNITS)
 			{
 				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
@@ -1382,6 +1407,30 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
+		}
+		
+		if ($this->situationinvoice) {
+			$pdf->line($this->posxprogress - 1, $tab_top, $this->posxprogress - 1, $tab_top + $tab_height);
+			
+			if (empty($hidetop)) {
+				
+				$pdf->SetXY($this->posxprogress, $tab_top+1);
+				
+				if($conf->global->PRODUCT_USE_UNITS)
+				{
+					$pdf->MultiCell($this->posxunit-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+				else if ($this->atleastonediscount)
+				{
+					$pdf->MultiCell($this->posxdiscount-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+				else
+				{
+					$pdf->MultiCell($this->postotalht-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
+				}
+			
+			}
+			
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
