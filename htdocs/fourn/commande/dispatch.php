@@ -368,7 +368,7 @@ if ($id > 0 || ! empty($ref)) {
 		print "</td></tr>";
 
 		if ($object->methode_commande) {
-			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->methode_commande . '</td></tr>';
+			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $commande->getInputMethod() . '</td></tr>';
 		}
 	}
 

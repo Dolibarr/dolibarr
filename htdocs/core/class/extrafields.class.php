@@ -771,7 +771,7 @@ class ExtraFields
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+            $out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
