@@ -28,11 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+$action = GETPOST('action','alpha');
+
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
 
-switch ( $_GET['action'] )
+switch($action)
 {
 	default:
 		if ( $_POST['hdnSource'] != 'NULL' )
@@ -162,6 +164,16 @@ switch ( $_GET['action'] )
 
 		break;
 
+	case 'change_thirdparty':	// We have clicked on button "Modify" a thirdparty
+		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY','int');
+		if ($newthirdpartyid > 0)
+		{
+		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
+		}
+		
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
+        break;	    
+	    
 	case 'ajout_article':	// We have clicked on button "Add product"
 
 		if (! empty($obj_facturation->id))	// A product was previously selected and stored in session, so we can add it

@@ -2510,20 +2510,18 @@ class SupplierProposal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf, $langs;
 
 		$langs->load("supplier_proposal");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'aurore';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF)) {
 				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'aurore';
 			}
 		}
 

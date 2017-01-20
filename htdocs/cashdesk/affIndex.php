@@ -34,12 +34,16 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
+$langs->load("companies");
+$langs->load("compta");
 $langs->load("cashdesk");
 
 
 /*
  * View
  */
+
+$form = new Form($db);
 
 //header("Content-type: text/html; charset=UTF-8");
 //header("Content-type: text/html; charset=".$conf->file->character_set_client);

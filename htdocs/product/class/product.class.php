@@ -636,6 +636,25 @@ class Product extends CommonObject
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
 		$this->length_units = trim($this->length_units);
+		$this->width = price2num($this->width);
+		$this->width_units = trim($this->width_units);
+		$this->height = price2num($this->height);
+		$this->height_units = trim($this->height_units);
+		// set unit not defined
+		if ($this->length_units) $this->width_units = $this->length_units;    // Not used yet
+		if ($this->length_units) $this->height_units = $this->length_units;    // Not used yet
+		// Automated compute surface and volume if not filled
+		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units)
+		{
+			$this->surface = $this->length * $this->width;
+			$this->surface_units = $this->length_units + $this->width_units;
+		}
+		if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units)
+		{
+			$this->volume =  $this->surface * $this->height;
+			$this->volume_units = $this->surface_units + $this->height_units;
+		}
+		
 		$this->surface = price2num($this->surface);
 		$this->surface_units = trim($this->surface_units);
 		$this->volume = price2num($this->volume);
@@ -750,6 +769,10 @@ class Product extends CommonObject
 			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
 			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
+			$sql.= ", width= " . ($this->width!='' ? "'".$this->width."'" : 'null');
+			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->width_units."'" : 'null');
+			$sql.= ", height = " . ($this->height!='' ? "'".$this->height."'" : 'null');
+			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->height_units."'" : 'null');
 			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
 			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
 			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
@@ -1673,8 +1696,9 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
-		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas, weight, weight_units,";
+		$sql.= " length, length_units, width, width_units, height, height_units,";
+		$sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
 		$sql.= " fk_price_expression, price_autogen";
@@ -1736,6 +1760,11 @@ class Product extends CommonObject
 				$this->weight_units				= $obj->weight_units;
 				$this->length					= $obj->length;
 				$this->length_units				= $obj->length_units;
+				$this->width					= $obj->width;
+				$this->width_units				= $obj->width_units;
+				$this->height					= $obj->height;
+				$this->height_units				= $obj->height_units;
+
 				$this->surface					= $obj->surface;
 				$this->surface_units			= $obj->surface_units;
 				$this->volume					= $obj->volume;

@@ -942,18 +942,26 @@ abstract class CommonObject
 
         $result=array();
         $i=0;
+        //cas particulier pour les expeditions
+        if($this->element=='shipping' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='commande';
+        } else {
+            $id=$this->id;
+            $element=$this->element;
+        }
 
         $sql = "SELECT ec.fk_socpeople";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
         if ($source == 'internal') $sql.= " ".MAIN_DB_PREFIX."user as c,";
         if ($source == 'external') $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-        $sql.= " WHERE ec.element_id = ".$this->id;
+        $sql.= " WHERE ec.element_id = ".$id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
         if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
         if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
-        $sql.= " AND tc.element = '".$this->element."'";
+        $sql.= " AND tc.element = '".$element."'";
         $sql.= " AND tc.source = '".$source."'";
         $sql.= " AND tc.code = '".$code."'";
         $sql.= " AND tc.active = 1";
@@ -3020,9 +3028,16 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-
-            $totalOrdered+=$line->qty_asked;    // defined for shipment only
-            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            if (isset($line->qty_asked))   
+            {
+                if (empty($totalOrdered)) $totalOrdered=0;  // Avoid warning because $totalOrdered is ''
+                $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            }
+            if (isset($line->qty_shipped)) 
+            {
+                if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
+                $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }
 
             // Define qty, weight, volume, weight_units, volume_units
             if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
@@ -3037,8 +3052,11 @@ abstract class CommonObject
             if (! empty($weight_units)) $weightUnit = $weight_units;
             if (! empty($volume_units)) $volumeUnit = $volume_units;
 
+            if (empty($totalWeight)) $totalWeight=0;  // Avoid warning because $totalWeight is ''
+            if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
+            
             //var_dump($line->volume_units);
-            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 $trueWeightUnit=pow(10, $weightUnit);
                 $totalWeight += $weight * $qty * $trueWeightUnit;
@@ -3047,7 +3065,7 @@ abstract class CommonObject
             {
                 $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
             }
-            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
                 $trueVolumeUnit=pow(10, $volumeUnit);

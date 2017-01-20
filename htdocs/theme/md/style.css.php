@@ -584,6 +584,9 @@ div.myavailability {
 	color: #880000;
 	font-weight: bold;
 }
+.amountremaintopayback {
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -597,14 +600,16 @@ div.myavailability {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 /* Style used for most tables */ 
-.div-table-responsive {
+.div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
     line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
-div.fiche>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
     overflow-x: auto;
+}
+div.fiche>form>div.div-table-responsive {
     min-height: 350px;
 }
 

@@ -37,8 +37,8 @@
  */
 class FormOther
 {
-    var $db;
-    var $error;
+    private $db;
+    public $error;
 
 
     /**

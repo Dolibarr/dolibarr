@@ -337,24 +337,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				 	}
 
 					// Initialisation of datas
-					$object->socid			= $sendtosocid;	// To link to a company
-					$object->sendtoid		= $sendtoid;	// To link to a contact/address
-					$object->actiontypecode	= $actiontypecode;
-					$object->actionmsg		= $actionmsg;  // Long text
-					$object->actionmsg2		= $actionmsg2; // Short text
-					$object->trackid        = $trackid;
-					$object->fk_element		= $object->id;
-					$object->elementtype	= $object->element;
-
-					// Call of triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($db);
-					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $errors=$interface->errors;
+					if (is_object($object))
+					{
+    					$object->socid			= $sendtosocid;	// To link to a company
+    					$object->sendtoid		= $sendtoid;	// To link to a contact/address
+    					$object->actiontypecode	= $actiontypecode;
+    					$object->actionmsg		= $actionmsg;  // Long text
+    					$object->actionmsg2		= $actionmsg2; // Short text
+    					$object->trackid        = $trackid;
+    					$object->fk_element		= $object->id;
+    					$object->elementtype	= $object->element;
+    
+    					// Call of triggers
+    					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    					$interface=new Interfaces($db);
+    					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+    					if ($result < 0) {
+    						$error++; $errors=$interface->errors;
+    					}
+    					// End call of triggers
 					}
-					// End call of triggers
-
+					
 					if ($error)
 					{
 						dol_print_error($db);

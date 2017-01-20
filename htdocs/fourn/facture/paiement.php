@@ -422,7 +422,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	</script>'."\n";
 						}
 
-                        print '<div class="div-table-responsive">';
+                        print '<div class="div-table-responsive-no-min">';
                         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 						print '<tr class="liste_titre">';
@@ -639,7 +639,7 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
     
-    $nbtotalofrecords = -1;
+    $nbtotalofrecords = '';
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     {
         $result = $db->query($sql);

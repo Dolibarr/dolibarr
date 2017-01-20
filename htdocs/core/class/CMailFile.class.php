@@ -371,7 +371,9 @@ class CMailFile
         {
             // Use Swift Mailer library
             // ------------------------------------------
-
+            
+            $host = dol_getprefix('email');
+            
             require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
             // Create the message
             $this->message = Swift_Message::newInstance();
@@ -379,7 +381,7 @@ class CMailFile
             // Adding a trackid header to a message
             $headers = $this->message->getHeaders();
             $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
-            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $conf->global->MAIN_MAIL_SMTP_SERVER;
+            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
             $msgid = $headers->get('Message-ID');
             $msgid->setId($headerID);
             $headers->addIdHeader('References', $headerID);

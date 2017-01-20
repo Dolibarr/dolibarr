@@ -2111,13 +2111,13 @@ else
 					dol_print_error($db, $object->error, $object->errors);
 					exit();
 				}
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+				$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 				$file = $fileparams['fullname'];
 			}
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print load_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans('SendContractByMail'));
 
 			dol_fiche_head('');
 
@@ -2145,9 +2145,9 @@ else
 			$formmail->withtocc = $liste;
 			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__');
 			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__ (__REFCLIENT__)');
 			}
 			$formmail->withfile = 2;
 			$formmail->withbody = 1;
@@ -2155,7 +2155,7 @@ else
 			$formmail->withcancel = 1;
 			// Tableau des substitutions
 			$formmail->setSubstitFromObject($object);
-			$formmail->substit ['__ORDERREF__'] = $object->ref;
+			$formmail->substit ['__CONTRACTREF__'] = $object->ref;
 
 			$custcontact = '';
 			$contactarr = array();
@@ -2165,7 +2165,7 @@ else
 			{
 				foreach ($contactarr as $contact)
 				{
-					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
+					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
 						$custcontact = $contactstatic->getFullName($langs, 1);
@@ -2179,9 +2179,9 @@ else
 
 			// Tableau des parametres complementaires
 			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'order_send';
+			$formmail->param['models'] = 'contract_send';
 			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['orderid'] = $object->id;
+			$formmail->param['contractid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 			// Init list of files

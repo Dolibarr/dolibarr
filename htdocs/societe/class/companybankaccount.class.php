@@ -102,10 +102,11 @@ class CompanyBankAccount extends Account
     /**
      *	Update bank account
      *
-     *	@param	User	$user	Object user
-     *	@return	int				<=0 if KO, >0 if OK
+     *	@param	User	$user	     Object user
+     *  @param  int     $notrigger   1=Disable triggers
+     *	@return	int				     <=0 if KO, >0 if OK
      */
-    function update(User $user = null)
+    function update(User $user = null, $notrigger=0)
     {
     	global $conf;
 

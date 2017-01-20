@@ -662,7 +662,7 @@ class Account extends CommonObject
      *
      *    	@param	User	$user       Object user making action
      *      @param  int     $notrigger  1=Disable triggers
-     *		@return	int					<0 si ko, >0 si ok
+     *		@return	int					<0 if KO, >0 if OK
      */
     function update(User $user = null, $notrigger = 0)
     {

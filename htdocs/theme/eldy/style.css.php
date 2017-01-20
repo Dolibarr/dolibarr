@@ -261,10 +261,22 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     background-color: #FFF;
 }
 
-input:focus, textarea:focus, button:focus, select:focus {
-    box-shadow: 0 0 4px #8091BF;
-    /* TODO Remove shadow on focus. Use instead border-bottom: 1px solid #aaa !important; To disable with select2 too. */
+textarea:focus, button:focus {
+    /* v6 box-shadow: 0 0 4px #8091BF; */
+	border: 1px solid #aaa !important;
 }
+input:focus, select:focus {
+    /* box-shadow: 0 0 4px #8091BF; */
+	border-bottom: 1px solid #666;
+}
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom: 1px solid #aaa !important;
+}
+
 textarea.cke_source:focus
 {
 	box-shadow: none;
@@ -273,16 +285,32 @@ textarea.cke_source:focus
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
+    
     border: 1px solid #C0C0C0;
+    /* v6 border: none;
+    border-bottom: 1px solid #C0C0C0;
+    outline: none !important;*/
     margin: 0px 0px 0px 0px;
 }
 
-input, textarea, select {
+input, select {
+	/* v6 border-bottom: solid 1px rgba(0,0,0,.2);*/
 	border-radius: 2px;
-	border:solid 1px rgba(0,0,0,.3);
+	border: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
+
+	padding:4px;
+	margin-left:0px;
+	margin-bottom:1px;
+	margin-top:1px;
+	}
+textarea {
+	border-radius: 2px;
+	border: solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.3);
+	border-bottom:solid 1px rgba(0,0,0,.2);
+	
 	padding:4px;
 	margin-left:0px;
 	margin-bottom:1px;
@@ -579,6 +607,9 @@ div.myavailability {
 	color: #880000;
 	font-weight: bold;
 }
+.amountremaintopayback {
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -592,14 +623,16 @@ div.myavailability {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 /* Style used for most tables */ 
-.div-table-responsive {
+.div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
     line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
-div.fiche>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
     overflow-x: auto;
+}
+div.fiche>form>div.div-table-responsive {
     min-height: 350px;
 }
 
@@ -4028,7 +4061,14 @@ div.dataTables_length select {
 	background: #FFFFFF !important;
 }
 
-.select2-choice,
+.select2-choice
+{
+	border: 1px solid #aaa;
+	/* v6 border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid #aaa;*/
+}
 .select2-drop.select2-drop-above.select2-drop-active,
 .select2-container-active .select2-choice,
 .select2-container-active .select2-choices,
@@ -4037,6 +4077,7 @@ div.dataTables_length select {
 .select2-container-multi.select2-container-active .select2-choices
 {
 	border: 1px solid #aaa;
+	/* v6 */
 }
 .select2-disabled
 {
@@ -4057,7 +4098,7 @@ a span.select2-chosen
 	line-height: 24px;
 }
 .select2-choices .select2-search-choice {
-  border: 1px solid #aaa !important;
+    /* border: 1px solid #aaa !important; */
 }
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
