@@ -244,6 +244,13 @@ if ($step == 1 || $action == 'cleanselect')
 
 if ($action == 'builddoc')
 {
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_time = @ini_get("max_execution_time");
+    if ($max_time && $max_time < $max_execution_time_for_export)
+    {
+        @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
+    }
+    
     // Build export file
 	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)

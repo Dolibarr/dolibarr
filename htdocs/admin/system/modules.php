@@ -102,6 +102,8 @@ foreach($modulesdir as $dir)
     	closedir($handle);
     }
 }
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
@@ -148,6 +150,7 @@ foreach($sortorder as $numero=>$name)
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 print '<br>';
 sort($rights_ids);
 $old='';

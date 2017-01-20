@@ -34,7 +34,7 @@ class Login
 	/**
 	 * Login
 	 *
-	 * Log user with username and password
+	 * Log user with username and password. Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass)
 	 *
 	 * @param   string  $login			Username
 	 * @param   string  $password		User password

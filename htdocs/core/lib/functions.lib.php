@@ -967,7 +967,7 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
@@ -3316,7 +3316,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
 
         print '<li class="pagination">';
-        print '<select class="flat selectlimit" name="limit">';
+        print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
         $tmpchoice=explode(',',$pagesizechoices);
         $tmpkey=$limit.':'.$limit;
         if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;

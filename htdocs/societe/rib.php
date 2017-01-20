@@ -377,7 +377,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			$content = $account->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$content = $account->number;
-			if (! empty($account->label)) {
+			if (! empty($account->label) && $account->number) {
 			    if (! checkBanForAccount($account)) {
 			        $content.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 			    } else {
@@ -483,7 +483,7 @@ if ($socid && $action != 'edit' && $action != "create")
                     $string .= $rib->iban.' ';*/
                 }
             }
-        	if (! empty($rib->label)) {
+        	if (! empty($rib->label) && $rib->number) {
 			    if (! checkBanForAccount($rib)) {
 			        $string.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 			    } else {

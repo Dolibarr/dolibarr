@@ -422,7 +422,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	</script>'."\n";
 						}
 
-                        print '<div class="div-table-responsive">';
+                        print '<div class="div-table-responsive-no-min">';
                         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 						print '<tr class="liste_titre">';

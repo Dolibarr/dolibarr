@@ -693,8 +693,8 @@ class Contrat extends CommonObject
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
 
-				$this->lines[]			= $line;
-				$this->lines_id_index_mapper[$line->id] = key($this->lines);
+				$this->lines[$i]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $i;
 
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);

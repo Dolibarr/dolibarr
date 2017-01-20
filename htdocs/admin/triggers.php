@@ -52,6 +52,7 @@ $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">
 <tr class="liste_titre">
 <td colspan="2">'.$langs->trans("File").'</td>
@@ -78,6 +79,7 @@ foreach ($triggers as $trigger)
 }
 
 print '</table>';
+print '</div>';
 
 llxFooter();
 

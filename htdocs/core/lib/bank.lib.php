@@ -197,7 +197,7 @@ function checkBanForAccount($account)
         $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
         // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
         // Multiplication de chaque groupe par les coef du tableau
-var_dump($rib);        
+    
         for ($i = 0, $s = 0; $i < 3; $i++) {
             $code = substr($rib, 7 * $i, 7);
             $s += (0 + (int) $code) * $coef[$i];

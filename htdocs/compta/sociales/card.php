@@ -521,9 +521,6 @@ if ($id > 0)
             print '</tr>';
         }
 
-		// Status
-		//print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
-
 		print '</table>';
 
 		print '</div>';
@@ -548,6 +545,8 @@ if ($id > 0)
 		$resql = $db->query($sql);
 		if ($resql)
 		{
+		    $totalpaye = 0;
+		    
 		    $num = $db->num_rows($resql);
 		    $i = 0; $total = 0;
 		    print '<table class="noborder paymenttable">';
@@ -582,8 +581,8 @@ if ($id > 0)
 		        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
                 
-		    if ($object->paye == 0)
-		    {
+		    //if ($object->status == ChargeSociales::STATUS_DRAFT)
+		    //{
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
 		
@@ -592,7 +591,7 @@ if ($id > 0)
 		        
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
-		    }
+		    //}
 		    print "</table>";
 		    $db->free($resql);
 		}
