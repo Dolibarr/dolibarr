@@ -3338,49 +3338,166 @@ class Societe extends CommonObject
         return $this->update($this->id, $user);
 	}
 
-    /**
-     *  Return amount of bill not paid
-     *
-     *  @return		int				Amount in debt for thirdparty
-     */
-    function get_OutstandingBill()
-    {
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice
-		$paiement = $invoice->getSommePaiement();
-		$creditnotes=$invoice->getSumCreditNotesUsed();
-		$deposits=$invoice->getSumDepositsUsed();
-		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-		*/
-		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id;
-		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";	// Not a draft
-		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-		$sql .= " AND fk_statut <> 3";		// Not abandonned
-		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
+	/**
+	 *  Return amount of order not paid and total
+	 *
+	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingProposals()
+	{
+	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX."propal as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
 
-		dol_syslog("get_OutstandingBill", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$outstandingBill = 0;
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$facturestatic=new Facture($this->db);
-			while($obj=$this->db->fetch_object($resql)) {
-				$facturestatic->id=$obj->rowid;
-				$paiement = $facturestatic->getSommePaiement();
-				$creditnotes = $facturestatic->getSumCreditNotesUsed();
-				$deposits = $facturestatic->getSumDepositsUsed();
-
-				$outstandingBill+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
-   			}
-   			return $outstandingBill;
-		}
-		else
-			return 0;
+	    dol_syslog("getOutstandingProposals", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $outstandingTotal+= $obj->total_ht;
+	            $outstandingTotalIncTax+= $obj->total_ttc;
+	            if ($obj->fk_statut != 0)    // Not a draft
+	            {
+	                $outstandingOpened+=$obj->total_ttc;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else
+	        return array();
 	}
+	
+	/**
+	 *  Return amount of order not paid and total
+	 *
+	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingOrders()
+	{
+	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX."commande as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
 
+	    dol_syslog("getOutstandingOrders", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $outstandingTotal+= $obj->total_ht;
+	            $outstandingTotalIncTax+= $obj->total_ttc;
+	            if ($obj->fk_statut != 0)    // Not a draft
+	            {
+	                $outstandingOpened+=$obj->total_ttc;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else
+	        return array();
+	}
+	
+	/**
+	 *  Return amount of bill not paid and total
+	 *
+	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingBills()
+	{
+	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
+	     $paiement = $invoice->getSommePaiement();
+	     $creditnotes=$invoice->getSumCreditNotesUsed();
+	     $deposits=$invoice->getSumDepositsUsed();
+	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+	     */
+	    $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX."facture as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
+
+	    dol_syslog("getOutstandingBills", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	        $tmpobject=new Facture($this->db);
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $tmpobject->id=$obj->rowid;
+	            if ($obj->fk_statut != 0                                           // Not a draft
+	                && ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+	                )                                                      
+	            {
+	                $outstandingTotal+= $obj->total_ht;
+	                $outstandingTotalIncTax+= $obj->total_ttc;
+	            }
+	            if ($obj->paye == 0
+	                && $obj->fk_statut != 0    // Not a draft
+	                && $obj->fk_statut != 3	   // Not abandonned
+	                && $obj->fk_statut != 2)   // Not classified as paid
+    	            //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+	            {
+    	            $paiement = $tmpobject->getSommePaiement();
+    	            $creditnotes = $tmpobject->getSumCreditNotesUsed();
+    	            $deposits = $tmpobject->getSumDepositsUsed();
+	                $outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else 
+	    {
+	        return array();
+	    }
+	}
+	
+	/**
+	 *  Return amount of bill not paid
+	 *
+	 *  @return		int				Amount in debt for thirdparty
+	 *  @deprecated
+	 */
+	function get_OutstandingBill()
+	{
+	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
+	     $paiement = $invoice->getSommePaiement();
+	     $creditnotes=$invoice->getSumCreditNotesUsed();
+	     $deposits=$invoice->getSumDepositsUsed();
+	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+	     */
+	    $sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
+	    $sql .= " AND paye = 0";
+	    $sql .= " AND fk_statut <> 0";	// Not a draft
+	    //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+	    $sql .= " AND fk_statut <> 3";		// Not abandonned
+	    $sql .= " AND fk_statut <> 2";		// Not clasified as paid
+	
+	    dol_syslog("get_OutstandingBill", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingAmount = 0;
+	        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	        $tmpobject=new Facture($this->db);
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $tmpobject->id=$obj->rowid;
+	            $paiement = $tmpobject->getSommePaiement();
+	            $creditnotes = $tmpobject->getSumCreditNotesUsed();
+	            $deposits = $tmpobject->getSumDepositsUsed();
+	            $outstandingAmount+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
+	        }
+	        return $outstandingAmount;
+	    }
+	    else
+	        return 0;
+	}
+	
 	/**
 	 * Return label of status customer is prospect/customer
 	 *

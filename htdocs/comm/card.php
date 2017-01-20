@@ -508,33 +508,91 @@ if ($id > 0)
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
+	$boxstat = '';
+	
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$outstandingBills = $object->get_OutstandingBill();
-	$warn = '';
-	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingBills) 
+	$boxstat.='<div class="box">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
+	
+	if ($conf->propal->enabled)
 	{
-		$warn = img_warning($langs->trans("OutstandingBillReached"));
+    	// Box proposals
+    	$tmp = $object->getOutstandingProposals();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllProposals");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+	}
+
+	if ($conf->commande->enabled)
+	{
+	    // Box proposals
+	    $tmp = $object->getOutstandingOrders();
+	    $outstandingOpened=$tmp['opened'];
+	    $outstandingTotal=$tmp['total_ht'];
+	    $outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllOrders");
+	    $link='';
+	    $icon='bill';
+	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+	    $boxstat.='</div>';
+	    if ($link) $boxstat.='</a>';
 	}
 	
-	print '<table class="noborder" width="100%">';
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
-	print '</tr>';
+	if ($conf->facture->enabled)
+	{
+    	$text=$langs->trans("OverAllInvoices");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+    	
+    	// Box outstanding bill
+    	$tmp = $object->getOutstandingBills();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+    	$warn = '';
+    	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
+    	{
+    	    $warn = img_warning($langs->trans("OutstandingBillReached"));
+    	}
+    	$text=$langs->trans("CurrentOutstandingBill");
+    	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened).$warn.'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+	}
 	
-	// Outstanding bill
-	print '<tr class="impair">';
-	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
-	print '<td>'.price($outstandingBills).$warn.'</td>';
-	print '</tr>';
+	$boxstat.='</td></tr>';
+	$boxstat.='</table>';
+	$boxstat.='</div>';
 	
-	print '</table>';
-	print '<br>';
-
+    print $boxstat;
+    
 	$now=dol_now();
 
 	/*
