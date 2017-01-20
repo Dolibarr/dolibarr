@@ -171,7 +171,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
 	{
-		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
+		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
         $sTime='';
         $sDay=0;
