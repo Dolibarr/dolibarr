@@ -179,7 +179,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'warnings');
+			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
 		}
 		else
 		{
@@ -195,7 +195,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	$action='';
 }
 
-if ($weclickonassign && $action == 'addtime' && $user->rights->projet->lire)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
