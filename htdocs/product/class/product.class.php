@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017		Gustavo Novaro			
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,36 +55,61 @@ class Product extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
-	var $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm'; // See also into images.lib.php
+	public $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm'; // See also into images.lib.php
 
 	/*
 	 * @deprecated
 	 * @see label
 	 */
-	var $libelle;
+	public $libelle;
 	/**
 	 * Product label
 	 * @var string
 	 */
-	var $label;
-    /**
-     * Product descripion
-     * @var string
-     */
-	var $description;
+	public $label;
+    
+	/**
+     	* Product descripion
+     	* @var string
+     	*/
+	public $description;
 
 	/**
 	 * Check TYPE constants
 	 * @var int
 	 */
-	var $type = self::TYPE_PRODUCT;
-	//! Selling price
-	var $price;				// Price net
-	var $price_ttc;			// Price with tax
-	var $price_min;         // Minimum price net
-	var $price_min_ttc;     // Minimum price with tax
-	//! Base price ('TTC' for price including tax or 'HT' for net price)
-	var $price_base_type;
+	public $type = self::TYPE_PRODUCT;
+	
+	/**
+	 * Selling price
+	 * @var float
+	 */
+	public $price;			// Price net
+	
+	/**
+	 * Price with tax
+	 * @var float
+	 */
+	public $price_ttc;
+	
+	/**
+	 * Minimum price net
+	 * @var float
+	 */
+	public $price_min;
+	
+	/**
+	 * Minimum price with tax
+	 * @var float
+	 */
+	public $price_min_ttc;
+	
+	/*
+	 * Base price ('TTC' for price including tax or 'HT' for net price)
+	 * @var float
+	 */
+	public $price_base_type;
+	
 	//! Arrays for multiprices
 	public $multiprices=array();
 	public $multiprices_ttc=array();
@@ -92,49 +118,99 @@ class Product extends CommonObject
 	public $multiprices_min_ttc=array();
 	public $multiprices_tva_tx=array();
 	public $multiprices_recuperableonly=array();
-	//! Price by quantity arrays
-	var $price_by_qty;
-	var $prices_by_qty=array();
-	var $prices_by_qty_id=array();
-	var $prices_by_qty_list=array();
-	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
-	var $default_vat_code;
-	//! Default VAT rate of product
-	var $tva_tx;
-	//! French VAT NPR (0 or 1)
-    var $tva_npr=0;
-	//! Other local taxes
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $localtax1_type;
-	var $localtax2_type;
 	
-	//! Stock real
-	var $stock_reel;
-	//! Stock virtual
-	var $stock_theorique;
-	//! Cost price
-	var $cost_price;
+	//! Price by quantity arrays
+	public $price_by_qty;
+	public $prices_by_qty=array();
+	public $prices_by_qty_id=array();
+	public $prices_by_qty_list=array();
+	
+	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
+	public $default_vat_code;
+	
+	//! Default VAT rate of product
+	public $tva_tx;
+	
+	//! French VAT NPR (0 or 1)
+    	public $tva_npr=0;
+	
+	//! Other local taxes
+	public $localtax1_tx;
+	public $localtax2_tx;
+	public $localtax1_type;
+	public $localtax2_type;
+	
+	/**
+	 * Stock real
+	 * @var int
+	 */
+	public $stock_reel = 0;
+	
+	/**
+	 * Stock virtual
+	 * @var int
+	 */
+	public $stock_theorique;
+	
+	/**
+	 * Cost price
+	 * @var float
+	 */
+	public $cost_price;
+	
 	//! Average price value for product entry into stock (PMP)
-	var $pmp;
-    //! Stock alert
-	var $seuil_stock_alerte;
-	//! Ask for replenishment when $desiredstock < $stock_reel
+	public $pmp;
+	
+    	/**
+	 * Stock alert
+	 * @var int
+	 */
+	public $seuil_stock_alerte;
+	
+	/**
+	 * Ask for replenishment when $desiredstock < $stock_reel
+	 */
 	public $desiredstock;
-	//! Duree de validite du service
-	var $duration_value;
-	//! Unite de duree
-	var $duration_unit;
-	// Statut indique si le produit est en vente '1' ou non '0'
-	var $status;
-	// Status indicate whether the product is available for purchase '1' or not '0'
-	var $status_buy;
-	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
-	var $finished;
-	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
-	var $status_batch;
+	
+	/*
+	 * Service expiration
+	 */
+	public $duration_value;
+	
+	/**
+	 * Exoiration unit
+	 */
+	public $duration_unit;
+	
+	/**
+	 * Status indicates whether the product is on sale '1' or not '0'
+	 * @var int
+	 */
+	public $status;
+	
+	/**
+	 * Status indicate whether the product is available for purchase '1' or not '0'
+	 * @var int
+	 */
+	public $status_buy;
+	
+	/**
+	 * Status indicates whether the product is a finished product '1' or a raw material '0'
+	 * @var int
+	 */
+	public $finished;
+	
+	/**
+	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
+	 * @var int
+	 */
+	public $status_batch;
 
-	var $customcode;       // Customs code
+	/**
+	 * Customs code
+	 * @var
+	 */
+	public $customcode;
 
 	/**
 	 * Product URL
@@ -143,56 +219,66 @@ class Product extends CommonObject
 	public $url;
 
 	//! Unites de mesure
-	var $weight;
-	var $weight_units;
-	var $length;
-	var $length_units;
-	var $surface;
-	var $surface_units;
-	var $volume;
-	var $volume_units;
+	public $weight;
+	public $weight_units;
+	public $length;
+	public $length_units;
+	public $surface;
+	public $surface_units;
+	public $volume;
+	public $volume_units;
 
-	var $accountancy_code_buy;
-	var $accountancy_code_sell;
+	public $accountancy_code_buy;
+	public $accountancy_code_sell;
 
-	//! barcode
-	var $barcode;               // value
+	/**
+	 * Main barcode
+	 * barcode value
+	 * @var 
+	 */
+	public $barcode;
+	
+	/**
+	 * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
+	 * @var array
+	 */
+	public $barcodes_extra=array();
 
-	var $stats_propale=array();
-	var $stats_commande=array();
-	var $stats_contrat=array();
-	var $stats_facture=array();
-    var $stats_commande_fournisseur=array();
+	public $stats_propale=array();
+	public $stats_commande=array();
+	public $stats_contrat=array();
+	public $stats_facture=array();
+    	public $stats_commande_fournisseur=array();
 
-	var $multilangs=array();
+	public $multilangs=array();
 
 	//! Taille de l'image
-	var $imgWidth;
-	var $imgHeight;
+	public $imgWidth;
+	public $imgHeight;
 
-	var $date_creation;
-	var $date_modification;
+	public $date_creation;
+	public $date_modification;
 
 	//! Id du fournisseur
-	var $product_fourn_id;
+	public $product_fourn_id;
 
 	//! Product ID already linked to a reference supplier
-	var $product_id_already_linked;
+	public $product_id_already_linked;
 
-	var $nbphoto;
+	public $nbphoto;
 
 	//! Contains detail of stock of product into each warehouse
-	var $stock_warehouse=array();
+	public $stock_warehouse=array();
 
-	var $oldcopy;
+	public $oldcopy;
 
-    var $fk_price_expression;
+    	public $fk_price_expression;
 
 	/**
 	 * @deprecated
 	 * @see fourn_pu
 	 */
-	var $buyprice;
+	public $buyprice;
 	public $fourn_pu;
 
 	public $fourn_price_base_type;
@@ -201,7 +287,7 @@ class Product extends CommonObject
 	 * @deprecated
 	 * @see ref_supplier
 	 */
-	var $ref_fourn;
+	public $ref_fourn;
 	public $ref_supplier;
 
 	/**
@@ -290,7 +376,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-        $error=0;
+        	$error=0;
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
@@ -320,39 +406,48 @@ class Product extends CommonObject
 		$price_ttc=0;
 		$price_min_ht=0;
 		$price_min_ttc=0;
+		
+		//
 		if ($this->price_base_type == 'TTC' && $this->price_ttc > 0)
 		{
 			$price_ttc = price2num($this->price_ttc,'MU');
 			$price_ht = price2num($this->price_ttc / (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if ($this->price_base_type != 'TTC' && $this->price > 0)
 		{
 			$price_ht = price2num($this->price,'MU');
 			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if (($this->price_min_ttc > 0) && ($this->price_base_type == 'TTC'))
 		{
 			$price_min_ttc = price2num($this->price_min_ttc,'MU');
 			$price_min_ht = price2num($this->price_min_ttc / (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if (($this->price_min > 0) && ($this->price_base_type != 'TTC'))
 		{
 			$price_min_ht = price2num($this->price_min,'MU');
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
 
-    	$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+    		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
-        // Barcode value
-        $this->barcode=trim($this->barcode);
+		// Barcode value
+		$this->barcode=trim($this->barcode);
 
-        // Check parameters
+	        // Check parameters
 		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
+		
 		if (empty($this->ref))
 		{
 			// Load object modCodeProduct
@@ -371,6 +466,7 @@ class Product extends CommonObject
 				}
 				unset($modCodeProduct);
 			}
+			
 			if (empty($this->ref))
 			{
 				$this->error='ProductModuleNotSetupForAutoRef';
