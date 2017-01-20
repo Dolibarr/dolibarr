@@ -556,6 +556,11 @@ if ($id > 0)
 	
 	if ($conf->facture->enabled)
 	{
+    	$tmp = $object->getOutstandingBills();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    
     	$text=$langs->trans("OverAllInvoices");
     	$link='';
     	$icon='bill';
@@ -567,10 +572,6 @@ if ($id > 0)
     	if ($link) $boxstat.='</a>';
     	
     	// Box outstanding bill
-    	$tmp = $object->getOutstandingBills();
-    	$outstandingOpened=$tmp['opened'];
-    	$outstandingTotal=$tmp['total_ht'];
-    	$outstandingTotalIncTax=$tmp['total_ttc'];
     	$warn = '';
     	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
     	{
