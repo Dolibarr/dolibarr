@@ -408,31 +408,34 @@ print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_
 print '</td></tr>'."\n";
 
 // AGENDA NOTIFICATION
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
-
-if (empty($conf->global->AGENDA_NOTIFICATION)) {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
-    print '</td></tr>'."\n";
-} else {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
-    print '</td></tr>'."\n";
-	$var=!$var;
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+{
+    $var=!$var;
     print '<tr '.$bc[$var].'>'."\n";
-    print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
+    print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right">'."\n";
-
-    if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+    
+    if (empty($conf->global->AGENDA_NOTIFICATION)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+        print '</td></tr>'."\n";
     } else {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        print '</td></tr>'."\n";
+    	$var=!$var;
+        print '<tr '.$bc[$var].'>'."\n";
+        print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
+        print '<td align="center">&nbsp;</td>'."\n";
+        print '<td align="right">'."\n";
+    
+        if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+        } else {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        }
+    
+        print '</td></tr>'."\n";
     }
-
-    print '</td></tr>'."\n";
 }
 
 print '</table>';

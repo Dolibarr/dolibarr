@@ -75,7 +75,7 @@ class modAgenda extends DolibarrModules
 		$this->langfiles = array("companies");
 
 		// Module parts
-        $this->module_parts = array('js' => array('/core/js/agenda_notification.js.php'));
+        $this->module_parts = array();
 
 		// Constants
 		//-----------

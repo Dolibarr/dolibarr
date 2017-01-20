@@ -14,8 +14,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
-*/
+ * 
+ * Library javascript to enable Browser notifications
+ */
+
 if (!defined('NOREQUIREUSER')) define('NOREQUIREUSER', '1');
 if (!defined('NOREQUIRESOC')) define('NOREQUIRESOC', '1');
 if (!defined('NOCSRFCHECK')) define('NOCSRFCHECK', 1);
@@ -24,110 +26,113 @@ if (!defined('NOLOGIN')) define('NOLOGIN', 1);
 if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', 1);
 if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 
-session_cache_limiter(FALSE);
-
 require_once '../../main.inc.php';
 
-if(!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php')){
-
+if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'))
+{
     global $langs, $conf;
-
-    $langs->load('agenda');
 
     // Define javascript type
     header('Content-type: text/javascript; charset=UTF-8');
+
+    // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
+    session_cache_limiter(FALSE);
     header('Cache-Control: no-cache');
-
-    // Check notification permissions API HTML5
-    print 'if (Notification.permission !== "granted") {
-                    Notification.requestPermission()
-                }' . PHP_EOL;
-
     session_start();
     if (!isset($_SESSION['auto_check_events'])) {
-
         // Round to eliminate the second part
         $_SESSION['auto_check_events'] = floor(time() / 60) * 60;
-        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';' . PHP_EOL;
-        print 'var now = ' . $_SESSION['auto_check_events'] . ';' . PHP_EOL;
+        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';'."\n";
+        print 'var now = ' . $_SESSION['auto_check_events'] . ';' . "\n";
     } else {
-
-        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';' . PHP_EOL;
-        print 'var now = ' . time() . ';' . PHP_EOL;
+        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';' . "\n";
+        print 'var now = ' . time() . ';' . "\n";
     }
-
-    //TODO provisionally set to be checked every 60 seconds, the 1000 is because it needs to be in milliseconds
-    print 'var time_auto_update = 60;' . "\n";
+    print 'var time_auto_update = '.(empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)?'3':(int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY).';' . "\n";
     ?>
-
+	
+	/* Check if permission ok */
+	if (Notification.permission !== "granted") {
+        Notification.requestPermission()
+    }
 
     if (now > (time_session + time_auto_update) || now == time_session) {
 
         first_execution(); //firts run auto check
     } else {
 
-        var time_first_execution = (time_auto_update - (now - time_session)) * 1000;
+        var time_first_execution = (time_auto_update - (now - time_session)) * 1000;	//need milliseconds
 
-        setTimeout(first_execution, time_first_execution); //firts run auto check
+        setTimeout(first_execution, time_first_execution); //first run auto check
     }
 
 
     function first_execution() {
+    	console.log("Call first_execution");
         check_events();
         setInterval(check_events, time_auto_update * 1000); //program time for run check events
     }
 
     function check_events() {
-
-        $.ajax("<?php print dol_buildpath('/core/ajax/check_events.php', 1); ?>", {
-            type: "post",   // Usually post o get
-            async: true,
-            data: {time: time_session},
-            success: function (result) {
-
-                var arr = JSON.parse(result);
-
-                if (arr.length > 0) {
-                    if (Notification.permission === "granted") {
-
+    	if (Notification.permission === "granted")
+    	{
+    		console.log("Call check_events");
+            $.ajax("<?php print dol_buildpath('/core/ajax/check_notifications.php', 1); ?>", {
+                type: "post",   // Usually post o get
+                async: true,
+                data: {time: time_session},
+                success: function (result) {
+                    var arr = JSON.parse(result);
+                    if (arr.length > 0) {
                         <?php
-                        if($conf->global->AGENDA_NOTIFICATION_SOUND){
-                            print 'var audio = new Audio(\''.dol_buildpath('/comm/action/sound/notification.mp3', 1).'\');';
+                        if (! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
+                            print 'var audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
                         }
                         ?>
-
+    
                         $.each(arr, function (index, value) {
+                            var url="notdefined";
+                            var title="Not defined";
                             var body = value['tipo'] + ': ' + value['titulo'];
-                            if (value['location'] != null) {
+                            if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
                                 body += '\n <?php print $langs->transnoentities('Location')?>: ' + value['location'];
                             }
-
-
-                            var title = "<?php print $langs->trans('Agenda') ?>";
+    
+                            if (value['type'] == 'agenda')
+                            {
+                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value['id'];
+                                title = '<?php print $langs->trans('Agenda') ?>';
+                            }
                             var extra = {
-                                icon: "<?php print dol_buildpath('/theme/common/bell.png', 1); ?>",
+                                icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
                                 body: body,
                                 tag: value['id']
                             };
-
+    
                             // We release the notify
                             var noti = new Notification(title, extra);
-                            <?php
-                            if($conf->global->AGENDA_NOTIFICATION_SOUND){
-                                print 'if(index==0)audio.play();'."\n";
+                            if (index==0 && audio) 
+                            {
+                            	audio.play();
                             }
-                            ?>
                             noti.onclick = function (event) {
+                                console.log("An event to notify on browser was received");
                                 event.preventDefault(); // prevent the browser from focusing the Notification's tab
                                 window.focus();
-                                window.open("<?php print dol_buildpath('/comm/action/card.php?id=', 1); ?>" + value['id'], '_blank');
+                                window.open(url, '_blank');
                                 noti.close();
                             };
                         });
                     }
                 }
-            }
-        });
+            });
+        }
+        else
+        {
+        	console.log("Cancel check_events. Useless because Notification.permission is "+Notification.permission);
+        }
+
         time_session += time_auto_update;
     }
-<?php }
+<?php 
+}
