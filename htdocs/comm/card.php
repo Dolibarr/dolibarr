@@ -366,6 +366,21 @@ if ($id > 0)
 	print '</td>';
 	print '</tr>';
 
+	// Max outstanding bill
+	if ($object->client)
+	{
+	    print '<tr class="nowrap">';
+	    print '<td>';
+	    print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
+	    print '</td><td>';
+	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
+	
+	    print '</td>';
+	    print '</tr>';
+	}
+	
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -511,23 +526,8 @@ if ($id > 0)
 	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
 	print '</tr>';
 	
-	// Max outstanding bill
-	if ($object->client)
-	{
-	    print '<tr class="impair">';
-	    print '<td>';
-	    print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
-	    print '</td><td>';
-	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
-	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-	
-	    print '</td>';
-	    print '</tr>';
-	}
-	
 	// Outstanding bill
-	print '<tr class="pair">';
+	print '<tr class="impair">';
 	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
 	print '<td>'.price($outstandingBills).$warn.'</td>';
 	print '</tr>';

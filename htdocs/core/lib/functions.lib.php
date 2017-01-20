@@ -3316,7 +3316,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
 	     
         print '<li class="pagination">';
-        print '<select class="flat selectlimit" name="limit">';
+        print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
         $tmpchoice=explode(',',$pagesizechoices);
         $tmpkey=$limit.':'.$limit;
         if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
