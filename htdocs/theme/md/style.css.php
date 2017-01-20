@@ -583,6 +583,9 @@ div.myavailability {
 	color: #880000;
 	font-weight: bold;
 }
+.amountremaintopayback {
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
