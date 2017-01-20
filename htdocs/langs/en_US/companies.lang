@@ -388,6 +388,7 @@ LastModifiedThirdParties=Latest %s modified third parties
 UniqueThirdParties=Total of unique third parties
 InActivity=Open
 ActivityCeased=Closed
+ThirdPartyIsClosed=Third party is closed
 ProductsIntoElements=List of products/services into %s
 CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Max. for outstanding bill

@@ -1007,7 +1007,15 @@ if ($id > 0)
     
     		if (! empty($conf->facture->enabled))
     		{
-    			if ($user->rights->facture->creer && $object->status==1)
+    			if (empty($user->rights->facture->creer))
+    			{
+    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    			}
+    			else if ($object->status != 1)
+    			{
+    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    			}
+    			else
     			{
     				$langs->load("bills");
     				$langs->load("orders");
@@ -1021,10 +1029,6 @@ if ($id > 0)
     				if ($object->client != 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     
-    			}
-    			else
-    			{
-    				print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     		}
     	}
