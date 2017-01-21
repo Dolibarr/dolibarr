@@ -29,17 +29,16 @@
  */
 class Translate
 {
-	var $dir;                          // Directories that contains /langs subdirectory
+	public $dir;                          // Directories that contains /langs subdirectory
 
-	var $defaultlang;                  // Current language for current user
-	var $direction = 'ltr';            // Left to right or Right to left
-	var $charset_output='UTF-8';       // Codage used by "trans" method outputs
+	public $defaultlang;                  // Current language for current user
+	public $charset_output='UTF-8';       // Codage used by "trans" method outputs
 
-	var $tab_translate=array();        // Array of all translations key=>value
-	private $_tab_loaded=array();      // Array to store result after loading each language file
+	public $tab_translate=array();        // Array of all translations key=>value
+	private $_tab_loaded=array();         // Array to store result after loading each language file
 
-	var $cache_labels=array();         // Cache for labels return by getLabelFromKey method
-	var $cache_currencies=array();     // Cache to store currency symbols
+	public $cache_labels=array();         // Cache for labels return by getLabelFromKey method
+	public $cache_currencies=array();     // Cache to store currency symbols
 
 
 
