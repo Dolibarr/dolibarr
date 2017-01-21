@@ -2554,9 +2554,9 @@ abstract class CommonObject
 
             if (! empty($this->linkedObjectsIds))
             {
-                foreach($this->linkedObjectsIds as $objecttype => $objectids)
+                foreach($this->linkedObjectsIds as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
                 {
-                    // Parse element/subelement (ex: project_task)
+                    // Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
                     $module = $element = $subelement = $objecttype;
                     if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
                         && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
@@ -2621,7 +2621,7 @@ abstract class CommonObject
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-                        //print '/'.$classpath.'/'.$classfile.'.class.php';
+                        //print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
                         if (class_exists($classname))
                         {
 	                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
