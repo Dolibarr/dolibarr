@@ -17,7 +17,6 @@ ShowIntervention=Mostrar intervençao
 SendInterventionRef=Apresentação de intervenção %s
 SendInterventionByMail=Enviar por E-mail intervenção
 InterventionCreatedInDolibarr=Intervenção %s criada
-InterventionValidatedInDolibarr=Intervenção %s validada
 InterventionModifiedInDolibarr=Intervenção %s alterada
 InterventionClassifiedBilledInDolibarr=Intervenção %s classificada como Faturada
 InterventionClassifiedUnbilledInDolibarr=Intervenção %s definida como à faturar
