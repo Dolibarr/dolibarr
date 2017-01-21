@@ -595,7 +595,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify unbilled
 	else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setStatut(1);
@@ -610,19 +610,19 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify Done
 	else if ($action == 'classifydone' && $user->rights->ficheinter->creer)
 	{
-		$result=$object->setStatut(3);
-		if ($result > 0)
-		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	    $result=$object->setStatut(3);
+	    if ($result > 0)
+	    {
+	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	        exit;
+	    }
+	    else
+	    {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
 	}
 	
 	/*

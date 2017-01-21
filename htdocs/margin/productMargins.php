@@ -175,8 +175,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = d.fk_product";
-$sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.fk_soc = s.rowid";
+$sql.= " WHERE f.fk_soc = s.rowid";
+$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
