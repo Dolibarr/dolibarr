@@ -1256,10 +1256,10 @@ div.menu_titre {
 .mainmenuaspan
 {
 <?php if ($disableimages) { ?>
-	padding-left: 4px;
-	padding-right: 2px;
+	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $right; ?>: 2px;
 <?php } else { ?>
-	padding-right: 4px;
+	padding-<?php print $right; ?>: 4px;
 <?php } ?>
 }
 
@@ -2044,7 +2044,7 @@ a.tabTitle {
 /*    background: #657090;
     color: white;*/
     color:rgba(0,0,0,.5);
-    margin-right:10px;
+    margin-<?php print $right; ?>: 10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;

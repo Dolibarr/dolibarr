@@ -2239,7 +2239,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';

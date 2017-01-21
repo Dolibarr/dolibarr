@@ -60,10 +60,10 @@ You can use a Web server and a supported database (MariaDb, MySql or Postgresql)
 ## UPGRADING
 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
-- If you're upgrading from version x.y.z to x.y.w (only third number differs), there is no need to run any migration process.
-- If you're upgrading from a beta version or from any version x.y.z to any other where x or y number differs, you must call the Dolibarr "install/" page in your browser (this should be done automatically at first dolibarr access) and follow the upgrade process.
+- At first next access, Dolibarr will redirect your to the "install/" page to make the upgrade process.
+  If a file install.lock exists to lock any run of upgrade process, the application will ask you to remove the file manually (you should find the install.lock file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "documents").
 
-*Note: migration process can safely be done multiple times.*
+*Note: migration process can safely be done multiple times by calling the page /install/index.php*
 
 ## WHAT'S NEW
 
@@ -80,17 +80,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Invoices and payment management
 - Standing orders management (European SEPA)
 - Bank accounts management
-- Shared calendar
+- Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities and/or project management (following project benefit including invoices, expense reports, time spent, ...)
 - Projects management
 - Contracts management
 - Stock management
 - Shipping management
 - Interventions management
-- Agenda with ical and vcal export for third party tools integration
+- Employee's leave requests management
+- Expense report management
 - Electronic Document Management (EDM)
 - Foundations members management
-- Employee's holidays management
 - Mass emailing
 - Surveys
 - Point of Sale

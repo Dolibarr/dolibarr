@@ -2507,7 +2507,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: right"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : $other));
 }
 
 /**

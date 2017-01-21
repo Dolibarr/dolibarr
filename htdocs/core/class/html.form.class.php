@@ -5391,6 +5391,7 @@ class Form
         		        global $noMoreLinkedObjectBlockAfter;
         		        $noMoreLinkedObjectBlockAfter=1;
         		    }
+
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res)
         			{
@@ -5439,7 +5440,27 @@ class Form
 			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
 		);
-
+		
+		global $action;
+		
+		// Can complet the possiblelink array
+		$hookmanager->initHooks(array('commonobject'));
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+		        $possiblelinks=array_merge($possiblelinks, $hookmanager->resArray);
+		    }
+		}
+		else if ($reshook > 0)
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+                $possiblelinks=$hookmanager->resArray;
+		    }
+		}
 
 		foreach($possiblelinks as $key => $possiblelink)
 		{
@@ -5451,6 +5472,7 @@ class Form
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
 				$sql = $possiblelink['sql'];
+
 				$resqllist = $this->db->query($sql);
 				if ($resqllist)
 				{
@@ -5466,7 +5488,7 @@ class Form
 					print '<td class="nowrap"></td>';
 					print '<td align="center">' . $langs->trans("Ref") . '</td>';
 					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td align="right">' . $langs->trans("AmountHTShort") . '</td>';
 					print '<td align="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
 					while ($i < $num)
@@ -5480,7 +5502,7 @@ class Form
 						print '</td>';
 						print '<td align="center">' . $objp->ref . '</td>';
 						print '<td>' . $objp->ref_client . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td align="right">' . price($objp->total_ht) . '</td>';
 						print '<td>' . $objp->name . '</td>';
 						print '</tr>';
 						$i++;
