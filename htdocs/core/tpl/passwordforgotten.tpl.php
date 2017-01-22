@@ -102,7 +102,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	?>
 	<!-- Captcha -->
 	<tr>
-	<td valign="top" class="nowrap none center">
+	<td class="tdtop nowrap none center">
 
 	<table class="login_table_securitycode centpercent"><tr>
 	<td>

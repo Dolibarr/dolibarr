@@ -3445,7 +3445,7 @@ class Form
                         foreach($input['values'] as $selkey => $selval)
                         {
                             $more.='<tr>';
-                            if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+                            if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
                             $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';

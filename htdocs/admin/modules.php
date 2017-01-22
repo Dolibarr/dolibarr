@@ -485,11 +485,11 @@ if ($mode != 'marketplace')
         print '</td>';
 
         // Name
-        print '<td valign="top">'.$objMod->getName();
+        print '<td class="tdtop">'.$objMod->getName();
         print "</td>\n";
 
         // Desc
-        print '<td valign="top">';
+        print '<td class="tdtop">';
         print nl2br($objMod->getDesc());
         print "</td>\n";
 

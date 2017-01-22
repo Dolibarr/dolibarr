@@ -250,7 +250,7 @@ if ($user->rights->categorie->creer)
 		print'</td></tr>';
 
 		// Description
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
 		$doleditor->Create();

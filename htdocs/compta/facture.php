@@ -2227,7 +2227,7 @@ if ($action == 'create')
 		$optionsav .= '</option>';
 	}
 
-	print '<tr><td valign="top" class="fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
+	print '<tr><td class="tdtop fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
 
 	print '<div class="tagtable">' . "\n";
 

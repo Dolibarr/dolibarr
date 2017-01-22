@@ -1349,7 +1349,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top">';
+	print '<td class="tdtop">';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1359,7 +1359,7 @@ if ($action == 'create')
 	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top">';
+		print '<td class="tdtop">';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);

@@ -244,7 +244,7 @@ if ($action == 'create')
 	{
 		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
-			print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
 		}
@@ -330,7 +330,7 @@ else
 			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc->getInfo($object->entity);
-				print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+				print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 				print '<td width="75%" class="valeur">'.$mc->label;
 				print "</td></tr>\n";
 			}
@@ -406,7 +406,7 @@ else
                 {
                     if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                     {
-                        print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
+                        print '</td><td class="tdtop">'.$langs->trans("Entity").'</td>';
                         print "<td>".$mc->select_entities($conf->entity);
                     }
                     else
@@ -518,7 +518,7 @@ else
             {
                 if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
-                    print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+                    print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
                     print "<td>".$mc->select_entities($object->entity);
                     print "</td></tr>\n";
                 }

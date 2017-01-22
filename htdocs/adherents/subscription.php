@@ -1039,7 +1039,7 @@ if ($rowid > 0)
                 //print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
 
                 // No more action
-                print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
+                print '<tr><td class="tdtop fieldrequired">'.$langs->trans('MoreActions');
                 print '</td>';
                 print '<td>';
                 print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice)?' checked':'').'> '.$langs->trans("None").'<br>';

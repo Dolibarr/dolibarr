@@ -207,7 +207,7 @@ print ' -> ';
 if (GETPOST('action') == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else print $urlfile;
 print '</td></tr>';
-/*print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+/*print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 if ($_GET["action"] == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
