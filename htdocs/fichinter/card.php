@@ -967,7 +967,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
