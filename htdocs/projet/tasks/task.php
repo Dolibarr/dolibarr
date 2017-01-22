@@ -398,7 +398,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td>';
 			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 			print '</td></tr>';
@@ -509,7 +509,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Description
-			print '<td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 			print nl2br($object->description);
 			print '</td></tr>';
 

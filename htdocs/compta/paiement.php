@@ -512,7 +512,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
-		print '<td valign="top">';
+		print '<td class="tdtop">';
 		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment').'</textarea></td></tr>';
         
         print '</table>';

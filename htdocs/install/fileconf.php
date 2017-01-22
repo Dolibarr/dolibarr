@@ -117,7 +117,7 @@ if (! empty($force_install_message))
 	<!-- Documents root $dolibarr_main_document_root -->
 	<tr>
 	<?php
-	print '<td valign="top" class="label"><b>';
+	print '<td class="tdtop label"><b>';
 	print $langs->trans("WebPagesDirectory");
 	print "</b></td>";
 
@@ -148,7 +148,7 @@ if (! empty($force_install_message))
 
 	<!-- Documents URL $dolibarr_main_data_root -->
 	<tr>
-		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
+		<td class="tdtop label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
 		</td>
 		<?php
 		$dolibarr_main_data_root = @$force_install_main_data_root;
@@ -185,9 +185,9 @@ if (! empty($force_install_message))
 	}
 	?>
 	<tr>
-		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
+		<td class="tdtop label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
 		</td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
 			       class="minwidth300"
 			       name="main_url"
@@ -209,7 +209,7 @@ if (! empty($force_install_message))
 	if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
 	    ?>
 	<tr>
-		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
+		<td class="tdtop label"><?php echo $langs->trans("ForceHttps"); ?></td>
 		<td class="label" valign="top">
 			<input type="checkbox"
 			       name="main_force_https"
@@ -261,7 +261,7 @@ if (! empty($force_install_message))
 	?>
 	<tr>
 		<!-- Driver type -->
-		<td valign="top" class="label"><b> <?php echo $langs->trans("DriverType"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DriverType"); ?>
 		</b></td>
 
 		<td class="label">
@@ -337,9 +337,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
 		</b></td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_host"
 			       value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
@@ -354,8 +354,8 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label">
+		<td class="tdtop label"><?php echo $langs->trans("Port"); ?></td>
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_port"
 			       id="db_port"

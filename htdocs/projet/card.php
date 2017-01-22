@@ -766,7 +766,7 @@ elseif ($object->id > 0)
 	    print '</tr>';
 
 	    // Description
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
         print '<td>';
         print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
         print '</td></tr>';

@@ -867,7 +867,7 @@ if ($action == 'editcss')
     print $website;
     print '</td></tr>';
 
-    print '<tr><td valign="top">';
+    print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
     print '<textarea class="flat centpercent" rows="32" name="WEBSITE_CSS_INLINE">';
