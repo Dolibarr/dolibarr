@@ -471,7 +471,10 @@ if ($action == 'new')
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
-		print '<table class="noborder" width="100%">';
+		$moreforfilter='';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+		
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").' ';
 		print "</td>\n";
@@ -539,7 +542,8 @@ if ($action == 'new')
 			$i++;
 		}
 		print "</table>";
-
+        print '</div>';
+        
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
