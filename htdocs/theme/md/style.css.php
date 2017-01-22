@@ -621,7 +621,7 @@ div.fiche>form>div.div-table-responsive {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
-/* rule to reduce top menu - 3rd reduction */
+/* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
 	.minwidth100 { min-width: 100px; }
@@ -711,7 +711,7 @@ div.fiche>form>div.div-table-responsive {
      
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
