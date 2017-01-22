@@ -315,8 +315,14 @@ if (empty($reshook))
 	}
 	elseif ($action == 'setdatef' && $user->rights->fournisseur->facture->creer)
 	{
+	    $newdate=dol_mktime(0,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
+	    if ($newdate > (dol_now() + (empty($conf->global->INVOICE_MAX_OFFSET_IN_FUTURE)?0:$conf->global->INVOICE_MAX_OFFSET_IN_FUTURE)))
+	    {
+	        if (empty($conf->global->INVOICE_MAX_OFFSET_IN_FUTURE)) setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
+	        else setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
+	    }
 	    $object->fetch($id);
-	    $object->date=dol_mktime(12,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
+	    $object->date=$newdate;
 	    if ($object->date_echeance && $object->date_echeance < $object->date) $object->date_echeance=$object->date;
 	    $result=$object->update($user);
 	    if ($result < 0) dol_print_error($db,$object->error);

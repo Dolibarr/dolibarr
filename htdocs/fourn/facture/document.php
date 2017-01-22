@@ -239,6 +239,9 @@ if ($object->id > 0)
 
 	print '</table>';
 	print '</div>';
+	
+	dol_fiche_end();
+	
 
 	$modulepart = 'facture_fournisseur';
 	$permission = $user->rights->fournisseur->facture->creer;
