@@ -2183,42 +2183,6 @@ else
         }
         print "</td>";
         print '</tr>';
-
-        // Status
-        //print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
-
-        // Project
-        /*
-        if (! empty($conf->projet->enabled))
-        {
-            $langs->load('projects');
-            print '<tr>';
-            print '<td>';
-
-            print '<table class="nobordernopadding" width="100%"><tr><td>';
-            print $langs->trans('Project');
-            print '</td>';
-            if ($action != 'classify')
-            {
-                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
-                print img_edit($langs->trans('SetProject'),1);
-                print '</a></td>';
-            }
-            print '</tr></table>';
-
-            print '</td><td colspan="3">';
-            if ($action == 'classify')
-            {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', 0, 0, 1);
-            }
-            else
-            {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
-            }
-            print '</td>';
-            print '</tr>';
-        }
-		*/
 		
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
@@ -2309,6 +2273,9 @@ else
     	/*
     	 * List of payments
     	 */
+    	
+    	$totalpaye = 0;
+    	
 		$sign = 1;
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign = - 1;
 
@@ -2338,7 +2305,7 @@ else
     	if ($result)
     	{
     	    $num = $db->num_rows($result);
-    	    $i = 0; $totalpaye = 0;
+    	    $i = 0;
     	    print '<table class="noborder paymenttable" width="100%">';
     	    print '<tr class="liste_titre">';
     	    print '<td class="liste_titre">' . ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
@@ -2416,7 +2383,8 @@ else
     	    dol_print_error($db);
     	}
 
-		if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
+		if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) 
+		{
 			// Total already paid
 			print '<tr><td colspan="' . $nbcols . '" align="right">';
 			if ($object->type != FactureFournisseur::TYPE_DEPOSIT)
@@ -2431,9 +2399,10 @@ else
 			// Loop on each credit note or deposit amount applied
 			$creditnoteamount = 0;
 			$depositamount = 0;
+			/*
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 			$sql .= " re.description, re.fk_facture_source";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except_supplier as re";
 			$sql .= " WHERE fk_facture = " . $object->id;
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -2463,7 +2432,8 @@ else
 			} else {
 				dol_print_error($db);
 			}
-
+            */
+					
 			// Paye partiellement 'escompte'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
 				print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
