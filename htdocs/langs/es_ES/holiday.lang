@@ -78,6 +78,7 @@ ManualUpdate=Actualización manual
 HolidaysCancelation=Anulación días libres
 EmployeeLastname=Apellidos empleado
 EmployeeFirstname=Nombre empleado
+TypeWasDisabledOrRemoved=El tipo de día libre (id %s) ha sido desactivado o eliminado
 
 ## Configuration du Module ##
 LastUpdateCP=Última actualización automática de días retribuidos

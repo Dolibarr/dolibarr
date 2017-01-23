@@ -13,7 +13,9 @@ LocalTax1IsUsedDesc=Use a second type of tax (other than GST)
 LocalTax1IsNotUsedDesc=Do not use other type of tax (other than GST)
 LocalTax2IsUsedDesc=Use a third type of tax (other than GST)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than GST)
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 OptionVatMode=GST due
 YourCompanyDoesNotUseVAT=Your company has been defined to not use GST (Home - Setup - Company/Foundation), so there is no GST options to setup.
+ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
 TextTitleColor=Colour of page title
 LinkColor=Colour of links

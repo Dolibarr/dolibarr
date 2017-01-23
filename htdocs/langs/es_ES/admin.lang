@@ -10,6 +10,9 @@ VersionUnknown=Desconocida
 VersionRecommanded=Recomendada
 FileCheck=Comprobador de integridad de archivos
 FileCheckDesc=Esta herramienta le permite comprobar la integridad de los archivos de la aplicación, comparando cada archivo con los oficiales. Se puede utilizar esta herramienta para detectar si algunos archivos fueron modificados por un hacker por ejemplo.
+FileIntegrityIsStrictlyConformedWithReference=La integridad de los archivos se ajusta estrictamente a la referencia.
+FileIntegritySomeFilesWereRemovedOrModified=El chequeo de integridad de archivos ha fallado. Algunos archivos han sido removidos o modificados.
+GlobalChecksum=Suma de comprobación global
 MakeIntegrityAnalysisFrom=Realizar el análisis de la integridad de los archivos de la aplicación desde
 LocalSignature=Firma local incrustada (menos segura)
 RemoteSignature=Firma remota (más segura)
@@ -276,7 +279,7 @@ ModuleFamilyInterface=Interfaces con sistemas extrenos
 MenuHandlers=Gestores menú
 MenuAdmin=Editor menú
 DoNotUseInProduction=No usar en producción
-ThisIsProcessToFollow=He aquí el procedimiento a seguir:
+ThisIsProcessToFollow=Estos son los pasos para proceder:
 ThisIsAlternativeProcessToFollow=Este es una configuración alternativa para procesar:
 StepNb=Paso %s
 FindPackageFromWebSite=Buscar el paquete que responde a su necesidad (por ejemplo en el sitio web %s)
@@ -411,6 +414,7 @@ ModuleCompanyCodePanicum=Devuelve un código contable vacío.
 ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
 Use3StepsApproval=De forma predeterminada, los pedidos a proveedor deben ser creados y aprobados por 2 usuarios diferentes (un paso/usuario para crear y un paso/usuario para aprobar. Tenga en cuenta que si el usuario tiene tanto el permiso para crear y aprobar, un paso usuario será suficiente) . Puede pedir con esta opción introducir una tercera etapa de aprobación/usuario, si la cantidad es superior a un valor específico (por lo que serán necesarios 3 pasos: 1 validación, 2=primera aprobación y 3=segunda aprobación si la cantidad es suficiente).<br>Deje vacío si una aprobación (2 pasos) es suficiente, si se establece en un valor muy bajo (0,1) se requiere siempre una segunda aprobación (3 pasos).
 UseDoubleApproval=Usar 3 pasos de aprobación si el importe (sin IVA) es mayor que...
+WarningPHPMail=ADVERTENCIA: Algunos proveedores de correo electrónico (como Yahoo) no le permiten enviar un e-mail desde otro servidor que no sea el servidor de Yahoo si la dirección de correo electrónico utilizada como remitente es su correo e-mail de Yahoo (como myemail@yahoo.com, myemail@yahoo.fr, ...). Su configuración actual utiliza el servidor de la aplicación para enviar e-mail, por lo que algunos destinatarios (compatibles con el protocolo restrictivo DMARC) le preguntarán a Yahoo si pueden aceptar su e-mail y Yahoo responderá "no" porque el servidor no es un servidor Propiedad de Yahoo, por lo que algunos de sus e-mails enviados pueden no ser aceptados. Si su proveedor de correo electrónico (como Yahoo) tiene esta restricción, debe cambiar la configuración de e-mail para elegir el método "servidor SMTP" y introdudir el servidor SMTP y credenciales proporcionadas por su proveedor de correo electrónico (pregunte a su proveedor de correo electrónico las credenciales SMTP para su cuenta).
 
 # Modules
 Module0Name=Usuarios y grupos
@@ -515,8 +519,8 @@ Module2200Name=Precios dinámicos
 Module2200Desc=Activar el uso de expresiones matemáticas para precios
 Module2300Name=Programador
 Module2300Desc=Gestión del Trabajo programado
-Module2400Name=Agenda/Eventos
-Module2400Desc=Siga los eventos o citas. Registre eventos manuales en las agendas o deje a las aplicaciones registrar eventos automáticos para fines de seguimiento.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Gestión Electrónica de Documentos
 Module2500Desc=Permite administrar una base de documentos
 Module2600Name=API/Servicios web (servidor SOAP)
@@ -582,7 +586,7 @@ Permission34=Eliminar productos
 Permission36=Ver/gestionar los productos ocultos
 Permission38=Exportar productos
 Permission41=Leer proyectos y tareas (proyectos compartidos y proyectos de los que soy contacto). También puede introducir tiempos consumidos en tareas asignadas.
-Permission42=Crear/modificar proyectos y tareas (compartidos o soy contacto)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Eliminar proyectos y tareas (compartidos o soy contacto)
 Permission45=Exportar proyectos
 Permission61=Consultar intervenciones
@@ -685,7 +689,7 @@ PermissionAdvanced253=Crear/modificar usuarios internos/externos y sus permisos
 Permission254=Modificar la contraseña de otros usuarios
 Permission255=Eliminar o desactivar otros usuarios
 Permission256=Consultar sus permisos
-Permission262=Consultar todas las empresas (Solamente usuarios internos. Los externos están limitados a ellos mismos)
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Consultar el CA
 Permission272=Consultar las facturas
 Permission273=Emitir las facturas
@@ -994,7 +998,7 @@ TriggerAlwaysActive=Triggers de este archivo siempre activos, ya que los módulo
 TriggerActiveAsModuleActive=Triggers de este archivo activos ya que el módulo <b>%s</b> está activado
 GeneratedPasswordDesc=Indique aquí que norma quiere utilizar para generar las contraseñas cuando quiera generar una nueva contraseña
 DictionaryDesc=Inserte aquí los datos de referencia. Puede añadir sus datos a los predefinidos.
-ConstDesc=Esta página le permite editar todos los demás parámetros que no se encuentran en las páginas anteriores. Estos son reservados en su mayoría a desarrolladores o soluciones avanzadas.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Todos los otros parámetros relacionados con la seguridad se definen aquí.
 LimitsSetup=Configuración de límites y precisiones
 LimitsDesc=Puede definir aquí los límites y precisiones utilizados por Dolibarr
@@ -1471,6 +1475,8 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Establecer automáticamente este valor por defecto
 AGENDA_DEFAULT_FILTER_TYPE=Establecer por defecto este tipo de evento en el filtro de búsqueda en la vista de la agenda
 AGENDA_DEFAULT_FILTER_STATUS=Establecer por defecto este estado de eventos en el filtro de búsqueda en la vista de la agenda
 AGENDA_DEFAULT_VIEW=Establecer la pestaña por defecto al seleccionar el menú Agenda
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite hacer clicables los números de teléfono. Un clic en este icono hará que su teléfono llame al número de teléfono. Esto puede ser usado para llamar a un sistema de centralitas desde Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ClickToDialUseTelLink=Utilice el enlace "tel:" que aparece en los números de teléfono
@@ -1571,7 +1577,7 @@ BackupDumpWizard=Asistente para crear una copia de seguridad de la base de datos
 SomethingMakeInstallFromWebNotPossible=No es posible la instalación de módulos externos desde la interfaz web por la siguiente razón:
 SomethingMakeInstallFromWebNotPossible2=Por esta razón, explicaremos aquí los pasos del proceso de actualización manual que puede realizar un usuario con privilegios. 
 InstallModuleFromWebHasBeenDisabledByFile=La instalación de módulos externos desde la aplicación se encuentra desactivada por el administrador. Debe requerirle que elimine el archivo <strong>%s</strong> para habilitar esta funcionalidad.
-ConfFileMuseContainCustom=Instalar un módulo externo desde la aplicación guarda los archivos del módulo en el directorio <strong>%s</strong>. Para permitir a Dolibarr el procesamiento de dicho directorio, debe configurar su <strong>conf/conf.php</strong> para tener la opción<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Instalar un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong>%s</strong>. Para que este directorio pueda ser procesado por Dolibarr, necesita configurar su <strong>conf/conf.php</strong> para disponer de la opción<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Resaltar líneas de los listados cuando el ratón pasa por encima de ellas
 HighlightLinesColor=Resalta el color de la línea cuando el ratón pasa por encima (mantener vacío para no resaltar)
 TextTitleColor=Color para la página de título
@@ -1614,8 +1620,8 @@ ByDefaultInList=Mostrar por defecto en modo lista
 YouUseLastStableVersion=Debe usar la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta release mayor (no dude en usarlo en sus sitios web)
 TitleExampleForMaintenanceRelease=Ejemplo de mensaje que puede usar para anunciar esta versión de mantenimiento (no dude en usarlo en sus sitios web)
-ExampleOfNewsMessageForMajorRelease=Disponible ERP/CRM Dolibarr %s. La versión %s es una versión mayor con un montón de nuevas características para los usuarios y desarrolladores. Se puede descargar desde la sección de descargas del portal http://www.dolibarr.org  (subdirectorio versiones estables). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> para ver la lista completa de los cambios.
-ExampleOfNewsMessageForMaintenanceRelease=Disponible ERP/CRM Dolibarr %s. La versión %s es una versión de mantenimiento, por lo que sólo contiene correcciones de errores. Recomendamos a todo el mundo que use una versión anterior que actualice a esta. Como cualquier versión de mantenimiento, no hay novedades. Se puede descargar desde la sección de descargas del portal http://www.dolibarr.org (subdirectorio versiones estables subdirectorio). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> para ver la lista completa de los cambios.
+ExampleOfNewsMessageForMajorRelease=Disponible ERP/CRM Dolibarr %s. La versión %s es una versión mayor con un montón de nuevas características, tanto para usuarios como para desarrolladores. Se puede descargar desde la sección de descargas del portal https://www.dolibarr.org (subdirectorio versiones estables). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> para ver la lista completa de los cambios.
+ExampleOfNewsMessageForMaintenanceRelease=Disponible ERP/CRM Dolibarr %s. La versión %s es una versión de mantenimiento, por lo que sólo contiene correcciones de errores. Recomendamos a todo el mundo que use una versión anterior que actualice a esta. Como cualquier versión de mantenimiento, no hay novedades. Se puede descargar desde la sección de descargas del portal https://www.dolibarr.org (subdirectorio versiones estables subdirectorio). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> para ver la lista completa de los cambios.
 MultiPriceRuleDesc=Cuando la opción "Varios niveles de precios por producto/servicio" está activada, puede definir diferentes precios (uno por nivel de precios) para cada producto. Para ahorrar tiempo, puede ingresar aquí una regla para autocalcular cada nivel de acuerdo con el precio del primer nivel, por lo que tendrá que introducir sólo el precio para el primer nivel de cada producto. Esta página le sirve para ahorrar tiempo y puede serle muy útil si sus precios para cada nivel son relativos al primer nivel. Puede pasar por alto esta página en la mayoría de los casos.
 ModelModulesProduct=Plantillas de documentos de productos
 ToGenerateCodeDefineAutomaticRuleFirst=Para poder generar códigos automáticamente, primero debe indicar un gestor para autogenerar códigos de barras

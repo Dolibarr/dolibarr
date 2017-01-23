@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Gertaerak
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agendak
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by

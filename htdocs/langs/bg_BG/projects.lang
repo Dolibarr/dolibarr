@@ -58,6 +58,7 @@ TaskDateEnd=Крайна дата на задача
 TaskDescription=Описание на задача
 NewTask=Нова задача
 AddTask=Създаване на задача
+AddTimeSpent=Create time spent
 Activity=Дейност
 Activities=Задачите / дейностите
 MyActivities=Моите задачи / дейности

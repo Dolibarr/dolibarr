@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Намеса %s изтрита
 InterventionsArea=Зона Намеси
 DraftFichinter=Чернови намеси
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Проследяване на контакт с клиентите
 # Modele numérotation
