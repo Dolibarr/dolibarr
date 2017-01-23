@@ -139,6 +139,7 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	$urlparam='';
+	if ($sall) $urlparam.="&sall=".$sall;
 	if ($socid) $urlparam.="&socid=".$socid;
 	if ($search_ref) $urlparam.="&search_ref=".urlencode($search_ref);
 	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);

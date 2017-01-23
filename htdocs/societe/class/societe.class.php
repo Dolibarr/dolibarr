@@ -1936,11 +1936,10 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        $contact_emails = $this->contact_property_array('email');
+        $contact_emails = $this->contact_property_array('email',1);
         if ($this->email && $addthirdparty)
         {
             if (empty($this->name)) $this->name=$this->nom;
-            // TODO: Tester si email non deja present dans tableau contact
             $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
         return $contact_emails;
@@ -3483,17 +3482,17 @@ class Societe extends CommonObject
 		 * Because this function is meant to be executed within a transaction, we won't take care of it.
 		 */
 		$sql = 'SELECT rowid
-FROM llx_societe_commerciaux
+FROM '.MAIN_DB_PREFIX.'societe_commerciaux
 WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
   SELECT fk_user
-  FROM llx_societe_commerciaux
+  FROM '.MAIN_DB_PREFIX.'societe_commerciaux
   WHERE fk_soc = '.(int) $origin_id.'
 );';
 
 		$query = $db->query($sql);
 
 		while ($result = $db->fetch_object($query)) {
-			$db->query('DELETE FROM llx_societe_commerciaux WHERE rowid = '.$result->rowid);
+			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$result->rowid);
 		}
 
 		/**

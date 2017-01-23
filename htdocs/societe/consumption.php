@@ -250,6 +250,7 @@ if ($type_element == 'supplier_invoice')
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";
+	$where.= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='supplier';
@@ -262,6 +263,7 @@ if ($type_element == 'supplier_order')
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
@@ -275,48 +277,51 @@ if ($type_element == 'contract')
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_contrat = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
 
-$sql = $sql_select;
-$sql.= ' d.description as description,';
-if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
-if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
-if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
-$sql.= " s.rowid as socid ";
-if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
-if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
-$sql.= $where;
-if ($month > 0) {
-	if ($year > 0) {
-		$start = dol_mktime(0, 0, 0, $month, 1, $year);
-		$end = dol_time_plus_duree($start,1,'m') - 1;
+if(!empty($sql_select)) {
+	$sql = $sql_select;
+	$sql.= ' d.description as description,';
+	if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
+	$sql.= " s.rowid as socid ";
+	if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
+	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
+	$sql.= $where;
+	if ($month > 0) {
+		if ($year > 0) {
+			$start = dol_mktime(0, 0, 0, $month, 1, $year);
+			$end = dol_time_plus_duree($start,1,'m') - 1;
+			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+		} else {
+			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
+		}
+	} else if ($year > 0) {
+		$start = dol_mktime(0, 0, 0, 1, 1, $year);
+		$end = dol_time_plus_duree($start,1,'y') - 1;
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	} else {
-		$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
 	}
-} else if ($year > 0) {
-	$start = dol_mktime(0, 0, 0, 1, 1, $year);
-	$end = dol_time_plus_duree($start,1,'y') - 1;
-	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
+	if ($sprod_fulldescr)
+	{
+	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    $sql.=")";
+	}
+	$sql.= $db->order($sortfield,$sortorder);
+	
+	$resql=$db->query($sql);
+	$totalnboflines = $db->num_rows($resql);
+	
+	$sql.= $db->plimit($limit + 1, $offset);
 }
-if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
-if ($sprod_fulldescr)
-{
-    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    $sql.=")";
-}
-$sql.= $db->order($sortfield,$sortorder);
-
-$resql=$db->query($sql);
-$totalnboflines = $db->num_rows($resql);
-
-$sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
 // Define type of elements

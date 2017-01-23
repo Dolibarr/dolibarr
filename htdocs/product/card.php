@@ -609,8 +609,20 @@ if (empty($reshook))
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
                 }
             }
-
+            
             if (GETPOST('propalid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $propal->addline(
                     $desc,
                     $pu_ht,
@@ -628,7 +640,7 @@ if (empty($reshook))
                     0,
                     0,
                     0,
-                    0,
+                    $buyprice,
                     '',
                     '',
                     '',
@@ -642,6 +654,18 @@ if (empty($reshook))
 
                 setEventMessages($langs->trans("ErrorUnknown") . ": $result", null, 'errors');
             } elseif (GETPOST('commandeid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $commande->addline(
                     $desc,
                     $pu_ht,
@@ -662,7 +686,7 @@ if (empty($reshook))
                     0,
                     0,
                     null,
-                    0,
+                    $buyprice,
                     '',
                     0,
                     $object->fk_unit
@@ -673,6 +697,18 @@ if (empty($reshook))
                     exit;
                 }
             } elseif (GETPOST('factureid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $facture->addline(
                     $desc,
                     $pu_ht,
@@ -696,7 +732,7 @@ if (empty($reshook))
                     0,
                     0,
                     null,
-                    0,
+                    $buyprice,
                     '',
                     0,
                     100,

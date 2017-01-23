@@ -1768,6 +1768,7 @@ class ExpenseReportLine
         // Clean parameters
         $this->comments=trim($this->comments);
         $this->vatrate = price2num($this->vatrate);
+        $this->value_unit = price2num($this->value_unit);
 
         $this->db->begin();
 

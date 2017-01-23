@@ -1023,21 +1023,21 @@ class Cronjob extends CommonObject
 				}
 				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
-		}
 
-		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
+			dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
 
-
-		// Update with result
-		$this->lastoutput='';
-		if (is_array($output_arr) && count($output_arr)>0)
-		{
-			foreach($output_arr as $val)
+			// Update with result
+			$this->lastoutput='';
+			if (is_array($output_arr) && count($output_arr)>0)
 			{
-				$this->lastoutput.=$val."\n";
+				foreach($output_arr as $val)
+				{
+					$this->lastoutput.=$val."\n";
+				}
 			}
+			$this->lastresult=$retval;
 		}
-		$this->lastresult=$retval;
+
 		$this->datelastresult=dol_now();
 		$result = $this->update($user);
 		if ($result < 0)

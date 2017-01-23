@@ -57,6 +57,9 @@ if ($action == 'add_payment')
 		exit;
 	}
 
+	$expensereport = new ExpenseReport($db);
+	$expensereport->fetch($chid);
+
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	if (! $_POST["fk_typepayment"] > 0)
@@ -85,8 +88,7 @@ if ($action == 'add_payment')
 		{
 			if (substr($key,0,7) == 'amount_')
 			{
-				$other_chid = substr($key,7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
 				$total += price2num($_POST[$key]);
 			}
 		}

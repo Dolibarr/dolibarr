@@ -141,7 +141,7 @@ if ($prev_id)
 			print price($row[0]);
 
 			print '</td><td align="right">';
-			print round($row[0]/$bon->amount*100,2)." %";
+			if ($bon->amount) print round($row[0]/$bon->amount*100,2)." %";
 			print '</td>';
 
 			print "</tr>\n";

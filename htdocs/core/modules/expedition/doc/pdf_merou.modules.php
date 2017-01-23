@@ -100,7 +100,8 @@ class pdf_merou extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
 		$outputlangs->load("sendings");
-
+		$outputlangs->load("productbatch");
+		
 		if ($conf->expedition->dir_output)
 		{
 			$object->fetch_thirdparty();

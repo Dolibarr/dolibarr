@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +175,7 @@ if (GETPOST('statut', 'alpha') !== '')
 	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
 
-if ($billed !== '')
+if ($billed !== '' && $billed >= 0)
 {
 	$sql .= " AND cf.billed = ".$billed;
 }
@@ -208,6 +209,7 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+	if ($sall)					$param.="&search_all=".$sall;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_company)		$param.="&search_company=".$search_company;
 	if ($search_user)			$param.="&search_user=".$search_user;
@@ -215,7 +217,7 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($billed != '')          $param.="billed=".$billed; 
+	if ($billed != '')          $param.="&billed=".$billed; 
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);

@@ -53,7 +53,7 @@ $projectstatic = new Project($db);
  * Actions
  */
 
-if ($action == 'addtimespent' && $user->rights->projet->creer)
+if ($action == 'addtimespent' && $user->rights->projet->lire)
 {
 	$error=0;
 

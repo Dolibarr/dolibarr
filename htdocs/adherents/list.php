@@ -81,7 +81,7 @@ $extrafields = new ExtraFields($db);
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
     'd.rowid'=>'Ref',
-    //'d.ref'=>'Ref',
+    'd.login'=>'Login',
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
     'd.societe'=>"Company",

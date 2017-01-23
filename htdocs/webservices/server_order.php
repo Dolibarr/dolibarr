@@ -935,7 +935,7 @@ function updateOrder($authentication,$order)
 			if (isset($order['billed']))
 			{
 				if ($order['billed'])   $result=$object->classifyBilled($fuser);
-				if (! $order['billed']) $result=$object->classifyBilled($fuser);
+				if (! $order['billed']) $result=$object->classifyUnBilled($fuser);
 			}
 
 			//Retreive all extrafield for object

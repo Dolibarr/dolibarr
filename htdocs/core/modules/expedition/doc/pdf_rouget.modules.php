@@ -110,7 +110,8 @@ class pdf_rouget extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
         $outputlangs->load("sendings");
-
+        $outputlangs->load("productbatch");
+        
 		$nblignes = count($object->lines);
 
         // Loop on each lines to detect if there is at least one image to show

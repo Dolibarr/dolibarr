@@ -1012,6 +1012,9 @@ function getParameterByName(name, valueifnotfound)
 	}
 })();
 
+// Another solution, easier, to build a javascript rounding function 
+function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price2num()
@@ -1024,7 +1027,7 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-				$dec = ',';
+		$dec = ',';
 		$thousand = ' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
 			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
@@ -1032,6 +1035,7 @@ function price2numjs(amount) {
 		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
 			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
 		}
+		if ($thousand == 'Space') $thousand=' ';
 		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
@@ -1050,11 +1054,15 @@ function price2numjs(amount) {
 	if (nbdec > rounding) rounding = nbdec;
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
-
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');            // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
-
-	return Math.round10(amount, rounding);
+	//console.log("amount before="+amount+" rouding="+rounding)
+	var res = Math.round10(amount, - rounding);
+	// Other solution is 
+	// var res = dolroundjs(amount, rounding)
+	console.log("res="+res)
+	return res;
 }
+

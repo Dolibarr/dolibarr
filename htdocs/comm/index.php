@@ -69,7 +69,7 @@ if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
-llxHeader();
+llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 
@@ -341,7 +341,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'customer',16);
+                print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
@@ -647,7 +647,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1, 'company', 44);
+                print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
@@ -746,7 +746,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1, 'company', 44);
+                print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";

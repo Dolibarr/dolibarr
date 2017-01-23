@@ -4,6 +4,7 @@
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,7 +634,7 @@ class Don extends CommonObject
                 $this->town           = $obj->town;
                 $this->zip            = $obj->zip;
                 $this->town           = $obj->town;
-                $this->country_id     = $obj->country_id;
+                $this->country_id     = $obj->fk_country;
                 $this->country_code   = $obj->country_code;
                 $this->country        = $obj->country;
                 $this->country_olddata= $obj->country_olddata;	// deprecated

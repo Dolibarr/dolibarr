@@ -80,11 +80,11 @@ if(! empty($_POST['removAll']))
 	{
 		$pathtodelete = $value;
 		$filetodelete = $listofnames[$key];
-		$result = dol_delete_file($pathtodelete,1); // Delete uploded Files 
-	
+		$result = dol_delete_file($pathtodelete,1); // Delete uploded Files
+
 		$langs->load("other");
 		setEventMessages($langs->trans("FileWasRemoved",$filetodelete), null, 'mesgs');
-		
+
 		$formmail->remove_attached_files($key); // Update Session
 	}
 }
@@ -117,29 +117,29 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$dolimail = new Dolimail($db);
 			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
 			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-			if (!$possibleaccounts && !$possibleuser) 
+			if (!$possibleaccounts && !$possibleuser)
 			{
 					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
 			}
-			elseif (count($possibleaccounts)>1) 
+			elseif (count($possibleaccounts)>1)
 			{
 					$sendtosocid=$possibleaccounts[1]['id'];
 					$result=$object->fetch($sendtosocid);
-					
+
 					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
 			}
-			else 
+			else
 			{
-				if($possibleaccounts){ 
+				if($possibleaccounts){
 					$sendtosocid=$possibleaccounts[1]['id'];
 					$result=$object->fetch($sendtosocid);
-				}elseif($possibleuser){ 
+				}elseif($possibleuser){
 					$sendtosocid=$possibleuser[0]['id'];
 
 					$result=$uobject->fetch($sendtosocid);
 					$object=$uobject;
 				}
-				
+
 			}
 		}
 	}
@@ -236,35 +236,35 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$mailboxconfig = new IMAP($db);
 					$mailboxconfig->fetch($mbid);
 					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
-				
+
 					$mailboxconfig->folder_id=$mailboxconfig->mailbox_imap_outbox;
 					$mailboxconfig->userfolder_fetch();
-				
+
 					if ($mailboxconfig->mailbox_save_sent_mails == 1)
 					{
-					
+
 						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
 						if (!$folder) $folder = "Sent";	// Default Sent folder
-					
+
 						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (FALSE === $mailboxconfig->mbox) 
+						if (FALSE === $mailboxconfig->mbox)
 						{
 							$info = FALSE;
 							$err = $langs->trans('Error3_Imap_Connection_Error');
 							setEventMessages($err,$mailboxconfig->element, null, 'errors');
-						} 
-						else 
+						}
+						else
 						{
 							$mailboxconfig->mailboxid=$_POST['frommail'];
 							$mailboxconfig->foldername=$folder;
 							$from = $mailfromid[0] . $mailfromid[2];
 							$imap=1;
 						}
-					
-					} 
+
+					}
 				}
 			}
-			
+
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
@@ -278,7 +278,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($result)
 				{
 					$error=0;
-					
+
 					// FIXME This must be moved into a trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
@@ -289,13 +289,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							$dolimail=new DoliMail($db);
 							$dolimail->id = $mid;
 							$res=$dolimail->set_prop($user, 'answered',1);
-				  		}	
+				  		}
 						if ($imap==1)
 						{
 							// write mail to IMAP Server
-							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile); 
+							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile);
 							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
-							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings'); 
+							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
 				 	 	}
 				 	}
 
@@ -313,7 +313,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
+						$error++; $errors=$interface->errors;
 					}
 					// End call of triggers
 
@@ -327,8 +327,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessages($mesg, null, 'mesgs');
-						if($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						else	header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
+						if ($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
+						else header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
 						exit;
 					}
 				}

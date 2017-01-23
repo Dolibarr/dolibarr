@@ -157,7 +157,7 @@ if ($socid > 0)
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut > 0";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";

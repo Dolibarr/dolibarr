@@ -87,11 +87,11 @@ abstract class ModeleNumRefBarCode
     /**
      *  Return next value available
      *
-     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	Societe		$objproduct	Object Product
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objsoc=0,$type=-1)
+    function getNextValue($objproduct,$type='')
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
