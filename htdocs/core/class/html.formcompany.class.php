@@ -138,7 +138,7 @@ class FormCompany
 	 */
 	function form_prospect_level($page, $selected='', $htmlname='prospect_level_id', $empty=0)
 	{
-		global $langs;
+		global $user, $langs;
 
 		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectlevel">';
@@ -171,7 +171,7 @@ class FormCompany
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-
+		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
