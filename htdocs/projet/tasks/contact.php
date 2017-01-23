@@ -42,7 +42,7 @@ $project_ref=GETPOST('project_ref','alpha');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 //$result = restrictedArea($user, 'projet', $id, 'projet_task');
 if (! $user->rights->projet->lire) accessforbidden();
 
@@ -212,7 +212,7 @@ if ($id > 0 || ! empty($ref))
                 $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
             }
             
-            dol_banner_tab($projectstatic, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+            dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
         
             print '<div class="fichecenter">';
             print '<div class="fichehalfleft">';

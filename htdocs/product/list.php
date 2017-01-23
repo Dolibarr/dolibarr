@@ -304,7 +304,7 @@ else
 	$sql.=$hookmanager->resPrint;
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
     $sql.= $db->order($sortfield,$sortorder);
-	$nbtotalofrecords = -1;
+	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);

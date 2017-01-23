@@ -366,6 +366,21 @@ if ($id > 0)
 	print '</td>';
 	print '</tr>';
 
+	// Max outstanding bill
+	if ($object->client)
+	{
+	    print '<tr class="nowrap">';
+	    print '<td>';
+	    print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
+	    print '</td><td>';
+	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
+	
+	    print '</td>';
+	    print '</tr>';
+	}
+	
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -493,48 +508,92 @@ if ($id > 0)
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
+	$boxstat = '';
+	
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$outstandingBills = $object->get_OutstandingBill();
-	$warn = '';
-	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingBills) 
+	$boxstat.='<div class="box">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
+	
+	if ($conf->propal->enabled)
 	{
-		$warn = img_warning($langs->trans("OutstandingBillReached"));
+    	// Box proposals
+    	$tmp = $object->getOutstandingProposals();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllProposals");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+	}
+
+	if ($conf->commande->enabled)
+	{
+	    // Box proposals
+	    $tmp = $object->getOutstandingOrders();
+	    $outstandingOpened=$tmp['opened'];
+	    $outstandingTotal=$tmp['total_ht'];
+	    $outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllOrders");
+	    $link='';
+	    $icon='bill';
+	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+	    $boxstat.='</div>';
+	    if ($link) $boxstat.='</a>';
 	}
 	
-	print '<table class="noborder" width="100%">';
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
-	print '</tr>';
-	
-	// Max outstanding bill
-	if ($object->client)
+	if ($conf->facture->enabled)
 	{
-	    print '<tr class="impair">';
-	    print '<td>';
-	    print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
-	    print '</td><td>';
-	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
-	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-	
-	    print '</td>';
-	    print '</tr>';
+    	$tmp = $object->getOutstandingBills();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    
+    	$text=$langs->trans("OverAllInvoices");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+    	
+    	// Box outstanding bill
+    	$warn = '';
+    	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
+    	{
+    	    $warn = img_warning($langs->trans("OutstandingBillReached"));
+    	}
+    	$text=$langs->trans("CurrentOutstandingBill");
+    	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened).$warn.'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
 	}
 	
-	// Outstanding bill
-	print '<tr class="pair">';
-	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
-	print '<td>'.price($outstandingBills).$warn.'</td>';
-	print '</tr>';
+	$boxstat.='</td></tr>';
+	$boxstat.='</table>';
+	$boxstat.='</div>';
 	
-	print '</table>';
-	print '<br>';
-
+    print $boxstat;
+    
 	$now=dol_now();
 
 	/*
@@ -776,7 +835,9 @@ if ($id > 0)
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
-				print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").' <span class="badge">'.$num.'</span></a></td></tr></table></td>';
+				print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").' <span class="badge">'.$num.'</span></a></td>';
+				//print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+				print '</tr></table></td>';
 				print '</tr>';
 			}
 			$i = 0;
@@ -837,7 +898,9 @@ if ($id > 0)
 		        print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td></tr></table></td>';
+				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td>';
+				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+				print '</tr></table></td>';
 				print '</tr>';
 				$var=!$var;
 			}
@@ -1007,7 +1070,15 @@ if ($id > 0)
     
     		if (! empty($conf->facture->enabled))
     		{
-    			if ($user->rights->facture->creer && $object->status==1)
+    			if (empty($user->rights->facture->creer))
+    			{
+    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    			}
+    			else if ($object->status != 1)
+    			{
+    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    			}
+    			else
     			{
     				$langs->load("bills");
     				$langs->load("orders");
@@ -1021,10 +1092,6 @@ if ($id > 0)
     				if ($object->client != 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     
-    			}
-    			else
-    			{
-    				print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     		}
     	}

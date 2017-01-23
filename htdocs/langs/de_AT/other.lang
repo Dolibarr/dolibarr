@@ -42,4 +42,3 @@ EMailTextOrderRefused=Bestellung %s abgelehnt
 EMailTextOrderRefusedBy=Bestellung %s von %s abgelehnt
 ThisIsListOfModules=Dies ist eine Liste der Module, die von dieser Demo-Profil (nur gängigsten Module sind in dieser Demo) vorgewählt. Bearbeiten, um eine personalisierte Demo haben und klicken Sie auf &quot;Start&quot;.
 SelectAColor=Wählen Sie eine Farbe
-ShipmentValidatedInDolibarr=Sendung %s validiert

@@ -76,7 +76,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php } ?>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
+	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
 </tr>
 

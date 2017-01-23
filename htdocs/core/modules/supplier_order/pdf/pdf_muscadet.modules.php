@@ -170,7 +170,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			$deja_regle = 0;
 			$amount_credit_notes_included = 0;
 			$amount_deposits_included = 0;
 			//$amount_credit_notes_included = $object->getSumCreditNotesUsed();
@@ -466,7 +466,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
 

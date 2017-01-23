@@ -534,6 +534,40 @@ class Task extends CommonObject
             return -1;
         }
     }
+    
+	/**
+     *	Return nb of time spent
+     *
+     *	@return	int		<0 if KO, 0 if no children, >0 if OK
+     */
+    function hasTimeSpent()
+    {
+    	$error=0;
+        $ret=0;
+
+        $sql = "SELECT COUNT(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
+        $sql.= " WHERE fk_task=".$this->id;
+
+        dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
+        }
+
+        if (! $error)
+        {
+            return $ret;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 
     /**
@@ -1619,16 +1653,14 @@ class Task extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 

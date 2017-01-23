@@ -641,7 +641,9 @@ if (! empty($conf->don->enabled))
 $totentrees=array();
 $totsorties=array();
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste">'."\n";
+
 print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -735,7 +737,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "</tr>\n";
 
 print "</table>";
-
+print '</div>';
 
 llxFooter();
 $db->close();

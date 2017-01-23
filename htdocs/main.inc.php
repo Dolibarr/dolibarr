@@ -1303,7 +1303,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
-
+            
+            // Browser notifications
+            $enablebrowsernotif=false;
+            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION) && ! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) $enablebrowsernotif=true;
+            if ($enablebrowsernotif)
+            {
+                print '<!-- Includes JS of Dolibarr -->'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php?version='.urlencode(DOL_VERSION).($ext?'&amp;'.$ext:'').'"></script>'."\n";
+            }
+            
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?version='.urlencode(DOL_VERSION).($ext?'&amp;'.$ext:'').'"></script>'."\n";
@@ -1935,11 +1944,11 @@ if (! function_exists("llxFooter"))
                       var scrollBottom = $(window).scrollTop() + $(window).height();
                       //console.log(scrollBottom);
                       diffoutsidebottom = (posbottom - scrollBottom);
-                      console.log("diffoutsidebottom (positive = outside) = "+diffoutsidebottom);
+                      console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
                       if (diffoutsidebottom > 0)
                       {
-                            pix = "-"+diffoutsidebottom+"px";
-                            console.log(pix);
+                            pix = "-"+(diffoutsidebottom+8)+"px";
+                            console.log("We reposition top by "+pix);
                             $(this).parent().parent().find(\'dd\').css("top", pix);
                       }
                       // $(".dropdown dd ul").slideToggle(\'fast\');

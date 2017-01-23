@@ -584,6 +584,9 @@ div.myavailability {
 	color: #880000;
 	font-weight: bold;
 }
+.amountremaintopayback {
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -597,14 +600,16 @@ div.myavailability {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 /* Style used for most tables */ 
-.div-table-responsive {
+.div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
     line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
-div.fiche>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
     overflow-x: auto;
+}
+div.fiche>form>div.div-table-responsive {
     min-height: 350px;
 }
 
@@ -616,7 +621,7 @@ div.fiche>form>div.div-table-responsive {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
-/* rule to reduce top menu - 3rd reduction */
+/* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
 	.minwidth100 { min-width: 100px; }
@@ -706,7 +711,7 @@ div.fiche>form>div.div-table-responsive {
      
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
@@ -1251,10 +1256,10 @@ div.menu_titre {
 .mainmenuaspan
 {
 <?php if ($disableimages) { ?>
-	padding-left: 4px;
-	padding-right: 2px;
+	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $right; ?>: 2px;
 <?php } else { ?>
-	padding-right: 4px;
+	padding-<?php print $right; ?>: 4px;
 <?php } ?>
 }
 
@@ -2039,7 +2044,7 @@ a.tabTitle {
 /*    background: #657090;
     color: white;*/
     color:rgba(0,0,0,.5);
-    margin-right:10px;
+    margin-<?php print $right; ?>: 10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;

@@ -1601,7 +1601,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 
-		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked></td>';
+		print '<tr><td class="tdtop"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyPropal") . '</td></tr>';
 	}
 

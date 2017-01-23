@@ -450,6 +450,7 @@ class printing_printgcp extends PrintingDriver
         }
         $responsedata = json_decode($response, true);
         //$html .= '<pre>'.print_r($responsedata,true).'</pre>';
+        $html .= '<div class="div-table-responsive">';
         $html .= '<table width="100%" class="noborder">';
         $html .= '<tr class="liste_titre">';
         $html .= '<td>'.$langs->trans("Id").'</td>';
@@ -483,10 +484,11 @@ class printing_printgcp extends PrintingDriver
         else
         {
                 $html .= '<tr '.$bc[$var].'>';
-                $html .= '<td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td>';
+                $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';
         }
         $html .= '</table>';
+        $html .= '</div>';
         
         $this->resprint = $html;
         

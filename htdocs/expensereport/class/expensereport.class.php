@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -489,7 +489,7 @@ class ExpenseReport extends CommonObject
      *  Returns the label of a statut
      *
      *  @param      int     $status     id statut
-     *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *  @return     string              Label
      */
     function LibStatut($status,$mode=0)
@@ -514,6 +514,8 @@ class ExpenseReport extends CommonObject
         if ($mode == 5)
             return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
 
+        if ($mode == 6)
+            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
     }
 
 
@@ -830,6 +832,7 @@ class ExpenseReport extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
         $sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
+		$sql.= ' ORDER BY de.date ASC';
 
         dol_syslog('ExpenseReport::fetch_lines sql='.$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1572,18 +1575,16 @@ class ExpenseReport extends CommonObject
 
         $langs->load("trips");
 
-        // Positionne le modele sur le nom du modele a utiliser
-        if (! dol_strlen($modele))
-        {
-            if (! empty($conf->global->EXPENSEREPORT_ADDON_PDF))
-            {
-                $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
-            }
-            else
-            {
-                $modele = 'standard';
-            }
-        }
+	    if (! dol_strlen($modele)) {
+
+		    $modele = 'standard';
+
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (! empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+		    }
+	    }
 
         $modelpath = "core/modules/expensereport/doc/";
 

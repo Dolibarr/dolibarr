@@ -3445,7 +3445,7 @@ class Form
                         foreach($input['values'] as $selkey => $selval)
                         {
                             $more.='<tr>';
-                            if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+                            if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
                             $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';
@@ -5391,6 +5391,7 @@ class Form
         		        global $noMoreLinkedObjectBlockAfter;
         		        $noMoreLinkedObjectBlockAfter=1;
         		    }
+
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res)
         			{
@@ -5439,7 +5440,27 @@ class Form
 			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
 		);
-
+		
+		global $action;
+		
+		// Can complet the possiblelink array
+		$hookmanager->initHooks(array('commonobject'));
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+		        $possiblelinks=array_merge($possiblelinks, $hookmanager->resArray);
+		    }
+		}
+		else if ($reshook > 0)
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+                $possiblelinks=$hookmanager->resArray;
+		    }
+		}
 
 		foreach($possiblelinks as $key => $possiblelink)
 		{
@@ -5451,6 +5472,7 @@ class Form
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
 				$sql = $possiblelink['sql'];
+
 				$resqllist = $this->db->query($sql);
 				if ($resqllist)
 				{
@@ -5466,7 +5488,7 @@ class Form
 					print '<td class="nowrap"></td>';
 					print '<td align="center">' . $langs->trans("Ref") . '</td>';
 					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td align="right">' . $langs->trans("AmountHTShort") . '</td>';
 					print '<td align="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
 					while ($i < $num)
@@ -5480,7 +5502,7 @@ class Form
 						print '</td>';
 						print '<td align="center">' . $objp->ref . '</td>';
 						print '<td>' . $objp->ref_client . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td align="right">' . price($objp->total_ht) . '</td>';
 						print '<td>' . $objp->name . '</td>';
 						print '</tr>';
 						$i++;
@@ -5658,10 +5680,15 @@ class Form
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
         
-        //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
-        //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
-        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
-        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
+        $navurl = $_SERVER["PHP_SELF"];
+        // Special case for project/task page
+        if ($paramid == 'project_ref')
+        {
+            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document).php/','/tasks.php',$navurl);
+            $paramid='ref';
+        }
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<!-- Start banner content --><div style="vertical-align: middle">';
@@ -5876,7 +5903,7 @@ class Form
 	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,3)).'">';	// gravatar need md5 hash
                 }
                 else
 				{

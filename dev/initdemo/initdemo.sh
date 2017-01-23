@@ -162,7 +162,7 @@ export res=$?
 
 
 # ---------------------------- copy demo files
-export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" `
+export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
 	echo cp -pr $mydir/documents_demo/* "$documentdir/"
@@ -174,7 +174,7 @@ then
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else
-	echo Detection of documents directory failed so demo files were not copied. 
+	echo Detection of documents directory $documentdir failed so demo files were not copied. 
 fi
 
 

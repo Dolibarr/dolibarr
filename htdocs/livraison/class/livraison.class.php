@@ -1009,16 +1009,14 @@ class Livraison extends CommonObject
 
 		$langs->load("deliveries");
 
-		// Positionne modele sur le nom du modele de bon de livraison a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->LIVRAISON_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'typhon';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'typhon';
 			}
 		}
 

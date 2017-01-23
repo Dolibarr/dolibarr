@@ -873,7 +873,7 @@ else
 		}
 
 		// Address
-		print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
 		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
 		print '</td></tr>';
 

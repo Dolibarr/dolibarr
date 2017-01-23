@@ -40,23 +40,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_einstein extends ModelePDFCommandes
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
+	
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     */
+	public $phpmin = array(5, 2); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+    public $page_largeur;
+    public $page_hauteur;
+    public $format;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
-
-    var $emetteur;	// Objet societe qui emet
+    public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -64,7 +88,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -483,7 +507,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line

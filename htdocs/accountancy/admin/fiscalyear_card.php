@@ -268,7 +268,7 @@ if ($action == 'create')
 			print '</td></tr>';
 
 			// Label
-			print '<tr><td valign="top">';
+			print '<tr><td class="tdtop">';
 			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print '</td><td colspan="2">';
 			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
