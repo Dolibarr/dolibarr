@@ -626,7 +626,13 @@ if ($object->id > 0)
 	// modified by hook
 	if (empty($reshook))
 	{
-	   if ($user->rights->fournisseur->commande->creer)
+		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
+		{
+			$langs->load("supplier_proposal");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+		}
+
+	    if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
@@ -636,12 +642,6 @@ if ($object->id > 0)
 		{
 			$langs->load("bills");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-		}
-
-		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
-		{
-			$langs->load("supplier_proposal");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
