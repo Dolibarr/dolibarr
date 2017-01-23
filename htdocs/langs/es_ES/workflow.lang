@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupues
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos cuando la factura relacionada se clasifique como pagada
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos de cliente relacionados cuando la factura sea validada
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto relacionado cuando la factura a cliente sea validada
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar como enviado el pedido origen en la validación del envío si la cantidad enviada es la misma que la del pedido
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar como enviado el pedido relacionado cuando el envío relacionado sea validado y la cantidad enviada sea la misma que la del pedido
+AutomaticCreation=Creación automática
+AutomaticClassification=Clasificación automática

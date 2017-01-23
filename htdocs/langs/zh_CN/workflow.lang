@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=分类链接来源建议，创建客�
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票标记为已开票时将账单归类到客户订单(s)资源
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当客户发票标记为已确认时将账单归类到客户订单(s)资源
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=当客户发票生效时分类链接报价源到账单
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

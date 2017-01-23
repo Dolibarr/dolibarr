@@ -8,7 +8,7 @@ Projects=المشاريع
 ProjectsArea=Projects Area
 ProjectStatus=حالة المشروع
 SharedProject=مشاريع مشتركة
-PrivateProject=Project contacts
+PrivateProject=مشروع اتصالات
 MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
 ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
 TasksOnProjectsPublicDesc=This view presents all tasks on projects you are allowed to read.
@@ -20,14 +20,15 @@ OnlyOpenedProject=المشاريع المفتوحة فقط مرئية (المش�
 ClosedProjectsAreHidden=Closed projects are not visible.
 TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-AllTaskVisibleButEditIfYouAreAssigned=جميع المهام لهذا المشروع واضحة، ولكن يمكنك إدخال الوقت فقط لمهمة تم تعيينك على. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
-OnlyYourTaskAreVisible=فقط المهام الموكلة لك على مرئية. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task assigned to you. Assign task to yourself if you need to enter time on it.
+OnlyYourTaskAreVisible=Only tasks assigned to you are visible. Assign task to yourself if it is not visible and you need to enter time on it.
+ImportDatasetTasks=Tasks of projects
 NewProject=مشروع جديد
 AddProject=إنشاء مشروع
 DeleteAProject=حذف مشروع
 DeleteATask=حذف مهمة
-ConfirmDeleteAProject=هل أنت متأكد من أنك تريد حذف هذا المشروع؟
-ConfirmDeleteATask=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
+ConfirmDeleteAProject=Are you sure you want to delete this project?
+ConfirmDeleteATask=Are you sure you want to delete this task?
 OpenedProjects=Open projects
 OpenedTasks=Open tasks
 OpportunitiesStatusForOpenedProjects=Opportunities amount of open projects by status
@@ -91,16 +92,16 @@ NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخا
 AffectedTo=إلى المتضررين
 CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
 ValidateProject=تحقق من مشروع غابة
-ConfirmValidateProject=هل أنت متأكد أنك تريد التحقق من صحة هذا المشروع؟
+ConfirmValidateProject=Are you sure you want to validate this project?
 CloseAProject=وثيقة المشروع
-ConfirmCloseAProject=هل أنت متأكد أنك تريد إغلاق هذا المشروع؟
+ConfirmCloseAProject=Are you sure you want to close this project?
 ReOpenAProject=فتح مشروع
-ConfirmReOpenAProject=هل أنت متأكد أنك تريد إعادة فتح هذا المشروع؟
+ConfirmReOpenAProject=Are you sure you want to re-open this project?
 ProjectContact=مشروع اتصالات
 ActionsOnProject=الإجراءات على المشروع
 YouAreNotContactOfProject=كنت لا اتصال لهذا المشروع الخاص
 DeleteATimeSpent=قضى الوقت حذف
-ConfirmDeleteATimeSpent=هل أنت متأكد أنك تريد حذف هذا الوقت الذي يقضيه؟
+ConfirmDeleteATimeSpent=Are you sure you want to delete this time spent?
 DoNotShowMyTasksOnly=انظر أيضا المهام  الغير موكلة الي
 ShowMyTasksOnly=عرض فقط المهام الموكلة الي
 TaskRessourceLinks=مصادر
@@ -117,8 +118,8 @@ CloneContacts=الاتصالات استنساخ
 CloneNotes=ملاحظات استنساخ
 CloneProjectFiles=انضم مشروع استنساخ ملفات
 CloneTaskFiles=مهمة استنساخ (ق) انضم الملفات (إن مهمة (ق) المستنسخة)
-CloneMoveDate=يعود تاريخ تحديث مشروع / المهام من الآن؟
-ConfirmCloneProject=هل أنت متأكد من استنساخ هذا المشروع؟
+CloneMoveDate=Update project/tasks dates from now?
+ConfirmCloneProject=Are you sure to clone this project?
 ProjectReportDate=تغيير موعد المهمة وفقا المشروع تاريخ بداية
 ErrorShiftTaskDate=من المستحيل تحويل التاريخ المهمة وفقا لتاريخ بدء المشروع الجديد
 ProjectsAndTasksLines=المشاريع والمهام
@@ -188,6 +189,6 @@ OppStatusQUAL=المؤهل العلمى
 OppStatusPROPO=مقترح
 OppStatusNEGO=Negociation
 OppStatusPENDING=بانتظار
-OppStatusWON=Won
+OppStatusWON=فاز
 OppStatusLOST=ضائع
 Budget=Budget

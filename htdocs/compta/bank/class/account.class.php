@@ -662,7 +662,7 @@ class Account extends CommonObject
      *
      *    	@param	User	$user       Object user making action
      *      @param  int     $notrigger  1=Disable triggers
-     *		@return	int					<0 si ko, >0 si ok
+     *		@return	int					<0 if KO, >0 if OK
      */
     function update(User $user = null, $notrigger = 0)
     {
@@ -833,7 +833,7 @@ class Account extends CommonObject
      *      @param  string	$ref     	Ref of bank account to get
      *      @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
         global $conf;
 
@@ -1224,8 +1224,9 @@ class Account extends CommonObject
         $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
         if (! empty($conf->accounting->enabled))
         {
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $langs->load("accountancy");
-            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . $this->account_number;
+            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
             $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -1930,7 +1931,7 @@ class AccountLine extends CommonObject
      */
     function info($id)
     {
-        $sql = 'SELECT b.rowid, b.datec,';
+        $sql = 'SELECT b.rowid, b.datec, b.tms as datem,';
         $sql.= ' b.fk_user_author, b.fk_user_rappro';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
         $sql.= ' WHERE b.rowid = '.$id;
@@ -1957,6 +1958,7 @@ class AccountLine extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datem);
                 //$this->date_rappro       = $obj->daterappro;    // Not yet managed
             }
             $this->db->free($result);

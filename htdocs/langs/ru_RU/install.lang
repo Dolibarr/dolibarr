@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Оставьте пустым, если пользоват
 SaveConfigurationFile=Сохранить значения
 ServerConnection=Сервер связи
 DatabaseCreation=Создание базы данных
-UserCreation=Создание пользователя
 CreateDatabaseObjects=Создание объектов базы данных
 ReferenceDataLoading=Исходные данные погрузки
 TablesAndPrimaryKeysCreation=Создание таблиц и первичных ключей
@@ -133,12 +132,12 @@ MigrationFinished=Миграция завершена
 LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
 ActivateModule=Активировать модуль %s
 ShowEditTechnicalParameters=Показать расширенные параметры (для опытных пользователей)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Версия вашей СУБД %s. Она содержит критическую ошибку, которая приводит к потере данных, если вы меняете структуру БД, как это требуется в процессе миграции. По этой причине, перенос не будет осуществлён до момента, пока вы не обновите вашу СУБД до работоспособной версии (версии с критическими ошибками %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Вы можете использовать мастер настройки DoliWamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
+KeepDefaultValuesDeb=Du bruker Dolibarr konfigurasjonsveiviseren fra en Ubuntu eller Debian-pakke, så verdiene foreslått her allerede er optimalisert. Bare passordet til databasen eieren til å opprette må fullføres. Endre andre parametere bare hvis du vet hva du gjør.
+KeepDefaultValuesMamp=Вы можете использовать мастер настройки DoliMamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
+KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Открыть контракт закрыт оши�
 MigrationReopenThisContract=Возобновить контракт %s
 MigrationReopenedContractsNumber=%s контрактов изменено
 MigrationReopeningContractsNothingToUpdate=Нет закрытых контракту, чтобы открыть
-MigrationBankTransfertsUpdate=Обновление связей между Банком сделки и банковские передачи
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Все ссылки в курсе
 MigrationShipmentOrderMatching=Отправок получения обновлений
 MigrationDeliveryOrderMatching=Доставка получения обновлений

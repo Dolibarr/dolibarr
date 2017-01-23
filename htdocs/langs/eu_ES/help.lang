@@ -9,9 +9,9 @@ DolibarrHelpCenter=Dolibarr help and support center
 ToGoBackToDolibarr=Otherwise, click <a href="%s">here to use Dolibarr</a>
 TypeOfSupport=Source of support
 TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support ?
+TypeSupportCommercial=Komertziala
+TypeOfHelp=Mota
+NeedHelpCenter=Need help or support?
 Efficiency=Efficiency
 TypeHelpOnly=Help only
 TypeHelpDev=Help+Development

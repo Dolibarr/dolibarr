@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Säkerhetskod
-Calendar=Kalender
 NumberingShort=N°
 Tools=Verktyg
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Leverans skickas per post
 Notify_MEMBER_VALIDATE=Medlem validerade
 Notify_MEMBER_MODIFY=Medlem modifierad
 Notify_MEMBER_SUBSCRIPTION=Medlem tecknat
-Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Elementet bort
 Notify_PROJECT_CREATE=Projekt skapande
 Notify_TASK_CREATE=Task skapade
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Total storlek på bifogade filer / dokument
 MaxSize=Maximal storlek
 AttachANewFile=Bifoga en ny fil / dokument
 LinkedObject=Länkat objekt
-Miscellaneous=Diverse
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Detta är en test post. \nDet två linjerna är åtskilda av en vagnretur.\n\n__SIGNATURE__
 PredefinedMailTestHtml=Detta är en <b>test</b> post (ordet Provningen skall i fetstil). <br> De två linjerna är åtskilda av en vagnretur.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Företag %s tillsatt
-ContractValidatedInDolibarr=Kontrakt %s validerade
-PropalClosedSignedInDolibarr=Förslag %s undertecknade
-PropalClosedRefusedInDolibarr=Förslag %s vägrade
-PropalValidatedInDolibarr=Förslag %s validerade
-PropalClassifiedBilledInDolibarr=Förslag %s klassificerad faktureras
-InvoiceValidatedInDolibarr=Faktura %s validerade
-InvoicePaidInDolibarr=Faktura %s ändrades till betald
-InvoiceCanceledInDolibarr=Faktura %s annulleras
-MemberValidatedInDolibarr=Medlem %s validerade
-MemberResiliatedInDolibarr=Medlem %s resiliated
-MemberDeletedInDolibarr=Medlem %s raderad
-MemberSubscriptionAddedInDolibarr=Teckning av medlem %s tillades
-ShipmentValidatedInDolibarr=Frakten %s validerad
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Frakten %s raderad
 ##### Export #####
-Export=Exportera
 ExportsArea=Export område
 AvailableFormats=Tillgängliga format
-LibraryUsed=Librairy används
-LibraryVersion=Version
+LibraryUsed=Biblioteket som används
+LibraryVersion=Library version
 ExportableDatas=Exporteras data
 NoExportableData=Inga exporteras data (ingen moduler med exporteras laddats uppgifter, eller behörigheter som saknas)
-NewExport=Nya exportmöjligheter
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Titel
+WEBSITE_DESCRIPTION=Beskrivning
 WEBSITE_KEYWORDS=Keywords

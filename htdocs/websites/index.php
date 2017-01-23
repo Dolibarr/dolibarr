@@ -867,7 +867,7 @@ if ($action == 'editcss')
     print $website;
     print '</td></tr>';
 
-    print '<tr><td valign="top">';
+    print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
     print '<textarea class="flat centpercent" rows="32" name="WEBSITE_CSS_INLINE">';
@@ -978,7 +978,7 @@ if ($action == 'editcontent')
     $contentforedit .= $objectpage->content;
     
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
+    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
     $doleditor->Create(0, '', false);
 }
 

@@ -38,20 +38,20 @@ class UserGroup extends CommonObject
 	public $table_element='usergroup';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $entity;		// Entity of group
+	public $entity;		// Entity of group
 	/**
 	 * @deprecated
 	 * @see name
 	 */
-	var $nom;			// Name of group
-	var $globalgroup;	// Global group
-	var $datec;			// Creation date of group
-	var $datem;			// Modification date of group
-	var $members=array();	// Array of users
+	public $nom;			// Name of group
+	public $globalgroup;	// Global group
+	public $datec;			// Creation date of group
+	public $datem;			// Modification date of group
+	public $members=array();	// Array of users
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 	/**

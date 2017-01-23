@@ -223,6 +223,16 @@ HelpCenterDesc1=Cette application, indépendante de Dolibarr,  permet de vous ai
 HelpCenterDesc2=Choisissez le service qui correspond à votre besoin en cliquant sur le lien adéquat (Certains de ces services ne sont disponibles qu'en <b>anglais</b>).
 CurrentMenuHandler=Gestionnaire menu courant
 MeasuringUnit=Unité de mesure
+LeftMargin=Marge de gauche
+TopMargin=Marge supérieure
+PaperSize=Type de papier
+Orientation=Orientation
+SpaceX=Espace X
+SpaceY=Espace Y
+FontSize=Taille de police
+Content=Contenu
+NoticePeriod=Délai de prévenance
+NewByMonth=Mois suivant
 Emails=Emails
 EMailsSetup=Configuration Emails
 EMailsDesc=Cette page permet de remplacer les paramètres PHP en rapport avec l'envoi d'emails. Dans la plupart des cas, sur des OS comme Unix/Linux, les paramètres PHP sont déjà corrects et cette page est inutile.
@@ -354,6 +364,7 @@ Boolean=Booléen (Case à cocher)
 ExtrafieldPhone = Téléphone
 ExtrafieldPrice = Prix
 ExtrafieldMail = Email
+ExtrafieldUrl = Url
 ExtrafieldSelect = Liste de sélection
 ExtrafieldSelectList = Liste issue d'une table
 ExtrafieldSeparator=Séparateur de champ
@@ -365,8 +376,8 @@ ExtrafieldLink=Lier à un objet
 ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>Pour que la liste soit dépendante d'une autre :<br>1,valeur1|code_liste_parent:clef_parent<br>2,valeur2|code_liste_parent:clef_parent
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
-ExtrafieldParamHelpsellist=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>
-ExtrafieldParamHelpchkbxlst=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>
+ExtrafieldParamHelpsellist=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>Pour faire un SELECT dans le filtre, utilisez $SEL$<br>Si vous voulez filtrer sur un extrafield, utilisez la syntaxe extra.fieldcode=... (ou fieldcode est le code de l'extrafield)<br><br>Pour avoir une liste qui dépend d'un autre:<br>\nc_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>Pour faire un SELECT dans le filtre, utilisez $SEL$<br>Si vous voulez filtrer sur un extrafield, utilisez la syntaxe extra.fieldcode=... (ou fieldcode est le code de l'extrafield)<br><br>Pour avoir une liste qui dépend d'un autre:<br>\nc_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelplink=Les paramètres doivent être ObjectName: Classpath<br>Syntaxe: ObjectName:Classpath<br>Exemple: Société:societe/class/societe.class.php
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
@@ -398,7 +409,7 @@ EnableAndSetupModuleCron=Si vous voulez avoir cette facture récurrente génér�
 ModuleCompanyCodeAquarium=Renvoie un code comptable composé de :<br>%s suivi du code tiers fournisseur pour le code compta fournisseur,<br>%s suivi du code tiers client pour le code compta client.
 ModuleCompanyCodePanicum=Renvoie un code comptable vide.
 ModuleCompanyCodeDigitaria=Renvoie un code comptable composé suivant le code tiers. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code tiers.
-Use3StepsApproval=Par défaut, les commandes fournisseurs nécessitent d'être créées et approuvées en deux étapes par deux utilisateurs distincts. Si un utilisateur à les deux permissions, ces deux actions sont effectuées en une seule fois. Cette option ajoute la nécessité d'une approbation par un troisième utilisateur si le montant de la commande est supérieur au montant d'une valeur définie soit étape 1 : Validation, étape 2 : Première approbation et étape 3 : seconde approbation selon le montant de la commande. <br>Si le champ est laissé vide, l'approbation se fera en deux étapes. Si le champ est saisi à une valeur faible (0.1) la double approbation sera toujours nécessaire.
+Use3StepsApproval=Par défaut, les commandes fournisseurs nécessitent d'être créées et approuvées en deux étapes/utilisateurs (une étape/utilisateur pour créer et une étape/utilisateur pour approuver. Si un utilisateur à les deux permissions, ces deux actions sont effectuées en une seule fois). Cette option ajoute la nécessité d'une approbation par une troisième étape/utilisateur, si le montant de la commande est supérieur au montant d'une valeur définie (soit 3 étapes nécessaire: 1 =Validation, 2=Première approbation et 3=seconde approbation si le montant l'exige).<br>Laissez le champ vide si une seule approbation (2 étapes) sont suffisantes, placez une valeur très faibe (0.1) si une deuxième approbation (3 étapes) est toujours exigée.
 UseDoubleApproval=Activer l'approbation en trois étapes si le montant HT est supérieur à...
 
 # Modules
@@ -814,6 +825,7 @@ DictionaryPaymentModes=Modes de paiements
 DictionaryTypeContact=Types de contacts/adresses
 DictionaryEcotaxe=Barèmes Eco-participation (DEEE)
 DictionaryPaperFormat=Format papiers
+DictionaryFormatCards=Formats des cartes
 DictionaryFees=Types de déplacement et notes de frais
 DictionarySendingMethods=Méthodes d'expédition
 DictionaryStaff=Effectifs
@@ -1017,7 +1029,6 @@ SimpleNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'
 ShowProfIdInAddress=Afficher l'identifiant professionnel dans les adresses sur les documents
 ShowVATIntaInAddress=Cacher l'identifiant de TVA Intracommunautaire dans les adresses sur les documents
 TranslationUncomplete=Traduction partielle
-SomeTranslationAreUncomplete=Certaines langues sont traduites partiellement ou peuvent contenir des erreurs. Si vous en détectez, vous pouvez corriger les fichiers langues depuis  <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
 MAIN_DISABLE_METEO=Désactiver la vue météo
 TestLoginToAPI=Tester connexion à l'API
 ProxyDesc=Certaines fonctions de Dolibarr nécessitent que le serveur ait accès à internet. Définissez ici les paramètres de ces accès. Si le serveur Dolibarr est derrière un proxy, ces paramètres indiquent à Dolibarr comment le traverser.
@@ -1565,7 +1576,7 @@ HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de la table lorsque
 HighlightLinesColor=Mettez en surbrillance les lignes de la table lorsque la souris passe au-dessus (garder vide pour ne pas avoir de surbrillance)
 TextTitleColor=Couleur du titre des pages
 LinkColor=Couleur des liens
-PressF5AfterChangingThis=Appuyez sur F5 sur le clavier après avoir modifié cette valeur pour que le changement soit effectif
+PressF5AfterChangingThis=Appuyez sur la touche F5 ou videz le cache de votre navigateur après avoir modifié cette valeur pour que le changement soit effectif
 NotSupportedByAllThemes=Fonctionne avec les thèmes natifs. Non garanti avec d'autres
 BackgroundColor=Couleur de fond
 TopMenuBackgroundColor=Couleur de fond pour le menu horizontal
@@ -1625,13 +1636,13 @@ AddOtherPagesOrServices=Ajout d'autres pages ou services
 AddModels=Ajout de modèles de document ou de numérotation
 AddSubstitutions=Ajout de valeurs de substitution
 DetectionNotPossible=Détection impossible
-UrlToGetKeyToUseAPIs=Url pour obtenir le jeton pour utiliser l'API (une fois le jeton reçu, il est enregistré dans la table des utilisateurs de la base de données et sera vérifié à chaque accès)
+UrlToGetKeyToUseAPIs=Url pour obtenir le jeton pour utiliser l'API (une fois le jeton reçu, il est enregistré dans la table des utilisateurs de la base de données et doit être fourni à chaque appel d'API)
 ListOfAvailableAPIs=Liste des APIs disponibles
 activateModuleDependNotSatisfied=Le module "%s" dépend du module "%s" qui est manquant, aussi le module "%1$s" peut ne pas fonctionner correctement. Merci d'installer le module "%2$s" ou désactiver le module "%1$s" si vous ne souhaitez pas avoir de mauvaise surprise
 CommandIsNotInsideAllowedCommands=La commande demandée n'est pas autorisée par le paramètre <strong>$dolibarr_main_restrict_os_commands</strong> du fichier <strong>conf.php</strong>.
 LandingPage=Page cible
 SamePriceAlsoForSharedCompanies=Si vous utilisez un module multi-société, avec le choix «prix unique», le prix sera aussi le même pour toutes les sociétés si les produits sont partagés entre les environnements
-ModuleEnabledAdminMustCheckRights=Le module a été activé. Les permissions pour le(s) module(s) activé(s) ont été donnés aux utilisateurs admin uniquement. Vous devrez peut-être accorder des autorisations aux autres utilisateurs manuellement si nécessaire.
+ModuleEnabledAdminMustCheckRights=Le module a été activé. Les permissions pour le(s) module(s) activé(s) ont été donnés aux utilisateurs admin uniquement. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
 UserHasNoPermissions=Cet utilisateur n'a pas de permission définie
 TypeCdr=Utilisez "Aucune" si la date du terme de paiement est la date de la facture plus un delta en jours (delta est le champ "Nb de jours") <br> Utilisez "À la fin du mois", si, après le delta, la date doit être augmentée pour atteindre la fin du mois (+ un «Offset» optionnel en jours) <br> Utilisez "Coutant/Suivant" pour que la date du terme de paiement soit la premier Nième jour du mois qui suit (N est stocké dans le champ "Nb de jours")
 ##### Resource ####

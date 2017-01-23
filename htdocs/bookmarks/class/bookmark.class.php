@@ -26,8 +26,13 @@
 /**
  *		Class to manage bookmarks
  */
-class Bookmark
+class Bookmark extends CommonObject
 {
+    public $element='bookmark';
+    public $table_element='bookmark';
+    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $picto = 'bookmark';
+    
     var $db;
 
     var $id;
@@ -228,4 +233,15 @@ class Bookmark
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 *	Return label of contact status
+	 *
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
+	 */
+	function getLibStatut($mode)
+	{
+	    return '';
+	}
+	
 }

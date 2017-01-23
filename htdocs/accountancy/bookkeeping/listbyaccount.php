@@ -156,13 +156,13 @@ if ($action == 'delmouvconfirm') {
  * View
  */
 
-$title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+$title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting");
 
 llxHeader('', $title_page);
 
 // List
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
 	if ($nbtotalofrecords < 0) {
@@ -207,7 +207,9 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,'','',$limit);
+$viewflat = ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a>';
+
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
@@ -218,8 +220,6 @@ else
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '</div>';
-
-print ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a><br><br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -235,9 +235,8 @@ print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" 
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
-print '<td>' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
-print '<td></td>';
+print '<td class="liste_titre">' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
+print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
@@ -247,10 +246,10 @@ print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/></td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_account" value="' . $search_label_account . '"/></td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td  align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
-print '<td align="right" colspan="2" class="liste_titre">';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre" align="right" colspan="2">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';
@@ -331,14 +330,15 @@ foreach ( $object->lines as $line ) {
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché
-print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+print '<tr class="liste_total">';
+print '<td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
 
 // Affiche le Total
 print '<tr class="liste_total">';
-print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>';
+print '<td align="right" colspan="5">'.$langs->trans("Total").':</td>';
 print '<td  align="right">';
 print price($total_debit);
 print '</td>';

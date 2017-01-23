@@ -451,7 +451,7 @@ class MultiCurrency extends CommonObject
 	}
 	 
 	 /**
-	 * Update rate in database 
+	 * Add new entry into llx_multicurrency_rate to historise
 	 * 
 	 * @param double	$rate	rate value
 	  * 
@@ -459,15 +459,7 @@ class MultiCurrency extends CommonObject
 	 */
 	 public function updateRate($rate)
 	 {
-	 	if (is_object($this->rate))
-		{
-			$this->rate->rate = $rate;
-			return $this->rate->update();
-		}
-		else 
-		{
-			return $this->addRate($rate);
-		}
+	 	return $this->addRate($rate);
 	 }
 	
 	/**
@@ -480,7 +472,7 @@ class MultiCurrency extends CommonObject
 	 	$sql = 'SELECT cr.rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
-		$sql.= ' AND cr.date_sync >= ALL (SELECT cr2.date_sync FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr.rowid = cr2.rowid)';
+		$sql.= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.$this->id.')';
 		
 		dol_syslog(__METHOD__,LOG_DEBUG);
 		$resql = $this->db->query($sql);

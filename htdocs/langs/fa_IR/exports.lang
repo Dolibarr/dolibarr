@@ -26,8 +26,6 @@ FieldTitle=عنوان درست
 NowClickToGenerateToBuildExportFile=در حال حاضر، فرمت فایل را انتخاب کنید در جعبه دسته کوچک موسیقی جاز و کلیک بر روی "ایجاد" برای ساخت فایل صادرات ...
 AvailableFormats=فرمت های موجود
 LibraryShort=کتابخانه
-LibraryUsed=کتابخانه استفاده می شود
-LibraryVersion=نسخه
 Step=گام
 FormatedImport=دستیار واردات
 FormatedImportDesc1=این منطقه اجازه می دهد تا برای وارد کردن داده های شخصی، با استفاده از یک دستیار برای کمک به شما در فرایند بدون دانش فنی.
@@ -87,7 +85,7 @@ TooMuchWarnings=هنوز هم وجود دارد <b>از٪ s</b> خط منبع د
 EmptyLine=خط خالی (دور ریخته خواهد شد)
 CorrectErrorBeforeRunningImport=ابتدا باید، درست قبل از اجرای واردات قطعی تمام خطا است.
 FileWasImported=فایل را با <b>تعداد٪ s را</b> وارد شد.
-YouCanUseImportIdToFindRecord=شما می توانید تمام پرونده های وارد شده در پایگاه داده خود را از طریق فیلتر کردن در <b>import_key</b> درست پیدا <b>= '٪ s' را.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=تعداد خطوط بدون خطا و بدون <b>اخطار:٪ است.</b>
 NbOfLinesImported=شماره خطوط با موفقیت وارد <b>کنید:٪ s.</b>
 DataComeFromNoWhere=ارزش برای وارد می آید از هیچ جا در فایل منبع.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>کاما جدا</b> فرمت فایل <b>ارزش</b> (CSV). <b
 Excel95FormatDesc=فرمت فایل <b>اکسل</b> (. XLS) <br> این مادری اکسل 95 فرمت (BIFF5) است.
 Excel2007FormatDesc=فرمت فایل <b>اکسل</b> (. XLSX) <br> این مادری اکسل 2007 فرمت (SpreadsheetML) است.
 TsvFormatDesc=فرمت <b>تب</b> فایل <b>مقادیر جدا شده</b> (. TSV) <br> این فرمت یک فایل متنی که در آن زمینه توسط یک جدول نویس [تب] از هم جدا شده است.
-ExportFieldAutomaticallyAdded=<b>٪</b> درست <b>ها</b> به طور خودکار اضافه شده است. اجتناب از آن شما را به خطوط مشابه به عنوان رکورد تکراری درمان می شود (با این رشته اضافه شده است، تمام خطوط شناسه (شماره) آن خودشان و متفاوت خواهد بود).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=گزینه CSV
 Separator=تفکیک کننده
 Enclosure=محوطه

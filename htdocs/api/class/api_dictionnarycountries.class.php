@@ -54,7 +54,7 @@ class DictionnaryCountries extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $filter     To filter the countries by name
      * @param string    $lang       Code of the language the label of the countries must be translated to
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of countries
      *            
      * @throws RestException

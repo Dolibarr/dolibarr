@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Biztonsági kód
-Calendar=Naptár
 NumberingShort=N°
 Tools=Eszközök
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Szállítás postai úton
 Notify_MEMBER_VALIDATE=Tagállamnak jóvá
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=Tagállam jegyzett
-Notify_MEMBER_RESILIATE=Tagja resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Tag törölve
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Teljes méretű csatolt fájlok / dokumentumok
 MaxSize=Maximális méret
 AttachANewFile=Helyezzen fel egy új file / dokumentum
 LinkedObject=Csatolt objektum
-Miscellaneous=Vegyes
 NbOfActiveNotifications=Figyelmeztetések száma (nyugtázott emailek száma)
 PredefinedMailTest=Ez egy teszt mailt. \\ NA két vonal választja el egymástól kocsivissza.
 PredefinedMailTestHtml=Ez egy <b>teszt</b> mail (a szó vizsgálatot kell vastagon). <br> A két vonal választja el egymástól kocsivissza.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=%s cég hozzáadva
-ContractValidatedInDolibarr=%s szerződés jóváhagyva
-PropalClosedSignedInDolibarr=A %s javaslat alárva
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=%s számla jóváhagyva
-InvoicePaidInDolibarr=%s számla fizetettre változott
-InvoiceCanceledInDolibarr=%s számla visszavonva
-MemberValidatedInDolibarr=%s tag jóváhagyva
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Export
 ExportsArea=Az export területén
 AvailableFormats=Elérhető formátumok
-LibraryUsed=Librairy használt
-LibraryVersion=Változat
+LibraryUsed=Könyvtár használt
+LibraryVersion=Library version
 ExportableDatas=Exportálható adatok
 NoExportableData=Nem exportálható adatok (nincs modulok exportálható adatok betöltése, vagy hiányzó engedélyek)
-NewExport=Új export
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Cím
+WEBSITE_DESCRIPTION=Leírás
 WEBSITE_KEYWORDS=Keywords

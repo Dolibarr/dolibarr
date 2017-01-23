@@ -44,9 +44,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->propal->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
@@ -111,13 +111,16 @@ if (empty($reshook))
 {
 	if ($cancel) 
 	{
-		if ($action != 'addlink')
+		if ($action != 'addlink' && $action != 'updateline')
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
-		}		
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		}
+		if ($id > 0 || ! empty($ref)) {
+		    $ret = $object->fetch($id,$ref);
+		    $object->fetch_thirdparty();
+        }
 		$action='';
 	}
 	
@@ -220,7 +223,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Categorisation dans projet
+	// Link to a project
 	else if ($action == 'classin' && $user->rights->commande->creer)
 	{
 		$object->setProject(GETPOST('projectid'));
@@ -636,6 +639,7 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -670,7 +674,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && (! ($price_ht_devise >= 0) || $price_ht_devise == '')) 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
@@ -810,6 +814,7 @@ if (empty($reshook))
 				$desc = $product_desc;
 				$type = GETPOST('type');
 				$fk_unit=GETPOST('units', 'alpha');
+				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 			}
 
 			// Margin
@@ -831,7 +836,7 @@ if (empty($reshook))
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $fk_unit);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, $pu_ht_devise);
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -902,6 +907,7 @@ if (empty($reshook))
 		$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
 		$pu_ht=GETPOST('price_ht');
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -962,7 +968,20 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'));
+
+			if (empty($user->rights->margins->creer))
+			{
+				foreach ($object->lines as &$line)
+				{
+					if ($line->id == GETPOST('lineid'))
+					{
+						$fournprice = $line->fk_fournprice;
+						$buyingprice = $line->pa_ht;
+						break;
+					}
+				}
+			}
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'),$pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1629,7 +1648,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 
 	// Template to use by default
-	print '<tr><td>' . $langs->trans('Model') . '</td>';
+	print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
 	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
@@ -2193,10 +2212,18 @@ if ($action == 'create' && $user->rights->commande->creer)
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editmulticurrencyrate') {
+			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+    			if($action == 'actualizemulticurrencyrate') {
+    				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+    			}
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
+					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+					print '</div>';
+				}
 			}
 			print '</td></tr>';
 		}
@@ -2217,7 +2244,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
-		// Origin
+		// Source reason (why we have an ordrer)
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Source');
@@ -2231,12 +2258,26 @@ if ($action == 'create' && $user->rights->commande->creer)
 		} else {
 			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 		}
-		// Removed because using dictionary is an admin feature, not a user feature. There is already the "star" to show info to admin users.
-		// This is to avoid too heavy screens and have an uniform look and feel for all screens.
-		// print '</td><td>';
-		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+		// TODO Order mode (how we receive order). Not yet implemented
+		/*
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('SourceMode');
+		print '</td>';
+		if ($action != 'editinputmode')
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinputmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetInputMode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editinputmode') {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'input_mode_id', 1);
+		} else {
+			$form->formInputMode($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->source, 'none');
+		}
+		print '</td></tr>';
+		*/
+		
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
@@ -2395,6 +2436,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
+        print '<div class="div-table-responsive">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
@@ -2420,7 +2462,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 		}
 		print '</table>';
-
+        print '</div>';
+        
 		print "</form>\n";
 
 		dol_fiche_end();

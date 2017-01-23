@@ -51,6 +51,8 @@ class Categorie extends CommonObject
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
     const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
     const TYPE_PROJECT = 6;
+    public $picto = 'category';
+    
 
 	/**
 	 * @var array ID mapping from type string
@@ -131,17 +133,17 @@ class Categorie extends CommonObject
 	public $element='category';
 	public $table_element='categories';
 
-	var $fk_parent;
-	var $label;
-	var $description;
+	public $fk_parent;
+	public $label;
+	public $description;
 	/**
 	 * @var string     Color
 	 */
-	var $color;
+	public $color;
 	/**
 	 * @var ???
 	 */
-	var $socid;
+	public $socid;
 	/**
 	 * @var int Category type
 	 *
@@ -154,10 +156,10 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PROJECT
 	 */
-	var $type;
+	public $type;
 
-	var $cats=array();			// Categories table in memory
-	var $motherof=array();
+	public $cats = array();			// Categories table in memory
+	public $motherof = array();
 
 	/**
 	 *	Constructor
@@ -205,6 +207,7 @@ class Categorie extends CommonObject
 				$res = $this->db->fetch_array($resql);
 
 				$this->id			= $res['rowid'];
+				//$this->ref			= $res['rowid'];
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description	= $res['description'];
@@ -1703,6 +1706,18 @@ class Categorie extends CommonObject
 	    }
 	}
 
+	/**
+	 *	Return label of contact status
+	 *
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
+	 */
+	function getLibStatut($mode)
+	{
+	    return '';
+	}
+	
+	
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

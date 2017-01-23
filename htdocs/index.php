@@ -173,7 +173,7 @@ if (empty($user->societe_id))
 	    ! empty($conf->propal->enabled) && $user->rights->propale->lire,
 	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
-	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
+	    ! empty($conf->contrat->enabled) && $user->rights->contrat->lire,
 	    ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
 		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),

@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - cron
+Permission23101 =Voir les travaux planifiés
+Permission23102 =Créer/Modifier des travaux planifiées
+Permission23103 =Effacer travail planifié
+Permission23104 =Exécuté Travail planifié
+CronNone=Aucune
+CronFrom=De

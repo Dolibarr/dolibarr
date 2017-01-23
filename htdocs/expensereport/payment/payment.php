@@ -193,8 +193,9 @@ if (GETPOST("action") == 'create')
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
-	$sql.= " WHERE p.fk_expensereport = ".$chid;
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
+	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -203,7 +204,7 @@ if (GETPOST("action") == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	print '<tr class="liste_titre">';
 	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
@@ -234,7 +235,7 @@ if (GETPOST("action") == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 

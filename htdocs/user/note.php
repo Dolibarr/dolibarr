@@ -37,6 +37,7 @@ $langs->load("users");
 
 $object = new User($db);
 $object->fetch($id);
+$object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessforbidden();
@@ -112,7 +113,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
 		$doleditor->Create();
 	}
 	else

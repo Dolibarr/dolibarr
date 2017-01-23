@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - bills
+BillStatusPaidBackOrConverted=Paid or converted into discount
+BillShortStatusPaidBackOrConverted=Processed
+RemainderToPayBack=Remaining amount to pay back
+PaymentConditionShortRECEP=Immediate
+PaymentConditionRECEP=Immediate

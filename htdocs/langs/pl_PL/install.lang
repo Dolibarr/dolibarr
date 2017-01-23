@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Zostaw puste jeśli użytkownik nie posiada hasła (unikaj
 SaveConfigurationFile=Zapis wartości
 ServerConnection=Połączenie z serwerem
 DatabaseCreation=Utworzenie bazy danych
-UserCreation=Utworzenie użytkownika
 CreateDatabaseObjects=Tworzenie obiektów w bazie danych
 ReferenceDataLoading=Przesyłanie danych referencyjnych
 TablesAndPrimaryKeysCreation=Tworzenie tabel oraz kluczy głównych
@@ -133,12 +132,12 @@ MigrationFinished=Migracja zakończona
 LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj nazwę i hasło, które masz zamiar użyć do połączenia z oprogramowaniem. Zapamiętaj je, ponieważ jest to konto do administrowania wszystkimi innymi ustawieniami.
 ActivateModule=Aktywuj moduł %s
 ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane parametry (tryb ekspert)
-WarningUpgrade=Ostrzeżenie:\nCzy utworzyłeś kopię zapasową bazy danych?\nJest to wysoce zalecane: przykładowo, z powodu kilku błędów w systemie baz danych (dla przykładu wersje 5.5.40/41/42/43), niektóre dane lub tabele mogą zostać utracone podczas tego procesu, w związku z tym jest wysoce zalecane posiadanie pełnej kopii zapasowej swojej bazy danych przed uruchomieniem migracji.\n\nKliknij OK w celu rozpoczęcia procesu migracji...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych to %s. Ma krytyczną lukę utraty danych jeśli się zmieni struktury na bazie danych, tak jak jest to wymagane podczas procesu migracji. Z tego powodu migracje nie zostaną dopuszczone dopóki nie ulepszysz bazy danych do wyższej wersji  (lista znanych wersji z lukami: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+KeepDefaultValuesDeb=Uzywasz kreatora instalacji dla Linuxa (Ubutu, Debian, Fedora..), więc zaproponowane wartości są zoptymalizowane. Tylko hasło właściciela bazy danych do stworzenia musi być kompletne. Inne parametry zmieniaj TYLKO jeśli wiesz co robisz.
+KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartości zaproponowane tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Otwarte kontrakty zamknięte z przyczyny błędu
 MigrationReopenThisContract=Ponownie otwórz kontrakt %s
 MigrationReopenedContractsNumber=%s kontraktów zmodyfikowanych
 MigrationReopeningContractsNothingToUpdate=Brak zamkniętych kontraktów do otwarcia
-MigrationBankTransfertsUpdate=Zaktualizuj połączenia między transakcjami bankowymi, a transferami bankowymi
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Wszystkie połączenia są aktualne
 MigrationShipmentOrderMatching=Aktualizacja rachunków za wysyłki
 MigrationDeliveryOrderMatching=Aktualizacja rachunków za dostawy

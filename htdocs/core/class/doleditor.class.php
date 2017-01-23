@@ -152,7 +152,7 @@ class DolEditor
     	$fullpage=False;
     	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
     	{
-    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed
+    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
     	}
 
     	$found=0;
@@ -171,7 +171,7 @@ class DolEditor
             $out.= $this->content;
             $out.= '</textarea>';
 
-            if ($this->tool == 'ckeditor')
+            if ($this->tool == 'ckeditor' && ! empty($conf->use_javascript_ajax))
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 

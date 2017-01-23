@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Toimitus
 DeliveryRef=Ref Delivery
-DeliveryCard=Toimitus-kortti
+DeliveryCard=Receipt card
 DeliveryOrder=Toimitusvahvistus
 DeliveryDate=Toimituspäivää
-CreateDeliveryOrder=Luo toimitusvahvistus
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Aseta meriliikenneyhtiön päivämäärä
 ValidateDeliveryReceipt=Validate toimituksen vastaanottamisen
-ValidateDeliveryReceiptConfirm=Oletko varma, että haluat vahvistaa tämän toimituksen vastaanottamisesta?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Poista toimituskuitti
-DeleteDeliveryReceiptConfirm=Oletko varma että haluat poistaa toimituskuitti <b>%s?</b>
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Toimitustapa
 TrackingNumber=Seurantanumero
 DeliveryNotValidated=Toimitus ei validoitu
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Peruttu
+StatusDeliveryDraft=Luonnos
+StatusDeliveryValidated=Vastaanotetut
 # merou PDF model
 NameAndSignature=Nimi ja allekirjoitus:
 ToAndDate=To___________________________________ on ____ / _____ / __________

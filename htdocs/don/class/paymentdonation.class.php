@@ -24,33 +24,34 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentDonation
- *		\brief      Class to manage payments of donations
+/**
+ *	Class to manage payments of donations
  */
 class PaymentDonation extends CommonObject
 {
 	public $element='payment_donation';			//!< Id that identify managed objects
 	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
+    public $picto = 'payment';
+    
+	public $rowid;
 
-	var $rowid;
-
-	var $fk_donation;
-	var $datec='';
-	var $tms='';
-	var $datep='';
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $typepayment;
-	var $num_payment;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $fk_donation;
+	public $datec='';
+	public $tms='';
+	public $datep='';
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $typepayment;
+	public $num_payment;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $total;
+	public $total;
 
 	/**
 	 *	Constructor
@@ -432,6 +433,32 @@ class PaymentDonation extends CommonObject
 	}
 
 
+	/**
+	 * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        		Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return '';
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Libelle du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	
+	    return '';
+	}
+	
+	
 	/**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

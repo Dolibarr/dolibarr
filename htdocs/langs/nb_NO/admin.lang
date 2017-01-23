@@ -58,8 +58,8 @@ ErrorCodeCantContainZero=Koden kan ikke inneholde verdien 0
 DisableJavascript=Deaktiver JavaScript og Ajax funksjoner (Anbefalt for tekstbaserte nettlesere og blinde)
 UseSearchToSelectCompanyTooltip=Hvis du har et stort antall tredjeparter (> 100 000), kan du øke hastigheten ved å sette konstant COMPANY_DONOTSEARCH_ANYWHERE til 1 i Oppsett-> Annet. Søket vil da være begrenset til starten av strengen.
 UseSearchToSelectContactTooltip=Hvis du har et stort antall tredjeparter (> 100 000), kan du øke hastigheten ved å sette konstant CONTACT_DONOTSEARCH_ANYWHERE til 1 i Oppsett-> Annet. Søket vil da være begrenset til starten av strengen.
-DelaiedFullListToSelectCompany=Vent med å trykke på noen taster før innholdet i tredjeparts-kombilisten er lastet (Dette kan øke ytelsen hvis du har et stort antall tredjeparter)
-DelaiedFullListToSelectContact=Vent med å trykke på noen taster før innholdet i kontakt-kombilisten er lastet (Dette kan øke ytelsen hvis du har et stort antall tredjeparter)
+DelaiedFullListToSelectCompany=Wait you press a key before loading content of thirdparties combo list (This may increase performance if you have a large number of thirdparties, but it is less convenient)
+DelaiedFullListToSelectContact=Wait you press a key before loading content of contact combo list (This may increase performance if you have a large number of contact, but it is less convenient)
 NumberOfKeyToSearch=Antall tegn for å starte søk: %s
 NotAvailableWhenAjaxDisabled=Ikke tilgjengelig når Ajax er slått av
 AllowToSelectProjectFromOtherCompany=På elementer av en tredjepart, kan du velge et prosjekt knyttet til en annen tredjepart
@@ -223,6 +223,16 @@ HelpCenterDesc1=Dette området kan hjelpe deg å få support-tjeneste med Doliba
 HelpCenterDesc2=Enkelte deler av denne tjenesten er <b>kun</b> tilgjengelig på <b>engelsk.</b>
 CurrentMenuHandler=Gjeldende menyen behandler
 MeasuringUnit=Måleenhet
+LeftMargin=Left margin
+TopMargin=Top margin
+PaperSize=Paper type
+Orientation=Orientation
+SpaceX=Space X
+SpaceY=Space Y
+FontSize=Font size
+Content=Content
+NoticePeriod=Oppsigelsestid
+NewByMonth=New by month
 Emails=E-poster
 EMailsSetup=E-postinnstillinger
 EMailsDesc=Denne siden lar deg overstyre PHP-innstillingene for å sende e-post. I de fleste tilfeller på Unix/Linuxservere er PHP-innstillingene korrekte, slik at disse innstillingene er unødvendige.
@@ -354,6 +364,7 @@ Boolean=Boolean (Avmerkingsboks)
 ExtrafieldPhone = Telefon
 ExtrafieldPrice = Pris
 ExtrafieldMail = E-post
+ExtrafieldUrl = Url
 ExtrafieldSelect = Velg liste
 ExtrafieldSelectList = Velg fra tabell
 ExtrafieldSeparator=Separator
@@ -365,8 +376,8 @@ ExtrafieldLink=Lenke til et objekt
 ExtrafieldParamHelpselect=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...<br><br>For å gjøre listen avhengig av en annen liste:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...
 ExtrafieldParamHelpradio=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...
-ExtrafieldParamHelpsellist=Parameterlisten kommer fra en tabell<br>Syntaks : table_name:label_field:id_field::filter<br>Eksempel : c_typent:libelle:id::filter<br><br>filter kan være en enkel test (f.eks active=1) for kun å vise aktive verdier<br>Du kan også bruke $ID$ i filter, som gir ID til aktuelt objekt<br>For å bruke SELECT i filtre, bruk $SEL$<br>Hvis du vil bruke filtre på ekstrafelter, bruk syntaks extra.fieldcode=... (der feltkode er koden på ekstrafeltet)<br><br>For at listene skal være avhengige av hverandre:<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameterlisten kommer fra en tabell<br>Syntaks : table_name:label_field:id_field::filter<br>Eksempel : c_typent:libelle:id::filter<br><br>filter kan være en enkel test (f.eks active=1) for kun å vise aktive verdier<br>Du kan også bruke $ID$ i filter, som gir ID til aktuelt objekt<br>For å bruke SELECT i filtre, bruk $SEL$<br>Hvis du vil bruke filtre på ekstrafelter, bruk syntaks extra.fieldcode=... (der feltkode er koden på ekstrafeltet)<br><br>For at listene skal være avhengige av hverandre:<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelplink=Parametre må være ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Eksempel : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Bibliotek brukt for PDF-generering
 WarningUsingFPDF=Advarsel! <b>conf.php</b> inneholder direktivet <b>dolibarr_pdf_force_fpdf=1</b>. Dette betyr at du bruker FPDF biblioteket for å generere PDF-filer. Dette biblioteket er gammelt og støtter ikke en rekke funksjoner (Unicode, bilde-transparens, kyrillisk, arabiske og asiatiske språk, ...), så du kan oppleve feil under PDF generering. <br> For å løse dette, og ha full støtte ved PDF generering, kan du laste ned <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, deretter kommentere eller fjerne linjen <b>$dolibarr_pdf_force_fpdf=1</b>, og i stedet legge inn <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -398,7 +409,7 @@ EnableAndSetupModuleCron=Hvis du ønsker at gjentakende fakturaer skal genereres
 ModuleCompanyCodeAquarium=Velger en regnskapskode bygget av: <br>%s etterfulgt av tredjeparts leverandørkode for en leverandør-regnskap kode,<br>%s etterfulgt av tredjepart kundekode for en kunde- regnskapkode.
 ModuleCompanyCodePanicum=Velg en tom regnskapskode
 ModuleCompanyCodeDigitaria=Regnskapskode avhenger av tredjepartskode. Koden består av karakteren "C" i første posisjon, etterfulgt av de første 5 tegnene i tredjepartskoden.
-Use3StepsApproval=Som standard må innkjøpsordrer opprettes og godkjennes av 2 forskjellige brukere (1-bruker for å opprette og 2-bruker for å godkjenne. Merk at hvis brukeren har både tillatelse til å opprette og godkjenne, vil ett skritt være nok) . Du kan velge med dette alternativet å innføre et tredje trinn - brukergodkjenning. Hvis beløpet er høyere enn en valgt verdi (3 trinn vil være nødvendig: 1 - validering, 2 - første godkjenning og 3 - andre godkjenning dersom beløpet er høyt nok).<br> Sett denne til tom hvis en godkjenning (2 trinn) er nok, sett den til en svært lav verdi (0,1) hvisdet alltid kreves en andre godkjenning.
+Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Bruk 3-trinns godkjennelse når beløpet (eks. MVA) er høyere enn...
 
 # Modules
@@ -814,6 +825,7 @@ DictionaryPaymentModes=Betalingsmåter
 DictionaryTypeContact=Kontakt/adressetyper
 DictionaryEcotaxe=Miljøgebyr (WEEE)
 DictionaryPaperFormat=Papirformater
+DictionaryFormatCards=Cards formats
 DictionaryFees=Avgiftstyper
 DictionarySendingMethods=Leveringsmetoder
 DictionaryStaff=Stab
@@ -1017,7 +1029,6 @@ SimpleNumRefModelDesc=Returner referansenummeret med format %syymm-nnnn der åå
 ShowProfIdInAddress=Vis Profesjonell ID med adresser på dokumenter
 ShowVATIntaInAddress=Skjul MVA Intra num med adresser på dokumenter
 TranslationUncomplete=Delvis oversettelse
-SomeTranslationAreUncomplete=Noen språk kan være delvis oversatt eller inneholder feil. Hvis du oppdager noen, kan du redigere språkfiler ved å registrere deg her <a href="http://transifex.com/projects/p/dolibarr/" target="_blank"> http://transifex.com/projects/p/dolibarr/</a>.
 MAIN_DISABLE_METEO=Deaktiver Meteo visning
 TestLoginToAPI=Test-innlogging til API
 ProxyDesc=Enkelte funksjoner i Dolibarr må ha en Internett-tilgang for å fungere. Definer parametere for dette her. Hvis Dolibarr-serveren er bak en proxy-server, forteller disse parametrene Dolibarr hvordan få tilgang til Internett gjennom den.
@@ -1062,7 +1073,7 @@ TotalNumberOfActivatedModules=Totalt antall aktiverte moduler: <b>%s</b> / <b>%s
 YouMustEnableOneModule=Du må minst aktivere en modul
 ClassNotFoundIntoPathWarning=Klasse %s ikke funnet i PHP banen
 YesInSummer=Ja i sommer
-OnlyFollowingModulesAreOpenedToExternalUsers=Merk: Kun følgende moduler er åpne for eksterne brukere (hva enn tillatelse til slike brukere er):
+OnlyFollowingModulesAreOpenedToExternalUsers=Note, only following modules are open to external users (whatever are permission of such users) and only if permissions were granted:
 SuhosinSessionEncrypt=Session lagring kryptert av Suhosin
 ConditionIsCurrently=Tilstand er for øyeblikket %s
 YouUseBestDriver=Du bruker driveren %s, som er den beste tilgjengelige for øyeblikket.
@@ -1140,6 +1151,8 @@ FreeLegalTextOnSupplierProposal=Fritekst på prisforespørsler leverandør
 WatermarkOnDraftSupplierProposal=Vannmerke på kladder på prisforespørsler leverandør (ingen hvis tom)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Spør om bankkonto på prisforespørsel
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Spør om Lagerkilde for ordre
+##### Suppliers Orders #####
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Ask for bank account destination of supplier order
 ##### Orders #####
 OrdersSetup=Innstillinger for ordre
 OrdersNumberingModules=Nummereringsmodul for ordre
@@ -1320,7 +1333,7 @@ ViewProductDescInFormAbility=Visualisering av varebeskrivelser i skjemaer (eller
 MergePropalProductCard=I "Vedlagte filer"-fanen i "Varer og tjenester" kan du aktivere en opsjon for å flette PDF-varedokument til tilbud PDF-azur hvis varen/tjenesten er i tilbudet
 ViewProductDescInThirdpartyLanguageAbility=Visualisering av varebeskrivelser i tredjepartens språk
 UseSearchToSelectProductTooltip=Hvis du har mange varer (>100 000), kan du øke hastigeten ved å sette konstanten PRODUCT_DONOTSEARCH_ANYWHERE til 1 i Oppsett->Annet. Søket vil da begrenses til starten av søkestrengen
-UseSearchToSelectProduct=Bruk et søkeskjema for å velge vare (i stedet for en nedtrekksliste)
+UseSearchToSelectProduct=Wait you press a key before loading content of product combo list (This may increase performance if you have a large number of products, but it is less convenient)
 SetDefaultBarcodeTypeProducts=Standard strekkodetype for varer
 SetDefaultBarcodeTypeThirdParties=Standard strekkodetype for tredjeparter
 UseUnits=Definer måleenhet for kvantitet ved opprettelse av ordre, tilbud eller faktura
@@ -1563,7 +1576,7 @@ HighlightLinesOnMouseHover=Fremhev tabellinjer når musen flyttes over
 HighlightLinesColor=Uthev fargen på linjen når musen føres over (holdes tom for ingen uthevning)
 TextTitleColor=Farge på sidetittel
 LinkColor=Farge på lenker
-PressF5AfterChangingThis=Trykk F5 etter å ha endret denne verdien for at endringene skal tre i kraft
+PressF5AfterChangingThis=Press F5 on keyboard or clear your browser cache after changing this value to have it effective
 NotSupportedByAllThemes=Vil virke med kjernetemaer, vil kanskje ikke virke med eksterne temaer
 BackgroundColor=Bakgrunnsfarge
 TopMenuBackgroundColor=Bakgrunnsfarge for toppmeny
@@ -1623,12 +1636,17 @@ AddOtherPagesOrServices=Legg til andre sider eller tjenester
 AddModels=Legg til dokument eller nummereringsmaler
 AddSubstitutions=Legg til tast-erstatninger
 DetectionNotPossible=Detektering ikke mulig
-UrlToGetKeyToUseAPIs=Url til å få nøkkel for å bruke API (når nøkkel er mottatt lagres den i databasens brukertabell  og vil bli sjekket ved hver fremtidig tilgang)
+UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and must be provided on each API call)
 ListOfAvailableAPIs=Liste over tilgjengelige API'er
 activateModuleDependNotSatisfied=Modul "%s" avhenger av modulen "%s", som mangler, slik at modulen "%1$s" kanskje ikke virker korrekt. Installer modulen "%2$s" eller deaktiver modulen "%1$s" hvis du vil unngå ubehagelige overraskelser
 CommandIsNotInsideAllowedCommands=Kommandoen du prøver å kjøre er ikke i listen over tillatte kommandoer definert i parameter <strong>$dolibarr_main_restrict_os_commands</strong> i <strong>conf.php</strong> filen.
 LandingPage=Landingsside
 SamePriceAlsoForSharedCompanies=Hvis du bruker en multiselskapsmodul, og har valgt "En pris", vil prisen være den samme for alle selskaper om varene er delt mellom miljøer
-ModuleEnabledAdminMustCheckRights=Modulen er blitt aktivert. Tillatelser for aktivert(e) modul(er) ble kun gitt til brukere med admin-rettigheter. Du kan gi utvidede rettigheter til andre brukere ved behov.
+ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users or groups manually if necessary.
 UserHasNoPermissions=Denne brukeren har ingen tillatelser
 TypeCdr=Bruk "Ingen" hvis dato for betalingsfrist er fakturadato pluss en delta i dager (delta er feltet "Antall dager")<br>Bruk "På slutten av måneden", dersom det etter delta, at dato må økes for å komme til slutten av måneden (+ en valgfri "Offset" i dager)<br>Bruk "Nåværene/Neste" for å få betalingsdato til å være den første N-te i måneden (N lagres i feltet "Antall dager")
+##### Resource ####
+ResourceSetup=Configuration du module Resource
+UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
+DisabledResourceLinkUser=Disabled resource link to user
+DisabledResourceLinkContact=Disabled resource link to contact

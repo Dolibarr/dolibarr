@@ -15,5 +15,3 @@ ReplenishmentOrdersDesc=Das ist eine Liste aller offenen Lieferantenbestellungen
 ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)
 OpenAll=Für alle Aktionen freigeben
 OpenInternal=Für interne Aktionen freigeben
-OpenShipping=Zur Auslieferung freigeben
-OpenDispatch=Zum Versenden freigeben

@@ -5,7 +5,7 @@ Establishments=Sedii
 Establishment=Sediu
 NewEstablishment=Sediu nou
 DeleteEstablishment=Sterge Sediu
-ConfirmDeleteEstablishment=Sigur doriți să ștergeți aceast sediu ?
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Deschide Sediu
 CloseEtablishment=Inchide Sediu
 # Dictionary

@@ -178,7 +178,7 @@ $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don'
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -230,6 +230,7 @@ if ($result) {
 
 	$moreforfilter = '';
 
+    print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
@@ -304,17 +305,18 @@ if ($result) {
 		print "</tr>";
 		$i ++;
 	}
+	
+	print "</table>";
+	print "</div>";
+	
+	if ($nbtotalofrecords > $limit) {
+	    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
+	}
+	
+	print '</form>';
 } else {
 	print $db->error();
 }
-
-print "</table>";
-
-if ($nbtotalofrecords > $limit) {
-    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
-}
-
-print '</form>';
 
 
 llxFooter();

@@ -64,7 +64,7 @@ class modMyModule extends DolibarrModules
 		$this->description = "Description of module MyModule";
 		$this->descriptionlong = "A very long description. Can be a full HTML content";
 		$this->editor_name = 'Editor name';
-		$this->editor_url = 'http://www.dolibarr.org';
+		$this->editor_url = 'https://www.dolibarr.org';
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';

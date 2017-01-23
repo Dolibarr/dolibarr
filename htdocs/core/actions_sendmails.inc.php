@@ -35,7 +35,7 @@
 if (GETPOST('addfile'))
 {
 	$trackid = GETPOST('trackid','aZ09');
-	
+
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
@@ -52,7 +52,7 @@ if (GETPOST('addfile'))
 if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 {
 	$trackid = GETPOST('trackid','aZ09');
-    
+
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
@@ -71,7 +71,7 @@ if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 if (GETPOST('removAll'))
 {
 	$trackid = GETPOST('trackid','aZ09');
-	
+
     $listofpaths=array();
 	$listofnames=array();
 	$listofmimes=array();
@@ -83,7 +83,7 @@ if (GETPOST('removAll'))
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->trackid = $trackid;
-	
+
 	foreach($listofpaths as $key => $value)
 	{
 		$pathtodelete = $value;
@@ -104,14 +104,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 {
 	$trackid = GETPOST('trackid','aZ09');
 	$subject='';$actionmsg='';$actionmsg2='';
-	
+
     if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	if (is_object($object))
 	{
     	$result=$object->fetch($id);
-    
+
     	$sendtosocid=0;
     	if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
     	{
@@ -128,29 +128,29 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     			$dolimail = new Dolimail($db);
     			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
     			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-    			if (!$possibleaccounts && !$possibleuser) 
+    			if (!$possibleaccounts && !$possibleuser)
     			{
     					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
     			}
-    			elseif (count($possibleaccounts)>1) 
+    			elseif (count($possibleaccounts)>1)
     			{
     					$sendtosocid=$possibleaccounts[1]['id'];
     					$result=$object->fetch($sendtosocid);
-    					
+
     					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
     			}
-    			else 
+    			else
     			{
-    				if($possibleaccounts){ 
+    				if($possibleaccounts){
     					$sendtosocid=$possibleaccounts[1]['id'];
     					$result=$object->fetch($sendtosocid);
-    				}elseif($possibleuser){ 
+    				}elseif($possibleuser){
     					$sendtosocid=$possibleuser[0]['id'];
-    
+
     					$result=$uobject->fetch($sendtosocid);
     					$object=$uobject;
     				}
-    				
+
     			}
     		}
     	}
@@ -200,7 +200,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		if (dol_strlen($sendto))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		    
+
 			$langs->load("commercial");
 
 			$fromtype = GETPOST('fromtype');
@@ -231,7 +231,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($mode == 'emailfromsupplierproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
 			if ($mode == 'emailfromsupplierorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
 			if ($mode == 'emailfromsupplierinvoice')  $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
-				
+
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send' || $action == 'relance')
@@ -253,7 +253,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 			$formmail->trackid = $trackid;      // $trackid must be defined
-            
+
 			$attachedfiles=$formmail->get_attached_files();
 			$filepath = $attachedfiles['paths'];
 			$filename = $attachedfiles['names'];
@@ -337,24 +337,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				 	}
 
 					// Initialisation of datas
-					$object->socid			= $sendtosocid;	// To link to a company
-					$object->sendtoid		= $sendtoid;	// To link to a contact/address
-					$object->actiontypecode	= $actiontypecode;
-					$object->actionmsg		= $actionmsg;  // Long text
-					$object->actionmsg2		= $actionmsg2; // Short text
-					$object->trackid        = $trackid;
-					$object->fk_element		= $object->id;
-					$object->elementtype	= $object->element;
-					$object->attachedfiles	= $attachedfiles;
+					if (is_object($object))
+					{
+						$object->socid			= $sendtosocid;	// To link to a company
+						$object->sendtoid		= $sendtoid;	// To link to a contact/address
+						$object->actiontypecode	= $actiontypecode;
+						$object->actionmsg		= $actionmsg;  // Long text
+						$object->actionmsg2		= $actionmsg2; // Short text
+						$object->trackid        = $trackid;
+						$object->fk_element		= $object->id;
+						$object->elementtype	= $object->element;
+						$object->attachedfiles	= $attachedfiles;
 
-					// Call of triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($db);
-					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $errors=$interface->errors;
-					}
+						// Call of triggers
+						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+						if ($result < 0) {
+							$error++; $errors=$interface->errors;
+						}
 					// End call of triggers
+					}
 
 					if ($error)
 					{

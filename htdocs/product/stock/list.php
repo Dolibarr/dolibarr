@@ -146,7 +146,8 @@ if ($result)
 	
 	$moreforfilter='';
 
-	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
@@ -250,7 +251,8 @@ if ($result)
 	$db->free($result);
 
 	print "</table>";
-
+    print "</table>";
+    
 	print '</form>';
 }
 else

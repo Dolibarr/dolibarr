@@ -260,7 +260,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
 
             // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
-            if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
+            if (! $silent) print '<tr><td class="tdtop">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
             dol_syslog('Admin.lib::run_sql Request '.($i+1), LOG_DEBUG);
 			$sqlmodified=0;
 
@@ -977,7 +977,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
                                 $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
-                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = count($tabname)+1; $tabname[] = $val; }
+                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = max($taborder)+1; $tabname[] = $val; }
                                 foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
                                 foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
                                 foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
@@ -1236,7 +1236,7 @@ function form_constantes($tableau,$strictw3c=0)
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_NOTIF_MAIL','ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-                    $doleditor=new DolEditor('constvalue_'.$const.(empty($strictw3c)?'':'[]'),$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor=new DolEditor('constvalue_'.$const.(empty($strictw3c)?'':'[]'),$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,ROWS_5,'90%');
                     $doleditor->Create();
                     print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="texte">';
                 }

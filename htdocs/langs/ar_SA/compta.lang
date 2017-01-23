@@ -86,12 +86,13 @@ Refund=رد
 SocialContributionsPayments=الاجتماعية المدفوعات / الضرائب المالية
 ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
 TotalToPay=على دفع ما مجموعه
+BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted ascending on %s and filtered for 1 bank account
 CustomerAccountancyCode=قانون محاسبة العملاء
 SupplierAccountancyCode=مورد قانون المحاسبة
 CustomerAccountancyCodeShort=الزبون. حساب. رمز
 SupplierAccountancyCodeShort=سوب. حساب. رمز
 AccountNumber=رقم الحساب
-NewAccount=حساب جديد
+NewAccountingAccount=حساب جديد
 SalesTurnover=مبيعات
 SalesTurnoverMinimum=الحد الأدنى حجم مبيعات
 ByExpenseIncome=By expenses & incomes
@@ -169,7 +170,7 @@ InvoiceRef=فاتورة المرجع.
 CodeNotDef=لم يتم تعريف
 WarningDepositsNotIncluded=لا يتم تضمين فواتير الودائع في هذا الإصدار مع هذه الوحدة المحاسبة.
 DatePaymentTermCantBeLowerThanObjectDate=تاريخ الدفع الأجل لا يمكن أن يكون أقل من تاريخ الكائن.
-Pcg_version=نسخة PCG
+Pcg_version=Chart of accounts models
 Pcg_type=نوع PCG
 Pcg_subtype=PCG النوع الفرعي
 InvoiceLinesToDispatch=خطوط الفاتورة لارسال
@@ -184,11 +185,11 @@ CalculationRuleDescSupplier=وفقا لالمورد، واختيار الطري�
 TurnoverPerProductInCommitmentAccountingNotRelevant=تقرير دوران لكل منتج، وعند استخدام طريقة <b>المحاسبة النقدية</b> غير ذي صلة. متاح فقط هذا التقرير عند استخدام طريقة <b>المشاركة المحاسبة</b> (انظر إعداد وحدة المحاسبة).
 CalculationMode=وضع الحساب
 AccountancyJournal=كود المحاسبة مجلة
-ACCOUNTING_VAT_SOLD_ACCOUNT=افتراضي كود المحاسبة لجمع ضريبة القيمة المضافة (ضريبة القيمة المضافة على المبيعات)
-ACCOUNTING_VAT_BUY_ACCOUNT=كود المحاسبة الافتراضية لضريبة القيمة المضافة المستردة (ضريبة القيمة المضافة على المشتريات)
-ACCOUNTING_VAT_PAY_ACCOUNT=كود المحاسبة الافتراضي للدفع ضريبة القيمة المضافة
-ACCOUNTING_ACCOUNT_CUSTOMER=كود المحاسبة افتراضيا لthirdparties العملاء
-ACCOUNTING_ACCOUNT_SUPPLIER=كود المحاسبة افتراضيا لthirdparties المورد
+ACCOUNTING_VAT_SOLD_ACCOUNT=Accounting account by default for collecting VAT - VAT on sales (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_BUY_ACCOUNT=Accounting account by default for recovered VAT - VAT on purchases (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_PAY_ACCOUNT=Accounting account by default for paying VAT
+ACCOUNTING_ACCOUNT_CUSTOMER=Accounting account by default for customer third parties (used if not defined on third party card)
+ACCOUNTING_ACCOUNT_SUPPLIER=Accounting account by default for supplier third parties (used if not defined on third party card)
 CloneTax=استنساخ ضريبة اجتماعية / مالية
 ConfirmCloneTax=تأكيد استنساخ ل/ دفع الضرائب المالية الاجتماعي
 CloneTaxForNextMonth=استنساخ لشهر المقبل
@@ -199,6 +200,7 @@ BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=استنا
 SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
 LinkedFichinter=Link to an intervention
-ImportDataset_tax_contrib=Import social/fiscal taxes
-ImportDataset_tax_vat=Import vat payments
+ImportDataset_tax_contrib=الضرائب الاجتماعية / المالية
+ImportDataset_tax_vat=Vat payments
 ErrorBankAccountNotFound=Error: Bank account not found
+FiscalPeriod=Accounting period

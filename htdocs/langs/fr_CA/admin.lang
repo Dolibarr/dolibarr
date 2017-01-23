@@ -155,7 +155,6 @@ MailToSendIntervention=Envoyer l'intervention
 MailToSendSupplierRequestForQuotation=Pour envoyer demande de devis au fournisseur
 MailToSendSupplierOrder=Envoyer la commande fournisseur
 MailToSendSupplierInvoice=Envoyer la facture fournisseur
-ByDefaultInList=Afficher par défaut sur la liste vue
 TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version majeure ( se sentir libre de l'utiliser sur vos sites web )
 TitleExampleForMaintenanceRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version de maintenance ( se sentir libre de l'utiliser sur vos sites web )
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s est disponible . Version %s est une version majeure avec beaucoup de nouvelles fonctionnalités pour les utilisateurs et les développeurs. Vous pouvez le télécharger à partir de la zone de téléchargement de http://www.dolibarr.org portail (versions sous-répertoire Stable ) . Vous pouvez lire <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a>pour la liste complète des changements .

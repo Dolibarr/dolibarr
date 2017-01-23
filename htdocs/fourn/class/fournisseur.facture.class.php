@@ -208,7 +208,7 @@ class FactureFournisseur extends CommonInvoice
      *    Create supplier invoice into database
      *
      *    @param      User		$user       object utilisateur qui cree
-     *    @return     int    	     		id facture si ok, < 0 si erreur
+     *    @return     int    	     		Id invoice created if OK, < 0 if KO
      */
     public function create($user)
     {
@@ -313,32 +313,83 @@ class FactureFournisseur extends CommonInvoice
                 }
             }
 
-            foreach ($this->lines as $i => $val)
-            {
-                $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-                $sql .= ' VALUES ('.$this->id.');';
-
-                dol_syslog(get_class($this)."::create", LOG_DEBUG);
-                $resql_insert=$this->db->query($sql);
-                if ($resql_insert)
+			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
+			{
+                dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
+                foreach ($this->lines as $i => $val)
                 {
-                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-
-                    $this->updateline(
-                        $idligne,
-                        $this->lines[$i]->description,
-                        $this->lines[$i]->pu_ht,
-                        $this->lines[$i]->tva_tx,
-                        $this->lines[$i]->localtax1_tx,
-                        $this->lines[$i]->localtax2_tx,
-                        $this->lines[$i]->qty,
-                        $this->lines[$i]->fk_product,
-                        'HT',
-                        (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
-                        $this->lines[$i]->product_type
-                    );
+                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+                    $sql .= ' VALUES ('.$this->id.')';
+    
+                    $resql_insert=$this->db->query($sql);
+                    if ($resql_insert)
+                    {
+                        $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+    
+                        $this->updateline(
+                            $idligne,
+                            $this->lines[$i]->description,
+                            $this->lines[$i]->pu_ht,
+                            $this->lines[$i]->tva_tx,
+                            $this->lines[$i]->localtax1_tx,
+                            $this->lines[$i]->localtax2_tx,
+                            $this->lines[$i]->qty,
+                            $this->lines[$i]->fk_product,
+                            'HT',
+                            (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
+                            $this->lines[$i]->product_type
+                        );
+                    }
+                    else
+                    {
+                        $this->error=$this->db->lasterror();
+                        $this->db->rollback();
+                        return -5;
+                    }
                 }
-            }
+			}
+			else	// If this->lines is an array of invoice line arrays
+			{
+			    dol_syslog("There is ".count($this->lines)." lines that are array lines");
+			    foreach ($this->lines as $i => $val)
+			    {
+                	$line = $this->lines[$i];
+                	
+                	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+                	if (! is_object($line)) $line = (object) $line;
+			        
+                	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+			        $sql .= ' VALUES ('.$this->id.')';
+			    
+			        $resql_insert=$this->db->query($sql);
+			        if ($resql_insert)
+			        {
+			            $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+			    
+			            $this->updateline(
+			                $idligne,
+			                $line->description,
+			                $line->pu_ht,
+			                $line->tva_tx,
+			                $line->localtax1_tx,
+			                $line->localtax2_tx,
+			                $line->qty,
+			                $line->fk_product,
+			                'HT',
+			                (! empty($line->info_bits)?$line->info_bits:''),
+			                $line->product_type
+			                );
+			        }
+			        else
+			        {
+			            $this->error=$this->db->lasterror();
+			            $this->db->rollback();
+			            return -5;
+			        }
+			    }			    
+			}
+			
             // Update total price
             $result=$this->update_price();
             if ($result > 0)
@@ -1259,11 +1310,12 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		array	$array_options		extrafields array
      * 	@param 		string	$fk_unit 			Code of the unit to use. Null to use the default one
      *  @param      int     $origin_id          id origin document
+	 *  @param		double	$pu_ht_devise		Amount in currency
      *	@return    	int             			>0 if OK, <0 if KO
      *
      *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
-    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0)
+    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0, $pu_ht_devise=0)
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1296,17 +1348,19 @@ class FactureFournisseur extends CommonInvoice
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
 
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
         $total_localtax1 = $tabprice[9];
         $total_localtax2 = $tabprice[10];
+		$pu_ht = $tabprice[3];
 
         // MultiCurrency
         $multicurrency_total_ht  = $tabprice[16];
         $multicurrency_total_tva = $tabprice[17];
         $multicurrency_total_ttc = $tabprice[18];
+		$pu_ht_devise = $tabprice[19];
 
         // Check parameters
         if ($type < 0) return -1;
@@ -1328,7 +1382,7 @@ class FactureFournisseur extends CommonInvoice
         $this->line->fk_product=$fk_product;
         $this->line->product_type=$type;
         $this->line->remise_percent=$remise_percent;
-        $this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu):$pu); // For credit note, unit price always negative, always positive otherwise
+        $this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
         $this->line->date_start=$date_start;
         $this->line->date_end=$date_end;
         $this->line->ventil=$ventil;
@@ -1350,7 +1404,7 @@ class FactureFournisseur extends CommonInvoice
         // Multicurrency
         $this->line->fk_multicurrency			= $this->fk_multicurrency;
         $this->line->multicurrency_code			= $this->multicurrency_code;
-        $this->line->multicurrency_subprice		= price2num($this->line->subprice * $this->multicurrency_tx);
+        $this->line->multicurrency_subprice		= $pu_ht_devise;
         $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
         $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
         $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -1407,9 +1461,10 @@ class FactureFournisseur extends CommonInvoice
      * @param      	timestamp   $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
      * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * @param		double		$pu_ht_devise		Amount in currency
      * @return    	int           					<0 if KO, >0 if OK
      */
-    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null)
+    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null, $pu_ht_devise=0)
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit", LOG_DEBUG);
@@ -1418,9 +1473,10 @@ class FactureFournisseur extends CommonInvoice
         $pu = price2num($pu);
         $qty  = price2num($qty);
 		$remise_percent=price2num($remise_percent);
+		$pu_ht_devise = price2num($pu_ht_devise);
 
         // Check parameters
-        if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
+        //if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
         if ($type < 0) return -1;
 
         // Clean parameters
@@ -1448,7 +1504,7 @@ class FactureFournisseur extends CommonInvoice
             $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
         }
         
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1462,6 +1518,7 @@ class FactureFournisseur extends CommonInvoice
 		$multicurrency_total_ht  = $tabprice[16];
         $multicurrency_total_tva = $tabprice[17];
         $multicurrency_total_ttc = $tabprice[18];
+		$pu_ht_devise = $tabprice[19];
 			
         if (empty($info_bits)) $info_bits=0;
 
@@ -1507,7 +1564,7 @@ class FactureFournisseur extends CommonInvoice
 	    $line->array_options = $array_options;
 
 		// Multicurrency
-		$line->multicurrency_subprice	= price2num($line->subprice * $this->multicurrency_tx);
+		$line->multicurrency_subprice	= $pu_ht_devise;
 		$line->multicurrency_total_ht 	= $multicurrency_total_ht;
         $line->multicurrency_total_tva 	= $multicurrency_total_tva;
         $line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -2206,12 +2263,14 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $product_ref;
+
 	/**
-	 * Reference product supplier
-	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
+	 * Supplier reference of price when we added the line. May have been changed after line was added. 
+	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields into updateline
 	 * @var string
 	 */
 	public $ref_supplier;
+
 	/**
 	 * @deprecated
 	 * @see label
@@ -2442,9 +2501,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$qty  = price2num($this->qty);
 
 		// Check parameters
-		if (! is_numeric($pu) || ! is_numeric($qty)) {
-			return -1;
-		}
+		if (empty($this->qty)) $this->qty=0;
 
 		if ($this->product_type < 0) {
 			return -1;

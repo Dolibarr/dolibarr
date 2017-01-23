@@ -47,7 +47,7 @@ class DictionnaryTowns extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $zipcode    To filter on zipcode
      * @param string    $town       To filter on city name
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of towns
      *            
      * @throws RestException

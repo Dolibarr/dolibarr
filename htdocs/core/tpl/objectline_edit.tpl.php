@@ -45,6 +45,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 if (in_array($object->element,array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (empty($user->rights->margins->creer)) $colspan++;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -122,6 +123,7 @@ $coldisplay=-1; // We remove first td
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled)) {
+		$colspan++;
 		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="8" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -173,6 +175,7 @@ $coldisplay=-1; // We remove first td
 	if (! empty($usemargins))
 	{
 	?>
+		<?php if (!empty($user->rights->margins->creer)) { ?>
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
@@ -181,10 +184,11 @@ $coldisplay=-1; // We remove first td
 			<!-- For free product -->
 			<input type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
 		</td>
+		<?php } ?>
 	    <?php if ($user->rights->margins->creer) {
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				  {
-				    $margin_rate = (isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				    $margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate","alpha",2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -194,7 +198,7 @@ $coldisplay=-1; // We remove first td
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
-				    $mark_rate = (isset($_POST["np_markRate"])?$_POST["np_markRate"]:price($line->marque_tx));
+				    $mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -259,12 +263,25 @@ jQuery(document).ready(function()
 {
 	jQuery("#price_ht").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') jQuery("#price_ttc").val(''); 
-		});
+		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
+		} 
+	});
 	jQuery("#price_ttc").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') jQuery("#price_ht").val(''); 
-		});
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#multicurrency_subprice").val('');
+		} 
+	});
+	jQuery("#multicurrency_subprice").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		} 
+	});
 
     <?php
     if (! empty($conf->margin->enabled))

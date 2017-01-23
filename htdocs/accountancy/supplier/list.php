@@ -217,7 +217,7 @@ $sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -266,7 +266,8 @@ if ($result) {
 	
 	$moreforfilter = '';
 	
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -414,6 +415,8 @@ if ($result) {
 	}
 
 	print '</table>';
+	print "</div>";
+	
 	print '</form>';
 } else {
 	print $db->error();

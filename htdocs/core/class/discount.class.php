@@ -29,22 +29,22 @@
  */
 class DiscountAbsolute
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $id;					// Id discount
-    var $fk_soc;
-    var $amount_ht;				//
-    var $amount_tva;			//
-    var $amount_ttc;			//
-    var $tva_tx;				// Vat rate
-    var $fk_user;				// Id utilisateur qui accorde la remise
-    var $description;			// Description libre
-    var $datec;					// Date creation
-    var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
-    var $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
-    var $fk_facture_source;		// Id facture avoir a l'origine de la remise
-    var $ref_facture_source;	// Ref facture avoir a l'origine de la remise
+    public $id;					// Id discount
+    public $fk_soc;
+    public $amount_ht;				//
+    public $amount_tva;			//
+    public $amount_ttc;			//
+    public $tva_tx;				// Vat rate
+    public $fk_user;				// Id utilisateur qui accorde la remise
+    public $description;			// Description libre
+    public $datec;					// Date creation
+    public $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
+    public $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
+    public $fk_facture_source;		// Id facture avoir a l'origine de la remise
+    public $ref_facture_source;	// Ref facture avoir a l'origine de la remise
 
     /**
      *	Constructor

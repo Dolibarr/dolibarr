@@ -26,8 +26,6 @@ FieldTitle=Kentän nimi
 NowClickToGenerateToBuildExportFile=Nyt klikkaa "Luo" rakentaa vienti tiedostoa ...
 AvailableFormats=Muodot disponibles
 LibraryShort=Kirjasto
-LibraryUsed=Librairie
-LibraryVersion=Version
 Step=Vaihe
 FormatedImport=Tuo avustaja
 FormatedImportDesc1=Tämä alue voidaan tuoda henkikökohtaiset tietoja käyttäen avustaja auttaa sinua prosessi ilman teknistä osaamista.
@@ -87,7 +85,7 @@ TooMuchWarnings=Vielä on <b>%s</b> muulta linjat varoituksia, mutta tuotanto on
 EmptyLine=Tyhjä rivi (on hävitettävä)
 CorrectErrorBeforeRunningImport=Sinun on ensin korjata kaikki virheet ennen jatkuva lopullista maahantuontia.
 FileWasImported=Tiedoston tuotiin numerolla <b>%s.</b>
-YouCanUseImportIdToFindRecord=Löydät kaikki tuodut tietokannan tietueisiin suodattamalla pellolla <b>import_key = "%s".</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Rivien määrä ilman virheitä ja varoituksia ei: <b>%s.</b>
 NbOfLinesImported=Rivien määrä Tuodut: <b>%s.</b>
 DataComeFromNoWhere=Arvo lisätä peräisin missään lähdetiedostoon.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Pilkuin erotellut</b> tiedostomuodossa (. Csv). <br> Tämä on 
 Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Options
 Separator=Separator
 Enclosure=Enclosure

@@ -93,21 +93,19 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$head=bank_prepare_head($object);
 	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
 
-	print '<table class="border" width="100%">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	dol_fiche_end();
 	
-
+    print '<br>';
+    
 	$solde = $object->solde(0);
 
-	/*
-	 * Affiche tableau des echeances a venir
-	 */
-	print '<table class="noborder centpercent">';
+	// Show next coming entries
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
@@ -121,7 +119,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	$var=true;
 
-	// Solde actuel
+	// Current balance
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
@@ -327,7 +325,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	print "</table>";
-
+    print "</div>";
 }
 else
 {

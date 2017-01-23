@@ -185,7 +185,7 @@ if ($result)
 	// Account
 	if (! empty($conf->banque->enabled))
     {
-	    print '<td>';
+	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account,'search_account',0,'',1);
 	    print '</td>';
     }

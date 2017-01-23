@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposalStatusDraft=Borrador (debe ser validado)
+DefaultModelSupplierProposalCreate=Creación de modelo por defecto

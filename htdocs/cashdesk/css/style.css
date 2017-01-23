@@ -19,7 +19,6 @@ body {
 	color: #333;
 	margin: 0;
 	padding: 0;
-	text-align: center;
 }
 
 p {
@@ -115,7 +114,7 @@ li.menu_choix0 {
 		float: right;
 }
 
-/* ------------------- R�capitulatif des articles ------------------- */
+/* ------------------- Remind of products ------------------- */
 .liste_articles {
 	min-width: 215px;
 	float: right;
@@ -212,6 +211,10 @@ p.titre {
 	max-width: 900px;
 }
 
+.blocksellfinished {
+	min-width: 215px;
+	margin-top: 8px;
+}
 .titre1 {
 	font-weight: bold;
 	color: #ff9900;

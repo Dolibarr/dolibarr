@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ print '<br>';
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 
+print '<div class="div-table-responsive">';
 print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
@@ -68,6 +69,6 @@ foreach($extrafields->attribute_type as $key => $value)
 }
 
 print "</table>";
-
+print '</div>';
 ?>
 <!-- END PHP TEMPLATE admin_extrafields_view.tpl.php -->

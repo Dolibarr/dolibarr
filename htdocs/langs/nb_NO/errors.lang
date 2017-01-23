@@ -69,7 +69,7 @@ ErrorLDAPSetupNotComplete=Dolibarr-LDAP oppsett er ikke komplett.
 ErrorLDAPMakeManualTest=En .ldif fil er opprettet i mappen %s. Prøv å lese den manuelt for å se mer informasjon om feil.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med "status ikke startet" hvis feltet "gjort av" også er utfylt.
 ErrorRefAlreadyExists=Ref bruket til oppretting finnes allerede.
-ErrorPleaseTypeBankTransactionReportName=Vennligst skriv navnet på bankkvitteringen der transaksjonen er rapportert (i formatet ÅÅÅÅMM eller ÅÅÅÅMMDD)
+ErrorPleaseTypeBankTransactionReportName=Skriv inn navn på kontoutskrift der oppføring er rapportert (Format YYYYMM eller YYYYMMDD)
 ErrorRecordHasChildren=Kunne ikke slette posten da den har koblinger.
 ErrorRecordIsUsedCantDelete=Kan ikke slette posten. Den er allerede brukt eller inkludert i et annet objekt
 ErrorModuleRequireJavascript=Javascript må være aktivert for å kunne bruke denne funksjonen. For å aktivere/deaktivere Javascript, gå til menyen Hjem-> Oppsett-> Visning.
@@ -131,7 +131,7 @@ ErrorWarehouseMustDiffers=Kilde- og mållager må være ulike
 ErrorBadFormat=Feil format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Feil, dette medlemmet er ennå ikke knyttet til noen tredjepart. Koble medlemmet til en eksisterende tredjepart eller opprett en ny tredjepart før du oppretter abonnement med faktura.
 ErrorThereIsSomeDeliveries=Feil! Det er noen leveringer knyttet til denne forsendelsen. Sletting nektet
-ErrorCantDeletePaymentReconciliated=Kan ikke slette en betaling som har generert en banktransaksjon, og som er blitt avstemt
+ErrorCantDeletePaymentReconciliated=Kan ikke slette en betaling etter at det er blitt generert en bankoppføring som er blitt avstemt
 ErrorCantDeletePaymentSharedWithPayedInvoice=Kan ikke slette en betaling delt med minst en faktura med status Betalt
 ErrorPriceExpression1=Kan ikke tildele til konstant '%s'
 ErrorPriceExpression2=Kan ikke omdefinere innebygd funksjon '%s'
@@ -177,6 +177,7 @@ ErrorStockIsNotEnoughToAddProductOnProposal=Ikke nok lagerbeholdning for varen %
 ErrorFailedToLoadLoginFileForMode=Kunne ikke finne innloggingsfil for modus '%s'.
 ErrorModuleNotFound=Modulfilen ble ikke funnet.
 ErrorFieldAccountNotDefinedForBankLine=Verdi for regnskapskode er ikke definert bankkonto linje %s
+ErrorBankStatementNameMustFollowRegex=Feil, navn på kontoutskrift må følge syntaksregelen %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.

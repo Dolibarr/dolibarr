@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=رمز الحماية
-Calendar=التقويم
 NumberingShort=N°
 Tools=أدوات
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=الشحن ترسل عن طريق البريد
 Notify_MEMBER_VALIDATE=عضو مصدق
 Notify_MEMBER_MODIFY=تعديل الأعضاء
 Notify_MEMBER_SUBSCRIPTION=عضو المكتتب
-Notify_MEMBER_RESILIATE=عضو resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=عضو حذف
 Notify_PROJECT_CREATE=إنشاء مشروع
 Notify_TASK_CREATE=مهمة إنشاء
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=اجمالى حجم الملفات المرفقة / و�
 MaxSize=الحجم الأقصى
 AttachANewFile=إرفاق ملف جديد / وثيقة
 LinkedObject=ربط وجوه
-Miscellaneous=متفرقات
 NbOfActiveNotifications=عدد الإخطارات (ملحوظة من رسائل البريد الإلكتروني المستلم)
 PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \\ nThe سطرين من قبل حرف إرجاع.
 PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
@@ -201,36 +199,16 @@ IfAmountHigherThan=إذا قدر أعلى <strong>من٪ الصورة</strong>
 SourcesRepository=مستودع للمصادر
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=شركة٪ الصورة بإضافة
-ContractValidatedInDolibarr=عقد%s التأكد من صلاحيتها
-PropalClosedSignedInDolibarr=اقتراح٪ الصورة قعت
-PropalClosedRefusedInDolibarr=اقتراح%s رفض
-PropalValidatedInDolibarr=اقتراح%s التأكد من صلاحيتها
-PropalClassifiedBilledInDolibarr=اقتراح%s تصنف المنقار
-InvoiceValidatedInDolibarr=فاتورة%s التحقق من صحة
-InvoicePaidInDolibarr=تغيير فاتورة%s لدفع
-InvoiceCanceledInDolibarr=فاتورة%s إلغاء
-MemberValidatedInDolibarr=عضو%s التأكد من صلاحيتها
-MemberResiliatedInDolibarr=عضو٪ الصورة resiliated
-MemberDeletedInDolibarr=عضو٪ الصورة حذفها
-MemberSubscriptionAddedInDolibarr=وأضاف الاشتراك لعضو٪ الصورة
-ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=شحنة٪ الصورة حذفها
 ##### Export #####
-Export=تصدير
 ExportsArea=صادرات المنطقة
 AvailableFormats=الأشكال المتاحة
-LibraryUsed=وتستخدم Librairy
-LibraryVersion=النسخة
+LibraryUsed=وتستخدم المكتبة
+LibraryVersion=Library version
 ExportableDatas=تصدير datas
 NoExportableData=ليس للتصدير البيانات (أي وحدات للتصدير مع تحميل البيانات ، ومفقود أذونات)
-NewExport=تصديرية جديدة
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=العنوان
+WEBSITE_DESCRIPTION=الوصف
 WEBSITE_KEYWORDS=Keywords

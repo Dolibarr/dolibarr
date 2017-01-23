@@ -73,7 +73,7 @@ class BookKeeping extends CommonObject
 	public $id;
 	/**
 	 */
-	public $doc_date = '';
+	public $doc_date;
 	public $doc_type;
 	public $doc_ref;
 	public $fk_doc;
@@ -190,14 +190,14 @@ class BookKeeping extends CommonObject
 		
 		if ($resql) {
 			$row = $this->db->fetch_object($resql);
-			if ($row->nb == 0) {
-				
+			if ($row->nb == 0) 
+			{
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
 				$sqlnum .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-				$sqlnum .= " WHERE doc_type = '" . $this->doc_type . "'";
-				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";
-				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";
+				$sqlnum .= " WHERE doc_type = '" . $this->doc_type . "'";		// For example doc_type = 'bank' 
+				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";		// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
+				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";			// ref of source object
 			    $sqlnum .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
 				
 				dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
@@ -276,13 +276,13 @@ class BookKeeping extends CommonObject
 						$this->id = $id;
 						$result = 0;
 					} else {
-						$result = - 2;
+						$result = -2;
 						$error ++;
 						$this->errors[] = 'Error Create Error ' . $result . ' lecture ID';
 						dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 					}
 				} else {
-					$result = - 1;
+					$result = -1;
 					$error ++;
 					$this->errors[] = 'Error ' . $this->db->lasterror();
 					dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
@@ -290,11 +290,11 @@ class BookKeeping extends CommonObject
 			} else {     // Already exists
 				$result = -3;
 				$error++;
-				$this->errors[] = 'Error Transaction for ('.$this->doc_type.', '.$this->doc_ref.', '.$this->fk_docdet.') were already recorded';
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_WARNING);
+				$this->error='BookkeepingRecordAlreadyExists';
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_WARNING);
 			}
 		} else {
-			$result = - 5;
+			$result = -5;
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
@@ -316,11 +316,9 @@ class BookKeeping extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
-			
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
-			
 			return $result;
 		}
 	}
@@ -1163,9 +1161,12 @@ class BookKeeping extends CommonObject
 	 * @return void
 	 */
 	public function initAsSpecimen() {
-		$this->id = 0;
+		global $user;
 		
-		$this->doc_date = '';
+		$now=dol_now();
+		
+		$this->id = 0;
+		$this->doc_date = $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
 		$this->fk_doc = '';
@@ -1173,11 +1174,11 @@ class BookKeeping extends CommonObject
 		$this->code_tiers = '';
 		$this->numero_compte = '';
 		$this->label_compte = '';
-		$this->debit = '';
+		$this->debit = 99.9;
 		$this->credit = '';
 		$this->montant = '';
 		$this->sens = '';
-		$this->fk_user_author = '';
+		$this->fk_user_author = $user->id;
 		$this->import_key = '';
 		$this->code_journal = '';
 		$this->piece_num = '';

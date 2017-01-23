@@ -20,7 +20,7 @@ insert into llx_menu (module, enabled, rowid, menu_handler, type, mainmenu, left
 insert into llx_menu (module, enabled, rowid, menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('hrm|holiday|deplacement|expensereport', '$conf->hrm->enabled || $conf->holiday->enabled || $conf->deplacement->enabled || $conf->expensereport->enabled', 15__+MAX_llx_menu__, __HANDLER__, 'top', 'hrm', '', 0, '/hrm/index.php?mainmenu=hrm&amp;leftmenu=', 'HRM', -1, 'holiday', '$user->rights->hrm->employee->read || $user->rights->holiday->write || $user->rights->deplacement->lire || $user->rights->expensereport->lire', '', 0, 80, __ENTITY__);
 
 -- Home - Dashboard
-insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '1', __HANDLER__, 'left', 90__+MAX_llx_menu__, 'home', '', 1__+MAX_llx_menu__, '/index.php', 'Dashboard', 0, '', '', '', 2, 0, __ENTITY__);
+insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '1', __HANDLER__, 'left', 90__+MAX_llx_menu__, 'home', '', 1__+MAX_llx_menu__, '/index.php', 'MyDashboard', 0, '', '', '', 2, 0, __ENTITY__);
 
 -- Home - Setup
 insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '$user->admin', __HANDLER__, 'left', 100__+MAX_llx_menu__, 'home', 'setup', 1__+MAX_llx_menu__, '/admin/index.php?leftmenu=setup', 'Setup', 0, 'admin', '', '', 2, 1, __ENTITY__);

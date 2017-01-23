@@ -34,20 +34,20 @@ class Establishment extends CommonObject
 	public $fk_element = 'fk_establishment';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
-	var $rowid;
+	public $id;
+	public $rowid;
 
-	var $name;
-	var $address;
-	var $zip;
-	var $town;
-	var $status;		// 0=open, 1=closed
-	var $entity;
+	public $name;
+	public $address;
+	public $zip;
+	public $town;
+	public $status;		// 0=open, 1=closed
+	public $entity;
 
-	var $country_id;
+	public $country_id;
 
-	var $statuts=array();
-	var $statuts_short=array();
+	public $statuts=array();
+	public $statuts_short=array();
 
 	/**
 	 * Constructor

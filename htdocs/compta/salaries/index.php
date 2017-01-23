@@ -151,8 +151,10 @@ if ($result)
 
 	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 	
-	print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
@@ -183,7 +185,7 @@ if ($result)
 	// Account
 	if (! empty($conf->banque->enabled))
     {
-	    print '<td>';
+	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account,'search_account',0,'',1);
 	    print '</td>';
     }
@@ -194,6 +196,7 @@ if ($result)
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
+    
 	print "</tr>\n";
 
     while ($i < min($num,$limit))
@@ -257,7 +260,7 @@ if ($result)
 	print "<td></td></tr>";
 
     print "</table>";
-
+    print '</div>';
 	print '</form>';
 
     $db->free($result);
@@ -268,7 +271,5 @@ else
 }
 
 
-
 llxFooter();
-
 $db->close();

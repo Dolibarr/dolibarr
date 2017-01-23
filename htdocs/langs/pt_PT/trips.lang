@@ -1,19 +1,21 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Relatório de despesas
 ExpenseReports=Relatórios de despesas
+ShowExpenseReport=Show expense report
 Trips=Relatórios de Despesas
 TripsAndExpenses=Relatório de Despesas
 TripsAndExpensesStatistics=Estatísticas dos Relatórios de Despesas
 TripCard=Expense report card
 AddTrip=Create expense report
-ListOfTrips=List of expense reports
+ListOfTrips=Lista de relatórios de despesas
 ListOfFees=Lista de Taxas
+TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Novo relatório de despesas
 CompanyVisited=Empresa/Instituição Visitada
 FeesKilometersOrAmout=Quantidade de Quilómetros
 DeleteTrip=Apagar relatório de despesas
-ConfirmDeleteTrip=Tem a certeza que deseja apagar este relatório de despesas?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Lista de relatórios de despesas
 ListToApprove=A aguardar aprovação
 ExpensesArea=Expense reports area
@@ -27,7 +29,7 @@ TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Linha do relatório de despesas
 TF_OTHER=Outro
-TF_TRIP=Transportation
+TF_TRIP=Meio de Transporte
 TF_LUNCH=Alimentação
 TF_METRO=Metro
 TF_TRAIN=Comboio
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Aprovar relatório de despesas
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Pagar um relatório de despesas
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Validar relatório de despesas
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=nenhum relatório de despesas para exportar para este período.
 ExpenseReportPayment=Expense report payment
