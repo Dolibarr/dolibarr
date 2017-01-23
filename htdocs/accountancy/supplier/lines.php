@@ -182,7 +182,7 @@ $sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

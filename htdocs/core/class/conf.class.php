@@ -282,6 +282,7 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
+		    //var_dump($module);
 			// For multicompany sharings
 			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
 			$this->$module->multidir_temp	= array($this->entity => $rootfordata."/".$module."/temp");
@@ -491,6 +492,9 @@ class Conf
 		// By default, we use the zip town autofill
 		if (! isset($this->global->MAIN_USE_ZIPTOWN_DICTIONNARY)) $this->global->MAIN_USE_ZIPTOWN_DICTIONNARY=1;
 
+		// By default, we open card if one found
+		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
+		
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 

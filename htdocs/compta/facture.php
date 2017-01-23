@@ -1291,6 +1291,25 @@ if (empty($reshook))
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
+
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($object->lines))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+			}
+
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		}
@@ -1345,8 +1364,16 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
+        if (! GETPOST('prod_entry_mode'))
+        {
+            if (GETPOST('type') < 0 && ! GETPOST('search_idprod'))
+            {
+                setEventMessages($langs->trans('ErrorChooseBetweenFreeAntryOrPredefinedProduct'), null, 'errors');
+                $error ++;
+            }
+        }
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
@@ -2200,7 +2227,7 @@ if ($action == 'create')
 		$optionsav .= '</option>';
 	}
 
-	print '<tr><td valign="top" class="fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
+	print '<tr><td class="tdtop fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
 
 	print '<div class="tagtable">' . "\n";
 
@@ -3257,7 +3284,7 @@ else if ($id > 0 || ! empty($ref))
     			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
     		} else {
     			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == 0) {
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
@@ -3723,11 +3750,13 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('ExcessReceived');
         print ' :</td>';
-        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':$cssforamountpaymentcomplete).'>' . price($resteapayeraffiche) . '</td>';
+        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
     } 
     else // Credit note
     {
+        $cssforamountpaymentcomplete='';
+        
         // Total already paid back
         print '<tr><td colspan="' . $nbcols . '" align="right">';
         print $langs->trans('AlreadyPaidBack');
@@ -3743,7 +3772,7 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('ExcessPaydBack');
         print ' :</td>';
-        print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
 
         // Sold credit note

@@ -91,10 +91,10 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$object = new AdherentType($db);
 
 		$object->libelle        = trim($label);
-		$object->subscription   = trim($subscription);
+		$object->subscription   = (int) trim($subscription);
 		$object->note           = trim($comment);
-		$object->mail_valid     = trim($mail_valid);
-		$object->vote           = trim($vote);
+		$object->mail_valid     = (boolean) trim($mail_valid);
+		$object->vote           = (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -129,10 +129,10 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 		$object = new AdherentType($db);
 		$object->id             = $rowid;
 		$object->libelle        = trim($label);
-		$object->subscription   = trim($subscription);
+		$object->subscription   = (int) trim($subscription);
 		$object->note           = trim($comment);
-		$object->mail_valid     = trim($mail_valid);
-		$object->vote           = trim($vote);
+		$object->mail_valid     = (boolean) trim($mail_valid);
+		$object->vote           = (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -251,10 +251,10 @@ if ($action == 'create')
 	print $form->selectyesno("vote",0,1);
 	print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 	$doleditor->Create();
@@ -314,10 +314,10 @@ if ($rowid > 0)
 		print yn($object->vote);
 		print '</tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
 
-		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
 		// Other attributes
@@ -407,7 +407,7 @@ if ($rowid > 0)
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 		// Count total nb of records
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$resql = $db->query($sql);
@@ -647,10 +647,10 @@ if ($rowid > 0)
 		print $form->selectyesno("vote",$object->vote,1);
 		print '</td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 		$doleditor->Create();

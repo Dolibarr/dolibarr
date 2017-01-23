@@ -197,13 +197,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
-	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
+	if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
+	print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
+	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
 print '</tr>';
 

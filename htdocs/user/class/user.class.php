@@ -330,7 +330,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 
@@ -1061,7 +1061,8 @@ class User extends CommonObject
 		$this->town         = $contact->town;
 		$this->state_id     = $contact->state_id;
 		$this->country_id   = $contact->country_id;
-
+        $this->employee     = 0;
+        
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
 
@@ -2600,8 +2601,9 @@ class User extends CommonObject
 
 	/**
 	 * 	Return list of all child users id in herarchy (all sublevels).
+	 *  Note: Calling this function also reste full list of users into $this->users.
 	 *
-	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 *	@return		array		      		  	Array of user id lower than user (all levels under user).
 	 *  @see get_children
 	 */
 	function getAllChildIds()

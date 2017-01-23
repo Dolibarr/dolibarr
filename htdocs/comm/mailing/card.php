@@ -756,8 +756,9 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
-				// MAILING_NO_USING_PHPMAIL may be defined or not
-				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0, MAILING_LIMIT_SENDBYCLI may be defined ot not.
+				// MAILING_NO_USING_PHPMAIL may be defined or not.
+				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
+				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
@@ -771,8 +772,8 @@ else
 				}
 				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 					// The feature is forbidden from GUI, we show just message to use from command line.
 				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
@@ -785,8 +786,8 @@ else
 				}
 				else
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 				    $text='';
 				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
@@ -797,7 +798,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,270);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,300);
 				}
 			}
 
@@ -844,23 +845,28 @@ else
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if ($object->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			if ($object->statut != 3 && is_numeric($nbemail))
 			{
-				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
-				{
-					$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->textwithpicto($nbemail,$text,1,'warning');
-				}
-				else
-				{
-					$text=$langs->trans('NotEnoughPermissions');
-					print $form->textwithpicto($nbemail,$text,1,'warning');
-				}
-
-			}
-			else
-			{
-				print $nbemail;
+			    $text='';
+			    if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			    {
+    				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+    				{
+    					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+    				}
+    				else
+    				{
+    					$text.=$langs->trans('NotEnoughPermissions');
+    				}
+			    }
+				if ($text)
+    			{
+    			    print $form->textwithpicto($nbemail,$text,1,'warning');
+    			}
+    			else
+    			{
+    				print $nbemail;
+    			}
 			}
 			print '</td></tr>';
 

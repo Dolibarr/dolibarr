@@ -557,6 +557,7 @@ if ($id == 25)
 	if ($conf->fournisseur->enabled) $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
 	if ($conf->fournisseur->enabled) $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
 	if ($conf->societe->enabled) $elementList['thirdparty']=$langs->trans('MailToThirdparty');
+	if ($conf->contrat->enabled) $elementList['contract']=$langs->trans('MailToSendContract');
 
 	$parameters=array('elementList'=>$elementList);
 	$reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1274,6 +1275,7 @@ if ($id)
 
         // Title line with search boxes
         print '<tr class="liste_titre">';
+        $filterfound=0;
         foreach ($fieldlist as $field => $value)
         {
             $showfield=1;							  	// By defaut
@@ -1284,21 +1286,25 @@ if ($id)
             {
                 if ($value == 'country')
                 {
-                    print '<td>';
+                    print '<td class="liste_titre">';
                     print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
                     print '</td>';
+                    $filterfound++;
                 }
                 else
                 {
-                    print '<td></td>';
+                    print '<td class="liste_titre"></td>';
                 }
             }
         }
         if ($id == 4) print '<td></td>';
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     	print '<td class="liste_titre" colspan="2" align="right">';
-    	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-    	print $searchpitco;
+    	if ($filterfound)
+    	{
+        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpitco;
+    	}
     	print '</td>';
         print '</tr>';
             
@@ -1314,19 +1320,17 @@ if ($id)
                 print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
-                    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="page" value="'.$page.'">';
-                    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
+                    // Show fields
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="center">';
+                    print '<input type="hidden" name="page" value="'.$page.'">';
+                    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';

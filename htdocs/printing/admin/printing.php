@@ -161,9 +161,19 @@ if ($mode == 'setup' && $user->admin)
                     break;
                 case "info":    // Google Api setup or Google OAuth Token
                     print '<tr '.$bc[$var].'>';
-                    print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
+                    print '<td'.($key['required']?' class=required':'').'>';
+                    if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+                    {
+                        print $langs->trans("IsTokenGenerated");
+                    }
+                    else
+                    {
+                        print $langs->trans($key['varname']);
+                    }
+                    print '</td>';
                     print '<td>'.$langs->trans($key['info']).'</td>';
                     print '<td>';
+                    //var_dump($key);
                     if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
                     {
                         // Delete remote tokens
@@ -187,7 +197,8 @@ if ($mode == 'setup' && $user->admin)
                 // Token
                 print '<tr '.$bc[$var].'>';
                 print '<td>'.$langs->trans("Token").'</td>';
-                print '<td>';
+                print '<td colspan="2">';
+                $tokenobj=null;
                 // Dolibarr storage
                 $storage = new DoliStorage($db, $conf);
                 try
@@ -209,8 +220,6 @@ if ($mode == 'setup' && $user->admin)
                     print ''.join(',',$tokenobj->getExtraParams());
                     print '</textarea>';*/
                 }
-                print '</td>';
-                print '<td>';
                 print '</td>';
                 print '</tr>'."\n";
             }

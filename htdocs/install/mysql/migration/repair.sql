@@ -143,6 +143,10 @@ delete from llx_element_element where sourcetype='facture' and fk_source not in 
 delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
 
 
+-- Fix: delete orphelin actioncomm_resources
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 

@@ -134,11 +134,50 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 {
 	$fullpath=$dir."/".$original_file;
 	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
-
+	
 	if ($result == $fullpath)
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+		
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		     
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+		
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -168,6 +207,45 @@ if ($action == 'confirm_crop')
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+		
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+		     
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+		
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -218,10 +296,11 @@ print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
 print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px  &nbsp; '.$langs->trans("or").' &nbsp; ';
 print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
+
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
-print '<input type="hidden" name="modulepart" value="'.$modulepart.'" />';
+print '<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br>';
 print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';

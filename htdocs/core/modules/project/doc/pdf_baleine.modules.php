@@ -223,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
+					$planned_workload=convertSecondToTime((int) $object->lines[$i]->planned_workload,'allhourmin');
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 

@@ -226,7 +226,7 @@ if (empty($reshook))
     	$search_idprof6='';
     	$search_type='';
     	$search_type_thirdparty='';
-    	$search_status='';
+    	$search_status=-1;
     	$search_stcomm='';
      	$search_level_from='';
      	$search_level_to='';
@@ -413,7 +413,7 @@ if ($search_idprof6)  $sql.= natural_search("s.idprof6",$search_idprof6);
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
-if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
+if ($search_status!='' && $search_status >= 0) $sql .= " AND s.status = ".$db->escape($search_status);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
@@ -439,7 +439,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -878,7 +878,7 @@ if (! empty($arrayfields['s.tms']['checked']))
 if (! empty($arrayfields['s.status']['checked']))
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $search_status, 1);
     print '</td>';
 }
 // Action column

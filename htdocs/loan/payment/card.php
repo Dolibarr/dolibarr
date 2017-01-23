@@ -231,7 +231,7 @@ if ($resql)
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);
-			print $loan->getLinkUrl(1);
+			print $loan->getNomUrl(1);
 			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';

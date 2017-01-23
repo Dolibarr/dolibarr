@@ -145,7 +145,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 ?>
 <table class="centpercent">
 	<tr>
-		<td valign="top">
+		<td class="tdtop">
 
 		<div id="div_container_exportoptions">
 		<fieldset id="exportoptions"><legend><?php echo $langs->trans("ExportMethod"); ?></legend>
@@ -179,7 +179,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 		</div>
 
 		</td>
-		<td valign="top">
+		<td class="tdtop">
 
 
 		<div id="div_container_sub_exportoptions">

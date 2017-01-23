@@ -56,6 +56,16 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
+// Test if explorer is not disabled
+if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($conf->global->API_EXPLORER_DISABLED))
+{
+    $langs->load("admin");
+    dol_syslog("Call Dolibarr API interfaces with module REST disabled");
+    print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
+    exit;
+}
+
+
 
 $api = new DolibarrApi($db);
 

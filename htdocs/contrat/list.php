@@ -288,7 +288,7 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

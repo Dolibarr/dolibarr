@@ -183,7 +183,7 @@ $min_year = 5;
 
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
-$sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,";
+$sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.statut, u.photo";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -266,7 +266,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -524,17 +524,40 @@ if ($resql)
 			$expensereportstatic->date_modif=$db->jdate($obj->date_modif);
 			$expensereportstatic->date_valid=$db->jdate($obj->date_valid);
 			$expensereportstatic->date_approve=$db->jdate($obj->date_approve);
+			$expensereportstatic->note_private=$obj->note_private;
+			$expensereportstatic->note_public=$obj->note_public;
 				
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
+			// Ref
 			if (! empty($arrayfields['d.ref']['checked'])) {
     			print '<td>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td class="nobordernopadding nowrap">';
     			print $expensereportstatic->getNomUrl(1);
+    			print '</td>';
+    			// Warning late icon and note
+        		print '<td class="nobordernopadding nowrap">';
     			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
     			if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
+    			if (!empty($obj->note_private) || !empty($obj->note_public))
+    			{
+    			    print ' <span class="note">';
+    			    print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    			    print '</span>';
+    			}
+    			print '</td>';
+    			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+    			$filename=dol_sanitizeFileName($obj->ref);
+    			$filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+    			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+    			print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
+    			print '</td>';
+    			print '</tr></table>';
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
 			}
+			// User
 			if (! empty($arrayfields['user']['checked'])) {
 			    print '<td align="left">';
     			$usertmp->id=$obj->id_user;
@@ -547,18 +570,22 @@ if ($resql)
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
 			}
+			// Start date
 			if (! empty($arrayfields['d.date_debut']['checked'])) {
                 print '<td align="center">'.($obj->date_debut > 0 ? dol_print_date($obj->date_debut, 'day') : '').'</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
+            // End date
 			if (! empty($arrayfields['d.date_fin']['checked'])) {
 			    print '<td align="center">'.($obj->date_fin > 0 ? dol_print_date($obj->date_fin, 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
+			// Date validation
 			if (! empty($arrayfields['d.date_valid']['checked'])) {
 			    print '<td align="center">'.($obj->date_valid > 0 ? dol_print_date($obj->date_valid, 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
+			// Date approval
 			if (! empty($arrayfields['d.date_approve']['checked'])) {
 			    print '<td align="center">'.($obj->date_approve > 0 ? dol_print_date($obj->date_approve, 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
