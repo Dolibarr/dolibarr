@@ -301,7 +301,7 @@ if ($object->id > 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
+		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
 		//Query from product/liste.php
