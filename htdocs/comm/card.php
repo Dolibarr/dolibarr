@@ -579,7 +579,7 @@ if ($id > 0)
     	$warn = '';
     	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
     	{
-    	    $warn = img_warning($langs->trans("OutstandingBillReached"));
+    	    $warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
     	}
     	$text=$langs->trans("CurrentOutstandingBill");
     	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
@@ -587,7 +587,7 @@ if ($id > 0)
     	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
     	$boxstat.='<div class="boxstats">';
     	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened).$warn.'</span>';
+    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
     	$boxstat.='</div>';
     	if ($link) $boxstat.='</a>';
 	}

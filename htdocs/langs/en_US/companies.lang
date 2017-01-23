@@ -81,6 +81,7 @@ PaymentBankAccount=Payment bank account
 OverAllProposals=Total proposals
 OverAllOrders=Total orders
 OverAllInvoices=Total invoices
+OverAllSupplierProposals=Total price requests
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE is used
