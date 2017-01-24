@@ -12,6 +12,25 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 4.0.4 to 4.0.3 *****
+FIX: #6227 Document models table header "Unit" is shown in 2 lines in Spanish
+FIX: #6230
+FIX: #6237
+FIX: #6245 Thirdparty link in supplier invoices list, links to "comm/card" instead of "fourn/card" page
+FIX: #6253 Supplier invoice list filter does not respect "thirdparty" filter
+FIX: #6277
+FIX: project list and ajax completion return wrong list.
+FIX: bug margin calculation by user with multicompany
+FIX: Can make a stock transfert on product not on sale/purchase.
+FIX: extrafield input for varchar was not working with special char within (ie double quotes)
+FIX: javascript error
+FIX: link for not found photo when using gravatar. Must use external url.
+FIX: Protection so even if link is output for external user, links is disabled.
+FIX: repair tool was ko to restore extrafields with type select.
+FIX: Security access problem with external users on projects/tasks
+FIX: We must not drop extrafield column if there is still record on other entities.
+FIX: regression with sedning email when introducing security options to restrict nb of email sending.
+t 
 ***** ChangeLog for 4.0.3 to 4.0.2 *****
 FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
 FIX: #5958 no discount on supplier command made by replenishment
