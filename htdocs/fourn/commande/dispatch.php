@@ -314,7 +314,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($commande->methode_commande)
 			{
-				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->getInputMethod().'</td></tr>';
 			}
 		}
 

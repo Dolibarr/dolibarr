@@ -372,7 +372,7 @@ else
 {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
-print $form->select_produits($id_product,'productid',$filtertype,$limit);
+print $form->select_produits($id_product,'productid',$filtertype,$limit,0,-1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
