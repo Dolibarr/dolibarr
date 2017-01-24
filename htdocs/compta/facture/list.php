@@ -646,7 +646,7 @@ if ($resql)
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
 					}
-					if($objecttmp->mode_reglement_id != 3){
+					if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
 					}
