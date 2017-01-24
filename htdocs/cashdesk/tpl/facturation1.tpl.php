@@ -125,23 +125,13 @@ $langs->load("cashdesk");
     			<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtTotal" value="" disabled /></td><td></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
-                <?php //var_dump($tab_tva); ?>
-                <select name="selTva" onchange="javascript: modif();" >
-                    <?php
-                        $tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
-
-                        $tab_tva_size=count($tab_tva);      // $tab_tva contains list of possible vat array('rowid'=> , 'taux'=> ) 
-                        for ($i=0;$i < $tab_tva_size;$i++) 
-                        {
-                            if ($tva_tx == $tab_tva[$i]['rowid'])
-                                $selected = 'selected';
-                            else
-                                $selected = '';
-
-                            echo '<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ";
-                        }
-                    ?>
-                </select>
+                <?php //var_dump($tab_tva); 
+					$tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
+					$buyer = new Societe($db);
+					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
+					
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):-1), $mysoc, $buyer, 0, 0, '', false, -1);
+			    ?>
                 </td>
 			</tr>
 		</table>
