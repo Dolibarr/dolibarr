@@ -646,6 +646,10 @@ if ($resql)
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
 					}
+					if($objecttmp->mode_reglement_id != 3){
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					}
 					
 				}
 			}
@@ -663,7 +667,7 @@ if ($resql)
     	   			if ($result > 0)
     	   			{
     	   				$db->commit();
-    	       			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+    	       			setEventMessages( $langs->trans("RecordSaved"), null, 'mesgs');
    					 }
     	   			else
 					{
