@@ -489,3 +489,4 @@ DeleteRepeatableInvoice=Supprimer facture modèle
 ConfirmDeleteRepeatableInvoice=Est-ce votre sûr de vouloir supprimer la facture modèle ?
 CreateOneBillByThird=Créer une facture par tiers (sinon, une facture par commande)
 BillCreated=%s facture(s) créée(s)
+WithdrawRequest=Demande de prélèvement
