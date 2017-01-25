@@ -223,6 +223,16 @@ HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle
 HelpCenterDesc2=Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
 CurrentMenuHandler=Gestor de menú
 MeasuringUnit=Unidad de medida
+LeftMargin=Margen izquierdo
+TopMargin=Margen superior
+PaperSize=Tipo de papel
+Orientation=Orientación
+SpaceX=Área X
+SpaceY=Área Y
+FontSize=Tamaño de fuente
+Content=Contenido
+NoticePeriod=Plazo de aviso
+NewByMonth=Nuevo por mes
 Emails=E-Mails
 EMailsSetup=Configuración E-Mails
 EMailsDesc=Esta página permite sustituir los parámetros PHP relacionados con el envío de correos electrónicos. En la mayoría de los casos en SO como UNIX/Linux, los parámetros PHP son ya correctos y esta página es inútil.
@@ -354,6 +364,7 @@ Boolean=Boleano (Casilla de verificación)
 ExtrafieldPhone = Teléfono
 ExtrafieldPrice = Precio
 ExtrafieldMail = Correo
+ExtrafieldUrl = Url
 ExtrafieldSelect = Lista de selección
 ExtrafieldSelectList = Lista desde una tabla
 ExtrafieldSeparator=Separador
@@ -365,8 +376,8 @@ ExtrafieldLink=Objeto adjuntado
 ExtrafieldParamHelpselect=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...<br><br>Para tener la lista en función de otra:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Lista de parámetros viene de una tabla<br>Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo se activa <br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
-ExtrafieldParamHelpchkbxlst=Lista Parámetros viene de una tabla <br> Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo se activa <br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
+ExtrafieldParamHelpsellist=Lista de parámetros viene de una tabla<br>Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br><br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo el valor activo<br>También puedes utilizar $ID$ en el filtro como el id actual del objeto actual<br>Para hacer un SELECT en el filtro usa $SEL$<br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br><br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
+ExtrafieldParamHelpchkbxlst=Lista de parámetros viene de una tabla<br>Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo se activa <br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
 ExtrafieldParamHelplink=Los parámetros deben ser ObjectName: Classpath<br>Sintaxis: ObjectName:Classpath<br>Ejemplo: Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Libreria usada en la generación de los PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
@@ -398,7 +409,7 @@ EnableAndSetupModuleCron=Si desea tener esta factura recurrente para generarla a
 ModuleCompanyCodeAquarium=Devuelve un código contable compuesto de<br>%s seguido del código tercero de proveedor para el código contable de proveedor,<br>%s seguido del código tercero de cliente para el código contable de cliente.
 ModuleCompanyCodePanicum=Devuelve un código contable vacío.
 ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
-Use3StepsApproval=De forma predeterminada, los pedidos a proveedor deben ser creados y aprobados por 2 usuarios diferentes (un paso/usuario para crear y un paso/usuario para aprobar. Tenga en cuenta que si el usuario tiene tanto el permiso para crear y aprobar, un paso usuario será suficiente) . Puede pedir con esta opción introducir una tercera etapa de aprobación/usuario, si la cantidad es superior a un valor específico (por lo que serán necesarios 3 pasos: 1 validación, 2=primera aprobación y 3=segunda aprobación si la cantidad es suficiente).<br>Deje vacío si una aprobación (2 pasos) es suficiente, si se establece en un valor muy bajo (0,1) se requiere siempre una segunda aprobación.
+Use3StepsApproval=De forma predeterminada, los pedidos a proveedor deben ser creados y aprobados por 2 usuarios diferentes (un paso/usuario para crear y un paso/usuario para aprobar. Tenga en cuenta que si el usuario tiene tanto el permiso para crear y aprobar, un paso usuario será suficiente) . Puede pedir con esta opción introducir una tercera etapa de aprobación/usuario, si la cantidad es superior a un valor específico (por lo que serán necesarios 3 pasos: 1 validación, 2=primera aprobación y 3=segunda aprobación si la cantidad es suficiente).<br>Deje vacío si una aprobación (2 pasos) es suficiente, si se establece en un valor muy bajo (0,1) se requiere siempre una segunda aprobación (3 pasos).
 UseDoubleApproval=Usar 3 pasos de aprobación si el importe (sin IVA) es mayor que...
 
 # Modules
@@ -814,6 +825,7 @@ DictionaryPaymentModes=Modos de pago
 DictionaryTypeContact=Tipos de contactos/direcciones
 DictionaryEcotaxe=Baremos CEcoParticipación (DEEE)
 DictionaryPaperFormat=Formatos de papel
+DictionaryFormatCards=Formatos de fichas
 DictionaryFees=Tipos de honorarios
 DictionarySendingMethods=Métodos de expedición
 DictionaryStaff=Empleados
@@ -1017,7 +1029,6 @@ SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy e
 ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
 ShowVATIntaInAddress=Ocultar el identificador IVA en las direcciones de los documentos
 TranslationUncomplete=Traducción parcial
-SomeTranslationAreUncomplete=Algunos idiomas pueden estar parcialmente traducidos o pueden contener errores. Si detecta algunos, puede arreglar los archivos de idiomas registrándose en <a href="http://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
 MAIN_DISABLE_METEO=Deshabilitar la vista meteorológica
 TestLoginToAPI=Comprobar conexión a la API
 ProxyDesc=Algunas de las características de Dolibarr requieren que el servidor tenga acceso a Internet. Defina aqui los parámetros para dicho acceso. Si el servidor está detrás de un proxy, estos parámetros indican a Dolibarr cómo pasarlo.
@@ -1057,7 +1068,7 @@ TranslationString=Cadena traducida
 CurrentTranslationString=Cadena traducida actual
 WarningAtLeastKeyOrTranslationRequired=Se necesita un criterio de búsqueda al menos por cadena de clave o traducción
 NewTranslationStringToShow=Nueva cadena traducida a mostrar
-OriginalValueWas=La traducción original se ha sobreescrito. El valor original era was:<br><br>%s
+OriginalValueWas=La traducción original se ha sobreescrito. El valor original era:<br><br>%s
 TotalNumberOfActivatedModules=Número total de módulos activados: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=Debe activar al menos un módulo.
 ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP
@@ -1140,6 +1151,8 @@ FreeLegalTextOnSupplierProposal=Texto libre en presupuestos de proveedores
 WatermarkOnDraftSupplierProposal=Marca de agua en presupuestos de proveedor (en caso de estar vacío)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Preguntar por cuenta bancaria a usar en el presupuesto
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Almacén a utilizar para el pedido
+##### Suppliers Orders #####
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Preguntar por cuenta bancaria a usar en el pedido a proveedor
 ##### Orders #####
 OrdersSetup=Configuración del módulo pedidos
 OrdersNumberingModules=Módulos de numeración de los pedidos
@@ -1320,7 +1333,7 @@ ViewProductDescInFormAbility=Visualización de las descripciones de los producto
 MergePropalProductCard=Activar en el producto/servicio la pestaña Documentos una opción para fusionar documentos PDF de productos al presupuesto PDF azur si el producto/servicio se encuentra en el presupuesto
 ViewProductDescInThirdpartyLanguageAbility=Visualización de las descripciones de productos en el idioma del tercero
 UseSearchToSelectProductTooltip=También si usted tiene una gran cantidad de producto (> 100 000), puede aumentar la velocidad mediante el establecimiento PRODUCT_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
-UseSearchToSelectProduct=Utilice un formulario de búsqueda para elegir un producto (en lugar de una lista desplegable).
+UseSearchToSelectProduct=Esperar a que presione una tecla antes de cargar el contenido de la lista combinada de productos (Esto puede incrementar el rendimiento si tiene un gran número de productos) 
 SetDefaultBarcodeTypeProducts=Tipo de código de barras utilizado por defecto para los productos
 SetDefaultBarcodeTypeThirdParties=Tipo de código de barras utilizado por defecto para los terceros
 UseUnits=Definir una unidad de medida para la Cantidad en la edición de líneas de pedidos, presupuetos o facturas
@@ -1563,7 +1576,7 @@ HighlightLinesOnMouseHover=Resaltar líneas de los listados cuando el ratón pas
 HighlightLinesColor=Resalta el color de la línea cuando el ratón pasa por encima (mantener vacío para no resaltar)
 TextTitleColor=Color para la página de título
 LinkColor=Color para los enlaces
-PressF5AfterChangingThis=Una vez cambiado este valor, pulse F5 en el teclado para hacerlo efectivo
+PressF5AfterChangingThis=Para que sea eficaz el cambio, presione F5 en el teclado o borre la memoria caché del navegador después de cambiar este valor
 NotSupportedByAllThemes=Funciona con temas del core, puede no funcionar con temas externos
 BackgroundColor=Color de fondo
 TopMenuBackgroundColor=Color de fondo para el Menú superior
@@ -1623,7 +1636,7 @@ AddOtherPagesOrServices=Añadir otras páginas o servicios
 AddModels=Añadir modelos de documentos o numeración
 AddSubstitutions=Añadir substituciones de claves
 DetectionNotPossible=No es posible la detección
-UrlToGetKeyToUseAPIs=Url para conseguir tokens para usar API (una vez recibido el token se guarda en la tabla de usuario de la base de datos y se verificará en cada acceso)
+UrlToGetKeyToUseAPIs=Url para conseguir token para usar la API (una vez recibido el token se guarda en la tabla de usuarios de la base de datos y se debe proporcionar en cada llamada API)
 ListOfAvailableAPIs=Listado de APIs disponibles
 activateModuleDependNotSatisfied=El módulo "%s" depende del módulo "%s" que falta, por lo que el módulo "%1$s" puede no funcionar correctamente. Instale el módulo "%2$s" o desactive el módulo "%1$s" si no quiere sorpresas
 CommandIsNotInsideAllowedCommands=El comando que intenta ejecutar no se encuentra en el listado de comandos permitidos en el parámetro<strong> $dolibarr_main_restrict_os_commands</strong> en el archivo <strong>conf.php</strong>.
@@ -1632,3 +1645,8 @@ SamePriceAlsoForSharedCompanies=Si se utiliza un módulo multi-empresa, con la o
 ModuleEnabledAdminMustCheckRights=El módulo ha sido activado. Los permisos para los módulos activados se dan solamente a los usuarios administradores. Deberá otorgar permisos manualmente a otros usuarios si es necesario.
 UserHasNoPermissions=Este usuario no tiene permisos definidos
 TypeCdr=Use "Ninguno" si la fecha del plazo de pago es la fecha de factura más un delta en días (delta es el campo "Nº de días")<br>Use "A final de mes", si, después del delta, la fecha debe aumentarse para llegar al final del mes (+ opcional "Offset" en días)<br>Use "Actual/Siguiente" para tener la fecha del plazo de pago sea el primer N de cada mes (N se almacena en el campo "Nº de días")
+##### Resource ####
+ResourceSetup=Configuración del módulo Recursos
+UseSearchToSelectResource=Utilice un formulario de búsqueda para elegir un recurso (en lugar de una lista desplegable).
+DisabledResourceLinkUser=Desactivar enlace recursos a usuario
+DisabledResourceLinkContact=Desactivar enlace recurso a contacto

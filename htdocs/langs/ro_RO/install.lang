@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Lasă un gol în cazul în care utilizatorul nu are nici o
 SaveConfigurationFile=Salvaţi valorile
 ServerConnection=Conexiune server
 DatabaseCreation=Baza de date crearea de
-UserCreation=Creare utilizator
 CreateDatabaseObjects=Baza de date crearea de obiecte
 ReferenceDataLoading=Date de referinta de încărcare
 TablesAndPrimaryKeysCreation=Mese si primar cheile de creare
@@ -133,12 +132,12 @@ MigrationFinished=Migraţia terminată
 LastStepDesc=<strong>Ultimul pas:</strong> Definirea aici nume de utilizator şi parola pe care intenţionaţi să îl utilizaţi pentru conectarea la software-ul. Nu pierde aceasta ca este cont pentru a administra toate celelalte.
 ActivateModule=Activaţi modul %s
 ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansaţi (mod expert)
-WarningUpgrade=Avertisment: \nAti facut o copie de rezervă a bazei de date mai întâi? \nAcest lucru este foarte recomandat: de exemplu, din cauza unor bug-uri în sistemele de baze de date (de exemplu, mysql versiune 5.5.40/41/42/43), unele date sau tabele pot fi pierdute în timpul acestui proces, de aceea este foarte recomandat să aveți o copie completa a bazei de date înaintea pornirii migrariii. \n\nFaceți clic pe OK pentru a începe procesul de migrare ...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Versiunea dvs. de baze de date este %s. Un bug va poate face sa pierdeti  date critice dacă faceti o schimbare a structurii pe baza de date,asa cum este impusă de procesul de migrare. De  aceea, migrare nu va fi permisa până când faceți upgrade la  baza de date la o versiune mai mare  (lista bug-urilor  cunoscute versiunea : %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Puteţi utiliza expertul de configurare de la Dolibarr DoliWamp, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
+KeepDefaultValuesDeb=Puteţi utiliza expertul de configurare Dolibarr dintr-un pachet Linux (Ubuntu, Debian, Fedora ...), astfel încât valorile propuse aici sunt deja optimizate. Numai parola proprietarul bazei de date pentru a crea trebuie să fie completate. Modificarea alţi parametri numai dacă ştii ce faci.
+KeepDefaultValuesMamp=Puteţi utiliza expertul de configurare de la Dolibarr DoliMamp, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
+KeepDefaultValuesProxmox=Puteţi utiliza expertul de configurare Dolibarr de la un aparat Proxmox virtuale, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Contract de deschis închis de eroare
 MigrationReopenThisContract=Redeschide  contract %s 
 MigrationReopenedContractsNumber=%s Contracte modificate
 MigrationReopeningContractsNothingToUpdate=Nici un contract închis pentru a deschide
-MigrationBankTransfertsUpdate=Actualizaţi legături între tranzacţie bancară şi un transfer bancar
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Toate link-uri sunt de până la zi
 MigrationShipmentOrderMatching=Trimiteri la data primirii de actualizare
 MigrationDeliveryOrderMatching=Livrare la primirea de actualizare

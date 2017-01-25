@@ -699,7 +699,7 @@ if ($action == 'create')
             // Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
             print $doleditor->Create(1);
             print "</td></tr>";
 
@@ -708,7 +708,7 @@ if ($action == 'create')
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
                 print '<td colspan="3">';
-                $doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         		print $doleditor->Create(1);
                 print "</td></tr>";
             }
@@ -767,7 +767,7 @@ if ($action == 'create')
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			if (count($liste) > 1)
 			{
-    			print "<tr><td>".$langs->trans("Model")."</td>";
+    			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
                 print '<td colspan="3">';
     			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
                 print "</td></tr>\n";
@@ -862,7 +862,7 @@ if ($action == 'create')
                 if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
-                    $product->load_stock();
+                    $product->load_stock('warehouseopen');
 
                     print '<td>';
                     print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne

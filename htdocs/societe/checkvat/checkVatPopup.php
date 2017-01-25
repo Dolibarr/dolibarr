@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,17 +41,18 @@ print '<div>';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
+$vatNumber = GETPOST("vatNumber",'alpha');
 
-if (! $_REQUEST["vatNumber"])
+if (! $vatNumber)
 {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
 }
 else
 {
-	$_REQUEST["vatNumber"] = preg_replace('/\^\w/', '', $_REQUEST["vatNumber"]);
-	$countryCode=substr($_REQUEST["vatNumber"],0,2);
-	$vatNumber=substr($_REQUEST["vatNumber"],2);
+	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
+	$countryCode=substr($vatNumber,0,2);
+	$vatNumber=substr($vatNumber,2);
 	
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';

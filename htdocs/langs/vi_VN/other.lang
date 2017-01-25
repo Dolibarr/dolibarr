@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Mã bảo vệ
-Calendar=Lịch
 NumberingShort=N°
 Tools=Công cụ
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Vận Chuyển gửi qua đường bưu điện
 Notify_MEMBER_VALIDATE=Thành viên được xác nhận
 Notify_MEMBER_MODIFY=Thành viên sửa đổi
 Notify_MEMBER_SUBSCRIPTION=Thành viên đã đăng ký
-Notify_MEMBER_RESILIATE=Thành viên resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Thành viên bị xóa
 Notify_PROJECT_CREATE=Dự án sáng tạo
 Notify_TASK_CREATE=Nhiệm vụ tạo
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Tổng dung lượng của các file đính kèm / tài
 MaxSize=Kích thước tối đa
 AttachANewFile=Đính kèm một tập tin mới / tài liệu
 LinkedObject=Đối tượng liên quan
-Miscellaneous=Linh tinh
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Đây là một email thử nghiệm. Hai dòng được phân cách bằng một trở về vận chuyển. __SIGNATURE__
 PredefinedMailTestHtml=Đây là một thư <b>kiểm tra</b> (kiểm tra từ phải được in đậm). <br> Hai dòng được phân cách bằng một trở về vận chuyển. <br><br> __SIGNATURE__
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Xuất khẩu
 ExportsArea=Khu vực xuất khẩu
 AvailableFormats=Định dạng có sẵn
-LibraryUsed=Librairy sử dụng
-LibraryVersion=Phiên bản
+LibraryUsed=Thư viện sử dụng
+LibraryVersion=Library version
 ExportableDatas=Dữ liệu xuất khẩu
 NoExportableData=Không có dữ liệu xuất khẩu (không có mô-đun với dữ liệu xuất khẩu nạp, hoặc cho phép mất tích)
-NewExport=Xuất khẩu mới
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Tiêu đề
+WEBSITE_DESCRIPTION=Mô tả
 WEBSITE_KEYWORDS=Keywords

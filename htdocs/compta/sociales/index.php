@@ -174,8 +174,9 @@ if ($resql)
 	}
 	else
 	{
-
-		print '<table class="liste" width="100%">';
+	    print '<div class="div-table-responsive">';
+	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	    
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
@@ -286,6 +287,7 @@ if ($resql)
 		}
 		
 		print '</table>';
+		print '</div>';
 	}
 	print '</form>';
 }

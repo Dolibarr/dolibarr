@@ -48,6 +48,7 @@ print load_fiche_titre($title,'','title_setup');
 
 // Version
 $var=true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
@@ -69,10 +70,12 @@ else
 }
 print '</td></tr>'."\n";
 print '</table>';
+print '</div>';
 print '<br>';
 
 // Session
 $var=true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
@@ -107,6 +110,7 @@ foreach($_SESSION as $key => $val)
 }
 print '</td></tr>'."\n";
 print '</table>';
+print '</div>';
 print '<br>';
 
 
@@ -116,6 +120,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	$shmoparray=dol_listshmop();
 
 	$var=true;
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
@@ -133,12 +138,14 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	}
 
 	print '</table>';
+	print '</div>';
 	print '<br>';
 }
 
 
 // Localisation
 $var=true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
@@ -234,6 +241,7 @@ if (! empty($conf->global->MAIN_FILESYSTEM_ENCODING)) $tmp=$conf->global->MAIN_F
 print '<tr '.$bc[$var].'><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 
 print '</table>';
+print '</div>';
 print '<br>';
 
 
@@ -286,11 +294,13 @@ $configfileparameters=array(
 		'separator4' => '',
 		'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
-		'?dolibarr_strict_mode' => 'Strict mode is on/off',
+		'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+        '?dolibarr_strict_mode' => 'Strict mode is on/off',
 		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
 );
 
 $var=true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' ';
@@ -352,11 +362,13 @@ foreach($configfileparameters as $key => $value)
 	}
 }
 print '</table>';
+print '</div>';
 print '<br>';
 
 
 
 // Parameters in database
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
@@ -406,7 +418,7 @@ if ($resql)
 }
 
 print '</table>';
-
+print '</div>';
 
 
 llxFooter();

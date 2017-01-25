@@ -19,6 +19,7 @@ CustomerOrder=Kundeordre
 CustomersOrders=Kundeordre
 CustomersOrdersRunning=Gjeldende kundeordre
 CustomersOrdersAndOrdersLines=Kundeordre og ordrelinjer
+OrdersDeliveredToBill=Fakturerbare leverte kundeordre
 OrdersToBill=Kundeordre levert
 OrdersInProcess=Kundeordre til behandling
 OrdersToProcess=Kundeordre til behandling
@@ -52,6 +53,7 @@ StatusOrderBilled=Fakturert
 StatusOrderReceivedPartially=Delvis mottatt
 StatusOrderReceivedAll=Alt er mottatt
 ShippingExist=En forsendelse eksisterer
+QtyOrdered=Antall bestilt
 ProductQtyInDraft=Varemengde i ordrekladder
 ProductQtyInDraftOrWaitingApproved=Varemengde i kladdede/godkjente ordrer som ikke er bestilt enda
 MenuOrdersToBill=Ordre levert
@@ -99,6 +101,7 @@ OnProcessOrders=Ordre i behandling
 RefOrder=Ref. ordre
 RefCustomerOrder=Kundens ordrereferanse
 RefOrderSupplier=Leverandørens ordrereferanse
+RefOrderSupplierShort=Ref. order supplier
 SendOrderByMail=Send ordre med post
 ActionsOnOrder=Handlinger ifm. ordre
 NoArticleOfTypeProduct=Der er ingen varer av typen 'vare' på ordren, så det er ingen varer å sende
@@ -125,29 +128,19 @@ TypeContact_order_supplier_internal_SHIPPING=Representant for oppfølging av lev
 TypeContact_order_supplier_external_BILLING=Leverandørens fakturakontakt
 TypeContact_order_supplier_external_SHIPPING=Leverandørens leveransekontakt
 TypeContact_order_supplier_external_CUSTOMER=Leverandørens ordreoppfølger
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstant COMMANDE_SUPPLIER_ADDON er ikke definert
 Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON er ikke definert
 Error_OrderNotChecked=Ingen ordre til fakturering er valgt
-# Sources
-OrderSource0=Tilbud
-OrderSource1=Internett
-OrderSource2=Epostkampanje
-OrderSource3=Telefonkampanje
-OrderSource4=Faxkampanje
-OrderSource5=Kommersiell
-OrderSource6=Butikk
-QtyOrdered=Antall bestilt
-# Documents models
-PDFEinsteinDescription=En komplett ordremodell (logo...)
-PDFEdisonDescription=En enkel ordremodell
-PDFProformaDescription=En komplett proforma faktura (logo ...)
-# Orders modes
+# Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Post
 OrderByFax=Faks
 OrderByEMail=E-post
 OrderByWWW=Online
 OrderByPhone=Telefon
+# Documents models
+PDFEinsteinDescription=En komplett ordremodell (logo...)
+PDFEdisonDescription=En enkel ordremodell
+PDFProformaDescription=En komplett proforma faktura (logo ...)
 CreateInvoiceForThisCustomer=Fakturer ordrer
 NoOrdersToInvoice=Ingen fakturerbare ordrer
 CloseProcessedOrdersAutomatically=Klassifiser alle valgte bestillinger "Behandlet".
@@ -158,3 +151,4 @@ OrderFail=En feil skjedde under opprettelse av din ordre
 CreateOrders=Lag ordre
 ToBillSeveralOrderSelectCustomer=For å opprette en faktura for flere ordrer, klikk først på kunden, velg deretter "%s".
 CloseReceivedSupplierOrdersAutomatically=Lukk ordre til "%s" automatisk hvis alle varer er mottatt
+SetShippingMode=Sett leveransemetode

@@ -70,7 +70,7 @@ class BankAccounts extends DolibarrApi
         }
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('banque', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('bank_account', 1).')';
         // Add sql filters
         if ($sqlfilters) 
         {
@@ -160,7 +160,7 @@ class BankAccounts extends DolibarrApi
         $account->courant = $account->type;
 
         if ($account->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when creating account: ' . $account->error);
+            throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
         }
         return $account->id;
     }
@@ -185,6 +185,7 @@ class BankAccounts extends DolibarrApi
         }
 
         foreach ($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $account->$field = $value;
         }
 

@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Leverans
 DeliveryRef=Ref Delivery
-DeliveryCard=Leverans kort
+DeliveryCard=Receipt card
 DeliveryOrder=Leveransorder
 DeliveryDate=Leveransdatum
-CreateDeliveryOrder=Generera leveransorder
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Ställ in leveransdatum
 ValidateDeliveryReceipt=ttestera kvitto
-ValidateDeliveryReceiptConfirm=Är du säker på att du vill godkänna detta kvitto?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Radera leveranskvittens
-DeleteDeliveryReceiptConfirm=Är du säker på att du vill ta bort <b>%s</b> kvitto?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Leveransmetod
 TrackingNumber=Spårningsnummer
 DeliveryNotValidated=Leverans är inte attesterad
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Annullerad
+StatusDeliveryDraft=Utkast
+StatusDeliveryValidated=Mottagna
 # merou PDF model
 NameAndSignature=Namn och namnteckning:
 ToAndDate=To___________________________________ den ____ / _____ / __________

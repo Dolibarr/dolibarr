@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Spesenabrechnung
 ExpenseReports=Spesenabrechnungen
+ShowExpenseReport=Spesenabrechnung anzeigen
 Trips=Spesenabrechnungen
 TripsAndExpenses=Reise- und Fahrtspesen
 TripsAndExpensesStatistics=Reise- und Fahrtspesen Statistik
@@ -8,12 +9,13 @@ TripCard=Reisekosten - Karte
 AddTrip=Reisekostenabrechnung erstellen
 ListOfTrips=Aufstellung Spesenabrechnungen
 ListOfFees=Liste der Spesen
+TypeFees=Gebührenarten
 ShowTrip=Spesenabrechnung anzeigen
 NewTrip=neue Spesenabrechnung
 CompanyVisited=Besuchter Partner
 FeesKilometersOrAmout=Spesenbetrag bzw. Kilometergeld
 DeleteTrip=Spesenabrechnung löschen
-ConfirmDeleteTrip=Möchten Sie diese Spesenabrechnung wirklich löschen?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Aufstellung Spesenabrechnungen
 ListToApprove=Warten auf Bestätigung
 ExpensesArea=Spesenabrechnungen
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validiert (Wartet auf Genehmigung)
 
 NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
 
-ConfirmRefuseTrip=Möchten Sie diese Spesenabrechnung wirklich ablehnen?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Genehmigen Spesenabrechnung
-ConfirmValideTrip=Möchten Sie diese Spesenabrechnung wirklich genehmigen?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Spesenabrechnung bezahlen
-ConfirmPaidTrip=Möchten Sie den Status dieser Spesenabrechnung auf "Bezahlt" ändern?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Status der Spesenabrechnung auf den Status "Entwurf" ändern
-ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Spesenabrechnung wirklich auf "Entwurf" ändern?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Bestätige Spesenabrechnung
-ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung bestätigen wollen?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.
 ExpenseReportPayment=Spesenabrechnung Zahlung

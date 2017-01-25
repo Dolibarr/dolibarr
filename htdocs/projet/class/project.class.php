@@ -97,6 +97,11 @@ class Project extends CommonObject
 	 */
 	public $date_m;
 
+	/**
+	 * @var Task[]
+	 */
+	public $lines;
+	
 
     /**
      *  Constructor
@@ -228,7 +233,7 @@ class Project extends CommonObject
      *
      * @param  User		$user       User object of making update
      * @param  int		$notrigger  1=Disable all triggers
-     * @return int
+     * @return int                  <=0 if KO, >0 if OK
      */
     function update($user, $notrigger=0)
     {
@@ -346,7 +351,7 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Get object and lines from database
+     * 	Get object from database
      *
      * 	@param      int		$id       	Id of object to load
      * 	@param		string	$ref		Ref of project
@@ -1493,7 +1498,7 @@ class Project extends CommonObject
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-		if ($TableName=="actioncomm")
+		if ($tableName == "actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
 			$sql.= " WHERE id=".$elementSelectId;
@@ -1564,16 +1569,14 @@ class Project extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'baleine';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
-			}
-			else
-			{
-				$modele='baleine';
 			}
 		}
 

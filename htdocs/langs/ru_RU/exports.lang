@@ -26,8 +26,6 @@ FieldTitle=Поле название
 NowClickToGenerateToBuildExportFile=Теперь нажмите кнопку "Создать", чтобы построить экспортный файл ...
 AvailableFormats=Форматы доступное
 LibraryShort=Библиотека
-LibraryUsed=Librairie
-LibraryVersion=Версии
 Step=Шаг
 FormatedImport=Импорт ассистент
 FormatedImportDesc1=Эта область позволяет импортировать персонализированных данных, с помощью ассистента, чтобы помочь вам в процессе без технических знаний.
@@ -87,7 +85,7 @@ TooMuchWarnings=Существует еще <b>%s</b> другие линии и
 EmptyLine=Пустые строки (будет использоваться)
 CorrectErrorBeforeRunningImport=Прежде всего, необходимо исправить все ошибки перед запуском окончательного импорта.
 FileWasImported=Файл был импортирован с номером <b>%s.</b>
-YouCanUseImportIdToFindRecord=Вы можете найти все импортируемые записей в базе данных с помощью фильтрации на поле <b>import_key = %s.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Количество строк, без ошибок и предупреждений нет: <b>%s.</b>
 NbOfLinesImported=Количество линий успешно импортированы: <b>%s.</b>
 DataComeFromNoWhere=Соотношение вставить приходит из ниоткуда в исходном файле.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Разделителями-запятыми</b> файл (фо�
 Excel95FormatDesc=Формат файла <b>Excel</b> (.xls)<br>Это формат Excel 95  (BIFF5).
 Excel2007FormatDesc=Формат файла <b>Excel</b>  (.xlsx)<br>Это формат Excel версий старше 2007  (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Options
 Separator=Разделитель
 Enclosure=Enclosure

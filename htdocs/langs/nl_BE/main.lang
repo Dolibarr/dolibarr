@@ -20,7 +20,6 @@ FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 NoTemplateDefined=Geen model gedefinieerd voor dit email type
-Errors=Fouten
 NotAuthorized=U bent niet toegelaten om dat te doen.
 NoFilter=Geen filter
 DateToday=Datum van vandaag

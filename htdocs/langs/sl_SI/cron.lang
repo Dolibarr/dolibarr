@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Preberi načrtovano delo
+Permission23102 = Ustvari/posodobi načrtovano delo
+Permission23103 = Izbriši načrtovano delo
+Permission23104 = Izvedi načrtovano delo
 # Admin
 CronSetup= Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -22,9 +22,9 @@ CronLastResult=Last result code
 CronCommand=Ukaz
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Naloga
 CronNone=Nič
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Next execution
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Frekvenca
 CronClass=Class
 CronMethod=Metoda
 CronModule=Modul
 CronNoJobs=Nobene naloge niso registrirane
 CronPriority=Prioriteta
-CronLabel=Label
+CronLabel=Oznaka
 CronNbRun=Nb. launch
 CronMaxRun=Max nb. launch
 CronEach=Every
@@ -65,7 +65,7 @@ CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of 
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Od
 # Info
 # Common
 CronType=Job type

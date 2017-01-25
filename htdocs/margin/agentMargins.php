@@ -129,6 +129,7 @@ $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE f.fk_soc = s.rowid";
+$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
 $sql.= " AND sc.fk_soc = f.fk_soc";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (! empty($conf->global->AGENT_CONTACT_TYPE))
@@ -136,7 +137,7 @@ if (! empty($conf->global->AGENT_CONTACT_TYPE))
 else
 	$sql .= " AND sc.fk_user = u.rowid";
 $sql.= " AND f.fk_statut > 0";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 $sql.= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
 	if (! empty($conf->global->AGENT_CONTACT_TYPE))
@@ -168,7 +169,7 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',0,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,$num,'');
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";

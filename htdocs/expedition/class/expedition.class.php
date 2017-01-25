@@ -892,7 +892,7 @@ class Expedition extends CommonObject
 				$result=$product->fetch($fk_product);
 
 				if ($entrepot_id > 0) {
-					$product->load_stock();
+					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
 				else
@@ -2162,16 +2162,14 @@ class Expedition extends CommonObject
 
 		$langs->load("sendings");
 
-		// Sets the model on the model name to use
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->EXPEDITION_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'rouget';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'rouget';
 			}
 		}
 

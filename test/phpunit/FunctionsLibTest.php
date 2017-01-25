@@ -367,6 +367,14 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $after=dol_string_nohtmltag($text, 1);
         $this->assertEquals("A string with tag with < chars",$after,"test3");
 
+        $text="A string<br>Another string";
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("A string\nAnother string",$after,"test4");
+
+        $text="A string<br>Another string";
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("A string Another string",$after,"test5");
+
         return true;
     }
 

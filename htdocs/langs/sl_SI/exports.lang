@@ -26,8 +26,6 @@ FieldTitle=Naziv polja
 NowClickToGenerateToBuildExportFile=Zdaj izberite format datoteke v polju vzorcev in kliknite »Ustvari« za kreiranje izvozne datoteke...
 AvailableFormats=Formati, ki so na voljo
 LibraryShort=Knjižnica
-LibraryUsed=Uporabljena knjižnica
-LibraryVersion=Verzija
 Step=Korak
 FormatedImport=Uvozni pomočnik
 FormatedImportDesc1=To področje omogoča uvoz prilagojenih podatkov z uporabo pomočnika, ki pomaga pri postopku, če nimate potrebnega tehničnega znanja.
@@ -87,7 +85,7 @@ TooMuchWarnings=Še vedno je <b>%s</b> ostalih izvornih vrstic z opozorili, vend
 EmptyLine=Prazna vrstica (ne bo upoštevana)
 CorrectErrorBeforeRunningImport=Pred dokončnim uvozom morate najprej popraviti vse napake.
 FileWasImported=Datoteka je bila uvožena s številko <b>%s</b>.
-YouCanUseImportIdToFindRecord=Vse uvožene zapise lahko v vaši bazi podatkov najdete s filtriranjem po polju <b>import_key='%s'</b>.
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Število vrstic brez napak in brez opozoril: <b>%s</b>.
 NbOfLinesImported=Število uspešno uvoženih vrstic: <b>%s</b>.
 DataComeFromNoWhere=Vrednost za vstavljanje ne prihaja iz izvorne datoteke.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> format datoteke (.csv).<br>To je teks
 Excel95FormatDesc=<b>Excel</b> datotečni format (.xls)<br>To je osnovni Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> datotečni format (.xlsx)<br>To je osnovni Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> datotečni format (.tsv)<br>To je tekstovni datotečni format, pri katerem so polja ločena s tabulatorjem [tab].
-ExportFieldAutomaticallyAdded=Polje <b>%s</b> je bilo dodano avtomatsko. S tem je preprečeno, da bo podobne vrstice tretirali kot podvojene zapise (s tem dodanim poljem ima vsaka vrstica svoj ID in se razlikuje od ostalih).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv opcija
 Separator=Ločilo
 Enclosure=Priloga

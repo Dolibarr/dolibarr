@@ -83,7 +83,7 @@ if (! empty($canvas))
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $sref="";
     $snom="";
@@ -249,7 +249,8 @@ if ($resql)
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
@@ -381,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)

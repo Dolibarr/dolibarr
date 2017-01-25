@@ -315,9 +315,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$iniY = $tab_top + 11;
+				$curY = $tab_top + 11;
+				$nexY = $tab_top + 11;
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblines ; $i++)
@@ -637,7 +637,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+			$pdf->line($this->marge_gauche, $tab_top+10, $this->page_largeur-$this->marge_droite, $tab_top+10);
 		}
 
 		$pdf->SetDrawColor(128,128,128);

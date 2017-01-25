@@ -225,7 +225,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -294,6 +294,7 @@ if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->t
 print '<br>';
 
 
+print '<div class="div-table-responsive">';
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("ID"),$_SERVER["PHP_SELF"],"t.rowid","",$param,'',$sortfield,$sortorder);
@@ -313,20 +314,20 @@ print_liste_field_titre('');
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
 print '</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
 print '</td><td class="liste_titre" align="right">';
@@ -472,6 +473,7 @@ else
 }
 
 print '</table>';
+print '</div>';
 
 print '</from>';
 
@@ -480,7 +482,6 @@ print '<br><br>';
 
 
 dol_print_cron_urls();
-
 
 llxFooter();
 

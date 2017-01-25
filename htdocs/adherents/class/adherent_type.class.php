@@ -35,9 +35,10 @@ class AdherentType extends CommonObject
 {
 	public $table_element = 'adherent_type';
 	public $element = 'adherent_type';
-
+	public $picto = 'group';
+	
 	/** @var string Label */
-	public $libelle;
+	public $label;
 	/**
 	 * @var bool
 	 * @deprecated Use subscription
@@ -199,7 +200,7 @@ class AdherentType extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT d.rowid, d.libelle, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
+        $sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
         $sql .= " WHERE d.rowid = ".$rowid;
 
@@ -214,7 +215,8 @@ class AdherentType extends CommonObject
 
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
-                $this->libelle        = $obj->libelle;
+                $this->label          = $obj->label;
+                $this->libelle        = $obj->label;	// For backward compatibility
                 $this->statut         = $obj->statut;
                 $this->subscription   = $obj->subscription;
                 $this->mail_valid     = $obj->mail_valid;
@@ -296,6 +298,16 @@ class AdherentType extends CommonObject
     }
 
 
+    /**
+     *     getLibStatut
+     *
+     *     @return string     Return status of a type of member
+     */
+    function getLibStatut()
+    {
+    	return '';
+    }
+    
     /**
      *     getMailOnValid
      *

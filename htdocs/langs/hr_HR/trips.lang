@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Izvještaj troška
 ExpenseReports=Izvještaji troška
+ShowExpenseReport=Prikaži izvještaj troška
 Trips=Izvještaji troška
 TripsAndExpenses=Izvještaji troškova
 TripsAndExpensesStatistics=Statistika izvještaja troška
@@ -8,12 +9,13 @@ TripCard=Kartica izvještaja troška
 AddTrip=Kreiraj izvještaj troška
 ListOfTrips=Popis izvještaja troškova
 ListOfFees=Popis pristojbi
+TypeFees=Tipovi pristojbi
 ShowTrip=Prikaži izvještaj troška
 NewTrip=Novi izvještaj troška
 CompanyVisited=Tvrtka/zaklada posječena
 FeesKilometersOrAmout=Iznos ili kilometri
 DeleteTrip=Obriši izvještaj troška
-ConfirmDeleteTrip=Jeste li sigurni da želite obrisati izvještaj o troškovima ?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=Popis izvještaja troškova
 ListToApprove=Čeka na odobrenje
 ExpensesArea=Sučelje izvještaja troška
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Ovjereno (čeka odobrenje)
 
 NOT_AUTHOR=Vi niste autor izvještaja troška. Operacija je prekinuta.
 
-ConfirmRefuseTrip=Jeste li sigurni da želite odbiti izvještaj o troškovima ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Odobri izvještaj troška
-ConfirmValideTrip=Jeste li sigurni da želite odobriti izvještaj o troškovima ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Isplati troškove
-ConfirmPaidTrip=Jeste li sigurni da želite promjeniti status izvještaja troškova u "Plaćeno" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Jeste li sigurni da želite otkazati izvjetaj troškova ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Vrati izvještaj troška nazad na status "Skica"
-ConfirmBrouillonnerTrip=Jeste li sigurni da želite staviti izvještaj troškova u status "Skica" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Ovjeri trošak
-ConfirmSaveTrip=Jeste li sigurni da želite ovjeriti izvještaj troškova ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=Nema izvještaja troška za izvoz u ovom razdoblju.
 ExpenseReportPayment=Isplata izvještaja troška

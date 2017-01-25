@@ -303,7 +303,7 @@ foreach($property as $key => $prop)
 			$varprop.="\$this->db->escape(\$this->".$prop['field'].")";
 			$varprop.=".\"'\")";
 		}
-		elseif ($prop['field']=='fk_user_mod' || $prop['field']=='fk_user_author')
+		elseif ($prop['field']=='fk_user_mod' || $prop['field']=='fk_user_m' ||  $prop['field']=='fk_user_author')
 		{
 			$varprop.="'.\$user->id";
 		}
@@ -367,7 +367,7 @@ foreach($property as $key => $prop)
 			$varprop.=')."\'" : \'null\')';
 		}
 		
-		elseif ($prop['field']=='fk_user_mod') {
+		elseif ($prop['field']=='fk_user_mod' || $prop['field']=='fk_user_m') {
 			$varprop.="'.\$user->id";
 		}
 		else

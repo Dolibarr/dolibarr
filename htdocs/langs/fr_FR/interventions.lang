@@ -26,6 +26,7 @@ DocumentModelStandard=Modèle de fiche d'intervention standard
 InterventionCardsAndInterventionLines=Fiches interventions et lignes d'interventions
 InterventionClassifyBilled=Classer "Facturée"
 InterventionClassifyUnBilled=Classer "Non facturée"
+InterventionClassifyDone=Classé "Traitée"
 StatusInterInvoiced=Facturée
 ShowIntervention=Afficher intervention
 SendInterventionRef=Envoi de la fiche intervention %s

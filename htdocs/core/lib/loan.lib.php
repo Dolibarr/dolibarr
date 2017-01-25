@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +41,6 @@ function loan_prepare_head($object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))		
-	{		
-		$nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);		
-		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;		
-		$head[$tab][1] = $langs->trans("Notes");		
-		if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';		
-		$head[$tab][2] = 'note';		
-		$tab++;		
-	}
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -67,6 +57,16 @@ function loan_prepare_head($object)
 	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
+
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{		
+		$nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
+		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+		$head[$tab][1] = $langs->trans("Notes");
+		if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';
+		$head[$tab][2] = 'note';
+		$tab++;
+	}
 
     $head[$tab][0] = DOL_URL_ROOT.'/loan/info.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Info");

@@ -26,6 +26,7 @@ DocumentModelStandard=Standard dokumentet modell for intervensjoner
 InterventionCardsAndInterventionLines=Intervensjoner og intervensjonslinjer
 InterventionClassifyBilled=Merk "Fakturert"
 InterventionClassifyUnBilled=Merk "Ikke fakturert"
+InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Fakturert
 ShowIntervention=Vis intervensjon
 SendInterventionRef=Send intervensjon %s

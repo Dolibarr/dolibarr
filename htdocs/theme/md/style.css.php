@@ -242,6 +242,7 @@ body {
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
+	line-height: 130%;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -254,6 +255,7 @@ a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
+a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; } 
 
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
@@ -261,6 +263,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
+    /* TODO Remove shadow on focus. Use instead border-bottom: 1px solid #aaa !important; To disable with select2 too. */
 }
 textarea.cke_source:focus
 {
@@ -581,17 +584,33 @@ div.myavailability {
 	color: #880000;
 	font-weight: bold;
 }
+.amountremaintopayback {
+	font-weight: bold;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
-.table-responsive {
+/*.table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+}*/
+/* Style used for most tables */ 
+.div-table-responsive, .div-table-responsive-no-min {
+    overflow-x: auto;
+    min-height: 0.01%;
+    line-height: 100%;
+}
+/* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */ 
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+    overflow-x: auto;
+}
+div.fiche>form>div.div-table-responsive {
+    min-height: 350px;
 }
 
 
@@ -602,7 +621,7 @@ div.myavailability {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
-/* rule to reduce top menu - 3rd reduction */
+/* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
 	.minwidth100 { min-width: 100px; }
@@ -617,6 +636,7 @@ div.myavailability {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
@@ -631,6 +651,8 @@ div.myavailability {
 .titlefieldcreate { width: 20%; }
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.imgmaxwidth180 { max-width: 180px; }
+	
 
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
@@ -689,7 +711,7 @@ div.myavailability {
      
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
@@ -791,6 +813,7 @@ td.showDragHandle {
 <?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
+	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
@@ -1003,12 +1026,13 @@ div.attacharea {
 	padding-bottom: 10px;
 }
 div.arearef {
-	/*border-bottom: 1px solid #bbb;*/
 	padding-top: 2px;
 	padding-bottom: 5px;
-	/*padding-right: 3px;
-	padding-left: 2px;*/
 	margin-bottom: 10px;
+}
+div.arearefnobottom {
+	padding-top: 2px;
+	padding-bottom: 4px;
 }
 div.heightref {
 	min-height: 80px; 
@@ -1033,6 +1057,9 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+img.fitcontain {
+    object-fit: contain;
+}
 div.photoref {
 	display:table-cell;
 	vertical-align:middle;
@@ -1046,6 +1073,7 @@ img.photorefnoborder {
     object-fit: contain;
     border: 1px solid #CCC;
 }
+
 .underrefbanner {
 }
 .underbanner {
@@ -1228,10 +1256,10 @@ div.menu_titre {
 .mainmenuaspan
 {
 <?php if ($disableimages) { ?>
-	padding-left: 4px;
-	padding-right: 2px;
+	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $right; ?>: 2px;
 <?php } else { ?>
-	padding-right: 4px;
+	padding-<?php print $right; ?>: 4px;
 <?php } ?>
 }
 
@@ -1434,6 +1462,19 @@ form#login {
 
 	border-top:solid 1px f8f8f8;
 }
+.login_table input#username, .login_table input#password, .login_table input#securitycode{
+	border: none;
+	border-bottom: solid 1px rgba(180,180,180,.4);
+	padding: 5px;
+	margin-left: 18px;
+	margin-top: 5px;
+}
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+	outline: none !important;
+	/* box-shadow: none;
+	-webkit-box-shadow: 0 0 0 50px #FFF inset;
+	box-shadow: 0 0 0 50px #FFF inset;*/
+}
 .login_main_message {
 	text-align: center;
 	max-width: 560px;
@@ -1468,9 +1509,9 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo {
-	max-width: 200px;
-	max-height: 100px;
+#img_logo, .img-logo {
+	max-width: 170px;
+	max-height: 90px;
 }
 
 div.login_block {
@@ -1548,7 +1589,8 @@ img.loginphoto {
 }
 
 .span-icon-user {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
+	background-repeat: no-repeat;
 }
 .span-icon-password {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
@@ -1929,6 +1971,7 @@ img.toolbarbutton {
 }
 
 .ecm-in-layout-south {
+    border-top: 0px !important;
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
@@ -2001,7 +2044,7 @@ a.tabTitle {
 /*    background: #657090;
     color: white;*/
     color:rgba(0,0,0,.5);
-    margin-right:10px;
+    margin-<?php print $right; ?>: 10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
@@ -2361,6 +2404,13 @@ table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
 }
 
+table.liste td, table.noborder td, div.noborder form div {
+	padding: 8px 2px 8px 3px;			/* t r b l */
+}
+div.liste_titre_bydiv .divsearchfield {
+	padding: 2px 1px 2px 0px;			/* t r b l */
+}
+
 table.nobordernopadding {
 	border-collapse: collapse !important;
 	border: 0px;
@@ -2694,6 +2744,10 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
+tr.liste_titre td.liste_titre {		/* For last line of table headers only */
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 div.liste_titre {
 	padding-left: 3px;
 }
@@ -2756,6 +2810,11 @@ div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
+}
+div .tdtop {
+    vertical-align: top !important;
+	padding-top: 5px !important;
+	padding-bottom: 0px;
 }
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
@@ -2933,14 +2992,14 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #302010;
+  color: #303035;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFBF9A;
-  -moz-border-radius:3px;
-  -webkit-border-radius: 3px;
-  border-radius:3px;
-  background: #EFCFAA;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #EaE4Ea;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -4436,7 +4495,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-	.imgopensurveywizard { width:95%; height: auto; }
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 	
 	#tooltip {
 		position: absolute;

@@ -590,6 +590,7 @@ echo '</form>';
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
 
+echo '<div class="div-table-responsive">';
 echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
@@ -766,7 +767,7 @@ foreach ($usernames as $username)
 }
 
 echo "</table>\n";
-
+echo '</div>';
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {

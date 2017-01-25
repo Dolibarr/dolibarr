@@ -86,7 +86,7 @@ if ($filtre) {
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -121,7 +121,9 @@ if ($resql)
     
     print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
@@ -137,7 +139,7 @@ if ($resql)
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td></td>';
+	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -155,7 +157,7 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';
+		print '<td>'.$loan_static->getNomUrl(1, 42).'</td>';
 
 		// Label
 		print '<td>'.dol_trunc($obj->label,42).'</td>';
@@ -176,6 +178,7 @@ if ($resql)
 	}
 
     print "</table>";
+    print '</div>';
     print "</form>\n";
     $db->free($resql);
 }

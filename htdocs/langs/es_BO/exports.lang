@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - exports
+ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values

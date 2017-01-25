@@ -17,6 +17,7 @@
 --
 -- ============================================================================
 
+ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 ALTER TABLE llx_projet_task ADD INDEX idx_projet_task_fk_projet (fk_projet);
 ALTER TABLE llx_projet_task ADD INDEX idx_projet_task_fk_user_creat (fk_user_creat);

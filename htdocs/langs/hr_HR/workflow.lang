@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označi povezanu ponudu kao naplaćeno
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označi vezanu narudžbu(e) kupca naplaćeno kada je račun kupca postavljen kao plaćeno
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označi vezanu narudžbu(e) kupca naplaćeno kada je račun kupca postavljen kao ovjereno
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Označi povezanu ponudu kao naplaćeno kada je račun kupca ovjeren
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

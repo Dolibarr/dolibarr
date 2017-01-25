@@ -132,9 +132,9 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			
+			$cssclass="titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-			print '</div>';
 			print '</div>';
 			
 			dol_fiche_end();

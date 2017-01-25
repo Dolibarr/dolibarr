@@ -32,13 +32,13 @@ ECMDocsByProducts=Dokumenter i tilknytning til produkter
 ECMDocsByProjects=Documents linked to projects
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Nr. bibliotek skabt
 ShowECMSection=Vis mappe
 DeleteSection=Fjern mappe
-ConfirmDeleteSection=Kan du bekræfte, at du ønsker at slette den <b>mappe %s?</b>
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Relativ mappe for filer
 CannotRemoveDirectoryContainsFiles=Fjernes ikke muligt, fordi den indeholder nogle filer
 ECMFileManager=Filhåndtering
 ECMSelectASection=Vælg en mappe på venstre-træ ...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
-

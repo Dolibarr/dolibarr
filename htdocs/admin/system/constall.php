@@ -90,7 +90,8 @@ $configfileparameters=array(
                             '?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 							'separator',
 							'?dolibarr_mailing_limit_sendbyweb',
-							'?dolibarr_strict_mode'
+							'?dolibarr_mailing_limit_sendbycli',
+                            '?dolibarr_strict_mode'
 						);
 $configfilelib=array(
 //					'separator',

@@ -792,7 +792,7 @@ if ($rowid > 0)
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
-        $sql.= " ba.rowid as baid, ba.label, ba.bank";
+        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.accountancy_journal, ba.number";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -807,7 +807,7 @@ if ($rowid > 0)
             $num = $db->num_rows($result);
             $i = 0;
 
-            print "<table class=\"noborder\" width=\"100%\">\n";
+            print '<table class="noborder" width="100%">'."\n";
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Ref").'</td>';
@@ -841,6 +841,10 @@ if ($rowid > 0)
                     {
                         $accountstatic->label=$objp->label;
                         $accountstatic->id=$objp->baid;
+                        $accountstatic->number=$objp->number;
+                        $accountstatic->account_number=$objp->account_number;
+                        $accountstatic->accountancy_journal=$objp->accountancy_journal;
+                        $accountstatic->ref=$objp->ref;
                         print $accountstatic->getNomUrl(1);
                     }
                     else
@@ -1035,7 +1039,7 @@ if ($rowid > 0)
                 //print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
 
                 // No more action
-                print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
+                print '<tr><td class="tdtop fieldrequired">'.$langs->trans('MoreActions');
                 print '</td>';
                 print '<td>';
                 print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice)?' checked':'').'> '.$langs->trans("None").'<br>';

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Öryggisnúmer
-Calendar=Calendar
 NumberingShort=N°
 Tools=Verkfæri
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Shipping send með pósti
 Notify_MEMBER_VALIDATE=Member fullgilt
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=Member áskrift
-Notify_MEMBER_RESILIATE=Member resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Member eytt
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Heildarstærð meðfylgjandi skrá / gögn
 MaxSize=Hámarks stærð
 AttachANewFile=Hengja nýja skrá / skjal
 LinkedObject=Tengd mótmæla
-Miscellaneous=Ýmislegt
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Þetta er prófun póst. \\ NThe tvær línur eru aðskilin með vagn til baka.
 PredefinedMailTestHtml=Þetta er <b>prófun</b> póstur (orðið próf verður feitletruð). <br> Þessar tvær línur eru aðskilin með vagn til baka.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Útflutningur
 ExportsArea=Útflutningur area
 AvailableFormats=Laus snið
-LibraryUsed=Librairy notaður
-LibraryVersion=Útgáfa
+LibraryUsed=Bókasafn notaður
+LibraryVersion=Library version
 ExportableDatas=Exportable gögn
 NoExportableData=Nei exportable gögn (ekki einingum með exportable gögn hlaðinn eða vantar heimildir)
-NewExport=New útflutningur
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Titill
+WEBSITE_DESCRIPTION=Lýsing
 WEBSITE_KEYWORDS=Keywords

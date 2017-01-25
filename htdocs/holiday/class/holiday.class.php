@@ -36,7 +36,8 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'holiday';
+    
 	/**
 	 * @deprecated
 	 * @see id
@@ -126,7 +127,8 @@ class Holiday extends CommonObject
         // Check parameters
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-
+        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameter"; return -1; }
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
         $sql.= "fk_user,";
@@ -149,7 +151,7 @@ class Holiday extends CommonObject
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
-        $sql.= " '".$this->fk_type."',";
+        $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;
         $sql.= ")";
@@ -280,7 +282,7 @@ class Holiday extends CommonObject
 
         $sql = "SELECT";
         $sql.= " cp.rowid,";
-
+        
         $sql.= " cp.fk_user,";
         $sql.= " cp.date_create,";
         $sql.= " cp.description,";
@@ -785,7 +787,17 @@ class Holiday extends CommonObject
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-
+		if ($mode == 6)
+		{
+		    $pictoapproved='statut6';
+		    if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+		    if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+		    if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+		    if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+		    if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+		    if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+		}
+		
 		return $statut;
     }
 
@@ -849,25 +861,49 @@ class Holiday extends CommonObject
      *  Return value of a conf parameterfor leave module
      *  TODO Move this into llx_const table
      *
-     *  @param	string	$name       name of parameter
-     *  @return string      		value of parameter
+     *  @param	string	$name                 Name of parameter
+     *  @param  string  $createifnotfound     'stringvalue'=Create entry with string value if not found. For example 'YYYYMMDDHHMMSS'.
+     *  @return string      		          Value of parameter. Example: 'YYYYMMDDHHMMSS' or < 0 if error
      */
-    function getConfCP($name)
+    function getConfCP($name, $createifnotfound='')
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
-        $sql.= " WHERE name = '".$name."'";
+        $sql.= " WHERE name = '".$this->db->escape($name)."'";
 
-        dol_syslog(get_class($this).'::getConfCP name='.$name.'', LOG_DEBUG);
+        dol_syslog(get_class($this).'::getConfCP name='.$name.' createifnotfound='.$createifnotfound, LOG_DEBUG);
         $result = $this->db->query($sql);
 
-        // Si pas d'erreur
         if($result) {
 
-            $objet = $this->db->fetch_object($result);
-            // Retourne la valeur
-            return $objet->value;
-
+            $obj = $this->db->fetch_object($result);
+            // Return value
+            if (empty($obj))
+            {
+                if ($createifnotfound)
+                {
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
+                    $sql.= " VALUES('".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
+                    $result = $this->db->query($sql);
+                    if ($result) 
+                    {
+                        return $createifnotfound;
+                    }
+                    else 
+                    {
+                        $this->error=$this->db->lasterror();
+                        return -2;
+                    }
+                }
+                else
+                {
+                    return '';
+                }
+            }
+            else 
+            {
+                return $obj->value;
+            }
         } else {
 
             // Erreur SQL
@@ -896,11 +932,12 @@ class Holiday extends CommonObject
 			$now=dol_now();
 
             $month = date('m',$now);
-
+            $newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
+            
             // Get month of last update
-            $lastUpdate = $this->getConfCP('lastUpdate');
+            $lastUpdate = $this->getConfCP('lastUpdate', $newdateforlastupdate);
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;exit;
+			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
@@ -911,9 +948,8 @@ class Holiday extends CommonObject
 	            $nbUser = count($users);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-                $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
+                $sql.= " value = '".$this->db->escape($newdateforlastupdate)."'";
                 $sql.= " WHERE name = 'lastUpdate'";
-
                 $result = $this->db->query($sql);
 
 				$typeleaves=$this->getTypes(1,1);
@@ -1599,6 +1635,7 @@ class Holiday extends CommonObject
     	$this->date_fin=dol_now()+(24*3600);
     	$this->fk_validator=1;
     	$this->halfday=0;
+    	$this->fk_type=1;
     }
 
 }

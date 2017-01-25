@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Palikite tuščią, jei vartotojas neturi slaptažodžio (
 SaveConfigurationFile=Išsaugoti reikšmes
 ServerConnection=Serverio prisijungimas
 DatabaseCreation=Duomenų bazės sukūrimas
-UserCreation=Vartotojo sukūrimas
 CreateDatabaseObjects=Duomenų bazės objektų kūrimas
 ReferenceDataLoading=Nurodytų duomenų įkėlimas
 TablesAndPrimaryKeysCreation=Lentelių ir Pirminiai raktų kūrimas
@@ -133,12 +132,12 @@ MigrationFinished=Perkėlimas baigtas
 LastStepDesc=<strong>Paskutinis žingsnis</strong>: Nustatykite čia prisijungimo vardą ir slaptažodį, kuriuos planuojate naudoti prisijungimui prie programos. Nepameskite jų, nes tai yra administratoriaus, kuris administruoja visus kitus vartotojus, sąskaitos rekvizitai.
 ActivateModule=Įjungti modulį %s
 ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
-WarningUpgrade=Įspėjimas:\nAr Jūs pasidarėte duomenų bazės atsarginę kopiją ?\nTai labai rekomenduotina: pavyzdžiui, dėl kai kurių klaidų duomenų bazės sistemoje (pvz. mysql versija 5.5.40/41/42/43), kai kurie duomenys ar lentelės gali būti prarasti šio proceso metu, todėl, prieš pradedant perkėlimą primygtinai rekomenduojama pasidaryti pilną savo duomenų bazės kopiją.\nSpauskite OK, kad pradėti perkėlimo procesą ...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Jūsų duomenų bazės versija yra %s. Gali būti kritinė situacija su duomenų praradimu, jeigu pakeisite duomenų bazės struktūrą, kaip reikalaujama perkėlimo proceso metu. Šiuo tikslu perkėlimas nebus leidžiamas, kol nebus atliktas duomenų bazės programos atnaujinimas į aukštesnę versiją (žinomų klaidingų versijų sąrašas: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Jūs naudojate Dolibarr nustatymų vedlį iš DoliWamp, todėl čia siūlomos reikšmės jau yra optimizuotas. Juos keiskite tik, jeigu tikrai žinote, ką darote.
+KeepDefaultValuesDeb=Naudojate Dolibarr vedlį iš Linux paketo (Ubuntu, Debian, Fedora ...), todėl čia siūlomos reikšmės jau yra optimizuotos. Tik duomenų bazės savininko slaptažodis turi būti pilnai sukurtas. Keiskite kitus parametrus tik jei tikrai žinote, ką darote.
+KeepDefaultValuesMamp=Naudojate Dolibarr vedlį iš DoliMamp, todėl čia siūlomos reikšmės jau yra optimizuotos. Keiskite juos tik jei tikrai žinote, ką darote.
+KeepDefaultValuesProxmox=Naudojate Dolibarr vedlį iš Proxmox virtualaus prietaiso, todėl čia siūlomos reikšmės jau yra optimizuotos. keiskite juos tik jei tikrai žinote, ką darote.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Atidaryti sutartį, kuri buvo uždaryta per klaidą
 MigrationReopenThisContract=Iš naujo atidaryti sutartį %s
 MigrationReopenedContractsNumber=%s sutartys modifikuotos
 MigrationReopeningContractsNothingToUpdate=Nėra uždarytų sutarčių atidarymui
-MigrationBankTransfertsUpdate=Atnaujinti ryšius tarp banko operacijos ir banko pervedimo
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Visos sąsajos yra atnaujintos
 MigrationShipmentOrderMatching=Siuntimo kvito atnaujinimas
 MigrationDeliveryOrderMatching=Pristatymo kvito atnaujinimas

@@ -170,26 +170,46 @@ else
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<input type="hidden" name="action" value="update" />';
 
-    print '<table class="noborder" width="100%;">';
-    print "<tr class=\"liste_titre\">";
-    print '<td width="55%">'.$langs->trans('Employee').'</td>';
+    $moreforfilter='';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+    
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans('Employee'), $_SERVER["PHP_SELF"]);
     if (count($typeleaves))
     {
         foreach($typeleaves as $key => $val)
         {
-        	print '<td width="20%" style="text-align:center">'.$val['label'].'</td>';
+        	print '<th style="text-align:center">'.$val['label'].'</th>';
         }
     }
     else
     {
-        print '<td>'.$langs->trans("NoLeaveWithCounterDefined").'</td>';
+        print '<th>'.$langs->trans("NoLeaveWithCounterDefined").'</th>';
     }
-    print '<td width="20%" style="text-align:center">';
+    print '<th style="text-align:center">';
     if ($canedit) print $langs->trans('Note');
-    print '</td>';
-    print '<td></td>';
+    print '</th>';
+    print_liste_field_titre('');
     print '</tr>';
-
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre"></td>';
+    if (count($typeleaves))
+    {
+        foreach($typeleaves as $key => $val)
+        {
+            print '<td class="liste_titre" style="text-align:center"></td>';
+        }
+    }
+    else
+    {
+        print '<td class="liste_titre"></td>';
+    }
+    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre"></td>';
+    print '</tr>';
+    
     foreach($listUsers as $users)
     {
         $var=!$var;
@@ -200,7 +220,9 @@ else
             if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
         }
         
-        print '<tr '.$bc[$var].' style="height: 20px;">';
+        print '<tr '.$bc[$var].'>';
+        
+        // User
         print '<td>';
         $userstatic->id=$users['rowid'];
         $userstatic->lastname=$users['lastname'];
@@ -212,6 +234,7 @@ else
         print $userstatic->getNomUrl(-1);
         print '</td>';
 
+        // Amount for each type
         if (count($typeleaves))
         {
         	foreach($typeleaves as $key => $val)
@@ -229,8 +252,10 @@ else
         {
             print '<td></td>';
         }
+        
+        // Note
         print '<td style="text-align:center">';
-        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
         print '</td>';
         print '<td>';
         if (! empty($user->rights->holiday->define_holiday))
@@ -244,7 +269,7 @@ else
     }
 
     print '</table>';
-
+    print '</div>';
     print '</form>';
 }
 

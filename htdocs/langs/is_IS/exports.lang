@@ -26,8 +26,6 @@ FieldTitle=Field titill
 NowClickToGenerateToBuildExportFile=Nú, veldu skráarsnið í fellilistanum og smella á "Búa" að byggja útflutningur skrá ...
 AvailableFormats=Laus snið
 LibraryShort=Bókasafn
-LibraryUsed=Bókasafn notaður
-LibraryVersion=Útgáfa
 Step=Skref
 FormatedImport=Import assistant
 FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
@@ -87,7 +85,7 @@ TooMuchWarnings=Það er <b>enn %s </b> aðrar línur fengið með varnaðarorð
 EmptyLine=Tóm línu (verður fleygt)
 CorrectErrorBeforeRunningImport=Þú verður fyrst að leiðrétta allar villur áður en þú endanlega flutt.
 FileWasImported=Skrá var flutt með <b>%s</b> tala.
-YouCanUseImportIdToFindRecord=Þú getur fundið allar innfluttar færslur í gagnagrunninum með því að sía á <b>import_key sviði %s  = '.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Fjöldi lína með engar villur og engar <b>viðvaranir: %s .</b>
 NbOfLinesImported=Fjöldi lína flutt með góðum <b>árangri: %s .</b>
 DataComeFromNoWhere=Gildi til að setja inn koma frá hvergi í skrá uppspretta.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Seperated Gildi</b> skráarsnið (. Csv). <br> Þetta er 
 Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Options
 Separator=Separator
 Enclosure=Enclosure

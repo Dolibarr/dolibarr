@@ -26,8 +26,6 @@ FieldTitle=Naziv polja
 NowClickToGenerateToBuildExportFile=Sada selektirajte format fajla u listi i kliknite na "Generiši" kako biste napravili eksport fajl...
 AvailableFormats=Dostupni formati
 LibraryShort=Biblioteka
-LibraryUsed=Korišćena biblioteka
-LibraryVersion=Verzija
 Step=Korak
 FormatedImport=Asistent importa
 FormatedImportDesc1=Ovde možete importovati personalizovane podake, koristeći asistenta koji će Vam pomoći u tom procesu i bez tehničkog znanja.
@@ -87,7 +85,7 @@ TooMuchWarnings=Postoji još <b>%s</b> izvornih linija sa upozorenjima, ali je n
 EmptyLine=Prazna linija (biće preskočena)
 CorrectErrorBeforeRunningImport=Prvo morate ispraviti sve greške pre nego što pokrenete definitivni import.
 FileWasImported=Fajl je importovan sa brojem <b>%s</b>.
-YouCanUseImportIdToFindRecord=Možete pronaći sve importovane podatke u bazi filtrirajući po polju <b>import_key='%s'</b>.
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Broj linija bez grešaka i upozorenja: <b>%s</b>.
 NbOfLinesImported=Broj uspešno importovanih linija: <b>%s</b>.
 DataComeFromNoWhere=Vrednost ne dolazi iz izvornog fajla.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> format (.csv)<br>Ovo je tekst fajl gd
 Excel95FormatDesc=<b>Excel</b> format (.xls)<br>Ovo je osnovni Excel 95 format (BIFF5)
 Excel2007FormatDesc=<b>Excel</b> format (.xslx)<br>Ovo je osnovni Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> format (.tsv)<br>Ovo je tekstualni format gde su polja razdvojena tabom.
-ExportFieldAutomaticallyAdded=Polje <b>%s</b> je automatski dodato. Ovo će sprečiti da slične linije budu tretirane kao duplikati (sa ovim dodatnim poljem, svaka linija će imati svoj sopstveni id i biće različite).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv opcije
 Separator=Separator
 Enclosure=Enclosure

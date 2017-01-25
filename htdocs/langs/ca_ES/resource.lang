@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Recursos
 MenuResourceAdd=Nou recurs
-DeleteResource=Eliminar recurs
+DeleteResource=Elimina recurs
 ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
 NoResourceInDatabase=Sense recursos a la base de dades.
 NoResourceLinked=Sense recursos enllaçats

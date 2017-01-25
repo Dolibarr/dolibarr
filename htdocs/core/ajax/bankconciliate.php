@@ -51,8 +51,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 {
 	// Increase date
 	$al = new AccountLine($db);
-    $al->datev_next($_GET["rowid"]);
-    $al->fetch($_GET["rowid"]);
+    $al->datev_next(GETPOST('rowid','int'));
+    $al->fetch(GETPOST('rowid','int'));
 
     print '<span>'.dol_print_date($db->jdate($al->datev),"day").'</span>';
 
@@ -63,8 +63,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 {
 	// Decrease date
 	$al =new AccountLine($db);
-    $al->datev_previous($_GET["rowid"]);
-    $al->fetch($_GET["rowid"]);
+    $al->datev_previous(GETPOST('rowid','int'));
+    $al->fetch(GETPOST('rowid','int'));
 
     print '<span>'.dol_print_date($db->jdate($al->datev),"day").'</span>';
 

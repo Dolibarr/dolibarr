@@ -26,8 +26,6 @@ FieldTitle=pole tytuł
 NowClickToGenerateToBuildExportFile=Teraz wybierz format pliku z listy rozwijanej i  kliknij na "Generuj" w celu wygenerowania pliku eksportu...
 AvailableFormats=Dostępne formaty
 LibraryShort=Biblioteka
-LibraryUsed=Librairie
-LibraryVersion=Wersja
 Step=Krok
 FormatedImport=Asystent importu
 FormatedImportDesc1=Obszar ten pozwala importować spersonalizowane dane za pomocą asystenta, który pomoże osobą bez wiedzy technicznej w procesie.
@@ -87,7 +85,7 @@ TooMuchWarnings=Nadal <b>%s</b> inne linie z ostrzeżeniami, ale wyjście jest n
 EmptyLine=Pusty wiersz (zostanie odrzucona)
 CorrectErrorBeforeRunningImport=Najpierw musisz poprawić wszystkie błędy zanim uruchomisz ostatecznie import.
 FileWasImported=Plik został przywieziony z <b>%s</b> numerycznych.
-YouCanUseImportIdToFindRecord=Możesz znaleźć wszystkie importowane rekordy w bazie danych przez filtrowanie <b>import_key</b> pole <b>= &quot;%s&quot;.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Liczba linii bez błędów i żadnych ostrzeżeń: <b>%s.</b>
 NbOfLinesImported=Liczba linii zaimportowany: <b>%s.</b>
 DataComeFromNoWhere=Wartości, aby dodać pochodzi z nigdzie w pliku źródłowym.
@@ -105,7 +103,7 @@ CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br
 Excel95FormatDesc=Format pliku <b>Excel</b> (.xls) <br> To jest natywny format programu Excel 95 (BIFF5).
 Excel2007FormatDesc=Format pliku <b>Excel</b> (xlsx) <br> To jest w formacie Excel 2007 rodzimych (SpreadsheetML).
 TsvFormatDesc=<b>Tab separacji</b> format <b>Wartość</b> (.tsv) <br> Jest to format pliku tekstowego, gdzie pola są oddzielone tabulator [TAB].
-ExportFieldAutomaticallyAdded=<b>Pole% s</b> został automatycznie dodany. Będzie unikać, aby mieć podobne linie mają być traktowane jako zduplikowanych rekordów (w tym polu dodał, wszystkie linie będzie posiadać swój własny identyfikator i będą się różnić).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Opcje csv
 Separator=Separator
 Enclosure=Ogrodzenie

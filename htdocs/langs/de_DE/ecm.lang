@@ -32,13 +32,13 @@ ECMDocsByProducts=Mit Produkten verknüpfte Dokumente
 ECMDocsByProjects=Mit Projekten verknüpfte Dokumente
 ECMDocsByUsers=Mit Benutzern verknüpfte Dokumente
 ECMDocsByInterventions=Mit Serviceaufträgen verknüpfte Dokumente
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Noch kein Ordner erstellt
 ShowECMSection=Ordner anzeigen
 DeleteSection=Verzeichnis löschen
-ConfirmDeleteSection=Möchten Sie das Verzeichnis <b>%s</b> wirklich löschen?
+ConfirmDeleteSection=Möchten Sie dieses Verzeichnis <b>%s</b> wirklich löschen?
 ECMDirectoryForFiles=Relatives Verzeichnis für Dateien
 CannotRemoveDirectoryContainsFiles=Entfernen des Ordners nicht möglich, da dieser noch Dateien enthält
 ECMFileManager=Dateiverwaltung
 ECMSelectASection=Wähle einen Ordner aus der Baumansicht links ...
 DirNotSynchronizedSyncFirst=Dieses Verzeichnis scheint außerhalb des ECM Moduls erstellt oder verändert worden zu sein. Sie müssten auf den "Aktualisieren"-Button klicken, um den Inhalt der Festplatte mit der Datenbank zu synchronisieren.
-

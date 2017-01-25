@@ -331,16 +331,40 @@ class ExtraFields
 
 		$table=$elementtype.'_extrafields';
 
+		$error=0;
+		
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
+			$result=$this->delete_label($attrname,$elementtype);
 			if ($result < 0)
 			{
-				$this->error=$this->db->lasterror();
+			    $this->error=$this->db->lasterror();
+			    $error++;
 			}
 
-			$result=$this->delete_label($attrname,$elementtype);
-
+			if (! $error)
+			{
+        		$sql = "SELECT COUNT(rowid) as nb";
+        		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
+        		$sql.= " WHERE elementtype = '".$elementtype."'";
+        		$sql.= " AND name = '".$attrname."'";
+        		//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
+                $resql = $this->db->query($sql);
+                if ($resql)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($obj->nb <= 0)
+                    {
+            			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
+            			if ($result < 0)
+            			{
+            				$this->error=$this->db->lasterror();
+            				$error++;
+            			}
+                    }
+                }
+			}
+			
 			return $result;
 		}
 		else
@@ -660,7 +684,7 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 *
 	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Value to show (for date type it must be in timestamp format)
+	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format)
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -668,7 +692,7 @@ class ExtraFields
 	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
-	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0, $objectid=0)
+	function showInputField($key, $value, $moreparam='', $keyprefix='', $keysuffix='', $showsize=0, $objectid=0)
 	{
 		global $conf,$langs;
 
@@ -747,7 +771,7 @@ class ExtraFields
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+            $out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
@@ -756,7 +780,7 @@ class ExtraFields
 		elseif ($type == 'text')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor($keysuffix.'options_'.$key.$keyprefix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
+			$doleditor=new DolEditor($keysuffix.'options_'.$key.$keyprefix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
 			$out=$doleditor->Create(1);
 		}
 		elseif ($type == 'boolean')
@@ -771,7 +795,7 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.price2num($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
@@ -1163,10 +1187,17 @@ class ExtraFields
 			dol_include_once($InfoFieldList[1]);
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
-                $object = new $InfoFieldList[0]($this->db);
-                if (!empty($value)) $object->fetch($value);
-                $valuetoshow=$object->ref;
-                if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
+			    $valuetoshow=$value;
+                if (!empty($value)) 
+                {
+                    $object = new $InfoFieldList[0]($this->db);
+                    $resfetch=$object->fetch($value);
+                    if ($resfetch > 0) 
+                    {
+                        $valuetoshow=$object->ref;
+                        if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
+                    }
+                }
                 $out.='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$valuetoshow.'" >';
 			}
 			else

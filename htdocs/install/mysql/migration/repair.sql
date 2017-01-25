@@ -17,7 +17,14 @@
 
 -- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
--- You can check with show full columns from llx_accountingaccount;
+-- You can check with "show full columns from llx_accountingaccount";
+
+
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
 
 
 
@@ -134,6 +141,10 @@ delete from llx_element_element where sourcetype='shipping' and fk_source not in
 delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
 delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
 delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
+
+
+-- Fix: delete orphelin actioncomm_resources
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
@@ -293,4 +304,20 @@ create table tmp_c_shipment_mode as (select code, tracking from llx_c_shipment_m
 DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking != '') AND (tracking IS NULL OR tracking = '');
 drop table tmp_c_shipment_mode;
 
+
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_fin = date_debut where DATE(STR_TO_DATE(date_fin, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_fin = date_debut where DATE(STR_TO_DATE(date_fin, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport set date_valid = date_fin where DATE(STR_TO_DATE(date_valid, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_expensereport set date_valid = date_fin where DATE(STR_TO_DATE(date_valid, '%Y-%m-%d')) IS NULL;
 

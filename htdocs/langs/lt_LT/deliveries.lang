@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Pristatymas
 DeliveryRef=Ref Delivery
-DeliveryCard=Pristatymo kortelė
+DeliveryCard=Receipt card
 DeliveryOrder=Pristatymo užsakymas
 DeliveryDate=Pristatymo data
-CreateDeliveryOrder=Sukurti pristatymo užsakymą
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Nustatyti pakrovimo datą
 ValidateDeliveryReceipt=Patvirtinti pristatymo kvitą
-ValidateDeliveryReceiptConfirm=Ar tikrai norite patvirtinti šitą pristatymo kvitą ?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Ištrinti pristatymo kvitą
-DeleteDeliveryReceiptConfirm=Ar tikrai norite ištrinti pristatymo kvitą <b>%s</b> ?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Pristatymo būdas
 TrackingNumber=Sekimo numeris
 DeliveryNotValidated=Pristatymas nepatvirtintas
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Atšauktas
+StatusDeliveryDraft=Projektas
+StatusDeliveryValidated=Gautas
 # merou PDF model
 NameAndSignature=Vardas, Pavardė ir parašas:
 ToAndDate=Kam___________________________________ nuo ____ / _____ / __________

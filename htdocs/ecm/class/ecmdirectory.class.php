@@ -23,8 +23,7 @@
  */
 
 /**
- *  \class      EcmDirectory
- *  \brief      Class to manage ECM directories
+ *  Class to manage ECM directories
  */
 class EcmDirectory // extends CommonObject
 {

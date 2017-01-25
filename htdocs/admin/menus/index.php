@@ -71,7 +71,7 @@ if ($action == 'up')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -89,11 +89,11 @@ if ($action == 'up')
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId","int")."))";
+	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
+	$sql.= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
 	$sql.= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -127,7 +127,7 @@ elseif ($action == 'down')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -145,11 +145,11 @@ elseif ($action == 'down')
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId","int")."))";
+	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
+	$sql.= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
 	$sql.= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -180,7 +180,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql.= " WHERE rowid = ".$_GET['menuId'];
+	$sql.= " WHERE rowid = ".GETPOST('menuId','int');
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -245,11 +245,11 @@ if ($action == 'delete')
 {
 	$sql = "SELECT m.titre";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET['menuId'];
+	$sql.= " WHERE m.rowid = ".GETPOST('menuId','int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId','int'),$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
 }
 
 
@@ -298,7 +298,7 @@ if ($conf->use_javascript_ajax)
 
 	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.module";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
+	$sql.= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND entity = ".$conf->entity;
 	//$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
