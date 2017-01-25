@@ -3330,20 +3330,42 @@ class Product extends CommonObject
 	 * 	@param		string	$label			Label of stock movement
 	 * 	@param		double	$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *  @param		string	$inventorycode	Inventory code
+	 *	@param		string	$origin_element	Origin element type
+	 *	@param		int		$origin_id		Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
+	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='', $origin_element='', $origin_id=0)
 	{
 		if ($id_entrepot)
 		{
 			$this->db->begin();
 
+			if ($movement == 1)
+			{
+				// If remove stock then it save the actual PMP as price (the new calculation of PMP is triggered only on $movement = 0 || 3
+				$price = $this->pmp;
+			}
+			
 			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
+			
+			if (!empty($origin_element) && $origin_id > 0)
+			{
+				$origin='';
+				if ($origin_element == 'project') $origin = new Project($db);
+				
+				if (!empty($origin))
+				{
+					$movementstock->origin = $origin;
+					$movementstock->origin->id = $origin_id;
+				}
+				
+			}
+			
 			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode);
 
 			if ($result >= 0)
@@ -3375,9 +3397,11 @@ class Product extends CommonObject
 	 * 	@param		date	$dluo			sell-by date
 	 * 	@param		string	$lot			Lot number
 	 *  @param		string	$inventorycode	Inventory code
+	 *	@param		string	$origin_element	Origin element type
+	 *	@param		int		$origin_id		Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='')
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='', $origin_element='', $origin_id=0)
 	{
 		if ($id_entrepot)
 		{
@@ -3389,6 +3413,20 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
+			
+			if (!empty($origin_element) && $origin_id > 0)
+			{
+				$origin='';
+				if ($origin_element == 'project') $origin = new Project($db);
+				
+				if (!empty($origin))
+				{
+					$movementstock->origin = $origin;
+					$movementstock->origin->id = $origin_id;
+				}
+				
+			}
+			
 			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode,'',$dlc,$dluo,$lot);
 
 			if ($result >= 0)
