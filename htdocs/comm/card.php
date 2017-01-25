@@ -484,24 +484,28 @@ if ($id > 0)
 	    print '</tr></table>';
 	    print '</td><td>';
 	    if ($action == 'editlevel')
+	    {
 	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
-	        else
-	            print $object->getLibProspLevel();
-	            print "</td>";
-	            print '</tr>';
-	
-	            // Status
-	            $object->loadCacheOfProspStatus();
-	            print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
-	            print ' &nbsp; &nbsp; ';
-	            print '<div class="floatright">';
-	            foreach($object->cacheprospectstatus as $key => $val)
-	            {
-	                $titlealt='default';
-	                if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
-	                if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
-	            }
-	            print '</div></td></tr>';
+	    }
+	    else
+	    {
+	        print $object->getLibProspLevel();
+	    }
+        print "</td>";
+        print '</tr>';
+
+        // Status
+        $object->loadCacheOfProspStatus();
+        print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+        print ' &nbsp; &nbsp; ';
+        print '<div class="floatright">';
+        foreach($object->cacheprospectstatus as $key => $val)
+        {
+            $titlealt='default';
+            if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+            if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
+        }
+        print '</div></td></tr>';
 	   print "</table>";
 	}
 	
@@ -575,7 +579,7 @@ if ($id > 0)
     	$warn = '';
     	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
     	{
-    	    $warn = img_warning($langs->trans("OutstandingBillReached"));
+    	    $warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
     	}
     	$text=$langs->trans("CurrentOutstandingBill");
     	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
@@ -583,7 +587,7 @@ if ($id > 0)
     	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
     	$boxstat.='<div class="boxstats">';
     	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened).$warn.'</span>';
+    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
     	$boxstat.='</div>';
     	if ($link) $boxstat.='</a>';
 	}
