@@ -2121,7 +2121,7 @@ abstract class CommonObject
 
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
-    	$sql.= " ,fk_user_modif=".$user->id;
+    	$sql.= " ,".($this->table_element == 'adherent'?"fk_user_mod":"fk_user_modif")."=".$user->id;
     	$sql.= " WHERE rowid =". $this->id;
 
     	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
