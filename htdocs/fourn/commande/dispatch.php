@@ -6,6 +6,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry         <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2010      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -368,7 +369,7 @@ if ($id > 0 || ! empty($ref)) {
 		print "</td></tr>";
 
 		if ($object->methode_commande) {
-			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $commande->getInputMethod() . '</td></tr>';
+			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->getInputMethod() . '</td></tr>';
 		}
 	}
 
