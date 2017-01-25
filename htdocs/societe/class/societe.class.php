@@ -3341,11 +3341,15 @@ class Societe extends CommonObject
 	/**
 	 *  Return amount of order not paid and total
 	 *
-	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @return    array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingProposals()
+	function getOutstandingProposals($mode='customer')
 	{
-	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX."propal as f";
+	    $table='propal';
+	    if ($mode == 'supplier') $table = 'supplier_proposal';
+	    
+	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
 	    $sql .= " WHERE fk_soc = ". $this->id;
 
 	    dol_syslog("getOutstandingProposals", LOG_DEBUG);
@@ -3372,11 +3376,15 @@ class Societe extends CommonObject
 	/**
 	 *  Return amount of order not paid and total
 	 *
+	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingOrders()
+	function getOutstandingOrders($mode='customer')
 	{
-	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX."commande as f";
+	    $table='commande';
+	    if ($mode == 'supplier') $table = 'commande_fournisseur';
+	     
+	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
 	    $sql .= " WHERE fk_soc = ". $this->id;
 
 	    dol_syslog("getOutstandingOrders", LOG_DEBUG);
@@ -3403,10 +3411,14 @@ class Societe extends CommonObject
 	/**
 	 *  Return amount of bill not paid and total
 	 *
+	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingBills()
+	function getOutstandingBills($mode='customer')
 	{
+	    $table='facture';
+	    if ($mode == 'supplier') $table = 'facture_fourn';
+	     
 	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
 	     $paiement = $invoice->getSommePaiement();
 	     $creditnotes=$invoice->getSumCreditNotesUsed();
@@ -3414,7 +3426,8 @@ class Societe extends CommonObject
 	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 	     */
-	    $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX."facture as f";
+	    if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+	    else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 	    $sql .= " WHERE fk_soc = ". $this->id;
 
 	    dol_syslog("getOutstandingBills", LOG_DEBUG);
@@ -3424,8 +3437,16 @@ class Societe extends CommonObject
 	        $outstandingOpened = 0;
 	        $outstandingTotal = 0;
 	        $outstandingTotalIncTax = 0;
-	        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	        $tmpobject=new Facture($this->db);
+	        if ($mode == 'supplier')
+	        {
+	            require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	            $tmpobject=new FactureFournisseur($this->db);
+	        }
+	        else
+	        {
+	           require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	           $tmpobject=new Facture($this->db);
+	        }
 	        while($obj=$this->db->fetch_object($resql)) {
 	            $tmpobject->id=$obj->rowid;
 	            if ($obj->fk_statut != 0                                           // Not a draft

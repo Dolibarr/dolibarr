@@ -88,6 +88,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
+	
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -124,6 +125,65 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
+	/**
+	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	function getSumCreditNotesUsed($multicurrency=0)
+	{
+	    if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+	    {
+	        // TODO
+	       return 0;     
+	    }
+	    
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+	
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+	
+	/**
+	 *    	Return amount (with tax) of all deposits invoices used by invoice
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
+	 */
+	function getSumDepositsUsed($multicurrency=0)
+	{
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+	    {
+	        // TODO
+	       return 0;     
+	    }
+	    
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+	
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumDepositsUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+	
+	
 	/**
 	 *	Renvoie tableau des ids de facture avoir issus de la facture
 	 *
