@@ -468,7 +468,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
 
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
-				if ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
+				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -487,7 +487,7 @@ foreach ($listofreferent as $key => $value)
 				$total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
-				if ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
+				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
 					$defaultvat = get_default_tva($mysoc, $mysoc);
