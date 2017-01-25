@@ -3340,6 +3340,12 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
+			if ($movement == 1)
+			{
+				// If remove stock then it save the actual PMP as price (the new calculation of PMP is triggered only on $movement = 0 || 3
+				$price = $this->pmp;
+			}
+			
 			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
 			$op[0] = "+".trim($nbpiece);

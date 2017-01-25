@@ -46,6 +46,7 @@ $langs->load("stocks");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -376,6 +377,7 @@ $sql.= " ".MAIN_DB_PREFIX."product as p,";
 $sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " WHERE m.fk_product = p.rowid";
+if ($msid) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
@@ -438,6 +440,7 @@ if ($resql)
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans("ListOfStockMovements");
     if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+	if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
     llxHeader("",$texte,$help_url);
 
     /*

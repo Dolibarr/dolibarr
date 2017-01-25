@@ -19,6 +19,7 @@ Movements=Mouvements
 ErrorWarehouseRefRequired=Le nom de référence de l'entrepôt est obligatoire
 ListOfWarehouses=Liste des entrepôts
 ListOfStockMovements=Liste des mouvements de stock
+StockMovementForId=Mouvement ID %d
 StocksArea=Espace entrepôts
 Location=Lieu
 LocationSummary=Nom court du lieu
