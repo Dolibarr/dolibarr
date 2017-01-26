@@ -2,6 +2,7 @@
 SecurityCode=Codi de seguretat
 NumberingShort=N°
 Tools=Utilitats
+TMenuTools=Utilitats
 ToolsDesc=Totes les útilitats vàries no incloses en altres entrades de menú estan recollides aquí.<br /><br />Totes les utilitats es poden trobar en el menú de l'esquerra.
 Birthday=Aniversari
 BirthdayDate=Data d'aniversari

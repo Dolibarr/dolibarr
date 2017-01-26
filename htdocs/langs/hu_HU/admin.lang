@@ -10,6 +10,9 @@ VersionUnknown=Ismeretlen
 VersionRecommanded=Ajánlott
 FileCheck=Files integrity checker
 FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified of removed.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
@@ -276,7 +279,7 @@ ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Menü kezelők
 MenuAdmin=Menüszerkesztő
 DoNotUseInProduction=Ne használd élesben
-ThisIsProcessToFollow=A következő beállítási folyamat:
+ThisIsProcessToFollow=This is steps to process:
 ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
 StepNb=%s lépés
 FindPackageFromWebSite=Keressen olyan csomag, amely biztosítja a kívánt funkciót (például a hivatalos honlapján %s).
@@ -411,6 +414,7 @@ ModuleCompanyCodePanicum=Vissza az üres számviteli kódot.
 ModuleCompanyCodeDigitaria=Számviteli kód attól függ, hogy harmadik fél kódot. A kód áll a karakter &quot;C&quot;-ben az első helyen, majd az első 5 karakter a harmadik fél kódot.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
 
 # Modules
 Module0Name=Felhasználók és csoportok
@@ -515,8 +519,8 @@ Module2200Name=Dinamikus árak
 Module2200Desc=Matematikai kifejezések engedélyezése az árak meghatározásához
 Module2300Name=Cron
 Module2300Desc=Scheduled job management
-Module2400Name=Agenda/Events
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Elektronikus Tartalom Kezelő
 Module2500Desc=Mentés és dokumentumok megosztása
 Module2600Name=API/Web szolgáltatások (SOAP szerver)
@@ -582,7 +586,7 @@ Permission34=Törlés termékek
 Permission36=Lásd / kezelhetik rejtett termékek
 Permission38=Export termékek
 Permission41=Read projects and tasks (shared project and projects i'm contact for). Can also enter time consumed on assigned tasks (timesheet)
-Permission42=Létrehozza / módosítja projektek (közös projekt és a projektek vagyok contact)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Törlés projektek (közös projekt és a projektek vagyok contact)
 Permission45=Export projects
 Permission61=Olvassa beavatkozások
@@ -685,7 +689,7 @@ PermissionAdvanced253=Létrehozza / módosítja belső / külső felhasználók 
 Permission254=Létrehozása / módosítása csak a külső felhasználók számára
 Permission255=Módosíthat más felhasználó jelszavát
 Permission256=Törlése vagy tiltsa le más felhasználók
-Permission262=Hosszabbítsa hozzáférés minden harmadik fél (nem csak a kapcsolódó felhasználó). Nem hatékony a külső felhasználók (mindig csak magukat).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Olvassa CA
 Permission272=Olvassa számlák
 Permission273=Számlák kibocsátása
@@ -994,7 +998,7 @@ TriggerAlwaysActive=Triggerek ebben a fájlban mindig aktív, függetlenül az a
 TriggerActiveAsModuleActive=Triggerek ebben a fájlban vannak aktív <b>%s</b> modul engedélyezve van.
 GeneratedPasswordDesc=Határozza meg itt, hogy melyik szabályt kívánja használni, hogy új jelszót, ha kéred, hogy automatikusan generált jelszó
 DictionaryDesc=Insert all reference data. You can add your values to the default.
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=Korlátok / Precision beállítás
 LimitsDesc=Megadhatjuk, korlátok, pontosítást és optimalizálás által használt Dolibarr itt
@@ -1471,6 +1475,8 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
@@ -1571,7 +1577,7 @@ BackupDumpWizard=Wizard to build database backup dump file
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1614,8 +1620,8 @@ ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=Ön a legújabb stabil verziót használja!
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

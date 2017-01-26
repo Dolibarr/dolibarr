@@ -2,6 +2,7 @@
 SecurityCode=Κωδικός ασφαλείας
 NumberingShort=N°
 Tools=Εργαλεία
+TMenuTools=Εργαλεία
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=Γενέθλια
 BirthdayDate=Ημερομηνία γενεθλίων

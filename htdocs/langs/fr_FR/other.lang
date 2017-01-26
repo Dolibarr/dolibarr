@@ -2,6 +2,7 @@
 SecurityCode=Code de sécurité
 NumberingShort=N°
 Tools=Outils
+TMenuTools=Outils
 ToolsDesc=Cet espace est dédié au regroupement d'outils divers non disponibles dans les autres entrées du menu.<br><br>La liste de ces outils est accessible par le menu sur le côté.
 Birthday=Anniversaire
 BirthdayDate=Date anniversaire

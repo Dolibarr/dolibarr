@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
+VATRefund=Sales tax refund Refund
 SalesTurnover=Chiffre d'affaires des ventes
 Dispatched=Envoyé
 ToDispatch=Envoyer
-AddExtraReport=Extra reports

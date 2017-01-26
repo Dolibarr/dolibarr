@@ -43,6 +43,7 @@ LoanCalcDesc=Mit diesem <b>Hypothek Rechner</b> kann die monatliche Belastung, b
 GoToInterest=%s wird in Richtung ZINSEN gehen
 GoToPrincipal=%s wird in Richtung HAUPT gehen
 YouWillSpend=Sie werden %s im Jahr %s bezahlen
+ListLoanAssociatedProject=List of loan associated with the project
 # Admin
 ConfigLoan=Konfiguration des Modul Kredite
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default

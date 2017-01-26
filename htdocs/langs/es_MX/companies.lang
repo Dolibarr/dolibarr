@@ -2,9 +2,7 @@
 ErrorCompanyNameAlreadyExists=El nombre de la empresa %s ya existe. Elige uno diferente.
 ErrorSetACountryFirst=Ajusta primero el país
 SelectThirdParty=Selecciona un tercero
-ConfirmDeleteCompany=¿Seguro que quieres eliminar esta empresa y toda la información relacionada?
 DeleteContact=Eliminar un contacto/dirección
-ConfirmDeleteContact=¿Seguro que quieres eliminar este contacto y toda la información relacionada?
 CreateDolibarrThirdPartySupplier=Crear tercero (proveedor)
 IdThirdParty=ID de tercero
 IdCompany=ID de empresa
@@ -152,5 +150,5 @@ LeopardNumRefModelDesc=El código es libre. Este código puede ser modificado en
 ManagingDirectors=Administrador(es) (CEO, Director, Presidente...)
 MergeOriginThirdparty=Tercero duplicado (tercero que deseas eliminar)
 MergeThirdparties=Combinar terceros
-ConfirmMergeThirdparties=¿Seguro que deseas combinar este tercero con el actual? Todos los objetos vinculados (facturas, pedidos, ...) serán trasladados al tercero actual por lo que será capaz de eliminar el duplicado.
 ThirdpartiesMergeSuccess=Los terceros han sido combinados.
+ErrorThirdpartiesMerge=Hubo un error al eliminar los terceros. Por favor compruebe el log. Los cambios han sido revertidos.

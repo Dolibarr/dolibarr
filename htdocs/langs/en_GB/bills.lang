@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace completely an invoice with no payment already received.<br><br>Note: Only an invoice with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
+ErrorVATIntraNotConfigured=Intracommunitary VAT number not yet defined
+EscompteOffered=Dscnt.offered (pay.befor.term)
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
 ChequeNumber=Cheque N°

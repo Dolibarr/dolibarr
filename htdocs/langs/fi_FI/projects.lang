@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=Uusi tehtävä
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Toiminto
 Activities=Tehtävät / toiminnot
 MyActivities=Omat tehtävät / toiminnot

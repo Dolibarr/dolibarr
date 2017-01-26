@@ -2,6 +2,7 @@
 SecurityCode=Sicherheitsschlüssel
 NumberingShort=Nr.
 Tools=Hilfsprogramme
+TMenuTools=Hilfsprogramme
 ToolsDesc=Alle sonstigen Hilfsprogramme, die nicht in anderen Menü-Einträgen enthalten sind, werden hier zusammengefasst. <br /><br />Alle Hilfsprogramme können über das linke Menü erreicht werden.
 Birthday=Geburtstag
 BirthdayDate=Geburtstag

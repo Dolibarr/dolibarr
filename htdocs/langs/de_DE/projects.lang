@@ -58,6 +58,7 @@ TaskDateEnd=Enddatum der Aufgabe
 TaskDescription=Aufgaben-Beschreibung
 NewTask=Neue Aufgabe
 AddTask=Aufgabe erstellen
+AddTimeSpent=Create time spent
 Activity=Tätigkeit
 Activities=Aufgaben/Tätigkeiten
 MyActivities=Meine Aufgaben/Tätigkeiten
