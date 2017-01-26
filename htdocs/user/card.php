@@ -752,9 +752,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
 	// Employee
+    $defaultemployee=1;
     print '<tr>';
-    print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(GETPOST('employee')?GETPOST('employee'):0),1);
+    print '<td>'.$langs->trans('Employee').'</td><td>';
+    print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
     print '</td></tr>';
 
     // Position/Job

@@ -1372,7 +1372,7 @@ class Form
      *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
+     *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
@@ -1396,24 +1396,20 @@ class Form
         $includeUsers=null;
 
         // Permettre l'exclusion d'utilisateurs
-        if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
+        if (is_array($exclude))	$excludeUsers = implode(",",$exclude);
         // Permettre l'inclusion d'utilisateurs
-        if (is_array($include))	$includeUsers = implode("','",$include);
+        if (is_array($include))	$includeUsers = implode(",",$include);
 		else if ($include == 'hierarchy')
 		{
 			// Build list includeUsers to have only hierarchy
-			$userid=$user->id;
-			$include=array();
-			if (empty($user->users) || ! is_array($user->users)) $user->get_full_tree();
-			foreach($user->users as $key => $val)
-			{
-				if (preg_match('/_'.$userid.'/',$val['fullpath'])) $include[]=$val['id'];
-			}
-			$includeUsers = implode("','",$include);
-			//var_dump($includeUsers);exit;
-			//var_dump($user->users);exit;
+			$includeUsers = implode(",",$user->getAllChildIds(0));
 		}
-
+		else if ($include == 'hierarchyme')
+		{
+		    // Build list includeUsers to have only hierarchy and current user
+		    $includeUsers = implode(",",$user->getAllChildIds(1));
+		}
+		
         $out='';
 
         // On recherche les utilisateurs
@@ -1443,8 +1439,8 @@ class Form
         	}
         }
         if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
-        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
-        if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
+        if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
         if (! empty($morefilter)) $sql.=" ".$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
