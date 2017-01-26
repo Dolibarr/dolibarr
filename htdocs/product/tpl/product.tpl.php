@@ -253,7 +253,7 @@
     ?>
 
     <?php
-    // Le poids et le volume ne concerne que les produits et pas les services
+    // Weight and volume apply only to products and not to services
     if ($type != 1):
     ?>
         <tr>
