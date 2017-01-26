@@ -2605,7 +2605,7 @@ class User extends CommonObject
 	/**
 	 * 	Return list of all child users id in herarchy of current user (all sublevels).
 	 *
-	 *  @return     int      $addcurrentuser    1=Add also current user id to the list.
+	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
 	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
 	 *  @see get_children
 	 */
