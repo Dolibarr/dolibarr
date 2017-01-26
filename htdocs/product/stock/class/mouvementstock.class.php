@@ -30,6 +30,15 @@
  */
 class MouvementStock extends CommonObject
 {
+	/**
+	 * @var string Id to identify managed objects
+	 */
+	public $element = 'stockmouvement';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'stock_mouvement';
+	
 	var $product_id;
 	var $entrepot_id;
 	var $qty;
@@ -45,7 +54,7 @@ class MouvementStock extends CommonObject
 	{
 		$this->db = $db;
 	}
-
+	
 	/**
 	 *	Add a movement of stock (in one direction only)
 	 *
@@ -462,6 +471,91 @@ class MouvementStock extends CommonObject
 		}
 	}
 
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id  Id object
+	 *
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id)
+	{
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+	
+	    $sql = 'SELECT';
+	    $sql .= ' t.rowid,';
+	    $sql .= " t.tms,";
+	    $sql .= " t.datem,";
+	    $sql .= " t.fk_product,";
+	    $sql .= " t.fk_entrepot,";
+	    $sql .= " t.value,";
+	    $sql .= " t.price,";
+	    $sql .= " t.type_mouvement,";
+	    $sql .= " t.fk_user_author,";
+	    $sql .= " t.label,";
+	    $sql .= " t.fk_origin,";
+	    $sql .= " t.origintype,";
+	    $sql .= " t.inventorycode,";
+	    $sql .= " t.batch,";
+	    $sql .= " t.eatby,";
+	    $sql .= " t.sellby";
+	    $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+	    $sql.= ' WHERE 1 = 1';
+	    //if (null !== $ref) {
+	        //$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
+	    //} else {
+	        $sql .= ' AND t.rowid = ' . $id;
+	    //}
+	
+	    $resql = $this->db->query($sql);
+	    if ($resql) {
+	        $numrows = $this->db->num_rows($resql);
+	        if ($numrows) {
+	            $obj = $this->db->fetch_object($resql);
+	
+	            $this->id = $obj->rowid;
+	
+	            $this->product_id = $obj->fk_product;
+	            $this->warehouse_id = $obj->fk_entrepot;
+	            $this->qty = $obj->value;
+	            $this->type = $obj->type_mouvement;
+	             
+	            $this->tms = $this->db->jdate($obj->tms);
+	            $this->datem = $this->db->jdate($obj->datem);
+	            $this->price = $obj->price;
+	            $this->fk_user_author = $obj->fk_user_author;
+	            $this->label = $obj->label;
+	            $this->fk_origin = $obj->fk_origin;
+	            $this->origintype = $obj->origintype;
+	            $this->inventorycode = $obj->inventorycode;
+	            $this->batch = $obj->batch;
+	            $this->eatby = $this->db->jdate($obj->eatby);
+	            $this->sellby = $this->db->jdate($obj->sellby);
+	        }
+	        	
+	        // Retrieve all extrafields for invoice
+	        // fetch optionals attributes and labels
+	        require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	        $extrafields=new ExtraFields($this->db);
+	        $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+	        $this->fetch_optionals($this->id,$extralabels);
+	
+	        // $this->fetch_lines();
+	        	
+	        $this->db->free($resql);
+	
+	        if ($numrows) {
+	            return 1;
+	        } else {
+	            return 0;
+	        }
+	    } else {
+	        $this->errors[] = 'Error ' . $this->db->lasterror();
+	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+	
+	        return - 1;
+	    }
+	}
 
 	/**
 	 *  Create movement in database for all subproducts
@@ -728,6 +822,10 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
+			case 'project':
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$origin = new Project($this->db);
+				break;
 				
 			default:
 				if ($origintype)
@@ -751,7 +849,92 @@ class MouvementStock extends CommonObject
 		return '';
 	}
 
+	/**
+	 *  Return a link (with optionaly the picto)
+	 * 	Use this->id,this->lastname, this->firstname
+	 *
+	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option				On what the link point to
+     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int		$maxlen				Max length of visible user name
+     *  @param  string  $morecss            Add more css on link
+	 *	@return	string						String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	{
+		global $langs, $conf, $db;
 
+        $result = '';
+        $companylink = '';
+
+        $label = '<u>' . $langs->trans("Movement") . ' '.$this->id.'</u>';
+        $label.= '<div width="100%">';
+        $label.= '<b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+		$label.= '<br /><b>' . $langs->trans('Qty') . ':</b> ' .$this->qty;
+		$label.= '</div>';
+		
+        $link = '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+        $link.= '>';
+		$linkend='</a>';
+
+        if ($withpicto)
+        {
+            $result.=($link.img_object(($notooltip?'':$label), 'stock', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            if ($withpicto != 2) $result.=' ';
+		}
+		$result.= $link . $this->id . $linkend;
+		return $result;
+	}
+	
+	/**
+	 *  Return label statut
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un status donne
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 2)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 3)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+		}
+		if ($mode == 4)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 5)
+		{
+			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+		}
+	}
+	
 	/**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

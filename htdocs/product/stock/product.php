@@ -35,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+if (!empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';
+}
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("products");
@@ -130,6 +135,11 @@ if ($action == "correct_stock" && ! $cancel)
 		$priceunit=price2num(GETPOST("unitprice"));
 		if (is_numeric(GETPOST("nbpiece")) && $id)
 		{
+			$origin_element = '';
+		
+			$projectid = GETPOST('projectid');
+			if (!empty($projectid)) $origin_element = 'project';
+		
 			if (empty($object)) {
 				$object = new Product($db);
 				$result=$object->fetch($id);
@@ -146,7 +156,9 @@ if ($action == "correct_stock" && ! $cancel)
 					$d_eatby,
 					$d_sellby,
 					GETPOST('batch_number'),
-					GETPOST('inventorycode')
+					GETPOST('inventorycode'),
+					$origin_element,
+					$projectid
 				);		// We do not change value of stock for a correction
 			}
 			else
@@ -158,7 +170,9 @@ if ($action == "correct_stock" && ! $cancel)
 		    		GETPOST("mouvement"),
 		    		GETPOST("label"),
 		    		$priceunit,
-					GETPOST('inventorycode')
+					GETPOST('inventorycode'),
+					$origin_element,
+					$projectid
 				);		// We do not change value of stock for a correction
 			}
 
@@ -398,7 +412,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
 
 $form = new Form($db);
 $formproduct=new FormProduct($db);
-
+if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 if ($id > 0 || $ref)
 {
