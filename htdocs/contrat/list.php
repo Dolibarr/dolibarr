@@ -272,7 +272,7 @@ $sql.= " state.code_departement, state.nom";
 // Add where from extra fields
 foreach ($extrafields->attribute_label as $key => $val)
 {
-    $sql .= ', ef.'.$val;
+    $sql .= ', ef.'.$key;
 }
 // Add where from hooks
 $parameters=array();
