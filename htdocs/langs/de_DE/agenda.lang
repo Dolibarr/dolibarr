@@ -2,6 +2,7 @@
 IdAgenda=ID Veranstaltung
 Actions=Ereignisse
 Agenda=Terminplanung
+TMenuAgenda=Terminplanung
 Agendas=Tagesordnungen
 LocalAgenda=interne Kalender
 ActionsOwnedBy=Ereignis stammt von

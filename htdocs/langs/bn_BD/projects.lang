@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=New task
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Activity
 Activities=Tasks/activities
 MyActivities=My tasks/activities

@@ -43,6 +43,7 @@ LoanCalcDesc=<b>Hipotekarni kalkulator</b> se može koristiti za izračun mjese�
 GoToInterest=%s će otići u KAMATU
 GoToPrincipal=%s će otići u GLAVNICU
 YouWillSpend=Potrošit ćete %s u %s godina
+ListLoanAssociatedProject=List of loan associated with the project
 # Admin
 ConfigLoan=Konfiguracija modula kredita
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default

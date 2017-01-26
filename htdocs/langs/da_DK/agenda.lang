@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Aktioner
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Dagsordener
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by

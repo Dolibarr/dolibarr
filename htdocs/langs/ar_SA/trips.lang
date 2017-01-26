@@ -21,7 +21,17 @@ ListToApprove=تنتظر الموافقة
 ExpensesArea=منطقة تقارير المصاريف
 ClassifyRefunded=تصنيف "ردها"
 ExpenseReportWaitingForApproval=وقد قدم تقرير حساب جديد للموافقة عليها
-ExpenseReportWaitingForApprovalMessage=وقد تم تقديم تقرير حساب جديد وينتظر للموافقة عليها. - العضو:٪ ق - الفترة:٪ الصورة انقر هنا للتحقق من صحة:٪ الصورة
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=تقرير حساب الهوية
 AnyOtherInThisListCanValidate=شخص إبلاغ عن التحقق من الصحة.
 TripSociete=شركة المعلومات
@@ -59,31 +69,23 @@ DATE_REFUS=تاريخ ينكر
 DATE_SAVE=تاريخ التحقق من الصحة
 DATE_CANCEL=تاريخ الإلغاء
 DATE_PAIEMENT=تاريخ الدفع
-
 BROUILLONNER=إعادة فتح
 ValidateAndSubmit=التحقق من صحة ويقدم للموافقة عليها
 ValidatedWaitingApproval=التحقق من صحة (في انتظار الموافقة)
-
 NOT_AUTHOR=أنت لست صاحب هذا التقرير حساب. إلغاء العملية.
-
 ConfirmRefuseTrip=Are you sure you want to deny this expense report?
-
 ValideTrip=الموافقة على تقرير النفقات
 ConfirmValideTrip=Are you sure you want to approve this expense report?
-
 PaidTrip=دفع تقرير مصروفات
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
-
 ConfirmCancelTrip=Are you sure you want to cancel this expense report?
-
 BrouillonnerTrip=الرجوع تقرير نفقة لوضع "مسودة"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
-
 SaveTrip=التحقق من صحة التقرير حساب
 ConfirmSaveTrip=Are you sure you want to validate this expense report?
-
 NoTripsToExportCSV=أي تقرير نفقة لتصدير لهذه الفترة.
 ExpenseReportPayment=دفع تقرير حساب
-
 ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=تقارير النفقات لدفع
+CloneExpenseReport=Clone expese report
+ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?

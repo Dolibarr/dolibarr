@@ -21,7 +21,17 @@ ListToApprove=En espera de aprobación
 ExpensesArea=Área de gastos
 ClassifyRefunded=Clasificar 'Reembolsado'
 ExpenseReportWaitingForApproval=Se ha enviado un nuevo gasto para ser aprobado
-ExpenseReportWaitingForApprovalMessage=Un nuevo gasto ha sido enviado y espera su aprobación.\n-Usuario: %s\n-Periodo: %s\nHaga clic aquí para validarlo: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=Id de gasto
 AnyOtherInThisListCanValidate=Persona a informar para la validación
 TripSociete=Información de la empresa
@@ -59,31 +69,23 @@ DATE_REFUS=Fecha denegación
 DATE_SAVE=Fecha de validación
 DATE_CANCEL=Fecha cancelación
 DATE_PAIEMENT=Fecha de pago
-
 BROUILLONNER=Reabrir
 ValidateAndSubmit=Validar y enviar para aprobar
 ValidatedWaitingApproval=Validado (en espera de aprobación)
-
 NOT_AUTHOR=No es el autor de este gasto. Operación cancelada.
-
 ConfirmRefuseTrip=¿Está seguro de querer denegar este gasto?
-
 ValideTrip=Aprobar gasto
 ConfirmValideTrip=¿Está seguro de querer aprobar este gasto?
-
 PaidTrip=Pagar gasto
 ConfirmPaidTrip=¿Está seguro de querer cambiar el estado de este gasto a "Pagado"?
-
 ConfirmCancelTrip=¿Está seguro de querer cancelar este gasto?
-
 BrouillonnerTrip=Devolver el gasto al estado "Borrador"
 ConfirmBrouillonnerTrip=¿Está seguro de querer devolver este gasto al estado "Borrador"?
-
 SaveTrip=Validar gasto
 ConfirmSaveTrip=¿Está seguro de querer validar este gasto?
-
 NoTripsToExportCSV=Sin gastos a exportar para este periodo.
 ExpenseReportPayment=Informe de pagos de gastos
-
 ExpenseReportsToApprove=Informe de gastos a aprobar
 ExpenseReportsToPay=Informe de gastos a pagar
+CloneExpenseReport=Cerrar informe de gastos
+ConfirmCloneExpenseReport=¿Está seguro de querer eliminar este informe de gastos?
