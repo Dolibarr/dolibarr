@@ -178,8 +178,8 @@ if (empty($user->societe_id))
 		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
-	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
-	    ! empty($conf->projet->enabled) && $user->rights->projet->lire
+	    ! empty($conf->projet->enabled) && $user->rights->projet->lire,
+	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 	    );
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(
@@ -199,8 +199,8 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
-	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
-            DOL_DOCUMENT_ROOT."/projet/class/project.class.php" 
+            DOL_DOCUMENT_ROOT."/projet/class/project.class.php", 
+	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('User',
@@ -219,8 +219,8 @@ if (empty($user->societe_id))
 	                   'CommandeFournisseur',
 	                   'FactureFournisseur',
             	       'SupplierProposal',
-	                   'ExpenseReport',
-	                   'Project'
+	                   'Project',
+	                   'ExpenseReport'
 	    );
 	    // Cle array returned by the method load_state_board for each line
 	    $keys=array('users',
@@ -239,8 +239,8 @@ if (empty($user->societe_id))
 	                'supplier_orders',
 	                'supplier_invoices',
 	                'askprice',
-	                'expensereports',
-	                'projects'
+	                'projects',
+	                'expensereports'
 	    );
 	    // Dashboard Icon lines
 	    $icons=array('user',
@@ -259,8 +259,8 @@ if (empty($user->societe_id))
 	                 'order',
 	                 'bill',
 	                 'propal',
-					 'trip',
-	                 'project'
+	                 'project',
+					 'trip'
 	    );
 	    // Translation keyword
 	    $titres=array("Users",
@@ -279,8 +279,8 @@ if (empty($user->societe_id))
 	                  "SuppliersOrders",
                       "SuppliersInvoices",
 	                  "SupplierProposalShort",
-					  "ExpenseReports",
-	                  "Projects"
+	                  "Projects",
+					  "ExpenseReports"
 	    );
 	    // Dashboard Link lines
 	    $links=array(
@@ -300,8 +300,8 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/fourn/commande/list.php',
 	        DOL_URL_ROOT.'/fourn/facture/list.php',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm',
-	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project'
+	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'
 	    );
 	    // Translation lang files
 	    $langfile=array("users",
@@ -318,8 +318,8 @@ if (empty($user->societe_id))
             	        "supplier_proposal",
 						"contracts",
 						"interventions",
-						"trips",
-	                    "projects"
+	                    "projects",
+						"trips"
 	    );
 
 
