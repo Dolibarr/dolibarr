@@ -484,24 +484,28 @@ if ($id > 0)
 	    print '</tr></table>';
 	    print '</td><td>';
 	    if ($action == 'editlevel')
+	    {
 	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
-	        else
-	            print $object->getLibProspLevel();
-	            print "</td>";
-	            print '</tr>';
-	
-	            // Status
-	            $object->loadCacheOfProspStatus();
-	            print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
-	            print ' &nbsp; &nbsp; ';
-	            print '<div class="floatright">';
-	            foreach($object->cacheprospectstatus as $key => $val)
-	            {
-	                $titlealt='default';
-	                if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
-	                if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
-	            }
-	            print '</div></td></tr>';
+	    }
+	    else
+	    {
+	        print $object->getLibProspLevel();
+	    }
+        print "</td>";
+        print '</tr>';
+
+        // Status
+        $object->loadCacheOfProspStatus();
+        print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+        print ' &nbsp; &nbsp; ';
+        print '<div class="floatright">';
+        foreach($object->cacheprospectstatus as $key => $val)
+        {
+            $titlealt='default';
+            if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+            if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
+        }
+        print '</div></td></tr>';
 	   print "</table>";
 	}
 	

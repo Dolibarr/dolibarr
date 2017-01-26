@@ -1372,7 +1372,7 @@ class Form
      *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
+     *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
@@ -1396,24 +1396,20 @@ class Form
         $includeUsers=null;
 
         // Permettre l'exclusion d'utilisateurs
-        if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
+        if (is_array($exclude))	$excludeUsers = implode(",",$exclude);
         // Permettre l'inclusion d'utilisateurs
-        if (is_array($include))	$includeUsers = implode("','",$include);
+        if (is_array($include))	$includeUsers = implode(",",$include);
 		else if ($include == 'hierarchy')
 		{
 			// Build list includeUsers to have only hierarchy
-			$userid=$user->id;
-			$include=array();
-			if (empty($user->users) || ! is_array($user->users)) $user->get_full_tree();
-			foreach($user->users as $key => $val)
-			{
-				if (preg_match('/_'.$userid.'/',$val['fullpath'])) $include[]=$val['id'];
-			}
-			$includeUsers = implode("','",$include);
-			//var_dump($includeUsers);exit;
-			//var_dump($user->users);exit;
+			$includeUsers = implode(",",$user->getAllChildIds(0));
 		}
-
+		else if ($include == 'hierarchyme')
+		{
+		    // Build list includeUsers to have only hierarchy and current user
+		    $includeUsers = implode(",",$user->getAllChildIds(1));
+		}
+		
         $out='';
 
         // On recherche les utilisateurs
@@ -1443,8 +1439,8 @@ class Form
         	}
         }
         if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
-        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
-        if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
+        if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
         if (! empty($morefilter)) $sql.=" ".$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
@@ -4257,7 +4253,7 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.code, t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
@@ -4273,6 +4269,7 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['rowid']	= $obj->rowid;
     				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
     				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
@@ -4302,9 +4299,9 @@ class Form
      *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
      *  @param  Societe	      $societe_vendeuse   Thirdparty seller
      *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
-     *  @param  int		      $idprod             Id product
+     *  @param  int		      $idprod             Id product. O if unknown of NA.
      *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
-     *  @param  int		      $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *                  		                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  					      Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  					      Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -4312,10 +4309,10 @@ class Form
 	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
-     *  @param  int          $addcode             Add code into key in select list
+     *  @param  int          $mode                1=Add code into key in select list
      *  @return	string
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $mode=0)
     {
         global $langs,$conf,$mysoc;
 
@@ -4427,10 +4424,13 @@ class Form
         		// Keep only 0 if seller is not subject to VAT
         		if ($disabled && $rate['txtva'] != 0) continue;
 
-        		$return.= '<option value="'.$rate['txtva'];
-        		$return.= $rate['nprtva'] ? '*': '';
-        		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
-        		$return.= '"';
+        		// Define key to use into select list
+        		$key = $rate['txtva'];
+        		$key.= $rate['nprtva'] ? '*': '';
+        		if ($mode > 0 && $rate['code']) $key.=' ('.$rate['code'].')';
+        		if ($mode < 0) $key = $rate['rowid'];
+        		
+        		$return.= '<option value="'.$key.'"';
         		if (! $selectedfound)
         		{
             		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag

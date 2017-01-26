@@ -58,6 +58,7 @@ TaskDateEnd=Data de finalització
 TaskDescription=Descripció de tasca
 NewTask=Nova tasca
 AddTask=Crear tasca
+AddTimeSpent=Crea temps dedicat
 Activity=Activitat
 Activities=Tasques/activitats
 MyActivities=Les meves tasques/activitats

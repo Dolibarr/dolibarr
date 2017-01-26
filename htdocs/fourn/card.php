@@ -301,7 +301,7 @@ if ($object->id > 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
+		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
 		//Query from product/liste.php
@@ -626,7 +626,13 @@ if ($object->id > 0)
 	// modified by hook
 	if (empty($reshook))
 	{
-	   if ($user->rights->fournisseur->commande->creer)
+		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
+		{
+			$langs->load("supplier_proposal");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+		}
+
+	    if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
@@ -636,12 +642,6 @@ if ($object->id > 0)
 		{
 			$langs->load("bills");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-		}
-
-		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
-		{
-			$langs->load("supplier_proposal");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
