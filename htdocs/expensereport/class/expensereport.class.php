@@ -1674,11 +1674,14 @@ class ExpenseReport extends CommonObject
 
 	    $now=dol_now();
 
+	    $userchildids = $user->getAllChildIds(1);
+	    
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
         $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.fk_user_author IN (".join(',',$userchildids).")";
 
         $resql=$this->db->query($sql);
         if ($resql)
