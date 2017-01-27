@@ -965,7 +965,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  *      @return	mixed					           Return html part or void if noprint is 1
  *      TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep, a.id', $sortorder='DESC')
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep,a.id', $sortorder='DESC')
 {
     global $bc,$user,$conf;
     global $form;
@@ -1183,7 +1183,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		}
         $out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
         $out.='<td class="maxwidth100onsmartphone">'.$langs->trans("Label").'</td>';
-        $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep, a.id', '', $param, '', $sortfield, $sortorder);
+        $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder);
         $out.='<td>'.$langs->trans("Type").'</td>';
 		$out.='<td></td>';
 		$out.='<td></td>';

@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Serviceauftrag %s gelöscht
 InterventionsArea=Übersicht Serviceaufträge
 DraftFichinter=Serviceaufträge entwerfen
 LastModifiedInterventions=%s zuletzt bearbeitete Serviceaufträge
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Kundenkontakt-Nachbetreuung
 # Modele numérotation

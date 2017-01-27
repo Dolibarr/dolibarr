@@ -2,6 +2,7 @@
 SecurityCode=Sikkerhedskode
 NumberingShort=N°
 Tools=Værktøj
+TMenuTools=Værktøjer
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=Fødselsdag
 BirthdayDate=Birthday date

@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -693,8 +693,8 @@ class Contrat extends CommonObject
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
 
-				$this->lines[]			= $line;
-				$this->lines_id_index_mapper[$line->id] = key($this->lines);
+				$this->lines[$i]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $i;
 
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
@@ -2199,20 +2199,18 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("contracts");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->CONTRACT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'strato';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->CONTRACT_ADDON_PDF)) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'strato';
 			}
 		}
 
@@ -2253,11 +2251,11 @@ class Contrat extends CommonObject
 		$this->context['createfromclone'] = 'createfromclone';
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->fetch($this->id);
 		// Load dest object
 		$clonedObj = clone $this;
+        $clonedObj->socid = $socid;
 
 		$this->db->begin();
 
@@ -2292,16 +2290,13 @@ class Contrat extends CommonObject
 			$this->error = $clonedObj->error;
 			$this->errors[] = $clonedObj->error;
 		} else {
-			// copy internal contacts
-			if ($clonedObj->copy_linked_contact($this, 'internal') < 0)
-				$error ++;
-
-				// copy external contacts if same company
-			elseif ($this->socid == $clonedObj->socid) {
-				if ($clonedObj->copy_linked_contact($this, 'external') < 0)
-					$error ++;
-			}
-		}
+            // copy external contacts if same company
+            if ($this->socid == $clonedObj->socid) {
+                if ($clonedObj->copy_linked_contact($this, 'external') < 0) {
+                    $error++;
+                }
+            }
+        }
 
 		if (! $error) {
 			foreach ( $this->lines as $line ) {

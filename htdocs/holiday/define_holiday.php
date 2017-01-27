@@ -221,6 +221,8 @@ else
         }
         
         print '<tr '.$bc[$var].'>';
+        
+        // User
         print '<td>';
         $userstatic->id=$users['rowid'];
         $userstatic->lastname=$users['lastname'];
@@ -232,6 +234,7 @@ else
         print $userstatic->getNomUrl(-1);
         print '</td>';
 
+        // Amount for each type
         if (count($typeleaves))
         {
         	foreach($typeleaves as $key => $val)
@@ -249,8 +252,10 @@ else
         {
             print '<td></td>';
         }
+        
+        // Note
         print '<td style="text-align:center">';
-        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
         print '</td>';
         print '<td>';
         if (! empty($user->rights->holiday->define_holiday))

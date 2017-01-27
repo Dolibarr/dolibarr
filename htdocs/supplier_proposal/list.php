@@ -285,7 +285,7 @@ if ($search_user > 0)
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', sp.ref DESC';
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

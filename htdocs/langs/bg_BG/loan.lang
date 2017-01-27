@@ -43,6 +43,7 @@ LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly p
 GoToInterest=%s ще върви към ЛИХВАТА
 GoToPrincipal=%s ще върви към ГЛАВНИЦАТА
 YouWillSpend=You will spend %s in year %s
+ListLoanAssociatedProject=List of loan associated with the project
 # Admin
 ConfigLoan=Конфигурация на модула заем
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default

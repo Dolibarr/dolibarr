@@ -329,7 +329,10 @@ print load_fiche_titre($langs->trans("BoxesAvailable"));
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="add">'."\n";
-print '<table class="noborder" width="100%">'."\n";
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste centpercent">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
@@ -375,6 +378,8 @@ foreach($boxtoadd as $box)
 }
 
 print '</table>'."\n";
+print '</div>';
+
 print '<div class="right">';
 print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
@@ -388,7 +393,9 @@ $boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 print "<br>\n\n";
 print load_fiche_titre($langs->trans("BoxesActivated"));
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
@@ -441,7 +448,9 @@ foreach($boxactivated as $key => $box)
 	print '</tr>'."\n";
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+print '<br>';
 
 
 // Other parameters

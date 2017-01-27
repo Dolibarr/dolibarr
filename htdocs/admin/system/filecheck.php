@@ -82,8 +82,8 @@ $xmlremote = GETPOST('xmlremote')?GETPOST('xmlremote'):'https://www.dolibarr.org
 
 // Test if remote test is ok
 $enableremotecheck = True;
-if (preg_match('/beta|alpha/i', DOL_VERSION)) $enableremotecheck=False;
-
+if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=False;
+$enableremotecheck = true;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
@@ -101,7 +101,8 @@ else
 print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck)
 {
-    print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'<br>';
+    print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = ';
+    print '<input name="xmlremote" class="flat quatrevingtpercent" value="'.$xmlremote.'"><br>';
 }
 else
 {
@@ -156,19 +157,25 @@ if ($xml)
         $file_list = array();
         $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat);		// Fill array $file_list
     
+        print_fiche_titre($langs->trans("FilesMissing"));
+        
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
-        print '<td>' . $langs->trans("FilesMissing") . '</td>';
+        print '<td>#</td>';
+        print '<td>' . $langs->trans("Filename") . '</td>';
         print '<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         print '</tr>'."\n";
         $var = true;
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
         if (is_array($tmpfilelist) && count($tmpfilelist))
         {
+            $i = 0;
 	        foreach ($tmpfilelist as $file)
 	        {
+	            $i++;
 	            $var = !$var;
 	            print '<tr ' . $bc[$var] . '>';
+	            print '<td>'.$i.'</td>' . "\n";
 	            print '<td>'.$file['filename'].'</td>' . "\n";
 	            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            print "</tr>\n";
@@ -176,15 +183,18 @@ if ($xml)
         }
         else 
         {
-            print '<tr ' . $bc[false] . '><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            print '<tr ' . $bc[false] . '><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }            
         print '</table>';
 
         print '<br>';
 
+        print_fiche_titre($langs->trans("FilesUpdated"));
+        
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
-        print '<td>' . $langs->trans("FilesUpdated") . '</td>';
+        print '<td>#</td>';
+        print '<td>' . $langs->trans("Filename") . '</td>';
         print '<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         print '<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
         print '<td align="right">' . $langs->trans("Size") . '</td>';
@@ -194,10 +204,13 @@ if ($xml)
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
+            $i = 0;
 	        foreach ($tmpfilelist2 as $file)
 	        {
+	            $i++;
 	            $var = !$var;
 	            print '<tr ' . $bc[$var] . '>';
+	            print '<td>'.$i.'</td>' . "\n";
 	            print '<td>'.$file['filename'].'</td>' . "\n";
 	            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            print '<td align="center">'.$file['md5'].'</td>' . "\n";
@@ -241,14 +254,12 @@ if ($xml)
     //var_dump($checksumconcat);
     $checksumget = md5(join(',',$checksumconcat));
     $checksumtoget = $xml->dolibarr_htdocs_dir_checksum;
-    if ($checksumtoget)
-    {
-        print '<br>';
-        print '<strong>'.$langs->trans("GlobalChecksum").'</strong><br>';
-        print $langs->trans("ExpectedChecksum").' = '.$checksumtoget.'<br>';
-        print $langs->trans("CurrentChecksum").' = '.$checksumget;
-    }
-    
+
+    print '<br>';
+
+    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print $langs->trans("ExpectedChecksum").' = '. ($checksumtoget ? $checksumtoget : $langs->trans("Unknown")) .'<br>';
+    print $langs->trans("CurrentChecksum").' = '.$checksumget;
 }
 
 

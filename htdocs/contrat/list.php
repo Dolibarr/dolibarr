@@ -272,7 +272,7 @@ $sql.= " state.code_departement, state.nom";
 // Add where from extra fields
 foreach ($extrafields->attribute_label as $key => $val)
 {
-    $sql .= ', ef.'.$val;
+    $sql .= ', ef.'.$key;
 }
 // Add where from hooks
 $parameters=array();
@@ -288,7 +288,7 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

@@ -43,6 +43,7 @@ LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly p
 GoToInterest=٪ S سوف تذهب نحو الفائدة
 GoToPrincipal=٪ S سوف تذهب نحو PRINCIPAL
 YouWillSpend=You will spend %s in year %s
+ListLoanAssociatedProject=List of loan associated with the project
 # Admin
 ConfigLoan=التكوين للقرض وحدة
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default

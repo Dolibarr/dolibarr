@@ -58,6 +58,7 @@ TaskDateEnd=تاریخ پایان کار
 TaskDescription=شرح وظیفه
 NewTask=کار جدید
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=فعالیت
 Activities=وظایف / فعالیت ها
 MyActivities=کارهای من / فعالیت ها

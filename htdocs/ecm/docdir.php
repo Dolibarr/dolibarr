@@ -166,7 +166,7 @@ if ($action == 'create')
 	print '</td></tr>'."\n";
 
 	// Description
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="desc" rows="4" cols="90">';
 	print $ecmdir->description;
 	print '</textarea>';

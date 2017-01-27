@@ -68,8 +68,8 @@ print '<br>';
 $phparray=phpinfo_array();
 foreach($phparray as $key => $value)
 {
-	//print load_fiche_titre($key);
-	print '<table class="noborder">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
 	print '<td width="220px">'.$key.'</td>';
@@ -114,7 +114,9 @@ foreach($phparray as $key => $value)
 			print '</tr>';
 		}
 	}
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 }
 
 

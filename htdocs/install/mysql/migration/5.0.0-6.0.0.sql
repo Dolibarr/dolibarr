@@ -25,10 +25,13 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
 ALTER TABLE llx_ecm_files CHANGE COLUMN filepath filepath varchar(255);
 ALTER TABLE llx_ecm_files ADD COLUMN position integer;
+ALTER TABLE llx_ecm_files ADD COLUMN keyword varchar(750);
 ALTER TABLE llx_ecm_files CHANGE COLUMN keyword keyword varchar(750);
+ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12);
 
 ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
@@ -41,4 +44,6 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
 
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+
+ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 

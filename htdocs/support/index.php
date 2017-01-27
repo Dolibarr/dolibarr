@@ -86,13 +86,13 @@ print '<td align="center" valign="top">';
 
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
-$urlwiki='http://wiki.dolibarr.org';
-if (preg_match('/fr/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
-if (preg_match('/es/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
+$urlwiki='https://wiki.dolibarr.org';
+if (preg_match('/fr/i',$langs->defaultlang)) $urlwiki='https://wiki.dolibarr.org/index.php/Accueil';
+if (preg_match('/es/i',$langs->defaultlang)) $urlwiki='https://wiki.dolibarr.org/index.php/Portada';
 print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki);
 print '<br>';
-$urlforum='http://www.dolibarr.org/forum/';
-$urlforumlocal='http://www.dolibarr.org/forum/';
+$urlforum='https://www.dolibarr.org/forum/';
+$urlforumlocal='https://www.dolibarr.org/forum/';
 if (preg_match('/fr/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.fr/forum/';
 if (preg_match('/es/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.es/index.php/foro/';
 if (preg_match('/it/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.it/forum/';
@@ -194,8 +194,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
-$urlwiki='http://partners.dolibarr.org';
+$urlwiki='https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
@@ -229,8 +228,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
-$urlwiki='http://partners.dolibarr.org';
+$urlwiki='https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';

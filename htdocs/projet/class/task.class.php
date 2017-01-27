@@ -534,6 +534,40 @@ class Task extends CommonObject
             return -1;
         }
     }
+    
+	/**
+     *	Return nb of time spent
+     *
+     *	@return	int		<0 if KO, 0 if no children, >0 if OK
+     */
+    function hasTimeSpent()
+    {
+    	$error=0;
+        $ret=0;
+
+        $sql = "SELECT COUNT(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
+        $sql.= " WHERE fk_task=".$this->id;
+
+        dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
+        }
+
+        if (! $error)
+        {
+            return $ret;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 
     /**
@@ -1039,12 +1073,12 @@ class Task extends CommonObject
     }
 
     /**
-     *  Calculate value of time consumed using the thm (hourly amount value of work for user entering time)
+     *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
      *
      *	@param		User		$fuser		Filter on a dedicated user
      *  @param		string		$dates		Start date (ex 00:00:00)
      *  @param		string		$datee		End date (ex 23:59:59)
-     *  @return 	array	        		Array of info for task array('amount')
+     *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
      */
     function getSumOfAmount($fuser='', $dates='', $datee='')
     {
@@ -1055,6 +1089,7 @@ class Task extends CommonObject
         $result=array();
 
         $sql = "SELECT";
+        $sql.= " SUM(t.task_duration) as nbseconds,";
         $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
@@ -1081,6 +1116,7 @@ class Task extends CommonObject
             $obj = $this->db->fetch_object($resql);
 
             $result['amount'] = $obj->amount;
+            $result['nbseconds'] = $obj->nbseconds;
             $result['nblinesnull'] = $obj->nblinesnull;
 
             $this->db->free($resql);
@@ -1617,16 +1653,14 @@ class Task extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 

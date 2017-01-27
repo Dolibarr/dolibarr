@@ -36,21 +36,21 @@ class Entrepot extends CommonObject
 	public $element='stock';
 	public $table_element='entrepot';
 	public $picto='stock';
-	
+
 	/**
 	 * Warehouse closed, inactive
 	 */
 	const STATUS_CLOSED = 0;
-	
+
 	/**
 	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
 	 */
 	const STATUS_OPEN_ALL = 1;
-	
+
 	/**
 	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
-	const STATUS_OPEN_INTERNAL = 2;	
+	const STATUS_OPEN_INTERNAL = 2;
 
 	var $libelle;
 	var $description;
@@ -61,10 +61,10 @@ class Entrepot extends CommonObject
 	var $zip;
 	var $town;
 	var $fk_parent;
-	
+
 	// List of short language codes for status
 	var $statuts = array();
-	
+
 	/**
 	 *  Constructor
 	 *
@@ -85,7 +85,7 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
-		
+
 	}
 
 	/**
@@ -97,9 +97,9 @@ class Entrepot extends CommonObject
 	function create($user)
 	{
 		global $conf;
-		
+
 		$this->libelle = trim($this->libelle);
-		
+
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{
@@ -112,7 +112,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label, fk_parent)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."', ".($this->fk_parent > 0 ? $this->fk_parent : 'NULL').")";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."', ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -161,19 +161,19 @@ class Entrepot extends CommonObject
 	function update($id, $user)
 	{
 	    if (empty($id)) $id = $this->id;
-	    
+
 		// Check if new parent is already a child of current warehouse
-		if(!empty($this->fk_parent)) 
+		if(!empty($this->fk_parent))
 		{
 			$TChildWarehouses = array($id);
 			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
-			if(in_array($this->fk_parent, $TChildWarehouses)) 
+			if(in_array($this->fk_parent, $TChildWarehouses))
 			{
 				$this->error = 'ErrorCannotAddThisParentWarehouse';
 				return -2;
 			}
 		}
-		
+
 		$this->libelle=trim($this->libelle);
 		$this->description=trim($this->description);
 
@@ -186,7 +186,7 @@ class Entrepot extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
-		$sql .= ", fk_parent = " . (($this->fk_parent > 0) ? $this->fk_parent : 'NULL');
+		$sql .= ", fk_parent = " . (($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
@@ -232,7 +232,7 @@ class Entrepot extends CommonObject
             if ($result < 0) { $error++; }
             // End call triggers
 		}
-		
+
 		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
 		foreach($elements as $table)
 		{
@@ -516,12 +516,12 @@ class Entrepot extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
-		
+
 		$langs->load('stocks');
-		
+
 		$picto = 'statut5';
 		$label = $langs->trans($this->statuts[$statut]);
-		
+
 
 		if ($mode == 0)
 		{
@@ -569,10 +569,10 @@ class Entrepot extends CommonObject
 		$langs->load("stocks");
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-		
+
         $result='';
         $label = '';
-        
+
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
         if (! empty($this->lieu))
@@ -591,11 +591,11 @@ class Entrepot extends CommonObject
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
         }
-        
+
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
-            
+
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'stock', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
 		$result.=$linkstart.($showfullpath ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label)).$linkend;
 		return $result;
@@ -628,60 +628,60 @@ class Entrepot extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
     }
-	
+
 	/**
 	 *	Return full path to current warehouse
 	 *
-	 *	@return		string	String full path to current warehouse separated by " >> " 
+	 *	@return		string	String full path to current warehouse separated by " >> "
 	 */
-	function get_full_arbo() 
+	function get_full_arbo()
 	{
         global $user,$langs,$conf;
-        
+
         $TArbo = array(empty($this->label)?$this->libelle:$this->label);
-        
+
         $protection=100; // We limit depth of warehouses to 100
-        
+
         $warehousetmp = new Entrepot($this->db);
-        
-        $parentid = $this->fk_parent;       // If parent_id not defined on current object, we do not start consecutive searches of parents 
+
+        $parentid = $this->fk_parent;       // If parent_id not defined on current object, we do not start consecutive searches of parents
         $i=0;
-        while ($parentid > 0 && $i < $protection) 
+        while ($parentid > 0 && $i < $protection)
         {
             $sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.$parentid;
             $resql = $this->db->query($sql);
-            if ($resql) 
+            if ($resql)
             {
                 $objarbo = $this->db->fetch_object($resql);
                 if ($objarbo)
                 {
                 	$warehousetmp->fetch($parentid);
                 	$TArbo[] = $warehousetmp->label;
-                 	$parentid = $objarbo->fk_parent; 
+                 	$parentid = $objarbo->fk_parent;
                 }
                 else break;
             }
             else dol_print_error($this->db);
-            
+
             $i++;
         }
-        
+
         return implode(' >> ', array_reverse($TArbo));
 	}
-	
+
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
-	 * 
+	 *
 	 * @param	int		$id					id parent warehouse
 	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
 	 * @return	array()	$TChildWarehouses	array which will contain all children
 	 */
 	function get_children_warehouses($id, &$TChildWarehouses) {
-		
+
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
 				WHERE fk_parent = '.$id;
-		
+
 		$resql = $this->db->query($sql);
 		if($resql) {
 			while($res = $this->db->fetch_object($resql)) {
@@ -689,9 +689,9 @@ class Entrepot extends CommonObject
 				$this->get_children_warehouses($res->rowid, $TChildWarehouses);
 			}
 		}
-		
+
 		return $TChildWarehouses;
-		
+
 	}
 
 }

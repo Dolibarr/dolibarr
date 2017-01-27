@@ -78,6 +78,7 @@ ManualUpdate=Ručna promjena
 HolidaysCancelation=Odbijanje zahtjeva
 EmployeeLastname=Prezime zaposlenika
 EmployeeFirstname=Ime zaposlenika
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Zadnje automatsko ažuriranje raspodjele odlazaka

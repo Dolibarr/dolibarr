@@ -17,7 +17,7 @@
 
 use Luracast\Restler\RestException;
 
-//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
  * API class for contact object
@@ -143,7 +143,7 @@ class ContactApi extends DolibarrApi
 			$sql .= " AND sc.fk_user = " . $search_sale;
 		}
 
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $db->query($sql);
