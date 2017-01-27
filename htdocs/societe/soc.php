@@ -2524,7 +2524,7 @@ else
 
 	            $var=true;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
