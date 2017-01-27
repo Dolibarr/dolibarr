@@ -140,3 +140,4 @@ ProductStockWarehouseCreated=Límite stock para alertas y stock óptimo deseado 
 ProductStockWarehouseUpdated=Límite stock para alertas y stock óptimo deseado actualizado correctamente
 ProductStockWarehouseDeleted=Límite stock para alertas y stock óptimo deseado eliminado correctamente
 AddNewProductStockWarehouse=Indicar nuevo límite para alertas y stock óptimo deseado
+AddStockLocationLine=Decrease quantity then click to add another warehouse for this product

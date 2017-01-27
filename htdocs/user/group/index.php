@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -115,16 +115,16 @@ $resql = $db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
-    
+
     $nbtotalofrecords = $num;
-    
+
     $i = 0;
 
     $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
-    
+
     $text = $langs->trans("ListOfGroups");
-    
+
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -133,26 +133,26 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-    
+
     print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
-    
-    if ($sall)
-    {
-        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
-    }    
-    
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+
     $moreforfilter='';
-    
+
 	//$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -166,7 +166,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
-    
+
     $var=True;
     while ($i < $num)
     {
@@ -192,10 +192,10 @@ if ($resql)
         $i++;
     }
     print "</table>";
-    
+
     print '</div>';
     print "</form>\n";
-    
+
     $db->free();
 }
 else

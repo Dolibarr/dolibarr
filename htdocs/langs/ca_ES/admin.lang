@@ -10,6 +10,9 @@ VersionUnknown=Desconeguda
 VersionRecommanded=Recomanada
 FileCheck=Comprovador de integritat de arxius
 FileCheckDesc=Aquesta eina li permet comprovar la integritat dels fitxers de l'aplicació, comparant cada arxiu amb els oficials. Es pot utilitzar aquesta eina per detectar si alguns arxius van ser modificats per un hacker per exemple.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified of removed.
+GlobalChecksum=Checksum global
 MakeIntegrityAnalysisFrom=Fer anàlisi de la integritat dels arxius de l'aplicació de
 LocalSignature=Firma local incrustada (menys fiables)
 RemoteSignature=Firma remota (més segura)
@@ -276,7 +279,7 @@ ModuleFamilyInterface=Interfícies amb sistemes externs
 MenuHandlers=Gestors de menú
 MenuAdmin=Editor de menú
 DoNotUseInProduction=No utilitzar en producció
-ThisIsProcessToFollow=Aquesta és la configuració del procés:
+ThisIsProcessToFollow=Aquests són els passos per al procés:
 ThisIsAlternativeProcessToFollow=Aquesta es una configuració alternativa per processar:
 StepNb=Pas %s
 FindPackageFromWebSite=Cercar el paquet que respon a la seva necessitat (per exemple en el lloc web %s)
@@ -411,6 +414,7 @@ ModuleCompanyCodePanicum=Retorna un codi comptable buit.
 ModuleCompanyCodeDigitaria=El codi comptable depèn del codi del tercer. El codi està format pel caràcter 'C' en primera posició seguit dels 5 primers caràcters del codi del tercer.
 Use3StepsApproval=Per defecte, les comandes de compra necessiten ser creades i aprovades per 2 usuaris diferents (el primer pas/usuari és per a crear i un altre pas/usuari per aprovar. Noteu que si un usuari te permisos tant per crear com per aprovar, un sol pas/usuari serà suficient). Amb aquesta opció, tens la possibilitat d'introduir un tercer pas/usuari per a l'aprovació, si l'import es superior a un determinat valor (d'aquesta manera són necessaris 3 passos: 1=validació, 2=primera aprovació i 3=segona aprovació si l'import és suficient).<br>Deixa-ho en blanc si només vols un nivell d'aprovació (2 passos); posa un valor encara que sigui molt baix (0,1) si vols una segona aprovació (3 passos).
 UseDoubleApproval=Utilitza una aprovació en 3 passos quan l'import (sense impostos) sigui més gran que...
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
 
 # Modules
 Module0Name=Usuaris i grups
@@ -515,8 +519,8 @@ Module2200Name=Multi-preus
 Module2200Desc=Activar l'ús d'expressions matemàtiques per als preus
 Module2300Name=Cron
 Module2300Desc=Gestor de tasques programades
-Module2400Name=Agenda/Esdeveniments
-Module2400Desc=Segueix els esdeveniments o cites. Registra els esdeveniments manuals en Agendes o permet a les aplicacions registrar esdeveniments automàtics per seguiment.
+Module2400Name=Esdeveniments/Agenda
+Module2400Desc=Segueix els esdeveniments realitzats o propers. Permet a l'aplicació registrar esdeveniments automàtics per seguiment o registra manualment els esdeveniments o cites.
 Module2500Name=Gestió Electrònica de Documents
 Module2500Desc=Permet administrar una base de documents
 Module2600Name=Serveis API/WEB (servidor SOAP)
@@ -582,7 +586,7 @@ Permission34=Elimina productes
 Permission36=Veure/gestionar els productes ocults
 Permission38=Exportar productes
 Permission41=Consulta projectes i tasques (els projectes compartits i els projectes en que sóc el contacte). També pots entrar els temps consumits en tasques asignades (timesheet)
-Permission42=Crear/modificar projectes i tasques (compartits o és contacte)
+Permission42=Crea/modifica projectes (projectes compartits i projectes dels que sóc contacte). També pot crear tasques i assignar usuaris a projectes i tasques
 Permission44=Elimina projectes (projectes compartits i projectes dels que en sóc contacte)
 Permission45=Exporta projectes
 Permission61=Consulta intervencions
@@ -685,7 +689,7 @@ PermissionAdvanced253=Crear/modificar usuaris interns/externs i els seus permiso
 Permission254=Crea/modifica només usuaris externs
 Permission255=Eliminar o desactivar altres usuaris
 Permission256=Consultar els seus permisos
-Permission262=Amplia l'accés a tots els tercers (no només a aquells enllaçats a l'usuari). No aplica als usuaris externs (sempre estan limitats a ells mateixos).
+Permission262=Amplia l'accés a tots els tercers (no només a aquells tercers enllaçats a l'usuari com a agent comercial). No aplica als usuaris externs (sempre estan limitats a ells mateixos per pressupostos, comandes, factures, contractes, etc). No aplica als projectes (només normes en permisos de projectes, visibilitat i qüestions d'assignació).
 Permission271=Consultar el CA
 Permission272=Consultar les factures
 Permission273=Emetre les factures
@@ -994,7 +998,7 @@ TriggerAlwaysActive=Triggers d'aquest arxiu sempre actius, ja que els mòduls Do
 TriggerActiveAsModuleActive=Triggers d'aquest arxiu actius ja que el mòdul <b>%s</b> està activat
 GeneratedPasswordDesc=Indiqui aquí que norma vol utilitzar per generar les contrasenyes quan vulgui generar una nova contrasenya
 DictionaryDesc=Afegeix totes les dades de referència. Pots afegir els teus valors per defecte.
-ConstDesc=Aquesta pàgina et permet editar tots els altres paràmetres no disponibles en les pàgines anteriors. Principalment són paràmetres reservats per desenvolupadors o per casuístiques avançades.
+ConstDesc=Aquesta pàgina et permet editar tots els altres paràmetres no disponibles en les pàgines anteriors. Principalment són paràmetres reservats per desenvolupadors o per casuístiques avançades. Per veure el llistat d'opcions <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">clica aquí</a>.
 MiscellaneousDesc=Tots els altres paràmetres relacionats amb la seguretat es defineixen aqui.
 LimitsSetup=Configuració de límits i precisions
 LimitsDesc=Podeu definir aquí els límits i precisions utilitzats per Dolibarr
@@ -1471,6 +1475,8 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Defineix automàticament aquest valor per defecte 
 AGENDA_DEFAULT_FILTER_TYPE=Establir per defecte aquest tipus d'esdeveniment en el filtre de cerca en la vista de la agenda
 AGENDA_DEFAULT_FILTER_STATUS=Establir per defecte aquest estat de esdeveniments en el filtre de cerca en la vista de la agenda
 AGENDA_DEFAULT_VIEW=Establir la pestanya per defecte al seleccionar el menú Agenda
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Habilita les notificacions sonores
 ##### ClickToDial #####
 ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
 ClickToDialUseTelLink=Utilitzar sols l'enllaç "tel:" als números de telèfon
@@ -1571,7 +1577,7 @@ BackupDumpWizard=Asistent per crear una copia de seguretat de la base de dades
 SomethingMakeInstallFromWebNotPossible=No és possible la instal·lació de mòduls externs des de la interfície web per la següent raó:
 SomethingMakeInstallFromWebNotPossible2=Per aquesta raó, explicarem aquí els passos del procés d'actualització manual que pot realitzar un usuari amb privilegis
 InstallModuleFromWebHasBeenDisabledByFile=La instal·lació de mòduls externs des de l'aplicació es troba desactivada per l'administrador. Ha de requerir que elimini l'arxiu <strong>%s</strong> per habilitar aquesta funció
-ConfFileMuseContainCustom=Instal·lant un mòdul extern de l'aplicació desa els fitxers del mòdul en el directori <strong>%s</strong>. Per tenir aquest directori processat per Dolibarr, has de configurar el teu  <strong>conf/conf.php</strong> per tenir l'opció <br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Remarca línies de la taula quan el ratolí passi per sobre
 HighlightLinesColor=Remarca el color de la línia quan el ratolí hi passa per sobre (deixa-ho buit per a no remarcar)
 TextTitleColor=Color de títol de pàgina
@@ -1614,8 +1620,8 @@ ByDefaultInList=Mostra per defecte en la vista del llistat
 YouUseLastStableVersion=Estàs utilitzant l'última versió estable
 TitleExampleForMajorRelease=Exemple de missatge que es pot utilitzar per anunciar aquesta actualització de versió (ets lliure d'utilitzar-ho a les teves webs)
 TitleExampleForMaintenanceRelease=Exemple de missatge que es pot utilitzar per anunciar aquesta actualització de manteniment (ets lliure d'utilitzar-ho a les teves webs)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s està disponible. La versió %s és una versió principal amb un munt de noves característiques per als usuaris i desenvolupadors. Es pot descarregar des de la secció de descàrregues del portal http://www.dolibarr.org (subdirectori de versions estables). Pots llegir el <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> per veure la llista completa dels canvis.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s està disponible. La versió %s és una versió de manteniment que només conté correcció d'errors. Recomanem a tothom que utilitzi una versió anterior que s'actualitzi a aquesta. Com qualsevol versió de manteniment, no hi ha noves característiques ni canvis d'estructures de dades en aquesta versió. Es pot descarregar des de la secció de descàrregues del portal http://www.dolibarr.org (subdirectori de versions estables). Pots llegir el <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> per veure la llista completa dels canvis.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=Quan l'opció "Varis nivells de preus per producte/servei" està activada, pots definir diferents preus (un preu per nivell) per cada producte. Per estalviar temps, pots entrar una regla per tenir preu per cada nivell autocalculat d'acord al preu del primer nivell, així només hauràs d'introduir el preu del primer nivell de cada producte. Aquesta pàgina està aqui per estalviar temps i pot ser útil només si els teus preus per cada nivell son relatius al primer nivell. Pots ignorar aquesta pàgina en la majoria dels casos.
 ModelModulesProduct=Plantilles per documents de productes
 ToGenerateCodeDefineAutomaticRuleFirst=Per poder generar codis automàticament, primer has de definir un responsable de autodefinir els números del codi de barres.

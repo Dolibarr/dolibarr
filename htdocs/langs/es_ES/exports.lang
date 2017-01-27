@@ -110,7 +110,7 @@ Enclosure=Delimitador de campos
 SpecialCode=Código especial
 ExportStringFilter=%% permite reemplazar uno o más carácteres en el texto
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtros por un año/mes/día<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filtros entre un rango de años/meses/días<br> > YYYY, > YYYYMM, > YYYYMMDD : filtros en todos los años/meses/días siguientes <br> < YYYY, < YYYYMM, < YYYYMMDD : filtros en todos los años/meses/días anteriores 
-ExportNumericFilter='NNNNN' filtros para un valor<br>'NNNNN+NNNNN' filtros sobre un rango de valores<br>'&gt;NNNNN' filtros para valores menores<br>'&gt;NNNNN' filtros para valores mayores
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Empezar la importación desde la línea nº
 EndAtLineNb=Terminar en la línea nº
 SetThisValueTo2ToExcludeFirstLine=Por ejemplo, indicar 3 para excluir las 2 primeras líneas
@@ -120,3 +120,8 @@ SelectFilterFields=Si quiere aplicar un filtro sobre algunos valores, introdúzc
 FilteredFields=Campos filtrados
 FilteredFieldsValues=Valores de filtros
 FormatControlRule=Regla formato de control
+## imports updates
+KeysToUseForUpdates=Clave a usar para actualizar datos
+NbInsert=Número de líneas añadidas: %s
+NbUpdate=Número de líneas actualizadas: %s
+MultipleRecordFoundWithTheseFilters=Se han encontrado varios registros con estos filtros: %s

@@ -58,6 +58,7 @@ TaskDateEnd=تاريخ انتهاء المهمة
 TaskDescription=وصف المهمة
 NewTask=مهمة جديدة
 AddTask=إنشاء مهمة
+AddTimeSpent=Create time spent
 Activity=النشاط
 Activities=المهام والأنشطة
 MyActivities=بلدي المهام والأنشطة

@@ -4,5 +4,4 @@ BillShortStatusValidated=Validado
 BillShortStatusClosedUnpaid=Cerrado
 RelatedCommercialProposals=Cotizaciones asociadas
 Billed=Pagado
-PaymentConditionShortRECEP=Inmediato
-PaymentConditionRECEP=Inmediato
+TypeContact_facture_external_BILLING=Contacto cliente de facturación cotización

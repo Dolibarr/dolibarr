@@ -183,20 +183,19 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
-/* TODO uncomment when the functionality will integrated
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnInvoiceDate").'</td>';
+print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnDocumentDate").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_INVOICE_DATE">';
-print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_INVOICE_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_INVOICE_DATE,1);
+print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE">';
+print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
-*/
+
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
