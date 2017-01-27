@@ -182,7 +182,7 @@ print "</table></form>";
 
 
 
-print '</td><td valign="top">';
+print '</td><td class="tdtop">';
 
 // Right area
 $relativepath=$ecmdir->getRelativePath();

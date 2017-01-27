@@ -77,6 +77,7 @@ class FormMail extends Form
     var $withfckeditor;
 
     var $substit=array();
+    var $substit_lines=array();
     var $param=array();
 
     var $error;
@@ -712,6 +713,18 @@ class FormMail extends Form
         				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
+                
+                //Add lines substitution key from each line
+                $lines = '';
+                $defaultlines = $arraydefaultmessage['content_lines'];
+                if (isset($defaultlines))
+                {
+                    foreach ($this->substit_lines as $substit_line)
+                    {
+                        $lines .= make_substitutions($defaultlines,$substit_line)."\n";
+                    }
+                }
+                $this->substit['__LINES__']=$lines;
 
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
@@ -820,7 +833,7 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT label, topic, content, lang";
+		$sql = "SELECT label, topic, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
@@ -840,6 +853,7 @@ class FormMail extends Form
 				$ret['label']=$obj->label;
 				$ret['topic']=$obj->topic;
 				$ret['content']=$obj->content;
+				$ret['content_lines']=$obj->content_lines;
 				$ret['lang']=$obj->lang;
 			}
 			else
@@ -859,6 +873,7 @@ class FormMail extends Form
 	        	$ret['label']='default';
 	        	$ret['topic']='';
 	        	$ret['content']=$defaultmessage;
+				$ret['content_lines']='';
 	        	$ret['lang']=$outputlangs->defaultlang;
 			}
 
@@ -922,7 +937,7 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT rowid, label, topic, content, lang, position";
+		$sql = "SELECT rowid, label, topic, content, content_lines, lang, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
@@ -944,6 +959,7 @@ class FormMail extends Form
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
 				$line->content=$obj->content;
+				$line->content_lines=$obj->content_lines;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}
@@ -962,7 +978,7 @@ class FormMail extends Form
 	/**
 	 * Set substit array from object
 	 * 
-	 * @param	Object	   $object		  Object to use
+	 * @param	CommonObject	   $object		  Object to use
 	 * @param   Translate  $outputlangs   Object lang 
 	 * @return	void
 	 */
@@ -970,11 +986,11 @@ class FormMail extends Form
 	{
 		global $user;
 		$this->substit['__REF__'] = $object->ref;
-		$this->substit['__REFCLIENT__'] = $object->ref_client;
-		$this->substit['__REFSUPPLIER__'] = $object->ref_supplier;
+		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : '';
+		$this->substit['__REFSUPPLIER__'] = isset($object->ref_supplier) ? $object->ref_supplier : '';
 
-		$this->substit['__DATE_YMD__'] = dol_print_date($object->date, 'day', 0, $outputlangs);
-		$this->substit['__DATE_DUE_YMD__'] = dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs);
+		$this->substit['__DATE_YMD__'] = isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '';
+		$this->substit['__DATE_DUE_YMD__'] = isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '';
 		$this->substit['__AMOUNT__'] = price($object->total_ttc);
 		$this->substit['__AMOUNT_WO_TAX__'] = price($object->total_ht);
 		
@@ -988,6 +1004,42 @@ class FormMail extends Form
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
+        
+        //Fill substit_lines with each object lines content
+        if (is_array($object->lines))
+        {
+            foreach ($object->lines as $line)
+            {
+                $substit_line = array(
+                    '__PRODUCT_REF__' => isset($line->product_ref) ? $line->product_ref : '',
+                    '__PRODUCT_LABEL__' => isset($line->product_label) ? $line->product_label : '',
+                    '__PRODUCT_DESCRIPTION__' => isset($line->product_desc) ? $line->product_desc : '',
+                    '__LABEL__' => isset($line->label) ? $line->label : '',
+                    '__DESCRIPTION__' => isset($line->desc) ? $line->desc : '',
+                    '__DATE_START_YMD__' => dol_print_date($line->date_start, 'day', 0, $outputlangs),
+                    '__DATE_END_YMD__' => dol_print_date($line->date_end, 'day', 0, $outputlangs),
+                    '__QUANTITY__' => $line->qty,
+                    '__SUBPRICE__' => price($line->subprice),
+                    '__AMOUNT__' => price($line->total_ttc),
+                    '__AMOUNT_WO_TAX__' => price($line->total_ht),
+                    //'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically
+                );
+
+                // Create dinamic tags for __PRODUCT_EXTRAFIELD_FIELD__
+                if (!empty($line->fk_product))
+                {
+                    $extrafields = new ExtraFields($this->db);
+                    $extralabels = $extrafields->fetch_name_optionals_label('product', true);
+                    $product = new Product($this->db);
+                    $product->fetch($line->fk_product, '', '', 1);
+                    $product->fetch_optionals($product->id, $extralabels);
+                    foreach ($extrafields->attribute_label as $key => $label) {
+                        $substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+                    }
+                }
+                $this->substit_lines[] = $substit_line;
+            }
+        }
 	}
 	
 	/**
@@ -1066,5 +1118,6 @@ class ModelMail
 	public $label;
 	public $topic;
 	public $content;
+	public $content_lines;
 	public $lang;
 }

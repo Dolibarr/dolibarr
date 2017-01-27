@@ -213,6 +213,8 @@ if ($result)
 	}
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+
+	print '<div class="div-table-responsive">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
@@ -312,7 +314,10 @@ if ($result)
 		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
 		else print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	}
-	print "</table></form>";
+	print "</table>";
+	print "</div>";
+	
+	print "</form>";
 	$db->free($result);
 }
 else

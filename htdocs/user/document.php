@@ -76,7 +76,7 @@ if ($user->id <> $id && ! $canreaduser) accessforbidden();
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -132,11 +132,11 @@ if ($object->id)
 	dol_fiche_head($head, 'document', $langs->trans("User"),0,'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
     print '<div class="underbanner clearboth"></div>';
-	
+
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
@@ -160,7 +160,7 @@ if ($object->id)
 	print '</table>';
 
 	dol_fiche_end();
-	
+
 
 	$modulepart = 'user';
 	$permission = $user->rights->user->user->creer;

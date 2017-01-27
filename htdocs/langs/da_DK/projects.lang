@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=Ny opgave
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Aktivitet
 Activities=Opgaver / aktiviteter
 MyActivities=Mine opgaver / aktiviteter

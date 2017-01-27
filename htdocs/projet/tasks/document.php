@@ -155,7 +155,7 @@ if ($object->id > 0)
             $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
         
-        dol_banner_tab($projectstatic, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';

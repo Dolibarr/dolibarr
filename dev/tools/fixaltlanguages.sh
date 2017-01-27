@@ -42,11 +42,15 @@ then
         then
         	aaupper="US"
         fi
+        if [ $aaupper = "EL" ]
+        then
+        	aaupper="GR"
+        fi        
     	bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
     	if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
-    	    if [ -d $reflang ]
+    	    if [ -d $reflang -a $aa"_"$bb != $aa"_"$aaupper ]
     	    then
 		    	echo "***** Process language "$aa"_"$bb" - Search original into "$reflang
     			echo $dirshort is an alternative language of $reflang

@@ -170,14 +170,17 @@ ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
 ErrorSupplierCountryIsNotDefined=Не е определено на страната на доставчика. Корекция на щепсела.
 ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
-ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
-ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
-ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
-ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
-ErrorFailedToLoadLoginFileForMode=Failed to get the login file for mode '%s'.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enough for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enough for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enough for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enough for product %s to add it into a new proposal.
+ErrorFailedToLoadLoginFileForMode=Failed to get the login key for mode '%s'.
 ErrorModuleNotFound=File of module was not found.
 ErrorFieldAccountNotDefinedForBankLine=Value for Accounting account not defined for source bank line %s
 ErrorBankStatementNameMustFollowRegex=Error, bank statement name must follow the following syntax rule %s
+ErrorPhpMailDelivery=Check that you don't use a too high number of recipients and that your email content is not similar to a Spam. Ask also your administrator to check firewall and server logs files for a more complete information.
+ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter time consumed.
+ErrorTaskAlreadyAssigned=Task already assigned to user
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.

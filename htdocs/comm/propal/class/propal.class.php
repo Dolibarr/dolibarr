@@ -824,7 +824,7 @@ class Propal extends CommonObject
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
 		// Multicurrency
-		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		if (empty($this->fk_multicurrency))
 		{
 			$this->multicurrency_code = $conf->currency;
@@ -3511,16 +3511,14 @@ class Propal extends CommonObject
 
 		$langs->load("propale");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROPALE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'azur';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROPALE_ADDON_PDF)) {
 				$modele = $conf->global->PROPALE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'azur';
 			}
 		}
 

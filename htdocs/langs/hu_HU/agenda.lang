@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Cselekvések
 Agenda=Napirend
+TMenuAgenda=Napirend
 Agendas=Napirendek
 LocalAgenda=Belső naptár
 ActionsOwnedBy=Esemény gazdája

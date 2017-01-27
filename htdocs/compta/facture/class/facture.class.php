@@ -3173,52 +3173,6 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
-	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
-	 */
-	function getSumCreditNotesUsed($multicurrency=0)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
-		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-		if ($result >= 0)
-		{
-			return $result;
-		}
-		else
-		{
-			$this->error=$discountstatic->error;
-			return -1;
-		}
-	}
-
-	/**
-	 *    	Return amount (with tax) of all deposits invoices used by invoice
-	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
-	 */
-	function getSumDepositsUsed($multicurrency=0)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
-		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getSumDepositsUsed($this, $multicurrency);
-		if ($result >= 0)
-		{
-			return $result;
-		}
-		else
-		{
-			$this->error=$discountstatic->error;
-			return -1;
-		}
-	}
-
-	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
 	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
@@ -4019,24 +3973,20 @@ class Facture extends CommonInvoice
 
 		$langs->load("bills");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->FACTURE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'crabe';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->FACTURE_ADDON_PDF)) {
 				$modele = $conf->global->FACTURE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'crabe';
 			}
 		}
 
 		$modelpath = "core/modules/facture/doc/";
 
-		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-		return $result;
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**

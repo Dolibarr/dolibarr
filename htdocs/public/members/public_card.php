@@ -111,7 +111,7 @@ if ($id > 0)
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 
-		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note_public).'</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 		print '</table>';
 	}

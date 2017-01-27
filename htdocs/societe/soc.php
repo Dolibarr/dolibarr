@@ -2239,7 +2239,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
@@ -2517,7 +2517,7 @@ else
 
 	            $var=true;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

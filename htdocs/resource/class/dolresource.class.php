@@ -455,7 +455,7 @@ class Dolresource extends CommonObject
     	$extrafields=new ExtraFields($this->db);
     	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
     	if (is_array($extralabels) && count($extralabels)>0) {
-    		foreach($extralabels as $label=>$code) {
+    		foreach($extralabels as $code=>$label) {
     			$sql.= " ef.".$code." as extra_".$code.",";
     		}
     	}

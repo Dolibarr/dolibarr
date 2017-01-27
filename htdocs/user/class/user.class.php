@@ -127,6 +127,9 @@ class User extends CommonObject
 	
 	public $dateemployment;			// Define date of employment by company
 
+	private $cache_childids;
+	
+	
 	/**
 	 *    Constructor de la classe
 	 *
@@ -330,7 +333,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 
@@ -1061,7 +1064,8 @@ class User extends CommonObject
 		$this->town         = $contact->town;
 		$this->state_id     = $contact->state_id;
 		$this->country_id   = $contact->country_id;
-
+        $this->employee     = 0;
+        
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
 
@@ -2600,26 +2604,38 @@ class User extends CommonObject
 
 	/**
 	 * 	Return list of all child users id in herarchy (all sublevels).
-	 *  Note: Calling this function also reste full list of users into $this->users.
+	 *  Note: Calling this function also reset full list of users into $this->users.
 	 *
-	 *	@return		array		      		  	Array of user id lower than user (all levels under user).
+	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
+	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
 	 *  @see get_children
 	 */
-	function getAllChildIds()
+	function getAllChildIds($addcurrentuser=0)
 	{
-		// Init this->users
-		$this->get_full_tree();
-
-		$idtoscan=$this->id;
-		$childids=array();
-
-		dol_syslog("Build childid for id = ".$idtoscan);
-		foreach($this->users as $id => $val)
-		{
-			//var_dump($val['fullpath']);
-			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
-		}
-
+    	$childids=array();
+	    
+	    if (isset($this->cache_childids[$this->id]))
+	    {
+	        $childids = $this->cache_childids[$this->id];
+	    }
+	    else
+	    {
+    		// Init this->users
+    		$this->get_full_tree();
+    
+    		$idtoscan=$this->id;
+    
+    		dol_syslog("Build childid for id = ".$idtoscan);
+    		foreach($this->users as $id => $val)
+    		{
+    			//var_dump($val['fullpath']);
+    			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+    		}
+	    }    
+		$this->cache_childids[$this->id] = $childids;
+		
+		if ($addcurrentuser) $childids[$this->id]=$this->id;
+		
 		return $childids;
 	}
 

@@ -740,7 +740,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
     		'ip' => false
     	);
 
-    	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+    	// This is when server run behind a reverse proxy
+    	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"])?'':'->'.$_SERVER['REMOTE_ADDR']);
+    	// This is when server run normally on a server
+    	else if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
     	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
     	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
     	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
@@ -967,7 +970,7 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
@@ -1090,7 +1093,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	if ($object->element == 'product' && ! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 
-	if ($object->element != 'product') 
+	if ($object->element != 'product' && $object->element != 'bookmark') 
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -2504,7 +2507,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: right"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : $other));
 }
 
 /**
@@ -3316,7 +3319,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
 
         print '<li class="pagination">';
-        print '<select class="flat selectlimit" name="limit">';
+        print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
         $tmpchoice=explode(',',$pagesizechoices);
         $tmpkey=$limit.':'.$limit;
         if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;

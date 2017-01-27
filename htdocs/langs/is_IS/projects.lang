@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=Ný verkefni
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Afþreying
 Activities=Verkefni / starfsemi
 MyActivities=verkefni mín / starfsemi

@@ -58,6 +58,7 @@ TaskDateEnd=Ülesande lõpu kuupäev
 TaskDescription=Ülesande kirjeldus
 NewTask=Uus ülesanne
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Aktiivsus
 Activities=Ülesanded/toimingud
 MyActivities=Minu ülesanded/aktiivsused

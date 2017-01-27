@@ -37,8 +37,8 @@ $langs->load("projects");
 $langs->load("companies");
 
 $id=GETPOST('id','int');
-$ref=GETPOST("ref",'alpha',1);
-$taskref=GETPOST("taskref",'alpha');
+$ref=GETPOST("ref",'alpha',1);          // task ref
+$taskref=GETPOST("taskref",'alpha');    // task ref
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
@@ -246,7 +246,7 @@ if ($id > 0 || ! empty($ref))
                 $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
             }
             
-            dol_banner_tab($projectstatic, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+            dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
         
             print '<div class="fichecenter">';
             print '<div class="fichehalfleft">';
@@ -398,7 +398,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td>';
 			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 			print '</td></tr>';
@@ -509,7 +509,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Description
-			print '<td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 			print nl2br($object->description);
 			print '</td></tr>';
 
@@ -551,7 +551,7 @@ if ($id > 0 || ! empty($ref))
 				}
 	
 				// Delete
-				if ($user->rights->projet->supprimer && ! $object->hasChildren())
+				if ($user->rights->projet->supprimer && ! $object->hasChildren() && ! $object->hasTimeSpent())
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				}

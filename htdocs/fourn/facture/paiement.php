@@ -379,7 +379,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
             print '<tr><td>'.$langs->trans('Comments').'</td>';
-            print '<td valign="top">';
+            print '<td class="tdtop">';
             print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '</table>';
             dol_fiche_end();
@@ -422,7 +422,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	</script>'."\n";
 						}
 
-                        print '<div class="div-table-responsive">';
+                        print '<div class="div-table-responsive-no-min">';
                         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 						print '<tr class="liste_titre">';

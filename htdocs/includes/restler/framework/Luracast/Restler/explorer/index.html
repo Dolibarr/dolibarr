@@ -2,8 +2,8 @@
 <html>
 <head>
   <title>Api Explorer</title>
-  <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
   <link href='css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/reset.css' media='print' rel='stylesheet' type='text/css'/>
@@ -56,11 +56,18 @@
       log("key: " + key);
       if(key && key.trim() != "") {
         log("added key " + key);
-        window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
+        
+        window.authorizations.add("key", new ApiKeyAuthorization("DOLAPIKEY", key, "query"));
+        console.log("param api_key added with value "+key);
+        
+        window.authorizations.add("key2", new ApiKeyAuthorization("DOLAPIKEY", key, "header"));
+        console.log("header DOLAPIKEY added with value "+key);
       }
     })
+    
     window.swaggerUi.load();
   });
+    
   </script>
 </head>
 
@@ -70,7 +77,7 @@
     <a id="logo" href="#">API Explorer</a>
     <form id='api_selector'>
       <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="hidden" value="resources.json"/></div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+      <div class='input'><input placeholder="DOLAPIKEY" id="input_apiKey" name="apiKey" type="text"/></div>
       <div class='input'><a id="explore" href="#">Explore</a></div>
     </form>
   </div>

@@ -704,9 +704,12 @@ class Commande extends CommonOrder
 
         // Clean parameters
         $this->brouillon = 1;		// set command as draft
-
+		
+		// $date_commande is deprecated
+        $date = ($this->date_commande ? $this->date_commande : $this->date);
+		
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -744,9 +747,6 @@ class Commande extends CommonOrder
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
-
-        // $date_commande is deprecated
-        $date = ($this->date_commande ? $this->date_commande : $this->date);
 
         $now=dol_now();
 
@@ -3641,16 +3641,14 @@ class Commande extends CommonOrder
 
 		$langs->load("orders");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->COMMANDE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'einstein';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'einstein';
 			}
 		}
 

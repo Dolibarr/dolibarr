@@ -375,7 +375,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 print '<tr class="liste_titre">';
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))

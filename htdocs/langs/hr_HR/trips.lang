@@ -21,7 +21,17 @@ ListToApprove=Čeka na odobrenje
 ExpensesArea=Sučelje izvještaja troška
 ClassifyRefunded=Označi 'Povrat'
 ExpenseReportWaitingForApproval=Novi izvještaj troška je predan za odobrenje
-ExpenseReportWaitingForApprovalMessage=Novi izvještaj troška je predan i čeka odobrenje.\n- Korisnik: %s\n- Period: %s\nKliknite ovdje za ovjeru: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=Izvještaj troška ID
 AnyOtherInThisListCanValidate=Osoba za obavjest za ovjeru.
 TripSociete=Više o tvrtci
@@ -59,31 +69,23 @@ DATE_REFUS=Datum odbijanja
 DATE_SAVE=Datum ovjere
 DATE_CANCEL=Datum odustajanja
 DATE_PAIEMENT=Datum isplate
-
 BROUILLONNER=Ponovo otvori
 ValidateAndSubmit=Ovjeri i predaj za odobrenje
 ValidatedWaitingApproval=Ovjereno (čeka odobrenje)
-
 NOT_AUTHOR=Vi niste autor izvještaja troška. Operacija je prekinuta.
-
 ConfirmRefuseTrip=Are you sure you want to deny this expense report?
-
 ValideTrip=Odobri izvještaj troška
 ConfirmValideTrip=Are you sure you want to approve this expense report?
-
 PaidTrip=Isplati troškove
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
-
 ConfirmCancelTrip=Are you sure you want to cancel this expense report?
-
 BrouillonnerTrip=Vrati izvještaj troška nazad na status "Skica"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
-
 SaveTrip=Ovjeri trošak
 ConfirmSaveTrip=Are you sure you want to validate this expense report?
-
 NoTripsToExportCSV=Nema izvještaja troška za izvoz u ovom razdoblju.
 ExpenseReportPayment=Isplata izvještaja troška
-
 ExpenseReportsToApprove=Troškovi za odobrenje
 ExpenseReportsToPay=Troškovi za platiti
+CloneExpenseReport=Clone expese report
+ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
