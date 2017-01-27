@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2251,11 +2251,11 @@ class Contrat extends CommonObject
 		$this->context['createfromclone'] = 'createfromclone';
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->fetch($this->id);
 		// Load dest object
 		$clonedObj = clone $this;
+        $clonedObj->socid = $socid;
 
 		$this->db->begin();
 
@@ -2290,16 +2290,13 @@ class Contrat extends CommonObject
 			$this->error = $clonedObj->error;
 			$this->errors[] = $clonedObj->error;
 		} else {
-			// copy internal contacts
-			if ($clonedObj->copy_linked_contact($this, 'internal') < 0)
-				$error ++;
-
-				// copy external contacts if same company
-			elseif ($this->socid == $clonedObj->socid) {
-				if ($clonedObj->copy_linked_contact($this, 'external') < 0)
-					$error ++;
-			}
-		}
+            // copy external contacts if same company
+            if ($this->socid == $clonedObj->socid) {
+                if ($clonedObj->copy_linked_contact($this, 'external') < 0) {
+                    $error++;
+                }
+            }
+        }
 
 		if (! $error) {
 			foreach ( $this->lines as $line ) {
