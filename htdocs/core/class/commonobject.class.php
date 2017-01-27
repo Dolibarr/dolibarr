@@ -2151,6 +2151,8 @@ abstract class CommonObject
      */
     function update_note($note,$suffix='')
     {
+        global $user;
+        
     	if (! $this->table_element)
     	{
     		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
@@ -2167,6 +2169,7 @@ abstract class CommonObject
             
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))?"fk_user_mod":"fk_user_modif")." = ".$user->id;
     	$sql.= " WHERE rowid =". $this->id;
 
     	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
