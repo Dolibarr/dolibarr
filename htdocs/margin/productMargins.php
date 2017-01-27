@@ -166,8 +166,8 @@ $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,"
 if ($id > 0) $sql.= " d.fk_product,";
 if ($id > 0) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " SUM(d.total_ht) as selling_price,";
-$sql.= " SUM(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " SUM(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
+$sql.= " sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(d.total_ht) - sum(".$db->ifsql('d.total_ht <0','d.qty * abs(d.buy_price_ht) * -1','d.qty * d.buy_price_ht').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -234,17 +234,9 @@ if ($result)
 			$pv = $objp->selling_price;
 			$marge = $objp->marge;
 
-			if ($marge < 0)
-			{
-				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
-			}
-			else
-			{
-				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
-			}
-
+			$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+			$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
+			
 			$var=!$var;
 
 			print "<tr ".$bc[$var].">";
@@ -295,16 +287,9 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	/*if ($totalMargin < 0)
-	{
-		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-	}
-	else
-	{*/
-		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-	//}
+	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+	$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+
 	print '<tr class="liste_total">';
 	if ($id > 0)
 		print '<td colspan=2>';
