@@ -78,6 +78,7 @@ ManualUpdate=Manual update
 HolidaysCancelation=Leave request cancelation
 EmployeeLastname=Employee lastname
 EmployeeFirstname=Employee firstname
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

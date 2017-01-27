@@ -1,17 +1,12 @@
 # Dolibarr language file - Source file is en_US - bills
 BillStatusPaid=Pagado
-BillStatusPaidBackOrConverted=Paid or converted into discount
 BillStatusStarted=Empezado
 BillShortStatusPaid=Pagado
-BillShortStatusPaidBackOrConverted=Processed
 BillShortStatusValidated=Validado
 BillShortStatusStarted=Empezado
 BillShortStatusClosedUnpaid=Cerrado
 BillFrom=De
-RemainderToPayBack=Remaining amount to pay back
 ReasonDiscount=Razón
-PaymentConditionShortRECEP=Immediate
-PaymentConditionRECEP=Immediate
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
 PaymentTypeCHQ=Verificar

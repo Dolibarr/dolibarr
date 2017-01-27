@@ -2,6 +2,7 @@
 SecurityCode=Öryggisnúmer
 NumberingShort=N°
 Tools=Verkfæri
+TMenuTools=Tools
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=Afmæli
 BirthdayDate=Birthday date

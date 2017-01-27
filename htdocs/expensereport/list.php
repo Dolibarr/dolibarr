@@ -240,7 +240,7 @@ if ($search_status != '' && $search_status >= 0)
 }
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-    && empty($user->rights->expensereport->writeall_advance))
+    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
 	$childids = $user->getAllChildIds();
 	$childids[]=$user->id;

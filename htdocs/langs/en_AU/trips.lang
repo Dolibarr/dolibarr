@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - trips
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s

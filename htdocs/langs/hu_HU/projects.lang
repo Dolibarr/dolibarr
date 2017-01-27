@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=Új feladat
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Aktivitás
 Activities=Feladatok/aktivitások
 MyActivities=Feladataim/Aktivitásaim
