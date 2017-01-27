@@ -119,12 +119,15 @@ $arrayfields = array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
 	foreach ( $extrafields->attribute_label as $key => $val ) {
-		$arrayfields["ef." . $key] = array(
-				'label' => $extrafields->attribute_label[$key],
-				'checked' => $extrafields->attribute_list[$key],
-				'position' => $extrafields->attribute_pos[$key],
-				'enabled' => $extrafields->attribute_perms[$key]
-		);
+		$typeofextrafield=$extrafields->attribute_type[$key];
+		if ($typeofextrafield!='separate') {
+			$arrayfields["ef." . $key] = array(
+					'label' => $extrafields->attribute_label[$key],
+					'checked' => $extrafields->attribute_list[$key],
+					'position' => $extrafields->attribute_pos[$key],
+					'enabled' => $extrafields->attribute_perms[$key]
+			);
+		}
 	}
 }
 

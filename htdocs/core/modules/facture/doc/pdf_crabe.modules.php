@@ -7,6 +7,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1620,8 +1621,10 @@ class pdf_crabe extends ModelePDFFactures
 		    {
 		        $usertmp=new User($this->db);
 		        $usertmp->fetch($arrayidcontact[0]);
+                $posy+=4;
+                $pdf->SetXY($posx,$posy);
 		        $pdf->SetTextColor(0,0,60);
-		        $pdf->MultiCell(190, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+		        $pdf->MultiCell($w, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 		    }
 		}
 		
