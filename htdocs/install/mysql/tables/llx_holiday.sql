@@ -22,6 +22,7 @@ rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 entity         integer DEFAULT 1 NOT NULL,		-- Multi company id
 fk_user        integer NOT NULL,
 fk_user_create integer,
+fk_user_modif  integer,
 fk_type        integer NOT NULL,
 date_create    DATETIME NOT NULL,
 description    VARCHAR( 255 ) NOT NULL,
