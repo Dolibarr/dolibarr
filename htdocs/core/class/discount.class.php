@@ -41,10 +41,10 @@ class DiscountAbsolute
     public $fk_user;				// Id utilisateur qui accorde la remise
     public $description;			// Description libre
     public $datec;					// Date creation
-    public $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
-    public $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
+    public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
+    public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)
     public $fk_facture_source;		// Id facture avoir a l'origine de la remise
-    public $ref_facture_source;	// Ref facture avoir a l'origine de la remise
+    public $ref_facture_source;	    // Ref facture avoir a l'origine de la remise
 
     /**
      *	Constructor
@@ -296,7 +296,7 @@ class DiscountAbsolute
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->fk_facture_source=$rowidline;
+            $this->fk_facture_line=$rowidline;
             $this->fk_facture=$rowidinvoice;
             return 1;
         }
