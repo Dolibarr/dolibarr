@@ -509,8 +509,8 @@ if (empty($reshook))
                 }
                 else
 				{
-					
-					if($result == -3) {
+				    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so 
+				    {
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
 						$object->code_client = null;
