@@ -115,6 +115,7 @@ $sql = "SELECT";
 if ($agentid > 0) $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
+// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge" ;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
