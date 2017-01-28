@@ -1277,7 +1277,7 @@ class Facture extends CommonInvoice
 	{
 		$this->lines=array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
+		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
 		$sql.= ' l.situation_percent, l.fk_prev_id,';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
@@ -1304,6 +1304,7 @@ class Facture extends CommonInvoice
 
 				$line->id               = $objp->rowid;
 				$line->rowid	        = $objp->rowid;             // deprecated
+				$line->fk_facture       = $objp->fk_facture;
 				$line->label            = $objp->custom_label;		// deprecated
 				$line->desc             = $objp->description;		// Description line
 				$line->description      = $objp->description;		// Description line
@@ -1558,6 +1559,18 @@ class Facture extends CommonInvoice
 			$facligne->rang=-1;
 			$facligne->info_bits=2;
 
+			// Get buy/cost price of invoice that is source of discount
+			if ($remise->fk_facture_source > 0)
+			{
+    			$srcinvoice=new Facture($this->db);
+    			$srcinvoice->fetch($remise->fk_facture_source);
+    			$totalcostpriceofinvoice=0;
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';  // TODO Move this into commonobject
+    			$formmargin=new FormMargin($this->db);
+    			$arraytmp=$formmargin->getMarginInfosArray($srcinvoice, false);
+        		$facligne->pa_ht = $arraytmp['pa_total'];
+			}
+			
 			$facligne->total_ht  = -$remise->amount_ht;
 			$facligne->total_tva = -$remise->amount_tva;
 			$facligne->total_ttc = -$remise->amount_ttc;
