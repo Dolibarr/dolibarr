@@ -4096,10 +4096,11 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		1 no triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@param      int		$notrigger		                 1 no triggers
+	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return		int						                 <0 if KO, >0 if OK
 	 */
-	function insert($notrigger=0)
+	function insert($notrigger=0, $noerrorifdiscountalreadylinked=0)
 	{
 		global $langs,$user,$conf;
 
@@ -4243,13 +4244,16 @@ class FactureLigne extends CommonInvoiceLine
 					// Check if discount was found
 					if ($result > 0)
 					{
-						// Check if discount not already affected to another invoice
-						if ($discount->fk_facture)
+					    // Check if discount not already affected to another invoice
+						if ($discount->fk_facture_line > 0)
 						{
-							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
-							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-							$this->db->rollback();
-							return -3;
+						    if (empty($noerrorifdiscountalreadylinked))
+						    {
+    							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
+    							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+    							$this->db->rollback();
+    							return -3;
+						    }
 						}
 						else
 						{
