@@ -48,6 +48,7 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -431,6 +432,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql.= " WHERE m.fk_product = p.rowid";
+if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
@@ -511,8 +513,12 @@ if ($resql)
 	
     $i = 0;
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-    $texte = $langs->trans("ListOfStockMovements");
-    if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+    if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
+	else
+	{
+		$texte = $langs->trans("ListOfStockMovements");
+		if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+	}
     llxHeader("",$texte,$help_url);
 
     /*
