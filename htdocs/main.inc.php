@@ -993,9 +993,10 @@ function top_httphead()
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
  * @param 	int    	$disablejmobile	Disable jmobile
+ * @param   int     $disablenofollow Disable no follow tag
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0)
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
 {
     global $user, $conf, $langs, $db;
 
@@ -1017,7 +1018,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
-        print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
+        print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";      				// Do not index
         print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);

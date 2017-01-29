@@ -339,7 +339,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 }
 
 /**
- * Check access by user to object
+ * Check access by user to object.
+ * This function is also called by restrictedArea
  *
  * @param User		$user			User to check
  * @param array		$featuresarray	Features/modules to check
@@ -348,8 +349,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
  * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param string	$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string	$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
- *
  * @return	bool		True if user has access, False otherwise
+ * @see restrictedArea
  */
 function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='', $dbt_select='rowid')
 {
