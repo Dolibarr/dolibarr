@@ -893,6 +893,33 @@ class MouvementStock extends CommonObject
 
 		return '';
 	}
+	
+	/**
+	 * Set attribute origin to object
+	 * 
+	 * @param	string	$origin_element
+	 * @param	int		$origin_id
+	 * 
+	 * @return	void
+	 */
+	function setOrigin($origin_element, $origin_id)
+	{
+		if (!empty($origin_element) && $origin_id > 0)
+		{
+			$origin='';
+			if ($origin_element == 'project')
+			{
+				if (!class_exists('Project')) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$origin = new Project($this->db);
+			}
+
+			if (!empty($origin))
+			{
+				$this->origin = $origin;
+				$this->origin->id = $origin_id;
+			}
+		}
+	}
 
 
 	/**
