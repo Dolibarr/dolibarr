@@ -2778,6 +2778,9 @@ tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair
     padding: 5px 2px 5px 3px;
     border-bottom: 1px solid #ddd;
 }
+form.pair, form.impair {
+	font-weight: normal;
+}
 form.tagtr:last-of-type div.tagtd, tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }

@@ -32,8 +32,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts4 extends MailingTargets
 {
 	var $name='ContactsByCategory';
-    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Add contacts by category';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	var $desc='Add contacts by category';
     var $require_admin=0;
 
     var $require_module=array();

@@ -49,7 +49,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
      * Return description of email selector
      *
-     * @return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
+     * @return     string      Return translation of module label. Try translation of $this->name then translation of 'MailingModuleDesc'.$this->name, or $this->desc if not found
      */
     function getDesc()
     {
@@ -58,7 +58,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
         $langs->load("mails");
         $transstring="MailingModuleDesc".$this->name;
         $s='';
-        if ($langs->trans($transstring) != $transstring) $s=$langs->trans($transstring);
+
+        if ($langs->trans($this->name) != $this->name) $s=$langs->trans($this->name);
+        elseif ($langs->trans($transstring) != $transstring) $s=$langs->trans($transstring);
         else $s=$this->desc;
 
         if ($this->tooltip && is_object($form)) $s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 1);

@@ -74,7 +74,10 @@ ResultOfMailSending=Result of mass EMail sending
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
-ContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s in file

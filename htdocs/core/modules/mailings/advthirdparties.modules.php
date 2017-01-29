@@ -26,6 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class mailing_advthirdparties extends MailingTargets
 {
 	var $name='ThirdPartyAdvancedTargeting';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc="Third parties";
 	var $require_admin=0;
 

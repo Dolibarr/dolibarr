@@ -231,7 +231,7 @@ if ($object->fetch($id) >= 0)
 
 	$var=!$var;
 
-	$allowaddtarget=($object->statut == 0);
+	$allowaddtarget=($object->statut == 0 || $object->statut == 1);
 
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
