@@ -46,6 +46,7 @@ if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compt
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (! empty($conf->stock->enabled))	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -92,7 +93,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 // Security check
 $socid=$object->socid;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $projectid, 'projet&project');
 
 
@@ -349,6 +350,15 @@ $listofreferent=array(
 	'datefieldname'=>'task_date',
 	'disableamount'=>0,
 	'test'=>$conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS)),
+'stock_mouvement'=>array(
+	'name'=>"MouvementStockAssociated",
+	'title'=>"ListMouvementStockProject",
+	'class'=>'MouvementStock',
+	'margin'=>'minus',
+	'table'=>'stock_mouvement',
+	'datefieldname'=>'datem',
+	'disableamount'=>0,
+	'test'=>$conf->stock->enabled && $user->rights->stock->mouvement->lire),
 );
 
 if ($action=="addelement")
@@ -412,6 +422,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("proposals");
 $langs->load("margins");
+if (!empty($conf->stock->enabled)) $langs->load('stocks');
 
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
@@ -457,6 +468,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
 
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
+				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -475,6 +487,7 @@ foreach ($listofreferent as $key => $value)
 				$total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
 					$defaultvat = get_default_tva($mysoc, $mysoc);
@@ -522,6 +535,9 @@ foreach ($listofreferent as $key => $value)
 					break;
 				case 'Contrat':
 					$newclassname = 'Contract';
+					break;
+				case 'MouvementStock':
+					$newclassname = 'StockMovement';
 					break;
 				default:
 					$newclassname = $classname;
@@ -633,7 +649,7 @@ foreach ($listofreferent as $key => $value)
 		// Thirdparty or user
 		print '<td>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') print '';		// if $key == 'project_task', we don't want details per user
-		elseif (in_array($tablename, array('expensereport_det','don','projet_task'))) print $langs->trans("User");
+		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		// Amount HT
@@ -715,7 +731,7 @@ foreach ($listofreferent as $key => $value)
 				print "<tr ".$bc[$var].">";
 				// Remove link
 				print '<td style="width: 24px">';
-				if ($tablename != 'projet_task')
+				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement')
 				{
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
 				}
@@ -763,6 +779,7 @@ foreach ($listofreferent as $key => $value)
 				// Date
 				$date='';
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
+				elseif ($tablename == 'stock_mouvement') $date=$element->datem;
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
 				    if ($tablename=='don') $date = $element->datedon;
@@ -798,7 +815,7 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
-				else if ($tablename == 'don')
+				else if ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
                 	if ($element->fk_user_author > 0)
                 	{
@@ -838,6 +855,10 @@ foreach ($listofreferent as $key => $value)
 					        $othermessage=$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
+					elseif ($tablename == 'stock_mouvement')
+					{
+						$total_ht_by_line=$element->price*abs($element->qty);
+					}
 					else
 					{
 						$total_ht_by_line=$element->total_ht;
@@ -873,6 +894,10 @@ foreach ($listofreferent as $key => $value)
 					        $othermessage=$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }					    
 					}
+					elseif ($tablename == 'stock_mouvement')
+					{
+						$total_ttc_by_line=$element->price*abs($element->qty);;
+					}
 					else
 					{
 						$total_ttc_by_line=$element->total_ttc;
@@ -907,6 +932,10 @@ foreach ($listofreferent as $key => $value)
 					{
 						print $element->progress.' %';
 					}
+				}
+				else if ($tablename == 'stock_mouvement')
+				{
+					print $element->getLibStatut(3);
 				}
 				else
 				{

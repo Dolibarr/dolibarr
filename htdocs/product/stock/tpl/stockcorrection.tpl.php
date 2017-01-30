@@ -77,7 +77,14 @@
 		// Purchase price
 		print '<tr>';
 		print '<td width="20%" colspan="2">'.$langs->trans("UnitPurchaseValue").'</td>';
-		print '<td colspan="4"><input class="flat" name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+		print '<td colspan="'.(!empty($conf->projet->enabled) ? '2' : '4').'"><input class="flat" name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+		if (!empty($conf->projet->enabled))
+		{
+			print '<td>'.$langs->trans('Project').'</td>';
+			print '<td>';
+			$formproject->select_projects();
+			print '</td>';	
+		}
 		print '</tr>';
 
 		// Serial / Eat-by date

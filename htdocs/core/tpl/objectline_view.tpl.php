@@ -69,19 +69,20 @@ if (empty($usemargins)) $usemargins=0;
 		<?php
 		if ($line->description)
 		{
-			if ($line->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
+			if ($line->description == '(CREDIT_NOTE)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 			}
-			elseif ($line->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+			elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				// Add date of deposit
-				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
+				    echo ' ('.dol_print_date($discount->datec).')';
 			}
 			else
 			{

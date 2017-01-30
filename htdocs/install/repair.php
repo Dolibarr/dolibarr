@@ -252,10 +252,34 @@ if ($ok)
 	            if (! in_array($code,array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attribute_type[$code]; $value=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                
+           			if ($type=='boolean') {
+        				$typedb='int';
+        				$lengthdb='1';
+        			} elseif($type=='price') {
+        				$typedb='double';
+        				$lengthdb='24,8';
+        			} elseif($type=='phone') {
+        				$typedb='varchar';
+        				$lengthdb='20';
+        			}elseif($type=='mail') {
+        				$typedb='varchar';
+        				$lengthdb='128';
+        			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
+        				$typedb='text';
+        				$lengthdb='';
+        			} elseif ($type=='link') {
+        				$typedb='int';
+        				$lengthdb='11';
+        			} else {
+        				$typedb=$type;
+        				$lengthdb=$length;
+        			}
+	                
 	                $field_desc=array(
-	                	'type'=>$type,
-	                	'value'=>$value,
+	                	'type'=>$typedb,
+	                	'value'=>$lengthdb,
 	                	'attribute'=>$attribute,
 	                	'default'=>$default,
 	                	'extra'=>$extra,

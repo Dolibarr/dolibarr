@@ -193,7 +193,7 @@ foreach ($modulesdir as $dir)
 		    					    }
 		    					    ksort($arrayofnatures);
 		    					}
-		    					
+
 		    					// Define array $categ with categ with at least one qualified module
 		    					if ($modulequalified > 0)
 		    					{
@@ -315,13 +315,13 @@ if ($mode != 'marketplace')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
+
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1);
     $moreforfilter.= '</div>';
     if (! empty($conf->global->MAIN_FEATURES_LEVEL))
     {
@@ -342,7 +342,7 @@ if ($mode != 'marketplace')
     $moreforfilter.=' ';
     $moreforfilter.='<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
     $moreforfilter.= '</div>';
-    
+
     if (! empty($moreforfilter))
     {
         //print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -351,11 +351,11 @@ if ($mode != 'marketplace')
         $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         //print '</div>';
-    }    
-    
+    }
+
     print '<br><br><br>';
-    
-    
+
+
     // Show list of modules
 
     print '<table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">'."\n";
@@ -370,7 +370,7 @@ if ($mode != 'marketplace')
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
     	$dirofmodule = $dirmod[$key];
-    	 
+
     	$special = $objMod->special;
 
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
@@ -383,9 +383,9 @@ if ($mode != 'marketplace')
         	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
       		continue;
         }
-        
+
         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-        
+
         // Check filters
         $modulename=$objMod->getName();
         $moduledesc=$objMod->getDesc();
@@ -396,7 +396,7 @@ if ($mode != 'marketplace')
         if ($search_keyword)
         {
             $qualified=0;
-            if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename) 
+            if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
@@ -415,7 +415,7 @@ if ($mode != 'marketplace')
             {
                 //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
                 $publisher=dol_escape_htmltag($objMod->getPublisher());
-                if ($reg[1] && $reg[1] != $publisher) continue;
+                if ($reg[1] && dol_escape_htmltag($reg[1]) != $publisher) continue;
                 if (! $reg[1] && ! empty($publisher)) continue;
             }
             if ($search_nature == 'core' && $objMod->isCoreOrExternalModule() == 'external') continue;
@@ -496,7 +496,7 @@ if ($mode != 'marketplace')
         $text='';
         if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
         else $text.=$objMod->getDesc().'<br>';
-        
+
         $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
@@ -522,7 +522,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
         if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
         {
@@ -534,7 +534,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
         if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
         {
@@ -553,14 +553,14 @@ if ($mode != 'marketplace')
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
         if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
         if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
         {
@@ -572,14 +572,14 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
         if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
         if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
         {
@@ -603,14 +603,14 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
         if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
         {
             $text.=$langs->trans("Yes");
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
         if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
         {
@@ -622,7 +622,7 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
         if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
         {
@@ -634,25 +634,25 @@ if ($mode != 'marketplace')
             }
         }
         else $text.=$langs->trans("No");
-        
+
         $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
         $text.=$langs->trans("DetectionNotPossible");
-        
+
         print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
-        // Picto warning 
+        // Picto warning
         $version=$objMod->getVersion(0);
         $versiontrans=$objMod->getVersion(1);
         if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
         if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
         if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
-        
+
         // Picto external
         if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
-        
-        
+
+
         print '</td>';
-        
+
         // Version
         print '<td align="center" valign="top" class="nowrap">';
         print $versiontrans;
