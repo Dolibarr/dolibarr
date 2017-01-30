@@ -77,7 +77,7 @@ $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
-if ($page < 0) { $page = 0; }
+if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 
 $langs->load("companies");
@@ -147,7 +147,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -176,7 +176,7 @@ if (empty($reshook))
 {
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-    
+
     // Purge search criteria
     if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter'))	// All tests are required to be compatible with all browsers
     {
@@ -200,7 +200,7 @@ if (empty($reshook))
         $search_categ_supplier='';
         $search_array_options=array();
     }
-    
+
     // Mass actions
     $objectclass='Contact';
     $objectlabel='Contact';
@@ -345,7 +345,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -424,7 +424,7 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-} 	
+}
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -504,9 +504,9 @@ if (! empty($arrayfields['p.priv']['checked']))            print_liste_field_tit
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-       if (! empty($arrayfields["ef.".$key]['checked'])) 
+       if (! empty($arrayfields["ef.".$key]['checked']))
        {
 			$align=$extrafields->getAlignFlag($key);
 			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -555,13 +555,13 @@ if (! empty($arrayfields['p.town']['checked']))
     print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
     print '</td>';
 }
-if (! empty($arrayfields['p.phone']['checked'])) 
+if (! empty($arrayfields['p.phone']['checked']))
 {
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_phone_pro" size="6" value="'.dol_escape_htmltag($search_phone_pro).'">';
     print '</td>';
 }
-if (! empty($arrayfields['p.phone_perso']['checked'])) 
+if (! empty($arrayfields['p.phone_perso']['checked']))
 {
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_phone_perso" size="6" value="'.dol_escape_htmltag($search_phone_perso).'">';
@@ -607,9 +607,9 @@ if (! empty($arrayfields['p.priv']['checked']))
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($arrayfields["ef.".$key]['checked'])) 
+		if (! empty($arrayfields["ef.".$key]['checked']))
 		{
 			print '<td class="liste_titre">';
 			print '</td>';
@@ -664,7 +664,7 @@ while ($i < min($num,$limit))
 	$contactstatic->phone_mobile=$obj->phone_mobile;
 	$contactstatic->zip=$obj->zip;
 	$contactstatic->town=$obj->town;
-    
+
     // Name
     if (! empty($arrayfields['p.lastname']['checked']))
     {
@@ -746,9 +746,9 @@ while ($i < min($num,$limit))
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);

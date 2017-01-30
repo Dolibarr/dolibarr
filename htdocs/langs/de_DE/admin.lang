@@ -10,6 +10,9 @@ VersionUnknown=Unbekannt
 VersionRecommanded=Empfohlen
 FileCheck=Dateien Integritätsprüfung
 FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified of removed.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
@@ -276,7 +279,7 @@ ModuleFamilyInterface=Schnittstellen zu externen Systemen
 MenuHandlers=Menü-Handler
 MenuAdmin=Menü-Editor
 DoNotUseInProduction=Nicht in Produktion nutzen
-ThisIsProcessToFollow=So führen Sie die Installation/Aktualisierung des Systems durch:
+ThisIsProcessToFollow=This is steps to process:
 ThisIsAlternativeProcessToFollow=Dies ist ein alternativer Setup-Prozess:
 StepNb=Schritt %s
 FindPackageFromWebSite=Finden Sie ein Paket, das die gewünschten Funktionen beinhaltet (zum Beispiel auf der offiziellen Website %s).
@@ -411,6 +414,7 @@ ModuleCompanyCodePanicum=Leeren Kontierungscode zurückgeben.
 ModuleCompanyCodeDigitaria=Kontierungscode hängt vom Partnercode ab. Der Code setzt sich aus dem Buchstaben 'C' und den ersten 5 Stellen des Partnercodes zusammen.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=3-Fach Verarbeitungsschritte verwenden wenn der Betrag (ohne Steuer) höher ist als ...
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
 
 # Modules
 Module0Name=Benutzer und Gruppen
@@ -515,8 +519,8 @@ Module2200Name=Dynamische Preise
 Module2200Desc=Mathematische Ausdrücke für Preise aktivieren
 Module2300Name=Cron
 Module2300Desc=CronJob Verwaltung
-Module2400Name=Terminplan/Ereignisse
-Module2400Desc=Folgeereignisse oder Termine. Ereignisse manuell in der Agenda erfassen oder Applikationen erlauben Termine zur Nachverfolgung zu erstellen.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Inhaltsverwaltung(ECM)
 Module2500Desc=Speicherung und Verteilung von Dokumenten
 Module2600Name=API/Webservice (SOAP Server)
@@ -582,7 +586,7 @@ Permission34=Produkte/Leistungen löschen
 Permission36=Projekte/Leistungen exportieren
 Permission38=Produkte exportieren
 Permission41=Projekte und Aufgaben lesen (Geteilte Projekte und Projekte in denen ich Kontakt bin).  Es kann auch Zeitaufwand auf zugewiesenen Aufgaben gebucht werden.
-Permission42=Projekte/Aufgaben erstellen/bearbeiten (Meine)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Projekte und Aufgaben löschen (gemeinsame Projekte und Projekte in welchen ich Ansprechpartner bin)
 Permission45=Projekte exportieren
 Permission61=Serviceaufträge ansehen
@@ -685,7 +689,7 @@ PermissionAdvanced253=Andere interne/externe Benutzer und Gruppen erstellen/bear
 Permission254=Nur externe Benutzer erstellen/bearbeiten
 Permission255=Andere Passwörter ändern
 Permission256=Andere Benutzer löschen oder deaktivieren
-Permission262=Zugang auf alle Partner erweitern (nicht nur diejenigen im Zusammenhang mit Benutzer). Nicht wirksam für externe Nutzer (immer auf sich selbst beschränkt).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Read CA
 Permission272=Rechnungen anzeigen
 Permission273=Ausgabe Rechnungen
@@ -994,7 +998,7 @@ TriggerAlwaysActive=Trigger in dieser Datei sind unabhängig der Modulkonfigurat
 TriggerActiveAsModuleActive=Trigger in dieser Datei sind durch das übergeordnete Modul <b>%s</b> aktiviert.
 GeneratedPasswordDesc=Definieren Sie hier das Schema nach dem automatisch generierte Passwörter erstellt werden sollen.
 DictionaryDesc=Alle Standardwerte einfügen. Sie können eigene Werte zu den Standartwerten hinzufügen.
-ConstDesc=Diese Seite erlaubt es alle anderen Parameter einzustellen, die auf den vorherigen Seiten nicht verfügbar sind. Dies sind meist reservierte Parameter für Entwickler oder für die erweiterte Fehlersuche.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Alle anderen sicherheitsrelevanten Parameter werden hier eingestellt.
 LimitsSetup=Limits und Genauigkeit Einstellungen
 LimitsDesc=Hier können Sie Grenzwerte, Genauigkeitseinstellungen und das Rundungsverhalten einstellen.
@@ -1471,6 +1475,8 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Diesen Standardwert automatisch als Ereignistyp im
 AGENDA_DEFAULT_FILTER_TYPE=Diesen Ereignistyp automatisch in den Suchfilter für die Agenda-Ansicht übernehmen
 AGENDA_DEFAULT_FILTER_STATUS=Diesen Ereignisstatus automatisch in den Suchfilter für die Agenda-Ansicht übernehmen
 AGENDA_DEFAULT_VIEW=Welchen Reiter möchten Sie beim Öffnen der Agenda automatisch anzeigen
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
 ##### ClickToDial #####
 ClickToDialDesc=Dieses Modul fügt ein Symbol nach Telefonnummern ein. Durch einen Klick auf dieses Symbol kann Dolibarr z.B. durch ein SIP System eine Telefonanlage anweisen, diese Telefonnummer zu wählen.
 ClickToDialUseTelLink=Nur einen Link "Tel:" bei Telefonnummern verwenden
@@ -1571,7 +1577,7 @@ BackupDumpWizard=Assistenten zum erstellen der Datenbank-Backup Dump-Datei
 SomethingMakeInstallFromWebNotPossible=Die Installation von dem externen Modul ist aus folgenden Gründen vom Web-Interface nicht möglich:
 SomethingMakeInstallFromWebNotPossible2=Aus diesem Grund wird die Prozess hier beschriebenen Upgrade ist nur manuelle Schritte ein privilegierter Benutzer tun kann.
 InstallModuleFromWebHasBeenDisabledByFile=Installieren von externen Modul aus der Anwendung wurde von Ihrem Administrator deaktiviert. \nSie müssen ihn bitten, die Datei<strong>%s</strong> zu entfernen, um diese Funktion zu ermöglichen.
-ConfFileMuseContainCustom=Zur Installation eines externen Modul speichern Sie die Modul-Dateien in Verzeichnis <strong>%s</strong>. Damit Dolibarr dieses Verzeichnis verarbeitet, müssen Sie in der Datei <strong>conf/conf.php</strong> die Optionen<br><strong>$dolibarr_main_url_root_alt="/custom"</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong> aktivieren.
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Zeilen hervorheben bei Mouseover
 HighlightLinesColor=Farbe der Zeile hervorheben, wenn die Maus darüberfährt (leer lassen, um den Effekt zu deaktivieren)
 TextTitleColor=Farbe des Seitenkopfs
@@ -1614,8 +1620,8 @@ ByDefaultInList=Standardanzeige als Listenansicht
 YouUseLastStableVersion=Sie verwenden die letzte stabile Version
 TitleExampleForMajorRelease=Beispielnachricht, die Sie nutzen können, um eine Hauptversion anzukündigen. Sie können diese auf Ihrer Website verwenden.
 TitleExampleForMaintenanceRelease=Beispielnachricht, die Sie nutzen können, um ein Wartungsupdate anzukündigen. Sie können diese auf Ihrer Website verwenden.
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s ist verfügbar. Version %s ist eine Hauptversion mit vielen neuen Features für Benutzer und Entwickler. Sie können die Version aus dem Downloadbereich des Portals http://www.dolibarr.org laden (Unterverzeichnis stabile Versionen). Lesen Sie die komplette Liste der <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">Änderungen</a>.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s ist verfügbar. Version %s ist ein Wartungsupdate mit vielen Fehlerbereinigungen. Wir empfehlen jedem auf diese Version zu wechseln. Wie bei jedem Wartungsupdate sind keinen neuen Features oder Änderungen in den Datenstrukturen enthalten. Sie können die Version aus dem Downloadbereich des Portals http://www.dolibarr.org laden (Unterverzeichnis stabile Versionen). Lesen Sie die komplette Liste der <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">Änderungen</a>.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=Wenn die Option "mehrere Preisebenen pro Artikel/Dienstleistung" aktiviert ist, können Sie verschiedene Preis (einen pro Ebene) für jeden artikel definieren. Um Zeit zu sparen, können Sie eine Regel anlegen, mit der der Preis pro Ebene automatisch anhand des Preise in der ersten Ebene kalkuliert wird, so dass Sie nur einen Preis in der ersten Ebene eingeben müssen. Diese Seite kann Ihnen nur Zeit sparen und nützlich sein, wenn die Preise anderer Ebenen vom Preis der ersten Ebene abhängig sind. Ansonsten können Sie diese Seite ignorieren.
 ModelModulesProduct=Vorlagen für Produktdokumente
 ToGenerateCodeDefineAutomaticRuleFirst=Um Barcode automatisch zu erstellen, müssen Sie zuerst einen Manager definieren, der die Barcode-Nummern erstellt.

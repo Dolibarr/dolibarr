@@ -58,6 +58,7 @@ TaskDateEnd=Datum ukončení úkolu
 TaskDescription=Popis úkolu
 NewTask=Nový úkol
 AddTask=Vytvořit úkol
+AddTimeSpent=Create time spent
 Activity=Činnost
 Activities=Úkoly / činnosti
 MyActivities=Moje úkoly / činnosti
