@@ -897,8 +897,8 @@ class MouvementStock extends CommonObject
 	/**
 	 * Set attribute origin to object
 	 * 
-	 * @param	string	$origin_element
-	 * @param	int		$origin_id
+	 * @param	string	$origin_element	type of element
+	 * @param	int		$origin_id		id of element
 	 * 
 	 * @return	void
 	 */
@@ -991,7 +991,6 @@ class MouvementStock extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
-	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
