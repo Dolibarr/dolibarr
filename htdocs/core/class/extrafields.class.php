@@ -1266,7 +1266,7 @@ class ExtraFields
 		}
 		elseif ($type == 'boolean')
 		{
-			if (!empty($value)) {
+			if (!empty($value)) 
 				$value=img_picto('','on');
 			else
 				$value=img_picto('','off');
