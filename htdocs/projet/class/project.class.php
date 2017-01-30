@@ -487,6 +487,10 @@ class Project extends CommonObject
 		{
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet=" . $this->id;
 		}
+		elseif ($type == 'stock_mouvement')
+		{
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . 'stock_mouvement as ms WHERE ms.origintype = "project" AND ms.fk_origin = ' . $this->id . ' AND ms.type_mouvement = 1';
+		}
         else
 		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
