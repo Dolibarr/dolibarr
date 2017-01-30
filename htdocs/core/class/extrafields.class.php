@@ -1266,11 +1266,10 @@ class ExtraFields
 		}
 		elseif ($type == 'boolean')
 		{
-			$checked='';
 			if (!empty($value)) {
-				$checked=' checked ';
-			}
-			$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly disabled>';
+				$value=img_picto('','on');
+			else
+				$value=img_picto('','off');
 		}
 		elseif ($type == 'mail')
 		{
