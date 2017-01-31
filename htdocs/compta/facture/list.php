@@ -51,6 +51,7 @@ if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT.'/projet/c
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
+$langs->load('projects');
 
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
@@ -87,6 +88,7 @@ $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 $toselect = GETPOST('toselect', 'array');
+$search_project_ref=GETPOST('search_project_ref','alpha');
 
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
@@ -140,6 +142,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'f.facnumber'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'f.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
+    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
     'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
     'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
@@ -211,6 +214,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $day_lim='';
     $year_lim='';
     $month_lim='';
+	$search_project_ref='';
     $search_array_options=array();
 }
 
@@ -645,6 +649,7 @@ $sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
+$sql.= " p.rowid as project_id, p.ref as project_ref,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
@@ -666,6 +671,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON (p.rowid = f.fk_projet)";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -705,6 +711,7 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_vat', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 if ($search_status != '' && $search_status >= 0)
 {
     if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
@@ -1007,7 +1014,8 @@ if ($resql)
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['f.facnumber']['checked']))          print_liste_field_titre($arrayfields['f.facnumber']['label'],$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.ref_client']['checked']))         print_liste_field_titre($arrayfields['f.ref_client']['label'],$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.project_ref']['checked']))		  print_liste_field_titre($arrayfields['p.project_ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'],$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))               print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
@@ -1058,6 +1066,11 @@ if ($resql)
     	print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
     	print '</td>';
+	}
+	// Project ref
+	if (! empty($arrayfields['p.project_ref']['checked']))
+	{
+		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Date invoice
 	if (! empty($arrayfields['f.date']['checked'])) 
@@ -1202,6 +1215,8 @@ if ($resql)
 
     if ($num > 0)
     {
+    	
+		$projectstatic=new Project($db);
         $i=0;
         $var=true;
         $totalarray=array();
@@ -1264,6 +1279,17 @@ if ($resql)
     			print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
+			
+			// Project
+	        if (! empty($arrayfields['p.project_ref']['checked']))
+	        {
+				$projectstatic->id=$obj->project_id;
+				$projectstatic->ref=$obj->project_ref;
+				print '<td>';
+				if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+				print '</td>';
+	            if (! $i) $totalarray['nbfield']++;
+	        }
     		
 			// Date
     		if (! empty($arrayfields['f.date']['checked']))
