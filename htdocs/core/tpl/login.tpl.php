@@ -16,7 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Need global variable $title to be defined
+// Need global variable $title to be defined by caller (like dol_loginfunction)
+
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -78,7 +79,7 @@ $(document).ready(function () {
 <table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <tr class="vmenu"><td class="center">
 <?php
-if ($disablenofollow) echo '<a href="https://www.dolibarr.org" target="_blank">';
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title); 
 if ($disablenofollow) echo '</a>';
 ?>
