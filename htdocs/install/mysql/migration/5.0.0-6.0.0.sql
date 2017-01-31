@@ -52,3 +52,8 @@ ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
 
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+
