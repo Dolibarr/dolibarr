@@ -30,6 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+if (!empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -41,6 +46,7 @@ $langs->load("stocks");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -125,6 +131,11 @@ if ($action == "correct_stock")
 
 	if (! $error)
     {
+		$origin_element = '';
+		
+		$projectid = GETPOST('projectid');
+		if (!empty($projectid)) $origin_element = 'project';
+		
         if ($product->hasbatch())
         {
         	$batch=GETPOST('batch_number');
@@ -142,7 +153,9 @@ if ($action == "correct_stock")
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
 	        	$eatby,$sellby,$batch,
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+				$origin_element,
+				$projectid
 	        );		// We do not change value of stock for a correction
         }
         else
@@ -154,7 +167,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+				$origin_element,
+				$projectid
 	        );		// We do not change value of stock for a correction
         }
 
@@ -350,6 +365,7 @@ $userstatic=new User($db);
 $form=new Form($db);
 $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
+if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
@@ -361,6 +377,7 @@ $sql.= " ".MAIN_DB_PREFIX."product as p,";
 $sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " WHERE m.fk_product = p.rowid";
+if ($msid) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
@@ -423,6 +440,7 @@ if ($resql)
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans("ListOfStockMovements");
     if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+	if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
     llxHeader("",$texte,$help_url);
 
     /*

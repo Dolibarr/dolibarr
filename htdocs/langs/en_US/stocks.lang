@@ -19,6 +19,7 @@ Movements=Movements
 ErrorWarehouseRefRequired=Warehouse reference name is required
 ListOfWarehouses=List of warehouses
 ListOfStockMovements=List of stock movements
+StockMovementForId=Movement ID %d
 StocksArea=Warehouses area
 Location=Location
 LocationSummary=Short name location
