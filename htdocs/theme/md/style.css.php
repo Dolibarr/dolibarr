@@ -1434,7 +1434,7 @@ form#login {
 }
 .login_table_title {
 	max-width: 530px;
-	color: #888888;
+	color: #888888 !important;
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table label {
