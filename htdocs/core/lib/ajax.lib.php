@@ -359,10 +359,11 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve', $htmlid='')
 {
 	global $conf;
 
+	if (empty($htmlid)) $htmlid = $htmlname;
 	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
@@ -371,10 +372,10 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlid.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		$(\''.(preg_match('/^\./',$htmlid)?$htmlid:'#'.$htmlid).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.'
@@ -385,17 +386,17 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (count($events))
 	{
 		$msg.= '
-			jQuery("#'.$htmlname.'").change(function () {
+			jQuery("#'.$htmlid.'").change(function () {
 				var obj = '.json_encode($events).';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
-	    				runJsCodeForEvent'.$htmlname.'(values);
+	    				runJsCodeForEvent'.$htmlid.'(values);
 	    			}
 				});
 			});
 
-			function runJsCodeForEvent'.$htmlname.'(obj) {
-				var id = $("#'.$htmlname.'").val();
+			function runJsCodeForEvent'.$htmlid.'(obj) {
+				var id = $("#'.$htmlid.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
