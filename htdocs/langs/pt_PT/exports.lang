@@ -26,8 +26,6 @@ FieldTitle=Campo título
 NowClickToGenerateToBuildExportFile=Agora, faça click em "Gerar" para gerar o ficheiro exportação...
 AvailableFormats=Formatos Disponíveis
 LibraryShort=Biblioteca
-LibraryUsed=Livraria Utilizada
-LibraryVersion=Versão
 Step=Passo
 FormatedImport=Assistente de Importação
 FormatedImportDesc1=Esta área permite realizar importações personalizadas de dados mediante um ajudante que evita ter conhecimentos técnicos de Dolibarr.
@@ -87,7 +85,7 @@ TooMuchWarnings=Há ainda outra fonte <b>%s</b> linhas com os avisos, mas a prod
 EmptyLine=linha em branco (serão descartadas)
 CorrectErrorBeforeRunningImport=Primeiro, você deve corrigir todos os erros antes de executar a importação definitiva.
 FileWasImported=O arquivo foi importado com <b>%s</b> número.
-YouCanUseImportIdToFindRecord=Você pode encontrar todos os registros importados em seu banco de dados de filtragem de <b>import_key</b> campo <b>= &quot;%s&quot;.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Número de linhas sem erros e sem avisos: <b>%s.</b>
 NbOfLinesImported=Número de linhas de importados com sucesso: <b>%s.</b>
 DataComeFromNoWhere=Valor para inserir vem do nada no arquivo fonte.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este
 Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Opções CSV
 Separator=Separador
 Enclosure=Enclosure

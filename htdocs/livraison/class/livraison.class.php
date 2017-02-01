@@ -817,6 +817,12 @@ class Livraison extends CommonObject
 			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
 			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
+		if ($mode == 6)
+		{
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
+		}
 	}
 
 
@@ -1003,16 +1009,14 @@ class Livraison extends CommonObject
 
 		$langs->load("deliveries");
 
-		// Positionne modele sur le nom du modele de bon de livraison a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->LIVRAISON_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'typhon';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'typhon';
 			}
 		}
 

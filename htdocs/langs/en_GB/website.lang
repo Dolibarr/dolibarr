@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - website
+WebsiteSetupDesc=Create here as many entries for websites as you need. Then go into menu Websites to edit them.
+Website=Website
+PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> is not yet available. You must first add a page.
+RequestedPageHasNoContentYet=Requested page with id %s has no content yet or the cache file .tpl.php was removed. Edit the content of the page to solve this.
+SetHereVirtualHost=If you can set, on your web server, a dedicated virtual host with a root directory on <strong>%s</strong>, enter here the virtual hostname so the preview can be done using this direct web server access as well as using the Dolibarr server.
+PreviewSiteServedByDolibarr=Preview %s in a new tab. The %s will be served by the Dolibarr server so it does not need an extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenience is that pages are using paths of your Dolibarr.<br>URL of %s served by Dolibarr:<br><strong>%s</strong>

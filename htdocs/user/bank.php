@@ -117,7 +117,7 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 }
 if ($id && $action == 'create' && $user->rights->user->user->creer)
 {
@@ -165,7 +165,7 @@ if ($id && $action != 'edit')
 		print '</tr>';
 	}
 
-	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+	print '<tr><td class="tdtop">'.$langs->trans("IBAN").'</td>';
 	print '<td colspan="4">'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
@@ -176,7 +176,7 @@ if ($id && $action != 'edit')
     }
     print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+	print '<tr><td class="tdtop">'.$langs->trans("BIC").'</td>';
 	print '<td colspan="4">'.$account->bic.'&nbsp;';
     if (! empty($account->bic)) {
         if (! checkSwiftForAccount($account)) {
@@ -187,15 +187,15 @@ if ($id && $action != 'edit')
     }
     print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
@@ -271,22 +271,22 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 	}
 
     // IBAN
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
+    print '<tr><td class="tdtop fieldrequired">'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
 
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BIC").'</td>';
+    print '<tr><td class="tdtop fieldrequired">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+    print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+    print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
     print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
     print $account->owner_address;
     print "</textarea></td></tr>";

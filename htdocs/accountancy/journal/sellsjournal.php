@@ -243,7 +243,7 @@ if ($action == 'writebookkeeping') {
             if ($mt) {
                 // get compte id and label
                 $accountingaccount = new AccountingAccount($db);
-                if ($accountingaccount->fetch(null, $k)) {
+                if ($accountingaccount->fetch(null, $k, true)) {
                     $bookkeeping = new BookKeeping($db);
                     $bookkeeping->doc_date = $val["date"];
                     $bookkeeping->doc_ref = $val["ref"];
@@ -375,7 +375,7 @@ if ($action == 'export_csv') {
             // Product / Service
             foreach ( $tabht[$key] as $k => $mt ) {
                 $accountingaccount_static = new AccountingAccount($db);
-                if ($accountingaccount_static->fetch(null, $k)) {
+                if ($accountingaccount_static->fetch(null, $k, true)) {
                     print $date . $sep;
                     print $sell_journal . $sep;
                     print length_accountg(html_entity_decode($k)) . $sep;
@@ -429,7 +429,7 @@ if ($action == 'export_csv') {
             // Product / Service
             foreach ( $tabht[$key] as $k => $mt ) {
                 $accountingaccount = new AccountingAccount($db);
-                $accountingaccount->fetch(null, $k);
+                $accountingaccount->fetch(null, $k, true);
 
                 if ($mt) {
                     print '"' . $date . '"' . $sep;
@@ -559,7 +559,7 @@ if (empty($action) || $action == 'view') {
 		// Product / Service
 		foreach ( $tabht[$key] as $k => $mt ) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k);
+			$accountingaccount->fetch(null, $k, true);
 
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";

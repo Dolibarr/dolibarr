@@ -9,6 +9,7 @@
 	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
+	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 
 		<!-- List of all tests -->
 

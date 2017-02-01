@@ -133,7 +133,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $fieldstosearchall = array(
     'f.facnumber'=>'Ref',
     'f.ref_client'=>'RefCustomer',
-    'fd.description'=>'Description',
+    'pd.description'=>'Description',
     's.nom'=>"ThirdParty",
     'f.note_public'=>'NotePublic',
 );
@@ -156,7 +156,7 @@ $arrayfields=array(
     'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
-    'am'=>array('label'=>$langs->trans("Received"), 'checked'=>0),
+    'dynamount_payed'=>array('label'=>$langs->trans("Received"), 'checked'=>0),
     'rtp'=>array('label'=>$langs->trans("Rest"), 'checked'=>0),
     'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -229,6 +229,103 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+if ($massaction == 'withdrawrequest')
+{
+    $langs->load("withdrawals");
+    
+    if (!$user->rights->prelevement->bons->creer)
+    {
+        $error++;
+        setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+    }
+    else 
+    {
+        //Checking error
+        $error = 0;
+        	
+	    $arrayofselected=is_array($toselect)?$toselect:array();
+        $listofbills=array();
+        foreach($arrayofselected as $toselectid)
+        {
+            $objecttmp=new Facture($db);
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $totalpaye  = $objecttmp->getSommePaiement();
+                $totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
+                $totaldeposits = $objecttmp->getSumDepositsUsed();
+                $objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+                $listofbills[] = $objecttmp;
+                if($objecttmp->paye || $objecttmp->resteapayer==0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+                } else if($objecttmp->resteapayer<0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+                }
+                if(!($objecttmp->statut > Facture::STATUS_DRAFT)){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+                }
+                	
+                $rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+                $rsql .= " , pfd.date_traite as date_traite";
+                $rsql .= " , pfd.amount";
+                $rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+                $rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+                $rsql .= " , ".MAIN_DB_PREFIX."user as u";
+                $rsql .= " WHERE fk_facture = ".$objecttmp->id;
+                $rsql .= " AND pfd.fk_user_demande = u.rowid";
+                $rsql .= " AND pfd.traite = 0";
+                $rsql .= " ORDER BY pfd.date_demande DESC";
+
+                $result_sql = $db->query($rsql);
+                if ($result_sql)
+                {
+                    $numprlv = $db->num_rows($result_sql);
+                }
+                	
+                if($numprlv>0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
+                }
+                if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+                }
+                	
+            }
+        }
+
+        //Massive withdraw request
+        if(!empty($listofbills) && empty($error))
+        {
+            $nbwithdrawrequestok=0;
+            foreach($listofbills as $aBill)
+            {
+                $db->begin();
+                $result = $aBill->demande_prelevement($user, $aBill->resteapayer);
+                if ($result > 0)
+                {
+                    $db->commit();
+                    $nbwithdrawrequestok++;
+                }
+                else
+                {
+
+                    $db->rollback();
+                    setEventMessages($aBill->error, $aBill->errors, 'errors');
+                }
+            }
+            if ($nbwithdrawrequestok > 0)
+            {
+                setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+            }   
+        }
+    }
+
+}
+
     
 
 /*
@@ -253,7 +350,9 @@ $sql.= ' f.datec as date_creation, f.tms as date_update,';
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
-if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
+// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
+// TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';   
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -267,7 +366,6 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields as ef on (f.rowid = ef.fk_object)";
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
-else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 // We'll need this table joined to the select in order to filter by sale
@@ -401,7 +499,7 @@ $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -459,8 +557,13 @@ if ($resql)
 
 	$arrayofmassactions=array(
 	    'presend'=>$langs->trans("SendByMail"),
-	    'builddoc'=>$langs->trans("PDFMerge")
+	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
+	if ($conf->prelevement->enabled)
+	{
+	   $langs->load("withdrawals");
+	   $arrayofmassactions['withdrawrequest']=$langs->trans("MakeWithdrawRequest");
+	}
 	if ($user->rights->facture->supprimer) 
 	{
 	    //if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) || empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
@@ -586,7 +689,7 @@ if ($resql)
         
         dol_fiche_end();
 	}
-	
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -636,7 +739,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['f.facnumber']['checked']))          print_liste_field_titre($arrayfields['f.facnumber']['label'],$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
@@ -654,8 +758,8 @@ if ($resql)
     if (! empty($arrayfields['f.total_ht']['checked']))           print_liste_field_titre($arrayfields['f.total_ht']['label'],$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.total_vat']['checked']))          print_liste_field_titre($arrayfields['f.total_vat']['label'],$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.total_ttc']['checked']))          print_liste_field_titre($arrayfields['f.total_ttc']['label'],$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['am']['checked']))                   print_liste_field_titre($arrayfields['am']['label'],$_SERVER['PHP_SELF'],'am','',$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'],$_SERVER['PHP_SELF'],'rtp','',$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['dynamount_payed']['checked']))      print_liste_field_titre($arrayfields['dynamount_payed']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     {
@@ -674,7 +778,7 @@ if ($resql)
     print $hookmanager->resPrint;
     if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER["PHP_SELF"],"f.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-    if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'],$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'],$_SERVER["PHP_SELF"],"fk_statut,paye,type,dynamount_payed","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
@@ -785,7 +889,7 @@ if ($resql)
     	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
     	print '</td>';
 	}
-    if (! empty($arrayfields['am']['checked']))
+    if (! empty($arrayfields['dynamount_payed']['checked']))
     {
         print '<td class="liste_titre" align="right">';
         print '</td>';
@@ -865,31 +969,28 @@ if ($resql)
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
-            $facturestatic->type=$obj->type;
+            $facturestatic->note_public=$obj->note_public;
+            $facturestatic->note_private=$obj->note_private;
+
+            $paiement = $facturestatic->getSommePaiement();
+            $totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
+            $totaldeposits = $facturestatic->getSumDepositsUsed();
+            $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
+            $remaintopay = $obj->total_ttc - $totalpay;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
-    
-                $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
-                $paiement = $facturestatic->getSommePaiement();
-				$remaintopay = $obj->total_ttc - $paiement;
-    
+
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
                 print '<td class="nobordernopadding nowrap">';
-                print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
+                print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
                 print $obj->increment;
                 print '</td>';
     
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-                if (! empty($obj->note_private))
-                {
-    				print ' <span class="note">';
-    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$obj->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    				print '</span>';
-    			}
                 $filename=dol_sanitizeFileName($obj->facnumber);
                 $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->facid;
@@ -1029,17 +1130,17 @@ if ($resql)
     		    $totalarray['totalttc'] += $obj->total_ttc;
             }
 
-            if (! empty($arrayfields['am']['checked']))
+            if (! empty($arrayfields['dynamount_payed']['checked']))
             {
-                print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
+                print '<td align="right">'.(! empty($totalpay)?price($totalpay,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
-    		    $totalarray['totalam'] += $paiement;
+    		    $totalarray['totalam'] += $totalpay;
             }
 
             if (! empty($arrayfields['rtp']['checked']))
             {
-                print '<td align="right">'.(! empty($remaintopay)?price($remaintopay,0,$langs):'&nbsp;').'</td>';
+                print '<td align="right">'.(! empty($remaintopay)?price($remaintopay,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
     		    $totalarray['totalrtp'] += $remaintopay;
@@ -1140,6 +1241,7 @@ if ($resql)
 	print $hookmanager->resPrint;
     
 	print "</table>\n";
+    print "</div>";
     
     print "</form>\n";
     
@@ -1155,10 +1257,6 @@ if ($resql)
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     
-        print '<br><a name="show_files"></a>';
-        $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
-        $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
-        
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else

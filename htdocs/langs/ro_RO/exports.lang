@@ -26,8 +26,6 @@ FieldTitle=Domeniul titlu
 NowClickToGenerateToBuildExportFile=Acum, dati click pe "Generează" fişier de export pentru a construi ...
 AvailableFormats=Formate disponibile
 LibraryShort=Biblioteca
-LibraryUsed=Librairie
-LibraryVersion=Version
 Step=Pasul
 FormatedImport=Import asistent
 FormatedImportDesc1=Această zonă permite de a importa date personalizate, folosind un asistent pentru a vă ajuta în procesul fără cunoştinţe tehnice.
@@ -87,7 +85,7 @@ TooMuchWarnings=Nu există încă <b>%s</b> sursă de alte linii cu avertismente
 EmptyLine=linie goală (vor fi aruncate)
 CorrectErrorBeforeRunningImport=Trebuie să corecteze primul toate erorile înainte de a rula import definitiv.
 FileWasImported=Dosarul a fost importat cu <b>%s</b> număr.
-YouCanUseImportIdToFindRecord=Puteţi găsi toate înregistrările importate în baza de date prin filtrarea pe <b>import_key</b> domeniul <b>= '%s ".</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Numărul de linii fără erori şi fără avertismente: <b>%s.</b>
 NbOfLinesImported=Numărul de linii cu succes importate: <b>%s.</b>
 DataComeFromNoWhere=Valoare pentru a introduce vine de nicăieri în fişierul sursă.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> format de fișier (csv). <br> Acesta 
 Excel95FormatDesc=<b>Excel</b> format fişier (.xls) <br>Acesta este format nativ Excel 95 (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> format fişier (.xlsx) <br>Acesta este format nativ Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b> Tab Separat Valoare </b> format de fișier (.tsv) <br> Acesta este un format de fișier text în care câmpurile sunt separate printr-un tabulator [tab].
-ExportFieldAutomaticallyAdded=Câmpul <b>%s </ b> a fost adăugat în mod automat. Se va evita ca linii similare să fie tratate ca înregistrări dublate (cu acest câmp adaugat, toate liniile vor avea propriul lor ID și vor diferi).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Opţiuni Csv
 Separator=Separator
 Enclosure=Închidere

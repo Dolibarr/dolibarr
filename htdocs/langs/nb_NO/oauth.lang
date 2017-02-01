@@ -11,7 +11,6 @@ RequestAccess=Klikk her for forespørsel/fornyet adgang og motta ny nøkkel
 DeleteAccess=Klikk her for å slette nøkkel
 UseTheFollowingUrlAsRedirectURI=Bruk følgende URL som redirect-URL når du lager din legitimasjon hos din OAuth tilbyder
 ListOfSupportedOauthProviders=Legg inn opplysninger fra din OAuth2-leverandør. Kun supporterte OAuth2-leverandører vises her. Dette oppsettet kan bli brukt av andre moduler som trenger OAuth2-autentisering
-TOKEN_ACCESS=
 TOKEN_REFRESH=Nøkkeloppfriskning tilstede
 TOKEN_EXPIRED=Nøkkel utgått
 TOKEN_EXPIRE_AT=Nøkkel utgår

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Bezbednosni kod
-Calendar=Kalendar
 NumberingShort=N°
 Tools=Alati
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Isporuka je poslata mailom
 Notify_MEMBER_VALIDATE=Član je potvrđen
 Notify_MEMBER_MODIFY=Član izmenjen
 Notify_MEMBER_SUBSCRIPTION=Član je prijavljen
-Notify_MEMBER_RESILIATE=Član je otkazan
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Član je uklonjen
 Notify_PROJECT_CREATE=Kreacija projekta
 Notify_TASK_CREATE=Zaduženje kreirano
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Ukupna veličina priloženih fajlova/dokumenata
 MaxSize=Maksimalna veličina
 AttachANewFile=Priloži novi fajl/dokument
 LinkedObject=Povezan objekat
-Miscellaneous=Ostalo
 NbOfActiveNotifications=Broj obaveštenja (br. primalaca mailova)
 PredefinedMailTest=Ovo je test mail.\nDve linije su razdvojene u dva različita reda.\n\n__SIGNATURE__
 PredefinedMailTestHtml=Ovo je <b>test</b> mail (reč test mora biti pojačana).<br>Dve linije su razdvojene u dva različita reda.<br><br>__SIGNATURE__
@@ -201,33 +199,13 @@ IfAmountHigherThan=Ukoliko je iznos veći od <strong>%s</strong>
 SourcesRepository=Repository koda
 Chart=Tabela
 
-##### Calendar common #####
-NewCompanyToDolibarr=Kompanija %s je dodata
-ContractValidatedInDolibarr=Ugovor %s je potvrđen
-PropalClosedSignedInDolibarr=Ponuda %s je potpisana
-PropalClosedRefusedInDolibarr=Ponuda %s je odbijena
-PropalValidatedInDolibarr=Ponuda %s je potvrđena
-PropalClassifiedBilledInDolibarr=Ponuda %s je klasirana kao naplaćena
-InvoiceValidatedInDolibarr=Račun %s je potvrđen
-InvoicePaidInDolibarr=Račun %s je promenjen u plaćen
-InvoiceCanceledInDolibarr=Račun %s je otkazan
-MemberValidatedInDolibarr=Član %s je potvrđen
-MemberResiliatedInDolibarr=Član %s je otkazan
-MemberDeletedInDolibarr=Član %s je obrisan
-MemberSubscriptionAddedInDolibarr=Pretplata za člana %s je dodata
-ShipmentValidatedInDolibarr=Isporuka %s je potvrđena
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Isporuka %s je obrisana
 ##### Export #####
-Export=Export
 ExportsArea=Oblast exporta
 AvailableFormats=Dostupni formati
 LibraryUsed=Korišćena biblioteka
-LibraryVersion=Verzija
+LibraryVersion=Library version
 ExportableDatas=Podaci za exportovanje
 NoExportableData=Nema podataka za exportovanje (nema modula sa učitanim podacima za exportovanje, ili nema potrebnih prava)
-NewExport=Novi export
 ##### External sites #####
 WebsiteSetup=Podešavanja modula sajta
 WEBSITE_PAGEURL=URL stranice

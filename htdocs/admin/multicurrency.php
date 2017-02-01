@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
 // Translations
+$langs->load("admin");
 $langs->load("multicurrency");
 
 // Access control
@@ -182,20 +183,19 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
-/* TODO uncomment when the functionality will integrated
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnInvoiceDate").'</td>';
+print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnDocumentDate").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_INVOICE_DATE">';
-print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_INVOICE_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_INVOICE_DATE,1);
+print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE">';
+print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
-*/
+
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -323,8 +323,17 @@ print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></form></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurrency")).'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">1';
+print '</td></form></tr>';
+
 foreach ($TCurrency as &$currency)
 {
+	if($currency->code == $conf->currency) continue;
+	
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
@@ -334,10 +343,12 @@ foreach ($TCurrency as &$currency)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
-	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;';
+	print '1 '.$conf->currency.' = ';
+	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';
+
 	print '</td></tr>';
 }
 

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=セキュリティコード
-Calendar=カレンダー
 NumberingShort=N°
 Tools=ツール
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=電子メールによって送信された商品
 Notify_MEMBER_VALIDATE=メンバー検証
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=メンバー購読
-Notify_MEMBER_RESILIATE=resiliatedメンバー
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=メンバーが削除さ
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=添付ファイル/文書の合計サイズ
 MaxSize=最大サイズ
 AttachANewFile=新しいファイル/文書を添付する
 LinkedObject=リンクされたオブジェクト
-Miscellaneous=その他
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=これはテストメールです。\\ nこの2行は、キャリッジリターンで区切られています。
 PredefinedMailTestHtml=これは<b>テスト</b>メール（ワードテストでは、太字でなければなりません）です。 <br>の2行は、キャリッジリターンで区切られています。
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=輸出
 ExportsArea=輸出地域
 AvailableFormats=利用可能なフォーマット
-LibraryUsed=Librairy使用
-LibraryVersion=バージョン
+LibraryUsed=ライブラリを使用
+LibraryVersion=Library version
 ExportableDatas=エクスポート可能なデータ
 NoExportableData=いいえ、エクスポートデータがありません（ロード、エクスポートデータ、または欠落権限を持つモジュールなし）
-NewExport=新しいエクスポート
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=タイトル
+WEBSITE_DESCRIPTION=説明
 WEBSITE_KEYWORDS=Keywords

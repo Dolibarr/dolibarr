@@ -37,7 +37,7 @@ $mine = GETPOST('mode')=='mine' ? 1 : 0;
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -140,7 +140,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 

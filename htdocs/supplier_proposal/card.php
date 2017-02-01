@@ -34,7 +34,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsupplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -997,7 +996,6 @@ llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_d
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formsupplier_proposal = new FormSupplierProposal($db);
 $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
@@ -1134,7 +1132,7 @@ if ($action == 'create')
 			$projectid = ($originid ? $originid : 0);
 
 		print '<tr>';
-		print '<td valign="top">' . $langs->trans("Project") . '</td><td colspan="2">';
+		print '<td class="tdtop">' . $langs->trans("Project") . '</td><td colspan="2">';
 
 		$numprojet = $formproject->select_projects($soc->id, $projectid);
 		if ($numprojet == 0) {
@@ -1245,7 +1243,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 
-		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked></td>';
+		print '<tr><td class="tdtop"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyAsk") . '</td></tr>';
 	}
 
@@ -1410,17 +1408,6 @@ if ($action == 'create')
 	
 	print '<table class="border" width="100%">';
 
-	// Ref
-	/*
-	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td colspan="5">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	print '</td></tr>';
-
-	// Company
-	print '<tr><td>' . $langs->trans('Supplier') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
-	print '</tr>';
-    */
-	
 	// Payment term
 	print '<tr><td class="titlefield">';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1477,41 +1464,6 @@ if ($action == 'create')
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
-
-	// Project
-	/*
-	if (! empty($conf->projet->enabled)) {
-		$langs->load("projects");
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project') . '</td>';
-		if ($user->rights->supplier_proposal->creer) {
-			if ($action != 'classify')
-				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid');
-			} else {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none');
-			}
-			print '</td></tr>';
-		} else {
-			print '</td></tr></table>';
-			if (! empty($object->fk_project)) {
-				print '<td colspan="3">';
-				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
-				print '<a href="../projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-				print $proj->ref;
-				print '</a>';
-				print '</td>';
-			} else {
-				print '<td colspan="3">&nbsp;</td>';
-			}
-		}
-		print '</tr>';
-	}*/
 
 	// Multicurrency
 	if (! empty($conf->multicurrency->enabled))
@@ -1596,14 +1548,32 @@ if ($action == 'create')
 	
 	print '<table class="border centpercent">';
 	
+	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
+	{
+		// Multicurrency Amount HT
+		print '<tr><td height="10" class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+		print '<td>' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		print '</tr>';
+
+		// Multicurrency Amount VAT
+		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+		print '<td>' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		print '</tr>';
+
+		// Multicurrency Amount TTC
+		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+		print '<td>' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+		print '</tr>';
+	}
+	
 	// Amount HT
-	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
-	print '<td class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+	print '<td>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 
 	// Amount VAT
 	print '<tr><td>' . $langs->trans('AmountVAT') . '</td>';
-	print '<td class="nowrap">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
@@ -1624,27 +1594,6 @@ if ($action == 'create')
 	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-
-	if (!empty($conf->multicurrency->enabled))
-	{
-		// Multicurrency Amount HT
-		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-
-		// Multicurrency Amount VAT
-		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-
-		// Multicurrency Amount TTC
-		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-	}
-
-	// Statut
-	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left">' . $object->getLibStatut(4) . '</td></tr>';
 
 	print '</table>';
 	
@@ -1689,6 +1638,7 @@ if ($action == 'create')
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+    print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form
@@ -1714,7 +1664,7 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-
+    print '</div>';
 	print "</form>\n";
 
 	dol_fiche_end();
@@ -1814,7 +1764,7 @@ if ($action == 'create')
 				}
 
 				// Delete
-				if ($user->rights->supplier_proposal->supprimer) {
+				if (($object->statut == 0 && $user->rights->supplier_proposal->creer) || $user->rights->supplier_proposal->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete"';
 					print '>' . $langs->trans('Delete') . '</a></div>';
 				}

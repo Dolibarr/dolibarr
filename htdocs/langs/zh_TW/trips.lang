@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=費用支出報表
 ExpenseReports=費用支出報表
+ShowExpenseReport=費用列表
 Trips=差旅報表
 TripsAndExpenses=費用支出
 TripsAndExpensesStatistics=費用支出統計
@@ -8,12 +9,13 @@ TripCard=Expense report card
 AddTrip=新增費用支出
 ListOfTrips=費用支出清單
 ListOfFees=費用清單
+TypeFees=Types of fees
 ShowTrip=費用列表
 NewTrip=新增費用
 CompanyVisited=公司拜訪
 FeesKilometersOrAmout=金額或公里
 DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
+ConfirmDeleteTrip=Are you sure you want to delete this expense report?
 ListTripsAndExpenses=List of expense reports
 ListToApprove=Waiting for approval
 ExpensesArea=Expense reports area
@@ -64,21 +66,21 @@ ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 
 ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ConfirmValideTrip=Are you sure you want to approve this expense report?
 
 PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
 
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+ConfirmCancelTrip=Are you sure you want to cancel this expense report?
 
 BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
 
 SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+ConfirmSaveTrip=Are you sure you want to validate this expense report?
 
 NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Expense report payment

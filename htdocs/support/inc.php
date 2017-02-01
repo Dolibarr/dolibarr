@@ -184,7 +184,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_general_ci';
+	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 
 	return 1;
 }

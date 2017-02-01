@@ -188,7 +188,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount, 1);
             }
         }
         else
@@ -220,7 +220,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer, '', 1);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote)

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -278,7 +278,7 @@ if ($action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby","int");
 	}
 
-	$object->note = trim($_POST["note"]);
+	$object->note = trim(GETPOST("note"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -289,11 +289,6 @@ if ($action == 'add')
 
 		$object->societe = $object->thirdparty;	// For backward compatibility
 	}
-
-	// Special for module webcal and phenix
-	// TODO external modules
-	if (! empty($conf->webcalendar->enabled) && GETPOST('add_webcal') == 'on') $object->use_webcal=1;
-	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $object->use_phenix=1;
 
 	// Check parameters
 	if (empty($object->userownerid) && empty($_SESSION['assignedtouser']))
@@ -795,7 +790,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
-	if(!empty($origin) && !empty($originid))
+	if (!empty($origin) && !empty($originid))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -819,7 +814,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_6,90);
+    $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1151,7 +1146,7 @@ if ($id > 0)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
+        $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
         $doleditor->Create();
         print '</td></tr>';
 

@@ -26,6 +26,7 @@ DocumentModelStandard=Modèle de fiche d'intervention standard
 InterventionCardsAndInterventionLines=Fiches interventions et lignes d'interventions
 InterventionClassifyBilled=Classer "Facturée"
 InterventionClassifyUnBilled=Classer "Non facturée"
+InterventionClassifyDone=Classé "Traitée"
 StatusInterInvoiced=Facturée
 ShowIntervention=Afficher intervention
 SendInterventionRef=Envoi de la fiche intervention %s
@@ -40,6 +41,7 @@ InterventionDeletedInDolibarr=Intervention %s effacée
 InterventionsArea=Espace interventions
 DraftFichinter=Interventions brouillon
 LastModifiedInterventions=Les %s dernières interventions modifiées
+FichinterToProcess=Interventions à traiter
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contact client suivi de l'intervention
 # Modele numérotation

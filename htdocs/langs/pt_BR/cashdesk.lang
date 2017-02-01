@@ -5,6 +5,7 @@ CashDeskOn=ligar
 NewSell=Nova venda
 AddThisArticle=Adicionar esse artigo
 RestartSelling=Voltar na venda
+SellFinished=Venda completada
 PrintTicket=Imprimir tíquete
 TotalTicket=Total do tíquite
 NoVAT=Nenhum ICMS para essa venda

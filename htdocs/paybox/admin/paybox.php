@@ -179,14 +179,14 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('PAYBOX_MESSAGE_OK',$conf->global->PAYBOX_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('PAYBOX_MESSAGE_OK',$conf->global->PAYBOX_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 

@@ -32,6 +32,7 @@ ECMDocsByProducts=Documents associés aux produits
 ECMDocsByProjects=Documents associés aux projets
 ECMDocsByUsers=Documents associés aux utilisateurs
 ECMDocsByInterventions=Documents associés aux interventions
+ECMDocsByExpenseReports=Documents associés aux notes de frais
 ECMNoDirectoryYet=Aucun répertoire créé
 ShowECMSection=Afficher répertoire
 DeleteSection=Suppression répertoire

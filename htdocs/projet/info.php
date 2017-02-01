@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,8 +26,26 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("projects");
+
+$id     = GETPOST('id','int');
+$ref    = GETPOST('ref','alpha');
+$socid  = GETPOST('socid','int');
+$action = GETPOST('action','alpha');
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield","alpha");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+if (! $sortfield) $sortfield="a.datep,a.id";
+if (! $sortorder) $sortorder="DESC";
+$offset = $limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if (GETPOST('actioncode','array'))
 {
@@ -40,10 +58,11 @@ else
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
+
 // Security check
-$socid=0;
 $id = GETPOST("id",'int');
-if ($user->societe_id) $socid=$user->societe_id;
+$socid=0;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user,'projet',$id,'');
 
 if (!$user->rights->projet->lire)	accessforbidden();
@@ -71,15 +90,20 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  * View
  */
 
+$form = new Form($db);
+$object = new Project($db);
+
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+    $object->info($object->id);
+}
+
 $title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$title,$help_url);
-
-$object = new Project($db);
-$object->fetch($id);
-$object->fetch_thirdparty();
-$object->info($id);
 
 $head = project_prepare_head($object);
 
@@ -138,7 +162,7 @@ if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
     }
     else
     {
@@ -151,6 +175,10 @@ print '</div>';
 
 if (!empty($object->id))
 {
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
     print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
     
     // List of actions on element
@@ -167,7 +195,7 @@ if (!empty($object->id))
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
-    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 

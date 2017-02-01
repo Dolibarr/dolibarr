@@ -48,6 +48,7 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -79,6 +80,11 @@ $modulepart='don';
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
+if ($action == 'classin' && $user->rights->don->creer)
+{
+	$object->fetch($id);
+	$object->setProject($projectid);
+}
 
 /*
  * View
@@ -87,7 +93,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-llxHeader("",$langs->trans("Donation"));
+$title = $langs->trans('Donation') . " - " . $langs->trans('Documents');
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -107,7 +115,6 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
 	$morehtmlref='<div class="refidno">';
@@ -119,7 +126,7 @@ if ($object->id)
 	    if ($user->rights->don->creer)
 	    {
 	        if ($action != 'classify')
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            // $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -152,7 +159,6 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 	
     print '<table class="border" width="100%">';
-
 
 	// Ref
 	/*

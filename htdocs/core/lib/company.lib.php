@@ -135,6 +135,8 @@ function societe_prepare_head(Societe $object)
     // Bank accounrs
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
+        $langs->load("banks");
+
         $nbBankAccount=0;
         $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("BankAccounts");
@@ -711,12 +713,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         print '</td>';
     
         // Address / Phone
-        print '<td>';
+        print '<td class="liste_titre">';
         //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
         // Email
-        print '<td>&nbsp;</td>';
+        print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
         print '<td class="liste_titre maxwidthonsmartphone">';
@@ -727,7 +729,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
         	$colspan++;
-            print '<td>&nbsp;</td>';
+            print '<td class="liste_titre">&nbsp;</td>';
         }
     
     	// Edit
@@ -947,7 +949,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
 }
 
 /**
- *    	Show html area with actions done
+ *    	Show html area with actions (done or not, ignore the name of function)
  *
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
@@ -958,14 +960,18 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  *      @param  string		       $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter.
  *      @param  array              $filters        Filter on other fields
+ *      @param  string             $sortfield      Sort field
+ *      @param  string             $sortorder      Sort order
  *      @return	mixed					           Return html part or void if noprint is 1
  *      TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array())
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep,a.id', $sortorder='DESC')
 {
     global $bc,$user,$conf;
     global $form;
 
+    global $param;
+    
     // Check parameters
     if (! is_object($filterobj)) dol_print_error('','BadParameter');
 
@@ -983,26 +989,55 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " a.note, a.percent,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.fk_user_author, a.fk_contact,";
-        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql.= " u.login, u.rowid as user_id";
         if (get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         if (get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (get_class($filterobj) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-        if (get_class($filterobj) == 'Adherent' && $filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (get_class($filterobj) == 'Adherent') 
+        {
+            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
+        if (get_class($filterobj) == 'CommandeFournisseur')
+        {
+            $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-        if (!empty($actioncode)) $sql.= " AND c.code='".$actioncode."' ";
+        // Condition on actioncode
+        if (! empty($actioncode))
+        {
+            if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+            {
+                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+                else 
+                {
+                    if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
+                    if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+                }
+            }
+            else
+            {
+                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+                else $sql.= " AND c.code = '".$db->escape($actioncode)."'";
+            }
+        }
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
-        $sql.= " ORDER BY a.datep DESC, a.id DESC";
+        $sql.= $db->order($sortfield, $sortorder);
 
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
@@ -1028,15 +1063,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             		'dateend'=>$db->jdate($obj->dp2),
             		'note'=>$obj->label,
             		'percent'=>$obj->percent,
-            		'acode'=>$obj->acode,
-            		'libelle'=>$obj->libelle,
-            		'userid'=>$obj->user_id,
+                    'userid'=>$obj->user_id,
             		'login'=>$obj->login,
             		'contact_id'=>$obj->fk_contact,
             		'lastname'=>$obj->lastname,
             		'firstname'=>$obj->firstname,
             		'fk_element'=>$obj->fk_element,
-            		'elementtype'=>$obj->elementtype
+            		'elementtype'=>$obj->elementtype,
+                    // Type of event
+                    'acode'=>$obj->acode,
+                    'alabel'=>$obj->alabel,
+                    'libelle'=>$obj->alabel,    // deprecated
+                    'apicto'=>$obj->apicto
                 );
                 
                 $numaction++;
@@ -1049,11 +1087,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
     }
 
+    // Add also event from emailings. FIXME This should be replaced by an automatic event
     if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
     {
         $langs->load("mails");
 
-        // Add also event from emailings. TODO This should be replaced by an automatic event
         $sql = "SELECT m.rowid as id, mc.date_envoi as da, m.titre as note, '100' as percentage,";
         $sql.= " 'AC_EMAILING' as acode,";
         $sql.= " u.rowid as user_id, u.login";	// User that valid action
@@ -1100,21 +1138,36 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
     if (! empty($conf->agenda->enabled) || (! empty($conf->mailing->enabled) && ! empty($objcon->email)))
     {
+        $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+        
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-        $actionstatic=new ActionComm($db);
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+
+	    $formactions=new FormActions($db);
+        
+	    $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 
-        // TODO uniformize
+        // TODO mutualize/uniformize
         $propalstatic=new Propal($db);
         $orderstatic=new Commande($db);
+        $supplierorderstatic=new CommandeFournisseur($db);
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        if ($objcon && get_class($objcon) == 'Contact' && get_class($filterobj) == 'Societe')
+        {
+            $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+        }
+        else
+        {
+            $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+        }
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
@@ -1128,37 +1181,35 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             if (get_class($filterobj) == 'Societe') $out.='</a>';
             $out.='</td>';
 		}
-        $out.='<td>'.$langs->trans("Ref").'</td>';
-        $out.='<td>'.$langs->trans("Label").'</td>';
-        $out.='<td>'.$langs->trans("Date").'</td>';
+        $out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
+        $out.='<td class="maxwidth100onsmartphone">'.$langs->trans("Label").'</td>';
+        $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder);
         $out.='<td>'.$langs->trans("Type").'</td>';
 		$out.='<td></td>';
 		$out.='<td></td>';
-		$out.='<td>'.$langs->trans("By").'</td>';
-		$out.='<td align="center">'.$langs->trans("Status").'</td>';
-		$out.='<td align="center"></td>';
+		$out.='<td>'.$langs->trans("Owner").'</td>';
+		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
+		$out.='<td class="maxwidthsearch">';
+		//TODO Add selection of fields
+		$out.='</td>';
 		$out.='</tr>';
 
 		
 		$out.='<tr class="liste_titre">';
 		if ($donetodo)
 		{
-            $out.='<td></td>';
+            $out.='<td class="liste_titre"></td>';
 		}
-		$out.='<td></td>';
-		$out.='<td><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out.='<td></td>';
-		$out.='<td>';
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-		    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		    $formactions=new FormActions($db);
-		    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', 0, 0, 0, 1);
-		}
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre">';
+	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
 		$out.='</td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
-		$out.='<td></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
+		$out.='<td class="liste_titre"></td>';
     	// Action column
     	$out.='<td class="liste_titre" align="middle">';
     	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
@@ -1169,11 +1220,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         foreach ($histo as $key=>$value)
         {
             $var=!$var;
-			$actionstatic->fetch($histo[$key]['id']);
+			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
 
             $out.="<tr ".$bc[$var].">";
 			
-            // done or todo
+            // Done or todo
             if ($donetodo)
             {
                 $out.='<td class="nowrap">';
@@ -1191,7 +1242,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             {
                 $actionstatic->type_code=$histo[$key]['acode'];
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
-                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['libelle']);
+                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['alabel']);
                 //$actionstatic->libelle=$libelle;
                 $libelle=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
@@ -1216,17 +1267,38 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($histo[$key]['dateend'],'hour');
                 else $out.='-'.dol_print_date($histo[$key]['dateend'],'dayhour');
             }
+            $late=0;
+            if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] == 0 && ! $histo[$key]['datestart'] && $histo[$key]['dateend'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $db->jdate($histo[$key]['dateend']) < ($now - $delay_warning)) $late=1;
+            if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && ! $histo[$key]['dateend'] && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
+            if ($late) $out.=img_warning($langs->trans("Late")).' ';
             $out.="</td>\n";
             
+            // Type
 			$out.='<td>';
-			$out.=$actionstatic->type;
+			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+			{
+    			if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+    			else {
+    			    if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
+    			    if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
+    			    if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+    			}
+			    $out.=$actionstatic->type;
+			}
+			else {
+			    $typelabel = $actionstatic->type;
+			    if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL"); 
+			    $out.=$typelabel;
+			}
 			$out.='</td>';
 
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
-            // TODO uniformize
+            // TODO mutualize/uniformize
             $out.='<td>';
             //var_dump($histo[$key]['elementtype']);
             if (isset($histo[$key]['elementtype']))
@@ -1292,7 +1364,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='</td>';
 
             // Statut
-            $out.='<td class="nowrap" align="center">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
+            $out.='<td class="nowrap" align="center">'.$actionstatic->LibStatut($histo[$key]['percent'],3,1,$histo[$key]['datestart']).'</td>';
 
             // Actions
             $out.='<td></td>';
@@ -1339,7 +1411,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	{
 		$socstatic = new Societe($db);
 
-		print load_fiche_titre($langs->trans("Subsidiaries"));
+		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
 		print "\n".'<table class="noborder" width="100%">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';

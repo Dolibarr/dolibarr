@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Dolibarr
 Upstream-Contact: Laurent Destailleur <eldy@users.sourceforge.net>
-Source: http://www.dolibarr.org/files/stable/standard/
+Source: https://www.dolibarr.org/files/stable/standard/
 
 Files: *
 Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>

@@ -83,7 +83,7 @@ if (! empty($canvas))
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $sref="";
     $snom="";
@@ -113,7 +113,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,';
 $sql.= ' ps.fk_entrepot,';
-$sql.= ' e.label as warehouse_label,';
+$sql.= ' e.label as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql.= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql.= ' pl.eatby, pl.sellby,';
 $sql.= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
@@ -158,7 +158,7 @@ $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.pr
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,";
 $sql.= " ps.fk_entrepot,";
-$sql.= " e.label,";
+$sql.= " e.label, e.lieu, e.fk_parent,";
 $sql.= " pb.batch, pb.eatby, pb.sellby,";
 $sql.= " pl.eatby, pl.sellby";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte";    // Not used yet
@@ -249,7 +249,8 @@ if ($resql)
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
@@ -303,7 +304,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-
+		
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
@@ -321,16 +322,29 @@ if ($resql)
 			}
 		}
 
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td class="nowrap">';
+
 		$product_static->ref=$objp->ref;
 		$product_static->id=$objp->rowid;
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
+		
+		$warehousetmp->id=$objp->fk_entrepot;
+		$warehousetmp->ref=$objp->warehouse_ref;
+		$warehousetmp->label=$objp->warehouse_ref;
+		$warehousetmp->fk_parent=$objp->warehouse_parent;
+
+		$var=!$var;
+
+		print '<tr '.$bc[$var].'>';
+		
+		// Ref
+		print '<td class="nowrap">';
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
+		
+		// Label
 		print '<td>'.$objp->label.'</td>';
 
 		if (! empty($conf->service->enabled) && $type == 1)
@@ -350,9 +364,6 @@ if ($resql)
 		print '<td>';
 		if ($objp->fk_entrepot > 0)
 		{
-		    $warehousetmp->id=$objp->fk_entrepot;
-		    $warehousetmp->label=$objp->warehouse_label;
-    		//$warehousetmp->fetch($objp->fk_entrepot);
     		print $warehousetmp->getNomUrl(1);
 		}
 		print '</td>';
@@ -371,6 +382,7 @@ if ($resql)
 	}
 
 	print "</table>";
+	print '</div>';
 	print '</form>';
 
 	if ($num > $conf->liste_limit)

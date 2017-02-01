@@ -26,6 +26,16 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
+### Install from composer
+If you do not already have Composer installed, you may do so by following the instructions at getcomposer.org. On Linux and Mac OS X, you'll run the following commands:
+
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+
+On Windows, you'll download and run https://getcomposer.org/Composer-Setup.exe
+
+composer create-project dolibarr/dolibarr erp
+
 ### Simple setup
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in few clicks, you can use one of the packaged versions:
@@ -60,10 +70,10 @@ You can use a Web server and a supported database (MariaDb, MySql or Postgresql)
 ## UPGRADING
 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
-- If you're upgrading from version x.y.z to x.y.w (only third number differs), there is no need to run any migration process.
-- If you're upgrading from a beta version or from any version x.y.z to any other where x or y number differs, you must call the Dolibarr "install/" page in your browser (this should be done automatically at first dolibarr access) and follow the upgrade process.
+- At first next access, Dolibarr will redirect your to the "install/" page to make the upgrade process.
+  If a file install.lock exists to lock any run of upgrade process, the application will ask you to remove the file manually (you should find the install.lock file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "documents").
 
-*Note: migration process can safely be done multiple times.*
+*Note: migration process can safely be done multiple times by calling the page /install/index.php*
 
 ## WHAT'S NEW
 
@@ -80,17 +90,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Invoices and payment management
 - Standing orders management (European SEPA)
 - Bank accounts management
-- Shared calendar
+- Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities and/or project management (following project benefit including invoices, expense reports, time spent, ...)
 - Projects management
 - Contracts management
 - Stock management
 - Shipping management
 - Interventions management
-- Agenda with ical and vcal export for third party tools integration
+- Employee's leave requests management
+- Expense report management
 - Electronic Document Management (EDM)
 - Foundations members management
-- Employee's holidays management
 - Mass emailing
 - Surveys
 - Point of Sale
@@ -147,7 +157,7 @@ These are features that Dolibarr does **not** yet fully support:
 
 ## DOCUMENTATION
 
-Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](http://wiki.dolibarr.org).
+Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](https://wiki.dolibarr.org).
 
 ## CONTRIBUTING
 

@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 DeliveryRef=Ref Delivery
-DeliveryCard=Доставка карта
+DeliveryCard=Receipt card
 DeliveryOrder=Доставка за
 DeliveryDate=Дата на доставка
-CreateDeliveryOrder=Генериране на ордер за доставка
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Състояние на доставката е записано
 SetDeliveryDate=Дата на изпращане
 ValidateDeliveryReceipt=Одобряване на разписка
-ValidateDeliveryReceiptConfirm=Сигурен ли сте, че искате да проверите тази разписка?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Изтриване на разписка
-DeleteDeliveryReceiptConfirm=Сигурен ли сте, че искате да изтриете <b>%s</b> разписка?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Начин
 TrackingNumber=Проследяващ номер
 DeliveryNotValidated=Доставката не валидирани
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Отменен
+StatusDeliveryDraft=Чернова
+StatusDeliveryValidated=Получено
 # merou PDF model
 NameAndSignature=Име и подпис:
 ToAndDate=To___________________________________ на ____ / _____ / __________

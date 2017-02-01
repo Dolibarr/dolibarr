@@ -84,11 +84,23 @@ function contact_prepare_head(Contact $object)
     $head[$tab][2] = 'documents';
     $tab++;
 
-    // Info
+    // Agenda / Events
+    $head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
+    $head[$tab][1].= $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$tab][1].= '/';
+        $head[$tab][1].= $langs->trans("Agenda");
+    }
+    $head[$tab][2] = 'agenda';
+    $tab++;
+    
+    // Log
+    /*
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
-	$tab++;
+	$tab++;*/
 
 	complete_head_from_modules($conf,$langs,$object,$head,$tab,'contact','remove');
 

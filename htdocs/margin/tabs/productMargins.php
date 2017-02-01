@@ -167,6 +167,8 @@ if ($id > 0 || ! empty($ref))
                 print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
 
                 $i = 0;
+                
+                print '<div class="div-table-responsive">';
                 print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
@@ -252,7 +254,7 @@ if ($id > 0 || ! empty($ref))
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
                 print "</table>";
-                print '<br>';
+                print '</div>';
             } else {
                 dol_print_error($db);
             }

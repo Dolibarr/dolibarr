@@ -97,6 +97,11 @@ class Project extends CommonObject
 	 */
 	public $date_m;
 
+	/**
+	 * @var Task[]
+	 */
+	public $lines;
+	
 
     /**
      *  Constructor
@@ -228,7 +233,7 @@ class Project extends CommonObject
      *
      * @param  User		$user       User object of making update
      * @param  int		$notrigger  1=Disable all triggers
-     * @return int
+     * @return int                  <=0 if KO, >0 if OK
      */
     function update($user, $notrigger=0)
     {
@@ -241,7 +246,15 @@ class Project extends CommonObject
         $this->description = trim($this->description);
 		if ($this->opp_amount < 0) $this->opp_amount='';
 		if ($this->opp_percent < 0) $this->opp_percent='';
-
+        if ($this->date_end && $this->date_end < $this->date_start)
+        {
+            $this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+            $this->errors[] = $this->error;
+            $this->db->rollback();
+            dol_syslog(get_class($this)."::update error -3 " . $this->error, LOG_ERR);
+            return -3;
+        }
+        
         if (dol_strlen(trim($this->ref)) > 0)
         {
             $this->db->begin();
@@ -338,7 +351,7 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Get object and lines from database
+     * 	Get object from database
      *
      * 	@param      int		$id       	Id of object to load
      * 	@param		string	$ref		Ref of project
@@ -695,10 +708,11 @@ class Project extends CommonObject
     /**
      * 		Validate a project
      *
-     * 		@param		User	$user		User that validate
-     * 		@return		int					<0 if KO, >0 if OK
+     * 		@param		User	$user		   User that validate
+     *      @param      int     $notrigger     1=Disable triggers
+     * 		@return		int					   <0 if KO, >0 if OK
      */
-    function setValid($user)
+    function setValid($user, $notrigger=0)
     {
         global $langs, $conf;
 
@@ -725,10 +739,13 @@ class Project extends CommonObject
             if ($resql)
             {
                 // Call trigger
-                $result=$this->call_trigger('PROJECT_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-
+                if (empty($notrigger))
+                {
+                    $result=$this->call_trigger('PROJECT_VALIDATE',$user);
+                    if ($result < 0) { $error++; }
+                    // End call triggers
+                }
+                
                 if (!$error)
                 {
                 	$this->statut=1;
@@ -889,15 +906,17 @@ class Project extends CommonObject
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$moreinpopup	Text to add into popup
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      * 	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ')
+    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result = '';
-        $link = '';
-        $linkend = '';
+        
         $label='';
         if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
         if (! empty($this->ref))
@@ -911,33 +930,44 @@ class Project extends CommonObject
         if (! empty($this->datee))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateEnd') . ': </b>' . dol_print_date($this->datee, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option != 'nolink')
         {
             if (preg_match('/\.php$/',$option)) {
-                $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = dol_buildpath($option,1) . '?id=' . $this->id;
             }
             else if ($option == 'task')
             {
-                $link = '<a href="' . DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id;
             }
             else
             {
-                $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
-                $linkend = '</a>';
+                $url = DOL_URL_ROOT . '/projet/card.php?id=' . $this->id;
             }
+        }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->propal->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowProject");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
         }
 
         $picto = 'projectpub';
         if (!$this->public) $picto = 'project';
 
-
-        if ($withpicto) $result.=($link . img_object($label, $picto, 'class="classfortooltip"') . $linkend);
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+        
+        if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1) . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -1468,7 +1498,7 @@ class Project extends CommonObject
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-		if ($TableName=="actioncomm")
+		if ($tableName == "actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
 			$sql.= " WHERE id=".$elementSelectId;
@@ -1539,16 +1569,14 @@ class Project extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'baleine';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
-			}
-			else
-			{
-				$modele='baleine';
 			}
 		}
 
@@ -1737,12 +1765,12 @@ class Project extends CommonObject
 	    global $conf;
 
         if (! ($this->statut == 1)) return false;
-        if (! $this->datee) return false;
+        if (! $this->datee && ! $this->date_end) return false;
 
         $now = dol_now();
 
-        return $this->datee < ($now - $conf->projet->warning_delay);
-	}
+        return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
+	}	
 
 
 	/**
@@ -1853,5 +1881,20 @@ class Project extends CommonObject
 		return 1;
 	}
 
+	
+	/**
+	 * 	Create an array of tasks of current project
+	 * 
+	 *  @param  User   $user       Object user we want project allowed to
+	 * 	@return int		           >0 if OK, <0 if KO
+	 */
+	function getLinesArray($user)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+	    $taskstatic = new Task($this->db);
+
+	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
+	}
+	
 }
 

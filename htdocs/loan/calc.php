@@ -49,12 +49,12 @@ $error                           = false;
  * Set the USER INPUT values
  * --------------------------------------------------- */
 if (isset($_REQUEST['form_complete'])) {
-    $sale_price                      = $_REQUEST['sale_price'];
-    $annual_interest_percent         = $_REQUEST['annual_interest_percent'];
-    $year_term                       = $_REQUEST['year_term'];
-    $down_percent                    = $_REQUEST['down_percent'];
-    $show_progress                   = (isset($_REQUEST['show_progress'])) ? $_REQUEST['show_progress'] : false;
-    $form_complete                   = $_REQUEST['form_complete'];
+    $sale_price                      = GETPOST('sale_price');
+    $annual_interest_percent         = GETPOST('annual_interest_percent');
+    $year_term                       = GETPOST('year_term');
+    $down_percent                    = GETPOST('down_percent');
+    $show_progress                   = (isset($_REQUEST['show_progress'])) ? GETPOST('show_progress') : false;
+    $form_complete                   = GETPOST('form_complete');
 }
 
 // This function does the actual mortgage calculations

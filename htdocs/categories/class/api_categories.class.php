@@ -98,11 +98,12 @@ class Categories extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-     * @return array Array of category objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of category objects
      *
 	 * @throws RestException
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '', $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -111,21 +112,24 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
         
-        $sql = "SELECT s.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql = "SELECT t.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('category', 1).')';
         if (!empty($type))
         {
-            $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+            $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
         }
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-
+        
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -147,13 +151,13 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -200,12 +204,12 @@ class Categories extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-        $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
         $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -233,13 +237,13 @@ class Categories extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if($category_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($category_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($category_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
+            throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
@@ -258,14 +262,15 @@ class Categories extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
 			throw new RestException(401);
 		}
+
         // Check mandatory fields
         $result = $this->_validate($request_data);
         
         foreach($request_data as $field => $value) {
             $this->category->$field = $value;
         }
-        if($this->category->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create category : '.$this->category->error);
+        if ($this->category->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
         }
         return $this->category->id;
     }
@@ -293,6 +298,7 @@ class Categories extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->category->$field = $value;
         }
         
@@ -334,10 +340,27 @@ class Categories extends DolibarrApi
         );
     }
     
+    
+    /**
+     * Clean sensible object datas
+     *
+     * @param   Categorie  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        // Remove the subscriptions because they are handled as a subresource.
+        //unset($object->subscriptions);
+    
+        return $object;
+    }
+    
     /**
      * Validate fields before create or update object
      * 
-     * @param array $data   Data to validate
+     * @param array|null    $data    Data to validate
      * @return array
      * 
      * @throws RestException

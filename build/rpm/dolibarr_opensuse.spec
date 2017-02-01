@@ -36,7 +36,7 @@ AutoReqProv: no
 
 
 %description
-An easy to use CRM & ERP open source/free software for small  
+An easy to use CRM & ERP open source/free software package for small  
 and medium companies, foundations or freelances. It includes different 
 features for Enterprise Resource Planning (ERP) and Customer Relationship 
 Management (CRM) but also for different other activities.

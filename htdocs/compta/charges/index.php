@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
@@ -134,7 +134,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
 	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
 	$sql.= " pct.code as payment_code,";
-	$sql.= " ba.rowid as bid, ba.label as blabel";
+	$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
@@ -205,6 +205,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        {
 		        	//$accountstatic->fetch($obj->fk_bank);
 		            $accountstatic->id=$obj->bid;
+		            $accountstatic->ref=$obj->bref;
+		            $accountstatic->number=$obj->bnumber;
+		            $accountstatic->accountancy_number=$obj->account_number;
+		            $accountstatic->accountancy_journal=$obj->accountancy_journal;
 		            $accountstatic->label=$obj->blabel;
 		            print $accountstatic->getNomUrl(1);
 		        }
@@ -249,8 +253,13 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		print load_fiche_titre($langs->trans("VATPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
-		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm";
+		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.fk_bank,";
+		$sql.= " pct.code as payment_code,";
+		$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
 		$sql.= " WHERE pv.entity = ".$conf->entity;
 		if ($year > 0)
 		{
@@ -273,6 +282,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
+			if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 		    print "</tr>\n";
 		    $var=1;
@@ -295,15 +306,45 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				$tva_static->ref=$obj->rowid;
 		        print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
+		        // Date
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-		        print '<td align="right">'.price($obj->amount)."</td>";
+		        
+		        // Type payment
+	    	    print '<td>';
+	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+	    	    print $obj->num_payment.'</td>';
+			        
+		    	// Account
+		    	if (! empty($conf->banque->enabled))
+			    {
+			        print '<td>';
+			        if ($obj->fk_bank > 0)
+			        {
+			        	//$accountstatic->fetch($obj->fk_bank);
+			            $accountstatic->id=$obj->bid;
+			            $accountstatic->ref=$obj->bref;
+			            $accountstatic->number=$obj->bnumber;
+			            $accountstatic->accountancy_number=$obj->account_number;
+			            $accountstatic->accountancy_journal=$obj->accountancy_journal;
+			            $accountstatic->label=$obj->blabel;
+			            print $accountstatic->getNomUrl(1);
+			        }
+			        else print '&nbsp;';
+			        print '</td>';
+			    }
+			    
+	    	    // Paid
+		    	print '<td align="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
 
 		        $i++;
 		    }
 		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		    print '<td align="right">'.price($total).'</td>';
-		    print '<td colspan="2">&nbsp;</td>';
+		    print '<td>&nbsp;</td>';
+		    print '<td>&nbsp;</td>';
+		    print '<td>&nbsp;</td>';
+		    print '<td>&nbsp;</td>';
 		    print '<td align="right">'.price($total)."</td>";
 		    print "</tr>";
 
@@ -426,8 +467,14 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         
         print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
-        $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
-        $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
+        $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, s.fk_bank, u.salary as current_salary,";
+		$sql.= " pct.code as payment_code,";
+		$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
+        $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id";
+		$sql.= " , ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE s.entity IN (".getEntity('user',1).")";
         $sql.= " AND u.rowid = s.fk_user";
         if ($year > 0)
@@ -449,6 +496,8 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
             print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
+			if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
             $var=1;
@@ -470,13 +519,40 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
                 $sal_static->ref=$obj->rowid;
                 print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
+                // Date
                 print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+
+            	// Type payment
+	    	    print '<td>';
+	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+	    	    print $obj->num_payment.'</td>';
+			        
+		    	// Account
+		    	if (! empty($conf->banque->enabled))
+			    {
+			        print '<td>';
+			        if ($obj->fk_bank > 0)
+			        {
+			        	//$accountstatic->fetch($obj->fk_bank);
+			            $accountstatic->id=$obj->bid;
+			            $accountstatic->ref=$obj->bref;
+			            $accountstatic->number=$obj->bnumber;
+			            $accountstatic->accountancy_number=$obj->account_number;
+			            $accountstatic->accountancy_journal=$obj->accountancy_journal;
+			            $accountstatic->label=$obj->blabel;
+			            print $accountstatic->getNomUrl(1);
+			        }
+			        else print '&nbsp;';
+			        print '</td>';
+			    }
+			    
+                // Paid
                 print '<td align="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";
 
                 $i++;
             }
-            print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+            print '<tr class="liste_total"><td colspan="6">'.$langs->trans("Total").'</td>';
             print '<td align="right">'.price($total)."</td>";
             print "</tr>";
 

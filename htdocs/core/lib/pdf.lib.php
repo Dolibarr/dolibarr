@@ -941,6 +941,20 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
+	// Prof Id 5
+	if ($fromcompany->idprof5)
+	{
+		$field=$outputlangs->transcountrynoentities("ProfId5",$fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof5);
+	}
+	// Prof Id 6
+	if ($fromcompany->idprof6)
+	{
+		$field=$outputlangs->transcountrynoentities("ProfId6",$fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
+	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
@@ -1232,8 +1246,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if (empty($hideref))
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
-				else $ref_prodserv = $prodser->ref; // Show local ref only
+				if ($issupplierline) 
+				{
+					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+						$ref_prodserv = $ref_supplier;
+					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';  
+					else 
+						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
+				}
+				else 
+					$ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
 			}

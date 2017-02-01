@@ -24,8 +24,8 @@ CREATE TABLE llx_expensereport (
   ref_ext 			integer,
   total_ht 			double(24,8) DEFAULT 0,
   total_tva 		double(24,8) DEFAULT 0,
-  localtax1			double(24,8) DEFAULT 0,				-- amount total localtax1
-  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2	
+  localtax1			double(24,8) DEFAULT 0,			-- amount total localtax1
+  localtax2			double(24,8) DEFAULT 0,			-- amount total localtax2
   total_ttc 		double(24,8) DEFAULT 0,
   date_debut 		date NOT NULL,
   date_fin 			date NOT NULL,
@@ -42,14 +42,14 @@ CREATE TABLE llx_expensereport (
   fk_user_approve   integer DEFAULT NULL,
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
-  fk_statut			integer NOT NULL,						-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=payed, 99=refused
-  fk_c_paiement 	integer DEFAULT NULL,					-- deprecated
-  paid              smallint default 0 NOT NULL,			-- deprecated
+  fk_statut			integer NOT NULL,				-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=payed, 99=refused
+  fk_c_paiement 	integer DEFAULT NULL,			-- deprecated
+  paid              smallint default 0 NOT NULL,	-- deprecated
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
   detail_cancel 	varchar(255) DEFAULT NULL,
-  integration_compta integer DEFAULT NULL,		-- not used
+  integration_compta integer DEFAULT NULL,			-- not used
   fk_bank_account 	integer DEFAULT NULL,
   model_pdf 		varchar(50) DEFAULT NULL,
   
@@ -61,6 +61,6 @@ CREATE TABLE llx_expensereport (
   multicurrency_total_ttc double(24,8) DEFAULT 0,
 
   import_key			varchar(14),
-  extraparams			varchar(255)							-- for other parameters with json format
+  extraparams			varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;
 

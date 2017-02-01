@@ -91,35 +91,33 @@ class ExpenseReports extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     *
-     * @return  array   Array of Expense Report objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array               Array of Expense Report objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0) {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
         global $db, $conf;
         
         $obj_ret = array();
 
         // case of external user, $societe param is ignored and replaced by user's socid
         //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+        
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('expensereport', 1).')';
         if ($user_ids) $sql.=" AND t.fk_user_author IN (".$user_ids.")";
         
-        // Insert sale filter
-        if ($search_sale > 0)
+        // Add sql filters
+        if ($sqlfilters) 
         {
-            $sql .= " AND sc.fk_user = ".$search_sale;
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
         
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-        {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
-        }
-
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -141,13 +139,13 @@ class ExpenseReports extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $expensereport_static = new ExpenseReport($db);
                 if($expensereport_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($expensereport_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve Expense Report list');
+            throw new RestException(503, 'Error when retrieve Expense Report list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No Expense Report found');
@@ -179,9 +177,8 @@ class ExpenseReports extends DolibarrApi
           }
           $this->expensereport->lines = $lines;
         }*/
-        if ($this->expensereport->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->expensereport->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating expensereport");
+        if ($this->expensereport->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating expensereport", array_merge(array($this->expensereport->error), $this->expensereport->errors));
         }
         
         return $this->expensereport->id;
@@ -395,6 +392,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->expensereport->$field = $value;
         }
         

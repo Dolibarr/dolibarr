@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013   Antoine Iauch	   <aiauch@gpcsolutions.fr>
- * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015   Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2013      Antoine Iauch	   <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +262,11 @@ if ($modecompta == 'CREANCES-DETTES')
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 
-	print '<table class="noborder" width="100%">';
+    $moreforfilter='';
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
@@ -418,6 +422,8 @@ if ($modecompta == 'CREANCES-DETTES')
 		$db->free($result);
 	}
 	print "</table>";
+	print '</div>';
+	
 	print '</form>';
 } else {
 	// $modecompta != 'CREANCES-DETTES'

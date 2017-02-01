@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=交货
 DeliveryRef=送达编号
-DeliveryCard=交货信息
+DeliveryCard=Receipt card
 DeliveryOrder=交货单
 DeliveryDate=交货日期
-CreateDeliveryOrder=产生交货单
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=交货状态保存
 SetDeliveryDate=送货日期设置
 ValidateDeliveryReceipt=验证送达回执
-ValidateDeliveryReceiptConfirm=你确定要验证这个交货收据吗？
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=删除送达回执
-DeleteDeliveryReceiptConfirm=你确定要删除送达回执<b>%s</b>吗？
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=运输方式
 TrackingNumber=运单号码
 DeliveryNotValidated=交付未验证

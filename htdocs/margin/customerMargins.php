@@ -90,7 +90,7 @@ if ($socid > 0) {
 	if ($soc->client)
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
-		print '<td colspan="4">';
+		print '<td class="maxwidthonsmartphone" colspan="4">';
 		print $form->select_company($socid, 'socid', 'client=1 OR client=3', 1, 0, 0);
 		//$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
 		print '</td></tr>';
@@ -102,7 +102,7 @@ if ($socid > 0) {
 }
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
-	print '<td colspan="4">';
+	print '<td class="maxwidthonsmartphone" colspan="4">';
 	print $form->select_company(null, 'socid', 'client=1 OR client=3', 1, 0, 0);
 	//$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
 	print '</td></tr>';
@@ -180,7 +180,7 @@ $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.fk_statut > 0";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if ($client)
@@ -205,7 +205,7 @@ if ($result)
 	$num = $db->num_rows($result);
 
   	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',0,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,$num,'');
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";

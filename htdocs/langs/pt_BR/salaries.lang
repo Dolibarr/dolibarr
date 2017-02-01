@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codigo contabilidade para pagamentos de salarios
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codigo contabilidade para despesas financeiras
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Conta da Contabilidade padrão para pagamentos de salário
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta da Contabilidade padrão para despesas pessoais
 NewSalaryPayment=Novo pagamento de salário
 SalaryPayment=Pagamento de salário
 SalariesPayments=Pagamentos de salários

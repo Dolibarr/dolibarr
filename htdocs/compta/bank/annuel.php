@@ -32,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
 
@@ -52,6 +55,12 @@ else
 {
 	$year_end=$year_start+2;
 }
+
+
+
+/*
+ * View
+ */
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
 $helpurl = "";
@@ -179,7 +188,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
+	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
 }
 print '</tr>';
 
@@ -187,7 +196,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
@@ -209,7 +218,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" width="10%">&nbsp;';
+		print '<td align="right" class="borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -276,10 +285,6 @@ if ($result < 0)
 }
 else
 {
-	// Definition de $width et $height
-	$width = 480;
-	$height = 300;
-
 	// Calcul de $min et $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -374,8 +379,8 @@ else
 	$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
 	$px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
 	$px1->SetTitle($title);
-	$px1->SetWidth($width);
-	$px1->SetHeight($height);
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
 	$px1->SetType(array('line','line','line'));
 	$px1->SetShading(3);
 	$px1->setBgColor('onglet');
@@ -461,8 +466,8 @@ else
 	$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
 	$px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
 	$px2->SetTitle($title);
-	$px2->SetWidth($width);
-	$px2->SetHeight($height);
+	$px2->SetWidth($WIDTH);
+	$px2->SetHeight($HEIGHT);
 	$px2->SetType(array('line','line','line'));
 	$px2->SetShading(3);
 	$px2->setBgColor('onglet');

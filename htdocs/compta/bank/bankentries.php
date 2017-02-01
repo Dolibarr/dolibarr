@@ -54,6 +54,7 @@ $langs->load("loan");
 $langs->load("donations");
 $langs->load("trips");
 $langs->load("members");
+$langs->load("compta");
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
@@ -108,13 +109,12 @@ if (! $sortfield) $sortfield='b.datev';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid') && ($id > 0 || ! empty($ref)))
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))
 {
     $sortfield = 'b.datev, b.dateo, b.rowid';
-    $mode_balance_ok = true;
+    if ($id > 0 || ! empty($ref) || $account > 0) $mode_balance_ok = true;
 }
 if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
-
 
 $object = new Account($db);
 if ($id > 0 || ! empty($ref))
@@ -429,7 +429,7 @@ if ($id > 0 || ! empty($ref))
         if ($object->canBeConciliated() > 0) {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile&id='.$object->id.$param.'">'.$langs->trans("Conciliate").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile'.$param.'">'.$langs->trans("Conciliate").'</a>';
             } else {
                 print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
@@ -502,7 +502,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -511,7 +511,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofpages = ceil($nbtotalofrecords/$limit);
 }
 
-if (($id > 0 || ! empty($ref)) && GETPOST("page",'int') === '')
+if (($id > 0 || ! empty($ref)) && ((string) $page == ''))
 {
     // We open a list of transaction of a dedicated account and no page was set by defaut
     // We force on last page.
@@ -519,7 +519,17 @@ if (($id > 0 || ! empty($ref)) && GETPOST("page",'int') === '')
     $offset = $limit * $page;
     if ($page < 0) $page = 0;
 }
+if ($page >= $nbtotalofpages) 
+{
+    // If we made a search and result has low page than the page number we were on
+    $page = ($nbtotalofpages -1); 
+    $offset = $limit * $page;
+    if ($page < 0) $page = 0;
+}
 
+// If not account defined $mode_balance_ok=false
+if (empty($account)) $mode_balance_ok=false;
+// If a search is done $mode_balance_ok=false
 if (! empty($search_ref)) $mode_balance_ok=false;
 if (! empty($req_nb)) $mode_balance_ok=false;
 if (! empty($type)) $mode_balance_ok=false;
@@ -567,7 +577,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
-	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
+	if (GETPOST('bid')) print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
 	
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile')
@@ -611,7 +621,7 @@ if ($resql)
 	                $last_ok=1;
 	            }
 	            $i++;
-	            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+	            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
 	        }
 	        if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
 	        print $liste;
@@ -668,7 +678,7 @@ if ($resql)
 	}	
 	
 	
-	/// ajax adjust value date
+	/// ajax to adjust value date with plus and less picto
 	print '
     <script type="text/javascript">
     $(function() {
@@ -719,18 +729,18 @@ if ($resql)
 	
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' : ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From') . ' ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
 	
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From') . ' ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
 	$moreforfilter .= $form->select_date($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
 	
 	$parameters=array();
@@ -748,7 +758,8 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	// Fields title
 	print '<tr class="liste_titre">';
@@ -822,7 +833,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$form->select_comptes($account,'account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
     	print '</td>';
 	}
@@ -840,7 +851,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-    	print '<td align="right">';
+    	print '<td class="liste_titre" align="right">';
     	$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
     	print $form->textwithpicto('', $htmltext, 1);
     	print '</td>';
@@ -872,6 +883,12 @@ if ($resql)
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
         {
+            if (! $account) 
+            {
+                dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+                exit;
+            }
+            
             //Loop on each record
             $sign = 1;
             $i = 0;
@@ -1074,7 +1091,7 @@ if ($resql)
     	   print '<td align="center" class="nowrap">';
     	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
     	   print '&nbsp;';
-    	   print '<span>';
+    	   print '<span class="inline-block">';
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
     	   print img_edit_remove() . "</a> ";
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1191,7 +1208,7 @@ if ($resql)
         	{
             	if ($objp->rappro)  // If line not conciliated and account can be conciliated
             	{
-            	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$object->id.'">'.$objp->num_releve.'</a>';
+            	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$objp->bankid.'">'.$objp->num_releve.'</a>';
             	}
             	else if ($action == 'reconcile')
             	{ 
@@ -1207,7 +1224,7 @@ if ($resql)
     	// Transaction reconciliated or edit link
     	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
-    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	    print img_edit();
     	    print '</a>';
     	}
@@ -1215,13 +1232,13 @@ if ($resql)
     	{
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
     	    }
     	    else
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
     	    }
@@ -1235,7 +1252,7 @@ if ($resql)
     	    print '&nbsp;';
     	    if ($user->rights->banque->modifier)
     	    {
-    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_delete();
     	        print '</a>';
     	    }
@@ -1280,6 +1297,8 @@ if ($resql)
 	}
 
 	print "</table>";
+	print "</div>";
+	
     print '</form>';
 	$db->free($resql);
 }

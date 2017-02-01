@@ -279,16 +279,18 @@ if ($socid > 0)
     	print '<br>';
     
     	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+    	
+    	print '<div class="underbanner clearboth"></div>';
     	print '<table class="border" width="100%">';
-    	print '<tr><td width="38%" class="fieldrequired">'.$langs->trans("AmountHT").'</td>';
-    	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
+    	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
+    	print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
     	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-    	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
+    	print '<tr><td>'.$langs->trans("VAT").'</td>';
     	print '<td>';
     	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
     	print '</td></tr>';
     	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" size="60" name="desc" value="'.GETPOST('desc').'"></td></tr>';
+    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc').'"></td></tr>';
     
     	print "</table>";
 	}

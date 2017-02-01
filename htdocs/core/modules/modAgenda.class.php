@@ -7,6 +7,7 @@
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,9 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array();
 		$this->langfiles = array("companies");
 
+		// Module parts
+        $this->module_parts = array();
+
 		// Constants
 		//-----------
 		$this->const = array();
@@ -82,7 +86,7 @@ class modAgenda extends DolibarrModules
 		{
 		    while ($obj = $this->db->fetch_object($sqlreadactions))
 		    {
-		        if (preg_match('/_CREATE$/',$obj->code) && ($obj->code != 'COMPANY_CREATE')) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty creation because there is no validation). 
+		        if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty or product creation because there is no validation). 
 		        if (preg_match('/^PROJECT_/',$obj->code)) continue;   // We don't track such events by default.
 		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");

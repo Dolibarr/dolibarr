@@ -96,6 +96,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'LVL'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'LBP', '[163]', 1,				'Lebanon Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'LRD', '[36]', 1,				'Liberia Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'LTL', '[76,116]', 1,			'Lithuania Litas');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MGA', NULL, 1,					'Ariary');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MKD', '[1076,1077,1085]', 1,	'Macedonia Denar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MYR', '[82,77]', 1,				'Malaysia Ringgit');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MRO', NULL, 1,					'Mauritania Ouguiya');

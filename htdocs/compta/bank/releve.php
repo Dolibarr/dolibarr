@@ -65,16 +65,29 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+$pageplusone = GETPOST("pageplusone",'int');
+if ($pageplusone) $page = $pageplusone - 1;
 if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$object = new Account($db);
+if ($id > 0 || ! empty($ref))
+{
+    $result=$object->fetch($id, $ref);
+    $account = $object->id;     // Force the search field on id of account
+}
+
+
+// Initialize technical object to manage context to save list fields
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 
 /*
@@ -96,12 +109,12 @@ $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
 
-// Load account
-$object = new Account($db);
-if ($id > 0 || ! empty($ref))
-{
-	$object->fetch($id, $ref);
-}
+// Must be before button action
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($id > 0) $param.='&id='.urlencode($id);
+
 
 if (empty($num))
 {
@@ -138,7 +151,7 @@ if (empty($num))
 		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$object->id.'">'.$langs->trans("Conciliate").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile'.$param.'">'.$langs->trans("Conciliate").'</a>';
 			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
@@ -216,7 +229,7 @@ if (empty($num))
 else
 {
 	/**
-	 *      Affiche liste ecritures d'un releve
+	 *   Show list of bank statements
 	 */
 	$ve=$_GET["ve"];
 
@@ -286,6 +299,7 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
+    print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -335,8 +349,10 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr ".$bc[$var]."><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$object->id."\">&nbsp;</a></td>";
-		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
+		print "<td colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
+		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print "</tr>\n";
 
 		while ($i < $numrows)
 		{
@@ -539,8 +555,13 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"4\">&nbsp;</td><td align=\"right\" colspan=\"2\"><b>".$langs->trans("EndBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
-	print "</table></form>\n";
+	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
+	print "</tr>\n";
+	print "</table>";
+	print "</div>";
+	
+	print "</form>\n";
 }
 
 

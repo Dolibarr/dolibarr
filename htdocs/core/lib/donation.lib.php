@@ -89,6 +89,15 @@ function donation_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	$nbNote = 0;
+	if(!empty($object->note_private)) $nbNote++;
+	if(!empty($object->note_public)) $nbNote++;
+	$head[$h][0] = DOL_URL_ROOT.'/don/note.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Notes");
+	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	$head[$h][2] = 'note';
+	$h++;
+	
 	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

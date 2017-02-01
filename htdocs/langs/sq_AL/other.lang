@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Security code
-Calendar=Calendar
 NumberingShort=N°
 Tools=Tools
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Shipping sent by mail
 Notify_MEMBER_VALIDATE=Member validated
 Notify_MEMBER_MODIFY=Member modified
 Notify_MEMBER_SUBSCRIPTION=Member subscribed
-Notify_MEMBER_RESILIATE=Member resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Member deleted
 Notify_PROJECT_CREATE=Project creation
 Notify_TASK_CREATE=Task created
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Total size of attached files/documents
 MaxSize=Maximum size
 AttachANewFile=Attach a new file/document
 LinkedObject=Linked object
-Miscellaneous=Miscellaneous
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=This is a test mail.\nThe two lines are separated by a carriage return.\n\n__SIGNATURE__
 PredefinedMailTestHtml=This is a <b>test</b> mail (the word test must be in bold).<br>The two lines are separated by a carriage return.<br><br>__SIGNATURE__
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Export
 ExportsArea=Exports area
 AvailableFormats=Available formats
-LibraryUsed=Librairy used
-LibraryVersion=Version
+LibraryUsed=Library used
+LibraryVersion=Library version
 ExportableDatas=Exportable data
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
-NewExport=New export
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_DESCRIPTION=Përshkrimi
 WEBSITE_KEYWORDS=Keywords

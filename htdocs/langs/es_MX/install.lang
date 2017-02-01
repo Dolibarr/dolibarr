@@ -46,7 +46,6 @@ KeepEmptyIfNoPassword=Deje en blanco si el usuario no tiene contraseña (evite e
 SaveConfigurationFile=Guardar valores
 ServerConnection=Conexión con el servidor
 DatabaseCreation=Creación de bases de datos
-UserCreation=Creación de usuario
 CreateDatabaseObjects=Creación de objetos de la base de datos
 ReferenceDataLoading=Referencia de carga de datos
 TablesAndPrimaryKeysCreation=Creación de Tablas y Llaves primarias

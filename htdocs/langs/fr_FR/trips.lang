@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Note de frais
 ExpenseReports=Notes de frais
+ShowExpenseReport=Afficher la note de frais
 Trips=Note de frais
 TripsAndExpenses=Notes de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
@@ -8,6 +9,7 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+TypeFees=Types de déplacement et notes de frais
 ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée
@@ -19,13 +21,23 @@ ListToApprove=En attente d'approbation
 ExpensesArea=Espace notes de frais
 ClassifyRefunded=Classer 'Remboursé'
 ExpenseReportWaitingForApproval=Une nouvelle note de frais a été soumise pour approbation
-ExpenseReportWaitingForApprovalMessage=Une nouvelle note de frais a été soumise et est en attente de validation.\n- Utilisateur: %s\n- Période: %s\nCliquer ici pour valider: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=Id note de frais
 AnyOtherInThisListCanValidate=Personne à informer pour la validation.
 TripSociete=Information société
 TripNDF=Informations note de frais
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
-ExpenseReportLine=Ligne de la note de frais
+ExpenseReportLine=Ligne de note de frais
 TF_OTHER=Autre
 TF_TRIP=Transport
 TF_LUNCH=Repas
@@ -57,31 +69,23 @@ DATE_REFUS=Date refus
 DATE_SAVE=Date validation
 DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Date de paiement
-
 BROUILLONNER=Réouvrir
 ValidateAndSubmit=Valider et envoyer pour approbation
 ValidatedWaitingApproval=Validé (en attente d'approbation)
-
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.
-
 ConfirmRefuseTrip=Êtes-vous sûr de vouloir refuser cette note de frais ?
-
 ValideTrip=Approuver note de frais
 ConfirmValideTrip=Êtes-vous sûr de vouloir approuver cette note de frais ?
-
 PaidTrip=Payer note de frais
 ConfirmPaidTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Payé" ?
-
 ConfirmCancelTrip=Êtes-vous sûr de vouloir annuler cette note de frais ?
-
 BrouillonnerTrip=Passer le rapport de dépenses au statut "Brouillon"
 ConfirmBrouillonnerTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Brouillon" ?
-
 SaveTrip=Valider note de frais
 ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
-
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
-
 ExpenseReportsToApprove=Notes de frais à approuver
 ExpenseReportsToPay=Notes de frais à payer
+CloneExpenseReport=Copier la note de frais
+ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir copier cette note de frais ?

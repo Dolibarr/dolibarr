@@ -32,13 +32,13 @@ ECMDocsByProducts=اسناد مرتبط به محصولات
 ECMDocsByProjects=اسناد مربوط به پروژه
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=بدون دایرکتوری ایجاد شده
 ShowECMSection=نمایش دایرکتوری
 DeleteSection=حذف دایرکتوری
-ConfirmDeleteSection=آیا تائید می کنید که می خواهید این <b>شاخه٪ s</b> را حذف کنید؟
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=دایرکتوری نسبی برای فایل ها
 CannotRemoveDirectoryContainsFiles=ممکن است حذف شده، زیرا حاوی بعضی از فایل ها نمی
 ECMFileManager=مدیریت فایل ها
 ECMSelectASection=انتخاب یک دایرکتوری در درخت سمت چپ ...
 DirNotSynchronizedSyncFirst=این دایرکتوری به نظر می رسد ایجاد می شود و یا تغییر در خارج ماژول ECM. شما باید در "تازه کردن" را فشار دهید کلیک کنید برای اولین بار برای همزمان سازی دیسک و پایگاه داده برای دریافت مطالب از این شاخه.
-

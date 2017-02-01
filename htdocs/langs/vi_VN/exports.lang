@@ -26,8 +26,6 @@ FieldTitle=Dòng tiêu đề
 NowClickToGenerateToBuildExportFile=Bây giờ, chọn định dạng tập tin trong combo box và click vào nút "Tạo" để xây dựng tập tin xuất dữ liệu ...
 AvailableFormats=Định dạng có sẵn
 LibraryShort=Thư viện
-LibraryUsed=Thư viện sử dụng
-LibraryVersion=Phiên bản
 Step=Bước
 FormatedImport=Trợ lý nhập dữ liệu
 FormatedImportDesc1=Khu vực này cho phép nhập dữ liệu cá nhân, sử dụng một trợ lý để giúp bạn trong quá trình mà không có kiến ​​thức kỹ thuật.
@@ -87,7 +85,7 @@ TooMuchWarnings=Hiện vẫn còn <b>%s</b> dòng nguồn khác với các cản
 EmptyLine=Dòng trống (sẽ bị loại bỏ)
 CorrectErrorBeforeRunningImport=Trước tiên, bạn phải sửa chữa tất cả các lỗi trước khi chạy nhập dữ liệu dứt khoát.
 FileWasImported=Tập tin được nhập dữ liệu với số <b>%s</b>.
-YouCanUseImportIdToFindRecord=Bạn có thể tìm thấy tất cả hồ sơ nhập dữ liệu trong cơ sở dữ liệu của bạn bằng cách lọc trên sân <b>import_key = '%s'.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Số dòng không có lỗi và không có cảnh báo <b>%s</b>.
 NbOfLinesImported=Số dòng nhập thành công <b>%s</b>.
 DataComeFromNoWhere=Giá trị để chèn đến từ hư không trong tập tin nguồn.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Comma</b> định dạng tập tin <b>Giá trị Ly</b> (csv). 
 Excel95FormatDesc=Định dạng tập tin <b>Excel</b> (xls) <br> Đây là nguồn gốc Excel 95 định dạng (BIFF5).
 Excel2007FormatDesc=Định dạng tập tin <b>Excel</b> (xlsx) <br> Đây là nguồn gốc định dạng Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b>Tab Ly</b> định dạng tập tin <b>Giá trị</b> (.tsv) <br> Đây là một định dạng tập tin văn bản mà các lĩnh vực được phân cách bởi một lập bảng [tab].
-ExportFieldAutomaticallyAdded=Dòng <b>%s</b> đã được tự động thêm vào. Nó sẽ tránh bạn phải có dòng tương tự như được coi là bản sao hồ sơ (với lĩnh vực này nói thêm, tất cả các dòng sẽ sở hữu id của riêng mình và sẽ khác nhau).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv Tùy chọn
 Separator=Separator
 Enclosure=Bao vây

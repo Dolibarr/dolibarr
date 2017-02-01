@@ -2,7 +2,7 @@
 HRM=Personal
 Holidays=Urlaub
 CPTitreMenu=Urlaub
-MenuReportMonth=Monatsauszug
+MenuReportMonth=Monatsaufstellung
 MenuAddCP=Neuer Urlaubsantrag
 NotActiveModCP=Sie müssen das Urlaubsmodul aktivieren um diese Seite zu sehen.
 AddCP=Erstellen Sie ein Urlaubs-Antrag
@@ -78,6 +78,7 @@ ManualUpdate=Manuelles Update
 HolidaysCancelation=Urlaubsantrag stornieren
 EmployeeLastname=Mitarbeiter Nachname
 EmployeeFirstname=Mitarbeiter Vorname
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Letzte automatische Aktualisierung der Urlaubstage

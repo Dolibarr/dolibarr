@@ -56,10 +56,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
 print '<tr '.$bc[$var].'><td class="nowrap">';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size="18"></td>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
 print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td class="nowrap">';
-print $langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
 
 print "</table></form><br>\n";
 

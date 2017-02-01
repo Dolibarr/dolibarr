@@ -50,8 +50,8 @@ class modAccounting extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Advanced accounting management";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
@@ -142,11 +142,6 @@ class modAccounting extends DolibarrModules
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
 				""
-		);
-		$this->const[12] = array(
-				"ACCOUNTING_LIMIT_LIST_VENTILATION",
-				"chaine",
-				"50"
 		);
 		$this->const[13] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",

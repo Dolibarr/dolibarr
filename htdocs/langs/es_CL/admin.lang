@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-Chartofaccounts=Gráfico de cuentas
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
@@ -21,3 +20,4 @@ ProposalsPDFModules=Modelos de documentos de cotizaciones
 FreeLegalTextOnProposal=Texto libre en cotizaciones
 WatermarkOnDraftProposal=Marca de agua en cotizaciones borrador (en caso de estar vacío)
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, cotizaciones, facturas, etc.)
+ApiProductionMode=Enable production mode (this will activate use of a caches for services management)

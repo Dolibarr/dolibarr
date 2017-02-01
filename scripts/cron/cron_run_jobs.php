@@ -82,7 +82,7 @@ if ($key != $conf->global->CRON_KEY)
 // If param userlogin is reserved word 'firstadmin' 
 if ($userlogin == 'firstadmin')
 {
-    $sql='SELECT login from '.MAIN_DB_PREFIX.'user WHERE admin = 1 ORDER BY entity LIMIT 1';
+    $sql='SELECT login from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
     $resql=$db->query($sql);
     if ($resql)
     {

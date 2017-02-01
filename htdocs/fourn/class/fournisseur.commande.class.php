@@ -128,6 +128,12 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
+    /**
+     * Draft status
+     */
+    const STATUS_DRAFT = 0;
+    
+    
     
 	/**
      * 	Constructor
@@ -275,9 +281,8 @@ class CommandeFournisseur extends CommonOrder
 
             $this->lines=array();
 
-            $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
-            $sql.= " l.qty,";
-            $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
+            $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
+            $sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
             $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
             $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
@@ -313,6 +318,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->subprice            = $objp->subprice;
                     $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
+                    
+                    $line->vat_src_code        = $objp->vat_src_code;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
                     $line->total_localtax1	   = $objp->total_localtax1;
@@ -326,10 +333,10 @@ class CommandeFournisseur extends CommonOrder
                     $line->product_label       = $objp->product_label;
                     $line->product_desc        = $objp->product_desc;
 
-                    $line->ref                 = $objp->product_ref;
-                    $line->product_ref         = $objp->product_ref;
-                    $line->ref_fourn           = $objp->ref_supplier;
-                    $line->ref_supplier        = $objp->ref_supplier;
+                    $line->ref                 = $objp->product_ref;    // Ref of product
+                    $line->product_ref         = $objp->product_ref;    // Ref of product
+                    $line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+                    $line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
 
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
@@ -586,9 +593,10 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *	@param		string	$option			On what the link points
+     *  @param	    int   	$notooltip		1=Disable tooltip
      *	@return		string					Chain with URL
      */
-    public function getNomUrl($withpicto=0,$option='')
+    public function getNomUrl($withpicto=0,$option='',$notooltip=0)
     {
         global $langs, $conf;
 
@@ -605,14 +613,28 @@ class CommandeFournisseur extends CommonOrder
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $picto='order';
+        $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
+            
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowOrder");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        $picto='order';
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.$this->ref.$linkend;
+        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 
@@ -1012,7 +1034,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->statut = 3;
                 $this->methode_commande_id = $methode;
-                $this->date_commande = $this->db->idate($date);
+                $this->date_commande = $date;
 
                 // Call trigger
                 $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT',$user);
@@ -1040,7 +1062,7 @@ class CommandeFournisseur extends CommonOrder
             $error++;
             $this->error = $langs->trans('NotAuthorized');
             $this->errors[] = $langs->trans('NotAuthorized');
-            dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
+            dol_syslog(get_class($this)."::commande User not Authorized", LOG_WARNING);
         }
 
         return ($error ? -1 : 1);
@@ -1144,7 +1166,7 @@ class CommandeFournisseur extends CommonOrder
 	                    $this->lines[$i]->localtax2_tx,
 	                    $this->lines[$i]->fk_product,
 	                    0,
-	                    $this->lines[$i]->ref_fourn,
+	                    $this->lines[$i]->ref_fourn,   // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
 	                    $this->lines[$i]->remise_percent,
 	                    'HT',
 	                    0,
@@ -1306,7 +1328,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param      float	$txlocaltax2        	Localtax2 tax
      *	@param      int		$fk_product      		Id product
      *  @param      int		$fk_prod_fourn_price	Id supplier price
-     *  @param      string	$fourn_ref				Supplier reference
+     *  @param      string	$fourn_ref				Supplier reference price
      *	@param      float	$remise_percent  		Remise
      *	@param      string	$price_base_type		HT or TTC
      *	@param		float	$pu_ttc					Unit price TTC
@@ -1317,9 +1339,10 @@ class CommandeFournisseur extends CommonOrder
      *  @param		int		$date_end				Date end of service
 	 *  @param		array	$array_options			extrafields array
      *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *  @param 		string	$pu_ht_devise			Amount in currency
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null, $pu_ht_devise=0)
     {
         global $langs,$mysoc,$conf;
 
@@ -1352,7 +1375,8 @@ class CommandeFournisseur extends CommonOrder
             $pu=$pu_ttc;
         }
         $desc=trim($desc);
-
+        $ref_supplier=''; // Ref of supplier price when we add line
+        
         // Check parameters
         if ($qty < 1 && ! $fk_product)
         {
@@ -1374,15 +1398,28 @@ class CommandeFournisseur extends CommonOrder
                     $prod = new Product($this->db, $fk_product);
                     if ($prod->fetch($fk_product) > 0)
                     {
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, $fourn_ref);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref
+                        $product_type = $prod->type;
+                        $label = $prod->libelle;
+                        
+                        // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+                        // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
-                            $label = $prod->libelle;
-                            $pu    = $prod->fourn_pu;
-                            $ref_supplier = $prod->ref_supplier;
-                            $product_type = $prod->type;
+                            $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
                         }
-                        if ($result == 0 || $result == -1)
+                        if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+                        {
+                            $langs->load("errors");
+                            $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+                            $this->db->rollback();
+                            dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+                            //$pu    = $prod->fourn_pu;     // We do not overwrite unit price   
+                            //$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+                            return -1;
+                        }
+                        if ($result == -1)
                         {
                             $langs->load("errors");
                             $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
@@ -1416,19 +1453,28 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
-            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
 
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+            // Clean vat code
+            $vat_src_code='';
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            }
+            
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+			$pu_ht = $tabprice[3];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
 
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
@@ -1457,6 +1503,8 @@ class CommandeFournisseur extends CommonOrder
             $this->line->subprice=$pu_ht;
             $this->line->rang=$this->rang;
             $this->line->info_bits=$info_bits;
+            
+            $this->line->vat_src_code=$vat_src_code;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;
@@ -1473,12 +1521,12 @@ class CommandeFournisseur extends CommonOrder
             // Multicurrency
             $this->line->fk_multicurrency			= $this->fk_multicurrency;
             $this->line->multicurrency_code			= $this->multicurrency_code;
-            $this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+            $this->line->multicurrency_subprice		= $pu_ht_devise;
             $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
-            $this->line->subprice=$pu;
+            $this->line->subprice=$pu_ht;
             $this->line->price=$this->line->subprice;
 
             $this->line->remise_percent=$remise_percent;
@@ -1936,6 +1984,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $old_statut = $this->statut;
                     $this->statut = $statut;
 
                     // Call trigger
@@ -1949,6 +1998,7 @@ class CommandeFournisseur extends CommonOrder
                     }
                     else
                     {
+                        $this->statut = $old_statut;
                         $this->db->rollback();
                         $this->error=$this->db->lasterror();
                         $result = -1;
@@ -2220,9 +2270,10 @@ class CommandeFournisseur extends CommonOrder
      *  @param      timestamp   $date_end       	Date end of service
 	 *  @param		array		$array_options		Extrafields array
      * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param		double		$pu_ht_devise		Unit price in currency
      *	@return    	int         	    			< 0 if error, > 0 if ok
      */
-    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit=null)
+    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0)
     {
     	global $mysoc, $conf;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
@@ -2260,24 +2311,35 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
-            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+            // Clean vat code
+            $vat_src_code='';
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $vatrate = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            }
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
 
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
-            $subprice = price2num($pu,'MU');
+            $subprice = price2num($pu_ht,'MU');
 
             $this->line=new CommandeFournisseurLigne($this->db);
             $this->line->fetch($rowid);
@@ -2288,38 +2350,39 @@ class CommandeFournisseur extends CommonOrder
             //$this->line->label=$label;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
-            $this->line->tva_tx=$txtva;
-            $this->line->localtax1_tx=$txlocaltax1;
-            $this->line->localtax2_tx=$txlocaltax2;
+
+	        $this->line->vat_src_code   = $vat_src_code;
+            $this->line->tva_tx         = $txtva;
+            $this->line->localtax1_tx   = $txlocaltax1;
+            $this->line->localtax2_tx   = $txlocaltax2;
             $this->line->localtax1_type = $localtaxes_type[0];
             $this->line->localtax2_type = $localtaxes_type[2];
-            $this->line->remise_percent=$remise_percent;
-            $this->line->subprice=$pu;
-            $this->line->rang=$this->rang;
-            $this->line->info_bits=$info_bits;
-            $this->line->total_ht=$total_ht;
-            $this->line->total_tva=$total_tva;
-            $this->line->total_localtax1=$total_localtax1;
-            $this->line->total_localtax2=$total_localtax2;
-            $this->line->total_ttc=$total_ttc;
-            $this->line->product_type=$type;
-            $this->line->special_code=$this->special_code;
-            $this->line->origin=$this->origin;
-            $this->line->fk_unit=$fk_unit;
+            $this->line->remise_percent = $remise_percent;
+            $this->line->subprice       = $pu_ht;
+            $this->line->rang           = $this->rang;
+            $this->line->info_bits      = $info_bits;
+            $this->line->total_ht       = $total_ht;
+            $this->line->total_tva      = $total_tva;
+            $this->line->total_localtax1= $total_localtax1;
+            $this->line->total_localtax2= $total_localtax2;
+            $this->line->total_ttc      = $total_ttc;
+            $this->line->product_type   = $type;
+            $this->line->special_code   = $this->special_code;
+            $this->line->origin         = $this->origin;
+            $this->line->fk_unit        = $fk_unit;
 
-            $this->line->date_start=$date_start;
-            $this->line->date_end=$date_end;
-
+            $this->line->date_start     = $date_start;
+            $this->line->date_end       = $date_end;
 
             // Multicurrency
             $this->line->fk_multicurrency			= $this->fk_multicurrency;
             $this->line->multicurrency_code			= $this->multicurrency_code;
-            $this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+            $this->line->multicurrency_subprice		= $pu_ht_devise;
             $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
-            $this->line->subprice=$pu;
+            $this->line->subprice=$pu_ht;
             $this->line->price=$this->line->subprice;
 
             $this->line->remise_percent=$remise_percent;
@@ -2332,9 +2395,11 @@ class CommandeFournisseur extends CommonOrder
 
 
             // Mise a jour info denormalisees au niveau facture
-            if (! $error)
+            if ($result >= 0)
             {
                 $this->update_price('','auto');
+				$this->db->commit();
+				return $result;
             }
             else
             {
@@ -2621,20 +2686,18 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$langs->load("suppliers");
 
-		// Sets the model on the model name to use
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'muscadet';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'muscadet';
 			}
 		}
 
@@ -2854,15 +2917,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     // From llx_product_fournisseur_price
 
 	/**
-	 * Supplier ref
-	 * @var string
-	 * @deprecated Use ref_supplier
-	 * @see ref_supplier
-	 */
-	public $ref_fourn;
-
-	/**
-	 * Supplier reference
+	 * Supplier reference of price when we added the line. May have been changed after line was added.
 	 * @var string
 	 */
     public $ref_supplier;
@@ -2995,8 +3050,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
         if (empty($this->tva_tx)) $this->tva_tx=0;
         if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
-        if (empty($this->localtax1_type)) $this->localtax1_type=0;
-        if (empty($this->localtax2_type)) $this->localtax2_type=0;
+        if (empty($this->localtax1_type)) $this->localtax1_type='0';
+        if (empty($this->localtax2_type)) $this->localtax2_type='0';
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
@@ -3025,7 +3080,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= " (fk_commande, label, description, date_start, date_end,";
         $sql.= " fk_product, product_type,";
-        $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
+        $sql.= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
         $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
         $sql.= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
         $sql.= ")";
@@ -3035,24 +3090,27 @@ class CommandeFournisseurLigne extends CommonOrderLine
         if ($this->fk_product) { $sql.= $this->fk_product.","; }
         else { $sql.= "null,"; }
         $sql.= "'".$this->product_type."',";
-        $sql.= "'".$this->qty."', ".$this->tva_tx.", ".$this->localtax1_tx.", ".$this->localtax2_tx;
+        $sql.= "'".$this->qty."', ";
 
-        $sql.= ", '".$this->localtax1_type."',";
-        $sql.= " '".$this->localtax2_type."'";
-
-        $sql.= ", ".$this->remise_percent.",'".price2num($this->subprice,'MU')."','".$this->ref_supplier."',";
-        $sql.= "'".price2num($this->total_ht)."',";
-        $sql.= "'".price2num($this->total_tva)."',";
-        $sql.= "'".price2num($this->total_localtax1)."',";
-        $sql.= "'".price2num($this->total_localtax2)."',";
-        $sql.= "'".price2num($this->total_ttc)."',";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
+        $sql.= " ".$this->tva_tx.", ";
+        $sql.= " ".$this->localtax1_tx.",";
+        $sql.= " ".$this->localtax2_tx.",";
+        $sql.= " '".$this->localtax1_type."',";
+        $sql.= " '".$this->localtax2_type."',";
+        $sql.= " ".$this->remise_percent.", ".price2num($this->subprice,'MU').", '".$this->db->escape($this->ref_supplier)."',";
+        $sql.= " ".price2num($this->total_ht).",";
+        $sql.= " ".price2num($this->total_tva).",";
+        $sql.= " ".price2num($this->total_localtax1).",";
+        $sql.= " ".price2num($this->total_localtax2).",";
+        $sql.= " ".price2num($this->total_ttc).",";
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
         $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
-        $sql.= ", ".price2num($this->pu_ht * $this->multicurrency_tx);
-        $sql.= ", ".$this->multicurrency_total_ht;
-        $sql.= ", ".$this->multicurrency_total_tva;
-        $sql.= ", ".$this->multicurrency_total_ttc;
+        $sql.= ", ".price2num($this->multicurrency_subprice);
+        $sql.= ", ".price2num($this->multicurrency_total_ht);
+        $sql.= ", ".price2num($this->multicurrency_total_tva);
+        $sql.= ", ".price2num($this->multicurrency_total_ttc);
         $sql.= ")";
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -3114,32 +3172,34 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " description='".$this->db->escape($this->desc)."'";
-        $sql.= ",subprice='".price2num($this->subprice)."'";
+        $sql.= "  description='".$this->db->escape($this->desc)."'";
+        $sql.= ", subprice='".price2num($this->subprice)."'";
         //$sql.= ",remise='".price2num($remise)."'";
-        $sql.= ",remise_percent='".price2num($this->remise_percent)."'";
-        $sql.= ",tva_tx='".price2num($this->tva_tx)."'";
-        $sql.= ",localtax1_tx='".price2num($this->total_localtax1)."'";
-        $sql.= ",localtax2_tx='".price2num($this->total_localtax2)."'";
-        $sql.= ",localtax1_type='".$this->localtax1_type."'";
-        $sql.= ",localtax2_type='".$this->localtax2_type."'";
-        $sql.= ",qty='".price2num($this->qty)."'";
-        $sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
-        $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-        $sql.= ",info_bits='".$this->info_bits."'";
-        $sql.= ",total_ht='".price2num($this->total_ht)."'";
-        $sql.= ",total_tva='".price2num($this->total_tva)."'";
-        $sql.= ",total_localtax1='".price2num($this->total_localtax1)."'";
-        $sql.= ",total_localtax2='".price2num($this->total_localtax2)."'";
-        $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
-        $sql.= ",product_type=".$this->product_type;
-        $sql.= ($this->fk_unit ? ",fk_unit='".$this->db->escape($this->fk_unit)."'":", fk_unit=null");
+        $sql.= ", remise_percent='".price2num($this->remise_percent)."'";
+        
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+        $sql.= ", tva_tx='".price2num($this->tva_tx)."'";
+        $sql.= ", localtax1_tx='".price2num($this->total_localtax1)."'";
+        $sql.= ", localtax2_tx='".price2num($this->total_localtax2)."'";
+        $sql.= ", localtax1_type='".$this->localtax1_type."'";
+        $sql.= ", localtax2_type='".$this->localtax2_type."'";
+        $sql.= ", qty='".price2num($this->qty)."'";
+        $sql.= ", date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= ", date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= ", info_bits='".$this->info_bits."'";
+        $sql.= ", total_ht='".price2num($this->total_ht)."'";
+        $sql.= ", total_tva='".price2num($this->total_tva)."'";
+        $sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
+        $sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
+        $sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+        $sql.= ", product_type=".$this->product_type;
+        $sql.= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'":", fk_unit=null");
 
         // Multicurrency
-        $sql.= " , multicurrency_subprice=".price2num($this->subprice * $this->multicurrency_tx)."";
-        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+        $sql.= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
         $sql.= " WHERE rowid = ".$this->id;
 

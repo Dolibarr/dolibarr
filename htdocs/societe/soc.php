@@ -72,6 +72,12 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
+if ($action == 'view' && $object->fetch($socid)<=0)
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
@@ -109,7 +115,7 @@ if (empty($reshook))
         }
     }
 
-	if ($action == 'confirm_merge' && $confirm == 'yes')
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer)
 	{
 		$object->fetch($socid);
 
@@ -284,9 +290,8 @@ if (empty($reshook))
         else
         {
             $object->name              = GETPOST('name', 'alpha');
-	        $object->name_alias   = GETPOST('name_alias');
         }
-
+        $object->name_alias            = GETPOST('name_alias');
         $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
@@ -765,7 +770,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
@@ -914,7 +919,6 @@ else
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
-							$("#name_alias").show();
                         	$("#effectif_id").val(0);
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
@@ -922,7 +926,6 @@ else
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
-							$("#name_alias").hide();
                         	$("#effectif_id").val(id_ef15);
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
@@ -964,7 +967,7 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type").'>';
-        print '<input type="hidden" name="LastName" value="'.$langs->trans('LastName').'">';
+        print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
@@ -976,11 +979,11 @@ else
 	    print '<tr><td class="titlefieldcreate">';
         if ($object->particulier || $private)
         {
-	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('LastName','name').'</span>';
+	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName','name').'</span>';
         }
         else
 		{
-			print '<span span id="TypeName" class="fieldrequired">'.fieldLabel('ThirdPartyName','name').'</span>';
+			print '<span id="TypeName" class="fieldrequired">'.fieldLabel('ThirdPartyName','name').'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
 	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
@@ -994,10 +997,11 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
-	        print '<td colspan="3"><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '</tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3">';
-            print $formcompany->select_civility($object->civility_id).'</td>';
+            // Title
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
             print '</tr>';
         }
 
@@ -1012,7 +1016,7 @@ else
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1"></option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
         print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
@@ -1070,9 +1074,9 @@ else
 
         // Zip / Town
         print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
-        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td><td>'.fieldLabel('Town','town').'</td><td>';
-        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td></tr>';
 
         // Country
@@ -1092,15 +1096,15 @@ else
 
         // Email web
         print '<tr><td>'.fieldLabel('EMail','email').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td>';
-	    print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
+	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
-	    print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
-
+	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
+	    
         // Skype
         if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        print '<td colspan="3"><input type="text" name="skype" id="skype" size="32" value="'.$object->skype.'"></td></tr>';
+	        print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
         }
 
         // Phone / Fax
@@ -1135,7 +1139,7 @@ else
         // Vat is used
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value',(isset($conf->global->THIRDPARTY_DEFAULT_USEVAT)?$conf->global->THIRDPARTY_DEFAULT_USEVAT:1),1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
@@ -1166,6 +1170,30 @@ else
         print '</td>';
         print '</tr>';
 
+        // Local Taxes
+        //TODO: Place into a function to control showing by country or study better option
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax1assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1:0),1);
+            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
+            print '</td></tr>';
+        
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax1assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1:0),1);
+            print '</td></tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
+            print '</td></tr>';
+        }
+        
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
@@ -1194,30 +1222,6 @@ else
         print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	    print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> ';
         print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-
-        // Local Taxes
-        //TODO: Place into a function to control showing by country or study better option
-        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
-            print $form->selectyesno('localtax1assuj_value',0,1);
-            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
-            print $form->selectyesno('localtax2assuj_value',0,1);
-            print '</td></tr>';
-
-        }
-        elseif($mysoc->localtax1_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print $form->selectyesno('localtax1assuj_value',0,1);
-            print '</td><tr>';
-        }
-        elseif($mysoc->localtax2_assuj=="1")
-        {
-            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print $form->selectyesno('localtax2assuj_value',0,1);
-            print '</td><tr>';
-        }
 
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1691,7 +1695,7 @@ else
             // VAT is used
             print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td colspan="3">';
             print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
-            print '</td>';
+            print '</td></tr>';
 
             // Local Taxes
             //TODO: Place into a function to control showing by country or study better option
@@ -1744,7 +1748,7 @@ else
             }
             
             // VAT Code
-            print '<td>'.fieldLabel('VATIntra','intra_vat').'</td>';
+            print '<tr><td>'.fieldLabel('VATIntra','intra_vat').'</td>';
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
@@ -2235,7 +2239,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
@@ -2513,7 +2517,7 @@ else
 
 	            $var=true;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -2544,7 +2548,6 @@ else
 	        }
 		}
     }
-
 }
 
 

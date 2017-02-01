@@ -363,7 +363,7 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->town)."'";
 		$sql.= ", ".$this->country_id;
         $sql.= ", ".$this->public;
-        $sql.= ", ".($this->fk_projet > 0?$this->fk_projet:"null");
+        $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
        	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql.= ", ".$user->id;
@@ -459,7 +459,7 @@ class Don extends CommonObject
         $sql .= ",town='".$this->db->escape($this->town)."'";
         $sql .= ",fk_country = ".$this->country_id;
         $sql .= ",public=".$this->public;
-        $sql .= ",fk_projet=".($this->fk_projet>0?$this->fk_projet:'null');
+        $sql .= ",fk_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";

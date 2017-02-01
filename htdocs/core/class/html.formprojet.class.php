@@ -59,9 +59,10 @@ class FormProjets
 	 *  @param  string  $filterkey      Key to filter
 	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
+	 *  @param  string  $morecss        More css
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='')
 	{
 		global $langs,$conf,$form;
 
@@ -78,14 +79,14 @@ class FormProjets
 				$project->fetch($selected);
 				$selected_input_value=$project->ref;
 			}
-			$urloption='socid='.$socid.'&htmlname='.$htmlname;
+			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
 			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 //				'update' => array(
 //					'projectid' => 'id'
 //				)
 			));
 
-			$out.='<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+			$out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
@@ -154,8 +155,10 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
-			$sql .= " AND p.title LIKE '%".$this->db->escape($filterkey)."%'";
-			$sql .= " OR p.ref LIKE '%".$this->db->escape($filterkey)."%'";
+			$sql .= ' AND (';
+			$sql .= ' p.title LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= ')';
 		}
 		$sql.= " ORDER BY p.ref ASC";
 
@@ -445,7 +448,7 @@ class FormProjets
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 *    @param	string		$table_element		Table of the element to update
-	 *    @param	int			$socid				If of thirdparty to use as filter
+	 *    @param	string		$socid				If of thirdparty to use as filter or 'id1,id2,...'
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
@@ -457,13 +460,16 @@ class FormProjets
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
 		$projectkey="fk_projet";
 		//print $table_element;
 		switch ($table_element)
 		{
+			case "loan":
+				$sql = "SELECT t.rowid, t.label as ref";
+				break;
 			case "facture":
 				$sql = "SELECT t.rowid, t.facnumber as ref";
 				break;
@@ -501,7 +507,11 @@ class FormProjets
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element." as t";
 		if ($linkedtothirdparty) $sql.=", ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE ".$projectkey." is null";
-		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
+		if (! empty($socid) && $linkedtothirdparty)
+		{
+		    if (is_numeric($socid)) $sql.= " AND t.fk_soc=".$socid;
+		    else $sql.= " AND t.fk_soc IN (".$socid.")";
+		}
 		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;

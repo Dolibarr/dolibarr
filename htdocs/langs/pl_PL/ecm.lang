@@ -32,13 +32,13 @@ ECMDocsByProducts=Dokumenty powiązane z produktami
 ECMDocsByProjects=Dokumenty powiązane z projektami
 ECMDocsByUsers=Dokumenty powiązane z użytkownikami
 ECMDocsByInterventions=Dokumenty powiązane z interwencjami
+ECMDocsByExpenseReports=Documents linked to expense reports
 ECMNoDirectoryYet=Brak utworzonego katalogu
 ShowECMSection=Pokaż katalog
 DeleteSection=Usuń katalog
-ConfirmDeleteSection=Czy możesz potwierdzić, że chcesz usunąć katalog <b>%s</b>?
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Pokrewny katalog dla plików
 CannotRemoveDirectoryContainsFiles=Usunięcie nie możliwe, ponieważ zawiera on pewne pliki
 ECMFileManager=Menedżer plików
 ECMSelectASection=Wybierz katalog na lewym drzewie...
 DirNotSynchronizedSyncFirst=Katalog ten wydaje się być utworzony lub zmieniany poza modułem ECM. Należy kliknąć w pierwszej kolejności na przycisk "Odśwież" aby zsynchronizować dysk i bazę danych, aby uzyskać zawartość tego katalogu.
-

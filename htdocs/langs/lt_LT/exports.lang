@@ -26,8 +26,6 @@ FieldTitle=Lauko pavadinimas
 NowClickToGenerateToBuildExportFile=Dabar pasirinkite failo formatą iš iškrentančio įvedimo laukelio ir paspauskite mygtuką "Sukurti", kad sukurti eksporto failą ...
 AvailableFormats=Galimi formatai
 LibraryShort=Biblioteka
-LibraryUsed=Panaudota biblioteka
-LibraryVersion=Versija
 Step=Žingsnis
 FormatedImport=Importo asistentas
 FormatedImportDesc1=Ši sritis leidžia importuoti personalizuotuos duomenis, naudojamas asistentas padės jums procese neturint techninių žinių.
@@ -87,7 +85,7 @@ TooMuchWarnings=Čia yra dar <b>%s</b> kito šaltinio eilutės su įspėjimais, 
 EmptyLine=Tuščia eilutė (bus atmesta)
 CorrectErrorBeforeRunningImport=Pirmiausia reikia ištaisyti visas klaidas prieš pradedant tikrą galutinį importą.
 FileWasImported=Failas buvo importuotas su numeriu: <b>%s</b>
-YouCanUseImportIdToFindRecord=Galite rasti visus importuotus įrašus į duomenų bazę filtruodami lauką <b>import_key='%s'</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Eilučių be klaidų ir be įspėjimų skaičius: <b>%s</b>
 NbOfLinesImported=Sėkmingai importuotų eilučių skaičius: <b>%s</b>
 DataComeFromNoWhere=Įterpiama reikšmė ateina nežinia iš kur iš šaltinio failo.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Kableliais atskirta reikšmė</b> failo formatas (.csv). <br>Ta
 Excel95FormatDesc=<b>Excel</b> failo formatas (.xls)<br>Tai įprastas Excel 95 formatas (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> failo formatas (.xlsx)<br>Tai įprastas Excel 2007 formatas (SpreadsheetML).
 TsvFormatDesc=<b>Tab atskirta reikšmė</b> failo formatas (.tsv)<br>Tai tekstinis failas, kur laukeliai atskiriami tabulatoriumi [Tab].
-ExportFieldAutomaticallyAdded=Laukelis <b>%s</b> buvo pridėtas automatiškai. Tai padės išvengti panašių eilučių, kurios laikomos besikartojančiais įrašais (dublicated) (su šiuo pridėtu laukeliu, visos eilutės turės savo ID ir bus skirtingos).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=CSV opcijos
 Separator=Atskyrimo ženklas
 Enclosure=Priedas

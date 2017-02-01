@@ -742,7 +742,8 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-		if (! $ret)
+
+        if (! $ret)
 		{
 		    $error++;
 		}
@@ -849,14 +850,14 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Add a expedition line.
+	 * Add an expedition line.
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	function addline($entrepot_id, $id, $qty,$array_options=0)
@@ -891,7 +892,7 @@ class Expedition extends CommonObject
 				$result=$product->fetch($fk_product);
 
 				if ($entrepot_id > 0) {
-					$product->load_stock();
+					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
 				else
@@ -908,6 +909,13 @@ class Expedition extends CommonObject
 			}
 		}
 
+		// If product need a batch number, we should not have called this function but addline_batch instead.
+		if (! empty($conf->productbatch->enabled) && ! empty($orderline->fk_product) && ! empty($orderline->product_tobatch))
+		{
+		    $this->error='ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
+		    return -4;
+		}
+		
 		// extrafields
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 			$line->array_options = $array_options;
@@ -1460,27 +1468,40 @@ class Expedition extends CommonObject
      *	@param      int			$option         Where point the link
      *	@param      int			$max          	Max length to show
      *	@param      int			$short			Use short labels
+     *  @param      int         $notooltip      1=No tooltip
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowSending") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
-
+        $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+            
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowSending");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+		
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
 
-		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
@@ -1967,6 +1988,7 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
+	    global $user;
 		$error=0;
 
 		$this->db->begin();
@@ -2140,16 +2162,14 @@ class Expedition extends CommonObject
 
 		$langs->load("sendings");
 
-		// Sets the model on the model name to use
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->EXPEDITION_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'rouget';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'rouget';
 			}
 		}
 

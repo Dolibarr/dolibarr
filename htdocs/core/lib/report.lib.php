@@ -110,12 +110,9 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
 	print '</td></tr>';
 
-	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
-	print '</tr>';
-
 	print '</table>';
 
+	print '<br><div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form>';
 
 	dol_fiche_end();

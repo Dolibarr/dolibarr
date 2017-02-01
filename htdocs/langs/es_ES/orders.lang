@@ -19,6 +19,7 @@ CustomerOrder=Pedido de cliente
 CustomersOrders=Pedidos de clientes
 CustomersOrdersRunning=Pedidos de clientes en curso
 CustomersOrdersAndOrdersLines=Pedidos de clientes y líneas de pedido
+OrdersDeliveredToBill=Pedidos de clientes enviados a facturar
 OrdersToBill=Pedidos de clientes enviados
 OrdersInProcess=Pedidos de clientes en proceso
 OrdersToProcess=Pedidos de clientes a procesar
@@ -52,6 +53,7 @@ StatusOrderBilled=Facturado
 StatusOrderReceivedPartially=Recibido parcialmente
 StatusOrderReceivedAll=Recibido
 ShippingExist=Existe una expedición
+QtyOrdered=Cant. pedida
 ProductQtyInDraft=Cantidades en pedidos borrador
 ProductQtyInDraftOrWaitingApproved=Cantidades en pedidos borrador o aprobados, pero no realizados
 MenuOrdersToBill=Pedidos a facturar
@@ -99,6 +101,7 @@ OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido para el cliente
 RefOrderSupplier=Ref. pedido para proveedor
+RefOrderSupplierShort=Ref. pedido a proveedor
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Eventos sobre el pedido
 NoArticleOfTypeProduct=No hay artículos de tipo 'producto' y por lo tanto enviables en este pedido
@@ -125,29 +128,19 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepción pedido a pro
 TypeContact_order_supplier_external_BILLING=Contacto proveedor facturación pedido
 TypeContact_order_supplier_external_SHIPPING=Contacto proveedor entrega pedido
 TypeContact_order_supplier_external_CUSTOMER=Contacto proveedor seguimiento pedido
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_OrderNotChecked=No se han seleccionado pedidos a facturar
-# Sources
-OrderSource0=Presupuesto
-OrderSource1=Internet
-OrderSource2=Campaña por correo
-OrderSource3=Campaña telefónica
-OrderSource4=Campaña por fax
-OrderSource5=Comercial
-OrderSource6=Revistas
-QtyOrdered=Cant. pedida
-# Documents models
-PDFEinsteinDescription=Modelo de pedido completo (logo...)
-PDFEdisonDescription=Modelo de pedido simple
-PDFProformaDescription=Una factura proforma completa (logo...)
-# Orders modes
+# Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Correo
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
+# Documents models
+PDFEinsteinDescription=Modelo de pedido completo (logo...)
+PDFEdisonDescription=Modelo de pedido simple
+PDFProformaDescription=Una factura proforma completa (logo...)
 CreateInvoiceForThisCustomer=Facturar pedidos
 NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
@@ -158,3 +151,4 @@ OrderFail=Se ha producido un error durante la creación de sus pedidos
 CreateOrders=Crear pedidos
 ToBillSeveralOrderSelectCustomer=Para crear una factura para numerosos pedidos, haga primero click sobre el cliente y luego elija "%s".
 CloseReceivedSupplierOrdersAutomatically=Cerrar el pedido automáticamente a "%s" si se han recibido todos los productos
+SetShippingMode=Indica el modo de envío

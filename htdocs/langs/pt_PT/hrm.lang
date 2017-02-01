@@ -5,7 +5,7 @@ Establishments=Estabelecimento
 Establishment=Estabelecimento
 NewEstablishment=Novo estabelecimento
 DeleteEstablishment=Eliminar estabelecimento
-ConfirmDeleteEstablishment=Tem a certeza que deseja eliminar o estabelecimento?
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Abrir estabelecimento
 CloseEtablishment=Fechar estabelecimento
 # Dictionary

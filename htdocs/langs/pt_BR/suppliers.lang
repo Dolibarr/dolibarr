@@ -1,16 +1,22 @@
 # Dolibarr language file - Source file is en_US - suppliers
 SuppliersInvoice=Faturas do Fornecedor
 ShowSupplierInvoice=Mostrar Fatura de Suprimentos
+BuyingPriceMin=Melhor preço de compra
+BuyingPriceMinShort=Melhor preço de compra
+TotalBuyingPriceMinShort=Total de precos de compra dos subprodutos
+TotalSellingPriceMinShort=Total de preços de venda de sub-produtos
 SomeSubProductHaveNoPrices=Algums dos sub-produtos nao tem um preco definido
+AddSupplierPrice=Adicionar preço de compra
+ChangeSupplierPrice=Modificar preço de compra
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Esta referencia de fornecedor ja esta asociada com a referenca: %s
 Availability=Entrega
 ExportDataset_fournisseur_1=Faturas de Fornecedores e Linhas de Fatura
 ExportDataset_fournisseur_2=Faturas Fornecedores e Pagamentos
 ExportDataset_fournisseur_3=Ordems de fornecedor e linhas de ordem
-ConfirmApproveThisOrder=Tem certeza que quer aprovar este pedido?
-DenyingThisOrder=Negar esta ordem
-ConfirmDenyingThisOrder=Tem certeza que quer negar este pedido?
-ConfirmCancelThisOrder=Tem certeza que quer cancelar este pedido?
+ConfirmApproveThisOrder=Tem certeza que deseja aprovar o pedido <b>%s</b>?
+DenyingThisOrder=Negar esta pedido
+ConfirmDenyingThisOrder=Você tem certeza que deseja negar este pedido <b>%s</b>?
+ConfirmCancelThisOrder=Você tem certeza que deseja cancelar este pedido <b>%s</b>?
 AddSupplierInvoice=Criar Fatura do Fornecedor
 SentToSuppliers=Enviado para fornecedores
 ListOfSupplierOrders=Lista de pedidos do fornecedor

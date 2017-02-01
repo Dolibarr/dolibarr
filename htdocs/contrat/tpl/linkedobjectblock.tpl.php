@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 ?>
 
@@ -22,19 +21,23 @@
 <?php
 
 global $user;
+global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("contracts");
 
+$total=0; $ilink=0;
 $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-    $objectlink->fetch_lines();
-	$var=!$var;
+    $ilink++;
+    $var=!$var;
+    $trclass=($var?'pair':'impair');
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-<tr <?php echo $bc[$var]; ?> >
+<tr class="<?php echo $trclass; ?>">
     <td><?php echo $langs->trans("Contract"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>

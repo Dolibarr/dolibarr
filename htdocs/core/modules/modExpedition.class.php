@@ -277,7 +277,7 @@ class modExpedition extends DolibarrModules
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
-		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('shipment',1).')';
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('expedition',1).')';
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 	}
 

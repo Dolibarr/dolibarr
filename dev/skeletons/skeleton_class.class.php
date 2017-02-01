@@ -188,11 +188,13 @@ class Skeleton_Class extends CommonObject
 			
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
+			/*
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 			$this->fetch_optionals($this->id,$extralabels);
-
+            */
+			
 			// $this->fetch_lines();
 			
 			$this->db->free($resql);
@@ -251,23 +253,19 @@ class Skeleton_Class extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
-
-		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new Skeleton_ClassLine();
+				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
 				$line->prop1 = $obj->field1;
 				$line->prop2 = $obj->field2;
-
-				$this->lines[$line->id] = $line;
 				//...
 			}
 			$this->db->free($resql);
@@ -451,36 +449,51 @@ class Skeleton_Class extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int  	$notooltip			1=Disable tooltip
      *  @param	int		$maxlen				Max length of visible user name
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
 	{
-		global $langs, $conf, $db;
+		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result = '';
         $companylink = '';
 
         $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<div width="100%">';
+        $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
+        $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
+        
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowProject");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->ref . $linkend;
+		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
 	}
 

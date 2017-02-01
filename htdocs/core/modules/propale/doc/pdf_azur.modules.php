@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,8 +109,8 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
-			$this->posxqty=133;
-			$this->posxunit=150;
+			$this->posxqty=130;
+			$this->posxunit=147;
 		}
 		else
 		{
@@ -127,6 +128,7 @@ class pdf_azur extends ModelePDFPropales
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
+			$this->posxunit-=20;
 			$this->posxdiscount-=20;
 			$this->postotalht-=20;
 		}
@@ -374,6 +376,14 @@ class pdf_azur extends ModelePDFPropales
 						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+				if (! empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0)
+				{
+				    $tmpuser=new User($this->db);
+				    $tmpuser->fetch($object->user_author_id);
+				    $notetoshow.='Affaire suivi par '.$tmpuser->getFullName($langs);
+				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
+				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
+				}				
 				if ($notetoshow)
 				{
 					$tab_top = 88 + $height_incoterms;
@@ -573,7 +583,7 @@ class pdf_azur extends ModelePDFPropales
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]='';
+					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
 					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
@@ -1464,8 +1474,10 @@ class pdf_azur extends ModelePDFPropales
 		    {
 		        $usertmp=new User($this->db);
 		        $usertmp->fetch($arrayidcontact[0]);
+                $posy+=4;
+                $pdf->SetXY($posx,$posy);
 		        $pdf->SetTextColor(0,0,60);
-		        $pdf->MultiCell(190, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+		        $pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 		    }
 		}
 		

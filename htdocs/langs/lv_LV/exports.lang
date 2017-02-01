@@ -26,8 +26,6 @@ FieldTitle=Lauka nosaukums
 NowClickToGenerateToBuildExportFile=Tagad izvēlieties faila formātu Combo lodziņā un noklikšķiniet uz &quot;Izveidot&quot;, lai izveidotu eksporta failu ...
 AvailableFormats=Pieejamie formāti
 LibraryShort=Bibliotēka
-LibraryUsed=Izmantotā bibliotēka
-LibraryVersion=Versija
 Step=Solis
 FormatedImport=Importēšanas palīgs
 FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
@@ -87,7 +85,7 @@ TooMuchWarnings=Joprojām <b>%s</b> citu avotu līnijas ar brīdinājumiem, tač
 EmptyLine=Tukšas līnijas (tiks izmesti)
 CorrectErrorBeforeRunningImport=Vispirms ir labot visas kļūdas, pirms braukšanas galīgo ievešanu.
 FileWasImported=Fails tika importēts ar numuru <b>%s.</b>
-YouCanUseImportIdToFindRecord=Jūs varat atrast visu importētās ierakstus datu bāzē, filtrējot uz lauka <b>import_key = '%s &quot;.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Skaits līniju bez kļūdām un bez brīdinājumiem: <b>%s.</b>
 NbOfLinesImported=Skaits līniju veiksmīgi importēto: <b>%s.</b>
 DataComeFromNoWhere=Vērtību, lai ievietotu nāk no nekur avota failā.
@@ -105,7 +103,7 @@ CSVFormatDesc=<b>Ar komatu atdalītu vērtību</b> failu formāts (. Csv). <br> 
 Excel95FormatDesc=<b>Excel</b> faila formāts (.xls)<br>Tas ir Excel 95 formāts (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> faila formāts (.xlsx) <br>Tas ir Excel 2007 formāts (SpreadsheetML).
 TsvFormatDesc=<b>Tab atdalītu vērtību</b> failu formāts (. TSV) <br> Tas ir teksta faila formāts, kur lauki ir atdalīti ar tabulācijas [Tab].
-ExportFieldAutomaticallyAdded=Lauka <b>%s</b> tika pievienoti automātiski. Tas ļaus izvairīties no jums ir līdzīgi jāuzskata par ierakstu dublikātiem (ar šajā jomā pievienots, visas līnijas būs pašu savu id un atšķirsies).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=Csv opcijas
 Separator=Atdalītājs
 Enclosure=Iežogojums

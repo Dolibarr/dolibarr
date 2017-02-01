@@ -73,7 +73,8 @@ Ex: https://alioth.debian.org/users/eldy-guest
 # msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX
  
 # To check package integrity
-# lintian --pedantic -E -I package.deb   To test a package   
+# lintian --pedantic -E -I package.deb   To test a binary package   
+# lintian --pedantic -E -I package.dsc   To test a source package   
 
 # To manipulate packages
 # dpkg -l                                List all packages
@@ -181,8 +182,8 @@ To test a package
 > cp ../build-area/* /srv/chroot/unstable/tmp
 > sudo schroot -c name_of_chroot
 > cd /tmp
-> lintian --pedantic -E -I dolibarr*.deb
-> lintian --pedantic -E -I dolibarr*.dsc
+> lintian --no-tag-display-limit --pedantic -E -I dolibarr*.deb
+> lintian --no-tag-display-limit --pedantic -E -I dolibarr*.dsc
 > dpkg -i dolibarr*.deb  ou   pour avoir des traces: dpkg -D77777 -i dolibarr*.deb
 > apt-get install -f
 
@@ -295,12 +296,16 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 * Edit orig.tar.gz file to remove 
 - debian
 - htdocs/includes/ckeditor
-- htdocs/includes/jszip
+- htdocs/includes/jquery/css
+- htdocs/includes/jquery/js
+- htdocs/includes/jquery/plugins/flot
+- htdocs/includes/jquery/plugins/multiselect
 - htdocs/includes/jquery/plugins/datatables
+- htdocs/includes/jszip
 - htdocs/includes/mike42
 - htdocs/includes/phpexcel or htdocs/includes/phpoffice
-- htdocs/includes/swiftmailer
 - htdocs/includes/restler/framework/Luracast/Restler/explorer
+- htdocs/includes/swiftmailer
 - htdocs/includes/tcpdf or htdocs/includes/tecnickcom
 And rename file into 
 dolibarr-x.y.z+dfsgw.tgz
@@ -315,8 +320,8 @@ x.y.z+dfsgw
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Update/fix debian/* files used to build package.
-At least, add an entry into debian/changelog
-> dch -v x.y.z+dfsgw-v "My comment" will add entry.
+At least, add an entry into debian/changelog with command
+> dch -v x.y.z+dfsgw-1 "My comment"
 For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increased for each new import)
 Then check/modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
@@ -327,13 +332,15 @@ Then check/modify also the user/date signature:
 To update dolibarr debian package when only files into debian has changed:
 
 * Change files and commit.
-* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
+* Add a line into changelog for version debian/x.y.z+dfsgw-v (increase the last v into 2, 3...)
+> dch -v x.y.z+dfsgw-v "My comment"
+* git tag will be added when package is pushed.
 
 
 To update dolibarr debian package when only files not into debian has changed:
 
 * Manually, add patches into debian/patches and update file debian/series, or do the 2 steps with "quilt import filepatch.patch"
-* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revien a l'état du upstream sans les patch.
+* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revient a l'état du upstream sans les patch.
 
 Once files has been prepared, it's time to test:
 
@@ -350,7 +357,7 @@ Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc
 
 * Test package (see dedicated chapter to test it with debian unstable env)
-> cp ../build-area/* /srv/chroot/unstable/tmp
+> sudo rm /srv/chroot/unstable/tmp/* >/dev/null 2>&1; cp ../build-area/* /srv/chroot/unstable/tmp
 See rest of process into dedicated chapter "To test a package" to test it with debian unstable env
 
 * If package .deb is ok:

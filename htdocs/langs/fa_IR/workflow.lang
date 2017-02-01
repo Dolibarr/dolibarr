@@ -10,4 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=طبقه بندی پیشنهاد من�
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=طبقه بندی مرتبط با سفارش مشتری منبع (بازدید کنندگان) صورتحساب زمانی که صورت حساب مشتری به پرداخت مجموعه
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=طبقه بندی مرتبط با سفارش مشتری منبع (بازدید کنندگان) صورتحساب زمانی که صورت حساب به مشتری اعتبار است
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify shipped linked source order on shipping validate if quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

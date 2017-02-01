@@ -24,8 +24,8 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -61,9 +61,9 @@ print "</table></form><br>\n";
  */
 $clause = " WHERE ";
 
-$sql = "SELECT e.rowid, e.ref";
-$sql.= ", s.nom as name, s.rowid as socid";
-$sql.= ", c.ref as commande_ref, c.rowid as commande_id";
+$sql = "SELECT e.rowid, e.ref, e.ref_customer,";
+$sql.= " s.nom as name, s.rowid as socid,";
+$sql.= " c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
@@ -91,11 +91,14 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].'><td class="nowrap">';
+			
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
+			$shipment->ref_customer=$obj->ref_customer;
+				
+			$var=!$var;
+			print "<tr ".$bc[$var].'><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
 			print '<td>';
@@ -114,9 +117,9 @@ if ($resql)
 /*
  * Commandes a traiter
  */
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut, s.nom as name, s.rowid as socid";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
@@ -140,19 +143,23 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
-			print '<td class="nowrap">';
+
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
+			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->fk_statut;
 			$orderstatic->facturee=0;
+			
+			$companystatic->name=$obj->name;
+			$companystatic->id=$obj->socid;
+			
+			$var=!$var;
+			print "<tr ".$bc[$var].">";
+			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
 			print $companystatic->getNomUrl(1,'customer',32);
 			print '</td>';
 			print '<td align="right">';
@@ -173,9 +180,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Commandes en traitement
  */
-$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
@@ -198,21 +205,25 @@ if ( $resql )
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var]."><td width=\"30%\">";
-			$orderstatic->id=$obj->rowid;
+			
+		    $orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
+			$orderstatic->ref_customer=$obj->ref_customer;
+			$orderstatic->statut=$obj->status;
+            $orderstatic->facturee=$obj->billed;
+			
+            $companystatic->name=$obj->name;
+			$companystatic->id=$obj->socid;
+				
+			$var=!$var;
+			print "<tr ".$bc[$var]."><td>";
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
 			print $companystatic->getNomUrl(1,'customer');
 			print '</td>';
             print '<td align="right">';
-            $orderstatic->statut=$obj->status;
-            $orderstatic->facturee=$obj->billed;
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
@@ -227,9 +238,9 @@ else dol_print_error($db);
 /*
  * Last shipments
  */
-$sql = "SELECT e.rowid, e.ref";
-$sql.= ", s.nom as name, s.rowid as socid";
-$sql.= ", c.ref as commande_ref, c.rowid as commande_id";
+$sql = "SELECT e.rowid, e.ref, e.ref_customer,";
+$sql.= " s.nom as name, s.rowid as socid,";
+$sql.= " c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
@@ -255,13 +266,19 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print '<tr '.$bc[$var].'><td width="20%"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
-			print $obj->ref.'</a></td>';
+		    
+			$shipment->id=$obj->rowid;
+			$shipment->ref=$obj->ref;
+			$shipment->ref_customer=$obj->ref_customer;
+				
+			$var=!$var;
+			print '<tr '.$bc[$var].'><td>';
+			print $shipment->getNomUrl(1);
+			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 			print '<td>';
-			if ($obj->commande_id)
+			if ($obj->commande_id > 0)
 			{
 				$orderstatic->id=$obj->commande_id;
 				$orderstatic->ref=$obj->commande_ref;

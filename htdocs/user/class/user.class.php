@@ -33,7 +33,6 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
-
 /**
  *	Class to manage Dolibarr users
  */
@@ -43,91 +42,94 @@ class User extends CommonObject
 	public $table_element='user';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id=0;
-	var $ldap_sid;
-	var $search_sid;
-	var $employee;
-	var $gender;
-	var $email;
-	var $skype;
-	var $job;
-	var $signature;
-	var $address;
-    var $zip;
-    var $town;
-    var $state_id;
-    var $state_code;
-    var $state;
-	var $office_phone;
-	var $office_fax;
-	var $user_mobile;
-	var $admin;
-	var $login;
-    var $api_key;
-	var $entity;
+	public $id=0;
+	public $ldap_sid;
+	public $search_sid;
+	public $employee;
+	public $gender;
+	public $email;
+	public $skype;
+	public $job;
+	public $signature;
+	public $address;
+    	public $zip;
+    	public $town;
+    	public $state_id;
+    	public $state_code;
+    	public $state;
+	public $office_phone;
+	public $office_fax;
+	public $user_mobile;
+	public $admin;
+	public $login;
+    	public $api_key;
+	public $entity;
 
 	//! Clear password in memory
-	var $pass;
+	public $pass;
 	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
-	var $pass_indatabase;
+	public $pass_indatabase;
 	//! Encrypted password in database (always defined)
-	var $pass_indatabase_crypted;
+	public $pass_indatabase_crypted;
 
-	var $datec;
-	var $datem;
+	public $datec;
+	public $datem;
 
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
 	 * @see socid
 	 */
-	var $societe_id;
+	public $societe_id;
 	/**
 	 * @deprecated
 	 * @see contactid
 	 */
-	var $contact_id;
-	var $socid;
-	var $contactid;
+	public $contact_id;
+	public $socid;
+	public $contactid;
 
-	var $fk_member;
-	var $fk_user;
+	public $fk_member;
+	public $fk_user;
 
-	var $clicktodial_url;
-	var $clicktodial_login;
-	var $clicktodial_password;
-	var $clicktodial_poste;
+	public $clicktodial_url;
+	public $clicktodial_login;
+	public $clicktodial_password;
+	public $clicktodial_poste;
 
-	var $datelastlogin;
-	var $datepreviouslogin;
-	var $statut;
-	var $photo;
-	var $lang;
+	public $datelastlogin;
+	public $datepreviouslogin;
+	public $statut;
+	public $photo;
+	public $lang;
 
-	var $rights;                        // Array of permissions user->rights->permx
-	var $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
+	public $rights;                        // Array of permissions user->rights->permx
+	public $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
-	var $nb_rights;						// Number of rights granted to the user
+	public $nb_rights;			// Number of rights granted to the user
 
-	var $conf;           			// To store personal config
+	public $conf;           		// To store personal config
 	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
 
-	var $users;						// To store all tree of users hierarchy
-	var $parentof;					// To store an array of all parents for all ids.
+	public $users;					// To store all tree of users hierarchy
+	public $parentof;				// To store an array of all parents for all ids.
 
-	var $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
+	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 	
-	var $thm;						// Average cost of employee - Used for valuation of time spent
-	var $tjm;						// Average cost of employee
+	public $thm;					// Average cost of employee - Used for valuation of time spent
+	public $tjm;					// Average cost of employee
 	
-	var $salary;					// Monthly salary       - Denormalized value from llx_user_employment  
-	var $salaryextra;				// Monthly salary extra - Denormalized value from llx_user_employment
-	var $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
+	public $salary;					// Monthly salary       - Denormalized value from llx_user_employment  
+	public $salaryextra;				// Monthly salary extra - Denormalized value from llx_user_employment
+	public $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
 
-	var $color;						// Define background color for user in agenda
+	public $color;						// Define background color for user in agenda
 	
-	var $dateemployment;			// Define date of employment by company
+	public $dateemployment;			// Define date of employment by company
 
+	private $cache_childids;
+	
+	
 	/**
 	 *    Constructor de la classe
 	 *
@@ -159,9 +161,9 @@ class User extends CommonObject
 	/**
 	 *	Load a user from database with its id or ref (login)
 	 *
-	 *	@param	int		$id		       		Si defini, id a utiliser pour recherche
-	 * 	@param  string	$login       		Si defini, login a utiliser pour recherche
-	 *	@param  string	$sid				Si defini, sid a utiliser pour recherche
+	 *	@param	int		$id		       		If defined, id to used for search
+	 * 	@param  string	$login       		If defined, login to used for search
+	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx)
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
@@ -331,7 +333,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 
@@ -1062,7 +1064,8 @@ class User extends CommonObject
 		$this->town         = $contact->town;
 		$this->state_id     = $contact->state_id;
 		$this->country_id   = $contact->country_id;
-
+        $this->employee     = 0;
+        
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
 
@@ -1659,38 +1662,48 @@ class User extends CommonObject
 		$outputlangs->load("users");
 		$outputlangs->load("other");
 
-		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword");
+		$appli=constant('DOL_APPLICATION_TITLE');
+		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+		
+		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword", $appli);
 
 		// Define $urlwithroot
 		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-		//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		if (! $changelater)
 		{
+			$url = $urlwithroot.'/';
+		    
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
-			$url = $urlwithroot.'/';
-			$mesg.= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $conf->global->MAIN_APPLICATION_TITLE).': '.$url."\n\n";
+			
+			$mesg.= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg.= "--\n";
 			$mesg.= $user->getFullName($outputlangs);	// Username that make then sending
+		
+			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		}
 		else
 		{
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+		    
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :\n";
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."\n\n";
-			dol_syslog(get_class($this)."::send_password url=".$url);
+			
+			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
+
         $mailfile = new CMailFile(
             $subject,
             $this->email,
@@ -2046,7 +2059,7 @@ class User extends CommonObject
 	    {
 	      	$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
-        		if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
+        		if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
         		else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
             		$result.=$picto;
 		}
@@ -2430,6 +2443,7 @@ class User extends CommonObject
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
+	 * @see getAllChildIds 
 	 */
 	function get_children()
 	{
@@ -2590,24 +2604,38 @@ class User extends CommonObject
 
 	/**
 	 * 	Return list of all child users id in herarchy (all sublevels).
+	 *  Note: Calling this function also reset full list of users into $this->users.
 	 *
-	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
+	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
+	 *  @see get_children
 	 */
-	function getAllChildIds()
+	function getAllChildIds($addcurrentuser=0)
 	{
-		// Init this->users
-		$this->get_full_tree();
-
-		$idtoscan=$this->id;
-		$childids=array();
-
-		dol_syslog("Build childid for id = ".$idtoscan);
-		foreach($this->users as $id => $val)
-		{
-			//var_dump($val['fullpath']);
-			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
-		}
-
+    	$childids=array();
+	    
+	    if (isset($this->cache_childids[$this->id]))
+	    {
+	        $childids = $this->cache_childids[$this->id];
+	    }
+	    else
+	    {
+    		// Init this->users
+    		$this->get_full_tree();
+    
+    		$idtoscan=$this->id;
+    
+    		dol_syslog("Build childid for id = ".$idtoscan);
+    		foreach($this->users as $id => $val)
+    		{
+    			//var_dump($val['fullpath']);
+    			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+    		}
+	    }    
+		$this->cache_childids[$this->id] = $childids;
+		
+		if ($addcurrentuser) $childids[$this->id]=$this->id;
+		
 		return $childids;
 	}
 

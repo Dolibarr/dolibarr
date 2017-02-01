@@ -24,16 +24,21 @@
 <?php
 
 global $user;
+global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+
 $langs->load("bills");
 
+$total=0; $ilink=0;
 $var=true;
-$total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-	$var=!$var;
+    $ilink++;
+    $var=!$var;
+    $trclass=($var?'pair':'impair');
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
     <td><?php echo $langs->trans("RepeatableInvoice"); ?></td>

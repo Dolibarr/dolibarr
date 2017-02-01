@@ -251,9 +251,10 @@ if ($result)
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
-    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'width="15%"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))          print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.description']['checked']))  print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['fd.description']['checked'])) print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
@@ -407,10 +408,11 @@ if ($result)
     			print $warnornote;
     			print '</td>';
     		}
+
     		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);
-    		$filedir=$conf->fichinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+    		$filedir=$conf->ficheinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
     		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
     		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
     		print '</td></tr></table>';
@@ -526,6 +528,8 @@ if ($result)
 	}
 
 	print '</table>';
+	print '</div>';
+	
 	print "</form>\n";
 	$db->free($result);
 }

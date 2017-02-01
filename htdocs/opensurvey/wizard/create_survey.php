@@ -149,7 +149,7 @@ if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creati
 
 print '</tr>'."\n";
 print '<tr><td>'. $langs->trans("Description") .'</td><td>';
-$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"],'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
+$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"],'',120,'dolibarr_notes','In',1,1,1,ROWS_7,'90%');
 $doleditor->Create(0,'');
 print '</td>'."\n";
 print '</tr>'."\n";

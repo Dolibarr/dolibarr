@@ -62,7 +62,6 @@ KeepEmptyIfNoPassword=Jäta tühjaks, kui kasutajal pole parooli (väldi seda)
 SaveConfigurationFile=Salvesta väärtused
 ServerConnection=Serveri ühendus
 DatabaseCreation=Andmebaasi loomine
-UserCreation=Kasutaja loomine
 CreateDatabaseObjects=Andmebaasi objektide loomine
 ReferenceDataLoading=Viiteandmete laadimine
 TablesAndPrimaryKeysCreation=Andmebaasi tabelite ja esmasvõtmete loomine
@@ -133,12 +132,12 @@ MigrationFinished=Migreerimine lõpetatud
 LastStepDesc=<strong>Viimane samm:</strong> Määra siin tarkvaraga ühendumiseks kasutatav kasutajanimi ja parool. Hoia neid alles, kuna selle kontoga saab administreerida kõiki teisi kasutajaid.
 ActivateModule=Aktiveeri moodul %s
 ShowEditTechnicalParameters=Klõpsa siia lisaparameetrite näitamiseks/muutmiseks (spetsialisti režiim)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Sinu andmebaasi versioon on %s. Selles versioonis on tõsine puuk, mis põhjustab andmebaasi struktuuri muutmisel andmekadu, nagu seda teeb migratsiooni protsess. Seega ei ole migratsioon lubatud seni, kuni uuendad oma andmebaasi parandustega versioonile (teadaolevate vigaste versioonide nimekiri: %s)
-KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
-KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
-KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesWamp=Kasutad DoliWampist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
+KeepDefaultValuesDeb=Kasutad Linuxi (Ubuntu, Debian, Fedora, ...) pakist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Pead sisestama vaid loodava andmebaasi omaniku parooli. Muuda teisi parameetreid vaid siis, kui tead täpselt, mida teed.
+KeepDefaultValuesMamp=Kasutad DoliMampist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
+KeepDefaultValuesProxmox=Kasutad Proxmoxi virtuaalrakendusest pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
 
 #########
 # upgrade
@@ -176,7 +175,7 @@ MigrationReopeningContracts=Avatud leping lõpetati ekslikult
 MigrationReopenThisContract=Ava leping %s uuesti
 MigrationReopenedContractsNumber=%s lepingut muudetud
 MigrationReopeningContractsNothingToUpdate=Pole suletud lepinguid, mida avada
-MigrationBankTransfertsUpdate=UUenda pangatehingute ja pangaülekannete vahelised seosed
+MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
 MigrationBankTransfertsNothingToUpdate=Kõik seosed on värsked
 MigrationShipmentOrderMatching=Saatmiskviitungite uuendamine
 MigrationDeliveryOrderMatching=Vastuvõtu kinnituste uuendamine

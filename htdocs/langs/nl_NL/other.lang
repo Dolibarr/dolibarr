@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Beveiligingscode
-Calendar=Kalender
 NumberingShort=N°
 Tools=Gereedschap
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
@@ -43,7 +42,7 @@ Notify_SHIPPING_SENTBYMAIL=Verzenden per e-mail
 Notify_MEMBER_VALIDATE=Lid gevalideerd
 Notify_MEMBER_MODIFY=Lid gewijzigd
 Notify_MEMBER_SUBSCRIPTION=Lid ingeschreven
-Notify_MEMBER_RESILIATE=Lid resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=Lid verwijderd
 Notify_PROJECT_CREATE=Creatie project
 Notify_TASK_CREATE=Taak gemaakt
@@ -55,7 +54,6 @@ TotalSizeOfAttachedFiles=Totale omvang van de bijgevoegde bestanden / documenten
 MaxSize=Maximale grootte
 AttachANewFile=Voeg een nieuw bestand / document bij
 LinkedObject=Gekoppeld object
-Miscellaneous=Diversen
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Dit is een test e-mail.\nDe twee lijnen worden gescheiden door een harde return.
 PredefinedMailTestHtml=Dit is een <b>test</b> e-mail (het woord test moet vetgedrukt worden weergegeven).<br> De twee lijnen worden gescheiden door een harde return.
@@ -201,36 +199,16 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 
-##### Calendar common #####
-NewCompanyToDolibarr=Company %s added
-ContractValidatedInDolibarr=Contract %s validated
-PropalClosedSignedInDolibarr=Proposal %s signed
-PropalClosedRefusedInDolibarr=Proposal %s refused
-PropalValidatedInDolibarr=Proposal %s validated
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
-InvoiceValidatedInDolibarr=Invoice %s validated
-InvoicePaidInDolibarr=Invoice %s changed to paid
-InvoiceCanceledInDolibarr=Invoice %s canceled
-MemberValidatedInDolibarr=Member %s validated
-MemberResiliatedInDolibarr=Member %s resiliated
-MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
-ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
-ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
-Export=Export
 ExportsArea=Uitvoeroverzicht
 AvailableFormats=Beschikbare formaten
 LibraryUsed=Gebruikte bibliotheek
-LibraryVersion=Bibliotheek versie
+LibraryVersion=Library version
 ExportableDatas=Exporteerbare gegevens
 NoExportableData=Geen exporteerbare gegevens (geen modules met exporteerbare gegevens geladen, of niet genoeg rechten)
-NewExport=Nieuwe export
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=Titel
+WEBSITE_DESCRIPTION=Omschrijving
 WEBSITE_KEYWORDS=Keywords

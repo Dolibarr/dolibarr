@@ -69,7 +69,7 @@ if ($id > 0 || ! empty($ref))
 
 // Security check
 $socid=GETPOST('socid');
-if ($user->societe_id > 0) $socid=$user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $object->id,'projet&project');
 
 // fetch optionals attributes and labels
@@ -494,7 +494,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Thirdparty
     if ($conf->societe->enabled)
     {
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
        	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
@@ -517,8 +517,8 @@ if ($action == 'create' && $user->rights->projet->creer)
 	    print '</td></tr>';
     }
 
-    // Public
-    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    // Visibility
+    print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
     $array=array();
     if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
     if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
@@ -539,13 +539,13 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
 	    // Opportunity status
 	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
-	    print '<td>';
+	    print '<td class="maxwidthonsmartphone">';
 	    print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status')?GETPOST('opp_status'):$object->opp_status);
 	    print '</tr>';
 
 	    // Opportunity probability
 	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"> %';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"><span class="hideonsmartphone"> %</span>';
 	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
 	    print '</td>';
 	    print '</tr>';
@@ -615,12 +615,12 @@ if ($action == 'create' && $user->rights->projet->creer)
         });
         </script>';
 }
-else
+elseif ($object->id > 0) 
 {
     /*
      * Show or edit
      */
-
+    
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -674,13 +674,11 @@ else
     }
 
 
-
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
     print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
-
 
     $head=project_prepare_head($object);
     dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
@@ -698,7 +696,7 @@ else
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
         if ($conf->societe->enabled)
@@ -706,7 +704,7 @@ else
             print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), '', 0, 0, 'minwidth300');
 	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		    {
 	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -752,7 +750,7 @@ else
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
         print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
-        print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
+        print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
         print '</td></tr>';
@@ -768,7 +766,7 @@ else
 	    print '</tr>';
 
 	    // Description
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
         print '<td>';
         print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
         print '</td></tr>';
@@ -829,32 +827,11 @@ else
 
         print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-        print '</td></tr>';
-        */
-
-        // Label
-        //print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-        // Third party
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
-        else print'&nbsp;';
-        print '</td></tr>';
-        */
-
         // Visibility
         print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
         if ($object->public) print $langs->trans('SharedProject');
         else print $langs->trans('PrivateProject');
         print '</td></tr>';
-
-        // Statut
-        //print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    {
@@ -879,7 +856,11 @@ else
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($object->date_start,'day');
         $end=dol_print_date($object->date_end,'day');
-        if ($end) print ' - '.$end;
+        if ($end) 
+        {
+            print ' - '.$end;
+            if ($object->hasDelay()) print img_warning($langs->trans('Late'));
+        }
         print '</td></tr>';
     	     
         // Budget
@@ -946,7 +927,7 @@ else
                 /* Change percent of default percent of new status is higher */
                 if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
                 {
-                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
                     jQuery("#opp_percent").val(defaultpercent);
 
                 }
@@ -1143,6 +1124,10 @@ else
     // Hook to add more things on page
     $parameters=array();
     $reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+}
+else
+{
+    print $langs->trans("RecordNotFound");
 }
 
 llxFooter();
