@@ -503,10 +503,9 @@ class Societe extends CommonObject
             }
             else
             {
-                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
-
-                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);    // duplicate on a field (code or profid or ...)
                     $result=-1;
                 }
                 else

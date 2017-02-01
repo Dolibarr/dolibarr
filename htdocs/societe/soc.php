@@ -514,8 +514,8 @@ if (empty($reshook))
                 }
                 else
 				{
-					
-					if($result == -3) {
+				    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
 						$object->code_client = null;
@@ -1308,10 +1308,15 @@ else
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
-        if ($backtopage)
+        if (! empty($backtopage))
         {
-            print ' &nbsp; ';
+            print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+        }
+        else
+        {
+            print ' &nbsp; &nbsp; ';
+            print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
         }
         print '</div>'."\n";
 
@@ -1898,7 +1903,7 @@ else
 
             print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
