@@ -4553,6 +4553,14 @@ img.demothumb {
     margin-left: 10px;
 }
 
+.demobackground {
+    /*
+    background-image: url(/dolibarr_5.0/htdocs/theme/image-demo.jpg);
+    background-size: cover;
+    object-fit: contain;
+    */
+}
+
 
 
 /* ============================================================================== */
