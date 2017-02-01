@@ -96,6 +96,7 @@ ValidateProject=Validate projet
 ConfirmValidateProject=Are you sure you want to validate this project?
 CloseAProject=Close project
 ConfirmCloseAProject=Are you sure you want to close this project?
+AlsoCloseAProject=Also close project (keep it open if you still need to follow production tasks on it)
 ReOpenAProject=Open project
 ConfirmReOpenAProject=Are you sure you want to re-open this project?
 ProjectContact=Project contacts
