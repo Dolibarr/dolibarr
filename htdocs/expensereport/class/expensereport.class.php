@@ -60,7 +60,7 @@ class ExpenseReport extends CommonObject
 
     // Create
     var $date_create;
-    var $fk_user_author;
+    var $fk_user_author;    // the user the expense report is for (not really the author)
 
     // Update
 	var $date_modif;
