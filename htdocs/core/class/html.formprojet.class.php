@@ -135,6 +135,8 @@ class FormProjets
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		if (empty($htmlid)) $htmlid = $htmlname;
+		
 		$out='';
         $outarray=array();
         
@@ -175,14 +177,14 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus,'resolve',$htmlid);
+	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             	$minmax='minwidth100 maxwidth300';
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.(empty($htmlid)?$htmlname:$htmlid).'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlid.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';

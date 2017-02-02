@@ -357,14 +357,12 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
- * @param	int		$htmlid						Html id to use instead of htmlname
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve',$htmlid='')
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
-
-	if (empty($htmlid)) $htmlid = $htmlname;
+	
 	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
@@ -373,10 +371,10 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlid.' -->
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./',$htmlid)?$htmlid:'#'.$htmlid).'\').'.$tmpplugin.'({
+        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.'
@@ -387,17 +385,17 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (count($events))
 	{
 		$msg.= '
-			jQuery("#'.$htmlid.'").change(function () {
+			jQuery("#'.$htmlname.'").change(function () {
 				var obj = '.json_encode($events).';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
-	    				runJsCodeForEvent'.$htmlid.'(values);
+	    				runJsCodeForEvent'.$htmlname.'(values);
 	    			}
 				});
 			});
 
-			function runJsCodeForEvent'.$htmlid.'(obj) {
-				var id = $("#'.$htmlid.'").val();
+			function runJsCodeForEvent'.$htmlname.'(obj) {
+				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
