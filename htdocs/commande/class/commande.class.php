@@ -242,7 +242,8 @@ class Commande extends CommonOrder
             }
             else
 			{
-            	dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				$this->error=$obj->error;
+            	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return "";
             }
         }
