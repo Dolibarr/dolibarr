@@ -1446,6 +1446,19 @@ if ($action == 'create')
     else
     {
         print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        // reload page to retrieve supplier informations
+        if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
+        {
+            print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+        }
     }
     print '</td></tr>';
 
