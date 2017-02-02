@@ -19,7 +19,6 @@ body {
 	color: #333;
 	margin: 0;
 	padding: 0;
-	text-align: center;
 }
 
 p {
@@ -214,6 +213,7 @@ p.titre {
 
 .blocksellfinished {
 	min-width: 215px;
+	margin-top: 8px;
 }
 .titre1 {
 	font-weight: bold;

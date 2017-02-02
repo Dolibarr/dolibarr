@@ -179,7 +179,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'warnings');
+			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
 		}
 		else
 		{
@@ -195,7 +195,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	$action='';
 }
 
-if ($weclickonassign && $action == 'addtime' && $user->rights->projet->lire)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
@@ -427,7 +427,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_total"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';

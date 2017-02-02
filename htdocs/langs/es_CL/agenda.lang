@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
+PropalClosedSignedInDolibarr=Cotización %s firmada en Dolibarr
+PropalClosedRefusedInDolibarr=Cotización %s rechazada en Dolibarr
 PropalValidatedInDolibarr=Cotización %s validada
 ProposalSentByEMail=Cotización %s enviada por e-mail

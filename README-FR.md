@@ -54,19 +54,10 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
 - Ecraser les vieux fichiers dans le vieux repertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
   
-- Si vous venez d'une version x.y.z vers x.y.w (seul le 3eme chiffre varie),
-  il n'y a pas besoin de migration de données.
-  
-- Si vous venez d'une beta ou d'un version x.y.z vers une autre ou les numeros x
-  ou y varient, vous devez appelez la page "install/" de migration dans votre 
-  navigateur (ceci doit se faire automatiquement au premier accès de l'application).
-  Ce sera une URL du genre:
-   http://localhost/dolibarr/htdocs/install/index.php
-  ou
-   http://yourdolibarrhost/install/index.php
+- Au prochain accès, Dolibarr proposera la page de "mise a jour" des données (si necessaire).
+  Si un fichier install.lock existe pour vérouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transféré sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents") 
 
-  Ensuite, choisir l'option de "mise a jour" en rapport avec votre cas.
-  Note: Le processus de migration peut etre lance plusieurs fois sans risque.
+*Note: Le processus de migration peut etre lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
   
 
 ## CE QUI EST NOUVEAU
@@ -86,11 +77,13 @@ Voir fichier ChangeLog.
 - Gestion des factures clients/fournisseurs et paiements
 - Gestion des virements bancaires SEPA
 - Gestion des comptes bancaires
-- Agenda partagé
+- Calendrier/Agenda partagé (avec export ical, vcal) 
 - Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
 - Gestion de stock
 - Gestion des expéditions
+- Gestion des demandes de congès
+- Gestion des notes de frais
 - GED (Gestion Electronique de Documents)
 - EMailings de masse
 - Réalisation de sondages

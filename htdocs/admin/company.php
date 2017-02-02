@@ -786,7 +786,7 @@ else
 	print '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) : '') . '</td></tr>';
+	print '<tr '.$bc[$var].'><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) : '') . '</td></tr>';
 
 	print '</table>';
 
@@ -952,7 +952,7 @@ else
 	print '</tr>';
 	
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("CompanyObject").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? nl2br($conf->global->MAIN_INFO_SOCIETE_OBJECT) : '') . '</td></tr>';
+	print '<tr '.$bc[$var].'><td class="tdtop">'.$langs->trans("CompanyObject").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? nl2br($conf->global->MAIN_INFO_SOCIETE_OBJECT) : '') . '</td></tr>';
 
 	print '</table>';
 	print '</form>';

@@ -1408,6 +1408,11 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
                             $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+			    // is remise percent not keyed but present for the product we add it
+                            if ($remise_percent == 0 && $prod->remise_percent !=0)
+                            	$remise_percent =$prod->remise_percent;
+
+				
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -2686,20 +2691,18 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$langs->load("suppliers");
 
-		// Sets the model on the model name to use
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'muscadet';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'muscadet';
 			}
 		}
 

@@ -157,7 +157,7 @@ if (! empty($enddate))
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	
 	dol_syslog(__FILE__, LOG_DEBUG);
@@ -179,6 +179,11 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 	
+	if ($conf->global->MARGIN_TYPE == "1")
+	    $labelcostprice=$langs->trans('BuyingPrice');
+	else   // value is 'costprice' or 'pmp'
+	    $labelcostprice=$langs->trans('CostPrice');
+	
 	$moreforfilter='';
 	
     print '<div class="div-table-responsive">';
@@ -189,11 +194,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "f.ref", "", $options, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "", "", $options, 'width=20%', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("UnitPriceHT"), $_SERVER["PHP_SELF"], "d.subprice", "", $options, 'align="right"', $sortfield, $sortorder);
-	if ($conf->global->MARGIN_TYPE == "1") {
-		print_liste_field_titre($langs->trans("BuyingPrice"), $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $options, 'align="right"', $sortfield, $sortorder);
-	} else {
-		print_liste_field_titre($langs->trans("CostPrice"), $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $options, 'align="right"', $sortfield, $sortorder);
-	}
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"], "d.total_ht", "", $options, 'align="right"', $sortfield, $sortorder);
 	

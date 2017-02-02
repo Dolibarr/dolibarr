@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exports

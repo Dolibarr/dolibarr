@@ -808,14 +808,14 @@ if (empty($reshook))
 	                        $line->fk_parent_line = $fk_parent_line;
 
 	                        $line->subprice =-$line->subprice; // invert price for object
-	                        $line->pa_ht = -$line->pa_ht;
+	                        $line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
 	                        $line->total_ht=-$line->total_ht;
 	                        $line->total_tva=-$line->total_tva;
 	                        $line->total_ttc=-$line->total_ttc;
 	                        $line->total_localtax1=-$line->total_localtax1;
 	                        $line->total_localtax2=-$line->total_localtax2;
 
-	                        $result = $line->insert();
+	                        $result = $line->insert(0, 1);     // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 	                        $object->lines[] = $line; // insert new line in current object
 
@@ -1295,6 +1295,25 @@ if (empty($reshook))
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
+
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($object->lines))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+			}
+
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		}
@@ -2229,7 +2248,7 @@ if ($action == 'create')
 		$optionsav .= '</option>';
 	}
 
-	print '<tr><td valign="top" class="fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
+	print '<tr><td class="tdtop fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
 
 	print '<div class="tagtable">' . "\n";
 
@@ -3757,6 +3776,8 @@ else if ($id > 0 || ! empty($ref))
     } 
     else // Credit note
     {
+        $cssforamountpaymentcomplete='';
+        
         // Total already paid back
         print '<tr><td colspan="' . $nbcols . '" align="right">';
         print $langs->trans('AlreadyPaidBack');
@@ -3772,7 +3793,7 @@ else if ($id > 0 || ! empty($ref))
         else
             print $langs->trans('ExcessPaydBack');
         print ' :</td>';
-        print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
         print '<td class="nowrap">&nbsp;</td></tr>';
 
         // Sold credit note

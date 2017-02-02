@@ -88,7 +88,7 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if ($page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0 ; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -240,7 +240,7 @@ if (empty($reshook))
         $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
         $result=$object->update($object->id, $user);
         if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
-    
+
         $action='';
     }
 }
@@ -439,7 +439,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -505,7 +505,7 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-} 	
+}
 
 // Show delete result message
 if (GETPOST('delsoc'))
@@ -619,9 +619,9 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_f
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-       if (! empty($arrayfields["ef.".$key]['checked'])) 
+       if (! empty($arrayfields["ef.".$key]['checked']))
        {
 			$align=$extrafields->getAlignFlag($key);
 			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -838,9 +838,9 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($arrayfields["ef.".$key]['checked'])) 
+		if (! empty($arrayfields["ef.".$key]['checked']))
 		{
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
@@ -895,7 +895,7 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 	$var=!$var;
-	
+
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
 	$companystatic->canvas=$obj->canvas;
@@ -906,7 +906,7 @@ while ($i < min($num, $limit))
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
     $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
     $companystatic->name_alias=$obj->name_alias;
-	
+
 	print "<tr ".$bc[$var].">";
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
@@ -948,12 +948,12 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['s.zip']['checked']))
     {
         print "<td>".$obj->zip."</td>\n";
-    }        
+    }
     // State
     if (! empty($arrayfields['state.nom']['checked']))
     {
         print "<td>".$obj->state_name."</td>\n";
-    }        
+    }
     // Country
     if (! empty($arrayfields['country.code_iso']['checked']))
     {

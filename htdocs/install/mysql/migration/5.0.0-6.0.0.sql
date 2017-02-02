@@ -43,6 +43,17 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
 
+ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 
 ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
+
+ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
+ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
 

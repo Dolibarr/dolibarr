@@ -143,7 +143,7 @@ class ContactApi extends DolibarrApi
 			$sql .= " AND sc.fk_user = " . $search_sale;
 		}
 
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $db->query($sql);

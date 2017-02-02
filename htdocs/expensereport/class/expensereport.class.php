@@ -60,7 +60,7 @@ class ExpenseReport extends CommonObject
 
     // Create
     var $date_create;
-    var $fk_user_author;
+    var $fk_user_author;    // the user the expense report is for (not really the author)
 
     // Update
 	var $date_modif;
@@ -489,7 +489,7 @@ class ExpenseReport extends CommonObject
      *  Returns the label of a statut
      *
      *  @param      int     $status     id statut
-     *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *  @return     string              Label
      */
     function LibStatut($status,$mode=0)
@@ -514,6 +514,8 @@ class ExpenseReport extends CommonObject
         if ($mode == 5)
             return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
 
+        if ($mode == 6)
+            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
     }
 
 
@@ -1573,18 +1575,16 @@ class ExpenseReport extends CommonObject
 
         $langs->load("trips");
 
-        // Positionne le modele sur le nom du modele a utiliser
-        if (! dol_strlen($modele))
-        {
-            if (! empty($conf->global->EXPENSEREPORT_ADDON_PDF))
-            {
-                $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
-            }
-            else
-            {
-                $modele = 'standard';
-            }
-        }
+	    if (! dol_strlen($modele)) {
+
+		    $modele = 'standard';
+
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (! empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+		    }
+	    }
 
         $modelpath = "core/modules/expensereport/doc/";
 
@@ -1673,11 +1673,14 @@ class ExpenseReport extends CommonObject
 
 	    $now=dol_now();
 
+	    $userchildids = $user->getAllChildIds(1);
+	    
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
         $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.fk_user_author IN (".join(',',$userchildids).")";
 
         $resql=$this->db->query($sql);
         if ($resql)

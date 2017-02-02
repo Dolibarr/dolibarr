@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Toimet
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Esityslistat
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by

@@ -2,6 +2,7 @@
 SecurityCode=Código seguridad
 NumberingShort=Nº
 Tools=Utilidades
+TMenuTools=Utilidades
 ToolsDesc=Todas las utilidades que no están incluidas en otras entradas del menú se encuentran aquí.<br /><br />Están disponibes en el menú de la izquierda.
 Birthday=Aniversario
 BirthdayDate=Fecha de cumpleaños

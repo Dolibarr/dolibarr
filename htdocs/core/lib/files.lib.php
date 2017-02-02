@@ -1289,21 +1289,19 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			
 		}
 	} elseif ($link) {
-		if (dol_mkdir($upload_dir) >= 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
-			$linkObject = new Link($db);
-			$linkObject->entity = $conf->entity;
-			$linkObject->url = $link;
-			$linkObject->objecttype = GETPOST('objecttype', 'alpha');
-			$linkObject->objectid = GETPOST('objectid', 'int');
-			$linkObject->label = GETPOST('label', 'alpha');
-			$res = $linkObject->create($user);
-			$langs->load('link');
-			if ($res > 0) {
-				setEventMessages($langs->trans("LinkComplete"), null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans("ErrorFileNotLinked"), null, 'errors');
-			}
+		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+		$linkObject = new Link($db);
+		$linkObject->entity = $conf->entity;
+		$linkObject->url = $link;
+		$linkObject->objecttype = GETPOST('objecttype', 'alpha');
+		$linkObject->objectid = GETPOST('objectid', 'int');
+		$linkObject->label = GETPOST('label', 'alpha');
+		$res = $linkObject->create($user);
+		$langs->load('link');
+		if ($res > 0) {
+			setEventMessages($langs->trans("LinkComplete"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ErrorFileNotLinked"), null, 'errors');
 		}
 	}
 	else

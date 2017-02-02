@@ -752,9 +752,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
 	// Employee
+    $defaultemployee=1;
     print '<tr>';
-    print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(GETPOST('employee')?GETPOST('employee'):0),1);
+    print '<td>'.$langs->trans('Employee').'</td><td>';
+    print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
     print '</td></tr>';
 
     // Position/Job
@@ -1090,9 +1091,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Categories
 	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
 	{
-		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
-		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
 	}

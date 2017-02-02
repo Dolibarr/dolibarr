@@ -86,14 +86,14 @@ $idpays = $p[0];
 
 $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ttc, erd.tva_tx, erd.total_ht, erd.total_tva, erd.fk_code_ventilation,";
-$sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_code,";
+$sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON erd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = er.fk_user_valid";
+$sql .= " JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = er.fk_user_author";
 $sql .= " WHERE er.fk_statut > 0 ";
 $sql .= " AND erd.fk_code_ventilation > 0 ";
 $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don't share object for accountancy

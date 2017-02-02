@@ -155,8 +155,10 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
-			$sql .= " AND p.title LIKE '%".$this->db->escape($filterkey)."%'";
-			$sql .= " OR p.ref LIKE '%".$this->db->escape($filterkey)."%'";
+			$sql .= ' AND (';
+			$sql .= ' p.title LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= ')';
 		}
 		$sql.= " ORDER BY p.ref ASC";
 
@@ -567,9 +569,10 @@ class FormProjets
 	 *    @param   int         $useshortlabel      Use short label
 	 *    @param   int         $showallnone        Add choice "All" and "None"
 	 *    @param   int         $showpercent        Show default probability for status
+	 *    @param   string      $morecss            Add more css
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected='-1', $showempty=1, $useshortlabel=0, $showallnone=0, $showpercent=0)
+	function selectOpportunityStatus($htmlname, $preselected='-1', $showempty=1, $useshortlabel=0, $showallnone=0, $showpercent=0, $morecss='')
 	{
 		global $conf, $langs;
 
@@ -585,7 +588,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat oppstatus" id="'.$htmlname.'" name="'.$htmlname.'">';
+				$sellist = '<select class="flat oppstatus'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 				if ($showempty) $sellist.= '<option value="-1"></option>';
 				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
 				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';

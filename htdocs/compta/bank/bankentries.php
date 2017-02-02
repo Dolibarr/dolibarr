@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -502,7 +503,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 $nbtotalofpages = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -621,7 +622,7 @@ if ($resql)
 	                $last_ok=1;
 	            }
 	            $i++;
-	            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+	            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
 	        }
 	        if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
 	        print $liste;
@@ -773,7 +774,7 @@ if ($resql)
 	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'balance','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -1208,7 +1209,7 @@ if ($resql)
         	{
             	if ($objp->rappro)  // If line not conciliated and account can be conciliated
             	{
-            	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$object->id.'">'.$objp->num_releve.'</a>';
+            	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$objp->bankid.'">'.$objp->num_releve.'</a>';
             	}
             	else if ($action == 'reconcile')
             	{ 
@@ -1224,7 +1225,7 @@ if ($resql)
     	// Transaction reconciliated or edit link
     	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
-    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	    print img_edit();
     	    print '</a>';
     	}
@@ -1232,13 +1233,13 @@ if ($resql)
     	{
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
     	    }
     	    else
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
     	    }
@@ -1252,7 +1253,7 @@ if ($resql)
     	    print '&nbsp;';
     	    if ($user->rights->banque->modifier)
     	    {
-    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$object->id.'&amp;page='.$page.'">';
+    	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_delete();
     	        print '</a>';
     	    }

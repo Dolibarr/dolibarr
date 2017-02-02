@@ -1173,14 +1173,14 @@ if ($action == 'create')
         print "</td></tr>";
     }
 
-    print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+    print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
     $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
     print $doleditor->Create(1);
     print '</td></tr>';
 
     if (empty($user->societe_id))
     {
-        print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+        print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
         $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
@@ -1482,11 +1482,11 @@ else
 
                 $objp = $db->fetch_object($result);
 
-                $var=!$var;
+                //$var=!$var;
 
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
-                    print '<tr '.$bc[$var].' valign="top">';
+                    print '<tr '.$bcnd[$var].' valign="top">';
                     // Libelle
                     if ($objp->fk_product > 0)
                     {
@@ -1575,7 +1575,7 @@ else
 		                    $colspan = 7;
 	                    }
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr '.$bcnd[$var].'>';
                         print '<td colspan="'.$colspan.'">';
 
                         // Date planned
@@ -1611,10 +1611,10 @@ else
 
                     // Display lines extrafields
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bcnd[$var].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
                 }
@@ -1622,7 +1622,7 @@ else
                 else
                 {
                     // Ligne carac
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bcnd[$var].">";
                     print '<td>';
                     if ($objp->fk_product)
                     {
@@ -1676,7 +1676,7 @@ else
 	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bcnd[$var].">";
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
@@ -1685,10 +1685,10 @@ else
                     print '</td>';
 
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bcnd[$var].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
 
@@ -1704,7 +1704,7 @@ else
 
             if ($object->statut > 0)
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
                 print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium"></td>';
                 print "</tr>\n";
             }
@@ -1773,7 +1773,7 @@ else
             {
                 print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
                 print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
                 print '<td width="30" align="right">';
                 if ($user->societe_id == 0)
@@ -1781,10 +1781,18 @@ else
                     if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')
                     {
                         $tmpaction='activateline';
-                        if ($objp->statut == 4) $tmpaction='unactivateline';
-						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) {
+                        $tmpactionpicto='play';
+                        $tmpactiontext=$langs->trans("Activate");
+                        if ($objp->statut == 4) 
+                        {
+                            $tmpaction='unactivateline';
+                            $tmpactionpicto='playstop';
+                            $tmpactiontext=$langs->trans("Unactivate");
+                        }
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) 
+						{
 							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
-							print img_edit();
+							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
                     }
@@ -1792,7 +1800,7 @@ else
                 print '</td>';
                 print "</tr>\n";
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
 
                 print '<td>';
                 // Si pas encore active
@@ -1915,7 +1923,7 @@ else
                 print '</td>';
 
                 print '<td align="right" rowspan="2" class="nohover">';
-                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
@@ -2111,13 +2119,13 @@ else
 					dol_print_error($db, $object->error, $object->errors);
 					exit();
 				}
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+				$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 				$file = $fileparams['fullname'];
 			}
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print load_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans('SendContractByMail'));
 
 			dol_fiche_head('');
 
@@ -2145,9 +2153,9 @@ else
 			$formmail->withtocc = $liste;
 			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__');
 			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__ (__REFCLIENT__)');
 			}
 			$formmail->withfile = 2;
 			$formmail->withbody = 1;
@@ -2155,7 +2163,7 @@ else
 			$formmail->withcancel = 1;
 			// Tableau des substitutions
 			$formmail->setSubstitFromObject($object);
-			$formmail->substit ['__ORDERREF__'] = $object->ref;
+			$formmail->substit ['__CONTRACTREF__'] = $object->ref;
 
 			$custcontact = '';
 			$contactarr = array();
@@ -2165,7 +2173,7 @@ else
 			{
 				foreach ($contactarr as $contact)
 				{
-					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
+					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
 						$custcontact = $contactstatic->getFullName($langs, 1);
@@ -2179,9 +2187,9 @@ else
 
 			// Tableau des parametres complementaires
 			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'order_send';
+			$formmail->param['models'] = 'contract_send';
 			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['orderid'] = $object->id;
+			$formmail->param['contractid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 			// Init list of files

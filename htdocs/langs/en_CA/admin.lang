@@ -7,3 +7,5 @@ LocalTax1IsUsedDesc=Use a second tax (PST)
 LocalTax1IsNotUsedDesc=Do not use second tax (PST)
 LocalTax1Management=PST Management
 LocalTax2IsNotUsedDesc=Do not use second tax (PST)
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
+ApiProductionMode=Enable production mode (this will activate use of a caches for services management)

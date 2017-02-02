@@ -813,7 +813,7 @@ class BonPrelevement extends CommonObject
                 dol_syslog(__METHOD__."::Read invoices error ".$this->db->error(), LOG_ERR);
             }
         }
-
+        
         if (! $error)
         {
             require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
@@ -834,7 +834,7 @@ class BonPrelevement extends CommonObject
                         {
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
-
+                        	
                             if ($bac->verif() >= 1)
                             //if (true)
                             {
@@ -867,7 +867,7 @@ class BonPrelevement extends CommonObject
         }
 
         $ok=0;
-
+        
         // Withdraw invoices in factures_prev array
         $out=count($factures_prev)." invoices will be withdrawn.";
         //print $out."\n";
@@ -1272,7 +1272,7 @@ class BonPrelevement extends CommonObject
 			 * section Debiteur (sepa Debiteurs bloc lines)
 			 */
 
-			$tmp_invoices = array();
+			/*$tmp_invoices = array();
 
 			$sql = "SELECT f.facnumber as fac FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."prelevement_facture as pf, ".MAIN_DB_PREFIX."societe as soc, ".MAIN_DB_PREFIX."c_country as p, ".MAIN_DB_PREFIX."societe_rib as rib WHERE pl.fk_prelevement_bons = ".$this->id." AND pl.rowid = pf.fk_prelevement_lignes AND pf.fk_facture = f.rowid AND soc.fk_pays = p.rowid AND soc.rowid = f.fk_soc AND rib.fk_soc = f.fk_soc AND rib.default_rib = 1";
 			$resql=$this->db->query($sql);
@@ -1280,9 +1280,7 @@ class BonPrelevement extends CommonObject
 				while ($objfac = $this->db->fetch_object($resql)) {
 					$tmp_invoices[] = $objfac->fac;
 				}
-			}
-
-	        $ListOfFactures = implode($tmp_invoices);
+			}*/
 
 			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 			$sql.= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
@@ -1310,7 +1308,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}

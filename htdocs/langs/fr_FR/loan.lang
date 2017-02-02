@@ -43,8 +43,9 @@ LoanCalcDesc=Cette <b>simulation de prêt</b> peut être utilisée pour comprend
 GoToInterest=%s remboursera les intérêts
 GoToPrincipal=%s remboursera le principal (capital)
 YouWillSpend=Vous allez dépenser %s pour l'année %s
+ListLoanAssociatedProject=Liste des prêts associés au projet
 # Admin
 ConfigLoan=Configuration du module Emprunt
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable capital par défaut
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable intérêt par défaut
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable assurance par défaut
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable remboursement capital d'un emprunt par défaut
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable paiement d'intérêt d'un emprunt par défaut
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable paiement de l'assurance d'un emprunt par défaut

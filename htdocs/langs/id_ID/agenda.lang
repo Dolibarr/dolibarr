@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Acara
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agenda
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by

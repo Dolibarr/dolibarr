@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1311,8 +1312,8 @@ if ($action == 'create')
 	print '<td>';
 	$defaultselectuser=$user->id;
 	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
-    $include_users = array($user->id);
-    if (! empty($user->rights->expensereport->writeall)) $include_users=array();
+  $include_users = 'hierarchyme';
+  if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
 	print $s;
 	print '</td>';
@@ -1349,7 +1350,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top">';
+	print '<td class="tdtop">';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1359,7 +1360,7 @@ if ($action == 'create')
 	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top">';
+		print '<td class="tdtop">';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -1396,10 +1397,10 @@ else
 		
 		if ($result > 0)
 		{
-			if ($object->fk_user_author != $user->id)
+			if (! in_array($object->fk_user_author, $user->getAllChildIds(1)))
 			{
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				    && empty($user->rights->expensereport->writeall_advance))
+				    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 				{
 					print load_fiche_titre($langs->trans('TripCard'));
 
@@ -2174,7 +2175,7 @@ if ($action != 'create' && $action != 'edit')
 	*/
 	if ($user->rights->expensereport->creer && $object->fk_statut==0)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -2222,7 +2223,7 @@ if ($action != 'create' && $action != 'edit')
 	 */
 	if ($object->fk_statut == 2)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
 			// Brouillonner
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';

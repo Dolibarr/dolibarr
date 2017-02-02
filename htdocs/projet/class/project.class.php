@@ -773,7 +773,7 @@ class Project extends CommonObject
      * 		Close a project
      *
      * 		@param		User	$user		User that close project
-     * 		@return		int					<0 if KO, >0 if OK
+     * 		@return		int					<0 if KO, 0 if already closed, >0 if OK
      */
     function setClose($user)
     {
@@ -828,6 +828,8 @@ class Project extends CommonObject
                 return -1;
             }
         }
+        
+        return 0;
     }
 
     /**
@@ -1569,16 +1571,14 @@ class Project extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'baleine';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
-			}
-			else
-			{
-				$modele='baleine';
 			}
 		}
 

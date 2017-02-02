@@ -158,7 +158,7 @@ if (! empty($search_code_journal)) {
  * Mode List
  */
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0);
 	if ($nbtotalofrecords < 0) {

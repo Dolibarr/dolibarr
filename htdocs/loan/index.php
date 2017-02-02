@@ -86,7 +86,7 @@ if ($filtre) {
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
