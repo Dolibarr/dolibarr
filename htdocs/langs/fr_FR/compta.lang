@@ -63,6 +63,7 @@ PaymentSocialContribution=Paiement de charges fiscales/sociales
 PaymentVat=Règlement TVA
 ListPayment=Liste des règlements
 ListOfCustomerPayments=Liste des règlements clients
+ListOfSupplierPayments=Liste des règlements fournisseurs
 DateStartPeriod=Date de début
 DateEndPeriod=Date de fin
 newLT1Payment=Nouveau paiement de taxe 2
