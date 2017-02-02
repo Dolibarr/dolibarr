@@ -205,19 +205,21 @@ if (empty($reshook))
 
         if (! GETPOST('label'))
         {
-            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), null, 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')),null,'errors');
             $action = "create";
             $error++;
         }
+	    
         if (empty($ref))
         {
-            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), null, 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')),null,'errors');
             $action = "create";
             $error++;
         }
+	    
         if (! empty($duration_value) && empty($duration_unit))
         {
-            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), null, 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')),null,'errors');
             $action = "create";
             $error++;
         }
@@ -277,7 +279,7 @@ if (empty($reshook))
             $object->duration_value     	 = $duration_value;
             $object->duration_unit      	 = $duration_unit;
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
-            $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
+            $object->desiredstock            	 = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
             $object->weight             	 = GETPOST('weight');
             $object->weight_units       	 = GETPOST('weight_units');
@@ -285,12 +287,12 @@ if (empty($reshook))
             $object->length_units       	 = GETPOST('size_units');
             $object->width               	 = GETPOST('sizewidth');
             $object->height             	 = GETPOST('sizeheight');
-	        $object->surface            	 = GETPOST('surface');
+	    $object->surface            	 = GETPOST('surface');
             $object->surface_units      	 = GETPOST('surface_units');
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
-	        $object->fk_unit                 = GETPOST('units');
+	    $object->fk_unit                 	 = GETPOST('units');
 
 			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
 			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
