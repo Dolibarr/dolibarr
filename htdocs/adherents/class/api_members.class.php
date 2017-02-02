@@ -195,7 +195,7 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$member->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('adherent',$member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -245,7 +245,7 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$member->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('adherent',$member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
