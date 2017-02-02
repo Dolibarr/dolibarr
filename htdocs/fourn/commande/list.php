@@ -77,6 +77,7 @@ $search_total_vat=GETPOST('search_total_vat','alpha');
 $search_total_ttc=GETPOST('search_total_ttc','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
+$search_project_ref=GETPOST('search_project_ref','alpha');
 
 $page  = GETPOST('page','int');
 $sortorder = GETPOST('sortorder','alpha');
@@ -204,6 +205,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $deliverymonth='';
     $deliveryyear='';
     $billed='';
+	$search_project_ref='';
     $search_array_options=array();
 
 }
@@ -350,6 +352,7 @@ if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.elemen
 if ($search_total_ht != '') $sql.= natural_search('cf.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '') $sql.= natural_search('cf.tva', $search_total_vat, 1);
 if ($search_total_ttc != '') $sql.= natural_search('cf.total_ttc', $search_total_ttc, 1);
+if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)

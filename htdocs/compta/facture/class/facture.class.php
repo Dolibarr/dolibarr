@@ -3016,7 +3016,8 @@ class Facture extends CommonInvoice
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
+				$this->error=$obj->error;
+				//dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
 
