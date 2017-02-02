@@ -3428,7 +3428,9 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type)
 	{
-		// Decode type
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	    
+	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;
 			$type_text = 'customer';
@@ -3446,7 +3448,6 @@ class Societe extends CommonObject
 		}
 
 		// Get current categories
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_id, 'id');
 
