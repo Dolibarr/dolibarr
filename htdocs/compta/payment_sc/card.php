@@ -37,7 +37,7 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action");
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -126,12 +126,12 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$_GET["id"];
+/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
 $head[$h][1] = $langs->trans("Info");
 $h++;
 */

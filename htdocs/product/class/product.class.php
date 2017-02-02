@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017		Gustavo Novaro			
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,36 +55,61 @@ class Product extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
-	var $regeximgext='\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
+	public $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm'; // See also into images.lib.php
 
 	/*
 	 * @deprecated
 	 * @see label
 	 */
-	var $libelle;
+	public $libelle;
 	/**
 	 * Product label
 	 * @var string
 	 */
-	var $label;
-    /**
-     * Product descripion
-     * @var string
-     */
-	var $description;
+	public $label;
+    
+	/**
+     	* Product descripion
+     	* @var string
+     	*/
+	public $description;
 
 	/**
 	 * Check TYPE constants
 	 * @var int
 	 */
-	var $type = self::TYPE_PRODUCT;
-	//! Selling price
-	var $price;				// Price net
-	var $price_ttc;			// Price with tax
-	var $price_min;         // Minimum price net
-	var $price_min_ttc;     // Minimum price with tax
-	//! Base price ('TTC' for price including tax or 'HT' for net price)
-	var $price_base_type;
+	public $type = self::TYPE_PRODUCT;
+	
+	/**
+	 * Selling price
+	 * @var float
+	 */
+	public $price;			// Price net
+	
+	/**
+	 * Price with tax
+	 * @var float
+	 */
+	public $price_ttc;
+	
+	/**
+	 * Minimum price net
+	 * @var float
+	 */
+	public $price_min;
+	
+	/**
+	 * Minimum price with tax
+	 * @var float
+	 */
+	public $price_min_ttc;
+	
+	/*
+	 * Base price ('TTC' for price including tax or 'HT' for net price)
+	 * @var float
+	 */
+	public $price_base_type;
+	
 	//! Arrays for multiprices
 	public $multiprices=array();
 	public $multiprices_ttc=array();
@@ -92,49 +118,99 @@ class Product extends CommonObject
 	public $multiprices_min_ttc=array();
 	public $multiprices_tva_tx=array();
 	public $multiprices_recuperableonly=array();
-	//! Price by quantity arrays
-	var $price_by_qty;
-	var $prices_by_qty=array();
-	var $prices_by_qty_id=array();
-	var $prices_by_qty_list=array();
-	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
-	var $default_vat_code;
-	//! Default VAT rate of product
-	var $tva_tx;
-	//! French VAT NPR (0 or 1)
-    var $tva_npr=0;
-	//! Other local taxes
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $localtax1_type;
-	var $localtax2_type;
 	
-	//! Stock real
-	var $stock_reel;
-	//! Stock virtual
-	var $stock_theorique;
-	//! Cost price
-	var $cost_price;
+	//! Price by quantity arrays
+	public $price_by_qty;
+	public $prices_by_qty=array();
+	public $prices_by_qty_id=array();
+	public $prices_by_qty_list=array();
+	
+	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
+	public $default_vat_code;
+	
+	//! Default VAT rate of product
+	public $tva_tx;
+	
+	//! French VAT NPR (0 or 1)
+    	public $tva_npr=0;
+	
+	//! Other local taxes
+	public $localtax1_tx;
+	public $localtax2_tx;
+	public $localtax1_type;
+	public $localtax2_type;
+	
+	/**
+	 * Stock real
+	 * @var int
+	 */
+	public $stock_reel = 0;
+	
+	/**
+	 * Stock virtual
+	 * @var int
+	 */
+	public $stock_theorique;
+	
+	/**
+	 * Cost price
+	 * @var float
+	 */
+	public $cost_price;
+	
 	//! Average price value for product entry into stock (PMP)
-	var $pmp;
-    //! Stock alert
-	var $seuil_stock_alerte;
-	//! Ask for replenishment when $desiredstock < $stock_reel
+	public $pmp;
+	
+    	/**
+	 * Stock alert
+	 * @var int
+	 */
+	public $seuil_stock_alerte;
+	
+	/**
+	 * Ask for replenishment when $desiredstock < $stock_reel
+	 */
 	public $desiredstock;
-	//! Duree de validite du service
-	var $duration_value;
-	//! Unite de duree
-	var $duration_unit;
-	// Statut indique si le produit est en vente '1' ou non '0'
-	var $status;
-	// Status indicate whether the product is available for purchase '1' or not '0'
-	var $status_buy;
-	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
-	var $finished;
-	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
-	var $status_batch;
+	
+	/*
+	 * Service expiration
+	 */
+	public $duration_value;
+	
+	/**
+	 * Exoiration unit
+	 */
+	public $duration_unit;
+	
+	/**
+	 * Status indicates whether the product is on sale '1' or not '0'
+	 * @var int
+	 */
+	public $status;
+	
+	/**
+	 * Status indicate whether the product is available for purchase '1' or not '0'
+	 * @var int
+	 */
+	public $status_buy;
+	
+	/**
+	 * Status indicates whether the product is a finished product '1' or a raw material '0'
+	 * @var int
+	 */
+	public $finished;
+	
+	/**
+	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
+	 * @var int
+	 */
+	public $status_batch;
 
-	var $customcode;       // Customs code
+	/**
+	 * Customs code
+	 * @var
+	 */
+	public $customcode;
 
 	/**
 	 * Product URL
@@ -143,56 +219,66 @@ class Product extends CommonObject
 	public $url;
 
 	//! Unites de mesure
-	var $weight;
-	var $weight_units;
-	var $length;
-	var $length_units;
-	var $surface;
-	var $surface_units;
-	var $volume;
-	var $volume_units;
+	public $weight;
+	public $weight_units;
+	public $length;
+	public $length_units;
+	public $surface;
+	public $surface_units;
+	public $volume;
+	public $volume_units;
 
-	var $accountancy_code_buy;
-	var $accountancy_code_sell;
+	public $accountancy_code_buy;
+	public $accountancy_code_sell;
 
-	//! barcode
-	var $barcode;               // value
+	/**
+	 * Main barcode
+	 * barcode value
+	 * @var 
+	 */
+	public $barcode;
+	
+	/**
+	 * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
+	 * @var array
+	 */
+	public $barcodes_extra=array();
 
-	var $stats_propale=array();
-	var $stats_commande=array();
-	var $stats_contrat=array();
-	var $stats_facture=array();
-    var $stats_commande_fournisseur=array();
+	public $stats_propale=array();
+	public $stats_commande=array();
+	public $stats_contrat=array();
+	public $stats_facture=array();
+    	public $stats_commande_fournisseur=array();
 
-	var $multilangs=array();
+	public $multilangs=array();
 
 	//! Taille de l'image
-	var $imgWidth;
-	var $imgHeight;
+	public $imgWidth;
+	public $imgHeight;
 
-	var $date_creation;
-	var $date_modification;
+	public $date_creation;
+	public $date_modification;
 
 	//! Id du fournisseur
-	var $product_fourn_id;
+	public $product_fourn_id;
 
 	//! Product ID already linked to a reference supplier
-	var $product_id_already_linked;
+	public $product_id_already_linked;
 
-	var $nbphoto;
+	public $nbphoto;
 
 	//! Contains detail of stock of product into each warehouse
-	var $stock_warehouse=array();
+	public $stock_warehouse=array();
 
-	var $oldcopy;
+	public $oldcopy;
 
-    var $fk_price_expression;
+    	public $fk_price_expression;
 
 	/**
 	 * @deprecated
 	 * @see fourn_pu
 	 */
-	var $buyprice;
+	public $buyprice;
 	public $fourn_pu;
 
 	public $fourn_price_base_type;
@@ -201,7 +287,7 @@ class Product extends CommonObject
 	 * @deprecated
 	 * @see ref_supplier
 	 */
-	var $ref_fourn;
+	public $ref_fourn;
 	public $ref_supplier;
 
 	/**
@@ -290,7 +376,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-        $error=0;
+        	$error=0;
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
@@ -320,39 +406,48 @@ class Product extends CommonObject
 		$price_ttc=0;
 		$price_min_ht=0;
 		$price_min_ttc=0;
+		
+		//
 		if ($this->price_base_type == 'TTC' && $this->price_ttc > 0)
 		{
 			$price_ttc = price2num($this->price_ttc,'MU');
 			$price_ht = price2num($this->price_ttc / (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if ($this->price_base_type != 'TTC' && $this->price > 0)
 		{
 			$price_ht = price2num($this->price,'MU');
 			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if (($this->price_min_ttc > 0) && ($this->price_base_type == 'TTC'))
 		{
 			$price_min_ttc = price2num($this->price_min_ttc,'MU');
 			$price_min_ht = price2num($this->price_min_ttc / (1 + ($this->tva_tx / 100)),'MU');
 		}
+		
+		//
 		if (($this->price_min > 0) && ($this->price_base_type != 'TTC'))
 		{
 			$price_min_ht = price2num($this->price_min,'MU');
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
 
-    	$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+    		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
-        // Barcode value
-        $this->barcode=trim($this->barcode);
+		// Barcode value
+		$this->barcode=trim($this->barcode);
 
-        // Check parameters
+	        // Check parameters
 		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
+		
 		if (empty($this->ref))
 		{
 			// Load object modCodeProduct
@@ -371,6 +466,7 @@ class Product extends CommonObject
 				}
 				unset($modCodeProduct);
 			}
+			
 			if (empty($this->ref))
 			{
 				$this->error='ProductModuleNotSetupForAutoRef';
@@ -636,6 +732,25 @@ class Product extends CommonObject
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
 		$this->length_units = trim($this->length_units);
+		$this->width = price2num($this->width);
+		$this->width_units = trim($this->width_units);
+		$this->height = price2num($this->height);
+		$this->height_units = trim($this->height_units);
+		// set unit not defined
+		if ($this->length_units) $this->width_units = $this->length_units;    // Not used yet
+		if ($this->length_units) $this->height_units = $this->length_units;    // Not used yet
+		// Automated compute surface and volume if not filled
+		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units)
+		{
+			$this->surface = $this->length * $this->width;
+			$this->surface_units = $this->length_units + $this->width_units;
+		}
+		if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units)
+		{
+			$this->volume =  $this->surface * $this->height;
+			$this->volume_units = $this->surface_units + $this->height_units;
+		}
+		
 		$this->surface = price2num($this->surface);
 		$this->surface_units = trim($this->surface_units);
 		$this->volume = price2num($this->volume);
@@ -750,6 +865,10 @@ class Product extends CommonObject
 			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
 			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
+			$sql.= ", width= " . ($this->width!='' ? "'".$this->width."'" : 'null');
+			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->width_units."'" : 'null');
+			$sql.= ", height = " . ($this->height!='' ? "'".$this->height."'" : 'null');
+			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->height_units."'" : 'null');
 			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
 			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
 			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
@@ -1351,7 +1470,7 @@ class Product extends CommonObject
 		$result = 0;
 
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
-		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
+		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
@@ -1385,6 +1504,7 @@ class Product extends CommonObject
 				$this->fourn_price_base_type = 'HT';                // Price base type
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
+				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
 				return $result;
@@ -1430,6 +1550,7 @@ class Product extends CommonObject
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
+						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$result=$obj->fk_product;
 						return $result;
@@ -1673,8 +1794,9 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
-		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas, weight, weight_units,";
+		$sql.= " length, length_units, width, width_units, height, height_units,";
+		$sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
 		$sql.= " fk_price_expression, price_autogen";
@@ -1736,6 +1858,11 @@ class Product extends CommonObject
 				$this->weight_units				= $obj->weight_units;
 				$this->length					= $obj->length;
 				$this->length_units				= $obj->length_units;
+				$this->width					= $obj->width;
+				$this->width_units				= $obj->width_units;
+				$this->height					= $obj->height;
+				$this->height_units				= $obj->height_units;
+
 				$this->surface					= $obj->surface;
 				$this->surface_units			= $obj->surface_units;
 				$this->volume					= $obj->volume;
@@ -3691,15 +3818,16 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Affiche la premiere photo du produit
+	 *  Return if at least one photo is available
 	 *
-	 *  @param      string		$sdir       Repertoire a scanner
-	 *  @return     boolean     			true si photo dispo, false sinon
+	 *  @param      string		$sdir       Directory to scan
+	 *  @return     boolean     			True if at least one photo is available, False if not
 	 */
 	function is_photo_available($sdir)
 	{
-		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
-
+	    include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+	    include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+	     
 		global $conf;
 
 		$dir = $sdir;
@@ -3717,7 +3845,7 @@ class Product extends CommonObject
 			    while (($file = readdir($handle)) !== false)
     			{
     				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
-    				if (dol_is_file($dir.$file)) return true;
+    				if (dol_is_file($dir.$file) && image_format_supported($file) > 0) return true;
     			}
 			}
 		}
@@ -3729,7 +3857,7 @@ class Product extends CommonObject
 	 *  Show photos of a product (nbmax maximum), into several columns
 	 *	TODO Move this into html.formproduct.class.php
 	 *
-	 *  @param      string	$sdir        	Directory to scan
+	 *  @param      string	$sdir        	Directory to scan (full absolute path)
 	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
 	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
@@ -3747,140 +3875,186 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
+		$sortfield='position_name';
+		$sortorder='asc';
+		
 		$dir = $sdir . '/';
 		$pdir = '/';
+		$dir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
+		$pdir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
+
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 		{
-			$dir .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-			$pdir .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-		}
-		else
-		{
-			$dir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
-			$pdir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
+			$dirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
+			$pdirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
 		}
 
+		// Defined relative dir to DOL_DATA_ROOT
+		$relativedir = '';
+		if ($dir)
+		{
+		    $relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
+		    $relativedir = preg_replace('/^[\\/]/','',$relativedir);
+		    $relativedir = preg_replace('/[\\/]$/','',$relativedir);
+		}
+		
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 
 		$return ='<!-- Photo -->'."\n";
 		$nbphoto=0;
 
-		$dir_osencoded=dol_osencode($dir);
-		if (file_exists($dir_osencoded))
+		$filearray=dol_dir_list($dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 		{
-			$handle=opendir($dir_osencoded);
-            if (is_resource($handle))
+		    $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		    $filearray=array_merge($filearray, $filearrayold);
+		}
+
+        $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+            
+        //var_dump($filearray);
+        //var_dump($filearrayindatabase);
+        
+        // Complete filearray with properties found into $filearrayindatabase
+        foreach($filearray as $key => $val)
+        {
+            $found=0;
+            // Search if it exists into $filearrayindatabase
+            foreach($filearrayindatabase as $key2 => $val2)
             {
-    			while (($file = readdir($handle)) !== false)
-    			{
-    				$photo='';
+                if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
+                {
+                    $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
+                    $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
+                    $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
+                    $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
+                    $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
+                    $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
+                    $found=1;
+                    break;
+                }
+            }
+        }
+        
+        if (count($filearray))
+        {
+            if ($sortfield && $sortorder)
+            {
+                $filearray=dol_sort_array($filearray, $sortfield, $sortorder);
+            }
+            
+            foreach($filearray as $key => $val)
+            {
+				$photo='';
+                $file = $val['name'];
+                
+				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
-    				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
+				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
+				if (image_format_supported($file) >= 0)
+				{
+					$nbphoto++;
+					$photo = $file;
+					$viewfilename = $file;
 
-    				if (dol_is_file($dir.$file) && preg_match('/('.$this->regeximgext.')$/i', $dir.$file))
-    				{
-    					$nbphoto++;
-    					$photo = $file;
-    					$viewfilename = $file;
+					if ($size == 1 || $size == 'small') {   // Format vignette
 
-    					if ($size == 1 || $size == 'small') {   // Format vignette
+						// Find name of thumb file
+						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
+						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
+						
+						// Get filesize of original file
+						$imgarray=dol_getImageSize($dir.$photo);
 
-    						// Find name of thumb file
-    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
-    						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
-    						
-    						// Get filesize of original file
-    						$imgarray=dol_getImageSize($dir.$photo);
+						if ($nbbyrow > 0)
+						{
+							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-    						if ($nbbyrow > 0)
-    						{
-    							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
+							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+						}
+						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
-    							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
-    							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
-    						}
-    						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
+						$return.= "\n";
+						
+						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
+						if (empty($nolink)) 
+						{
+						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
+						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
+						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+						}
 
-    						$return.= "\n";
-    						
-    						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
-    						if (empty($nolink)) 
-    						{
-    						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
-    						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
-    						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
-    						}
+						// Show image (width height=$maxHeight)
+						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
+						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
+						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+						
+						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+						{
+							$return.= '<!-- Show thumb -->';
+							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+						}
+						else {
+							$return.= '<!-- Show original file -->';
+							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+						}
 
-    						// Show image (width height=$maxHeight)
-    						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
-    						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
-    						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-    						
-    						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-    						{
-    							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
-    						}
-    						else {
-    							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
-    						}
+						if (empty($nolink)) $return.= '</a>';
+						$return.="\n";
 
-    						if (empty($nolink)) $return.= '</a>';
-    						$return.="\n";
+						if ($showfilename) $return.= '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							$return.= '<br>';
+							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
+							{
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+							}
+							if ($user->rights->produit->creer || $user->rights->service->creer)
+							{
+								// Link to resize
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-    						if ($showfilename) $return.= '<br>'.$viewfilename;
-    						if ($showaction)
-    						{
-    							$return.= '<br>';
-    							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
-    							{
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
-    							}
-    							if ($user->rights->produit->creer || $user->rights->service->creer)
-    							{
-    								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		// Link to delete
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
+							}
+						}
+						$return.= "\n";
 
-    			               		// Link to delete
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-    								$return.= img_delete().'</a>';
-    							}
-    						}
-    						$return.= "\n";
+						if ($nbbyrow > 0)
+						{
+							$return.= '</td>';
+							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
+						}
+						else if ($nbbyrow < 0) $return.='</div>';
+					}
 
-    						if ($nbbyrow > 0)
-    						{
-    							$return.= '</td>';
-    							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
-    						}
-    						else if ($nbbyrow < 0) $return.='</div>';
-    					}
+					if (empty($size)) {     // Format origine
+						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
 
-    					if (empty($size)) {     // Format origine
-    						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
+						if ($showfilename) $return.= '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							if ($user->rights->produit->creer || $user->rights->service->creer)
+							{
+								// Link to resize
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-    						if ($showfilename) $return.= '<br>'.$viewfilename;
-    						if ($showaction)
-    						{
-    							if ($user->rights->produit->creer || $user->rights->service->creer)
-    							{
-    								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		// Link to delete
+			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
+							}
+						}
+					}
 
-    			               		// Link to delete
-    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-    								$return.= img_delete().'</a>';
-    							}
-    						}
-    					}
-
-    					// On continue ou on arrete de boucler ?
-    					if ($nbmax && $nbphoto >= $nbmax) break;
-    				}
-    			}
+					// On continue ou on arrete de boucler ?
+					if ($nbmax && $nbphoto >= $nbmax) break;
+				}
             }
 
 			if ($size==1 || $size=='small')
@@ -3897,8 +4071,6 @@ class Product extends CommonObject
 					if ($nbphoto) $return.= '</table>';
 				}
 			}
-
-			closedir($handle);
 		}
 
 		$this->nbphoto = $nbphoto;
@@ -3916,8 +4088,9 @@ class Product extends CommonObject
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	     
 		$nbphoto=0;
 		$tabobj=array();
 
@@ -3928,7 +4101,7 @@ class Product extends CommonObject
 			while (($file = readdir($handle)) !== false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
-				if (dol_is_file($dir.$file) && preg_match('/('.$this->regeximgext.')$/i', $dir.$file))
+				if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
 				{
 					$nbphoto++;
 
@@ -3969,8 +4142,9 @@ class Product extends CommonObject
 	 */
 	function delete_photo($file)
 	{
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	     
         $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier

@@ -58,6 +58,7 @@ TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=Novi zadatak
 AddTask=Create task
+AddTimeSpent=Create time spent
 Activity=Aktivnost
 Activities=Zadaci/aktivnosti
 MyActivities=Moji zadaci/aktivnosti

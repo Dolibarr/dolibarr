@@ -983,7 +983,7 @@ if ($action == 'create')
 			$projectid = GETPOST('projectid')?GETPOST('projectid'):$object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, $forceaddid=0, $morecss='');
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$object->thirdparty->id.(!empty($id)?'&id='.$id:'')).'">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -1575,7 +1575,7 @@ else
 		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
 		}
 
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
         	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         	{
         		$result = $db->query($sql);

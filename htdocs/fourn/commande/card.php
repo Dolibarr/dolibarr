@@ -1415,7 +1415,8 @@ if ($action=='create')
 
 	// If not defined, set default value from constant
 	if (empty($cond_reglement_id) && ! empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID)) $cond_reglement_id=$conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID;
-
+	if (empty($mode_reglement_id) && ! empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID)) $mode_reglement_id=$conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID;
+	
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -1444,6 +1445,19 @@ if ($action=='create')
 	else
 	{
 		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        // reload page to retrieve customer informations
+        if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
+        {
+            print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+        }
 	}
 	print '</td>';
 
@@ -1900,7 +1914,7 @@ elseif (! empty($object->id))
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-			if($object->statut == 0) {
+			if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
 				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 				print '</div>';
@@ -2612,6 +2626,18 @@ elseif (! empty($object->id))
 					}
 				}
 
+				if ($object->statut == 2)
+				{
+				    if ($user->rights->fournisseur->commande->commander)
+				    {
+				        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=makeorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
+				    }
+				    else
+				    {
+				        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("MakeOrder").'</a></div>';
+				    }
+				}
+				
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
@@ -2663,103 +2689,102 @@ elseif (! empty($object->id))
 		}
 
 
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-
-		/*
-		 * Documents generes
-		 */
-		$comfournref = dol_sanitizeFileName($object->ref);
-		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
-		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
-		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
-		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed=$user->rights->fournisseur->commande->creer;
-		$delallowed=$user->rights->fournisseur->commande->supprimer;
-
-		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
-		$somethingshown=$formfile->numoffiles;
-
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order','order_supplier'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
+		if ($user->rights->fournisseur->commande->commander && $object->statut == 2 && $action == 'makeorder')
 		{
-			// Set status to ordered (action=commande)
-			print '<!-- form to record supplier order -->'."\n";
-			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="commande">';
-			print load_fiche_titre($langs->trans("ToOrder"),'','');
-			print '<table class="noborder" width="100%">';
-			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
-			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-			print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
-			print '</table>';
-			print '</form>';
-			print "<br>";
+		    // Set status to ordered (action=commande)
+		    print '<!-- form to record supplier order -->'."\n";
+		    print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
+		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		    print '<input type="hidden"	name="action" value="commande">';
+		    print load_fiche_titre($langs->trans("ToOrder"),'','');
+		    print '<table class="noborder" width="100%">';
+		    //print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+		    print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
+		    $date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+		    print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
+		    print '</td></tr>';
+		
+		    print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+		    $formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
+		    print '</td></tr>';
+		
+		    print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+		    print '<tr><td align="center" colspan="2">';
+		    print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
+		    print ' &nbsp; &nbsp; ';
+		    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		    print '</td></tr>';
+		    print '</table>';
+		    print '</form>';
+		    print "<br>";
 		}
-
-		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
+		
+		
+		if ($action != 'makeorder')
 		{
-			// Set status to received (action=livraison)
-			print '<!-- form to record supplier order received -->'."\n";
-			print '<form action="card.php?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="livraison">';
-			print load_fiche_titre($langs->trans("Receive"),'','');
-			
-			print '<table class="noborder" width="100%">';
-			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
-			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $form->select_date('','',1,1,'',"commande",1,0,1);
-			print "</td></tr>\n";
-
-			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
-			$liv = array();
-			$liv[''] = '&nbsp;';
-			$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
-			$liv['par']	= $langs->trans("PartialWoman");
-			$liv['nev']	= $langs->trans("NeverReceived");
-			$liv['can']	= $langs->trans("Canceled");
-
-			print $form->selectarray("type",$liv);
-
-			print '</td></tr>';
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
-			print "</table>\n";
-			print "</form>\n";
-			print "<br>";
+    		print '<div class="fichecenter"><div class="fichehalfleft">';
+    
+    		/*
+    		 * Documents generes
+    		 */
+    		$comfournref = dol_sanitizeFileName($object->ref);
+    		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
+    		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
+    		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
+    		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    		$genallowed=$user->rights->fournisseur->commande->creer;
+    		$delallowed=$user->rights->fournisseur->commande->supprimer;
+    
+    		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
+    		$somethingshown=$formfile->numoffiles;
+    
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order','order_supplier'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+    		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    
+    		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
+    		{
+    			// Set status to received (action=livraison)
+    			print '<!-- form to record supplier order received -->'."\n";
+    			print '<form action="card.php?id='.$object->id.'" method="post">';
+    			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    			print '<input type="hidden"	name="action" value="livraison">';
+    			print load_fiche_titre($langs->trans("Receive"),'','');
+    			
+    			print '<table class="noborder" width="100%">';
+    			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+    			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
+    			print $form->select_date('','',1,1,'',"commande",1,0,1);
+    			print "</td></tr>\n";
+    
+    			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+    			$liv = array();
+    			$liv[''] = '&nbsp;';
+    			$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
+    			$liv['par']	= $langs->trans("PartialWoman");
+    			$liv['nev']	= $langs->trans("NeverReceived");
+    			$liv['can']	= $langs->trans("Canceled");
+    
+    			print $form->selectarray("type",$liv);
+    
+    			print '</td></tr>';
+    			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
+    			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
+    			print "</table>\n";
+    			print "</form>\n";
+    			print "<br>";
+    		}
+    
+            // List of actions on element
+    		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+            $formactions=new FormActions($db);
+            $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+    
+    		print '</div></div></div>';
 		}
-
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
-
-
-		// List of actions on element
-		/* Hidden because" available into "Log" tab
-		print '<br>';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
-		$somethingshown=$formactions->showactions($object,'order_supplier',$socid);
-		*/
-
-		print '</div></div></div>';
 	}
 
 	print '</td></tr></table>';

@@ -595,7 +595,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify unbilled
 	else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setStatut(1);
@@ -610,19 +610,19 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify Done
 	else if ($action == 'classifydone' && $user->rights->ficheinter->creer)
 	{
-		$result=$object->setStatut(3);
-		if ($result > 0)
-		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	    $result=$object->setStatut(3);
+	    if ($result > 0)
+	    {
+	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	        exit;
+	    }
+	    else
+	    {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
 	}
 	
 	/*
@@ -967,7 +967,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
@@ -1395,10 +1395,12 @@ else if ($id > 0 || ! empty($ref))
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td align="center">'.$langs->trans('Date').'</td>';
-				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
-				print '<td width="48" colspan="3">&nbsp;</td>';
+				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
+				print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
+				print '<td class="liste_titre" align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
+				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
 			$var=true;

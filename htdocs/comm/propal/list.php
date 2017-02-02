@@ -333,7 +333,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.=', p.ref DESC';
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

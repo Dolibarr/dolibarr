@@ -602,6 +602,29 @@ if (empty($reshook))
 		}
 	}
 
+	// Action confirmation validation
+	if ($action == 'confirm_settodraft' && $confirm == 'yes')
+	{
+		if ($object->id > 0)
+		{
+			$result = $object->setStatut(0);
+            if ($result > 0)
+            {
+    			//setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
+    			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+    			exit;
+            }
+            else
+            {
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
 	// Resend
 	if ($action == 'confirm_reset' && $confirm == 'yes')
 	{
@@ -681,9 +704,9 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
-	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth200" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
 	$parameters=array();
@@ -697,7 +720,7 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
@@ -707,7 +730,7 @@ if ($action == 'create')
 	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+	$doleditor=new DolEditor('body',$_POST['body'],'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
 	print '</div>';
 	
@@ -727,7 +750,12 @@ else
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
 
-		// Confirmation de la validation du mailing
+		// Confirmation back to draft
+		if ($action == 'settodraft')
+		{
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("SetToDraft"),$langs->trans("ConfirmUnvalidateEmailing"),"confirm_settodraft",'','',1);
+		}
+		// Confirmation validation of mailing
 		if ($action == 'valid')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
@@ -756,8 +784,9 @@ else
 				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
-				// MAILING_NO_USING_PHPMAIL may be defined or not
-				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0, MAILING_LIMIT_SENDBYCLI may be defined ot not.
+				// MAILING_NO_USING_PHPMAIL may be defined or not.
+				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
+				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
 				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
@@ -771,8 +800,8 @@ else
 				}
 				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 					// The feature is forbidden from GUI, we show just message to use from command line.
 				    setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
@@ -785,8 +814,8 @@ else
 				}
 				else
 				{
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_PHPMAIL, null, 'warnings');
-				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL, null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 				    
 				    $text='';
 				    if ($conf->global->MAILING_LIMIT_SENDBYCLI >= 0)
@@ -797,7 +826,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,270);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,300);
 				}
 			}
 
@@ -844,23 +873,28 @@ else
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if ($object->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			if ($object->statut != 3 && is_numeric($nbemail))
 			{
-				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
-				{
-					$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->textwithpicto($nbemail,$text,1,'warning');
-				}
-				else
-				{
-					$text=$langs->trans('NotEnoughPermissions');
-					print $form->textwithpicto($nbemail,$text,1,'warning');
-				}
-
-			}
-			else
-			{
-				print $nbemail;
+			    $text='';
+			    if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			    {
+    				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+    				{
+    					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+    				}
+    				else
+    				{
+    					$text.=$langs->trans('NotEnoughPermissions');
+    				}
+			    }
+				if ($text)
+    			{
+    			    print $form->textwithpicto($nbemail,$text,1,'warning');
+    			}
+    			else
+    			{
+    				print $nbemail;
+    			}
 			}
 			print '</td></tr>';
 
@@ -894,9 +928,14 @@ else
 			 * Boutons d'action
 			 */
 
-			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall','clone')))
+			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('settodraft', 'valid','delete','sendall','clone')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
+
+				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->fk_user_valid == $user->id))
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
+				}
 
 				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
 				{
@@ -1059,7 +1098,7 @@ else
 				$readonly=1;
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
+				$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
@@ -1206,7 +1245,7 @@ else
 			print '<div style="padding-top: 10px">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+			$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 			$doleditor->Create();
 			print '</div>';
 

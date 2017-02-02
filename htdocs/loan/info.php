@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,29 +43,40 @@ $result = restrictedArea($user, 'loan', $id, '','');
  * View
  */
 
-$help_url='EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$langs->trans("Loan"),$help_url);
+$title = $langs->trans("Loan") . ' - ' . $langs->trans("Info");
+$help_url = 'EN:Module_Loan|FR:Module_Emprunt';
+llxHeader("",$title,$help_url);
 
-if ($id > 0) {
-	$loan = new Loan($db);
-	$loan->fetch($id);
-	$loan->info($id);
+$object = new Loan($db);
+$object->fetch($id);
+$object->info($id);
 
-	$head = loan_prepare_head($loan);
+$head = loan_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
 
-	print '<table width="100%"><tr><td>';
-	dol_print_object_info($loan);
-	print '</td></tr></table>';
+$morehtmlref='<div class="refidno">';
+// Ref loan
+$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+$morehtmlref.='</div>';
 
-	print '</div>';
-}
-else
-{
-    // $id ?
-}
+$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+
+$object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+
+print '<table width="100%"><tr><td>';
+dol_print_object_info($object);
+print '</td></tr></table>';
+
+print '</div>';
 
 llxFooter();
-
 $db->close();

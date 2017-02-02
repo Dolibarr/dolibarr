@@ -174,6 +174,15 @@ if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 
 if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
 if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
 $sql.= $db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = '';
+/*if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}*/
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
 $result = $db->query($sql);
@@ -195,7 +204,7 @@ if ($result)
         $center='<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
     }
     
-	print_barre_liste($langs->trans("ListOfSecurityEvents").' ('.$num.')', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, 0, 'setup');
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup');
 
 	if ($action == 'purge')
 	{
@@ -204,6 +213,8 @@ if ($result)
 	}
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+
+	print '<div class="div-table-responsive">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
@@ -303,7 +314,10 @@ if ($result)
 		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
 		else print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	}
-	print "</table></form>";
+	print "</table>";
+	print "</div>";
+	
+	print "</form>";
 	$db->free($result);
 }
 else

@@ -2,6 +2,7 @@
 IdAgenda=ID de evento
 Actions=Eventos
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Calendario interno
 ActionsOwnedBy=Acontecimiento asignado a
@@ -54,6 +55,7 @@ ShipmentValidatedInDolibarr=Expedición %s validada
 ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como facturada
 ShipmentUnClassifyCloseddInDolibarr=Expedición %s clasificada como reabierta
 ShipmentDeletedInDolibarr=Expedición %s eliminada
+OrderCreatedInDolibarr=Pedido %s creado
 OrderValidatedInDolibarr=Pedido %s validado
 OrderDeliveredInDolibarr=Pedido %s clasificado como enviado
 OrderCanceledInDolibarr=Pedido %s anulado

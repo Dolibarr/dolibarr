@@ -286,10 +286,17 @@ if (empty($reshook))
 		        {
 		            $obj = $db->fetch_object($resql);
 		            $npr = $obj->recuperableonly;
-		            $localtax1 = get_localtax($tva_tx,1);
-		            $localtax2 = get_localtax($tva_tx,2);
+		            $localtax1 = $obj->localtax1;
+		            $localtax2 = $obj->localtax2;
 		            $localtax1_type = $obj->localtax1_type;
 		            $localtax2_type = $obj->localtax2_type;
+
+		            // If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule
+		            if (in_array($mysoc->country_code, array('ES')))
+		            {
+    		            $localtax1 = get_localtax($tva_tx,1);
+	   	                $localtax2 = get_localtax($tva_tx,2);
+		            }
 		        }
 		    }
 			$pricestoupdate[0] = array(
@@ -1661,7 +1668,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
 		// Count total nb of records
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -1741,7 +1748,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// List of all prices by customers
 
 		// Count total nb of records
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all($sortorder, $sortfield, 0, 0, $filter);
 		}

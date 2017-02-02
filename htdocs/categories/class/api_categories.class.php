@@ -209,7 +209,7 @@ class Categories extends DolibarrApi
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -269,8 +269,8 @@ class Categories extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->category->$field = $value;
         }
-        if($this->category->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create category : '.$this->category->error);
+        if ($this->category->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
         }
         return $this->category->id;
     }

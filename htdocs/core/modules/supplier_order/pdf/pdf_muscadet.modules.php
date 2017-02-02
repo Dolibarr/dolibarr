@@ -4,6 +4,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,8 +112,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
-			$this->posxqty=133;
-			$this->posxunit=150;
+			$this->posxqty=130;
+			$this->posxunit=147;
 		} else {
 			$this->posxtva=112;
 			$this->posxup=126;
@@ -127,6 +128,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
+			$this->posxunit-=20;
 			$this->posxdiscount-=20;
 			$this->postotalht-=20;
 		}
@@ -169,7 +171,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			$deja_regle = 0;
 			$amount_credit_notes_included = 0;
 			$amount_deposits_included = 0;
 			//$amount_credit_notes_included = $object->getSumCreditNotesUsed();
@@ -465,7 +467,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
 
@@ -1110,8 +1112,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     		{
     		    $usertmp=new User($this->db);
     		    $usertmp->fetch($arrayidcontact[0]);
+                $posy+=4;
+                $pdf->SetXY($posx,$posy);
     		    $pdf->SetTextColor(0,0,60);
-    		    $pdf->MultiCell(190, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
+    		    $pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
     		}
 		}
 		

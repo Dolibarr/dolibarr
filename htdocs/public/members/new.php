@@ -518,8 +518,8 @@ foreach($extrafields->attribute_label as $key=>$value)
 }
 // Comments
 print '<tr>';
-print '<td valign="top">'.$langs->trans("Comments").'</td>';
-print '<td valign="top"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
+print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example

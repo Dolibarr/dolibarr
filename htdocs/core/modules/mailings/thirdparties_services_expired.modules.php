@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class mailing_thirdparties_services_expired extends MailingTargets
 {
     var $name='DolibarrContractsLinesExpired';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Third parties with expired contract\'s lines';
     var $require_admin=0;
 

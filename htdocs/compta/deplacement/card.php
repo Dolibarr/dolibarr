@@ -373,7 +373,7 @@ else if ($id)
             print '</td></tr>';
 
             // Public note
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
             $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
@@ -384,7 +384,7 @@ else if ($id)
             // Private note
             if (empty($user->societe_id))
             {
-                print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+                print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
                 $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
@@ -456,7 +456,7 @@ else if ($id)
             print '</td></tr>';
 
             // Km/Price
-            print '<tr><td valign="top">';
+            print '<tr><td class="tdtop">';
             print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print '</td><td>';
             print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');

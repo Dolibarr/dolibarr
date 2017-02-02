@@ -942,18 +942,26 @@ abstract class CommonObject
 
         $result=array();
         $i=0;
+        //cas particulier pour les expeditions
+        if($this->element=='shipping' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='commande';
+        } else {
+            $id=$this->id;
+            $element=$this->element;
+        }
 
         $sql = "SELECT ec.fk_socpeople";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
         if ($source == 'internal') $sql.= " ".MAIN_DB_PREFIX."user as c,";
         if ($source == 'external') $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-        $sql.= " WHERE ec.element_id = ".$this->id;
+        $sql.= " WHERE ec.element_id = ".$id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
         if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
         if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
-        $sql.= " AND tc.element = '".$this->element."'";
+        $sql.= " AND tc.element = '".$element."'";
         $sql.= " AND tc.source = '".$source."'";
         $sql.= " AND tc.code = '".$code."'";
         $sql.= " AND tc.active = 1";
@@ -1307,7 +1315,7 @@ abstract class CommonObject
         $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-        $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->$fieldid)."'";
+        $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
@@ -1328,7 +1336,7 @@ abstract class CommonObject
         $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-        $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->$fieldid)."'";
+        $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
@@ -1929,7 +1937,10 @@ abstract class CommonObject
 	 */
 	function updateRangOfLine($rowid,$rang)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
+	    $fieldposition = 'rang';
+	    if ($this->table_element_line == 'ecm_files') $fieldposition = 'position';
+	    
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
@@ -2140,6 +2151,8 @@ abstract class CommonObject
      */
     function update_note($note,$suffix='')
     {
+        global $user;
+        
     	if (! $this->table_element)
     	{
     		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
@@ -2156,6 +2169,7 @@ abstract class CommonObject
             
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))?"fk_user_mod":"fk_user_modif")." = ".$user->id;
     	$sql.= " WHERE rowid =". $this->id;
 
     	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
@@ -2445,9 +2459,10 @@ abstract class CommonObject
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *  Possible usage for parameters:
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
-     *  - one couple id+type is provided -> this will set $justsource or $justtarget
-     *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
-     *
+     *  - source id+type -> will get target list linked to source 
+     *  - target id+type -> will get source list linked to target 
+     *  - source id+type + target type -> will get target list of the type 
+     *  - target id+type + target source -> will get source list of the type 
      *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
@@ -2553,9 +2568,9 @@ abstract class CommonObject
 
             if (! empty($this->linkedObjectsIds))
             {
-                foreach($this->linkedObjectsIds as $objecttype => $objectids)
+                foreach($this->linkedObjectsIds as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
                 {
-                    // Parse element/subelement (ex: project_task)
+                    // Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
                     $module = $element = $subelement = $objecttype;
                     if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
                         && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
@@ -2620,7 +2635,7 @@ abstract class CommonObject
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-                        //print '/'.$classpath.'/'.$classfile.'.class.php';
+                        //print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
                         if (class_exists($classname))
                         {
 	                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
@@ -2770,6 +2785,7 @@ abstract class CommonObject
         $this->db->begin();
 
         $fieldstatus="fk_statut";
+        if ($elementTable == 'mailing') $fieldstatus="statut";
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
@@ -3016,9 +3032,16 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-
-            $totalOrdered+=$line->qty_asked;    // defined for shipment only
-            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            if (isset($line->qty_asked))   
+            {
+                if (empty($totalOrdered)) $totalOrdered=0;  // Avoid warning because $totalOrdered is ''
+                $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            }
+            if (isset($line->qty_shipped)) 
+            {
+                if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
+                $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }
 
             // Define qty, weight, volume, weight_units, volume_units
             if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
@@ -3033,8 +3056,11 @@ abstract class CommonObject
             if (! empty($weight_units)) $weightUnit = $weight_units;
             if (! empty($volume_units)) $volumeUnit = $volume_units;
 
+            if (empty($totalWeight)) $totalWeight=0;  // Avoid warning because $totalWeight is ''
+            if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
+            
             //var_dump($line->volume_units);
-            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 $trueWeightUnit=pow(10, $weightUnit);
                 $totalWeight += $weight * $qty * $trueWeightUnit;
@@ -3043,7 +3069,7 @@ abstract class CommonObject
             {
                 $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
             }
-            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
                 //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
                 $trueVolumeUnit=pow(10, $volumeUnit);
@@ -3296,84 +3322,90 @@ abstract class CommonObject
 		$usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
 
-		print '<tr class="liste_titre nodrag nodrop">';
-
-		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
-
-		// Description
-		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-
-		if ($this->element == 'supplier_proposal')
-		{
-			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
-		}
-
-		// VAT
-		print '<td class="linecolvat" align="right" width="80">'.$langs->trans('VAT').'</td>';
-
-		// Price HT
-		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-
-		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
-
-		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
-
-		// Qty
-		print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
-
-		if($conf->global->PRODUCT_USE_UNITS)
-		{
-			print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
-		}
-
-		// Reduction short
-		print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
-
-		if ($this->situation_cycle_ref) {
-			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
-		}
-
-		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
-		{
-			if (!empty($user->rights->margins->creer))
-			{
-				if ($conf->global->MARGIN_TYPE == "1")
-					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
-				else
-					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';	
-			}
-			
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarkRate').'</td>';
-		}
-
-		// Total HT
-		print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
-
-		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
-
-        if ($outputalsopricetotalwithtax) print '<td align="right" width="80">'.$langs->trans('TotalTTCShort').'</td>';
-
-		print '<td class="linecoledit"></td>';  // No width to allow autodim
-
-		print '<td class="linecoldelete" width="10"></td>';
-
-		print '<td class="linecolmove" width="10"></td>';
-
-		print "</tr>\n";
-
 		$num = count($this->lines);
-		$var = true;
-		$i	 = 0;
-
+		
 		//Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
+		
+		$parameters = array('num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
+		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+    		print '<tr class="liste_titre nodrag nodrop">';
+    
+    		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
+    
+    		// Description
+    		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+    
+    		if ($this->element == 'supplier_proposal')
+    		{
+    			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
+    		}
+    
+    		// VAT
+    		print '<td class="linecolvat" align="right" width="80">'.$langs->trans('VAT').'</td>';
+    
+    		// Price HT
+    		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+    
+    		// Multicurrency
+    		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
+    
+    		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
+    
+    		// Qty
+    		print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
+    
+    		if($conf->global->PRODUCT_USE_UNITS)
+    		{
+    			print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
+    		}
+    
+    		// Reduction short
+    		print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
+    
+    		if ($this->situation_cycle_ref) {
+    			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
+    		}
+    
+    		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+    		{
+    			if (!empty($user->rights->margins->creer))
+    			{
+    				if ($conf->global->MARGIN_TYPE == "1")
+    					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+    				else
+    					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';	
+    			}
+    			
+    			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
+    				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+    			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
+    				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+    		}
+    
+    		// Total HT
+    		print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
+    
+    		// Multicurrency
+    		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
+    
+            if ($outputalsopricetotalwithtax) print '<td align="right" width="80">'.$langs->trans('TotalTTCShort').'</td>';
+    
+    		print '<td class="linecoledit"></td>';  // No width to allow autodim
+    
+    		print '<td class="linecoldelete" width="10"></td>';
+    
+    		print '<td class="linecolmove" width="10"></td>';
+    
+    		print "</tr>\n";
+		}
+		
+		$var = true;
+		$i	 = 0;
 
 		foreach ($this->lines as $line)
 		{
@@ -3392,7 +3424,7 @@ abstract class CommonObject
 				}
 				else
 				{
-					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline, 'fk_parent_line'=>$line->fk_parent_line);
                     $reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}

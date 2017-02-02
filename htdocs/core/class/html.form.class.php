@@ -1372,7 +1372,7 @@ class Form
      *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
+     *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
@@ -1396,24 +1396,20 @@ class Form
         $includeUsers=null;
 
         // Permettre l'exclusion d'utilisateurs
-        if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
+        if (is_array($exclude))	$excludeUsers = implode(",",$exclude);
         // Permettre l'inclusion d'utilisateurs
-        if (is_array($include))	$includeUsers = implode("','",$include);
+        if (is_array($include))	$includeUsers = implode(",",$include);
 		else if ($include == 'hierarchy')
 		{
 			// Build list includeUsers to have only hierarchy
-			$userid=$user->id;
-			$include=array();
-			if (empty($user->users) || ! is_array($user->users)) $user->get_full_tree();
-			foreach($user->users as $key => $val)
-			{
-				if (preg_match('/_'.$userid.'/',$val['fullpath'])) $include[]=$val['id'];
-			}
-			$includeUsers = implode("','",$include);
-			//var_dump($includeUsers);exit;
-			//var_dump($user->users);exit;
+			$includeUsers = implode(",",$user->getAllChildIds(0));
 		}
-
+		else if ($include == 'hierarchyme')
+		{
+		    // Build list includeUsers to have only hierarchy and current user
+		    $includeUsers = implode(",",$user->getAllChildIds(1));
+		}
+		
         $out='';
 
         // On recherche les utilisateurs
@@ -1443,8 +1439,8 @@ class Form
         	}
         }
         if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
-        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
-        if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
+        if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
         if (! empty($morefilter)) $sql.=" ".$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
@@ -3445,7 +3441,7 @@ class Form
                         foreach($input['values'] as $selkey => $selval)
                         {
                             $more.='<tr>';
-                            if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+                            if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
                             $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';
@@ -4257,7 +4253,7 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.code, t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
@@ -4273,6 +4269,7 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['rowid']	= $obj->rowid;
     				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
     				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
@@ -4302,9 +4299,9 @@ class Form
      *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
      *  @param  Societe	      $societe_vendeuse   Thirdparty seller
      *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
-     *  @param  int		      $idprod             Id product
+     *  @param  int		      $idprod             Id product. O if unknown of NA.
      *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
-     *  @param  int		      $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *                  		                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  					      Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  					      Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -4312,10 +4309,10 @@ class Form
 	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
-     *  @param  int          $addcode             Add code into key in select list
+     *  @param  int          $mode                1=Add code into key in select list
      *  @return	string
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $mode=0)
     {
         global $langs,$conf,$mysoc;
 
@@ -4427,10 +4424,13 @@ class Form
         		// Keep only 0 if seller is not subject to VAT
         		if ($disabled && $rate['txtva'] != 0) continue;
 
-        		$return.= '<option value="'.$rate['txtva'];
-        		$return.= $rate['nprtva'] ? '*': '';
-        		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
-        		$return.= '"';
+        		// Define key to use into select list
+        		$key = $rate['txtva'];
+        		$key.= $rate['nprtva'] ? '*': '';
+        		if ($mode > 0 && $rate['code']) $key.=' ('.$rate['code'].')';
+        		if ($mode < 0) $key = $rate['rowid'];
+        		
+        		$return.= '<option value="'.$key.'"';
         		if (! $selectedfound)
         		{
             		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
@@ -4857,12 +4857,13 @@ class Form
      * 	@param	int				$disabled		Html select box is disabled
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
-     *  @param	int				$addjscombo		Add js combo
+     *  @param	int				$addjscombo		    Add js combo
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
-     * 	@return	string							HTML select string.
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry. 
+     * 	@return	string							    HTML select string.
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='')
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0)
     {
         global $conf, $langs;
 
@@ -4907,7 +4908,10 @@ class Form
         	// Translate
         	if ($translate)
         	{
-	        	foreach($array as $key => $value) $array[$key]=$langs->trans($value);
+	        	foreach($array as $key => $value) 
+	        	{
+	        	    $array[$key]=$langs->trans($value);
+	        	}
         	}
 
         	// Sort
@@ -4916,8 +4920,19 @@ class Form
 
             foreach($array as $key => $value)
             {
+                $disabled=''; $style='';
+                if (! empty($disablebademail))
+                {
+                    if (! preg_match('/&lt;.+@.+&gt;/', $value))
+                    {
+                        //$value=preg_replace('/'.preg_quote($a,'/').'/', $b, $value);
+                        $disabled=' disabled';
+                        $style=' class="warning"';
+                    }
+                }
                 $out.='<option value="'.$key.'"';
-                if ($id != '' && $id == $key) $out.=' selected';		// To preselect a value
+                $out.=$style.$disabled;
+                if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
                 $out.='>';
 
                 if ($key_in_label)
@@ -4929,6 +4944,7 @@ class Form
                     $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
                     if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
+                //var_dump($selectOptionValue);
                 $out.=$selectOptionValue;
                 $out.="</option>\n";
             }
@@ -5375,6 +5391,7 @@ class Form
         		        global $noMoreLinkedObjectBlockAfter;
         		        $noMoreLinkedObjectBlockAfter=1;
         		    }
+
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res)
         			{
@@ -5423,7 +5440,27 @@ class Form
 			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
 		);
-
+		
+		global $action;
+		
+		// Can complet the possiblelink array
+		$hookmanager->initHooks(array('commonobject'));
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+		        $possiblelinks=array_merge($possiblelinks, $hookmanager->resArray);
+		    }
+		}
+		else if ($reshook > 0)
+		{
+		    if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
+		    {
+                $possiblelinks=$hookmanager->resArray;
+		    }
+		}
 
 		foreach($possiblelinks as $key => $possiblelink)
 		{
@@ -5435,6 +5472,7 @@ class Form
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
 				$sql = $possiblelink['sql'];
+
 				$resqllist = $this->db->query($sql);
 				if ($resqllist)
 				{
@@ -5450,7 +5488,7 @@ class Form
 					print '<td class="nowrap"></td>';
 					print '<td align="center">' . $langs->trans("Ref") . '</td>';
 					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td align="right">' . $langs->trans("AmountHTShort") . '</td>';
 					print '<td align="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
 					while ($i < $num)
@@ -5464,7 +5502,7 @@ class Form
 						print '</td>';
 						print '<td align="center">' . $objp->ref . '</td>';
 						print '<td>' . $objp->ref_client . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td align="right">' . price($objp->total_ht) . '</td>';
 						print '<td>' . $objp->name . '</td>';
 						print '</tr>';
 						$i++;
@@ -5617,18 +5655,18 @@ class Form
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
-     *    @param	object	$object			Object to show
-     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
-     *    @param	string	$morehtml  		More html content to output just before the nav bar
-     *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field)
+     *    @param	object	$object			Object to show.
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
+     *    @param	string	$morehtml  		More html content to output just before the nav bar.
+     *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field).
      *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
-     *    @param	string	$morehtmlref  	More html to show after ref
-     *    @param	string	$moreparam  	More param to add in nav link url.
-     *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     *	  @param	string	$morehtmlleft	More html code to show before ref
-     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
-     *	  @param	string	$morehtmlright	More html code to show after ref
+     *    @param	string	$morehtmlref  	More html to show after ref.
+     *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.
+     *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name.
+     *	  @param	string	$morehtmlleft	More html code to show before ref.
+     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place).
+     *	  @param	string	$morehtmlright	More html code to show after ref.
      * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
@@ -5641,11 +5679,16 @@ class Form
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-
-        //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
-        //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
-        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
-        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
+        
+        $navurl = $_SERVER["PHP_SELF"];
+        // Special case for project/task page
+        if ($paramid == 'project_ref')
+        {
+            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document).php/','/tasks.php',$navurl);
+            $paramid='ref';
+        }
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&lt;':'&nbsp;').'</span>';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</a>':'<span class="inactive">'.(($conf->dol_use_jmobile != 4)?'&gt;':'&nbsp;').'</span>';
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<!-- Start banner content --><div style="vertical-align: middle">';
@@ -5860,7 +5903,7 @@ class Form
 	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,3)).'">';	// gravatar need md5 hash
                 }
                 else
 				{

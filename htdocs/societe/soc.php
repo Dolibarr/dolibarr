@@ -290,9 +290,8 @@ if (empty($reshook))
         else
         {
             $object->name              = GETPOST('name', 'alpha');
-	        $object->name_alias   = GETPOST('name_alias');
         }
-
+        $object->name_alias            = GETPOST('name_alias');
         $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
@@ -515,8 +514,8 @@ if (empty($reshook))
                 }
                 else
 				{
-					
-					if($result == -3) {
+				    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
 						$object->code_client = null;
@@ -920,7 +919,6 @@ else
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
-							$("#name_alias").show();
                         	$("#effectif_id").val(0);
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
@@ -928,7 +926,6 @@ else
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
-							$("#name_alias").hide();
                         	$("#effectif_id").val(id_ef15);
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
@@ -970,7 +967,7 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type").'>';
-        print '<input type="hidden" name="LastName" value="'.$langs->trans('LastName').'">';
+        print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
@@ -982,11 +979,11 @@ else
 	    print '<tr><td class="titlefieldcreate">';
         if ($object->particulier || $private)
         {
-	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('LastName','name').'</span>';
+	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName','name').'</span>';
         }
         else
 		{
-			print '<span span id="TypeName" class="fieldrequired">'.fieldLabel('ThirdPartyName','name').'</span>';
+			print '<span id="TypeName" class="fieldrequired">'.fieldLabel('ThirdPartyName','name').'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
 	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
@@ -1311,10 +1308,15 @@ else
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
-        if ($backtopage)
+        if (! empty($backtopage))
         {
-            print ' &nbsp; ';
+            print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+        }
+        else
+        {
+            print ' &nbsp; &nbsp; ';
+            print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
         }
         print '</div>'."\n";
 
@@ -1901,7 +1903,7 @@ else
 
             print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
@@ -2242,7 +2244,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
@@ -2520,7 +2522,7 @@ else
 
 	            $var=true;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

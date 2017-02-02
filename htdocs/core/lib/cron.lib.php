@@ -92,14 +92,16 @@ function dol_print_cron_urls()
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	// Cron launch
+	print '<div class="div-table-responsive-no-min">';
 	print '<u>'.$langs->trans("URLToLaunchCronJobs").':</u><br>';
 	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
 	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-	print '<br>';
-
+    print '</div>';
+    print '<br>';
+    
 	$logintouse = 'firstadmin';
 	if ($user->admin) $logintouse = $user->login;
 	
@@ -110,21 +112,24 @@ function dol_print_cron_urls()
 	print '<br>';
 
 	// Add note
-	$linuxlike=1;
-	if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
-	if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
-	print $langs->trans("Note").': ';
-	if ($linuxlike)
+	if (empty($conf->global->CRON_DISABLE_TUTORIAL_CRON))
 	{
-		print $langs->trans("CronExplainHowToRunUnix");
-		print '<br>';
-		print '<textarea class="quatrevingtpercent">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+    	$linuxlike=1;
+    	if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
+    	if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
+    	print $langs->trans("Note").': ';
+    	if ($linuxlike)
+    	{
+    		print $langs->trans("CronExplainHowToRunUnix");
+    		print '<br>';
+    		print '<textarea class="quatrevingtpercent">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+    	}
+    	else
+    	{
+    		print $langs->trans("CronExplainHowToRunWin");
+    	}
 	}
-	else
-	{
-		print $langs->trans("CronExplainHowToRunWin");
-	}
-
+	
 	return 0;
 }
 

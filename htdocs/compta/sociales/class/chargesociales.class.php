@@ -510,7 +510,7 @@ class ChargeSociales extends CommonObject
     function info($id)
     {
         $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
-        $sql.= " fk_user_author, fk_user_modif, fk_user_valid";
+        $sql.= " e.fk_user_author, e.fk_user_modif, e.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
@@ -543,7 +543,7 @@ class ChargeSociales extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                if (! empty($obj->fk_user_modif))	$this->date_modification = $this->db->jdate($obj->datem);
+                $this->date_modification = $this->db->jdate($obj->datem);
                 $this->date_validation   = $this->db->jdate($obj->datev);
                 $this->import_key        = $obj->import_key;
             }

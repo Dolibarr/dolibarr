@@ -919,7 +919,19 @@ if (empty($reshook))
 			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 		}
 	}
-	
+
+	/*
+	 * Send mail
+	 */
+
+	// Actions to send emails
+	$actiontypecode='AC_CONT';
+	$trigger_name='CONTRACT_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromcontract';
+	$trackid='cont'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
 	{
 		if ($action == 'addcontact')
@@ -1161,14 +1173,14 @@ if ($action == 'create')
         print "</td></tr>";
     }
 
-    print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+    print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
     $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
     print $doleditor->Create(1);
     print '</td></tr>';
 
     if (empty($user->societe_id))
     {
-        print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+        print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
         $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
@@ -1470,11 +1482,11 @@ else
 
                 $objp = $db->fetch_object($result);
 
-                $var=!$var;
+                //$var=!$var;
 
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
-                    print '<tr '.$bc[$var].' valign="top">';
+                    print '<tr '.$bcnd[$var].' valign="top">';
                     // Libelle
                     if ($objp->fk_product > 0)
                     {
@@ -1563,7 +1575,7 @@ else
 		                    $colspan = 7;
 	                    }
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr '.$bcnd[$var].'>';
                         print '<td colspan="'.$colspan.'">';
 
                         // Date planned
@@ -1599,10 +1611,10 @@ else
 
                     // Display lines extrafields
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bcnd[$var].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
                 }
@@ -1610,7 +1622,7 @@ else
                 else
                 {
                     // Ligne carac
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bcnd[$var].">";
                     print '<td>';
                     if ($objp->fk_product)
                     {
@@ -1664,7 +1676,7 @@ else
 	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
-                    print "<tr ".$bc[$var].">";
+                    print "<tr ".$bcnd[$var].">";
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
@@ -1673,10 +1685,10 @@ else
                     print '</td>';
 
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
-                    	print '<tr '.$bc[$var].'>';
+                    	print '<tr '.$bcnd[$var].'>';
                     	$line = new ContratLigne($db);
                     	$line->fetch_optionals($objp->rowid,$extralabelslines);
-                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
 
@@ -1692,7 +1704,7 @@ else
 
             if ($object->statut > 0)
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
                 print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium"></td>';
                 print "</tr>\n";
             }
@@ -1761,7 +1773,7 @@ else
             {
                 print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
                 print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
                 print '<td width="30" align="right">';
                 if ($user->societe_id == 0)
@@ -1769,10 +1781,18 @@ else
                     if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')
                     {
                         $tmpaction='activateline';
-                        if ($objp->statut == 4) $tmpaction='unactivateline';
-						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) {
+                        $tmpactionpicto='play';
+                        $tmpactiontext=$langs->trans("Activate");
+                        if ($objp->statut == 4) 
+                        {
+                            $tmpaction='unactivateline';
+                            $tmpactionpicto='playstop';
+                            $tmpactiontext=$langs->trans("Unactivate");
+                        }
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) 
+						{
 							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
-							print img_edit();
+							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
                     }
@@ -1780,7 +1800,7 @@ else
                 print '</td>';
                 print "</tr>\n";
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bcnd[$var].'>';
 
                 print '<td>';
                 // Si pas encore active
@@ -1903,7 +1923,7 @@ else
                 print '</td>';
 
                 print '<td align="right" rowspan="2" class="nohover">';
-                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
@@ -2026,37 +2046,164 @@ else
 
             print "</div>";
         }
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
-        print '<div class="fichecenter"><div class="fichehalfleft">';
+	if ($action != 'presend')
+	{
+		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-        /*
-         * Documents generes
-        */
-        $filename = dol_sanitizeFileName($object->ref);
-        $filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
-        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-        $genallowed = $user->rights->contrat->creer;
-        $delallowed = $user->rights->contrat->supprimer;
+		/*
+		 * Documents generes
+		*/
+		$filename = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+		$genallowed = $user->rights->contrat->creer;
+		$delallowed = $user->rights->contrat->supprimer;
 
-        $var = true;
+		$var = true;
 
-        print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
-
-        
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
-        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			// Show links to link elements
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'contract', $socid);
-        
-        
-        print '</div></div></div>';
+
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid);
+
+
+		print '</div></div></div>';
+	}
+
+		/*
+		 * Action presend
+		 */
+		if ($action == 'presend')
+		{
+			$object->fetch_projet();
+
+			$ref = dol_sanitizeFileName($object->ref);
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+			$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
+
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+				$newlang = $object->thirdparty->default_lang;
+
+			if (!empty($newlang))
+			{
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('commercial');
+			}
+
+			// Build document if it not exists
+			if (! $file || ! is_readable($file)) {
+				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result <= 0) {
+					dol_print_error($db, $object->error, $object->errors);
+					exit();
+				}
+				$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+				$file = $fileparams['fullname'];
+			}
+
+			print '<div class="clearboth"></div>';
+			print '<br>';
+			print load_fiche_titre($langs->trans('SendContractByMail'));
+
+			dol_fiche_head('');
+
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
+            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+            if($formmail->fromtype === 'user'){
+                $formmail->fromid = $user->id;
+
+            }
+			$formmail->trackid='ord'.$object->id;
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+			{
+				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
+			}
+			$formmail->withfrom = 1;
+			$liste = array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
+				$liste [$key] = $value;
+			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
+			$formmail->withtocc = $liste;
+			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+			if (empty($object->ref_client)) {
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__');
+			} else if (! empty($object->ref_client)) {
+				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__ (__REFCLIENT__)');
+			}
+			$formmail->withfile = 2;
+			$formmail->withbody = 1;
+			$formmail->withdeliveryreceipt = 1;
+			$formmail->withcancel = 1;
+			// Tableau des substitutions
+			$formmail->setSubstitFromObject($object);
+			$formmail->substit ['__CONTRACTREF__'] = $object->ref;
+
+			$custcontact = '';
+			$contactarr = array();
+			$contactarr = $object->liste_contact(- 1, 'external');
+
+			if (is_array($contactarr) && count($contactarr) > 0)
+			{
+				foreach ($contactarr as $contact)
+				{
+					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
+						$contactstatic = new Contact($db);
+						$contactstatic->fetch($contact ['id']);
+						$custcontact = $contactstatic->getFullName($langs, 1);
+					}
+				}
+
+				if (! empty($custcontact)) {
+					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
+				}
+			}
+
+			// Tableau des parametres complementaires
+			$formmail->param['action'] = 'send';
+			$formmail->param['models'] = 'contract_send';
+			$formmail->param['models_id']=GETPOST('modelmailselected','int');
+			$formmail->param['contractid'] = $object->id;
+			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+
+			// Init list of files
+			if (GETPOST("mode") == 'init') {
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
+			}
+
+			// Show form
+			print $formmail->get_form();
+
+			dol_fiche_end();
+		}
+
     }
 }
 

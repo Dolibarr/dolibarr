@@ -174,19 +174,16 @@ class Users extends DolibarrApi
 	    if (!isset($request_data["lastname"]))
 	         throw new RestException(400, "lastname field missing");*/
 	    //assign field values
-        $xxx=var_export($request_data, true);
-        dol_syslog("xxx=".$xxx);
         foreach ($request_data as $field => $value)
 	    {
 	          $this->useraccount->$field = $value;
 	    }
-	    
-        $result = $this->useraccount->create(DolibarrApiAccess::$user);
-	    if ($result <=0) {
-	         throw new RestException(500, "User not created : ".$this->useraccount->error);
+
+	    if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
+             throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
 	    }
-	    return array('id'=>$result);
-    }                
+	    return $this->useraccount->id;
+    }
 	
     
 	/**

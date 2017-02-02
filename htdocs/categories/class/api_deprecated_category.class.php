@@ -124,7 +124,7 @@ class CategoryApi extends DolibarrApi
         $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -205,7 +205,7 @@ class CategoryApi extends DolibarrApi
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -395,7 +395,7 @@ class CategoryApi extends DolibarrApi
             $this->category->$field = $value;
         }
         if($this->category->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create category : '.$this->category->error);
+            throw new RestException(500, 'Error when create category : '.$this->category->error);
         }
         return $this->category->id;
     }

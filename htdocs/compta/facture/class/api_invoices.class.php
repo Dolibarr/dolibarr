@@ -203,9 +203,8 @@ class Invoices extends DolibarrApi
             $this->invoice->lines = $lines;
         }*/
         
-        if ($this->invoice->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->invoice->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating invoice", array_merge(array($this->invoice->error), $this->invoice->errors));
         }
         return $this->invoice->id;
     }

@@ -169,14 +169,15 @@ $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,"
 if ($id > 0) $sql.= " d.fk_product,";
 if ($id > 0) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " SUM(d.total_ht) as selling_price,";
+// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql.= " SUM(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
 $sql.= " SUM(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = d.fk_product";
-$sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.fk_soc = s.rowid";
+$sql.= " WHERE f.fk_soc = s.rowid";
+$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
@@ -201,8 +202,13 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',0,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',$num,$num,'');
 
+	if ($conf->global->MARGIN_TYPE == "1")
+	    $labelcostprice=$langs->trans('BuyingPrice');
+	else   // value is 'costprice' or 'pmp'
+	    $labelcostprice=$langs->trans('CostPrice');
+	    
 	$moreforfilter='';
 	
 	$i = 0;
@@ -215,9 +221,11 @@ if ($result)
   		print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$id,'align="center"',$sortfield,$sortorder);
   	}
   	else
+  	{
   		print_liste_field_titre($langs->trans("ProductService"),$_SERVER["PHP_SELF"],"p.ref","","&amp;id=".$id,'',$sortfield,$sortorder);
+  	}
 	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
@@ -301,16 +309,10 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	/*if ($totalMargin < 0)
-	{
-		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-	}
-	else
-	{*/
-		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-	//}
+
+	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+	$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+
 	print '<tr class="liste_total">';
 	if ($id > 0)
 		print '<td colspan=2>';

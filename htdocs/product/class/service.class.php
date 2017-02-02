@@ -29,14 +29,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Service extends CommonObject
 {
-	var $libelle;
-	var $price;
-	var $tms;
-	var $debut;
-	var $fin;
+	public $libelle;
+	public $price;
+	public $tms;
+	public $debut;
+	public $fin;
 
-	var $debut_epoch;
-	var $fin_epoch;
+	public $debut_epoch;
+	public $fin_epoch;
 
 	/**
 	*  Constructor

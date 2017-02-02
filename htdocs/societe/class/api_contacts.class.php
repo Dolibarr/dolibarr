@@ -192,7 +192,10 @@ class Contacts extends DolibarrApi
 		{
 			$this->contact->$field = $value;
 		}
-		return $this->contact->create(DolibarrApiAccess::$user);
+		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
+		    throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
+		}
+		return $this->contact->id;
 	}
 
 	/**

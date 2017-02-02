@@ -174,7 +174,7 @@ if ($result)
 		{
 			print '<td align="center">';
 			$nbemail = $obj->nbemail;
-			if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 				print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -182,7 +182,8 @@ if ($result)
 			else
 			{
 				print $nbemail;
-			}
+			}*/
+			print $nbemail;
 			print '</td>';
 		}
 		// Last send

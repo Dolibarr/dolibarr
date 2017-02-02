@@ -47,15 +47,25 @@ switch ($action)
 
 
 	case 'valide_achat':
-
+        
+	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+	    
 		$company=new Societe($db);
-		$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+		$company->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
 		$invoice->type= Facture::TYPE_STANDARD;
+		
+		// TODO
+		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
+		// and restore after values just after
+		
 		$num=$invoice->getNextNumRef($company);
 
+		// TODO Restore save values
+		
+		
 		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);

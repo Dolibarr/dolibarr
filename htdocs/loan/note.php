@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +22,8 @@
 
 /**
  *   \file       htdocs/loan/note.php
- *   \brief      Tab for notes on loan
  *   \ingroup    loan
+ *   \brief      Tab for notes on loan
  */
 
 require '../main.inc.php';
@@ -56,42 +57,39 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Loan"),'');
+$title = $langs->trans("Loan") . ' - ' . $langs->trans("Notes");
+$help_url = 'EN:Module_Loan|FR:Module_Emprunt';
+llxHeader("",$title,$help_url);
 
 if ($id > 0)
 {
     /*
      * Affichage onglets
      */
+	$totalpaid=$object->getSumPayment();
 
     $head = loan_prepare_head($object);
 
     dol_fiche_head($head, 'note', $langs->trans("Loan"), 0, 'bill');
 
+	$morehtmlref='<div class="refidno">';
+	// Ref loan
+	$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+	$morehtmlref.='</div>';
 
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
 
-    print '<table class="border" width="100%">';
+	$object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-    // Ref
-    print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($object,'id','',1,'rowid','ref');
-    print '</td></tr>';
-    // Name
-    print '<tr><td>'.$langs->trans("Name").'</td>';
-    print '<td colspan="3">'.$object->label.'</td></tr>';
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
-    print "</table>";
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<br>';
-
-    //$colwidth='25';
     $cssclass='titlefield';
     $permission = $user->rights->loan->write;  // Used by the include of notes.tpl.php
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
 
     dol_fiche_end();
 }

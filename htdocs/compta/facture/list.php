@@ -229,6 +229,103 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+if ($massaction == 'withdrawrequest')
+{
+    $langs->load("withdrawals");
+    
+    if (!$user->rights->prelevement->bons->creer)
+    {
+        $error++;
+        setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+    }
+    else 
+    {
+        //Checking error
+        $error = 0;
+        	
+	    $arrayofselected=is_array($toselect)?$toselect:array();
+        $listofbills=array();
+        foreach($arrayofselected as $toselectid)
+        {
+            $objecttmp=new Facture($db);
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $totalpaye  = $objecttmp->getSommePaiement();
+                $totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
+                $totaldeposits = $objecttmp->getSumDepositsUsed();
+                $objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+                $listofbills[] = $objecttmp;
+                if($objecttmp->paye || $objecttmp->resteapayer==0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+                } else if($objecttmp->resteapayer<0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+                }
+                if(!($objecttmp->statut > Facture::STATUS_DRAFT)){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+                }
+                	
+                $rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+                $rsql .= " , pfd.date_traite as date_traite";
+                $rsql .= " , pfd.amount";
+                $rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+                $rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+                $rsql .= " , ".MAIN_DB_PREFIX."user as u";
+                $rsql .= " WHERE fk_facture = ".$objecttmp->id;
+                $rsql .= " AND pfd.fk_user_demande = u.rowid";
+                $rsql .= " AND pfd.traite = 0";
+                $rsql .= " ORDER BY pfd.date_demande DESC";
+
+                $result_sql = $db->query($rsql);
+                if ($result_sql)
+                {
+                    $numprlv = $db->num_rows($result_sql);
+                }
+                	
+                if($numprlv>0){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
+                }
+                if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
+                    $error++;
+                    setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+                }
+                	
+            }
+        }
+
+        //Massive withdraw request
+        if(!empty($listofbills) && empty($error))
+        {
+            $nbwithdrawrequestok=0;
+            foreach($listofbills as $aBill)
+            {
+                $db->begin();
+                $result = $aBill->demande_prelevement($user, $aBill->resteapayer);
+                if ($result > 0)
+                {
+                    $db->commit();
+                    $nbwithdrawrequestok++;
+                }
+                else
+                {
+
+                    $db->rollback();
+                    setEventMessages($aBill->error, $aBill->errors, 'errors');
+                }
+            }
+            if ($nbwithdrawrequestok > 0)
+            {
+                setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+            }   
+        }
+    }
+
+}
+
     
 
 /*
@@ -402,7 +499,7 @@ $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -460,8 +557,13 @@ if ($resql)
 
 	$arrayofmassactions=array(
 	    'presend'=>$langs->trans("SendByMail"),
-	    'builddoc'=>$langs->trans("PDFMerge")
+	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
+	if ($conf->prelevement->enabled)
+	{
+	   $langs->load("withdrawals");
+	   $arrayofmassactions['withdrawrequest']=$langs->trans("MakeWithdrawRequest");
+	}
 	if ($user->rights->facture->supprimer) 
 	{
 	    //if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) || empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
@@ -587,7 +689,7 @@ if ($resql)
         
         dol_fiche_end();
 	}
-	
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -867,18 +969,20 @@ if ($resql)
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
-            $facturestatic->type=$obj->type;
             $facturestatic->note_public=$obj->note_public;
             $facturestatic->note_private=$obj->note_private;
+
+            $paiement = $facturestatic->getSommePaiement();
+            $totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
+            $totaldeposits = $facturestatic->getSumDepositsUsed();
+            $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
+            $remaintopay = $obj->total_ttc - $totalpay;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
-    
-                $paiement = $facturestatic->getSommePaiement();
-				$remaintopay = $obj->total_ttc - $paiement;
-    
+
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
                 print '<td class="nobordernopadding nowrap">';
@@ -1028,10 +1132,10 @@ if ($resql)
 
             if (! empty($arrayfields['dynamount_payed']['checked']))
             {
-                print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
+                print '<td align="right">'.(! empty($totalpay)?price($totalpay,0,$langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
-    		    $totalarray['totalam'] += $paiement;
+    		    $totalarray['totalam'] += $totalpay;
             }
 
             if (! empty($arrayfields['rtp']['checked']))

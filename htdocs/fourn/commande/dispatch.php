@@ -6,6 +6,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry         <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -368,7 +369,7 @@ if ($id > 0 || ! empty($ref)) {
 		print "</td></tr>";
 
 		if ($object->methode_commande) {
-			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->methode_commande . '</td></tr>';
+			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->getInputMethod() . '</td></tr>';
 		}
 	}
 
@@ -625,9 +626,9 @@ if ($id > 0 || ! empty($ref)) {
 		// Message if nothing to dispatch
 		if (! $nbproduct) {
 			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
-				print $langs->trans("NoPredefinedProductToDispatch");		// No predefined line at all
+				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
 			else 
-				print $langs->trans("NoMorePredefinedProductToDispatch");	// No predefined line that remain to be dispatched.
+				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';

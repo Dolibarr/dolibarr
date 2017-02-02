@@ -17,18 +17,19 @@
  *
  * Javascript code to activate drag and drop on lines
  * You can use this if you want to be abale to drag and drop rows of a table.
- * You must add id="tablelines" on table level tag and have count($object->lines) or count($taskarray) > 0
+ * You must add id="tablelines" on table level tag and have ($nboflines or count($object->lines) or count($taskarray) > 0)
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on tables -->
 <?php
 $id=$object->id;
 $fk_element=$object->fk_element;
-$table_element_line=$object->table_element_line;
-$nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):0));
+$table_element_line=(empty($table_element_line)?$object->table_element_line:$table_element_line);
+$nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):(empty($nboflines)?0:$nboflines)));
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
+$filepath=(empty($filepath)?'':$filepath);
 
 if (GETPOST('action') != 'editline' && $nboflines > 1) { ?>
 <script type="text/javascript">
@@ -43,16 +44,19 @@ $(document).ready(function(){
     $("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
+			console.log($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
 			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
+			var filepath = "<?php echo urlencode($filepath); ?>";
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,
 						table_element_line: table_element_line,
 						fk_element: fk_element,
-						element_id: element_id
+						element_id: element_id,
+						filepath: filepath
 					},
 					function() {
 						if (reloadpage == 1) {

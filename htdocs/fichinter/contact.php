@@ -45,7 +45,11 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
 $result = $object->fetch($id,$ref);
-
+if (! $result)
+{
+    print 'Record not found';
+    exit;
+}
 
 /*
  * Adding a new contact
@@ -166,7 +170,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	$morehtmlref.='</div>';
 	
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, 0, 0, '', '', 1);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 	    
 	dol_fiche_end();
 	

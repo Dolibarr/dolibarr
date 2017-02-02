@@ -190,9 +190,8 @@ class Proposals extends DolibarrApi
           }
           $this->propal->lines = $lines;
         }*/
-        if ($this->propal->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->propal->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
         }
         
         return $this->propal->id;

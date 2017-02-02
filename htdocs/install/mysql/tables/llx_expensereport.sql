@@ -35,7 +35,7 @@ CREATE TABLE llx_expensereport (
   date_refuse 		datetime,
   date_cancel 		datetime,
   tms 		 		timestamp,
-  fk_user_author 	integer NOT NULL,
+  fk_user_author 	integer NOT NULL,				-- not the user author but the user the expense report is for
   fk_user_modif 	integer DEFAULT NULL,
   fk_user_valid 	integer DEFAULT NULL,
   fk_user_validator integer DEFAULT NULL,

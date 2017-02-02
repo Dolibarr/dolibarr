@@ -54,6 +54,7 @@ class CMailFile
 	var $deliveryreceipt;
 
 	var $eol;
+	var $eol2;
 	var $atleastonefile=0;
 	var $error='';
 
@@ -103,7 +104,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string
-	 *  @param  string  $moreinheader        More in header (for phpmail only for the moment)
+	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
 	 */
 	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='')
 	{
@@ -117,6 +118,7 @@ class CMailFile
 		{
 			$this->eol="\n";
 			$this->eol2="\n";
+			$moreinheader = str_replace("\r\n","\n",$moreinheader);
 		}
 
 		// On defini mixed_boundary
@@ -151,6 +153,8 @@ class CMailFile
 		{
 			$this->msgishtml = $msgishtml;
 		}
+
+		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
 		// Detect images
 		if ($this->msgishtml)
@@ -206,9 +210,10 @@ class CMailFile
 			$this->addr_bcc = $addr_bcc;
 			$this->deliveryreceipt = $deliveryreceipt;
 			$this->trackid = $trackid;
+			
 			$smtp_headers = $this->write_smtpheaders();
-            if (! empty($moreinheader)) $smtp_headers.=$moreinheader;
-            
+            if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
+
 			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
@@ -268,7 +273,9 @@ class CMailFile
 			$smtps->setFrom($this->getValidAddress($from,0,1));
 			$smtps->setTrackId($trackid);
 			$smtps->setReplyTo($this->getValidAddress($from,0,1));   // Set property with this->smtps->setReplyTo after constructor if you want to use another value than the From
-					
+
+			if (! empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
+
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -322,7 +329,8 @@ class CMailFile
 			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
 			$this->phpmailer->SetReplyTo($this->getValidAddress($from,0,1));   // Set property with this->phpmailer->setReplyTo after constructor if you want to use another value than the From
 			// TODO Add trackid into smtp header
-
+			// TODO if (! empty($moreinheader)) ...
+					
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -363,7 +371,9 @@ class CMailFile
         {
             // Use Swift Mailer library
             // ------------------------------------------
-
+            
+            $host = dol_getprefix('email');
+            
             require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
             // Create the message
             $this->message = Swift_Message::newInstance();
@@ -371,11 +381,12 @@ class CMailFile
             // Adding a trackid header to a message
             $headers = $this->message->getHeaders();
             $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
-            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $conf->global->MAIN_MAIL_SMTP_SERVER;
+            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
             $msgid = $headers->get('Message-ID');
             $msgid->setId($headerID);
             $headers->addIdHeader('References', $headerID);
-
+            // TODO if (! empty($moreinheader)) ...
+            
             // Give the message a subject
             $this->message->setSubject($this->encodetorfc2822($subject));
 
@@ -471,34 +482,43 @@ class CMailFile
                 'maildao'
             ));
             $reshook = $hookmanager->executeHooks('doactions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-            if (! empty($reshook)) 
+            if (! empty($reshook))
             {
                 $this->error = "Error in hook maildao doactions " . $reshook;
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_ERR);
-                
+
                 return $reshook;
             }
 
             // Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
-            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=10;
-            $tmparray = explode(',', $this->addr_to);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL=10;
+            $tmparray1 = explode(',', $this->addr_to);
+            if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in to:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_cc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL=10;
+            $tmparray2 = explode(',', $this->addr_cc);
+            if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in cc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
-            $tmparray = explode(',', $this->addr_bcc);
-            if (count($tmparray) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL=10;
+            $tmparray3 = explode(',', $this->addr_bcc);
+            if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)
             {
                 $this->error = 'Too much recipients in bcc:';
+                dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
+                return false;
+            }
+            if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=10;
+            if ((count($tmparray1)+count($tmparray2)+count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)
+            {
+                $this->error = 'Too much recipients in to:, cc:, bcc:';
                 dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_WARNING);
                 return false;
             }
@@ -531,26 +551,29 @@ class CMailFile
 				}
 				else
 				{
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-
-					$bounce = '';	// By default
+					$additionnalparam = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
 						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
 						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
-						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
+						// Having this variable defined may create problems with some sendmail (option -f refused)
+						// Having this variable not defined may create problems with some other sendmail (option -f required)
+						$additionnalparam .= ($additionnalparam?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
                     if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
                     {
-                        $bounce .= ($bounce?' ':'').'-ba';
+                        $additionnalparam .= ($additionnalparam?' ':'').'-ba';
                     }
 
+                    if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam?' ':'').'-U '.$additionnalparam; // Use -U to add additionnal params
+                    
+                    dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
+                    
 					$this->message=stripslashes($this->message);
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if (! empty($additionnalparam)) $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers, $additionnalparam);
 					else $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers);
 
 					if (! $res)
@@ -865,7 +888,7 @@ class CMailFile
 
 		// Receiver
 		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol2;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;    // Question: bcc must not be into header, only into SMTP command "RCPT TO". Does php mail support this ? 
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;    // TODO Question: bcc must not be into header, only into SMTP command "RCPT TO". Does php mail support this ?
 
 		// Delivery receipt
 		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol2;
@@ -967,8 +990,9 @@ class CMailFile
 			$strContent = preg_replace("/\r\n/si", "\n", $strContent);
 		}
 
-        //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
-        $strContent = rtrim(wordwrap($strContent));
+		// Make RFC2045 Compliant, split lines
+        //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
+        $strContent = rtrim(wordwrap($strContent));   // TODO Using this method creates unexpected line break on text/plain content.
 
 		if ($this->msgishtml)
 		{

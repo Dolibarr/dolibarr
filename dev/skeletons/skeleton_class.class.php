@@ -188,11 +188,13 @@ class Skeleton_Class extends CommonObject
 			
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
+			/*
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 			$this->fetch_optionals($this->id,$extralabels);
-
+            */
+			
 			// $this->fetch_lines();
 			
 			$this->db->free($resql);
@@ -251,23 +253,19 @@ class Skeleton_Class extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
-
-		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new Skeleton_ClassLine();
+				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
 				$line->prop1 = $obj->field1;
 				$line->prop2 = $obj->field2;
-
-				$this->lines[$line->id] = $line;
 				//...
 			}
 			$this->db->free($resql);

@@ -258,10 +258,10 @@ if ($action == 'create')
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$label).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {

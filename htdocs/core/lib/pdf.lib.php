@@ -1248,11 +1248,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			{
 				if ($issupplierline) 
 				{
-				    //$ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
-				    if (! empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) $ref_prodserv =$ref_supplier;
-    			    else $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+						$ref_prodserv = $ref_supplier;
+					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';  
+					else 
+						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
 				}
-				else $ref_prodserv = $prodser->ref; // Show local ref only
+				else 
+					$ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
 			}
@@ -1308,7 +1312,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			if ($detail->sellby) $dte[]=$outputlangs->transnoentitiesnoconv('printSellby',dol_print_date($detail->sellby, $format, false, $outputlangs));
 			if ($detail->batch) $dte[]=$outputlangs->transnoentitiesnoconv('printBatch',$detail->batch);
 			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->dluo_qty);
-			$libelleproduitservice.= "__N__  ".implode($dte,"-");
+			$libelleproduitservice.= "__N__  ".implode(" - ", $dte);
 		}
 	}
 

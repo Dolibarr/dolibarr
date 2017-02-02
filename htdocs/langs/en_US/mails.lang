@@ -35,7 +35,7 @@ MailingStatusSentPartialy=Sent partialy
 MailingStatusSentCompletely=Sent completely
 MailingStatusError=Error
 MailingStatusNotSent=Not sent
-MailSuccessfulySent=Email successfully sent (from %s to %s)
+MailSuccessfulySent=Email successfully accepted for delivery (from %s to %s)
 MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
@@ -74,7 +74,11 @@ ResultOfMailSending=Result of mass EMail sending
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
-ContactsWithThirdpartyFilter=Contact with customer filters
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s in file

@@ -207,9 +207,9 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       print __METHOD__." Result code for creating user ".var_export($result, true)."\n";
       print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
       $this->assertEquals($result['curl_error_no'],'');
-      $object=json_decode($result['content'], true);      
-      $this->assertNotNull($object, "Parsing of json result must no be null");
-      $this->assertGreaterThan(0, $object['id'], $object['error']['code'].' '.$object['error']['message']);
+      $resid=json_decode($result['content'], true);
+      $this->assertNotNull($resid, "Parsing of json result must no be null");
+      $this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
       
       // attempt to create duplicated user
       print __METHOD__." Request POST url=".$url."\n";
