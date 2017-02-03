@@ -174,7 +174,7 @@ then
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else
-	echo Detection of documents directory $documentdir failed so demo files were not copied. 
+	echo Detection of documents directory from $mydir failed so demo files were not copied. 
 fi
 
 

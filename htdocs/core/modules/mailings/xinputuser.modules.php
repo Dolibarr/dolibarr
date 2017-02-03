@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class mailing_xinputuser extends MailingTargets
 {
 	var $name='EmailsFromUser';              // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();            // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                    // Module mailing actif pour user admin ou non

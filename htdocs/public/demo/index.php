@@ -228,8 +228,8 @@ if (GETPOST("action") == 'gotodemo')
  */
 
 $head='';
-$head.='<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
-$head.='<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
+$head.='<meta name="keywords" content="demo,online,demonstration,example,test,erp,crm,demos,web">'."\n";
+$head.='<meta name="description" content="Dolibarr ERP and CRM demo. You can test here several profiles for Dolibarr ERP and CRM demonstration.">'."\n";
 $head.='<style type="text/css">'."\n";
 $head.='.body { font: 12px arial,verdana,helvetica !important; }'."\n";
 $head.='.CTable {
@@ -243,10 +243,6 @@ margin: 8px 0px 8px 2px;
 border: 1px solid #bbb;
 border-radius: 8px;
 -moz-border-radius: 8px;
-
--moz-box-shadow: 4px 4px 4px #EEE;
--webkit-box-shadow: 4px 4px 4px #EEE;
-box-shadow: 4px 4px 4px #EEE;
 
 background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 
@@ -316,7 +312,7 @@ print "\n";
 print '<table style="font-size:14px;" class="centpercent" summary="Main table for Dolibarr demos">';
 
 print '<tr><td>';
-print '<div class="center"><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></div><br>';
+print '<div class="center"><a alt="Official portal of your ERP CRM application" targe="_blank" href="https://www.dolibarr.org"><img class="demologo" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></a></div><br>';
 print '<br>';
 
 print '<div style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
@@ -358,7 +354,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
+        print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" class="centpercent CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 		// Title
         print '<tr>';
 		print '<td width="130" id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'"><img class="demothumb" src="'.$profilearray['icon'].'" alt="Demo '.$profilearray['label'].'"></a></td>';
@@ -481,7 +477,7 @@ function llxHeaderVierge($title, $head = "")
 
     top_htmlhead($head,$title);
 
-    print '<body style="padding: 20px;">'."\n";
+    print '<body class="demobody demobackground"><div style="padding: 20px;" class="demobackgrounddiv">'."\n";
 }
 
 /**
@@ -494,7 +490,7 @@ function llxFooterVierge()
     printCommonFooter('public');
 
     print "\n";
-    print "</body>\n";
+    print "</div></body>\n";
     print "</html>\n";
 }
 

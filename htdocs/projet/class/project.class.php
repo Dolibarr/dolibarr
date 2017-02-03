@@ -773,7 +773,7 @@ class Project extends CommonObject
      * 		Close a project
      *
      * 		@param		User	$user		User that close project
-     * 		@return		int					<0 if KO, >0 if OK
+     * 		@return		int					<0 if KO, 0 if already closed, >0 if OK
      */
     function setClose($user)
     {
@@ -828,6 +828,8 @@ class Project extends CommonObject
                 return -1;
             }
         }
+        
+        return 0;
     }
 
     /**

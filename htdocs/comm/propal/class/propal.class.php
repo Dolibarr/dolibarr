@@ -2764,6 +2764,8 @@ class Propal extends CommonObject
      */
     function availability($availability_id, $notrigger=0)
     {
+        global $user;
+        
         if ($this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;

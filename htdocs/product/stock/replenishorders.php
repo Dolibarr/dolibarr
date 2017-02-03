@@ -39,6 +39,41 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+$sref = GETPOST('search_ref', 'alpha');
+$snom = GETPOST('search_nom', 'alpha');
+$suser = GETPOST('search_user', 'alpha');
+$sttc = GETPOST('search_ttc', 'alpha');
+$sall = GETPOST('search_all', 'alpha');
+$sdate = GETPOST('search_date', 'alpha');
+$page = GETPOST('page', 'int');
+$sproduct = GETPOST('sproduct', 'int');
+
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+if (!$sortorder) $sortorder = 'DESC';
+if (!$sortfield) $sortfield = 'cf.date_creation';
+$page = GETPOST("page");
+if ($page < 0) $page = 0;
+$offset = $limit * $page;
+
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $sall="";
+    $sref="";
+    $snom="";
+    $suser="";
+    $sttc="";
+    $sdate='';
+    $sproduct=0;
+}
+
 
 
 /*
@@ -65,21 +100,6 @@ $head[1][2] = 'replenishorders';
 dol_fiche_head($head, 'replenishorders', '', 0, '');
 
 $commandestatic = new CommandeFournisseur($db);
-$sref = GETPOST('search_ref', 'alpha');
-$snom = GETPOST('search_nom', 'alpha');
-$suser = GETPOST('search_user', 'alpha');
-$sttc = GETPOST('search_ttc', 'int');
-$sall = GETPOST('search_all', 'alpha');
-$sdate = GETPOST('search_date', 'alpha');
-$page = GETPOST('page', 'int');
-$sproduct = GETPOST('sproduct', 'int');
-$sortorder = GETPOST('sortorder', 'alpha');
-$sortfield = GETPOST('sortfield', 'alpha');
-
-if (!$sortorder) $sortorder = 'DESC';
-if (!$sortfield) $sortfield = 'cf.date_creation';
-
-$offset = $conf->liste_limit * $page ;
 
 $sql = 'SELECT s.rowid as socid, s.nom as name, cf.date_creation as dc,';
 $sql.= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
@@ -101,25 +121,10 @@ if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
 }
-if ($sref) {
-    //natural search
-    $scrit = explode(' ', $sref);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND cf.ref LIKE "%' . $db->escape($crit) . '%"';
-    }
-}
-if ($snom) {
-    $scrit = explode(' ', $snom);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND s.nom LIKE "%' . $db->escape($crit) . '%"';
-    }
-}
-if ($suser) {
-    $sql .= ' AND u.login LIKE "%' . $db->escape($suser) . '%"';
-}
-if ($sttc) {
-    $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
-}
+if ($sref) $sql .= natural_search('cf.ref', $sref);
+if ($snom) $sql .= natural_search('s.nom', $snom);
+if ($suser) $sql .= natural_search('u.login', $suser);
+if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
 if ($sdate)
 {
     if (GETPOST('search_datemonth', 'int') && GETPOST('search_dateday', 'int') && GETPOST('search_dateyear', 'int'))
@@ -132,21 +137,15 @@ if ($sdate)
     }
     $sql .= " AND cf.date_creation = '" . $db->idate($date) . "'";
 }
-if ($sall) {
-    $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
-    $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
-}
-if (!empty($socid)) {
-    $sql .= ' AND s.rowid = ' . $socid;
-}
-
+if ($sall) $sql .= natural_search(array('cf.ref','cf.note'), $sall);
+if (!empty($socid)) $sql .= ' AND s.rowid = ' . $socid;
 if (GETPOST('statut', 'int')) {
     $sql .= ' AND fk_statut = ' . GETPOST('statut', 'int');
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($conf->liste_limit+1, $offset);
+$sql .= $db->plimit($limit+1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -242,9 +241,8 @@ if ($resql)
          $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-    $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';
-    $value = dol_escape_htmltag($langs->trans('Search'));
-    print '<input type="image" class="liste_titre" name="button_search" src="' . $src . '" value="' . $value . '" title="' . $value . '">'.
+         $searchpitco=$form->showFilterAndCheckAddButtons(0);
+         print $searchpitco;
          '</td>'.
          '</tr>';
 

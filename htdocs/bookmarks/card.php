@@ -194,7 +194,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	 * Fact bookmark mode or visually edition
 	 */
 	$object->fetch($id);
-	
+
 	$hselected = 'card';
 	$head = array(
 		array(
@@ -216,10 +216,10 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans("BackToList").'</a>';
-	
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '' , '', 0, '', '', 0);
+
+  dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
@@ -307,7 +307,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 
 	// Buttons
-	
+
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
