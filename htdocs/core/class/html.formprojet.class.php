@@ -60,9 +60,10 @@ class FormProjets
 	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
 	 *  @param  string  $morecss        More css
+	 *	@param  int     $htmlid         Html id to use instead of htmlname
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='')
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='', $htmlid='')
 	{
 		global $langs,$conf,$form;
 
@@ -90,7 +91,7 @@ class FormProjets
 		}
 		else
 		{
-			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid);
 			if ($discard_closed) 
 			{
 			    if (class_exists('Form'))
@@ -125,14 +126,17 @@ class FormProjets
 	 * @param  string  $filterkey          Key to filter
 	 * @param  int     $nooutput           No print output. Return it only.
 	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
+	 * @param  int     $htmlid             Html id to use instead of htmlname
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0)
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='')
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		if (empty($htmlid)) $htmlid = $htmlname;
+		
 		$out='';
         $outarray=array();
         
@@ -173,14 +177,14 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             	$minmax='minwidth100 maxwidth300';
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlid.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
