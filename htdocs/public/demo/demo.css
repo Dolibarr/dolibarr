@@ -3,7 +3,21 @@
 /*  Demo                                                                          */
 /* ============================================================================== */
 
-
+a:hover {
+	text-decoration: none;
+}
+.demobox {
+	border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	min-height: 210px;
+}
+.demobox:hover {
+	border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	box-shadow: 2px 2px 8px #BBB; 
+}
 .CTable {
 	padding: 6px;
 	font-weight: normal;
@@ -18,7 +32,9 @@
 	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 }
 .csscolumns {
+    margin-left: 8px;
     margin-top: 6px;
+    margin-bottom: 5px;
     -webkit-column-count: 4; /* Chrome, Safari, Opera */
     -moz-column-count: 4; /* Firefox */
     column-count: 3;
@@ -85,10 +101,6 @@ img.demothumb {
     height: 140px;
     background-position-y: bottom;
 }
-div#tr1profdemoall {
-    margin-left: -40px;
-    margin-right: -40px;
-}
 
 
 @media only screen and (max-width: 767px)
@@ -97,8 +109,11 @@ div#tr1profdemoall {
     	line-height: 150% !important;
         font-size: 100% !important;
     }
+    .demobox {
+		min-height: 170px !important;
+	}
     img.demothumb {
-        box-shadow: 1px 1px 4px #BBB;
+        /* box-shadow: 1px 1px 4px #BBB; */
         margin-right: 6px;
         margin-left: 4px;
         width: 80px;
