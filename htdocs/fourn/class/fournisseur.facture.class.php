@@ -1628,6 +1628,7 @@ class FactureFournisseur extends CommonInvoice
         }
         else
        {
+       		$this->error=$obj->error;
         	//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
         	return false;
         }
