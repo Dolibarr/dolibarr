@@ -170,7 +170,10 @@ class DolibarrApi
 	 * @throws RestException
 	 */
 	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-
+        
+        // For backward compatibility
+        if ($resource == 'member') $resource='adherent';
+        
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
