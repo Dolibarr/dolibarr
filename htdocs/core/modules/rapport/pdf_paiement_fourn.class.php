@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015		Charles-Fr BENKE  	 <charles.fr@benke.fr>
+/* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/rapport/pdf_paiement.class.php
+ *	\file       htdocs/core/modules/rapport/pdf_paiement_fourn.class.php
  *	\ingroup    banque
  *	\brief      File to build payment reports
  */
