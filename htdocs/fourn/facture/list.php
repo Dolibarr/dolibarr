@@ -46,6 +46,7 @@ if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 $langs->load("bills");
 $langs->load("companies");
 $langs->load('products');
+$langs->load('projects');
 
 $socid = GETPOST('socid','int');
 
