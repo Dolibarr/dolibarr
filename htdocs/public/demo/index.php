@@ -328,22 +328,21 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 400px">'."\n";
-        print '<div id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
+        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 400px;">'."\n";
 
-		print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">';
+        
+        print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
 
+        print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">';
 		print '<div style="padding: 10px;">';
         
 		print '<img class="demothumb" src="'.$profilearray['icon'].'" alt="Demo '.$profilearray['label'].'">';
 		
 		print '<div class="clearboth"></div>';
 	
-		print '<div style=""><div class="demothumbtext">';
-
+		print '<div class="demothumbtext">';
     	print $langs->trans($profilearray['label']);
-
-    	print '</div></div>';
+    	print '</div>';
     	
     	print '</div>';
     	print '</a>';
@@ -352,7 +351,7 @@ foreach ($demoprofiles as $profilearray)
         // Modules
         if (empty($profilearray['url']))
         {
-    		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="font-size:14px; line-height: 110%;">';
+    		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="font-size:14px; line-height: 110%; padding-bottom: 8px">';
     		
     		print $langs->trans("ThisIsListOfModules").'<br>';
     		print '<div class="csscolumns">';
