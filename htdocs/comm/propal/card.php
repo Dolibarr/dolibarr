@@ -2398,7 +2398,7 @@ if ($action == 'create')
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-
+		print '<a name="builddoc"></a>'; // ancre
 		/*
 		 * Documents generes
 		 */
