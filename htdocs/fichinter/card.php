@@ -756,7 +756,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$upload_dir = $conf->ficheinter->dir_output;
+	$permissioncreate = $user->rights->ficheinter->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheinter->creer)
