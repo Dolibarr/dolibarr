@@ -4549,20 +4549,36 @@ border-top-right-radius: 6px;
 
 
 /* For demo pages */
+.demobody {
+	line-height: 130%;
+	font-size: 150%;
+	text-align: center;
+}
+.demobantext {
+	max-width: 1024px;
+	text-align: center;
+	display: inline-block;
+}
+.demobanbox {
+    font-size: 90%;
+}
 img.demothumb {
-    box-shadow: 2px 2px 8px #BBB;
+    /* box-shadow: 2px 2px 8px #BBB; */
     margin-right: 20px;
     margin-left: 10px;
+    width: 110px;
 }
-
 .demobackground {
-    /*
-    background-image: url(/dolibarr_5.0/htdocs/theme/image-demo.jpg);
+    background-image: url(<?php echo DOL_URL_ROOT.'/public/demo/dolibarr_demo_ban.jpg' ?>);
     background-size: cover;
     object-fit: contain;
-    */
+    height: 140px;
+    background-position-y: bottom;
 }
-
+div#tr1profdemoall {
+    margin-left: -40px;
+    margin-right: -40px;
+}
 
 
 /* ============================================================================== */
@@ -4601,11 +4617,18 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 
+    .demobody {
+    	line-height: 150% !important;
+        font-size: 100% !important;
+    }
     img.demothumb {
         box-shadow: 1px 1px 4px #BBB;
         margin-right: 6px;
         margin-left: 4px;
         width: 80px;
+    }
+    .demobanbox {
+        font-size: 100%;
     }
 
     div.tabBar {
