@@ -247,62 +247,8 @@ if (GETPOST("action") == 'gotodemo')
 $head='';
 $head.='<meta name="keywords" content="demo,online,demonstration,example,test,erp,crm,demos,web">'."\n";
 $head.='<meta name="description" content="Dolibarr ERP and CRM demo. You can test here several profiles for Dolibarr ERP and CRM demonstration.">'."\n";
-$head.='<style type="text/css">'."\n";
-$head.='.CTable {
-padding: 6px;
-font-weight: normal;
-color: #444444 !important;
 
-margin: 8px 0px 8px 2px;
-
-/*border: 1px solid #bbb;
-border-radius: 8px;
--moz-border-radius: 8px;*/
-
-background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
-
-}
-.csscolumns {
-    margin-top: 6px;
-    -webkit-column-count: 4; /* Chrome, Safari, Opera */
-    -moz-column-count: 4; /* Firefox */
-    column-count: 3;
-    text-align: left;
-}
-.demomaxoveflow {
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-@media only screen and (max-width: 840px)
-{
-	.csscolumns {
-		-webkit-column-count: 3; /* Chrome, Safari, Opera */
-	    -moz-column-count: 3; /* Firefox */
-	    column-count: 3;
-        text-align: left;
-	}
-}
-@media only screen and (max-width: 640px)
-{
-	.csscolumns {
-		-webkit-column-count: 2; /* Chrome, Safari, Opera */
-	    -moz-column-count: 2; /* Firefox */
-	    column-count: 2;
-        text-align: left;
-	}
-}
-@media only screen and (max-width: 420px)
-{
-	.csscolumns {
-		-webkit-column-count: 1; /* Chrome, Safari, Opera */
-	    -moz-column-count: 1; /* Firefox */
-	    column-count: 1;
-        text-align: left;
-	}
-}
-</style>
-
+$head.='
 <script type="text/javascript">
 var openedId="";
 jQuery(document).ready(function () {
@@ -510,7 +456,7 @@ function llxHeaderVierge($title, $head = "")
 
     top_httphead();
 
-    top_htmlhead($head,$title);
+    top_htmlhead($head,$title,0,0,array(),array('public/demo/demo.css'));
 
     print '<body class="demobody"><div class="demobackgrounddiv">'."\n";
 }

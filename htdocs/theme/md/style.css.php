@@ -4446,19 +4446,6 @@ border-top-right-radius: 6px;
 
 
 /* ============================================================================== */
-/*  Demo                                                                          */
-/* ============================================================================== */
-
-img.demothumb {
-    box-shadow: 2px 2px 8px #888;
-	margin-bottom: 4px;
-    margin-right: 20px;
-    margin-left: 10px;
-}
-
-
-
-/* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
 
@@ -4504,13 +4491,6 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
-
-    img.demothumb {
-        box-shadow: 1px 1px 4px #BBB;
-        margin-right: 6px;
-        margin-left: 4px;
-        width: 80px;
-    }
 
     div.tabBar {
         padding-left: 0px;
