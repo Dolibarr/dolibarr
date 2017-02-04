@@ -418,7 +418,7 @@ WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to 
 
 # Modules
 Module0Name=Users & groups
-Module0Desc=Users and groups management
+Module0Desc=Users / Employees and Groups management
 Module1Name=Third parties
 Module1Desc=Companies and contact management (customers, prospects...)
 Module2Name=Commercial
