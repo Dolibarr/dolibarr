@@ -1752,6 +1752,10 @@ td.photo {
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
 
+td.ecmroot {
+    padding-bottom: 0 !important;
+}
+
 .largebutton {
     background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
     background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
