@@ -1402,15 +1402,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     /*
      * Top menu
      */
-    print "\n".'<!-- Start top horizontal -->'."\n";
-
-    if (empty($conf->dol_hide_topmenu))
+    if (empty($conf->dol_hide_topmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
     {
-    	print '<div class="side-nav-vert"><div id="id-top">';
+        print "\n".'<!-- Start top horizontal -->'."\n";
+        
+        print '<div class="side-nav-vert"><div id="id-top">';
 
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
-	    $menumanager->atarget=$target;
+    	$menumanager->atarget=$target;
 	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
 	    print "</div>\n";
 
@@ -1539,12 +1539,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		print '</div></div>';
 
 	    //unset($form);
+	
+		print '<div style="clear: both;"></div>';
+        print "<!-- End top horizontal menu -->\n\n";
     }
 
-	print '<div style="clear: both;"></div>';
-    print "<!-- End top horizontal menu -->\n\n";
-
-    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<div id="id-container">';
+    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
 
@@ -1572,7 +1572,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
     if (! empty($menu_array_before)) dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING);
 
-    if (empty($conf->dol_hide_leftmenu))
+    if (empty($conf->dol_hide_leftmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
     {
 	    // Instantiate hooks of thirdparty module
 	    $hookmanager->initHooks(array('searchform','leftblock'));

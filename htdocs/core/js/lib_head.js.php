@@ -973,8 +973,8 @@ function newpopup(url,title) {
 /**
  * Function show document preview. Use the "dialog" function.
  *
- * @param 	string file 		File path
- * @param 	string type 		Mime file type
+ * @param 	string file 		Url
+ * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	string title		Title of popup
  * @return	void
  * @see newpopup
