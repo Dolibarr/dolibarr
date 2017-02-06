@@ -118,7 +118,7 @@ class pdf_paiement_fourn
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$file = $dir . "/payments-".$year."-".$month.".pdf";
+		$file = $dir . "/supplier_payments-".$year."-".$month.".pdf";
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
