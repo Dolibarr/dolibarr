@@ -184,6 +184,7 @@ ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_obje
 
 INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
 
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT(''EXPEDITION_ADDON_NUMBER')__, __ENCRYPT('mod_expedition_safor')__,'chaine','Name for numbering manager for shipments',0,1);
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
