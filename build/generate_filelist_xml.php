@@ -42,35 +42,55 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 if (empty($argv[1])) 
 {
-    print "Usage: ".$script_file." release=x.y.z\n";
+    print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
     exit -1;
 }
 parse_str($argv[1]);
+if (! empty($argv[2])) parse_str($argv[2]);
 
-if ($release != DOL_VERSION)
+if (empty($includecustom)) 
 {
-    print 'Error: release is not version declared into filefunc.in.php.'."\n";
-    exit -1;
+    $includecustom=0;
+    
+    if (DOL_VERSION != $release)
+    {
+        print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parmater.'."\n";
+        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
+        exit -1;
+    }
 }
+else
+{
+    if (! preg_match('/'.preg_quote(DOL_VERSION,'/').'-/',$release))
+    {
+        print 'Error: When parameter "includecustom" is not set, version declared into ('.DOL_VERSION.') must be used with a suffix into "release" parmater (ex: '.DOL_VERSION.'-mydistrib).'."\n";
+        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
+        exit -1;
+    }
+}
+
+print "Version: ".$release."\n";
+print "Include custom: ".$includecustom."\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputdir=dirname(__FILE__).'/../htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
-dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
+print 'Delete current files '.$outputdir.'/filelist-'.$release.'.xml'."\n";
+dol_delete_file($outputdir.'/filelist-'.$release.'.xml',0,1,1);
 
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile,'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'">'."\n");
 
-fputs($fp, '<dolibarr_htdocs_dir>'."\n");
+fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
 
 $checksumconcat=array();
 
+// TODO Replace RecursiveDirectoryIterator with dol_dir_list
 $dir_iterator1 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
 $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
-// need to ignore document custom etc
-$files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install|nltechno))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+// Need to ignore document custom etc. Note: this also ignore natively symbolic links.
+$files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 $dir='';
 $needtoclose=0;
 foreach ($files as $file) {
@@ -102,10 +122,11 @@ $checksumconcat=array();
 
 fputs($fp, '<dolibarr_script_dir version="'.$release.'">'."\n");
 
+// TODO Replace RecursiveDirectoryIterator with dol_dir_list
 $dir_iterator2 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../scripts/');
 $iterator2 = new RecursiveIteratorIterator($dir_iterator2);
-// need to ignore document custom etc
-$files = new RegexIterator($iterator2, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install|nltechno))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+// Need to ignore document custom etc. Note: this also ignore natively symbolic links.
+$files = new RegexIterator($iterator2, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 $dir='';
 $needtoclose=0;
 foreach ($files as $file) {
