@@ -536,8 +536,8 @@ else
 }
 */
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'</td><td>';
 $variablename='SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

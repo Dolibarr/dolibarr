@@ -503,8 +503,8 @@ print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("FreeLegalTextOnContracts").' '.img_info($langs->trans("AddCRIfTooLong")).'</td><td>';
 $variablename='CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -520,8 +520,8 @@ print '</td></tr>'."\n";
 
 //Use draft Watermark
 $var=!$var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftContractCards").'<br>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("WatermarkOnDraftContractCards").'</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 
