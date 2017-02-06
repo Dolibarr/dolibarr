@@ -2052,6 +2052,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
     }
 
     $sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+    $sql.= " WHERE c.active = 1";
     $sql.= " ORDER BY c.label ASC";
     $resql=$db->query($sql);
     if ($resql)
