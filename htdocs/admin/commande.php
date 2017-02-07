@@ -569,8 +569,8 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'</td><td>';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 $variablename='ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

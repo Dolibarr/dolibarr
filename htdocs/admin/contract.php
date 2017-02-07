@@ -503,8 +503,8 @@ print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("FreeLegalTextOnContracts").' '.img_info($langs->trans("AddCRIfTooLong")).'</td><td>';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnContracts").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 $variablename='CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
