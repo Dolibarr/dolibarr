@@ -1059,7 +1059,7 @@ if (empty($reshook))
 											$qualified=1;
 											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
 											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-											if ($qualified) $totalamount += $lines[$i]->total_ht;
+											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 										}
 
 										if ($totalamount != 0) {
