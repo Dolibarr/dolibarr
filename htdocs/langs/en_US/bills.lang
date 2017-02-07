@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Invoice
 Bills=Invoices
-BillsCustomers=Customers invoices
-BillsCustomer=Customers invoice
-BillsSuppliers=Suppliers invoices
-BillsCustomersUnpaid=Unpaid customers invoices
-BillsCustomersUnpaidForCompany=Unpaid customer's invoices for %s
-BillsSuppliersUnpaid=Unpaid supplier's invoices
-BillsSuppliersUnpaidForCompany=Unpaid supplier's invoices for %s
+BillsCustomers=Customer invoices
+BillsCustomer=Customer invoice
+BillsSuppliers=Supplier invoices
+BillsCustomersUnpaid=Unpaid customer invoices
+BillsCustomersUnpaidForCompany=Unpaid customer invoices for %s
+BillsSuppliersUnpaid=Unpaid supplier invoices
+BillsSuppliersUnpaidForCompany=Unpaid supplier invoices for %s
 BillsLate=Late payments
 BillsStatistics=Customers invoices statistics
 BillsStatisticsSuppliers=Suppliers invoices statistics
