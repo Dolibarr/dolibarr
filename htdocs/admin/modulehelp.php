@@ -281,7 +281,6 @@ $special = $objMod->special;
 if (! $objMod->getName())
 {
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
-	continue;
 }
 
 $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
