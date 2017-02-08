@@ -95,7 +95,7 @@ class PriceSchedule extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -121,7 +121,7 @@ class PriceSchedule extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -169,7 +169,7 @@ class PriceSchedule extends CommonObject
             }
         }
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -191,7 +191,7 @@ class PriceSchedule extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -214,7 +214,7 @@ class PriceSchedule extends CommonObject
         if ($date_end) $sql.= " AND date_start <= ".$date_end;
         if ($limit) $sql .= $this->db->plimit($limit);
 
-        dol_syslog(get_class($this) . "::fetchSections");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             $this->sections = array();
@@ -264,7 +264,7 @@ class PriceSchedule extends CommonObject
         $sql.= " GROUP BY rowid";
         $sql.= $this->db->order($sortfield,$sortorder);
         if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
-        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
+        dol_syslog(__METHOD__);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -322,7 +322,7 @@ class PriceSchedule extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -341,7 +341,7 @@ class PriceSchedule extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -380,7 +380,7 @@ class PriceSchedule extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$obj->table_element;
             $sql.= " WHERE fk_schedule = ".$this->id;
 
-            dol_syslog(get_class($this) . "::delete sections");
+            dol_syslog(__METHOD__." sections", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if (!$resql) {
                 $error++;
@@ -393,7 +393,7 @@ class PriceSchedule extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql .= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this) . "::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (!$resql) {
                 $error++;
@@ -404,7 +404,7 @@ class PriceSchedule extends CommonObject
         // Commit or rollback
         if ($error) {
             foreach ($this->errors as $errmsg) {
-                dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
             }
             $this->db->rollback();
