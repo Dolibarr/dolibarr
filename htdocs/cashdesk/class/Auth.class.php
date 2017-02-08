@@ -22,7 +22,7 @@
  */
 class Auth
 {
-	private $db;
+	protected $db;
 
 	private $login;
 	private $passwd;
