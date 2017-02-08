@@ -18,7 +18,7 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$rowid = GETPOST('rowid');
+$id = GETPOST('id');
 $action = GETPOST('action');
 $object = new ProductAttribute($db);
 
@@ -109,14 +109,16 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 		<tr class="liste_titre nodrag nodrop">
 			<th class="liste_titre"><?php print $langs->trans('Ref') ?></th>
 			<th class="liste_titre"><?php print $langs->trans('Label') ?></th>
-			<th class="liste_titre"><?php print $langs->trans('NbProducts') ?></th>
+			<th class="liste_titre" align="right"><?php print $langs->trans('NbOfDifferentValues') ?></th>
+			<th class="liste_titre" align="right"><?php print $langs->trans('NbProducts') ?></th>
 			<th class="liste_titre" colspan="2"></th>
 		</tr>
 		<?php foreach ($variants as $key => $attribute): ?>
 		<tr id="row-<?php echo $attribute->id ?>" <?php echo $bcdd[$var] ?>>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->ref) ?></a></td>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->label) ?></a></td>
-			<td><?php echo $attribute->countChildProducts() ?></td>
+			<td align="right"><?php echo $attribute->countChildValues() ?></td>
+			<td align="right"><?php echo $attribute->countChildProducts() ?></td>
 			<td style="text-align: right">
 				<a href="card.php?id=<?php echo $attribute->id ?>&action=edit"><?php echo img_edit() ?></a>
 				<a href="card.php?id=<?php echo $attribute->id ?>&action=delete"><?php echo img_delete() ?></a>

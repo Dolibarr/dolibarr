@@ -73,9 +73,7 @@ class ProductAttribute
 			return -1;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/variants/lib/product_variants.lib.php';
-
-		$sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getProductEntities($this->db).")";
+		$sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product', 1).")";
 
 		$query = $this->db->query($sql);
 
@@ -100,11 +98,9 @@ class ProductAttribute
 	 */
 	public function fetchAll()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/variants/lib/product_variants.lib.php';
-
 		$return = array();
 
-		$sql = 'SELECT rowid, ref, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getProductEntities($this->db).')';
+		$sql = 'SELECT rowid, ref, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product', 1).')';
 		$sql .= $this->db->order('rang', 'asc');
 		$query = $this->db->query($sql);
 		if ($query)
@@ -184,16 +180,29 @@ class ProductAttribute
 	}
 
 	/**
+	 * Returns the number of values for this attribute
+	 *
+	 * @return int
+	 */
+	public function countChildValues()
+	{
+		$sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE fk_product_attribute = ".(int) $this->id;
+
+		$query = $this->db->query($sql);
+		$result = $this->db->fetch_object($query);
+
+		return $result->count;
+	}
+	
+	/**
 	 * Returns the number of products that are using this attribute
 	 *
 	 * @return int
 	 */
 	public function countChildProducts()
 	{
-		require_once __DIR__.'/../lib/product_variants.lib.php';
-
 		$sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v
-		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".(int) $this->id." AND pac.entity IN (".getProductEntities($this->db).")";
+		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".(int) $this->id." AND pac.entity IN (".getEntity('product', 1).")";
 
 		$query = $this->db->query($sql);
 
@@ -202,6 +211,7 @@ class ProductAttribute
 		return $result->count;
 	}
 
+	
 	/**
 	 * Reorders the order of the variants.
 	 * This is an internal function used by moveLine function
