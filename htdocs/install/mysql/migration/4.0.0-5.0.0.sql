@@ -287,9 +287,3 @@ CREATE TABLE llx_product_attribute_value
   entity INT DEFAULT 1 NOT NULL
 );
 ALTER TABLE llx_product_attribute_value ADD CONSTRAINT unique_ref UNIQUE (fk_product_attribute,ref);
-
--- add additional payment terms often needed in Austria
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour) values (9,'10D',         9,1, '10 jours','Réglement à 10 jours',0,10);
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour) values (10,'10DENDMONTH', 10,1, '10 jours fin de mois','Réglement à 10 jours fin de mois',1,10);
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour) values (11,'14D',         11,1, '14 jours','Réglement à 14 jours',0,14);
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour) values (12,'14DENDMONTH', 12,1, '14 jours fin de mois','Réglement à 14 jours fin de mois',1,14);
