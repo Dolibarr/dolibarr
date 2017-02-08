@@ -543,7 +543,7 @@ if ($resql)
     			if (!empty($obj->note_private) || !empty($obj->note_public))
     			{
     			    print ' <span class="note">';
-    			    print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    			    print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
     			    print '</span>';
     			}
     			print '</td>';
