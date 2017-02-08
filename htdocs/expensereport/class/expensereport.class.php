@@ -2242,9 +2242,10 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
  *  @param      int     $selected       Preselected type
  *  @param      string  $htmlname       Name of field in form
  *  @param      int     $showempty      Add an empty field
+ *  @param      int     $active         1=Active only, 0=Unactive only, -1=All
  *  @return     string                  Select html
  */
-function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
+function select_type_fees_id($selected='',$htmlname='type',$showempty=0, $active=1)
 {
     global $db,$langs,$user;
     $langs->load("trips");
@@ -2258,6 +2259,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
     }
 
     $sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+    if ($active >= 0) $sql.= " WHERE c.active = ".$active;
     $sql.= " ORDER BY c.label ASC";
     $resql=$db->query($sql);
     if ($resql)
