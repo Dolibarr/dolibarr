@@ -84,7 +84,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -135,7 +135,7 @@ class PriceGlobalVariableUpdater
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -191,7 +191,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -260,7 +260,7 @@ class PriceGlobalVariableUpdater
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -270,7 +270,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -346,7 +346,7 @@ class PriceGlobalVariableUpdater
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 
-        dol_syslog(get_class($this)."::listUpdaters");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -388,7 +388,7 @@ class PriceGlobalVariableUpdater
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE next_update < ".dol_now();
 
-        dol_syslog(get_class($this)."::processUpdaters");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -428,6 +428,7 @@ class PriceGlobalVariableUpdater
     {
         global $langs, $user;
         $langs->load("errors");
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $this->error = null;
         $this->checkParameters();
@@ -551,7 +552,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update_next_update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -560,7 +561,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update_next_update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -595,7 +596,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update_status");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -604,7 +605,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update_status ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
