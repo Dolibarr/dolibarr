@@ -31,7 +31,7 @@
  */
 class Address
 {
-	private $db;
+	protected $db;
 
 	public $id;
 	public $type;
@@ -495,7 +495,7 @@ class Address
  */
 class AddressLine
 {
-	private $db;
+	protected $db;
 	public $id;
 	public $date_creation;
 	public $date_modification;
