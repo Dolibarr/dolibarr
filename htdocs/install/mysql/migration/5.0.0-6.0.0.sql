@@ -67,6 +67,8 @@ CREATE TABLE llx_resource_schedule
   schedule_year   integer NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_resource_schedule ADD UNIQUE INDEX uk_llx_resource_schedule (fk_resource, schedule_year);
+
 CREATE TABLE llx_resource_schedule_section
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -79,6 +81,9 @@ CREATE TABLE llx_resource_schedule_section
   booker_type     varchar(64),       -- booker type
   booker_count    integer DEFAULT 0 NOT NULL   -- booker count
 )ENGINE=innodb;
+
+ALTER TABLE llx_resource_schedule_section ADD UNIQUE INDEX uk_llx_resource_schedule_section (fk_schedule, date_start, date_end);
+ALTER TABLE llx_resource_schedule_section ADD INDEX idx_llx_resource_schedule_section_status (status);
 
 CREATE TABLE llx_resource_placement
 (
@@ -107,3 +112,4 @@ CREATE TABLE llx_resource_log
   action          integer NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_resource_log ADD INDEX idx_llx_resource_schedule (fk_resource);
