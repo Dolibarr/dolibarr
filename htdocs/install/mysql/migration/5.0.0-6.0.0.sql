@@ -109,6 +109,8 @@ CREATE TABLE llx_product_price_schedule
   starting_hour       integer NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_product_price_schedule ADD INDEX uk_llx_product_price_schedule (fk_product, schedule_type, schedule_year);
+
 CREATE TABLE llx_product_price_schedule_section
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -118,3 +120,4 @@ CREATE TABLE llx_product_price_schedule_section
   price           double(24,8) NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_product_price_schedule_section ADD UNIQUE INDEX uk_llx_product_price_schedule_section (fk_schedule, date_start, date_end);
