@@ -284,7 +284,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
+				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
@@ -292,34 +292,31 @@ class pdf_standard extends ModeleExpenseReport
 				{
 					$piece_comptable = $i +1;
 
-					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
-
-					// Description of product line
-					$curX = $this->posxcomment-1;
-
-					$showpricebeforepagebreak=1;
+                    $curY = $nexY;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					
                     // Accountancy piece
                     $pdf->SetXY($this->posxpiece, $curY);
                     $pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
+                    $curY = ($pdf->PageNo() > $pageposbefore) ? $pdf->GetY()-4 : $curY;
 
                     // Comments
                     $pdf->SetXY($this->posxcomment, $curY );
                     $pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
+                    $curY = ($pdf->PageNo() > $pageposbefore) ? $pdf->GetY()-4 : $curY;
 
                     // Date
 					$pdf->SetXY($this->posxdate -1, $curY);
 					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
-					// Type
+                    // Type
 					$pdf->SetXY($this->posxtype -1, $curY);
 					$nextColumnPosX = $this->posxup;
                     if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
@@ -345,17 +342,17 @@ class pdf_standard extends ModeleExpenseReport
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 4,$vat_rate, 0, 'C');
-					}
+                    }
 
 					// Unit price
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 4,price($object->lines[$i]->value_unit), 0, 'R');
 
-					// Quantity
+                    // Quantity
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->postotalttc-$this->posxqty-0.8, 4,$object->lines[$i]->qty, 0, 'R');
 
-					// Total with all taxes
+                    // Total with all taxes
 					$pdf->SetXY($this->postotalttc-1, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 4, price($object->lines[$i]->total_ttc), 0, 'R');
 
@@ -378,11 +375,10 @@ class pdf_standard extends ModeleExpenseReport
 						$nbLineCommentNeed = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output);
 						$nbLineTypeNeed = dol_nboflines_bis($follow_type,4,$outputlangs->charset_output);
 
-						//Which one need more lines
-                        $nblineFollowComment = ($nbLineCommentNeed > $nbLineTypeNeed) ? $nbLineCommentNeed : $nbLineTypeNeed;
+                        $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
 					}
 
-                    $nexY+=$nblineFollowComment*($pdf->getFontSize()+1);    // Passe espace entre les lignes
+                    $nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
